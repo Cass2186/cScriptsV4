@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.16/6dc192c7f93ec1853f70d59d8a6dcf94eb42866/lombok-1.18.16.jar" />
+        </processorPath>
+        <module name="myScripts.scripts.cCombat.test" />
+        <module name="myScripts.libraries.cAPI.test" />
+        <module name="myScripts.scripts.TemplateScript.main" />
+        <module name="myScripts.scripts.cFarming.test" />
+        <module name="myScripts.scripts.cOrbCharger.test" />
+        <module name="myScripts.scripts.cSkiller.test" />
+        <module name="myScripts.scripts.cNMZ.test" />
+        <module name="myScripts.scripts.MotherLoadMine.test" />
+        <module name="myScripts.libraries.test" />
+        <module name="myScripts.scripts.my-script.main" />
+        <module name="myScripts.libraries.main" />
+        <module name="myScripts.scripts.my-script.test" />
+        <module name="myScripts.scripts.cCrabs.test" />
+        <module name="myScripts.main" />
+        <module name="myScripts.scripts.cBirdhouses.test" />
+        <module name="myScripts.scripts.my-script2.main" />
+        <module name="myScripts.scripts.cFarming.main" />
+        <module name="myScripts.scripts.test" />
+        <module name="myScripts.libraries.cAPI.main" />
+        <module name="myScripts.scripts.cCombat.main" />
+        <module name="myScripts.scripts.cVorkath.main" />
+        <module name="myScripts.scripts.cTutorialIsland.test" />
+        <module name="myScripts.scripts.cNMZ.main" />
+        <module name="myScripts.scripts.cBirdhouses.main" />
+        <module name="myScripts.scripts.cOrbCharger.main" />
+        <module name="myScripts.scripts.main" />
+        <module name="myScripts.scripts.cCrabs.main" />
+        <module name="myScripts.scripts.MotherLoadMine.main" />
+        <module name="myScripts.scripts.TemplateScript.test" />
+        <module name="myScripts.scripts.cTutorialIsland.main" />
+        <module name="myScripts.scripts.cSkiller.main" />
+        <module name="myScripts.scripts.cVorkath.test" />
+        <module name="myScripts.test" />
+        <module name="myScripts.scripts.my-script2.test" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="11" />
+  </component>
+</project>

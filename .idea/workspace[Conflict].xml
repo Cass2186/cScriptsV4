@@ -1,0 +1,679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c897b490-faa2-43a0-894d-eeb436534fb2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/scripts/kourendFavourScript/cSkiller.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/scripts/kourendFavourScript/myScripts.scripts.kourendFavourScript.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/scripts/kourendFavourScript/myScripts.scripts.kourendFavourScript.test.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Autocast.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/BankManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/CombatUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/DiscordWebhook.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/Entities.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/Finder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/FinderResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/PositionableFinder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/Utils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/BankItemEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/GroundItemEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/InterfaceEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/ItemEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/NpcEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/ObjectEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/PlayerEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/EntitySelector/finders/prefabs/RSItemFinder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/GEManager/Exchange.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/GEManager/GEItem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/GameSettings.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/InterfaceUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/ItemId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Keyboard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/PlayerOrientation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/QuestSteps/BuyItemsStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/QuestSteps/ObjectInteractionStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/QuestSteps/QuestInterface.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/QuestSteps/UseItemOnObjectStep.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Requirements/InventoryRequirement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Tasks/Priority.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Tasks/Task.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Tasks/TaskSet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Varbits.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/API/Priority.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/API/Task.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/API/TaskSet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/Data/MiningConst.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/Data/MiningUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/Data/Vars.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/Tasks/Bank.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/Tasks/DepositOre.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/MotherLoadMine/src/scripts/Tasks/MineOre.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/kotlin/compileKotlin/build-history.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/kotlin/compileKotlin/last-build.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/kotlin/myscript2jar-classes.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/libs/kourendFavourScript.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/libs/my-script2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/repo-deploy/kourendFavourScript.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/build/repo-deploy/my-script2.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/API/Priority.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/API/SkillNum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/API/Task.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/API/TaskSet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Data/Const.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Data/SkillTasks.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Data/Vars.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Cooking/CookFood.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Crafting/CraftBank.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Crafting/MakeGlass.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Firemaking/MakeFires.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Fishing/Fish.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/cSkiller/src/scripts/cSkiller.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/KittenTraining.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Relleka/GoToRelleka.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Relleka/RellekaCourse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/BuyItems.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HazeelCult/HazeelCult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HazeelCult/HazeelCultConst.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HorrorFromTheDeep/FORMS.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HorrorFromTheDeep/HorrorConst.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HorrorFromTheDeep/HorrorFight.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HorrorFromTheDeep/LightHouseSteps.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/HorrorFromTheDeep/StartHorror.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/jarAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/lombok_plugin_0_34_1_2019_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/lombok_plugin_0_34_1_2019_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/NpcChat.class" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/NpcChat.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/PathingUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/PathingUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/QuestSteps/NPCStep.class" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/QuestSteps/NPCStep.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/Requirements/ItemReq.class" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/Requirements/ItemReq.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/Timer.class" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/Timer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/Utils.class" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/Utils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/DaxConfigs.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/DaxTracker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/DaxTrackerServerApi.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/DaxWalker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/WebWalkerServerApi$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/WebWalkerServerApi.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/Json$DefaultHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/Json.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonArray$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonArray.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonLiteral.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonNumber.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonObject$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonObject$HashIndexTable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonObject$Member.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonObject.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonParser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonString.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonValue.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/JsonWriter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/Location.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/ParseException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/PrettyPrint$PrettyPrintWriter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/PrettyPrint.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/WriterConfig$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/WriterConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/json/WritingBuffer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/BankPathRequestPair.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/BulkBankPathRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/BulkPathRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/DataLog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/DataLogRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/DataSnapshot.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/DaxCredentials.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/DaxCredentialsProvider.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/IntPair.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/ListSearch.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/PathRequestPair.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/PathResult.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/PathStatus.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/Period.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/PlayerDetails.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/Point3D$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/Point3D.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/PropertyStats.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/Requirement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/RunescapeBank.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/ServerResponse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/SourceHighScore.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/UserHighScore.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/exceptions/AuthorizationException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/exceptions/RateLimitException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/models/exceptions/UnknownException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/utils/DaxTrackerProperty.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/api_lib/utils/IOHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/GetPathResponseContainer$Status.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/GetPathResponseContainer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/NodeInfo$Details.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/NodeInfo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/Pair.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/PathFindingNode.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/PlayerInformation.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/RSRegion$Rectangle.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/RSRegion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/BankHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/InterfaceHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/RSItemHelper$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/RSItemHelper$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/RSItemHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/RSNPCHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/RSObjectHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/WorldHelper$World.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/WorldHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/RuneElement$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/RuneElement$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/RuneElement.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/RunePouch$RuneSlot.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/RunePouch.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/Spell.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/SpellBook$Type.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/SpellBook.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/magic/Validatable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/questing/Quest$State.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/questing/Quest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/helpers/questing/QuestHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/ItemList.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/JSONArray.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/JSONAware.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/JSONObject.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/JSONStreamAware.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/JSONValue.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/parser/ContainerFactory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/parser/ContentHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/parser/JSONParser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/parser/ParseException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/parser/Yylex.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/shared/jsonSimple/parser/Yytoken.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/Teleport$Action.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/Teleport.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/WearableItemTeleport.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/MasterScrollBook$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/MasterScrollBook$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/MasterScrollBook$3.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/MasterScrollBook$Teleports.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/MasterScrollBook.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/TeleportConstants.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/TeleportLimit.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/TeleportScrolls$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/teleports/teleport_utils/TeleportScrolls.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/DaxWalkerEngine$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/DaxWalkerEngine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/move_task/MoveTaskHandler$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/move_task/MoveTaskHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/move_task/impl/DefaultObjectHandler$Direction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/move_task/impl/DefaultObjectHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/move_task/impl/DefaultWalkHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/passive_action/PassiveAction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/passive_action/impl/RunEnergyPassiveAction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/special_cases/SpecialCaseHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/special_cases/SpecialCaseHandlers.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/special_cases/impl/SecurityStrongholdHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/handlers/special_cases/impl/ShantyPassHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/models/DaxLogger.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/models/MoveTask.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/models/WaitCondition.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/models/enums/ActionResult.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/models/enums/MoveActionResult.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/models/enums/Situation.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/AccurateMouse$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/AccurateMouse$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/AccurateMouse$State.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/AccurateMouse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/TribotUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/camera/AsynchronousCamera.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/camera/Calculations.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/camera/CameraAction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/camera/CameraCalculations$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/camera/CameraCalculations.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/camera/DaxCamera.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/generator/CollisionFileMaker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/generator/CollisionTile.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/movement/WalkingQueue.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/path/DaxPathFinder$Destination.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/path/DaxPathFinder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/path/PathUtils$NotInPathException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker/utils/path/PathUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/Loggable$Level.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/Loggable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WaitFor$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WaitFor$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WaitFor$Condition.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WaitFor$Return.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WaitFor$ReturnCondition.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WaitFor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WalkerEngine$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WalkerEngine$CustomConditionContainer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WalkerEngine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WalkingCondition$State.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WalkingCondition.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/WebWalkerPaint.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/bfs/BFS.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/DoomsToggle.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/InteractionHelper$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/InteractionHelper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/NPCInteraction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialCondition.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$10.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$11.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$12.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$13.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$14.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$15.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$16.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$17.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$3.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$4.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$5.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$6.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$7.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$8.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject$9.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler$SpecialObject.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/AStarNode.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/CollisionFlags.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/PathAnalyzer$DestinationDetails.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/PathAnalyzer$Direction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/PathAnalyzer$PathState.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/PathAnalyzer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/Reachable$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/Reachable$Direction.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/local_pathfinding/Reachable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/Charter$Location.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/Charter$LocationProperty.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/Charter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/GnomeGlider$Location.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/GnomeGlider.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/NavigationSpecialCase$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/NavigationSpecialCase$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/NavigationSpecialCase$SpecialLocation.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/NavigationSpecialCase.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/ShipUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/SpiritTree$Location.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/SpiritTree.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/fairyring/FairyRing$Locations.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/fairyring/FairyRing.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/FirstLetter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/SecondLetter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/ThirdLetter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/real_time_collision/CollisionDataCollector.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/real_time_collision/CollisionFlags.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/classes/java/main/scripts/dax_api/walker_engine/real_time_collision/RealTimeCollisionTile.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/kotlin/cAPIjar-classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/kotlin/cAPIjar-classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/kotlin/compileKotlin/build-history.bin" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/kotlin/compileKotlin/build-history.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/kotlin/compileKotlin/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/kotlin/compileKotlin/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/build/libs/cAPI.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/build/libs/cAPI.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/NpcChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/NpcChat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/PathingUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/PathingUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/QuestSteps/NPCStep.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/QuestSteps/NPCStep.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Requirements/ItemReq.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Requirements/ItemReq.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Timer.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Timer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/cAPI/src/scripts/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/DaxConfigs.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/DaxConfigs.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/DaxTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/DaxTracker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/DaxTrackerServerApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/DaxTrackerServerApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/DaxWalker.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/DaxWalker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/WebWalkerServerApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/WebWalkerServerApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/Json.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/Json.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonArray.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonLiteral.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonLiteral.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonNumber.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonNumber.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonObject.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonString.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonString.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/JsonWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/JsonWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/Location.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/Location.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/ParseException.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/ParseException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/PrettyPrint.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/PrettyPrint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/WriterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/WriterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/json/WritingBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/json/WritingBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/BankPathRequestPair.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/BankPathRequestPair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/BulkBankPathRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/BulkBankPathRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/BulkPathRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/BulkPathRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/DataLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/DataLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/DataLogRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/DataLogRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/DataSnapshot.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/DataSnapshot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/DaxCredentials.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/DaxCredentials.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/DaxCredentialsProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/DaxCredentialsProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/IntPair.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/IntPair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/ListSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/ListSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/PathRequestPair.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/PathRequestPair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/PathResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/PathResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/PathStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/PathStatus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/Period.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/Period.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/PlayerDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/PlayerDetails.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/Point3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/Point3D.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/PropertyStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/PropertyStats.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/Requirement.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/Requirement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/RunescapeBank.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/RunescapeBank.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/ServerResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/ServerResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/SourceHighScore.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/SourceHighScore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/UserHighScore.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/UserHighScore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/exceptions/AuthorizationException.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/exceptions/AuthorizationException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/exceptions/RateLimitException.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/exceptions/RateLimitException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/models/exceptions/UnknownException.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/models/exceptions/UnknownException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/utils/DaxTrackerProperty.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/utils/DaxTrackerProperty.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/api_lib/utils/IOHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/api_lib/utils/IOHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/GetPathResponseContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/GetPathResponseContainer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/NodeInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/NodeInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/Pair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/PathFindingNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/PathFindingNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/PlayerInformation.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/PlayerInformation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/RSRegion.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/RSRegion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/BankHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/BankHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/InterfaceHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/InterfaceHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/RSItemHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/RSItemHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/RSNPCHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/RSNPCHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/RSObjectHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/RSObjectHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/WorldHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/WorldHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/magic/RuneElement.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/magic/RuneElement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/magic/RunePouch.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/magic/RunePouch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/magic/Spell.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/magic/Spell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/magic/SpellBook.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/magic/SpellBook.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/magic/Validatable.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/magic/Validatable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/questing/Quest.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/questing/Quest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/helpers/questing/QuestHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/helpers/questing/QuestHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/ItemList.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/ItemList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/JSONArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/JSONArray.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/JSONAware.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/JSONAware.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/JSONObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/JSONObject.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/JSONStreamAware.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/JSONStreamAware.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/JSONValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/JSONValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/parser/ContainerFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/parser/ContainerFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/parser/ContentHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/parser/ContentHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/parser/JSONParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/parser/JSONParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/parser/ParseException.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/parser/ParseException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/parser/Yylex.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/parser/Yylex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/shared/jsonSimple/parser/Yytoken.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/shared/jsonSimple/parser/Yytoken.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/teleports/Teleport.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/teleports/Teleport.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/teleports/WearableItemTeleport.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/teleports/WearableItemTeleport.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/teleports/teleport_utils/MasterScrollBook.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/teleports/teleport_utils/MasterScrollBook.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/teleports/teleport_utils/TeleportConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/teleports/teleport_utils/TeleportConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/teleports/teleport_utils/TeleportLimit.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/teleports/teleport_utils/TeleportLimit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/teleports/teleport_utils/TeleportScrolls.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/teleports/teleport_utils/TeleportScrolls.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/DaxWalkerEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/DaxWalkerEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/move_task/MoveTaskHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/move_task/MoveTaskHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/move_task/impl/DefaultObjectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/move_task/impl/DefaultObjectHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/move_task/impl/DefaultWalkHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/move_task/impl/DefaultWalkHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/passive_action/PassiveAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/passive_action/PassiveAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/passive_action/impl/RunEnergyPassiveAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/passive_action/impl/RunEnergyPassiveAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/special_cases/SpecialCaseHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/special_cases/SpecialCaseHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/special_cases/SpecialCaseHandlers.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/special_cases/SpecialCaseHandlers.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/special_cases/impl/SecurityStrongholdHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/special_cases/impl/SecurityStrongholdHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/handlers/special_cases/impl/ShantyPassHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/handlers/special_cases/impl/ShantyPassHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/models/DaxLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/models/DaxLogger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/models/MoveTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/models/MoveTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/models/WaitCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/models/WaitCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/models/enums/ActionResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/models/enums/ActionResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/models/enums/MoveActionResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/models/enums/MoveActionResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/models/enums/Situation.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/models/enums/Situation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/AccurateMouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/AccurateMouse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/TribotUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/TribotUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/camera/AsynchronousCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/camera/AsynchronousCamera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/camera/Calculations.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/camera/Calculations.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/camera/CameraAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/camera/CameraAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/camera/CameraCalculations.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/camera/CameraCalculations.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/camera/DaxCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/camera/DaxCamera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/generator/CollisionFileMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/generator/CollisionFileMaker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/generator/CollisionTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/generator/CollisionTile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/movement/WalkingQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/movement/WalkingQueue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/path/DaxPathFinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/path/DaxPathFinder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker/utils/path/PathUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker/utils/path/PathUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/Loggable.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/Loggable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/WaitFor.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/WaitFor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/WalkerEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/WalkerEngine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/WalkingCondition.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/WalkingCondition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/WebWalkerPaint.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/WebWalkerPaint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/bfs/BFS.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/bfs/BFS.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/interaction_handling/DoomsToggle.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/interaction_handling/DoomsToggle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/interaction_handling/InteractionHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/interaction_handling/InteractionHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/interaction_handling/NPCInteraction.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/interaction_handling/NPCInteraction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/interaction_handling/PathObjectHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/local_pathfinding/AStarNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/local_pathfinding/AStarNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/local_pathfinding/CollisionFlags.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/local_pathfinding/CollisionFlags.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/local_pathfinding/PathAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/local_pathfinding/PathAnalyzer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/local_pathfinding/Reachable.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/local_pathfinding/Reachable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/Charter.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/Charter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/GnomeGlider.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/GnomeGlider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/NavigationSpecialCase.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/NavigationSpecialCase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/ShipUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/ShipUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/SpiritTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/SpiritTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/FairyRing.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/FairyRing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/FirstLetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/FirstLetter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/SecondLetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/SecondLetter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/ThirdLetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/navigation_utils/fairyring/letters/ThirdLetter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/real_time_collision/CollisionDataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/real_time_collision/CollisionDataCollector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/real_time_collision/CollisionFlags.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/real_time_collision/CollisionFlags.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/cAPI/src/scripts/dax_api/walker_engine/real_time_collision/RealTimeCollisionTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/src/scripts/dax_api/walker_engine/real_time_collision/RealTimeCollisionTile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/dax_api/build/kotlin/daxapijar-classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/cSkiller/build/kotlin/kourendFavourScriptjar-classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/dax_api/build/libs/dax_api.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/dax_api/build/tmp/jar/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/cSkiller/build/tmp/jar/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/my-library/build/kotlin/compileKotlin/build-history.bin" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/build/kotlin/compileKotlin/build-history.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/my-library/build/kotlin/compileKotlin/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/build/kotlin/compileKotlin/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/my-library/build/kotlin/mylibraryjar-classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/build/kotlin/mylibraryjar-classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/my-library/build/libs/my-library.jar" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/my-library/build/libs/my-library.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/cAPI/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/cAPI/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/dax_api/build/kotlin/daxapijar-classes.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/dax_api/build/libs/dax_api.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/dax_api/build/tmp/jar/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/AgilityAPI/AgilUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/AgilityAPI/AgilUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/AgilityAPI/COURSES.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/AgilityAPI/COURSES.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/AgilityAPI/Obstacle.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/AgilityAPI/Obstacle.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Data/AgilityAreas.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Data/AgilityAreas.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Data/Const.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Data/Const.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Data/Vars.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Data/Vars.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Pollvniveach/GoToStart.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Pollvniveach/GoToStart.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Pollvniveach/Pollniveach.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Pollvniveach/Pollniveach.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Varrock/GoToVarrock.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Varrock/GoToVarrock.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Varrock/VarrockCourse.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/Tasks/Varrock/VarrockCourse.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/cAgility$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/cAgility$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/cAgility.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/classes/java/main/scripts/cAgility.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/kotlin/compileKotlin/build-history.bin" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/kotlin/compileKotlin/build-history.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/kotlin/compileKotlin/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/kotlin/compileKotlin/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/kotlin/myscriptjar-classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/kotlin/myscriptjar-classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/libs/my-script.jar" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/libs/my-script.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/build/repo-deploy/my-script.zip" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/build/repo-deploy/my-script.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/AgilityAPI/AgilUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/AgilityAPI/AgilUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/AgilityAPI/COURSES.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/AgilityAPI/COURSES.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/AgilityAPI/Obstacle.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/AgilityAPI/Obstacle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Data/AgilityAreas.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Data/AgilityAreas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Data/Const.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Data/Const.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Data/Vars.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Data/Vars.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Pollvniveach/GoToStart.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Pollvniveach/GoToStart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Pollvniveach/Pollniveach.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Pollvniveach/Pollniveach.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Varrock/GoToVarrock.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Varrock/GoToVarrock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Varrock/VarrockCourse.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/Tasks/Varrock/VarrockCourse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script/src/scripts/cAgility.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script/src/scripts/cAgility.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build/classes/java/main/scripts/cQuesterV2.class" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build/classes/java/main/scripts/cQuesterV2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build/kotlin/compileKotlin/build-history.bin" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build/kotlin/compileKotlin/build-history.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build/kotlin/compileKotlin/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build/kotlin/compileKotlin/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build/kotlin/myscript2jar-classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build/kotlin/myscript2jar-classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build/libs/my-script2.jar" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build/libs/my-script2.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/build/repo-deploy/my-script2.zip" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/build/repo-deploy/my-script2.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/my-script2/src/scripts/cQuesterV2.java" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/my-script2/src/scripts/cQuesterV2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/libraries">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/libraries/cAPI">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/libraries/dax_api">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/libraries/my-library">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/scripts">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/scripts/my-script">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/scripts/my-script2">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="Kotlin Class" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="1qr2AONtCbEvtlQ7zpZQbCc4E5v" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="true" />
+    <property name="Repository.Attach.Annotations" value="true" />
+    <property name="Repository.Attach.JavaDocs" value="true" />
+    <property name="Repository.Attach.Sources" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="com.laniax.intellijtribotplugin.FileInput" value="C:\Users\Cass\Documents\cAgility.zip" />
+    <property name="com.laniax.intellijtribotplugin.Script" value="cAgility" />
+    <property name="last_opened_file_path" value="$USER_HOME$/AppData/Roaming/.tribot/install/tribot-client/lib/tribot-dax-walker-0.0.3.jar" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.1997319" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Cass\Google Drive\myScripts\libraries\my-library\src\scripts" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\scripts\cSkiller" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\scripts" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\scripts\MotherLoadMine\src\scripts" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\libraries\cAPI\src\scripts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Cass\Google Drive\myScripts\scripts\cSkiller\src\scripts" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\libraries\cAPI\src\scripts" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\libraries\dax_api\src" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\scripts" />
+      <recent name="C:\Users\Cass\Google Drive\myScripts\scripts\my-script" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="scripts.Data" />
+      <recent name="scripts" />
+      <recent name="scripts.GEManager" />
+      <recent name="scripts.Items" />
+      <recent name="" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c897b490-faa2-43a0-894d-eeb436534fb2" name="Default Changelist" comment="" />
+      <created>1617823245207</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1617823245207</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/scripts/my-script/src/scripts/cAgility.java</url>
+          <line>183</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.tribot/tribot-client/12.0.29/7dbd1b51eed441b3a869b37d2782ce502683b3ae/tribot-client-12.0.29.jar!/org/tribot/script/interfaces/Ending.class</url>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/scripts/cSkiller/src/scripts/cSkiller.java</url>
+          <line>108</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Crafting/MakeGlass.java</url>
+          <line>18</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-field">
+          <url>file://$PROJECT_DIR$/scripts/cSkiller/src/scripts/Tasks/Crafting/CraftBank.java</url>
+          <line>17</line>
+          <properties field="message" class="scripts.Tasks.Crafting.CraftBank" />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

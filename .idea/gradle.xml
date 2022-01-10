@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="delegatedBuild" value="true" />
+        <option name="testRunner" value="GRADLE" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="corretto-11" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/libraries" />
+            <option value="$PROJECT_DIR$/libraries/cAPI" />
+            <option value="$PROJECT_DIR$/scripts" />
+            <option value="$PROJECT_DIR$/scripts/MotherLoadMine" />
+            <option value="$PROJECT_DIR$/scripts/TemplateScript" />
+            <option value="$PROJECT_DIR$/scripts/cBirdhouses" />
+            <option value="$PROJECT_DIR$/scripts/cCombat" />
+            <option value="$PROJECT_DIR$/scripts/cCrabs" />
+            <option value="$PROJECT_DIR$/scripts/cFarming" />
+            <option value="$PROJECT_DIR$/scripts/cNMZ" />
+            <option value="$PROJECT_DIR$/scripts/cOrbCharger" />
+            <option value="$PROJECT_DIR$/scripts/cSkiller" />
+            <option value="$PROJECT_DIR$/scripts/cTutorialIsland" />
+            <option value="$PROJECT_DIR$/scripts/cVorkath" />
+            <option value="$PROJECT_DIR$/scripts/my-script" />
+            <option value="$PROJECT_DIR$/scripts/my-script2" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
