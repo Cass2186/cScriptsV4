@@ -44,14 +44,14 @@ public class ConditionalStep implements QuestStep {
         Requirement lastPossibleCondition = null;
 
         for (Requirement conditions : steps.keySet()) {
-            if (conditions != null) {
+            if (conditions != null && conditions.check()) {
                 startUpStep(steps.get(conditions));
                 return;
             }
         }
 
        // if (!steps.get(null).isLocked())
-       //     startUpStep(steps.get(null));
+        startUpStep(steps.get(null));
 
     }
 
@@ -76,11 +76,12 @@ public class ConditionalStep implements QuestStep {
     @Override
     public void execute() {
         updateSteps();
-        if (requirements != null &&
-                Arrays.stream(requirements).anyMatch(r -> !r.check())) {
+
+        if (requirements != null && Arrays.stream(requirements).anyMatch(r -> !r.check())) {
             General.println("[Conditional Step]: We failed a requirement to execute this Conditional step");
             return;
         }
+
         this.getActiveStep().ifPresent(QuestStep::execute);
     }
 
