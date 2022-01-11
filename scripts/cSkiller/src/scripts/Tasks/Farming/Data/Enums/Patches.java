@@ -1,0 +1,56 @@
+package scripts.Tasks.Farming.Data.Enums;
+
+import lombok.Getter;
+import org.tribot.api2007.types.RSArea;
+import org.tribot.script.sdk.Log;
+import scripts.Tasks.Farming.Data.Areas;
+import scripts.Tasks.Farming.Data.FarmConst;
+
+import java.util.List;
+
+public enum Patches {
+
+    FALADOR_HERB_PATCH(List.of(FarmConst.FALADOR_HERB_PATCH_ID), Areas.FALADOR_AREA),
+    CATHERBY_HERB_PATCH(List.of(FarmConst.CATHERBY_HERB_PATCH_ID), Areas.CATHERBY_AREA),
+    ARDOUGNE_HERB_PATCH(List.of(FarmConst.ARDOUGNE_HERB_PATCH_ID), Areas.ARDOUGNE_AREA),
+    HOSIDIUS_HERB_PATCH(List.of(FarmConst.HOISIDIUS_HERB_PATCH_ID), Areas.HOSIDIUS_AREA),
+    MORYTANIA_HERB_PATCH(List.of(FarmConst.MORYTANIA_HERB_PATCH_ID), Areas.MORYTANIA_AREA),
+    FARMING_GUILD_HERB_PATCH(List.of(FarmConst.FARMING_GUILD_HERB_PATCH_ID), Areas.FARMING_GUILD_ALLOTMENT_AREA),
+
+    FALADOR_ALLOTMENT_PATCH(List.of(FarmConst.FALADOR_NW_ALLOTMENT_ID, FarmConst.FALADOR_SE_ALLOTMENT_ID), Areas.FALADOR_AREA),
+    CATHERBY_ALLOTMENT_PATCH(List.of(FarmConst.CATHERBY_N_ALLOTMENT_ID, FarmConst.CATHERBY_S_ALLOTMENT_ID), Areas.CATHERBY_AREA),
+    ARDOUGNE_ALLOTMENT_PATCH(List.of(FarmConst.ARDOUGNE_S_ALLOTMENT_ID, FarmConst.ARDOUGNE_N_ALLOTMENT_ID), Areas.ARDOUGNE_AREA),
+    HOSIDIUS_ALLOTMENT_PATCH(List.of(FarmConst.HOISIDIUS_SW_ALLOTMENT_ID, FarmConst.HOISIDIUS_SW_ALLOTMENT_ID), Areas.HOSIDIUS_AREA),
+    MORYTANIA_ALLOTMENT_PATCH(List.of(FarmConst.MORYTANIA_N_ALLOTMENT_ID, FarmConst.MORYTANIA_S_ALLOTMENT_ID), Areas.MORYTANIA_AREA),
+    //TODO ADD this
+    //   FARMING_GUILD_ALLOTMENT_PATCH(List.of(FarmConst.FARMING_GUILD_HERB_PATCH_ID), FarmConst.FARMING_GUILD_ALLOTMENT_AREA),
+
+    VARROCK_TREE_PATCH(List.of(FarmConst.VAROCK_TREE_PATCH_ID), Areas.VARROCK_TREE_AREA),
+    LUMBRIDGE_TREE_PATCH(List.of(FarmConst.LUMBRIDGE_TREE_PATCH_ID), Areas.LUMBRIDGE_TREE_AREA),
+    TAVERLY_TREE_PATCH(List.of(FarmConst.TAVERLY_TREE_PATCH_ID), Areas.TAVERLY_TREE_AREA),
+    FALADOR_TREE_PATCH(List.of(FarmConst.GNOME_STRONGHOLD_TREE_PATCH_ID), Areas.FALADOR_TREE_AREA),
+    STRONGHOLD_TREE_PATCH(List.of(FarmConst.GNOME_STRONGHOLD_TREE_PATCH_ID), Areas.TREE_GNOME_TREE_AREA),
+    FARMING_GUILD_TREE_PATCH(List.of(FarmConst.FARMING_GUILD_TREE_PATCH_ID), Areas.FARMING_GUILD_TREE_AREA),
+
+    STRONGHOLD_FRUIT_TREE_PATCH(List.of(FarmConst.STRONGHOLD_FRUIT_TREE_ID), Areas.STRONGHOLD_FRUIT_TREE_AREA),
+    TGV_FRUIT_TREE_PATCH(List.of(FarmConst.TGV_FRUIT_TREE_ID), Areas.TGV_FRUIT_TREE_AREA),
+    BRIMHAVEN_FRUIT_TREE_PATCH(List.of(FarmConst.BRIMHAVEN_FRUIT_TREE_ID), Areas.BRIMHAVEN_FRUIT_TREE_AREA),
+    FARMING_GUILD_FRUIT_TREE_PATCH(List.of(FarmConst.GUILD_TREE_PATCH_ID), Areas.FARMING_GUILD_TREE_AREA),//TODO CHECK
+    CATHERBY_FRUIT_TREE_PATCH(List.of(FarmConst.CATHERBY_FRUIT_TREE_ID), Areas.CATHERBY_FRUIT_TREE_AREA);
+
+    @Getter
+    private List<Integer> patchIds;
+
+    @Getter
+    private final RSArea patchArea;
+
+    Patches(List<Integer> id, RSArea area) {
+        this.patchIds = id;
+        this.patchArea= area;
+        if (this.patchArea == null){
+            Log.log(this.toString() + " IS Null area");
+        }
+    }
+
+}
+
