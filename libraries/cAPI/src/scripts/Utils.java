@@ -1119,7 +1119,7 @@ public class Utils {
     public static void idlePredictableAction() {
        int sleep = (int) ReactionGenerator.get().nextReactionTime(30, 10, 0.02, 0.1,
                30, 500);
-        Log.log("[Debug]: Sleeping (predictable rxn) for: " + sleep);
+        System.out.println("[Debug]: Sleeping (predictable rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
 

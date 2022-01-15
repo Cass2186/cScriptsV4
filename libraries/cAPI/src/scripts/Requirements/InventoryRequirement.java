@@ -29,10 +29,6 @@ public class InventoryRequirement implements Requirement {
     }
 
 
-    public void depositInventory() {
-
-    }
-
 
     public ArrayList<ItemReq> getMissingInventoryItemsList() {
         ArrayList<ItemReq> missing = new ArrayList<>();

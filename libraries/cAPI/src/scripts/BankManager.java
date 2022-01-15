@@ -580,9 +580,11 @@ public class BankManager {
     }
 
     public static boolean setUnNoted() {
+        RSInterface button = Interfaces.findWhereAction("Item", 12);
         RSInterfaceChild itemButton = Interfaces.get(12, 23);
-        if (Game.getSetting(115) == 1 && itemButton != null &&
-            itemButton.click()){
+        Log.log("[BankManager]: Selecting Unnoted items");
+        if (Game.getSetting(115) == 1 && button != null &&
+                button.click()){
             Timer.waitCondition(() -> !BankManager.areNotesOn(), 2000, 3000);
         }
         return !areNotesOn();

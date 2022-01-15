@@ -30,13 +30,9 @@ public class ItemReq implements Requirement {
     @Setter
     private int amountOfChargesNeeded;
 
-    private int playerAmt;
-
     @Getter
     private String itemName;
 
-    @Getter
-    private int chargesNeeded;
 
     @Getter
     private boolean isItemNoted;
@@ -147,7 +143,7 @@ public class ItemReq implements Requirement {
         private List<Integer> alternateItemIds = new ArrayList<>();
         private boolean isItemNoted = false;
         private int amount;
-        public int minAmount = 0;
+        private int minAmount = 0;
         private boolean acceptEquipped = false;
         private boolean shouldEquip = false;
 
@@ -188,6 +184,7 @@ public class ItemReq implements Requirement {
         }
 
         public Builder shouldEquip(boolean shouldEquip) {
+            this.acceptEquipped = true;
             this.shouldEquip = shouldEquip;
             return this;
         }

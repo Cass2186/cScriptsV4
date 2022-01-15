@@ -50,6 +50,7 @@ public class BuyItemsStep {
             BankManager.open(true);
             BankManager.depositAll(true);
             BankManager.withdraw(0, true, ItemId.COINS);
+            BankManager.setUnNoted();
             BankManager.withdrawArray(ItemId.RING_OF_WEALTH, 1);
             this.bankCache = Banking.getAllList();
         }
