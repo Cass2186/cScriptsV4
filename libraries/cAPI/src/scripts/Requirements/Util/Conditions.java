@@ -2,6 +2,7 @@ package scripts.Requirements.Util;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.tribot.script.sdk.Log;
 import scripts.Requirements.Requirement;
 
 import java.util.ArrayList;
@@ -100,6 +101,7 @@ public class Conditions implements Requirement {
         if (operation != null) {
             return operation.check(conditionsPassed, quantity);
         }
+        Log.log("[Conditons]: conditions.size() = " + conditions.size());
 
         //TODO: Replace with LogicType check, however more testing to be done to make sure nothing breaks
         if ((conditionsPassed > 0 && logicType == LogicType.OR)

@@ -102,7 +102,7 @@ public class Timer {
 
     public static boolean waitCondition(BooleanSupplier condition, int min, int max) {
         return Waiting.waitUntil(General.random(min, max), () -> {
-            Waiting.waitNormal(300, 110);
+            Waiting.waitNormal(300, 60);
             return (condition.getAsBoolean());
         });
     }
@@ -110,7 +110,7 @@ public class Timer {
 
     public static boolean waitCondition(BooleanSupplier condition, int min) {
         return Timing.waitCondition(() -> {
-            Waiting.waitNormal(300, 110);
+            Waiting.waitNormal(300, 60);
             return (condition.getAsBoolean());
         }, General.random(min, min + 4000));
 
@@ -119,7 +119,7 @@ public class Timer {
     public static boolean slowWaitCondition(BooleanSupplier condition, int min, int max) {
         return Timing.waitCondition(() -> {
             AntiBan.timedActions();
-            Waiting.waitNormal(800, 1250);
+            Waiting.waitNormal(800, 200);
             return (condition.getAsBoolean());
         }, General.random(min, max));
     }

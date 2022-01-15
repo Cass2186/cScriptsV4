@@ -10,6 +10,11 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
@@ -18,11 +23,12 @@ import scripts.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ObjectStep implements QuestStep{
+public class ObjectStep implements QuestStep {
 
 
     private RSTile tile;
@@ -86,6 +92,7 @@ public class ObjectStep implements QuestStep{
         this.handleChat = false;
         this.requirements.addAll(Arrays.asList(requirements));
     }
+
     public ObjectStep(int objectId, RSTile tile, String objectAction, boolean waitCond, boolean handleChat) {
         this.objectId = objectId;
         this.tile = tile;
@@ -140,6 +147,12 @@ public class ObjectStep implements QuestStep{
         this.chat.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
     }
 
+    public Optional<LocalTile> getWalkableTile(LocalTile tile) {
+        return Query.tiles()
+                .inArea(Area.fromRadius(tile, 1))
+                .filter(LocalTile::isWalkable)
+                .findBestInteractable();
+    }
 
     @Override
     public void execute() {
@@ -151,13 +164,21 @@ public class ObjectStep implements QuestStep{
         if (this.tile != null) {
             RSArea objArea = new RSArea(this.tile, this.tileRadius);
             if (!objArea.contains(Player.getPosition())) {
-                General.println("[ObjectStep]: Navigating to object area");
-                if (!useLocalNav && !PathingUtil.localNavigation(this.tile) && PathingUtil.walkToTile(this.tile, tileRadius, false))
+                General.println("[ObjectStep]: Navigating to object area: ID " + this.objectId);
+                LocalTile tile = new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getPosition().getPlane());
+                Optional<LocalTile> walkable = getWalkableTile(tile);
+                if (walkable.map(LocalWalking::walkTo).orElse(false)) {
+                    General.println("[ObjectStep]: Navigating to object area - local SDK (walkable)");
+                    PathingUtil.movementIdle();
+                } else if (LocalWalking.walkTo(tile)) {
+                    General.println("[ObjectStep]: Navigating to object area - local SDK");
+                    PathingUtil.movementIdle();
+                } else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
+                        PathingUtil.walkToTile(this.tile, tileRadius, false))
                     PathingUtil.movementIdle();
 
-                else {
+                else if (PathingUtil.localNavigation(this.tile)) {
                     General.println("[ObjectStep]: Navigating to object area - local");
-                    PathingUtil.localNavigation(this.tile);
                     PathingUtil.movementIdle();
                 }
             }
@@ -188,7 +209,7 @@ public class ObjectStep implements QuestStep{
 
             }
         }
-      //  Log.log("[ObjectStep]: Using Utils");
+        //  Log.log("[ObjectStep]: Using Utils");
         if (Utils.clickObject(this.objectId, this.objectAction, false)) {
             if (!handleChat) {
                 if (NPCInteraction.isConversationWindowUp())

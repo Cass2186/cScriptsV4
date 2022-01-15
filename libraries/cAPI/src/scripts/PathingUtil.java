@@ -442,7 +442,7 @@ public class PathingUtil {
 
                 } else {
                     General.println("[PathingUtil]: Failed to generate a path, waiting and trying again. Message: " + message);
-                    General.sleep(3500, 6500);
+                    General.sleep(2500, 3500);
                 }
             }
 
@@ -474,9 +474,8 @@ public class PathingUtil {
                     return largeArea.contains(Player.getPosition());
 
                 } else {
-
                     General.println("[PathingUtil]: Failed to generate a path, waiting 3-5s and trying again.");
-                    General.sleep(General.random(3500, 6500));
+                    General.sleep(2500, 3500);
                 }
             }
 
@@ -504,7 +503,7 @@ public class PathingUtil {
 
                 } else {
                     General.println("[PathingUtil]: Failed to generate a path, waiting 3-5s and trying again.");
-                    General.sleep(General.random(3500, 6500));
+                    General.sleep(2500, 3500);
                 }
             }
 
@@ -537,7 +536,7 @@ public class PathingUtil {
 
                 } else {
                     General.println("[Debug]: Failed to generate a path, waiting 2-5s and trying again.");
-                    General.sleep(General.random(2500, 5500));
+                    General.sleep(2500, 3500);
 
                     // place this here so it tries at least once to generate a path
                     if (Game.isInInstance()) {
@@ -577,7 +576,7 @@ public class PathingUtil {
 
                 } else {
                     General.println("[Debug]: Failed to generate a path, waiting 2-5s and trying again.");
-                    General.sleep(General.random(2500, 5500));
+                    General.sleep(2500, 3500);
 
                     // place this here so it tries at least once to generate a path
                     if (Game.isInInstance()) {
