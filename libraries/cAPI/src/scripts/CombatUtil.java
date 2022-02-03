@@ -185,7 +185,7 @@ public class CombatUtil {
 
     public static boolean checkSpecialItem(RSNPC target) {
         if (target != null && target.getHealthPercent() < 14) {
-            RSItem[] item = Inventory.find(ItemId.SLAYER_SPECIAL_ITEMS);
+            RSItem[] item = Inventory.find(ItemID.SLAYER_SPECIAL_ITEMS);
             if (item.length > 0) {
                 General.println("[CombatUtils]: Using Slayer Item on NPC");
                 return useSlayerItemOnNPC(target);
@@ -195,8 +195,8 @@ public class CombatUtil {
     }
 
     private static boolean useSlayerItemOnNPC(RSNPC npc) {
-        RSItem[] item = Inventory.find(ItemId.SLAYER_SPECIAL_ITEMS);
-        Optional<InventoryItem> i = Query.inventory().idEquals(ItemId.SLAYER_SPECIAL_ITEMS)
+        RSItem[] item = Inventory.find(ItemID.SLAYER_SPECIAL_ITEMS);
+        Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
                 .findClosestToMouse();
         if (npc != null) {
             Optional<Npc> n = Query.npcs().isInteractingWithMe().stream().findFirst();
@@ -233,7 +233,7 @@ public class CombatUtil {
 
         int icon = Player.getRSPlayer().getPrayerIcon();
 
-        Timing.waitCondition(() -> {
+        if(!Timing.waitCondition(() -> {
             General.sleep(General.random(100, 500));
 
             AntiBan.timedActions();
@@ -243,7 +243,12 @@ public class CombatUtil {
             }
             if (icon != -1 && Prayer.getPrayerPoints() < General.random(7, 27)) {
                 General.println("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                if (Inventory.find(ItemID.PRAYER_POTION).length == 0) {
+                    Log.log("returning false, no prayer pots");
+                    return false;
+                }
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
+
             }
             if (AntiBan.getShouldHover() && Mouse.isInBounds() && name != null) {
                 AntiBan.hoverNextNPC(name.getName());
@@ -259,8 +264,18 @@ public class CombatUtil {
                         || (isPraying() && Prayer.getPrayerPoints() < 5);
 
             return !Combat.isUnderAttack() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
-        }, General.random(longTimeOut - 5000, longTimeOut));
+        }, General.random(longTimeOut - 5000, longTimeOut)))
+            return false;
 
+        if (icon != -1 && Prayer.getPrayerPoints() < General.random(7, 25)) {
+            General.println("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
+            if (Inventory.find(ItemID.PRAYER_POTION).length == 0) {
+                Log.log("returning false, no prayer pots");
+                return false;
+            }
+            EatUtil.drinkPotion(ItemID.PRAYER_POTION);
+
+        }
         AntiBan.resetShouldOpenMenu();
 
         RSCharacter target = Combat.getTargetEntity();
@@ -415,7 +430,7 @@ public class CombatUtil {
                 EatUtil.eatFood();
 
             if (isPraying() && Prayer.getPrayerPoints() < prayerPotAt) {
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
             }
 
             RSCharacter target = Combat.getTargetEntity();
@@ -447,7 +462,7 @@ public class CombatUtil {
                 EatUtil.eatFood();
 
             if (isPraying() && Prayer.getPrayerPoints() < prayerPotAt) {
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
             }
 
             RSCharacter target = Combat.getTargetEntity();

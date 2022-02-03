@@ -56,23 +56,23 @@ public class RsBuddyPriceService extends CacheablePriceService<RsBuddyItem> impl
 	}
 
 	@Override
-	public Optional<Integer> getPrice(int itemId)
+	public Optional<Integer> getPrice(int ItemID)
 	{
-		Optional<RsBuddyItem> item = tryGetItemData(itemId);
+		Optional<RsBuddyItem> item = tryGetItemData(ItemID);
 		return item.map(RsBuddyItem::getAveragePrice);
 	}
 
 	@Override
-	public Optional<String> getName(int itemId)
+	public Optional<String> getName(int ItemID)
 	{
-		Optional<RsBuddyItem> item = tryGetItemData(itemId);
+		Optional<RsBuddyItem> item = tryGetItemData(ItemID);
 		return item.map(RsBuddyItem::getName);
 	}
 
 	@Override
-	public Optional<Boolean> isMembers(int itemId)
+	public Optional<Boolean> isMembers(int ItemID)
 	{
-		Optional<RsBuddyItem> item = tryGetItemData(itemId);
+		Optional<RsBuddyItem> item = tryGetItemData(ItemID);
 		return item.map(RsBuddyItem::isMembers);
 	}
 

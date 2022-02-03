@@ -2,7 +2,7 @@ package scripts.Requirements;
 
 import org.tribot.api2007.Skills;
 
-public class SkillRequirement {
+public class SkillRequirement implements Requirement{
 
     Skills.SKILLS skill;
     int minLevel = -1;
@@ -17,5 +17,10 @@ public class SkillRequirement {
         return skill != null && minLevel != -1 &&
                 Skills.getActualLevel(this.skill) >= this.minLevel;
 
+    }
+
+    @Override
+    public boolean check() {
+        return meetsSkillRequirement();
     }
 }

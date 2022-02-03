@@ -10,14 +10,11 @@ import org.tribot.api2007.types.RSTile;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ClickItemStep implements QuestStep{
 
-    private int itemId;
+    private int ItemID;
     private String interactionString;
     private RSTile tile;
     private List<String> dialog;
@@ -26,27 +23,27 @@ public class ClickItemStep implements QuestStep{
     @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
 
-    public ClickItemStep(int itemId, String interactionString) {
-        this.itemId = itemId;
+    public ClickItemStep(int ItemID, String interactionString) {
+        this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = Player.getPosition();
     }
 
-    public ClickItemStep(int itemId, String interactionString, Requirement... reqs) {
-        this.itemId = itemId;
+    public ClickItemStep(int ItemID, String interactionString, Requirement... reqs) {
+        this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = Player.getPosition();
         this.requirements.addAll(Arrays.asList(reqs));
     }
 
-    public ClickItemStep(int itemId, String interactionString, RSTile tile) {
-        this.itemId = itemId;
+    public ClickItemStep(int ItemID, String interactionString, RSTile tile) {
+        this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = tile;
     }
 
-    public ClickItemStep(int itemId, String interactionString, RSTile tile, Requirement... reqs) {
-        this.itemId = itemId;
+    public ClickItemStep(int ItemID, String interactionString, RSTile tile, Requirement... reqs) {
+        this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = tile;
         this.requirements.addAll(Arrays.asList(reqs));
@@ -72,13 +69,23 @@ public class ClickItemStep implements QuestStep{
     }
 
     @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
+
+    }
+
+    @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
             General.println("[ClickItemSteps]: We failed a requirement to execute this ClickItemStep");
             return;
         }
 
-        RSItem[] item = Inventory.find(this.itemId);
+        RSItem[] item = Inventory.find(this.ItemID);
         if (item.length > 0) {
             if (this.tile != null && PathingUtil.localNavigation(this.tile)) {
                 PathingUtil.movementIdle();

@@ -37,24 +37,24 @@ public class GrandExchangePriceService implements IRsItemPriceService
 		this.itemCache = new HashMap<>();
 	}
 
-	public Optional<ExchangeItem> tryGetItemData(int itemId)
+	public Optional<ExchangeItem> tryGetItemData(int ItemID)
 	{
-		if (shouldCache && itemCache.containsKey(itemId))
+		if (shouldCache && itemCache.containsKey(ItemID))
 		{
-			return Optional.of(itemCache.get(itemId));
+			return Optional.of(itemCache.get(ItemID));
 		}
 		Reader reader;
 		try
 		{
 			Gson gson = new GsonBuilder().create();
-			URLConnection urlConnection = new URL(URl + itemId).openConnection();
+			URLConnection urlConnection = new URL(URl + ItemID).openConnection();
 			urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
 			reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 			JsonObject data = JsonParser.parseReader(reader).getAsJsonObject();
 			Optional<ExchangeItem> item = Optional.ofNullable(gson.fromJson(data.get(ITEM_PROPERTY), ExchangeItem.class));
 			if (shouldCache && item.isPresent())
 			{
-				itemCache.put(itemId, item.get());
+				itemCache.put(ItemID, item.get());
 			}
 			reader.close();
 
@@ -69,23 +69,23 @@ public class GrandExchangePriceService implements IRsItemPriceService
 	}
 
 	@Override
-	public Optional<Integer> getPrice(int itemId)
+	public Optional<Integer> getPrice(int ItemID)
 	{
-		Optional<ExchangeItem> item = tryGetItemData(itemId);
+		Optional<ExchangeItem> item = tryGetItemData(ItemID);
 		return item.map(ExchangeItem::getCurrentPrice);
 	}
 
 	@Override
-	public Optional<String> getName(int itemId)
+	public Optional<String> getName(int ItemID)
 	{
-		Optional<ExchangeItem> item = tryGetItemData(itemId);
+		Optional<ExchangeItem> item = tryGetItemData(ItemID);
 		return item.map(ExchangeItem::getName);
 	}
 
 	@Override
-	public Optional<Boolean> isMembers(int itemId)
+	public Optional<Boolean> isMembers(int ItemID)
 	{
-		Optional<ExchangeItem> item = tryGetItemData(itemId);
+		Optional<ExchangeItem> item = tryGetItemData(ItemID);
 		return item.map(ExchangeItem::isMembers);
 	}
 

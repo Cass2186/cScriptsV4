@@ -10,6 +10,8 @@ import org.tribot.api2007.types.RSTile;
 import scripts.PathingUtil;
 import scripts.Timer;
 
+import java.util.Collection;
+
 public class EmoteStep implements QuestStep {
 
     private String emoteAction;
@@ -50,6 +52,16 @@ public class EmoteStep implements QuestStep {
 
     @Override
     public void addDialogStep(String... dialog) {
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
 
     }
 

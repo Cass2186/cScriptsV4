@@ -11,6 +11,7 @@ import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
@@ -35,14 +36,14 @@ public class UseItemOnItemStep implements QuestStep{
     protected final List<Requirement> requirements = new ArrayList<>();
 
 
-    public UseItemOnItemStep(int itemId, int item2Id, boolean waitCondition) {
-        this.item1Id = itemId;
+    public UseItemOnItemStep(int ItemID, int item2Id, boolean waitCondition) {
+        this.item1Id = ItemID;
         this.item2Id = item2Id;
         this.waitCond = waitCondition;
         this.handleChat = false;
     }
-    public UseItemOnItemStep(int itemId, int item2Id, boolean waitCondition, Requirement... requirements) {
-        this.item1Id = itemId;
+    public UseItemOnItemStep(int ItemID, int item2Id, boolean waitCondition, Requirement... requirements) {
+        this.item1Id = ItemID;
         this.item2Id = item2Id;
         this.waitCond = waitCondition;
         this.handleChat = false;
@@ -63,6 +64,16 @@ public class UseItemOnItemStep implements QuestStep{
 
     @Override
     public void addDialogStep(String... dialog) {
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
 
     }
 

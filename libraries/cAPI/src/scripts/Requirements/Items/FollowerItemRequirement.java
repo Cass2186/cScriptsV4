@@ -11,8 +11,8 @@ public class FollowerItemRequirement extends ItemRequirement implements Requirem
 
     private final List<Integer> followerIDs;
 
-    public FollowerItemRequirement(String itemName, List<Integer> itemIDs, List<Integer> followerIDs) {
-        super(itemName, itemIDs);
+    public FollowerItemRequirement(String itemName, List<Integer> ItemIDs, List<Integer> followerIDs) {
+        super(itemName, ItemIDs);
         this.followerIDs = followerIDs;
     }
 

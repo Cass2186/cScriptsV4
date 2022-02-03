@@ -6,6 +6,7 @@ import scripts.QuestSteps.QuestStep;
 import scripts.Requirements.Requirement;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
@@ -87,6 +88,16 @@ public class ConditionalStep implements QuestStep {
 
     @Override
     public void addDialogStep(String... dialog) {
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
 
     }
 }

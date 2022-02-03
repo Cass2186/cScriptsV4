@@ -184,7 +184,7 @@ public class Exchange {
     }
 
     private static String getItemName(GEItem item) {
-        RSItemDefinition itemDef = RSItemDefinition.get(item.getItemId());
+        RSItemDefinition itemDef = RSItemDefinition.get(item.getItemID());
         String itemString = itemDef.getName();
 
         if (itemString != null && itemString.length() > 10) {
@@ -227,10 +227,10 @@ public class Exchange {
 
                 if (compItemInter != null) {
                     componentItem = compItemInter.getComponentItem();
-                    // General.println("Line 385 - ID: " + componentItem + " || Item We are looking for " + item.getItemId());
+                    // General.println("Line 385 - ID: " + componentItem + " || Item We are looking for " + item.getItemID());
                     RSInterface scrollBarInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT, 51, 3);
                     // identified the item in the options
-                    if (componentItem == item.getItemId() && scrollBarInter != null) {
+                    if (componentItem == item.getItemID() && scrollBarInter != null) {
                         if (i >= 25) {// item should be offs  screen if this is true (check item index for this)
                             //  if (y > 65) { // is off screen if this is true (checking y point)
                             long startTime = System.currentTimeMillis();
@@ -260,7 +260,7 @@ public class Exchange {
                         // select item and wait for it to be selected in GE
                         if (compItemInter.click())
                             return Timer.waitCondition(() -> Interfaces.get(465, 25, 21) != null &&
-                                    Interfaces.get(465, 25, 21).getComponentItem() == item.getItemId(), 4000, 6000);
+                                    Interfaces.get(465, 25, 21).getComponentItem() == item.getItemID(), 4000, 6000);
                     }
                 }
             }
@@ -309,14 +309,15 @@ public class Exchange {
         if (Inventory.find(995).length < 1) {
             BankManager.open(true);
             BankManager.withdraw(0, true, 995);
-            BankManager.withdrawArray(ItemId.RING_OF_WEALTH, 1);
+            if (!org.tribot.script.sdk.GrandExchange.isNearby())
+            BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
         }
 
         if (Banking.isBankScreenOpen())
             Banking.close(); //replace with a custom method
 
 
-        String itemString = Utils.getItemName(geItem.getItemId()); //needs null check or optional
+        String itemString = Utils.getItemName(geItem.getItemID()); //needs null check or optional
 
         for (int i = 0; i < 3; i++) {
             openGE();
@@ -331,7 +332,7 @@ public class Exchange {
             General.sleep(General.random(800, 1500)); // lets load
 
         if (Interfaces.isInterfaceSubstantiated(GE_PARENT)
-                && Interfaces.get(GE_PARENT, 25, 21).getComponentItem() == geItem.itemId) {
+                && Interfaces.get(GE_PARENT, 25, 21).getComponentItem() == geItem.ItemID) {
 
             if (geItem.quantity != 1 && Interfaces.get(GE_PARENT, 25, 7) != null) { // selects item amount (custom)
                 if (Interfaces.get(GE_PARENT, 25, 7).click()) {
@@ -388,7 +389,7 @@ public class Exchange {
             if (Interfaces.get(GE_PARENT, 25, CONFIRM_OFFER_ID).click()) { // clicks confirm offer
                 General.sleep(General.randomSD(800, 5000, 2000, 500)); //need this sleep after clicking confirm
 
-            } else { // if the itemId in the image is not the right one (i.e. we selected the wrong item)
+            } else { // if the ItemID in the image is not the right one (i.e. we selected the wrong item)
                 if (Interfaces.isInterfaceSubstantiated(GE_PARENT, 4)) {
                     General.println("[GEManager]: Misclicked item... going back to offer screen.");
                     GrandExchange.goToSelectionWindow(true);
@@ -517,16 +518,16 @@ public class Exchange {
         }
     }
 
-    public static void buyItemFlat(int itemID, int flatPrice, int quantity) {
-        BankManager.determinePurchaseAmounts(itemID, quantity);
-        RSItemDefinition itemDef = RSItemDefinition.get(itemID);
+    public static void buyItemFlat(int ItemID, int flatPrice, int quantity) {
+        BankManager.determinePurchaseAmounts(ItemID, quantity);
+        RSItemDefinition itemDef = RSItemDefinition.get(ItemID);
         String itemString = itemDef.getName();
         if (BankManager.itemsToBuy < 0) {
             // DO NOT try and close the GE Here, it will close and open it for each item if you do this
             return;
         }
         if (BankManager.itemsToBuy > 0) {
-            GEItem geItem = new GEItem(itemID, quantity);
+            GEItem geItem = new GEItem(ItemID, quantity);
 
             General.println("[GEManager]: Buying: " + itemString + " x " + BankManager.itemsToBuy);
             if (selectBuyItem(geItem))
@@ -534,7 +535,7 @@ public class Exchange {
 
 
             if (Interfaces.isInterfaceSubstantiated(GE_PARENT)
-                    && Interfaces.get(GE_PARENT, 25, 21).getComponentItem() == geItem.itemId) {
+                    && Interfaces.get(GE_PARENT, 25, 21).getComponentItem() == geItem.ItemID) {
 
                 if (geItem.quantity != 1 && Interfaces.get(GE_PARENT, 25, 7) != null) { // selects item amount (custom)
                     if (Interfaces.get(GE_PARENT, 25, 7).click()) {
@@ -572,7 +573,7 @@ public class Exchange {
                     }
 
 
-                } else { // if the itemId in the image is not the right one (i.e. we selected the wrong item)
+                } else { // if the ItemID in the image is not the right one (i.e. we selected the wrong item)
                     if (Interfaces.get(465, 4) != null) {
                         General.println("[GEManager]: Misclicked item... going back to offer screen.");
                         Interfaces.get(465, 4).click();

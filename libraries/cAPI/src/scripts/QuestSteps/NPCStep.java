@@ -2,6 +2,7 @@ package scripts.QuestSteps;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import dax.walker_engine.local_pathfinding.Reachable;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;
@@ -11,17 +12,15 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.NpcChat;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class NPCStep implements QuestStep {
+public class NPCStep extends DetailedQuestStep implements QuestStep {
 
     @Getter
     private int npcID;
@@ -30,6 +29,8 @@ public class NPCStep implements QuestStep {
     private List<String> listChatOptions;
     private String npcName;
     private RSNPC rsnpc;
+    @Setter
+    public boolean isCombatStep = false;
 
     @Getter
     @Setter
@@ -50,7 +51,8 @@ public class NPCStep implements QuestStep {
     @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
 
-
+    @Getter
+    private final List<QuestStep> substeps = new ArrayList<>();
 
 
     public NPCStep(int npcID, RSArea npcArea) {
@@ -184,10 +186,25 @@ public class NPCStep implements QuestStep {
     }
 
     @Override
+    public void addSubSteps(QuestStep... substep) {
+        this.substeps.addAll(Arrays.asList(substep));
+    }
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
+        this.substeps.addAll(substeps);
+    }
+
+    @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
             General.println("[NPCStep]: We failed a requirement to execute this NPCStep");
             return;
+        }
+        if (this.substeps.size() > 0){
+            General.println("[NPCStep]: There are substeps for this NPCStep, executing them");
+            for (QuestStep sub : this.substeps){
+                sub.execute();
+            }
         }
 
         if (this.area != null && !area.contains(Player.getPosition())) {
@@ -214,6 +231,8 @@ public class NPCStep implements QuestStep {
                 Timer.slowWaitCondition(() -> this.npcTile.isClickable(), 8500, 9500);
             Log.log("[NpcStep]: Done walking");
         }
+        if (this.isCombatStep)
+            setInteractionString("Attack");
 
         if (NpcChat.talkToNPC(this.rsnpc, this.interactionString) ||
                 (this.npcName != null && NpcChat.talkToNPC(this.npcName)) ||

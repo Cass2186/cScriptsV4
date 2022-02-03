@@ -12,19 +12,19 @@ public class GearItem {
     private Equipment.Slot slot;
 
     @Getter
-    private List<Integer> itemIDs;
+    private List<Integer> ItemIDs;
 
 
     @Getter
     private boolean overrideable;
 
-    public GearItem(Equipment.Slot slot, List<Integer> itemIDs) {
+    public GearItem(Equipment.Slot slot, List<Integer> ItemIDs) {
         this.slot = slot;
-        this.itemIDs = itemIDs;
+        this.ItemIDs = ItemIDs;
     }
 
     private boolean isEquipped() {
-        return itemIDs.stream().anyMatch(Equipment::contains);
+        return ItemIDs.stream().anyMatch(Equipment::contains);
     }
 
 

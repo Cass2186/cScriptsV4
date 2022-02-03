@@ -8,10 +8,10 @@ import java.util.Optional;
 public interface IRsItemPriceService
 {
 
-	Optional<Integer> getPrice(int itemId);
+	Optional<Integer> getPrice(int ItemID);
 
-	Optional<String> getName(int itemId);
+	Optional<String> getName(int ItemID);
 
-	Optional<Boolean> isMembers(int itemId);
+	Optional<Boolean> isMembers(int ItemID);
 
 }

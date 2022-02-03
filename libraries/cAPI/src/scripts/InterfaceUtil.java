@@ -25,14 +25,14 @@ public class InterfaceUtil {
         return Interfaces.isInterfaceSubstantiated(parent, child) &&
                 Interfaces.get(parent, child).click();
     }
-    public static boolean searchInterfaceItemAndClickAction(int interfaceParent, int interfaceChild, int itemId, String action) {
+    public static boolean searchInterfaceItemAndClickAction(int interfaceParent, int interfaceChild, int ItemID, String action) {
         if (Interfaces.isInterfaceSubstantiated(interfaceParent, interfaceChild)) {
             int childrenNumber = Interfaces.get(interfaceParent, interfaceChild).getChildren().length;
             for (int i = 0; i < childrenNumber; i++) {
                 RSInterface[] items = Interfaces.get(interfaceParent, interfaceChild).getChildren();
                 if (items != null) {
                     for (RSInterface x : items) {
-                        if (x.getComponentItem() == itemId)
+                        if (x.getComponentItem() == ItemID)
                             return x.click(action);
                     }
                 }

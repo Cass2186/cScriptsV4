@@ -1,6 +1,7 @@
 package scripts.QuestSteps;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;
@@ -15,15 +16,14 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.walking.LocalWalking;
+import scripts.EntitySelector.Entities;
+import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
 import scripts.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -41,6 +41,9 @@ public class ObjectStep implements QuestStep {
     @Setter
     private boolean waitCond;
 
+    @Getter
+    @Setter
+    private BooleanSupplier priorAction = null;
 
     @Getter
     @Setter
@@ -109,7 +112,6 @@ public class ObjectStep implements QuestStep {
         this.handleChat = false;
     }
 
-
     public ObjectStep(int objectId, RSTile tile, String objectAction, boolean waitCond, Requirement... requirements) {
         this.objectId = objectId;
         this.tile = tile;
@@ -118,6 +120,18 @@ public class ObjectStep implements QuestStep {
         this.handleChat = false;
         this.requirements.addAll(Arrays.asList(requirements));
     }
+
+    @Builder
+    public ObjectStep(int objectId, RSTile tile, String objectAction, BooleanSupplier priorAction,
+                      Requirement... requirements) {
+        this.objectId = objectId;
+        this.tile = tile;
+        this.objectAction = objectAction;
+        this.priorAction = priorAction;
+        this.handleChat = false;
+        this.requirements.addAll(Arrays.asList(requirements));
+    }
+
 
     public ObjectStep(int objectId, RSTile tile, boolean waitCond, String objectAction,
                       boolean handleChat) {
@@ -147,6 +161,16 @@ public class ObjectStep implements QuestStep {
         this.chat.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
     }
 
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
+
+    }
+
     public Optional<LocalTile> getWalkableTile(LocalTile tile) {
         return Query.tiles()
                 .inArea(Area.fromRadius(tile, 1))
@@ -157,36 +181,40 @@ public class ObjectStep implements QuestStep {
     @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
-            General.println("[ObjectStep]: We failed a requirement to execute this NPCStep");
+            Log.error("[ObjectStep]: We failed a requirement to execute this NPCStep");
             return;
         }
 
         if (this.tile != null) {
             RSArea objArea = new RSArea(this.tile, this.tileRadius);
             if (!objArea.contains(Player.getPosition())) {
-                General.println("[ObjectStep]: Navigating to object area: ID " + this.objectId);
+                Log.debug("[ObjectStep]: Navigating to object area: ID " + this.objectId);
                 LocalTile tile = new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getPosition().getPlane());
                 Optional<LocalTile> walkable = getWalkableTile(tile);
                 if (walkable.map(LocalWalking::walkTo).orElse(false)) {
-                    General.println("[ObjectStep]: Navigating to object area - local SDK (walkable)");
+                    Log.debug("[ObjectStep]: Navigating to object area - local SDK (walkable)");
                     PathingUtil.movementIdle();
                 } else if (LocalWalking.walkTo(tile)) {
-                    General.println("[ObjectStep]: Navigating to object area - local SDK");
+                    Log.debug("[ObjectStep]: Navigating to object area - local SDK");
                     PathingUtil.movementIdle();
                 } else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
                         PathingUtil.walkToTile(this.tile, tileRadius, false))
                     PathingUtil.movementIdle();
 
                 else if (PathingUtil.localNavigation(this.tile)) {
-                    General.println("[ObjectStep]: Navigating to object area - local");
+                    Log.debug("[ObjectStep]: Navigating to object area - local");
                     PathingUtil.movementIdle();
                 }
             }
         }
-        General.println("[ObjectStep]: Interacting with object: " + this.objectId + " with: " + this.objectAction);
+        if (this.priorAction != null){
+            Log.info("[ObjectStep]: Executing prior action boolean supplier");
+            Timer.waitCondition(this.priorAction, 5000,7000);
+        }
+        Log.info("[ObjectStep]: Interacting with object: " + this.objectId + " with: " + this.objectAction);
 
         if (this.predicate != null) {
-            Log.log("[ObjectStep]: using predicate");
+            Log.debug("[ObjectStep]: using predicate");
             RSObject[] obj = Objects.findNearest(this.tileRadius, predicate);
             if (obj.length > 0 &&
                     Utils.clickObject(obj[0], this.objectAction, false)) {
@@ -194,7 +222,7 @@ public class ObjectStep implements QuestStep {
                     if (NPCInteraction.isConversationWindowUp())
                         NPCInteraction.handleConversation();
                 } else {
-                    General.println("[ObjectStep]: Handling chat");
+                    Log.debug("[ObjectStep]: Handling chat");
                     NPCInteraction.waitForConversationWindow();
                     if (chat != null && NPCInteraction.isConversationWindowUp()) {
                         String[] s = new String[chat.size()];
@@ -209,13 +237,19 @@ public class ObjectStep implements QuestStep {
 
             }
         }
+        RSObject tileObj = Entities.find(ObjectEntity::new)
+                .tileEquals(this.tile)
+                .idEquals(this.objectId)
+                .getFirstResult();
         //  Log.log("[ObjectStep]: Using Utils");
-        if (Utils.clickObject(this.objectId, this.objectAction, false)) {
+
+        if ((tileObj != null && Utils.clickObject(tileObj, this.objectAction))
+                || Utils.clickObject(this.objectId, this.objectAction, false)) {
             if (!handleChat) {
                 if (NPCInteraction.isConversationWindowUp())
                     NPCInteraction.handleConversation();
             } else {
-                General.println("[ObjectStep]: Handling chat");
+                Log.debug("[ObjectStep]: Handling chat");
                 NPCInteraction.waitForConversationWindow();
                 if (chat != null && NPCInteraction.isConversationWindowUp()) {
                     String[] s = new String[chat.size()];

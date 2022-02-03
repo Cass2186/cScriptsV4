@@ -15,13 +15,14 @@ import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class UseItemOnObjectStep implements QuestStep{
 
     RSTile tile;
-    int itemId;
+    int ItemID;
     int objectId;
     String objectName;
 
@@ -45,59 +46,59 @@ public class UseItemOnObjectStep implements QuestStep{
     protected final List<Requirement> requirements = new ArrayList<>();
 
 
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
     }
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile, Requirement... requirements) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, Requirement... requirements) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
 
         this.requirements.addAll(Arrays.asList(requirements));
     }
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile, String print) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, String print) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
         this.print = print;
     }
 
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile, String print, Requirement... requirements) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, String print, Requirement... requirements) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
         this.print = print;
         this.requirements.addAll(Arrays.asList(requirements));
     }
 
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile, boolean waitCondition) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, boolean waitCondition) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
@@ -108,8 +109,8 @@ public class UseItemOnObjectStep implements QuestStep{
         this.handleChat = false;
     }
 
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile, boolean waitCondition, Requirement... requirements) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, boolean waitCondition, Requirement... requirements) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
@@ -121,8 +122,8 @@ public class UseItemOnObjectStep implements QuestStep{
         this.requirements.addAll(Arrays.asList(requirements));
     }
 
-    public UseItemOnObjectStep(int itemId, int objectId, RSTile tile, boolean waitCondition, boolean handleChat) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, boolean waitCondition, boolean handleChat) {
+        this.ItemID = ItemID;
         this.objectId = objectId;
         this.tile = tile;
         RSObjectDefinition def = RSObjectDefinition.get(objectId);
@@ -133,8 +134,8 @@ public class UseItemOnObjectStep implements QuestStep{
         this.handleChat = handleChat;
     }
 
-    public UseItemOnObjectStep(int itemId, String objectName, RSTile tile, boolean waitCondition) {
-        this.itemId = itemId;
+    public UseItemOnObjectStep(int ItemID, String objectName, RSTile tile, boolean waitCondition) {
+        this.ItemID = ItemID;
         this.objectName = objectName;
         this.tile = tile;
         this.objectId = -1;
@@ -157,14 +158,14 @@ public class UseItemOnObjectStep implements QuestStep{
             else
                 PathingUtil.movementIdle();
         }
-        if (this.objectId != -1 && Utils.useItemOnObject(this.itemId, this.objectId)) {
+        if (this.objectId != -1 && Utils.useItemOnObject(this.ItemID, this.objectId)) {
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes");
             }
             return Timer.waitCondition(() -> waitCond, 5000, 8000);
-        } else if (Utils.useItemOnObject(this.itemId, this.objectName)) {
+        } else if (Utils.useItemOnObject(this.ItemID, this.objectName)) {
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
@@ -189,6 +190,16 @@ public class UseItemOnObjectStep implements QuestStep{
     @Override
     public void addDialogStep(String... dialog) {
         this.handleChat = true;
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
 
     }
 

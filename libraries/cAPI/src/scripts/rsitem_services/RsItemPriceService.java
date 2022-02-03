@@ -24,20 +24,20 @@ public class RsItemPriceService implements IRsItemPriceService
 	 * Attempts to grab the price of the item by checking each price service in the order they were added.
 	 * Once the price is found, no further service is checked.
 	 *
-	 * @param itemId The item ID to lookup
+	 * @param ItemID The item ID to lookup
 	 * @return The price of the item found. If the item can't be found in any of the services, an empty Optional is returned.
 	 */
 	@Override
-	public Optional<Integer> getPrice(int itemId)
+	public Optional<Integer> getPrice(int ItemID)
 	{
-		if (itemId == 995)
+		if (ItemID == 995)
 		{ // Coins
 			return Optional.of(1);
 		}
 		for (IRsItemPriceService service : priceServices)
 		{
-			log("Attempting to get price of [" + itemId + "] from: " + service.getClass().getName());
-			Optional<Integer> price = service.getPrice(itemId);
+			log("Attempting to get price of [" + ItemID + "] from: " + service.getClass().getName());
+			Optional<Integer> price = service.getPrice(ItemID);
 			if (price.isPresent())
 			{
 				log("Successfully retrieved price!");
@@ -55,20 +55,20 @@ public class RsItemPriceService implements IRsItemPriceService
 	 * Attempts to grab the name of the item by checking each price service in the order they were added.
 	 * Once the name is found, no further service is checked.
 	 *
-	 * @param itemId The item ID to lookup
+	 * @param ItemID The item ID to lookup
 	 * @return The name of the item found. If the item can't be found in any of the services, an empty Optional is returned.
 	 */
 	@Override
-	public Optional<String> getName(int itemId)
+	public Optional<String> getName(int ItemID)
 	{
-		if (itemId == 995)
+		if (ItemID == 995)
 		{ // Coins
 			return Optional.of("Coins");
 		}
 		for (IRsItemPriceService service : priceServices)
 		{
-			log("Attempting to get name of [" + itemId + "] from: " + service.getClass().getName());
-			Optional<String> name = service.getName(itemId);
+			log("Attempting to get name of [" + ItemID + "] from: " + service.getClass().getName());
+			Optional<String> name = service.getName(ItemID);
 			if (name.isPresent())
 			{
 				log("Successfully retrieved name!");
@@ -87,20 +87,20 @@ public class RsItemPriceService implements IRsItemPriceService
 	 * Attempts to grab the members status of the item by checking each price service in the order they were added.
 	 * Once the members status is found, no further service is checked.
 	 *
-	 * @param itemId The item ID to lookup
+	 * @param ItemID The item ID to lookup
 	 * @return The members status of the item found. If the item can't be found in any of the services, an empty Optional is returned.
 	 */
 	@Override
-	public Optional<Boolean> isMembers(int itemId)
+	public Optional<Boolean> isMembers(int ItemID)
 	{
-		if (itemId == 995)
+		if (ItemID == 995)
 		{ // Coins
 			return Optional.of(false);
 		}
 		for (IRsItemPriceService service : priceServices)
 		{
-			log("Attempting to get Member Status of [" + itemId + "] from: " + service.getClass().getName());
-			Optional<Boolean> members = service.isMembers(itemId);
+			log("Attempting to get Member Status of [" + ItemID + "] from: " + service.getClass().getName());
+			Optional<Boolean> members = service.isMembers(ItemID);
 			if (members.isPresent())
 			{
 				log("Successfully retrieved members status!");

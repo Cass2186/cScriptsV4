@@ -1,34 +1,35 @@
 package scripts.GEManager;
 
+import lombok.Builder;
 import org.tribot.api.General;
 
 import java.util.HashMap;
 
+
 public class GEItem {
 
-    int itemId;
+    int ItemID;
     int quantity;
     double percentIncrease;
 
     public HashMap<Integer, Integer> itemMaps = new HashMap<Integer, Integer>();
 
-    public GEItem(int itemId, int quantity){
-        this.itemId = itemId;
+    public GEItem(int ItemID, int quantity){
+        this.ItemID = ItemID;
         this.quantity = quantity;
         this.percentIncrease = 5;
 
     }
 
 
-    public GEItem(int itemId, int quantity, double buyIncrease){
-        this(itemId, quantity);
+    public GEItem(int ItemID, int quantity, double buyIncrease){
+        this(ItemID, quantity);
         this.percentIncrease = buyIncrease;
     }
 
     //allows duploicate filtering in skills Script
     @Override
     public boolean equals(Object obj) {
-
         if (this == obj)
             return true;
         if (obj == null)
@@ -36,9 +37,8 @@ public class GEItem {
         if (getClass() != obj.getClass())
             return false;
         GEItem other = (GEItem) obj;
-        if (itemId != other.getItemId())
+        if (ItemID != other.getItemID())
             return false;
-        //General.println("[GEItem]: Removing duplicate item");
         return true;
     }
 
@@ -46,12 +46,12 @@ public class GEItem {
     //allows duploicate filtering in skills Script
     @Override
     public int hashCode() {
-        return itemId;
+        return ItemID;
     }
 
 
-    public int getItemId(){
-        return this.itemId;
+    public int getItemID(){
+        return this.ItemID;
     }
 
     public int getItemQuantity(){

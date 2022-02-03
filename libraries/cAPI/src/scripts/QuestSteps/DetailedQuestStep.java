@@ -8,6 +8,8 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GroundItem;
 import org.tribot.script.sdk.types.WorldTile;
+import scripts.QuestSteps.Choice.DialogChoiceStep;
+import scripts.QuestSteps.Choice.DialogChoiceSteps;
 import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
@@ -17,7 +19,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class DetailedQuestStep {
+public class DetailedQuestStep implements QuestStep {
+
+    @Getter
+    protected DialogChoiceSteps choices = new DialogChoiceSteps();
 
 
     @Getter
@@ -112,4 +117,32 @@ public class DetailedQuestStep {
                 && !requirement.check();
     }
 
+
+    public void addDialogStepWithExclusion(String choice, String exclusionString) {
+        choices.addDialogChoiceWithExclusion(new DialogChoiceStep( choice), exclusionString);
+    }
+
+    public void addDialogStepWithExclusions(String choice, String... exclusionString) {
+        choices.addDialogChoiceWithExclusions(new DialogChoiceStep( choice), exclusionString);
+    }
+
+    @Override
+    public void execute() {
+
+    }
+
+    @Override
+    public void addDialogStep(String... dialog) {
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
+
+    }
 }

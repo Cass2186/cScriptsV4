@@ -14,25 +14,25 @@ import java.util.Optional;
 
 public class ItemOnTileRequirement implements Requirement {
 
-    private int itemId;
+    private int ItemID;
     private RSTile tile;
     private ItemReq itemReq;
 
     public ItemOnTileRequirement(ItemReq itemReq, RSTile tile) {
         this.itemReq = itemReq;
         this.tile = tile;
-        this.itemId = itemReq.getId();
+        this.ItemID = itemReq.getId();
     }
 
     public ItemOnTileRequirement(int id, RSTile tile) {
         this.tile = tile;
-        this.itemId = id;
+        this.ItemID = id;
     }
 
 
     public ItemOnTileRequirement(ItemReq itemReq) {
         this.itemReq = itemReq;
-        this.itemId = itemReq.getId();
+        this.ItemID = itemReq.getId();
     }
 
 
@@ -41,12 +41,12 @@ public class ItemOnTileRequirement implements Requirement {
         Optional<GroundItem> any;
         if (this.tile != null) {
             WorldTile worldTile = new WorldTile(this.tile.getX(), this.tile.getY(), this.tile.getPlane());
-            any = Query.groundItems().idEquals(this.itemId)
+            any = Query.groundItems().idEquals(this.ItemID)
                     .tileEquals(worldTile)
                     .stream().findAny();
         } else
             any = Query.groundItems()
-                    .idEquals(this.itemId)
+                    .idEquals(this.ItemID)
                     .stream().findAny();
 
         return any.isPresent();

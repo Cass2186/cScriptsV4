@@ -1,5 +1,6 @@
 package scripts.Requirements;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;
@@ -68,74 +69,74 @@ public class ItemRequirement implements Requirement {
     @Getter
     private Requirement conditionToHide;
 
-
-
-
-    public ItemRequirement(int itemId) {
-        this.id = itemId;
+    @lombok.Builder
+    public ItemRequirement(int ItemID) {
+        this.id = ItemID;
         this.amount = 1;
         this.minAmount = 1;
     }
-
-    public ItemRequirement(int itemId, int amount) {
-        this.id = itemId;
+    @lombok.Builder
+    public ItemRequirement(int ItemID, int amount) {
+        this.id = ItemID;
         this.amount = amount;
         this.minAmount = amount;
     }
-
-    public ItemRequirement(String name, int itemId, int amount) {
+    @lombok.Builder
+    public ItemRequirement(String name, int ItemID, int amount) {
         this.itemName = name;
-        this.id = itemId;
+        this.id = ItemID;
         this.amount = amount;
         this.minAmount = amount;
     }
-
-    public ItemRequirement(String name, int itemId) {
+    @lombok.Builder
+    public ItemRequirement(String name, int ItemID) {
         this.itemName = name;
-        this.id = itemId;
+        this.id = ItemID;
         this.amount = 1;
         this.minAmount = 1;
     }
-
-    public ItemRequirement(String name, List<Integer> itemIds) {
-        this(name, itemIds.get(0), 1);
-        this.addAlternateItemId(itemIds.subList(1, itemIds.size()));
+    @lombok.Builder
+    public ItemRequirement(String name, List<Integer> ItemIDs) {
+        this(name, ItemIDs.get(0), 1);
+        this.addAlternateItemID(ItemIDs.subList(1, ItemIDs.size()));
     }
-    public ItemRequirement(List<Integer> itemIds, int num) {
-        this(itemIds.get(0), num);
-        this.addAlternateItemId(itemIds.subList(1, itemIds.size()));
+    @lombok.Builder
+    public ItemRequirement(List<Integer> ItemIDs, int num) {
+        this(ItemIDs.get(0), num);
+        this.addAlternateItemID(ItemIDs.subList(1, ItemIDs.size()));
     }
 
-
-
-
-
-    public ItemRequirement(int itemId, int amount, boolean acceptEquipped) {
-        this(itemId, amount);
+    @lombok.Builder
+    public ItemRequirement(int ItemID, int amount, boolean acceptEquipped) {
+        this(ItemID, amount);
         this.acceptEquipped = acceptEquipped;
     }
-
-    public ItemRequirement(int itemId, int amount, boolean acceptEquipped, boolean shouldEquip) {
-        this(itemId, amount);
+    @lombok.Builder
+    public ItemRequirement(int ItemID, int amount, boolean acceptEquipped, boolean shouldEquip) {
+        this(ItemID, amount);
         this.acceptEquipped = acceptEquipped;
         this.shouldEquip = shouldEquip;
     }
 
-
-    public ItemRequirement(int itemId, int amount, int minAmount) {
-        this(itemId, amount);
+    @lombok.Builder
+    public ItemRequirement(int ItemID, int amount, int minAmount) {
+        this(ItemID, amount);
         this.minAmount = minAmount;
     }
-
-    public ItemRequirement(int itemId, int amount, int minAmount, boolean acceptEquipped) {
-        this(itemId, amount, minAmount);
+    @lombok.Builder
+    public ItemRequirement(int ItemID, int amount, int minAmount, boolean acceptEquipped) {
+        this(ItemID, amount, minAmount);
         this.acceptEquipped = acceptEquipped;
     }
 
-    public ItemRequirement(int itemId, int amount, int minAmount, boolean acceptEquipped, boolean shouldEquip) {
-        this(itemId, amount, minAmount, acceptEquipped);
+    @lombok.Builder
+    public ItemRequirement(int ItemID, int amount, int minAmount, boolean acceptEquipped, boolean shouldEquip) {
+        this(ItemID, amount, minAmount, acceptEquipped);
         this.shouldEquip = shouldEquip;
     }
+
+
+
 
     public ItemRequirement(ItemRequirement.Builder builder) {
         this.itemName = builder.itemName;
@@ -145,8 +146,9 @@ public class ItemRequirement implements Requirement {
         this.acceptEquipped = builder.acceptEquipped;
         this.shouldEquip = builder.shouldEquip;
         this.chargesNeeded = builder.amountOfChargesNeeded;
-        this.alternateItems = builder.alternateItemIds;
+        this.alternateItems = builder.alternateItemIDs;
     }
+
 
 
     public ItemRequirement equipped() {
@@ -171,15 +173,27 @@ public class ItemRequirement implements Requirement {
 
         //TODO subtract any unnoted items from required amount to check noted with
         //check if we have enough noted item
-        if (isAcceptNoted()){
-            RSItem[] notedItem = Inventory.find(Utils.getNotedItemId(this.getId()));
+        if (isAcceptNoted()) {
+            RSItem[] notedItem = Inventory.find(Utils.getNotedItemID(this.getId()));
             if (notedItem.length > 0 && notedItem[0].getStack() >= this.getAmount())
                 return true;
+        }
+
+        if (this.alternateItems != null && this.alternateItems.size() > 0) {
+            for (Integer b : alternateItems) {
+                if (Inventory.find(b).length > this.minAmount-1) {
+                    General.println("[ItemRequirement]: Accepted an alternative id of " + b +
+                            " for ItemID of:  " + this.id);
+                    return true;
+                }
+            }
         }
 
         if (i.length > 0) {
             if (def == null)
                 General.println("[ItemRequirement]: Definition is null");
+
+
 
             if (def != null && !def.isStackable()) {
                 General.println("[ItemRequirement]: We have x" + i.length + " of unstackable item " +
@@ -191,17 +205,8 @@ public class ItemRequirement implements Requirement {
                 return i[0].getStack() >= this.minAmount;
             }
 
-            if (this.alternateItems != null && this.alternateItems.size() > 0) {
-                for (Integer b : alternateItems) {
-                    if (i[0].getID() == b) {
-                        General.println("[ItemRequirement]: Accepted an alternative id of " + b +
-                                " for itemID of " + i[0].getID());
-                        return true;
-                    }
-                }
-            }
-        }
 
+        }
 
 
         boolean b = (i.length >= this.minAmount);
@@ -216,19 +221,21 @@ public class ItemRequirement implements Requirement {
     }
 
 
-    public void addAlternateItemId(List<Integer> ids) {
+    public void addAlternateItemID(List<Integer> ids) {
         this.alternateItems.addAll(ids);
     }
 
-    public void addAlternateItemId(Integer... ids) {
+    public void addAlternateItemID(Integer... ids) {
         this.alternateItems.addAll(Arrays.asList(ids));
     }
 
-    public void addAlternateItemIds(Integer... ids) {
+    public void addAlternateItemIDs(Integer... ids) {
         this.alternateItems.addAll(Arrays.asList(ids));
     }
+
     /**
      * Checks if we have adequate charges for our task
+     *
      * @param itemName without the "(X)"
      * @return
      */
@@ -293,8 +300,8 @@ public class ItemRequirement implements Requirement {
                     "skills necklace",
             };
 
-    public  boolean checkBank() {
-        if(BankCache.isInitialized()) {
+    public boolean checkBank() {
+        if (BankCache.isInitialized()) {
             return BankCache.getStack(this.getId()) >= this.getAmount();
         }
         //TODO finish this somehow
@@ -303,14 +310,12 @@ public class ItemRequirement implements Requirement {
     }
 
 
-
-
     public static class Builder {
 
         private int amountOfChargesNeeded;
         private String itemName;
         private int id;
-        private List<Integer> alternateItemIds = new ArrayList<>();
+        private List<Integer> alternateItemIDs = new ArrayList<>();
         public boolean acceptNoted = false;
         private int amount;
         public int minAmount = 0;
@@ -371,18 +376,18 @@ public class ItemRequirement implements Requirement {
     }
 
 
-    public int getInventoryNumMatches(List<InventoryItem> items, int itemID) {
+    public int getInventoryNumMatches(List<InventoryItem> items, int ItemID) {
         return items.stream()
                 .filter(Objects::nonNull)
-                .filter(i -> i.getId() == itemID)
+                .filter(i -> i.getId() == ItemID)
                 .mapToInt(InventoryItem::getStack)
                 .sum();
     }
 
-    public int getEquipmentNumMatches(List<EquipmentItem> items, int itemID) {
+    public int getEquipmentNumMatches(List<EquipmentItem> items, int ItemID) {
         return items.stream()
                 .filter(Objects::nonNull)
-                .filter(i -> i.getId() == itemID)
+                .filter(i -> i.getId() == ItemID)
                 .mapToInt(EquipmentItem::getStack)
                 .sum();
     }
@@ -392,36 +397,56 @@ public class ItemRequirement implements Requirement {
      * Get the difference between the required quantity for this requirement and the amount the client has.
      * Any value <= 0 indicates they have the required amount
      */
-    public int getRequiredItemDifference(int itemID, boolean checkConsideringSlotRestrictions,
+    public int getRequiredItemDifference(int ItemID, boolean checkConsideringSlotRestrictions,
                                          List<RSItem> items) {
         List<EquipmentItem> equipment = Query.equipment().toList();
         //ItemContainer equipped = client.getItemContainer(InventoryID.EQUIPMENT);
         int tempQuantity = amount;
 
         if (equipment.size() > 0) {
-            tempQuantity -= getEquipmentNumMatches(equipment, itemID);
+            tempQuantity -= getEquipmentNumMatches(equipment, ItemID);
         }
 
         if (!checkConsideringSlotRestrictions || !acceptEquipped) {
             List<InventoryItem> inventory = Query.inventory().toList();
             if (inventory.size() > 0) {
-                tempQuantity -= getInventoryNumMatches(inventory, itemID);
+                tempQuantity -= getInventoryNumMatches(inventory, ItemID);
             }
         }
 
         if (items != null) {
-           // tempQuantity -= getNumMatches(items, itemID);
+            // tempQuantity -= getNumMatches(items, ItemID);
         }
 
         return tempQuantity;
     }
 
+    public ItemRequirement copy() {
+        ItemRequirement newItem = new ItemRequirement(id, amount, shouldEquip);
+        newItem.addAlternateItemID(alternateItems);
+        newItem.setExclusiveToOneItemType(exclusiveToOneItemType);
+        newItem.setDisplayMatchedItemName(displayMatchedItemName);
+        newItem.setConditionToHide(conditionToHide);
+
+        return newItem;
+    }
+
+    public int getBuyQuantity(){
+        if (BankCache.isInitialized()){
+            return BankCache.getStack(this.id) - this.amount;
+        }
+        return 0;
+    }
 
     @Override
     public boolean check() {
         return hasItem();
     }
 
+
+    public boolean check(boolean checkConsideringSlotRestrictions) {
+        return check(checkConsideringSlotRestrictions, new ArrayList<>());
+    }
 
     public boolean check(boolean checkConsideringSlotRestrictions, List<RSItem> items) {
         List<RSItem> allItems = new ArrayList<>(items);
@@ -436,7 +461,7 @@ public class ItemRequirement implements Requirement {
             if (exclusiveToOneItemType) {
                 remainder = amount;
             }
-            remainder -= (amount - getRequiredItemDifference( alternate, checkConsideringSlotRestrictions,
+            remainder -= (amount - getRequiredItemDifference(alternate, checkConsideringSlotRestrictions,
                     allItems));
             if (remainder <= 0) {
                 return true;

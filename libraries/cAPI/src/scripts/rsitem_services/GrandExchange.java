@@ -23,67 +23,67 @@ public class GrandExchange extends org.tribot.api2007.GrandExchange
 	/**
 	 * Attempts to get the price of the item via the RuneLite, RSBuddy or GE API (whichever is accessible)
 	 *
-	 * @param itemId The item to lookup
+	 * @param ItemID The item to lookup
 	 * @return The current price of the item, or an empty Optional if it can't be found
 	 */
-	public static Optional<Integer> tryGetPrice(int itemId)
+	public static Optional<Integer> tryGetPrice(int ItemID)
 	{
-		return PRICE_SERVICE.getPrice(itemId);
+		return PRICE_SERVICE.getPrice(ItemID);
 	}
 
 	/**
 	 * Attempts to get the name of the item via the RSBuddy API or GE API (whichever is accessible)
 	 *
-	 * @param itemId The item to lookup
+	 * @param ItemID The item to lookup
 	 * @return The name of the item, or an empty Optional if it can't be found
 	 */
-	public static Optional<String> tryGetName(int itemId)
+	public static Optional<String> tryGetName(int ItemID)
 	{
-		return PRICE_SERVICE.getName(itemId);
+		return PRICE_SERVICE.getName(ItemID);
 	}
 
 	/**
 	 * Attempts to get the members status of the item via the RSBuddy API or GE API (whichever is accessible)
 	 *
-	 * @param itemId The item to lookup
+	 * @param ItemID The item to lookup
 	 * @return The members status of the item, or an empty Optional if it can't be found
 	 */
-	public static Optional<Boolean> tryGetMembers(int itemId)
+	public static Optional<Boolean> tryGetMembers(int ItemID)
 	{
-		return PRICE_SERVICE.isMembers(itemId);
+		return PRICE_SERVICE.isMembers(ItemID);
 	}
 
 	/**
 	 * Attempts to getInstance the price of the item via the RuneLite, RSBuddy or GE API (whichever is accessible)
 	 *
-	 * @param itemId The item to lookup
+	 * @param ItemID The item to lookup
 	 * @return The current price of the item, or -1 if it can't be found
 	 */
-	public static int getPrice(int itemId)
+	public static int getPrice(int ItemID)
 	{
-		return PRICE_SERVICE.getPrice(itemId).orElse(-1);
+		return PRICE_SERVICE.getPrice(ItemID).orElse(-1);
 	}
 
 	/**
 	 * Attempts to getInstance the name of the item via the RSBuddy API or GE API (whichever is accessible)
 	 *
-	 * @param itemId The item to lookup
+	 * @param ItemID The item to lookup
 	 * @return The name of the item, or null if it can't be found
 	 */
-	public static String getName(int itemId)
+	public static String getName(int ItemID)
 	{
-		return PRICE_SERVICE.getName(itemId).orElse(null);
+		return PRICE_SERVICE.getName(ItemID).orElse(null);
 	}
 
 	/**
 	 * Attempts to getInstance the members status of the item via the RSBuddy API or GE API (whichever is accessible)
 	 *
-	 * @param itemId The item to lookup
+	 * @param ItemID The item to lookup
 	 * @return The members status of the item, or null if it can't be found
 	 */
-	public static Boolean isMembers(int itemId)
+	public static Boolean isMembers(int ItemID)
 	{
-		return PRICE_SERVICE.isMembers(itemId).orElse(null);
+		return PRICE_SERVICE.isMembers(ItemID).orElse(null);
 	}
 
 }

@@ -10,11 +10,9 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import scripts.*;
 import scripts.Requirements.Requirement;
+import scripts.Timer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class KillNpcStep implements QuestStep {
 
@@ -221,6 +219,16 @@ public class KillNpcStep implements QuestStep {
 
     @Override
     public void addDialogStep(String... dialog) {
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
 
     }
 }

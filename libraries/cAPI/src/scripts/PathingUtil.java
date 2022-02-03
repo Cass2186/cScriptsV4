@@ -63,15 +63,15 @@ public class PathingUtil {
                 }
                 if (Utils.getVarBitValue(25) == 0 && Game.getRunEnergy() <= nextStaminaPotionUse) {
                     //General.println("[DaxPref]: Need to drink stamina ");
-                    RSItem[] invStam = Inventory.find(ItemId.STAMINA_POTION);
+                    RSItem[] invStam = Inventory.find(ItemID.STAMINA_POTION);
                     if (invStam.length > 0 && invStam[0].click()) {
                         nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);
                         Waiting.waitUntilAnimating(2000);
                     }
                 }
                 if (MyPlayer.isPoisoned()) {
-                    if (Inventory.find(ItemId.ANTIDOTE_PLUS_PLUS).length > 0)
-                        Utils.drinkPotion(ItemId.ANTIDOTE_PLUS_PLUS);
+                    if (Inventory.find(ItemID.ANTIDOTE_PLUS_PLUS).length > 0)
+                        Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
 
                 }
                 if (Combat.getHPRatio() <= eatAtPercent) {
@@ -87,10 +87,28 @@ public class PathingUtil {
         });
     }
 
-    private static void drinkStamina(){
+    public static boolean blindWalkToArea(RSArea area) {
+        if (!area.contains(Player.getPosition())) {
+            checkRun();
+            Walking.blindWalkTo(area.getRandomTile());
+            return Timer.abc2WaitCondition(() -> area.contains(Player.getPosition()), 8000, 12000);
+        }
+        return false;
+    }
+
+    public static boolean blindWalkToTile(RSTile tile) {
+        checkRun();
+        if (Walking.blindWalkTo(tile)) {
+            Timer.abc2WaitCondition(() -> tile.getPosition().distanceTo(Player.getPosition()) < 5, 8000, 12000);
+
+        }
+        return tile.getPosition().distanceTo(Player.getPosition()) < 4;
+    }
+
+    private static void drinkStamina() {
         if (Utils.getVarBitValue(25) == 0 && Game.getRunEnergy() <= nextStaminaPotionUse) {
             //General.println("[DaxPref]: Need to drink stamina ");
-            RSItem[] invStam = Inventory.find(ItemId.STAMINA_POTION);
+            RSItem[] invStam = Inventory.find(ItemID.STAMINA_POTION);
             if (invStam.length > 0 && invStam[0].click()) {
                 nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);
                 Waiting.waitUntilAnimating(1250);
@@ -112,10 +130,23 @@ public class PathingUtil {
         });
     }
 
-    public static  boolean walkToTile(WorldTile destination, Supplier<WalkState> state) {
-        Log.log("[PathingUtil] Local walking V2 - Worldtile");
-        return GlobalWalking.walkTo(destination, state);
+    public static boolean walkToTile(WorldTile destination, Supplier<WalkState> state) {
+        Log.log("[PathingUtil] walking V2 - Worldtile");
+        for (int i = 0; i < 3; i++) {
+            if (!GlobalWalking.walkTo(destination, state)) {
+                Log.log("[PathingUtil]  Worldtile failed to generate a path, sleeping 1.5s");
+                Waiting.waitNormal(1500,300);
+            } else
+                return true;
+        }
+        return false;
     }
+
+    public static boolean walkToTile(WorldTile destination) {
+        Log.log("[PathingUtil] Local walking V2 - Worldtile");
+        return GlobalWalking.walkTo(destination);
+    }
+
 
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
         Log.log("[PathingUtil] Local walking V2 - Worldtile");
@@ -158,7 +189,7 @@ public class PathingUtil {
             setDaxPref();
             drinkStamina();
             General.println("[PathingUtil]: DPathNavigator generated a path, feeding to dax");
-         return   WalkerEngine.getInstance().walkPath(Arrays.asList(path));
+            return WalkerEngine.getInstance().walkPath(Arrays.asList(path));
 
             //movementIdle();
 
@@ -176,7 +207,7 @@ public class PathingUtil {
             drinkStamina();
             General.println("[PathingUtil]: DPathNavigator generated a path, feeding to dax");
             WalkerEngine.getInstance().walkPath(Arrays.asList(path));
-          return  Timer.waitCondition(() -> destination.contains(Player.getPosition()), 7000, 10000);
+            return Timer.waitCondition(() -> destination.contains(Player.getPosition()), 7000, 10000);
             //movementIdle();
 
         }
@@ -517,11 +548,11 @@ public class PathingUtil {
         return walkToTile(tile, 2, false);
     }
 
-    public static boolean walkToTile(RSTile tile, int sizeRadius, int  attempts) {
+    public static boolean walkToTile(RSTile tile, int sizeRadius, int attempts) {
         checkRun();
         int sleepMin = Game.isRunOn() ? 8000 : 15000;
         int sleepMax = Game.isRunOn() ? 15000 : 20000;
-        RSArea largeArea = makeLargerArea(new RSArea(tile, sizeRadius+1));
+        RSArea largeArea = makeLargerArea(new RSArea(tile, sizeRadius + 1));
 
         setDaxPref();
 
@@ -532,7 +563,7 @@ public class PathingUtil {
                     Timer.waitCondition(() -> largeArea.contains(Player.getPosition()) || !Player.isMoving(), sleepMin, sleepMax);
 
                     return largeArea.contains(Player.getPosition()) ||
-                            tile.distanceTo(Player.getPosition()) <= sizeRadius+1;
+                            tile.distanceTo(Player.getPosition()) <= sizeRadius + 1;
 
                 } else {
                     General.println("[Debug]: Failed to generate a path, waiting 2-5s and trying again.");
@@ -545,7 +576,7 @@ public class PathingUtil {
                     }
 
                 }
-                Waiting.waitUniform(500,750);
+                Waiting.waitUniform(500, 750);
             }
 
         } else // already in area
@@ -553,6 +584,7 @@ public class PathingUtil {
 
         return false;
     }
+
     public static boolean walkToTile(RSTile tile, int sizeRadius, boolean abc2Sleep) {
         checkRun();
         int sleepMin = Game.isRunOn() ? 8000 : 15000;
@@ -572,7 +604,7 @@ public class PathingUtil {
                         Utils.abc2ReactionSleep(currentTime);
 
                     return largeArea.contains(Player.getPosition()) ||
-                            tile.distanceTo(Player.getPosition()) <= sizeRadius+1;
+                            tile.distanceTo(Player.getPosition()) <= sizeRadius + 1;
 
                 } else {
                     General.println("[Debug]: Failed to generate a path, waiting 2-5s and trying again.");

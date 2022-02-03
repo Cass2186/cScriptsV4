@@ -1,5 +1,6 @@
 package scripts.QuestSteps;
 
+import dax.shared.helpers.questing.Quest;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,13 +17,14 @@ import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-public class UseItemOnNpcStep {
+public class UseItemOnNpcStep implements QuestStep {
 
    private RSTile tile;
-    private   int itemId;
+    private   int ItemID;
     private  int npcId;
     private  String objectName;
     private  BooleanSupplier waitCondition;
@@ -40,55 +42,55 @@ public class UseItemOnNpcStep {
     protected final List<Requirement> requirements = new ArrayList<>();
 
 
-    public UseItemOnNpcStep(int itemId, int npcId, RSTile tile) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int npcId, RSTile tile) {
+        this.ItemID = ItemID;
         this.npcId = npcId;
         this.tile = tile;
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
     }
-    public UseItemOnNpcStep(int itemId, int objectId, RSTile tile, Requirement... requirements) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int objectId, RSTile tile, Requirement... requirements) {
+        this.ItemID = ItemID;
         this.npcId = objectId;
         this.tile = tile;
         RSNPCDefinition def = RSNPCDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
 
         this.requirements.addAll(Arrays.asList(requirements));
     }
-    public UseItemOnNpcStep(int itemId, int objectId, RSTile tile, String print) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int objectId, RSTile tile, String print) {
+        this.ItemID = ItemID;
         this.npcId = objectId;
         this.tile = tile;
         RSNPCDefinition def = RSNPCDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
         this.print = print;
     }
 
-    public UseItemOnNpcStep(int itemId, int objectId, RSTile tile, String print, Requirement requirements) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int objectId, RSTile tile, String print, Requirement requirements) {
+        this.ItemID = ItemID;
         this.npcId = objectId;
         this.tile = tile;
         RSNPCDefinition def = RSNPCDefinition.get(objectId);
         if (def != null)
             this.objectName = def.getName();
 
-        this.waitCond = Inventory.find(this.itemId).length == 0;
+        this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
         this.print = print;
         this.requirements.addAll(Arrays.asList(requirements));
     }
 
-    public UseItemOnNpcStep(int itemId, int objectId, RSTile tile, boolean waitCondition) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int objectId, RSTile tile, boolean waitCondition) {
+        this.ItemID = ItemID;
         this.npcId = objectId;
         this.tile = tile;
         RSNPCDefinition def = RSNPCDefinition.get(objectId);
@@ -99,8 +101,8 @@ public class UseItemOnNpcStep {
         this.handleChat = false;
     }
 
-    public UseItemOnNpcStep(int itemId, int objectId, RSTile tile, boolean waitCondition, Requirement... requirements) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int objectId, RSTile tile, boolean waitCondition, Requirement... requirements) {
+        this.ItemID = ItemID;
         this.npcId = objectId;
         this.tile = tile;
         RSNPCDefinition def = RSNPCDefinition.get(objectId);
@@ -112,8 +114,8 @@ public class UseItemOnNpcStep {
         this.requirements.addAll(Arrays.asList(requirements));
     }
 
-    public UseItemOnNpcStep(int itemId, int objectId, RSTile tile, boolean waitCondition, boolean handleChat) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, int objectId, RSTile tile, boolean waitCondition, boolean handleChat) {
+        this.ItemID = ItemID;
         this.npcId = objectId;
         this.tile = tile;
         RSNPCDefinition def = RSNPCDefinition.get(objectId);
@@ -124,18 +126,18 @@ public class UseItemOnNpcStep {
         this.handleChat = handleChat;
     }
 
-    public UseItemOnNpcStep(int itemId, String objectName, RSTile tile, boolean waitCondition) {
-        this.itemId = itemId;
+    public UseItemOnNpcStep(int ItemID, String objectName, RSTile tile, boolean waitCondition) {
+        this.ItemID = ItemID;
         this.objectName = objectName;
         this.tile = tile;
         this.npcId = -1;
         this.waitCond = waitCondition;
     }
-
-    public boolean execute() {
+    @Override
+    public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
             General.println("[UseItemOnNPC]: We failed a requirement to execute this UseItemOnNpcStep");
-            return false;
+            return;
         }
         if (this.print != null){
             General.println("[UseItemOnNPC]: " + this.print);
@@ -147,23 +149,36 @@ public class UseItemOnNpcStep {
             else
                 PathingUtil.movementIdle();
         }
-        if (this.npcId != -1 && Utils.useItemOnNPC(this.itemId, this.npcId)) {
+        if (this.npcId != -1 && Utils.useItemOnNPC(this.ItemID, this.npcId)) {
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes");
             }
-            return Timer.waitCondition(() -> waitCond, 5000, 8000);
-        } else if (Utils.useItemOnObject(this.itemId, this.objectName)) {
+             Timer.waitCondition(() -> waitCond, 5000, 8000);
+        } else if (Utils.useItemOnObject(this.ItemID, this.objectName)) {
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes");
             }
-            return Timer.waitCondition(() -> waitCond, 5000, 8000);
+             Timer.waitCondition(() -> waitCond, 5000, 8000);
         }
 
+    }
 
-        return false;
+    @Override
+    public void addDialogStep(String... dialog) {
+
+    }
+
+    @Override
+    public void addSubSteps(QuestStep... substep) {
+
+    }
+
+    @Override
+    public void addSubSteps(Collection<QuestStep> substeps) {
+
     }
 }

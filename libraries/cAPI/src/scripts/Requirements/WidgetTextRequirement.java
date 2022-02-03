@@ -2,9 +2,11 @@ package scripts.Requirements;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Widget;
+import scripts.WidgetInfo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,7 @@ public class WidgetTextRequirement implements Requirement {
     private final int groupId;
 
     private final int childId;
+    @Getter
     private final List<String> text;
     private int childChildId = -1;
     private boolean checkChildren;
@@ -29,12 +32,11 @@ public class WidgetTextRequirement implements Requirement {
     private int min = -1;
     private int max = -1;
 
-   /* public WidgetTextRequirement(Widget widgetInfo, String... text) {
-
+    public WidgetTextRequirement(WidgetInfo widgetInfo, String... text) {
         this.groupId = widgetInfo.getGroupId();
         this.childId = widgetInfo.getChildId();
         this.text = Arrays.asList(text);
-    }*/
+    }
 
     public WidgetTextRequirement(int groupId, int childId, boolean checkChildren, String... text) {
         this.groupId = groupId;
@@ -78,6 +80,7 @@ public class WidgetTextRequirement implements Requirement {
                     }
                     Optional<String> textOptional = widget.get().getText();
                     if (textOptional.isPresent() && textOptional.get().contains(textOption)) {
+                        Log.log("[WidgetTextReq]: Widget Text requirement has been validated true");
                         return true;
                     }
                 }
@@ -125,7 +128,7 @@ public class WidgetTextRequirement implements Requirement {
 
     @Override
     public boolean check() {
-        //     return checkWidget();
-        return false;
+          return checkWidget() || hasPassed;
+
     }
 }

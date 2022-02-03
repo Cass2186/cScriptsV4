@@ -6,16 +6,15 @@ import org.tribot.api.General;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
-import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.types.EquipmentItem;
 import scripts.BankManager;
 import scripts.Utils;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
 public class InventoryRequirement implements Requirement {
 
@@ -102,18 +101,52 @@ public class InventoryRequirement implements Requirement {
             BankManager.depositAll(true);
             missing = getMissingBankItemsList(); // adds everything that might have been in the inv to begin with
         }
-        for (ItemReq i : missing) {
-            // General.println("[Debug]: Withdrawing item #: " + i);
-            BankManager.open(true);
-            BankManager.withdraw(i.getAmount(), true, i.getId());
-            if (i.isShouldEquip()) {
-                RSItem[] item = Inventory.find(i.getId());
-                if (item.length > 0)
-                    Utils.equipItem(i.getId());
-            }
+        // List<Pair<Integer, Integer>> withdrew = new ArrayList<>();
+        HashMap<Integer, Integer> withdrew = new HashMap();
+        missing.stream()
+                .forEach(item -> {
+                    int id = item.getId();
+                    boolean isNoted = item.isItemNoted();
+                    int amt = item.getAmount();
+                    int startInvCount = org.tribot.script.sdk.Inventory.getCount(id);
+                    int bankCount = BankCache.getStack(id);
 
+                    // Check if we have the amount we need in the bank. If not, bind an error
+                    if (bankCount < amt) {
+                        Log.log("[Bank]: Insufficient item in bank");
+                    }
+
+                    if (bankCount < amt) {
+                        // Special case: If we don't need any of this item and there is none in the bank, skip
+                        //  if (bankCount == 0 && amt == 0)
+                        //     return; //@forEach
+
+
+                        if (BankSettings.isNoteEnabled() != isNoted) {
+                            BankSettings.setNoteEnabled(isNoted);
+                            Waiting.waitNormal(85, 15);
+                        }
+
+                        Bank.withdrawAll(id);
+                    } else {
+                        if (BankSettings.isNoteEnabled() != isNoted) {
+                            BankSettings.setNoteEnabled(isNoted);
+                            Waiting.waitNormal(85, 15);
+                        }
+                        amt = (amt - startInvCount);
+                        //prevents attempting to withdraw if we have enough
+                        if (amt > 0)
+                            Bank.withdraw(id, amt - startInvCount);
+                    }
+
+                    withdrew.put(id, startInvCount);
+                    Waiting.waitNormal(69, 16);
+                });
+        // Wait and confirm all inv items were withdrawn correctly
+        for (Integer i : withdrew.keySet()) {
+            Waiting.waitUntil(2500, () ->
+                    org.tribot.script.sdk.Inventory.getCount(i) > withdrew.get(i));
         }
-        BankManager.close(true);
 
     }
 
@@ -155,6 +188,9 @@ public class InventoryRequirement implements Requirement {
             invList.add(new ItemReq(id, minAmount,true, true));
         }
     }
+
+
+
 
     @Override
     public boolean check() {

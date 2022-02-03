@@ -46,19 +46,19 @@ public class RuneLitePriceService extends CacheablePriceService<RuneLiteItem> im
 	}
 
 	@Override
-	public Optional<Integer> getPrice(int itemId)
+	public Optional<Integer> getPrice(int ItemID)
 	{
-		return tryGetItemData(itemId).map(RuneLiteItem::getHigh);
+		return tryGetItemData(ItemID).map(RuneLiteItem::getHigh);
 	}
 
 	@Override
-	public Optional<String> getName(int itemId)
+	public Optional<String> getName(int ItemID)
 	{
 		return Optional.empty();
 	}
 
 	@Override
-	public Optional<Boolean> isMembers(int itemId)
+	public Optional<Boolean> isMembers(int ItemID)
 	{
 		return Optional.empty();
 	}

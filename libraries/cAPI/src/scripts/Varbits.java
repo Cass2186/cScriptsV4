@@ -1,5 +1,7 @@
 package scripts;
 
+import lombok.Getter;
+
 public enum Varbits {
 
     /*
@@ -27,6 +29,8 @@ public enum Varbits {
     RUNE_POUCH_AMOUNT2(1625),
     RUNE_POUCH_AMOUNT3(1626),
 
+    //HOUSE
+    BUILDING_MODE(2176),
     /**
      * Prayers
      */
@@ -556,11 +560,17 @@ public enum Varbits {
      *
      * @see <a href="https://oldschool.runescape.wiki/w/Minimap#Special_attack_orb">The OSRS Wiki's Minimap page</a>
      */
-    PVP_SPEC_ORB(8121);
+    PVP_SPEC_ORB(8121),
 
-    public int value;
+    DOOR_RENDER(6269);
+
+    @Getter
+    public int id;
+
+    @Getter
+    public int value = getId();
 
     Varbits(int value) {
-        this.value = value;
+        this.id = value;
     }
 }

@@ -8,6 +8,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
 
@@ -43,7 +44,7 @@ public class ItemReq implements Requirement {
 
     @Getter
     @Setter
-    private List<Integer> alternateItemIds = new ArrayList<>();
+    private List<Integer> alternateItemIDs = new ArrayList<>();
 
     @Getter
     @Setter
@@ -61,66 +62,84 @@ public class ItemReq implements Requirement {
     @Setter
     private boolean shouldEquip;
 
-    public ItemReq(int itemId) {
-        this.id = itemId;
+    @Getter
+    private boolean isStackable;
+
+    public ItemReq(int ItemID) {
+        this.id = ItemID;
         this.amount = 1;
         this.minAmount = 1;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(int itemId, int amount) {
-        this.id = itemId;
+    public ItemReq(int ItemID, int amount) {
+        this.id = ItemID;
         this.amount = amount;
         this.minAmount = amount;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(int[] itemId, int amount) {
-        this.id = itemId[0];
+    public ItemReq(int[] ItemID, int amount) {
+        this.id = ItemID[0];
 
         this.amount = amount;
         this.minAmount = amount;
-        for (int i : itemId){
-            alternateItemIds.add(i);
+        for (int i : ItemID){
+            alternateItemIDs.add(i);
         }
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(String name, int itemId, int amount) {
+    public ItemReq(String name, int ItemID, int amount) {
         this.itemName = name;
-        this.id = itemId;
+        this.id = ItemID;
         this.amount = amount;
         this.minAmount = amount;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(String name, int itemId) {
+    public ItemReq(String name, int ItemID) {
         this.itemName = name;
-        this.id = itemId;
+        this.id = ItemID;
         this.amount = 1;
         this.minAmount = 1;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(int itemId, int amount, boolean acceptEquipped) {
-        this(itemId, amount);
+    public ItemReq(int ItemID, int amount, boolean acceptEquipped) {
+        this(ItemID, amount);
         this.acceptEquipped = acceptEquipped;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(int itemId, int amount, boolean acceptEquipped, boolean shouldEquip) {
-        this(itemId, amount, acceptEquipped);
+    public ItemReq(int ItemID, int amount, boolean acceptEquipped, boolean shouldEquip) {
+        this(ItemID, amount, acceptEquipped);
         this.shouldEquip = shouldEquip;
+        this.isStackable = isItemStackable();
     }
 
 
-    public ItemReq(int itemId, int amount, int minAmount) {
-        this(itemId, amount);
+    public ItemReq(int ItemID, int amount, int minAmount) {
+        this(ItemID, amount);
         this.minAmount = minAmount;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(int itemId, int amount, int minAmount, boolean acceptEquipped) {
-        this(itemId, amount, minAmount);
+    public ItemReq(int ItemID, int amount, int minAmount, boolean acceptEquipped) {
+        this(ItemID, amount, minAmount);
         this.acceptEquipped = acceptEquipped;
+        this.isStackable = isItemStackable();
     }
 
-    public ItemReq(int itemId, int amount, int minAmount, boolean acceptEquipped, boolean shouldEquip) {
-        this(itemId, amount, minAmount, acceptEquipped);
+    public ItemReq(int ItemID, int amount, int minAmount, boolean acceptEquipped, boolean shouldEquip) {
+        this(ItemID, amount, minAmount, acceptEquipped);
         this.shouldEquip = shouldEquip;
+        this.isStackable = isItemStackable();
+    }
+
+    public boolean isItemStackable(){
+        Optional<ItemDefinition> def = ItemDefinition.get(this.id);
+        return def.map(ItemDefinition::isStackable).orElse(false);
     }
 
     public ItemReq(Builder builder) {
@@ -131,8 +150,9 @@ public class ItemReq implements Requirement {
         this.acceptEquipped = builder.acceptEquipped;
         this.shouldEquip = builder.shouldEquip;
         this.amountOfChargesNeeded = builder.amountOfChargesNeeded;
-        this.alternateItemIds = builder.alternateItemIds;
+        this.alternateItemIDs = builder.alternateItemIDs;
         this.isItemNoted = builder.isItemNoted;
+        this.isStackable = isItemStackable();
     }
 
     public static class Builder {
@@ -140,7 +160,7 @@ public class ItemReq implements Requirement {
         private int amountOfChargesNeeded;
         private String itemName;
         private int id;
-        private List<Integer> alternateItemIds = new ArrayList<>();
+        private List<Integer> alternateItemIDs = new ArrayList<>();
         private boolean isItemNoted = false;
         private int amount;
         private int minAmount = 0;
@@ -183,6 +203,12 @@ public class ItemReq implements Requirement {
             return this;
         }
 
+        public Builder addAlternateIds(int... ids) {
+            for (int i : ids)
+            this.alternateItemIDs.add(i);
+            return this;
+        }
+
         public Builder shouldEquip(boolean shouldEquip) {
             this.acceptEquipped = true;
             this.shouldEquip = shouldEquip;
@@ -203,15 +229,14 @@ public class ItemReq implements Requirement {
 
     public boolean hasItem() {
         RSItem[] i = Inventory.find(this.id);
-        RSItem[] alts;
         RSItemDefinition def = RSItemDefinition.get(this.id);
         if (Equipment.isEquipped(this.id)) {
             Log.log("Has item equipped w/ ID of " + this.id);
             return true;
         }
 
-        if (this.alternateItemIds != null){
-            if (this.alternateItemIds.stream().anyMatch(jar -> Inventory.find(jar).length > 0)) {
+        if (this.alternateItemIDs != null){
+            if (this.alternateItemIDs.stream().anyMatch(jar -> Inventory.find(jar).length > 0)) {
                 General.println("[ItemReq]: We have an alternate item");
                 return true;
             }
@@ -230,11 +255,11 @@ public class ItemReq implements Requirement {
                 return i[0].getStack() >= this.minAmount;
             }
 
-            if (this.alternateItemIds != null && this.alternateItemIds.size() > 0) {
-                for (Integer b : alternateItemIds) {
+            if (this.alternateItemIDs != null && this.alternateItemIDs.size() > 0) {
+                for (Integer b : alternateItemIDs) {
                     if (i[0].getID() == b) {
                         General.println("[ItemReq]: Accepted an alternative id of " + b +
-                                " for itemID of " + i[0].getID());
+                                " for ItemID of " + i[0].getID());
                         return true;
                     }
                 }
@@ -253,12 +278,12 @@ public class ItemReq implements Requirement {
     }
 
 
-    public void addAlternateItemId(List<Integer> ids) {
-        this.alternateItemIds.addAll(ids);
+    public void addAlternateItemID(List<Integer> ids) {
+        this.alternateItemIDs.addAll(ids);
     }
 
-    public void addAlternateItemId(Integer... ids) {
-        this.alternateItemIds.addAll(Arrays.asList(ids));
+    public void addAlternateItemID(Integer... ids) {
+        this.alternateItemIDs.addAll(Arrays.asList(ids));
     }
 
     /**
