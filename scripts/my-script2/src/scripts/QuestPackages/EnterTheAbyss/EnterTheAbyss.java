@@ -37,30 +37,30 @@ public class EnterTheAbyss implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
-                    new GEItem(ItemId.NECKLACE_OF_PASSAGE[0], 1, 100),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 1, 100),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LOBSTER, 15, 2),
-                    new ItemReq(ItemId.ADAMANT_SCIMITAR, 1, 1, true, true),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.EMPTY_BUCKET, 1, 1),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LOBSTER, 15, 2),
+                    new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, 1, true, true),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.EMPTY_BUCKET, 1, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     public void buyItems() {
-        if (!BankManager.checkInventoryItems(ItemId.VARROCK_TELEPORT)) {
+        if (!BankManager.checkInventoryItems(ItemID.VARROCK_TELEPORT)) {
             cQuesterV2.status = "Buying Items";
             General.println("[Debug]: " + cQuesterV2.status);
                 buyStep.buyItems();
@@ -73,10 +73,10 @@ public class EnterTheAbyss implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[2]);
-        BankManager.withdraw(1, true, ItemId.NECKLACE_OF_PASSAGE[0]);
-        BankManager.withdraw(3, true, ItemId.VARROCK_TELEPORT);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[2]);
+        BankManager.withdraw(1, true, ItemID.NECKLACE_OF_PASSAGE[0]);
+        BankManager.withdraw(3, true, ItemID.VARROCK_TELEPORT);
         BankManager.close(true);
 
     }

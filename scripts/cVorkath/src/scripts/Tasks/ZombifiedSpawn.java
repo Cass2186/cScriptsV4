@@ -36,6 +36,7 @@ public class ZombifiedSpawn implements Task {
         }
         RSProjectile[] spawnProjectile = Projectiles.getAll(p ->
                 p.getGraphicID() == VorkthUtil.SPAWN_PROJECTILE);
+
         //optionally disable prayer
         if (spawnProjectile.length > 0) {
             Log.log("[Debug]: Spawn projectile detected");
@@ -47,14 +48,14 @@ public class ZombifiedSpawn implements Task {
             }
 
             RSNPC[] spawn = NPCs.findNearest(VorkthUtil.ZOMBIFIED_SPAWN);
-            //try usign the utils method, if it doens't work just do accurate mouse
             if (spawn.length > 0 && Utils.clickNPC(spawn[0], "Cast", true)) {
                 Log.log("[Debug]: Clicked Spawn");
-                // re-enable prayer if needed
+
 
                 if (VorkthUtil.waitCond(() -> spawn[0].getHealthPercent() == 0 ||
                         NPCs.findNearest(VorkthUtil.ZOMBIFIED_SPAWN).length == 0, 5000)) {
 
+                    // re-enable prayer if needed
                     if (!org.tribot.script.sdk.Prayer.isQuickPrayerEnabled())
                         org.tribot.script.sdk.Prayer.enableQuickPrayer();
 

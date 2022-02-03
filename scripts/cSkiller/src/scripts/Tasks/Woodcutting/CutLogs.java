@@ -3,17 +3,14 @@ package scripts.Tasks.Woodcutting;
 import dax.walker.utils.camera.DaxCamera;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
-import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.query.Query;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.EntitySelector.Entities;
-import scripts.EntitySelector.finders.prefabs.ItemEntity;
 
 public class CutLogs implements Task {
 
@@ -86,47 +83,47 @@ public class CutLogs implements Task {
             return;
         }
         if (currentLevel < 6) {
-            if (Inventory.find(ItemId.AXE_IDS[0]).length < 1 && !Equipment.isEquipped(ItemId.AXE_IDS[0])) {
+            if (Inventory.find(ItemID.AXE_IDS[0]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[0])) {
                 BankManager.open(true);
-                BankManager.withdraw(1, true, ItemId.AXE_IDS[0]);
+                BankManager.withdraw(1, true, ItemID.AXE_IDS[0]);
                 BankManager.close(true);
-                Utils.equipItem(ItemId.AXE_IDS[0], "Wield");
+                Utils.equipItem(ItemID.AXE_IDS[0], "Wield");
 
             }
         } else if (currentLevel < 21) { // steel axe
-            if (Inventory.find(ItemId.AXE_IDS[1]).length < 1 && !Equipment.isEquipped(ItemId.AXE_IDS[1])) {
+            if (Inventory.find(ItemID.AXE_IDS[1]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[1])) {
                 BankManager.open(true);
-                BankManager.withdraw(1, true, ItemId.AXE_IDS[1]);
+                BankManager.withdraw(1, true, ItemID.AXE_IDS[1]);
                 BankManager.close(true);
                 if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 5) {
-                    Utils.equipItem(ItemId.AXE_IDS[1], "Wield");
+                    Utils.equipItem(ItemID.AXE_IDS[1], "Wield");
                 }
             }
         } else if (currentLevel < 31) { // mithril axe
-            if (Inventory.find(ItemId.AXE_IDS[2]).length < 1 && !Equipment.isEquipped(ItemId.AXE_IDS[2])) {
+            if (Inventory.find(ItemID.AXE_IDS[2]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[2])) {
                 BankManager.open(true);
-                BankManager.withdraw(1, true, ItemId.AXE_IDS[2]);
+                BankManager.withdraw(1, true, ItemID.AXE_IDS[2]);
                 BankManager.close(true);
                 if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 20) {
-                    Utils.equipItem(ItemId.AXE_IDS[2], "Wield");
+                    Utils.equipItem(ItemID.AXE_IDS[2], "Wield");
                 }
             }
         } else if (currentLevel < 41) { // adamant axe
-            if (Inventory.find(ItemId.AXE_IDS[3]).length < 1 && !Equipment.isEquipped(ItemId.AXE_IDS[3])) {
+            if (Inventory.find(ItemID.AXE_IDS[3]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[3])) {
                 BankManager.open(true);
-                BankManager.withdraw(1, true, ItemId.AXE_IDS[3]);
+                BankManager.withdraw(1, true, ItemID.AXE_IDS[3]);
                 BankManager.close(true);
                 if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 30) {
-                    Utils.equipItem(ItemId.AXE_IDS[3], "Wield");
+                    Utils.equipItem(ItemID.AXE_IDS[3], "Wield");
                 }
             }
         } else if (currentLevel < 61) { // rune axe
-            if (Inventory.find(ItemId.AXE_IDS[4]).length < 1 && !Equipment.isEquipped(ItemId.AXE_IDS[4])) {
+            if (Inventory.find(ItemID.AXE_IDS[4]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[4])) {
                 BankManager.open(true);
-                BankManager.withdraw(1, true, ItemId.AXE_IDS[4]);
+                BankManager.withdraw(1, true, ItemID.AXE_IDS[4]);
                 BankManager.close(true);
                 if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 40) {
-                    Utils.equipItem(ItemId.AXE_IDS[4], "Wield");
+                    Utils.equipItem(ItemID.AXE_IDS[4], "Wield");
                 }
             }
         }
@@ -146,16 +143,20 @@ public class CutLogs implements Task {
 
     @Override
     public boolean validate() {
-        RSItem invAxe = Entities.find(ItemEntity::new) //check if noted
+        boolean hasInvAxe =   Query.inventory()
                 .nameContains("axe")
-                .getFirstResult();
+                .nameNotContains("pickaxe")
+                .isAny();
 
-        boolean equippedAxe = Equipment.isEquipped(Filters.Items.nameContains(  " axe"));
+        boolean hasEquippedAxe =   Query.equipment()
+                .nameContains("axe")
+                .nameNotContains("pickaxe")
+                .isAny();
 
         // General.println("[CutLogs]: Has Axe: " +(invAxe != null || equippedAxe) );
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.WOODCUTTING)
-                && (invAxe != null || equippedAxe);
+                && (hasInvAxe || hasEquippedAxe);
     }
 
 

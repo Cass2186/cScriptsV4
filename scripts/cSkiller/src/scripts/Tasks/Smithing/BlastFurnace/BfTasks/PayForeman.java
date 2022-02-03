@@ -39,6 +39,7 @@ public class PayForeman implements Task {
 
     @Override
     public void execute() {
+        getCoins();
         if (Utils.clickNPC("Blast Furnace Foreman", "Pay")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Yes");

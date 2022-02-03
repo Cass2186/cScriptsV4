@@ -27,12 +27,12 @@ public class TribalTotem implements QuestTask {
     }
 
 
-    ItemReq coins = new ItemReq(ItemId.COINS, 2000, 100);
+    ItemReq coins = new ItemReq(ItemID.COINS, 2000, 100);
     //ItemReq amuletOfGlory = new ItemReq(ollections.getAmuletOfGlories());
-    ItemReq ardougneTeleports = new ItemReq(ItemId.ARDOUGNE_TELEPORT, 5, 1);
-    ItemReq addressLabel = new ItemReq(ItemId.ADDRESS_LABEL);
+    ItemReq ardougneTeleports = new ItemReq(ItemID.ARDOUGNE_TELEPORT, 5, 1);
+    ItemReq addressLabel = new ItemReq(ItemID.ADDRESS_LABEL);
 
-    ItemReq totem = new ItemReq(ItemId.TOTEM);
+    ItemReq totem = new ItemReq(ItemID.TOTEM);
 
     RSArea houseGroundFloorEntrance = new RSArea(new RSTile(2637, 3320, 0), new RSTile(2639, 3325, 0));
     RSArea houseGroundFloorMiddleRoom = new RSArea(new RSTile(2634, 3322, 0), new RSTile(2636, 3324, 0));
@@ -75,18 +75,18 @@ public class TribalTotem implements QuestTask {
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.COINS, 2000, 100),
-                    new ItemReq(ItemId.ARDOUGNE_TELEPORT, 10, 1),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 2, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 0)
+                    new ItemReq(ItemID.COINS, 2000, 100),
+                    new ItemReq(ItemID.ARDOUGNE_TELEPORT, 10, 1),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 2, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0)
             ))
     );
 
     public  ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ARDOUGNE_TELEPORT, 10, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 25),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 20)
+                    new GEItem(ItemID.ARDOUGNE_TELEPORT, 10, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 25),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 20)
             )
     );
 

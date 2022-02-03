@@ -15,7 +15,7 @@ import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.InterfaceUtil;
-import scripts.ItemId;
+import scripts.PathingUtil;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -33,31 +33,38 @@ public class UnnotePlanks implements Task {
         }
     }
 
-    public void unnotePlanks() {
+    public static void unnotePlanks() {
         Optional<InventoryItem> item = Query.inventory().nameContains("plank").isNoted().findFirst();
         Optional<Npc> phials = Query.npcs().nameContains("Phials").stream().findFirst();
         if (phials.isPresent() && item.isPresent()) {
-            if (!phials.get().isVisible()){
-                LocalWalking.walkTo(phials.get().getTile().translate(0,1));
-                Waiting.waitNormal(750,220);
+            if (!phials.get().isVisible()) {
+                LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
+                Waiting.waitNormal(750, 220);
             }
-            if(Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
+            if (Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
                     Timer.waitCondition(Player::isMoving, 1200, 1800)) {
                 Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
 
             }
         }
         if (NPCInteraction.isConversationWindowUp()) {
-            InterfaceUtil.clickInterfaceText(219,1, "Exchange All");
-            Timer.waitCondition(()-> Query.inventory().nameContains("plank")
-                            .isNotNoted().findFirst().isPresent(),
-                    2000,4000);
+            if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
+                Timer.waitCondition(() -> Query.inventory().nameContains("plank")
+                                .isNotNoted().findFirst().isPresent(),
+                        2000, 4000);
+            else if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange 5"))
+                Timer.waitCondition(() -> Query.inventory().nameContains("plank")
+                                .isNotNoted().findFirst().isPresent(),
+                        2000, 4000);
+
+            if (NPCInteraction.isConversationWindowUp())
+                NPCInteraction.handleConversation();
         }
     }
 
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Unnoting Planks";
     }
 
@@ -68,7 +75,11 @@ public class UnnotePlanks implements Task {
 
     @Override
     public boolean validate() {
-        if(Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION)){
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION)) {
+            Optional<InventoryItem> item = Query.inventory().nameContains("plank").isNoted().findFirst();
+            if (item.isEmpty())
+                return false;
+
             if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
                 return Inventory.find(FURNITURE.CRUDE_CHAIR.getPlankId()).length < FURNITURE.CRUDE_CHAIR.getPlankNum();
 
@@ -91,6 +102,10 @@ public class UnnotePlanks implements Task {
     @Override
     public void execute() {
         leaveHouse();
+        if (!Construction.RIMMINGTON.contains(Player.getPosition()) && !Game.isInInstance()){
+            PathingUtil.walkToArea(Construction.RIMMINGTON);
+        }
+
         unnotePlanks();
     }
 

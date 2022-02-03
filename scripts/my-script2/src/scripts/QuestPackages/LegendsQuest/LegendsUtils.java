@@ -63,7 +63,7 @@ public class LegendsUtils {
             cutBush(FOREST_PLAYER_TILE_TWO, FOREST_BUSH_TILE_THREE);
             cutBush(FOREST_PLAYER_TILE_THREE, FOREST_BUSH_TILE_FOUR);
         }
-        Inventory.drop(ItemId.LOG_IDS[0]);
+        Inventory.drop(ItemID.LOG_IDS[0]);
         return WHOLE_FOREST_AREA.contains(Player.getPosition());
     }
 

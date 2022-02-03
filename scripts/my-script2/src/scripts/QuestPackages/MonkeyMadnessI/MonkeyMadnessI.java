@@ -222,25 +222,25 @@ public class MonkeyMadnessI implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.BALL_OF_WOOL, 1, 500),
-                    new GEItem(ItemId.MONKS_ROBE_BOTTOM, 1, 500),
-                    new GEItem(ItemId.MONKS_ROBE_TOP, 1, 500),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 50),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 10, 50),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 10, 50),
-                    new GEItem(ItemId.LOCKPICK, 1, 300),
-                    new GEItem(ItemId.SKILLS_NECKLACE[0], 1, 50),
-                    new GEItem(ItemId.LOBSTER, 35, 50),
-                    new GEItem(ItemId.MONKFISH, 15, 50),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 1, 50),
-                    new GEItem(ItemId.GOLD_BAR, 1, 50),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 3, 50),
-                    new GEItem(ItemId.PRAYER_POTION[0], 6, 20),
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], 5, 40),
-                    new GEItem(ItemId.STAMINA_POTION[0], 6, 20),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 20),
-                    new GEItem(ItemId.ADAMANT_KITESHIELD, 1, 50),
-                    new GEItem(ItemId.ADAMANT_FULL_HELM, 1, 50)
+                    new GEItem(ItemID.BALL_OF_WOOL, 1, 500),
+                    new GEItem(ItemID.MONKS_ROBE_BOTTOM, 1, 500),
+                    new GEItem(ItemID.MONKS_ROBE_TOP, 1, 500),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 50),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 10, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 10, 50),
+                    new GEItem(ItemID.LOCKPICK, 1, 300),
+                    new GEItem(ItemID.SKILLS_NECKLACE[0], 1, 50),
+                    new GEItem(ItemID.LOBSTER, 35, 50),
+                    new GEItem(ItemID.MONKFISH, 15, 50),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 1, 50),
+                    new GEItem(ItemID.GOLD_BAR, 1, 50),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 3, 50),
+                    new GEItem(ItemID.PRAYER_POTION[0], 6, 20),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 5, 40),
+                    new GEItem(ItemID.STAMINA_POTION[0], 6, 20),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 20),
+                    new GEItem(ItemID.ADAMANT_KITESHIELD, 1, 50),
+                    new GEItem(ItemID.ADAMANT_FULL_HELM, 1, 50)
             )
     );
 
@@ -297,11 +297,11 @@ public class MonkeyMadnessI implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw(1, true, ANTIDOTE_PLUS_PLUS[0]);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(2, true, ItemId.RING_OF_DUELING[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(2, true, ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(4, true, MONKFISH);
         BankManager.close(true);
-        Utils.equipItem(ItemId.RING_OF_DUELING[0]);
+        Utils.equipItem(ItemID.RING_OF_DUELING[0]);
         if (Prayer.getPrayerPoints() < 30) {
             Utils.clanWarsReset();
         }
@@ -368,7 +368,7 @@ public class MonkeyMadnessI implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(2, true, ItemId.ANTIDOTE_PLUS_PLUS);
+        BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS);
         BankManager.withdraw(1, true, LOCKPICK);
         BankManager.withdraw(2, true, stamina4);
         BankManager.withdraw(12, true, lobster);
@@ -717,7 +717,7 @@ public class MonkeyMadnessI implements QuestTask {
         if (Inventory.find(monkeyDentures).length < 1 && Inventory.find(enchantedBar).length < 1) {
             cQuesterV2.status = "Getting Dentures";
             if (!DENTURES_BUILDING_AREA.contains(Player.getPosition())) {
-                Utils.drinkPotion(ItemId.STAMINA_POTION);
+                Utils.drinkPotion(ItemID.STAMINA_POTION);
 
                 if (Walking.blindWalkTo(new RSTile(2801, 2768, 0)))
                     General.sleep(General.random(2500, 5000));
@@ -809,7 +809,7 @@ public class MonkeyMadnessI implements QuestTask {
                 BankManager.depositEquipment();
                 BankManager.checkEquippedGlory();
                 BankManager.depositAll(true);
-                BankManager.withdraw(2, true, ItemId.ANTIDOTE_PLUS_PLUS);
+                BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS);
                 BankManager.withdraw(1, true, monkeyDentures);
                 BankManager.withdraw(1, true, amuletmould);
                 BankManager.withdraw(3, true, PRAYER_POTION[0]);
@@ -820,8 +820,8 @@ public class MonkeyMadnessI implements QuestTask {
                 BankManager.withdraw(1, true, 542);
                 BankManager.withdraw(1, true, 544);
 
-                BankManager.getTeleItem(ItemId.RING_OF_DUELING[0], ItemId.RING_OF_DUELING[1],
-                        ItemId.RING_OF_DUELING[2], ItemId.RING_OF_DUELING[3]);
+                BankManager.getTeleItem(ItemID.RING_OF_DUELING[0], ItemID.RING_OF_DUELING[1],
+                        ItemID.RING_OF_DUELING[2], ItemID.RING_OF_DUELING[3]);
                 BankManager.close(true);
                 Utils.equipItem(542);
                 Utils.equipItem(544);
@@ -908,13 +908,13 @@ public class MonkeyMadnessI implements QuestTask {
             BankManager.checkEquippedGlory();
             BankManager.depositAll(true);
 
-            BankManager.withdraw(1, true, ItemId.ADAMANT_KITESHIELD);
-            Utils.equipItem(ItemId.ADAMANT_KITESHIELD);
-            BankManager.withdraw(1, true, ItemId.ADAMANT_FULL_HELM);
-            Utils.equipItem(ItemId.ADAMANT_FULL_HELM);
+            BankManager.withdraw(1, true, ItemID.ADAMANT_KITESHIELD);
+            Utils.equipItem(ItemID.ADAMANT_KITESHIELD);
+            BankManager.withdraw(1, true, ItemID.ADAMANT_FULL_HELM);
+            Utils.equipItem(ItemID.ADAMANT_FULL_HELM);
 
             BankManager.withdraw(1, true, enchantedBar);
-            BankManager.withdraw(2, true, ItemId.ANTIDOTE_PLUS_PLUS);
+            BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS);
             BankManager.withdraw(1, true, amuletmould);
             BankManager.withdraw(1, true, LOCKPICK);
             BankManager.withdraw(2, true, PRAYER_POTION[0]);
@@ -1130,7 +1130,7 @@ public class MonkeyMadnessI implements QuestTask {
 
     public void checkPrayer() {
         if (Prayer.getPrayerPoints() < General.random(12, 20) &&
-                Utils.drinkPotion(ItemId.PRAYER_POTION))
+                Utils.drinkPotion(ItemID.PRAYER_POTION))
             General.sleep(General.random(150, 500));
         if (!Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MELEE) && Prayer.getPrayerPoints() > 0) {
             Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
@@ -1338,12 +1338,12 @@ public class MonkeyMadnessI implements QuestTask {
             BankManager.open(true);
             BankManager.checkEquippedGlory();
             BankManager.depositAll(true);
-            if (Equipment.find(ItemId.RING_OF_DUELING).length < 1) {
-                BankManager.withdrawArray(ItemId.RING_OF_DUELING, 1);
-                Utils.equipItem(ItemId.RING_OF_DUELING[0]);
+            if (Equipment.find(ItemID.RING_OF_DUELING).length < 1) {
+                BankManager.withdrawArray(ItemID.RING_OF_DUELING, 1);
+                Utils.equipItem(ItemID.RING_OF_DUELING[0]);
                 BankManager.depositAll(true);
             }
-            BankManager.withdraw(1, true, ItemId.ANTIDOTE_PLUS_PLUS);
+            BankManager.withdraw(1, true, ItemID.ANTIDOTE_PLUS_PLUS);
             BankManager.withdraw(1, true, amuletmould);
             BankManager.withdraw(1, true, LOCKPICK);
             BankManager.withdraw(2, true, PRAYER_POTION[0]);
@@ -1352,8 +1352,8 @@ public class MonkeyMadnessI implements QuestTask {
             BankManager.withdraw(1, true, ballOfWool);
             BankManager.withdraw(1, true, glory4);
             BankManager.withdraw(1, true, mSpeakAmulet);
-            BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE);
-            BankManager.withdraw(1, true, ItemId.RING_OF_DUELING);
+            BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE);
+            BankManager.withdraw(1, true, ItemID.RING_OF_DUELING);
             BankManager.withdraw(3050, true, 995);
             Utils.equipItem(mSpeakAmulet);
             BankManager.withdraw(1, true, MONKEY_CORPSE);
@@ -1406,8 +1406,8 @@ public class MonkeyMadnessI implements QuestTask {
             Timer.waitCondition(() -> Equipment.isEquipped(greegree), 1500, 2000);
 
         if (!LARGE_SHOP_AREA.contains(Player.getPosition())) {
-            if (Inventory.find(ItemId.STAMINA_POTION[0]).length > 0) {
-                AccurateMouse.click(Inventory.find(ItemId.STAMINA_POTION[0])[0], "Drink");
+            if (Inventory.find(ItemID.STAMINA_POTION[0]).length > 0) {
+                AccurateMouse.click(Inventory.find(ItemID.STAMINA_POTION[0])[0], "Drink");
             }
             Walking.walkPath(pathToGate);
             Timing.waitCondition(() -> !Player.isMoving(), 6000);
@@ -1497,7 +1497,7 @@ public class MonkeyMadnessI implements QuestTask {
                     cQuesterV2.status = "Going to Kruk";
                     General.println("[Debug]: " + cQuesterV2.status);
                     Walking.blindWalkTo(new RSTile(2803, 2756, 0)); // avoids the elder guard which otherwise blocks movement
-                    Utils.drinkPotion(ItemId.STAMINA_POTION);
+                    Utils.drinkPotion(ItemID.STAMINA_POTION);
                     Walking.walkPath(pathToKrukPt1);
                     PathingUtil.movementIdle();
 
@@ -1627,7 +1627,7 @@ public class MonkeyMadnessI implements QuestTask {
             cQuesterV2.status = "Returning to Awowogei";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Inventory.find(4033).length > 0 && !MONKEY_ENCOLSURE.contains(Player.getPosition())) {
-                Utils.drinkPotion(ItemId.STAMINA_POTION);
+                Utils.drinkPotion(ItemID.STAMINA_POTION);
 
                 Walking.walkPath(pathToTreeGnomeGate);
                 Waiting.waitUniform(4000, 6000);
@@ -1765,18 +1765,18 @@ public class MonkeyMadnessI implements QuestTask {
                 !BOSS_AREA.contains(Player.getPosition())) {
             BankManager.open(true);
             BankManager.depositAll(true);
-            BankManager.withdraw(500, true, ItemId.CANNONBALL);
+            BankManager.withdraw(500, true, ItemID.CANNONBALL);
             BankManager.withdraw(4, true, PRAYER_POTION[0]);
             BankManager.withdraw(8, true, lobster);
-            BankManager.withdraw(1, true, ItemId.RUNE_SCIMITAR);
+            BankManager.withdraw(1, true, ItemID.RUNE_SCIMITAR);
             BankManager.withdraw(1, true, 8);
             BankManager.withdraw(1, true, 6);
             BankManager.withdraw(1, true, 10);
             BankManager.withdraw(1, true, 12);
-            BankManager.withdraw(1, true, ItemId.ANTIDOTE_PLUS_PLUS);
-            BankManager.withdrawArray(ItemId.AMULET_OF_GLORY, 1);
-            Utils.equipItem(ItemId.AMULET_OF_GLORY);
-            Utils.equipItem(ItemId.RUNE_SCIMITAR);
+            BankManager.withdraw(1, true, ItemID.ANTIDOTE_PLUS_PLUS);
+            BankManager.withdrawArray(ItemID.AMULET_OF_GLORY, 1);
+            Utils.equipItem(ItemID.AMULET_OF_GLORY);
+            Utils.equipItem(ItemID.RUNE_SCIMITAR);
             BankManager.withdraw(1, true, TENTH_SQUAD_SIGIL);
             BankManager.close(true);
         }
@@ -1798,7 +1798,7 @@ public class MonkeyMadnessI implements QuestTask {
         if (!BOSS_AREA.contains(Player.getPosition())) {
             RSItem[] invItem1 = Inventory.find(SIGIL);
             Combat.setAutoRetaliate(false);
-            if (Prayer.getPrayerPoints() <= 15 && Utils.drinkPotion(ItemId.PRAYER_POTION))
+            if (Prayer.getPrayerPoints() <= 15 && Utils.drinkPotion(ItemID.PRAYER_POTION))
                 General.sleep(General.randomSD(400, 900, 600, 100));
 
             if (invItem1.length > 0 && invItem1[0].click("Wear")) {
@@ -1824,7 +1824,7 @@ public class MonkeyMadnessI implements QuestTask {
 
                 if (Prayer.getPrayerPoints() <= prayOn) {
                     prayOn = General.randomSD(5, 20, 12, 4);
-                    if (Utils.drinkPotion(ItemId.PRAYER_POTION))
+                    if (Utils.drinkPotion(ItemID.PRAYER_POTION))
                         General.sleep(General.randomSD(400, 900, 600, 100));
                 }
 
@@ -1868,12 +1868,12 @@ public class MonkeyMadnessI implements QuestTask {
                 RSObject[] setUpCannon = Objects.findNearest(20, 6);
                 if (setUpCannon.length > 0 && setUpCannon[0].click("Pick-up")) {
                     cQuesterV2.status = "Picking up Cannon";
-                    Timer.waitCondition(() -> Inventory.find(ItemId.CANNON_IDS[0]).length > 0, 5000, 8000);
+                    Timer.waitCondition(() -> Inventory.find(ItemID.CANNON_IDS[0]).length > 0, 5000, 8000);
                     Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MAGIC);
                 }
 
                 // I don't think this conversation is needed. You can just go right to the king
-             /*   if (Inventory.find(ItemId.CANNON_IDS[0]).length > 0) {
+             /*   if (Inventory.find(ItemID.CANNON_IDS[0]).length > 0) {
                     if (NpcChat.talkToNPC("Garkor")) {
                         NPCInteraction.waitForConversationWindow();
                         NPCInteraction.handleConversation();

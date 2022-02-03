@@ -5,7 +5,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.NpcID;
 import scripts.ObjectID;
 import scripts.QuestPackages.TouristTrap.TouristTrap;
@@ -88,28 +88,28 @@ public class TearsOfGuthix implements QuestTask {
 
 
     private void setupItemRequirements() {
-        litSapphireLantern = new ItemRequirement("Sapphire lantern", ItemId.SAPPHIRE_LANTERN_4702);
+        litSapphireLantern = new ItemRequirement("Sapphire lantern", ItemID.SAPPHIRE_LANTERN_4702);
         // litSapphireLantern.setTooltip("You can make this by using a cut sapphire on a bullseye lantern");
-        chisel = new ItemRequirement("Chisel", ItemId.CHISEL);
-        tinderbox = new ItemRequirement("Tinderbox", ItemId.TINDERBOX);
-        pickaxe = new ItemRequirement("Any pickaxe", ItemId.STEEL_PICKAXE);
-        rope = new ItemRequirement("Rope", ItemId.ROPE);
+        chisel = new ItemRequirement("Chisel", ItemID.CHISEL);
+        tinderbox = new ItemRequirement("Tinderbox", ItemID.TINDERBOX);
+        pickaxe = new ItemRequirement("Any pickaxe", ItemID.STEEL_PICKAXE);
+        rope = new ItemRequirement("Rope", ItemID.ROPE);
 
 
-        litSapphireLanternHighlighted = new ItemRequirement("Sapphire lantern", ItemId.SAPPHIRE_LANTERN_4702);
+        litSapphireLanternHighlighted = new ItemRequirement("Sapphire lantern", ItemID.SAPPHIRE_LANTERN_4702);
         // litSapphireLanternHighlighted.setTooltip("You can make this by using a cut sapphire on a bullseye lantern");
-        chiselHighlighted = new ItemRequirement("Chisel", ItemId.CHISEL);
+        chiselHighlighted = new ItemRequirement("Chisel", ItemID.CHISEL);
 
-        tinderboxHighlighted = new ItemRequirement("Tinderbox", ItemId.TINDERBOX);
+        tinderboxHighlighted = new ItemRequirement("Tinderbox", ItemID.TINDERBOX);
 
-        pickaxeHighlighted = new ItemRequirement("Any pickaxe", ItemId.STEEL_PICKAXE);
+        pickaxeHighlighted = new ItemRequirement("Any pickaxe", ItemID.STEEL_PICKAXE);
 
-        ropeHighlighted = new ItemRequirement("Rope", ItemId.ROPE);
+        ropeHighlighted = new ItemRequirement("Rope", ItemID.ROPE);
 
-        rockHighlighted = new ItemRequirement("Magic stone", ItemId.MAGIC_STONE);
+        rockHighlighted = new ItemRequirement("Magic stone", ItemID.MAGIC_STONE);
 
 
-        stoneBowl = new ItemRequirement("Stone bowl", ItemId.STONE_BOWL);
+        stoneBowl = new ItemRequirement("Stone bowl", ItemID.STONE_BOWL);
     }
 
 

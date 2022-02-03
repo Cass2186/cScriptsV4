@@ -62,11 +62,11 @@ public class GertrudesCat implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
                     new GEItem(seasonedSardines, 1, 500),
-                    new GEItem(ItemId.BUCKET_OF_MILK, 1, 300),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.BUCKET_OF_MILK, 1, 300),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -88,7 +88,7 @@ public class GertrudesCat implements QuestTask {
         BankManager.withdraw(1, true, seasonedSardines);
         BankManager.withdraw(1, true, bucketOfMilk);
         BankManager.withdraw(500, true, coins);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
         Utils.shortSleep();
     }
@@ -303,8 +303,6 @@ public class GertrudesCat implements QuestTask {
         if (NpcChat.talkToNPC("Gertrude")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation();
             Utils.modSleep();
         }
     }
@@ -318,35 +316,35 @@ public class GertrudesCat implements QuestTask {
         }
     }
 
-    int GAME_SETTING = 180;
+    int GAME_SETTING = QuestVarPlayer.QUEST_GERTRUDES_CAT.getId(); //180
 
     @Override
     public void execute() {
-        if (Game.getSetting(180) == 0) {
+        if (Game.getSetting(GAME_SETTING) == 0) {
             buyItems();
             getItems();
             startQuest();
             Utils.longSleep();
         }
-        if (Game.getSetting(180) == 1) {
+        if (Game.getSetting(GAME_SETTING) == 1) {
             step2();
         }
-        if (Game.getSetting(180) == 2) {
+        if (Game.getSetting(GAME_SETTING) == 2) {
             step3();
         }
-        if (Game.getSetting(180) == 3) {
+        if (Game.getSetting(GAME_SETTING) == 3) {
             step4();
             Utils.longSleep();
         }
-        if (Game.getSetting(180) == 4) {
+        if (Game.getSetting(GAME_SETTING) == 4) {
             step5();
             step6();
             step7();
         }
-        if (Game.getSetting(180) == 5) {
+        if (Game.getSetting(GAME_SETTING) == 5) {
             finishQuest();
         }
-        if (Game.getSetting(180) == 6) {
+        if (Game.getSetting(GAME_SETTING) == 6) {
             if (Utils.closeQuestCompletionWindow()) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();

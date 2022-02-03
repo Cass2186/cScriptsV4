@@ -12,6 +12,7 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
+import scripts.Data.Areas;
 import scripts.Data.Vars;
 import scripts.rsitem_services.GrandExchange;
 import scripts.rsitem_services.runelite.RuneLitePriceService;
@@ -48,7 +49,8 @@ public class LootItems implements Task {
             for (int i = 0; i < groundItems.length; i++) {
                 RSItemDefinition def = groundItems[i].getDefinition();
                 int id = groundItems[i].getID();
-
+                if (!Areas.UNDEAD_DRUID_AREA.contains(groundItems[i].getPosition()))
+                    continue;
                 for (int cust : customLootIds) {
                     if (id == cust) {
                         return true;
@@ -86,6 +88,9 @@ public class LootItems implements Task {
         if (groundItems.length > 0) {
             for (int i = 0; i < groundItems.length; i++) {
                 RSItemDefinition def = groundItems[i].getDefinition();
+                if (!Areas.UNDEAD_DRUID_AREA.contains(groundItems[i].getPosition()))
+                    continue;
+
                 int id = groundItems[i].getID();
 
                 if (def == null)
@@ -130,6 +135,8 @@ public class LootItems implements Task {
         RSGroundItem loot = getLootItem();
         if (loot != null) {
             int inv = Inventory.getAll().length;
+            if (!Areas.UNDEAD_DRUID_AREA.contains(loot.getPosition()))
+               return;
 
            // if (SlayerVars.get().fightArea.contains(loot)) {
 
@@ -162,10 +169,10 @@ public class LootItems implements Task {
                         DaxCamera.focus(loot);
 
                     if (DynamicClicking.clickRSGroundItem(loot, "Take " + name)) {
-                        Timer.waitCondition(() -> loot.getPosition().equals(Player.getPosition()), 5000, 7000);
+                        Timer.slowWaitCondition(() -> loot.getPosition().equals(Player.getPosition()), 5000, 7000);
                         General.println("[Debug]: Done looting");
                         Vars.get().lootValue = Vars.get().lootValue + value;
-                        Waiting.waitNormal(220,45);
+                        Waiting.waitNormal(300,45);
                     }
 
                // }
@@ -202,7 +209,7 @@ public class LootItems implements Task {
 
     @Override
     public void execute() {
-        RSItem[] closedBag = Inventory.find(ItemId.CLOSED_LOOTING_BAG);
+        RSItem[] closedBag = Inventory.find(ItemID.LOOTING_BAG);
         if (closedBag.length > 0 && closedBag[0].click("Open"))
             Utils.microSleep();
         getLoot();

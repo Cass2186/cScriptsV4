@@ -14,7 +14,7 @@ import scripts.BankManager;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.MiscTasks.BuyItems;
 import scripts.Utils;
@@ -55,8 +55,8 @@ public class MagicBank implements Task {
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55) {
             return Vars.get().currentTask != null &&
                     Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
-                    (Inventory.find(ItemId.AIR_BATTLESTAFF + 1).length == 0 ||
-                            Inventory.find(ItemId.NATURE_RUNE).length == 0);
+                    (Inventory.find(ItemID.AIR_BATTLESTAFF + 1).length == 0 ||
+                            Inventory.find(ItemID.NATURE_RUNE).length == 0);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 45) {
             return Vars.get().currentTask != null &&
                     Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
@@ -64,17 +64,17 @@ public class MagicBank implements Task {
         }
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
-                (Inventory.find(ItemId.AIR_BATTLESTAFF + 1).length == 0 ||
-                        Inventory.find(ItemId.NATURE_RUNE).length == 0);*/
+                (Inventory.find(ItemID.AIR_BATTLESTAFF + 1).length == 0 ||
+                        Inventory.find(ItemID.NATURE_RUNE).length == 0);*/
     }
 
     @Override
     public void execute() {
         if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 27) {
             myEnchBank2(saphRingTask);
-           // myEnchBank(saphList, ItemId.STAFF_OF_WATER);
+            // myEnchBank(saphList, ItemID.STAFF_OF_WATER);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 37) {
-            myEnchBank(emList, ItemId.STAFF_OF_AIR);
+            myEnchBank(emList, ItemID.STAFF_OF_AIR);
             //enchantBank(emeraldRingTask);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 45) {
             teleItems();
@@ -82,8 +82,7 @@ public class MagicBank implements Task {
             teleBank(-1);// teleItems();
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75) {
             alchBank(Vars.get().alchItem.getId());
-        }
-        else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) {
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) {
             myEnchBank2(diamondBraceletTAsk);
         }
     }
@@ -94,37 +93,36 @@ public class MagicBank implements Task {
     }
 
     BankTask saphRingTask = BankTask.builder()
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.STAFF_OF_WATER, Amount.of(1)))
-            .addInvItem(ItemId.COSMIC_RUNE, Amount.fill(1))
-            .addInvItem(ItemId.SAPPHIRE_RING, Amount.fill(1))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.STAFF_OF_WATER, Amount.of(1)))
+            .addInvItem(ItemID.COSMIC_RUNE, Amount.fill(1))
+            .addInvItem(ItemID.SAPPHIRE_RING, Amount.fill(1))
             .build();
 
     BankTask emeraldRingTask = BankTask.builder()
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.STAFF_OF_AIR, Amount.of(1)))
-            .addInvItem(ItemId.COSMIC_RUNE, Amount.fill(1))
-            .addInvItem(ItemId.EMERALD_RING, Amount.fill(1))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.STAFF_OF_AIR, Amount.of(1)))
+            .addInvItem(ItemID.COSMIC_RUNE, Amount.fill(1))
+            .addInvItem(ItemID.EMERALD_RING, Amount.fill(1))
             .build();
 
     BankTask diamondBraceletTAsk = BankTask.builder()
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.MUD_BATTLESTAFF, Amount.of(1)))
-            .addInvItem(ItemId.COSMIC_RUNE, Amount.fill(1))
-            .addInvItem(ItemId.DIAMOND_BRACELET, Amount.fill(1))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.MUD_BATTLESTAFF, Amount.of(1)))
+            .addInvItem(ItemID.COSMIC_RUNE, Amount.fill(1))
+            .addInvItem(ItemID.DIAMOND_BRACELET, Amount.fill(1))
             .build();
-
 
 
     List<ItemReq> saphList = new ArrayList<>(
             Arrays.asList(
-                    //new ItemReq(ItemId.STAFF_OF_AIR, 1, 0, true, true),
-                    new ItemReq(ItemId.COSMIC_RUNE, 0, 1),
-                    new ItemReq(ItemId.SAPPHIRE_RING, 0, 1)
+                    //new ItemReq(ItemID.STAFF_OF_AIR, 1, 0, true, true),
+                    new ItemReq(ItemID.COSMIC_RUNE, 0, 1),
+                    new ItemReq(ItemID.SAPPHIRE_RING, 0, 1)
             ));
 
     List<ItemReq> emList = new ArrayList<>(
             Arrays.asList(
-                    //  new ItemReq(ItemId.STAFF_OF_AIR, 1, 0, true, true),
-                    new ItemReq(ItemId.COSMIC_RUNE, 0, 1),
-                    new ItemReq(ItemId.EMERALD_RING, 0, 1)
+                    //  new ItemReq(ItemID.STAFF_OF_AIR, 1, 0, true, true),
+                    new ItemReq(ItemID.COSMIC_RUNE, 0, 1),
+                    new ItemReq(ItemID.EMERALD_RING, 0, 1)
             ));
 
     public boolean myEnchBank2(BankTask task) {
@@ -149,7 +147,7 @@ public class MagicBank implements Task {
             Utils.equipItem(staffId);
         }
         BankManager.open(true);
-        BankManager.depositAllExcept(true, ItemId.COSMIC_RUNE);
+        BankManager.depositAllExcept(true, ItemID.COSMIC_RUNE);
         List<ItemReq> newInv = SkillBank.withdraw(req);
 
         if (newInv != null && newInv.size() > 0) {
@@ -190,13 +188,13 @@ public class MagicBank implements Task {
         BankTask task;
         if (additionalRune == -1) {
             task = BankTask.builder()
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.STAFF_OF_AIR, Amount.of(1)))
-                    .addInvItem(ItemId.LAW_RUNE, Amount.fill(20))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.STAFF_OF_AIR, Amount.of(1)))
+                    .addInvItem(ItemID.LAW_RUNE, Amount.fill(20))
                     .build();
         } else {
             task = BankTask.builder()
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.STAFF_OF_AIR, Amount.of(1)))
-                    .addInvItem(ItemId.LAW_RUNE, Amount.fill(20))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.STAFF_OF_AIR, Amount.of(1)))
+                    .addInvItem(ItemID.LAW_RUNE, Amount.fill(20))
                     .addInvItem(additionalRune, Amount.fill(20))
                     .build();
         }
@@ -211,7 +209,7 @@ public class MagicBank implements Task {
         BankManager.open(true);
 
 
-        Optional<ItemReq> newInv =         BankManager.getItemReqFromBankError(task.execute());
+        Optional<ItemReq> newInv = BankManager.getItemReqFromBankError(task.execute());
         if (newInv.isPresent()) {
             General.println("[Magic Training]: Creating buy list");
             BuyItems.itemsToBuy = BuyItems.populateBuyList(SpellInfo.getRequiredItemList());
@@ -227,8 +225,8 @@ public class MagicBank implements Task {
             RSItem[] coins = Banking.find(995);
             if (coins.length > 0) {
                 int num = coins[0].getStack();
-                int b = (int) (num / ((int) Vars.get().alchItem.getAlchValue()*1.25));
-                General.println("[Debug]: Can buy " + b + " Alch items");
+                int b = (int) (num / (Vars.get().alchItem.getAlchValue() * 1.40));
+                General.println("[Debug]: Can buy " + b + " Alch items @ " + b);
                 return b;
             }
         }
@@ -249,7 +247,7 @@ public class MagicBank implements Task {
     }
 
     public void teleItems() {
-    //    int numOfItems = SpellInfo.getCurrentSpell().map(sp -> sp.determineResourcesToNextItem()).orElse(-1);
+        //    int numOfItems = SpellInfo.getCurrentSpell().map(sp -> sp.determineResourcesToNextItem()).orElse(-1);
         int staffId = SpellInfo.getCurrentSpell().map(sp -> sp.getStaffId()).orElse(-1);
 
         cSkiller.status = "Banking";
@@ -277,32 +275,33 @@ public class MagicBank implements Task {
 
     }
 
-    public void alchBank(int alchItemId) {
+    public void alchBank(int alchItemID) {
         cSkiller.status = "Banking";
-        if (Inventory.find(ItemId.getNotedId(alchItemId)).length < 1 || Inventory.find(ItemId.NATURE_RUNE).length < 1) {
+        if (Inventory.find(ItemID.getNotedId(alchItemID)).length < 1 || Inventory.find(ItemID.NATURE_RUNE).length < 1) {
 
             List<ItemReq> inv = new ArrayList<>(Arrays.asList(
-                    new ItemReq(ItemId.NATURE_RUNE, 250)));
+                    new ItemReq(ItemID.NATURE_RUNE, 0, 1)));
 
             BankManager.open(true);
             BankManager.depositAll(true);
 
-            if (org.tribot.api2007.Equipment.find(ItemId.STAFF_OF_FIRE).length < 1) {
+            if (org.tribot.api2007.Equipment.find(ItemID.STAFF_OF_FIRE).length < 1) {
                 General.println("[Magic Training]: Getting staff of fire");
-                BankManager.withdraw(1, true, ItemId.STAFF_OF_FIRE);
-                Utils.equipItem(ItemId.STAFF_OF_FIRE, "Wield");
+                BankManager.withdraw(1, true, ItemID.STAFF_OF_FIRE);
+                Utils.equipItem(ItemID.STAFF_OF_FIRE, "Wield");
             }
 
             List<ItemReq> newInv = SkillBank.withdraw(inv);
             BankManager.turnNotesOn();
-            BankManager.withdraw(0, true, alchItemId);
+            BankManager.withdraw(0, true, alchItemID);
 
-            if (Inventory.find(ItemId.getNotedId(alchItemId)).length == 0) {
-                General.println("[Magic Training]: Adding items to buy list");
+            if (Inventory.find(ItemID.getNotedId(alchItemID)).length == 0) {
+                General.println("[Magic Training]: Adding items to buy list : " + alchItemID);
                 if (newInv == null)
-                    newInv = new ArrayList<>(Arrays.asList(new ItemReq(alchItemId, determineAmountOfAlchItem())));
-                else
-                    newInv.add(new ItemReq(alchItemId, determineAmountOfAlchItem()));
+                    newInv = new ArrayList<>();
+
+                newInv.add(new ItemReq(alchItemID, determineAmountOfAlchItem()));
+                newInv.add(new ItemReq(ItemID.NATURE_RUNE, determineAmountOfAlchItem()));
             }
             if (newInv != null && newInv.size() > 0) {
                 General.println("[Magic Training]: Creating buy list");

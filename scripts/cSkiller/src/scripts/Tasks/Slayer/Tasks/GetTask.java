@@ -3,10 +3,8 @@ package scripts.Tasks.Slayer.Tasks;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
-import org.tribot.api.Clicking;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
-import org.tribot.api.Timing;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
@@ -146,7 +144,7 @@ public class GetTask implements Task {
                         General.println("[Debug]: Current Task : " + SlayerVars.get().targets[0] +
                                 " || only " + SlayerVars.get().remainingKills + " left");
                         General.sleep(General.randomSD(500, 3000, 1500, 250));
-                        // SlayerVars.get().npcItemId = GetTask.convertTaskToNPCImageId(SlayerVars.get().targets[0]);
+                        // SlayerVars.get().npcItemID = GetTask.convertTaskToNPCImageId(SlayerVars.get().targets[0]);
                         SlayerBank.checkSpecial();
                     }
                 }
@@ -156,16 +154,16 @@ public class GetTask implements Task {
 
     public static void checkGem() {
         SlayerVars.get().status = "Checking task";
-        RSItem[] gem = Inventory.find(ItemId.ENCHANTED_GEM);
-        RSItem[] slayHelm = Equipment.find(ItemId.SLAYER_HELM);
-        RSItem[] slayHelmI = Equipment.find(ItemId.SLAYER_HELM_I);
-        if (Equipment.isEquipped(ItemId.SLAYER_HELM) && slayHelm.length > 0) {
+        RSItem[] gem = Inventory.find(ItemID.ENCHANTED_GEM);
+        RSItem[] slayHelm = Equipment.find(ItemID.SLAYER_HELMET);
+        RSItem[] slayHelmI = Equipment.find(ItemID.SLAYER_HELMET_I);
+        if (Equipment.isEquipped(ItemID.SLAYER_HELMET) && slayHelm.length > 0) {
             if (slayHelm[0].click("Check")) {
                 General.sleep(General.randomSD(1000, 6000, 3000, 750));
                 return;
             }
 
-        } else if (Equipment.isEquipped(ItemId.SLAYER_HELM_I) && slayHelmI.length > 0) {
+        } else if (Equipment.isEquipped(ItemID.SLAYER_HELMET_I) && slayHelmI.length > 0) {
             if (slayHelmI[0].click("Check")) {
                 General.sleep(General.randomSD(1000, 6000, 3000, 750));
                 return;
@@ -174,11 +172,11 @@ public class GetTask implements Task {
         } else if (gem.length < 1) {
             if (BankManager.open(true)) {
                 BankManager.depositAll(true);
-                BankManager.withdraw(1, true, ItemId.ENCHANTED_GEM);
+                BankManager.withdraw(1, true, ItemID.ENCHANTED_GEM);
                 BankManager.close(true);
             }
         }
-        gem = Inventory.find(ItemId.ENCHANTED_GEM);
+        gem = Inventory.find(ItemID.ENCHANTED_GEM);
         if (gem.length > 0 && gem[0].click("Check")) {
             General.sleep(General.randomSD(3000, 9000, 5000, 750));
 
@@ -220,22 +218,22 @@ public class GetTask implements Task {
     }
 
     // public static int convertTaskToNPCImageId(String task) {
-    //      int i = Task.getNPCItemId(task);
+    //      int i = Task.getNPCItemID(task);
     //      return i;
     //  }
 
     public void getDramenStaff() {
-        if (Equipment.find(ItemId.DRAMEN_STAFF).length < 1) {
+        if (Equipment.find(ItemID.DRAMEN_STAFF).length < 1) {
             BankManager.open(true);
             BankManager.depositAll(true);
-            BankManager.withdraw(1, true, ItemId.ENCHANTED_GEM);
-            BankManager.withdraw(1, true, ItemId.DRAMEN_STAFF);
-            BankManager.withdraw(1, true, ItemId.LUMBRIDGE_TELEPORT);
-            BankManager.withdraw(1, true, ItemId.VARROCK_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.ENCHANTED_GEM);
+            BankManager.withdraw(1, true, ItemID.DRAMEN_STAFF);
+            BankManager.withdraw(1, true, ItemID.LUMBRIDGE_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.VARROCK_TELEPORT);
             BankManager.close(true);
 
             equipedWeapon = Equipment.find(Equipment.SLOTS.WEAPON);
-            Utils.equipItem(ItemId.DRAMEN_STAFF);
+            Utils.equipItem(ItemID.DRAMEN_STAFF);
             Utils.shortSleep();
         }
     }
@@ -320,7 +318,7 @@ public class GetTask implements Task {
 
     public void getTaskTurael() {
         if (SlayerVars.get().getTask) {
-            RSItem[] invitem = Inventory.find(ItemId.GAMES_NECKLACE);
+            RSItem[] invitem = Inventory.find(ItemID.GAMES_NECKLACE);
             if (invitem.length < 1) {
                 if (!Areas.TURAEL_AREA.contains(Player.getPosition())) {
                     BankManager.open(true);
@@ -329,15 +327,15 @@ public class GetTask implements Task {
                         BankManager.depositAll(true);
 
                     BankManager.checkEquippedGlory();
-                    if (!BankManager.withdraw(1, true, ItemId.GAMES_NECKLACE))
+                    if (!BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE))
                         SlayerVars.get().shouldRestock = true;
-                    BankManager.withdraw(1, true, ItemId.VARROCK_TELEPORT);
+                    BankManager.withdraw(1, true, ItemID.VARROCK_TELEPORT);
                     BankManager.close(true);
                     General.println("[Debug]: Getting Task From Turael.");
 
                 }
             }
-            if (Inventory.find(ItemId.GAMES_NECKLACE).length > 0) {
+            if (Inventory.find(ItemID.GAMES_NECKLACE).length > 0) {
                 PathingUtil.walkToArea(Areas.TURAEL_AREA);
                 RSNPC[] turael = NPCs.findNearest("Turael");
                 if (turael.length > 0) {
@@ -450,7 +448,7 @@ public class GetTask implements Task {
             AttackNpc.setPrayer();
 
             if (!SlayerVars.get().pointBoosting && Utils.getCombatLevel() >= 89 || (Equipment.isEquipped(
-                    ItemId.SLAYER_HELM) && Utils.getCombatLevel() > 84)) {
+                    ItemID.SLAYER_HELMET) && Utils.getCombatLevel() > 84)) {
                 getTaskNieve();
                 SlayerVars.get().shouldBank = true;
                 General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);

@@ -11,6 +11,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
@@ -37,40 +38,40 @@ public class HauntedMine implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.CHISEL, 1, 500),
-                    new GEItem(ItemId.STAMINA_POTION[0], 4, 15),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.CHISEL, 1, 500),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 15),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STAMINA_POTION[0], 4, 1),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 2, 0, true, true),
-                    new ItemReq(ItemId.CHISEL, 1, 1),
-                    new ItemReq(ItemId.RANGING_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 4, 1),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 2, 0, true, true),
+                    new ItemReq(ItemID.CHISEL, 1, 1),
+                    new ItemReq(ItemID.RANGING_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
 
-    ItemReq zealotsKey = new ItemReq("Zealot's key", ItemId.ZEALOTS_KEY);
+    ItemReq zealotsKey = new ItemReq("Zealot's key", ItemID.ZEALOTS_KEY);
 
-    ItemReq zealotsKeyHighlighted = new ItemReq("Zealot's key", ItemId.ZEALOTS_KEY);
+    ItemReq zealotsKeyHighlighted = new ItemReq("Zealot's key", ItemID.ZEALOTS_KEY);
 
 
-    ItemReq chisel = new ItemReq("Chisel", ItemId.CHISEL);
-    ItemReq glowingFungus = new ItemReq("Glowing fungus", ItemId.GLOWING_FUNGUS);
-    ItemReq glowingFungusHighlight = new ItemReq("Glowing fungus", ItemId.GLOWING_FUNGUS);
+    ItemReq chisel = new ItemReq("Chisel", ItemID.CHISEL);
+    ItemReq glowingFungus = new ItemReq("Glowing fungus", ItemID.GLOWING_FUNGUS);
+    ItemReq glowingFungusHighlight = new ItemReq("Glowing fungus", ItemID.GLOWING_FUNGUS);
 
-    ItemReq crystalMineKey = new ItemReq("Crystal-mine key", ItemId.CRYSTALMINE_KEY);
+    ItemReq crystalMineKey = new ItemReq("Crystal-mine key", ItemID.CRYSTALMINE_KEY);
 
     ItemReq combatGear = new ItemReq("Combat gear", -1, -1);
 
-    ItemReq food = new ItemReq(ItemId.SHARK, 10, 1);
+    ItemReq food = new ItemReq(ItemID.SHARK, 10, 1);
 
 
     RSArea entryRoom1 = new RSArea(new RSTile(2647, 9803, 0), new RSTile(2680, 9814, 0));
@@ -221,7 +222,7 @@ public class HauntedMine implements QuestTask {
         }
         RSInterface startButton = Interfaces.findWhereAction("Start", interfaceId);
         if (startButton != null && startButton.click()) {
-            Waiting.waitNormal(2000, 200);
+            Waiting.waitNormal(6000, 200);
             Utils.cutScene();
         }
     }
@@ -256,7 +257,7 @@ public class HauntedMine implements QuestTask {
 
     // useKeyOnValve.addSubSteps(openValve);
 
-    ObjectStep goDownLift = new ObjectStep(ObjectID.LIFT_4938, new RSTile(2807, 4493, 0),
+    ObjectStep goDownLift = new ObjectStep(ObjectID.LIFT_4938, new RSTile(2805, 4493, 0),
             "Go-down");
 
     ObjectStep goDownToCollectFungus = new ObjectStep(4967, new RSTile(2710, 4539, 0),
@@ -337,7 +338,29 @@ public class HauntedMine implements QuestTask {
     RSTile mineCartLevel3SouthHideTileReverse = new RSTile(2728, 4503, 0);
 
     public void solveMineCartReverse() {
-
+        RSNPC[] mineCart = NPCs.findNearest(3621);
+        if (mineCart.length > 0) {
+            if (mineCartSouthTriggerArea.contains(mineCart[0].getPosition())
+                    && mineCartLevel3SouthHideTileReverse.equals(Player.getPosition())) {
+                Log.log("[Debug]: Cart is in trigger area");
+               // goDownToFungusRoom.execute();
+                Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 5500);
+            } else if (mineCartLevel3SouthHideTile.equals(Player.getPosition())) {
+                Log.log("[Debug]: Waiting on cart to move to trigger area");
+                Timer.waitCondition(() -> mineCartSouthTriggerArea.contains(mineCart[0].getPosition()), 25000, 35000);
+            } else if (HauntedMineConst.inLevel3SouthBeforeMineCart.check() &&
+                    mineCartSmallSouthTriggerArea.contains(mineCart[0])) {
+                if (PathingUtil.localNavigation(mineCartLevel3SouthHideTile)) {
+                    Timer.waitCondition(() -> mineCartLevel3SouthHideTile.isClickable(), 3500, 5000);
+                    if (mineCartLevel3SouthHideTile.isClickable() &&
+                            DynamicClicking.clickRSTile(mineCartLevel3SouthHideTile, "Walk here"))
+                        PathingUtil.movementIdle();
+                }
+            } else {
+                Log.log("[Debug]: Waiting on cart to move to trigger area");
+                Timer.waitCondition(() -> mineCartSmallSouthTriggerArea.contains(mineCart[0]), 25000, 35000);
+            }
+        }
     }
 
     RSTile mineCartLevel3NorthHideTile = new RSTile(2728, 4503, 0);
@@ -423,6 +446,7 @@ public class HauntedMine implements QuestTask {
             goUpFromCollectRoom.execute();
         } else if (new Conditions(glowingFungus, inLevel3North, hasKeyOrOpenedValve).check()) {
             Log.log("[Debug]: goDownFromLevel3NorthEast");
+            //TODO add click on the tile to avoid the cart
             goDownFromLevel3NorthEast.execute();
         } else if (new Conditions(glowingFungus, inLevel2North, hasKeyOrOpenedValve).check()) {
             Log.log("[Debug]: goDownLevel2North");
@@ -432,6 +456,8 @@ public class HauntedMine implements QuestTask {
             goDownLevel1North.execute();
         } else if (new Conditions(fungusOnOtherSide, inCollectRoom, hasKeyOrOpenedValve).check()) {
             Log.log("[Debug]: Collecting fungus");
+            if (Inventory.isFull())
+                EatUtil.eatFood();
             collectFungus.execute();
             NPCInteraction.handleConversation("Take it.");
         } else if (new Conditions(fungusOnOtherSide, inLevel3North, hasKeyOrOpenedValve).check()) {
@@ -489,12 +515,13 @@ public class HauntedMine implements QuestTask {
             Log.log("[Debug]: In cart room");
             pickFungus.execute();
         } else {
+            Log.log("Enter mine");
             enterMine();
         }
     }
 
     public void exploreMineStep() {
-        ConditionalStep exploreMine = new ConditionalStep(talkToZealot);
+        ConditionalStep exploreMine = new ConditionalStep(cutCrystal);
 
         exploreMine.addStep(new Conditions(glowingFungus, inCrystalEntrance, crystalMineKey, chisel), cutCrystal);
         exploreMine.addStep(new Conditions(glowingFungus, inFloodedRoom, crystalMineKey, chisel), goDownToCrystals);
@@ -557,17 +584,19 @@ public class HauntedMine implements QuestTask {
     @Override
     public void execute() {
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_HAUNTED_MINE.getId());
-        if (gameSetting == 1) {
+        if (gameSetting == 11) {
             cQuesterV2.taskList.remove(this);
             return;
         }
+        if (gameSetting ==0)
+            talkToZealot.execute();
         Log.log("[Debug]: Haunted mine gameSetting is " + gameSetting);
         Map<Integer, QuestStep> steps = setconditions();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
-        step.ifPresent(QuestStep::execute);
+       //step.ifPresent(QuestStep::execute);
         navigateMine();
         exploreMineStep();
-        Waiting.waitNormal(50, 20);
+        Waiting.waitNormal(500, 20);
 
     }
 

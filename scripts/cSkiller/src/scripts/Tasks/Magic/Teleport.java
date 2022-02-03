@@ -12,7 +12,7 @@ import scripts.API.Task;
 import scripts.AntiBan;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Timer;
 
 import java.util.Optional;
@@ -46,8 +46,8 @@ public class Teleport implements Task {
                 Skills.getActualLevel(Skills.SKILLS.MAGIC) < 55 &&
                 Skills.getActualLevel(Skills.SKILLS.MAGIC)  >= 37
                 &&
-                Inventory.find(ItemId.LAW_RUNE).length > 0 &&
-                Equipment.isEquipped(ItemId.STAFF_OF_AIR);
+                Inventory.find(ItemID.LAW_RUNE).length > 0 &&
+                Equipment.isEquipped(ItemID.STAFF_OF_AIR);
     }
 
     @Override

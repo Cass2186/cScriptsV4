@@ -89,30 +89,30 @@ public class AnimalMagnetism implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.MITHRIL_AXE, 1, 300),
-                    new GEItem(ItemId.IRON_BAR, 5, 300),
-                    new GEItem(ItemId.DRAGON_BONES, 5, 300),
-                    new GEItem(ItemId.EMPTY_BUCKET, 5, 300),
-                    new GEItem(ItemId.HAMMER, 1, 600),
+                    new GEItem(ItemID.MITHRIL_AXE, 1, 300),
+                    new GEItem(ItemID.IRON_BAR, 5, 300),
+                    new GEItem(ItemID.DRAGON_BONES, 5, 300),
+                    new GEItem(ItemID.EMPTY_BUCKET, 5, 300),
+                    new GEItem(ItemID.HAMMER, 1, 600),
                     new GEItem(HARD_LEATHER, 1, 300),
                     new GEItem(HOLY_SYMBOL, 1, 350),
                     new GEItem(POLISHED_BUTTONS, 1, 350),
                     new GEItem(HARD_LEATHER, 1, 50),
                     new GEItem(HARD_LEATHER, 1, 50),
                     new GEItem(POT, 5, 500),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 2, 25),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 2, 25),
-                    new GEItem(ItemId.SALVE_GRAVEYARD_TELEPORT, 6, 40),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 2, 25),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 2, 25),
+                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 6, 40),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -142,10 +142,10 @@ public class AnimalMagnetism implements QuestTask {
             BankManager.withdraw(5, true, EMPTY_BUCKET);
             BankManager.withdraw(5, true, POT);
             BankManager.withdraw(20, true, ECTO_TOKEN);
-            BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
-            Utils.equipItem(ItemId.RING_OF_DUELING[0]);
-            BankManager.withdraw(1, true, ItemId.SALVE_GRAVEYARD_TELEPORT);
-            BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
+            BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
+            Utils.equipItem(ItemID.RING_OF_DUELING[0]);
+            BankManager.withdraw(1, true, ItemID.SALVE_GRAVEYARD_TELEPORT);
+            BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
             BankManager.close(true);
             Utils.equipItem(GHOST_SPEAK_AMULET);
         }
@@ -340,10 +340,10 @@ public class AnimalMagnetism implements QuestTask {
             BankManager.withdraw(1, true, HARD_LEATHER);
             BankManager.withdraw(2, true, UNDEAD_CHICKENS);
             BankManager.withdraw(20, true, ECTO_TOKEN);
-            BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE[0]);
-            BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-            BankManager.withdraw(2, true, ItemId.AMULET_OF_GLORY[2]);
-            BankManager.withdraw(1, true, ItemId.GAMES_NECKLACE[0]);
+            BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE[0]);
+            BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+            BankManager.withdraw(2, true, ItemID.AMULET_OF_GLORY[2]);
+            BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
             BankManager.close(true);
         }
     }
@@ -375,8 +375,8 @@ public class AnimalMagnetism implements QuestTask {
         if (!MINE_AREA.contains(Player.getPosition()) && Inventory.find(BAR_MAGNET).length < 1) {
             cQuesterV2.status = "Crafting Magnet";
             General.println("[Debug]: " + cQuesterV2.status);
-            if (Inventory.find(ItemId.SKILLS_NECKLACE[0]).length > 0) {
-                AccurateMouse.click(Inventory.find(ItemId.SKILLS_NECKLACE[0])[0], "Rub");
+            if (Inventory.find(ItemID.SKILLS_NECKLACE[0]).length > 0) {
+                AccurateMouse.click(Inventory.find(ItemID.SKILLS_NECKLACE[0])[0], "Rub");
                 Timer.waitCondition(() -> Interfaces.get(187, 3, 2) != null, 5000, 8000);
                 if (Interfaces.get(187, 3, 2) != null) {
                     if (Interfaces.get(187, 3, 2).click())

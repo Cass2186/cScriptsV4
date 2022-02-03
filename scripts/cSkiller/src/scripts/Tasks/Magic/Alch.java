@@ -13,8 +13,9 @@ import scripts.API.Task;
 import scripts.AntiBan;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Timer;
+import scripts.Utils;
 import scripts.rsitem_services.GrandExchange;
 
 import java.awt.*;
@@ -24,17 +25,17 @@ import java.util.Optional;
 public class Alch implements Task {
 
     public enum AlchItems {
-        YEW_LONGBOW(ItemId.YEW_LONGBOW, 768),
-        AIR_BATTLESTAFF(ItemId.AIR_BATTLESTAFF, 9300),
-        FIRE_BATTLESTAFF(ItemId.FIRE_BATTLESTAFF,9300),
-        WATER_BATTLESTAFF(ItemId.WATER_BATTLESTAFF,9300),
-        EARTH_BATTLESTAFF(ItemId.EARTH_BATTLESTAFF,9300),
-        ONYX_BOLTS_E(ItemId.ONYX_BOLTS_E,9000),
-        RING_OF_LIFE(ItemId.RING_OF_LIFE, 2115),
-        MAGIC_LONGBOW(ItemId.MAGIC_LONGBOW, 1536),
-        COMBAT_BRACELET(ItemId.COMBAT_BRACELET_0,12624),
-        SKILLS_NECKLACE(ItemId.SKILLS_NECKLACE_0, 12120),
-        ABYSSAL_BRACELET_5(ItemId.ABYSSAL_BRACELET_5, 2520);
+        YEW_LONGBOW(ItemID.YEW_LONGBOW, 768),
+        AIR_BATTLESTAFF(ItemID.AIR_BATTLESTAFF, 9300),
+        FIRE_BATTLESTAFF(ItemID.FIRE_BATTLESTAFF,9300),
+        WATER_BATTLESTAFF(ItemID.WATER_BATTLESTAFF,9300),
+        EARTH_BATTLESTAFF(ItemID.EARTH_BATTLESTAFF,9300),
+        ONYX_BOLTS_E(ItemID.ONYX_BOLTS_E,9000),
+        RING_OF_LIFE(ItemID.RING_OF_LIFE, 2115),
+        MAGIC_LONGBOW(ItemID.MAGIC_LONGBOW, 1536),
+        COMBAT_BRACELET(ItemID.COMBAT_BRACELET0,12624),
+        SKILLS_NECKLACE(ItemID.SKILLS_NECKLACE0, 12120),
+        ABYSSAL_BRACELET_5(ItemID.ABYSSAL_BRACELET5, 2520);
 
         AlchItems(int id) {
             this.id = id;
@@ -56,7 +57,7 @@ public class Alch implements Task {
         }
 
         public int getNatureRuneCost() {
-            RSItemDefinition def = RSItemDefinition.get(ItemId.NATURE_RUNE);
+            RSItemDefinition def = RSItemDefinition.get(ItemID.NATURE_RUNE);
             return def != null ? def.getHighAlchemyValue() : 220;
         }
 
@@ -72,44 +73,16 @@ public class Alch implements Task {
         return Magic.isSpellSelected() && Magic.getSelectedSpellName().contains("High Level Alchemy");
     }
 
-    public Optional<RSInterface> getSpellInterface(String spellName) {
-        RSInterface book = Interfaces.get(218);
-        if (book != null) {
-            RSInterface[] spells = book.getChildren();
-            return Arrays.stream(spells).filter(s -> s.getComponentName() != null)
-                    .filter(s -> General.stripFormatting(s.getComponentName()).contains(spellName))
-                    .findFirst();
-        }
-        return Optional.empty();
+
+    public int getNotedId(int ItemID) {
+        return ItemID + 1;
     }
 
-    public int getNotedId(int itemId) {
-        return itemId + 1;
-    }
 
-    public Rectangle getScreenPosition(String spellName) {
-        Optional<RSInterface> spellInter = getSpellInterface(spellName);
-        return spellInter.isPresent() ? spellInter.get().getAbsoluteBounds() : null;
-    }
 
-    public boolean dragItemToAlch(int itemId) {
-        Rectangle hoverPoint = getScreenPosition("High Level Alchemy");
-        Point p = hoverPoint.getLocation();
-        RSItem[] alchItem = Inventory.find(itemId);
-        if (alchItem.length > 0) {
-            Rectangle itemRec = alchItem[0].getArea();
-            Point itemP = new Point((int) itemRec.getMaxX(), (int) itemRec.getMaxY());
-            if (!hoverPoint.contains(itemP) && GameTab.open(GameTab.TABS.INVENTORY)) {
-                General.println("[Debug]: Dragging item");
-                Mouse.drag(itemRec.getLocation(), p, 1);
-            }
-            return hoverPoint.contains(itemP);
-        }
-        return false;
-    }
 
-    public boolean castAlch(int itemId) {
-        RSItem[] item = Inventory.find(itemId);
+    public boolean castAlch(int ItemID) {
+        RSItem[] item = Inventory.find(ItemID);
         if (item.length == 0) {
             General.println("[Debug]: Missing alchable item");
             return false;
@@ -118,21 +91,22 @@ public class Alch implements Task {
 
         if (Magic.isSpellSelected() && !Magic.getSelectedSpellName().contains("High Level Alchemy")) {
             General.println("[Debug]: Wrong spell is selected, clicking");
-            if (Player.getPosition().click())
+            if (Player.getPosition().click("Cast"))
                 Timer.waitCondition(() -> !Magic.isSpellSelected(), 2500, 3000);
         }
 
         //select spell and wait for inv to open
-        if (!isAlchSelected() && Magic.selectSpell("High Level Alchemy"))
-            Timer.waitCondition(() -> GameTab.getOpen().equals(GameTab.TABS.INVENTORY), 2500, 4200);
+        if (!isAlchSelected() && Magic.selectSpell("High Level Alchemy") &&
+            Timer.waitCondition(() -> GameTab.getOpen().equals(GameTab.TABS.INVENTORY), 2500, 4200))
+            Utils.idlePredictableAction();
 
         if (isAlchSelected() && GameTab.getOpen().equals(GameTab.TABS.INVENTORY)
                 && item[0].click("Cast"))
             return Timer.waitCondition(() -> {
                 AntiBan.timedActions();
-                Waiting.waitNormal(275, 75);
+                Waiting.waitNormal(350, 75);
                 return GameTab.getOpen().equals(GameTab.TABS.MAGIC);
-            }, 3500, 4200);
+            }, 4000, 5200);
 
         return false;
     }
@@ -148,13 +122,13 @@ public class Alch implements Task {
                 Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55 &&
                 Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75 &&
                 (Inventory.find(getNotedId(Vars.get().alchItem.getId())).length > 0 &&
-                        Inventory.find(ItemId.NATURE_RUNE).length > 0);
+                        Inventory.find(ItemID.NATURE_RUNE).length > 0);
     }
 
     @Override
     public void execute() {
-        if (dragItemToAlch(getNotedId(Vars.get().alchItem.id)))
-            castAlch(getNotedId(Vars.get().alchItem.id));
+        if (MagicMethods.dragItemToAlch(getNotedId(Vars.get().alchItem.getId())))
+            castAlch(getNotedId(Vars.get().alchItem.getId()));
 
     }
 

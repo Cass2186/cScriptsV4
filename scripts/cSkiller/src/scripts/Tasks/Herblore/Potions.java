@@ -1,12 +1,12 @@
 package scripts.Tasks.Herblore;
 
-import scripts.ItemId;
+import scripts.ItemID;
 
 public enum Potions {
 
-    ATTACK_POTION(ItemId.EYE_OF_NEWT, ItemId.GUAM_UNF, 25, 26),
-    STRENGTH_POTION(ItemId.LIMPWURT, ItemId.TARROMIN_UNF, 37, 38),
-    ENERGY_POTION(ItemId.HARRALANDER_UNF, ItemId.CHOCOLATE_DUST, 67.5, 45);
+    ATTACK_POTION(ItemID.EYE_OF_NEWT, ItemID.GUAM_POTION_UNF, 25, 26),
+    STRENGTH_POTION(ItemID.LIMPWURT_ROOT, ItemID.TARROMIN_POTION_UNF, 37, 38),
+    ENERGY_POTION(ItemID.HARRALANDER_POTION_UNF, ItemID.CHOCOLATE_DUST, 67.5, 45);
 
 
     int item1;

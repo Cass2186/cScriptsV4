@@ -25,13 +25,14 @@ public class DeathCollection implements Task {
             Log.log("[Debug]: Getting house tab");
             PathingUtil.walkToArea(LUMBRIDGE_BANK, false);
             BankManager.open(true);
-            BankManager.withdraw(1, true, ItemId.TELEPORT_TO_HOUSE);
+            BankManager.withdraw(1, true, ItemID.TELEPORT_TO_HOUSE);
             BankManager.close(true);
         }
-        RSItem[] housetab = Inventory.find(ItemId.TELEPORT_TO_HOUSE);
-        if (housetab.length > 0 && housetab[0].click("Break")) {
+        RSItem[] housetab = Inventory.find(ItemID.TELEPORT_TO_HOUSE);
+        if (VorkthUtil.LUNAR_ISLE_AREA.contains(Player.getPosition()) &&
+                !Game.isInInstance()&& housetab.length > 0 && housetab[0].click("Break")) {
             Timer.waitCondition(Game::isInInstance, 6000);
-            Waiting.waitNormal(2500, 300);
+            Waiting.waitNormal(3500, 300);
         }
         if (leaveViaPortal())
             Waiting.waitNormal(750, 125);
@@ -43,7 +44,7 @@ public class DeathCollection implements Task {
                 .actionsContains("Enter")
                 .getFirstResult());
         return p.map(port -> {
-            return port.click("Enter") &&
+            return Utils.clickObj(port.getID(), "Enter") &&
                     Timer.waitCondition(() -> VorkthUtil.LUNAR_ISLE_AREA.contains(Player.getPosition()),
                             8000, 10000);
         }).orElse(false);
@@ -51,14 +52,14 @@ public class DeathCollection implements Task {
     }
 
     public void fillRunePouch() {
-        if (Utils.useItemOnItem(ItemId.DUST_RUNE, ItemId.RUNE_POUCH)) {
-            Timer.waitCondition(() -> Inventory.find(ItemId.DUST_RUNE).length == 0, 2500, 3500);
+        if (Utils.useItemOnItem(ItemID.DUST_RUNE, ItemID.RUNE_POUCH)) {
+            Timer.waitCondition(() -> Inventory.find(ItemID.DUST_RUNE).length == 0, 2500, 3500);
         }
-        if (Utils.useItemOnItem(ItemId.CHAOS_RUNE, ItemId.RUNE_POUCH)) {
-            Timer.waitCondition(() -> Inventory.find(ItemId.CHAOS_RUNE).length == 0, 2500, 3500);
+        if (Utils.useItemOnItem(ItemID.CHAOS_RUNE, ItemID.RUNE_POUCH)) {
+            Timer.waitCondition(() -> Inventory.find(ItemID.CHAOS_RUNE).length == 0, 2500, 3500);
         }
-        if (Utils.useItemOnItem(ItemId.LAW_RUNE, ItemId.RUNE_POUCH)) {
-            Timer.waitCondition(() -> Inventory.find(ItemId.LAW_RUNE).length == 0, 2500, 3500);
+        if (Utils.useItemOnItem(ItemID.LAW_RUNE, ItemID.RUNE_POUCH)) {
+            Timer.waitCondition(() -> Inventory.find(ItemID.LAW_RUNE).length == 0, 2500, 3500);
         }
     }
 
@@ -85,14 +86,15 @@ public class DeathCollection implements Task {
         }
         if (PathingUtil.walkToTile(new RSTile(2640, 3697, 0), 4, false) &&
                 Utils.clickNPC("Torfinn", "Collect")) {
-            Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(602), 6000, 8000);
+            Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(602), 6000, 8000);
         }
         RSInterface unlock = Interfaces.findWhereAction("Unlock", 602);
         if (unlock != null && unlock.click()) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Yes, pay 100,000 x Coins.");
-            Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(602), 3000, 4000);
-            Waiting.waitNormal(400, 55);
+            if(NPCInteraction.waitForConversationWindow()) {
+                NPCInteraction.handleConversation("Yes, pay 100,000 x Coins.");
+                Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(602), 3000, 4000);
+                Waiting.waitNormal(1200, 120);
+            }
         }
         RSInterface take = Interfaces.findWhereAction("Take-All", 602);
         int invLength = Inventory.getAll().length;

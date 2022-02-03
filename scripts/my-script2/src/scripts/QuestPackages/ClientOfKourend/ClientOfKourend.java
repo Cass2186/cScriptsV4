@@ -46,11 +46,11 @@ public class ClientOfKourend implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(FEATHER, 1, 300),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 2, 30),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 30),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 2, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 30),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 2, 30),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 2, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 30),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -71,10 +71,10 @@ public class ClientOfKourend implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.GAMES_NECKLACE[0]);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(1, true, FEATHER);
-        BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
+        BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(2, true, BankManager.STAMINA_POTION[0]);
         BankManager.close(true);
     }

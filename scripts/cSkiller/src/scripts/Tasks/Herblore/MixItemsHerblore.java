@@ -1,6 +1,5 @@
 package scripts.Tasks.Herblore;
 
-import com.sun.tools.javac.Main;
 import org.tribot.api.General;
 import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.Banking;
@@ -13,7 +12,6 @@ import scripts.BankManager;
 import scripts.Data.Enums.HerbloreItems;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -30,12 +28,7 @@ public class MixItemsHerblore implements Task {
 
         if (Interfaces.get(270, 14) != null) {
             General.sleep(General.randomSD(25, 200, 125, 40));
-            Keyboard.holdKey(scripts.Keyboard.SPACEBAR, 32, (() -> {
-                        General.sleep(General.random(100, 250));
-                        return Interfaces.get(270, 14) == null;
-                    })
-            );
-
+            Keyboard.typeString(" ");
             Timer.abc2SkillingWaitCondition(() -> (Interfaces.get(233, 2) != null
                     || Inventory.find(item1).length < 1), 30000, 45000);
 
@@ -59,13 +52,14 @@ public class MixItemsHerblore implements Task {
 
     @Override
     public boolean validate() {
-        return Vars.get().currentTask != null  && Vars.get().currentTask.equals(SkillTasks.HERBLORE);
+        return Vars.get().currentTask != null  && Vars.get().currentTask.equals(SkillTasks.HERBLORE) &&
+                Skills.SKILLS.HERBLORE.getActualLevel()< 38;
     }
 
     @Override
     public void execute() {
         Optional<HerbloreItems> itemOptional = HerbloreItems.getCurrentItem();
-        itemOptional.ifPresent(itm -> mixItems(itm.getItemId(), itm.getUnfPotionId()));
+        itemOptional.ifPresent(itm -> mixItems(itm.getItemID(), itm.getUnfPotionId()));
     }
 
     @Override

@@ -14,9 +14,13 @@ import scripts.BankManager;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 
+import scripts.ItemID;
+import scripts.Requirements.ItemReq;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Timer;
+
+import java.util.List;
 
 
 public class Bank implements Task {
@@ -72,6 +76,19 @@ public class Bank implements Task {
 
             determineBirdHouse();
             goToVarrockWest();
+            List<ItemReq> list = List.of(
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 2),
+                    new ItemReq(Vars.get().currentBirdHouseId, 4, 4),
+                    new ItemReq(Const.get().BARLEY_SEED_ID, 500,40),
+                    new ItemReq(ItemID.STAMINA_POTION, 1),
+                   new ItemReq.Builder()
+                           .idEquals(Const.get().DIGSITE_PENDANT[0])
+                           .addAlternateIds(Const.get().DIGSITE_PENDANT)
+                            .minAmount(1)
+                            .chargesNeeded(1)
+                            .build()
+            );
+         //   BankManager.withdrawList(list);
             BankManager.open(true);
             BankManager.depositAll(true);
             BankManager.withdraw(2,true, Const.get().VARROCK_TELEPORT);
@@ -84,7 +101,7 @@ public class Bank implements Task {
             BankManager.withdraw(1, true, Const.get().DIGSITE_PENDANT);
             BankManager.withdraw(0, true, Const.get().BARLEY_SEED_ID);
             BankManager.withdraw(1, true, Const.get().STAMINA_POTION);
-            BankManager.close(true);
+           BankManager.close(true);
         }
         if (!BankManager.checkInventoryItems(Const.get().VARROCK_TELEPORT,
                 Vars.get().currentBirdHouseId, Const.get().BARLEY_SEED_ID)) {

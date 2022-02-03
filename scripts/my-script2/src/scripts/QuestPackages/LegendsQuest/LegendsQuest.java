@@ -1,42 +1,50 @@
 package scripts.QuestPackages.LegendsQuest;
 
+import com.sun.javafx.charts.Legend;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import scripts.*;
+import scripts.Listeners.InterfaceListener;
+import scripts.Listeners.InterfaceObserver;
+import scripts.Listeners.InventoryObserver;
+import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
+import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Statistics;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.ItemOnTileRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.ObjectCondition;
+import scripts.Requirements.*;
+import scripts.Requirements.Util.ConditionalStep;
+import scripts.Requirements.Util.Conditions;
+import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
+import scripts.Timer;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 
-public class LegendsQuest implements QuestTask {
+public class LegendsQuest implements QuestTask, InterfaceListener {
 
-    ItemReq axe = new ItemReq(ItemId.RUNE_AXE);
-    ItemReq machete = new ItemReq(ItemId.MACHETE);
+    ItemReq axe = new ItemReq(ItemID.RUNE_AXE);
+    ItemReq machete = new ItemReq(ItemID.MACHETE);
 
-    ItemReq radimusNotes = new ItemReq(ItemId.RADIMUS_NOTES);
+    ItemReq radimusNotes = new ItemReq(ItemID.RADIMUS_NOTES);
     //	radimusNotes.setTooltip("You can get another from Radimus in the Legends' Guild");
-    ItemReq papyrus3 = new ItemReq(ItemId.PAPYRUS, 3);
-    ItemReq charcoal3 = new ItemReq(ItemId.CHARCOAL);
-    ItemReq radimusNotesHighlight = new ItemReq(ItemId.RADIMUS_NOTES);
+    ItemReq papyrus3 = new ItemReq(ItemID.PAPYRUS, 3);
+    ItemReq charcoal3 = new ItemReq(ItemID.CHARCOAL);
+    ItemReq radimusNotesHighlight = new ItemReq(ItemID.RADIMUS_NOTES);
     //radimusNotesHighlight.setTooltip("You can get another from Radimus in the Legends' Guild");
 
 
@@ -47,123 +55,123 @@ public class LegendsQuest implements QuestTask {
     //	completeNotesHighlighted.setTooltip("You can get another from Radimus in the Legends' Guild, and you'll need to re-sketch the jungle");
 
 
-    ItemReq anyNotes = new ItemReq(ItemId.RADIMUS_NOTES);
-    //	anyNotes.addAlternates(ItemId.RADIMUS_NOTES_715);
+    ItemReq anyNotes = new ItemReq(ItemID.RADIMUS_NOTES);
+    //	anyNotes.addAlternates(ItemID.RADIMUS_NOTES_715);
 
-    ItemReq sketch = new ItemReq(ItemId.SKETCH);
+    ItemReq sketch = new ItemReq(ItemID.SKETCH);
     //	sketch.setTooltip("You can get another by summoning Gujuo with the bull roarer again");
 
-    ItemReq papyrus = new ItemReq(ItemId.PAPYRUS);
-    ItemReq charcoal = new ItemReq(ItemId.CHARCOAL);
+    ItemReq papyrus = new ItemReq(ItemID.PAPYRUS);
+    ItemReq charcoal = new ItemReq(ItemID.CHARCOAL);
 
-    ItemReq bullRoarer = new ItemReq(ItemId.BULL_ROARER);
+    ItemReq bullRoarer = new ItemReq(ItemID.BULL_ROARER);
     //	bullRoarer.setTooltip("You can get another by using a complete Radimus notes on a Jungle Forester");
-    ItemReq bullRoarerHighlight = new ItemReq("Bull roarer", ItemId.BULL_ROARER);
+    ItemReq bullRoarerHighlight = new ItemReq("Bull roarer", ItemID.BULL_ROARER);
     //	bullRoarerHighlight.setTooltip("You can get another by using a complete Radimus notes on a Jungle Forester");
 
-    ItemReq lockpick = new ItemReq("Lockpick", ItemId.LOCKPICK);
-    ItemReq soulRune = new ItemReq("Soul rune", ItemId.SOUL_RUNE);
-    ItemReq soulRuneHighlight = new ItemReq("Soul rune", ItemId.SOUL_RUNE);
+    ItemReq lockpick = new ItemReq("Lockpick", ItemID.LOCKPICK);
+    ItemReq soulRune = new ItemReq("Soul rune", ItemID.SOUL_RUNE);
+    ItemReq soulRuneHighlight = new ItemReq("Soul rune", ItemID.SOUL_RUNE);
 
-    ItemReq mindRune = new ItemReq("Mind rune", ItemId.MIND_RUNE);
-    ItemReq mindRuneHighlight = new ItemReq("Mind rune", ItemId.MIND_RUNE);
+    ItemReq mindRune = new ItemReq("Mind rune", ItemID.MIND_RUNE);
+    ItemReq mindRuneHighlight = new ItemReq("Mind rune", ItemID.MIND_RUNE);
 
-    ItemReq earthRune = new ItemReq("Earth rune", ItemId.EARTH_RUNE);
-    ItemReq earthRuneHighlight = new ItemReq("Earth rune", ItemId.EARTH_RUNE);
+    ItemReq earthRune = new ItemReq("Earth rune", ItemID.EARTH_RUNE);
+    ItemReq earthRuneHighlight = new ItemReq("Earth rune", ItemID.EARTH_RUNE);
 
-    ItemReq lawRune2 = new ItemReq("Law rune", ItemId.LAW_RUNE, 2);
-    ItemReq lawRuneHighlight = new ItemReq("Law rune", ItemId.LAW_RUNE);
+    ItemReq lawRune2 = new ItemReq("Law rune", ItemID.LAW_RUNE, 2);
+    ItemReq lawRuneHighlight = new ItemReq("Law rune", ItemID.LAW_RUNE);
 
-    ItemReq opal = new ItemReq("Opal", ItemId.OPAL);
-    ItemReq jade = new ItemReq("Jade", ItemId.JADE);
-    ItemReq topaz = new ItemReq("Red topaz", ItemId.RED_TOPAZ);
-    ItemReq sapphire = new ItemReq("Sapphire", ItemId.SAPPHIRE);
-    ItemReq emerald = new ItemReq("Emerald", ItemId.EMERALD);
-    ItemReq ruby = new ItemReq("Ruby", ItemId.RUBY);
-    ItemReq diamond = new ItemReq("Diamond", ItemId.DIAMOND);
+    ItemReq opal = new ItemReq("Opal", ItemID.OPAL);
+    ItemReq jade = new ItemReq("Jade", ItemID.JADE);
+    ItemReq topaz = new ItemReq("Red topaz", ItemID.RED_TOPAZ);
+    ItemReq sapphire = new ItemReq("Sapphire", ItemID.SAPPHIRE);
+    ItemReq emerald = new ItemReq("Emerald", ItemID.EMERALD);
+    ItemReq ruby = new ItemReq("Ruby", ItemID.RUBY);
+    ItemReq diamond = new ItemReq("Diamond", ItemID.DIAMOND);
 
-    ItemReq opalHighlighted = new ItemReq("Opal", ItemId.OPAL);
-    ItemReq jadeHighlighted = new ItemReq("Jade", ItemId.JADE);
-    ItemReq topazHighlighted = new ItemReq("Red topaz", ItemId.RED_TOPAZ);
-    ItemReq sapphireHighlighted = new ItemReq("Sapphire", ItemId.SAPPHIRE);
-    ItemReq emeraldHighlighted = new ItemReq("Emerald", ItemId.EMERALD);
-    ItemReq rubyHighlighted = new ItemReq("Ruby", ItemId.RUBY);
-    ItemReq diamondHighlighted = new ItemReq("Diamond", ItemId.DIAMOND);
+    ItemReq opalHighlighted = new ItemReq("Opal", ItemID.OPAL);
+    ItemReq jadeHighlighted = new ItemReq("Jade", ItemID.JADE);
+    ItemReq topazHighlighted = new ItemReq("Red topaz", ItemID.RED_TOPAZ);
+    ItemReq sapphireHighlighted = new ItemReq("Sapphire", ItemID.SAPPHIRE);
+    ItemReq emeraldHighlighted = new ItemReq("Emerald", ItemID.EMERALD);
+    ItemReq rubyHighlighted = new ItemReq("Ruby", ItemID.RUBY);
+    ItemReq diamondHighlighted = new ItemReq("Diamond", ItemID.DIAMOND);
 
 
-    ItemReq pickaxe = new ItemReq(ItemId.RUNE_PICKAXE);
+    ItemReq pickaxe = new ItemReq(ItemID.RUNE_PICKAXE);
 
-    ItemReq bindingBook = new ItemReq("Binding book", ItemId.BINDING_BOOK);
-    ItemReq bindingBookHighlighted = new ItemReq("Binding book", ItemId.BINDING_BOOK);
+    ItemReq bindingBook = new ItemReq("Binding book", ItemID.BINDING_BOOK);
+    ItemReq bindingBookHighlighted = new ItemReq("Binding book", ItemID.BINDING_BOOK);
 
-    ItemReq goldBar2 = new ItemReq("Gold bar", ItemId.GOLD_BAR, 2);
+    ItemReq goldBar2 = new ItemReq("Gold bar", ItemID.GOLD_BAR, 2);
 
-    ItemReq hammer = new ItemReq(ItemId.HAMMER);
+    ItemReq hammer = new ItemReq(ItemID.HAMMER);
 
-    ItemReq goldBowl = new ItemReq("Gold bowl", ItemId.GOLD_BOWL);
-    //goldBowl.addAlternates(ItemId.GOLDEN_BOWL,ItemId.GOLDEN_BOWL_724,ItemId.GOLDEN_BOWL_725,ItemId.GOLDEN_BOWL_726,ItemId.BLESSED_GOLD_BOWL);
-    ItemReq goldBowlHighlighted = new ItemReq("Gold bowl", ItemId.GOLD_BOWL);
+    ItemReq goldBowl = new ItemReq("Gold bowl", ItemID.GOLD_BOWL);
+    //goldBowl.addAlternates(ItemID.GOLDEN_BOWL,ItemID.GOLDEN_BOWL_724,ItemID.GOLDEN_BOWL_725,ItemID.GOLDEN_BOWL_726,ItemID.BLESSED_GOLD_BOWL);
+    ItemReq goldBowlHighlighted = new ItemReq("Gold bowl", ItemID.GOLD_BOWL);
 
 
     ItemReq combatGear = new ItemReq("Combat gear, food and potions", -1, -1);
 
 
-    ItemReq goldBowlBlessed = new ItemReq("Blessed gold bowl", ItemId.BLESSED_GOLD_BOWL);
+    ItemReq goldBowlBlessed = new ItemReq("Blessed gold bowl", ItemID.BLESSED_GOLD_BOWL);
 
-    ItemReq goldBowlFull = new ItemReq("Golden bowl", ItemId.GOLDEN_BOWL_726);
-    ItemReq goldBowlFullHighlighted = new ItemReq("Golden bowl", ItemId.GOLDEN_BOWL_726);
+    ItemReq goldBowlFull = new ItemReq("Golden bowl", ItemID.GOLDEN_BOWL_726);
+    ItemReq goldBowlFullHighlighted = new ItemReq("Golden bowl", ItemID.GOLDEN_BOWL_726);
     //	goldBowlFullHighlighted.setTooltip("You can fill another gold bowl from the water pool using a reed");
 //
-    ItemReq reed = new ItemReq("Hollow reed", ItemId.HOLLOW_REED);
+    ItemReq reed = new ItemReq("Hollow reed", ItemID.HOLLOW_REED);
 
-    ItemReq yommiSeeds = new ItemReq("Yommi tree seeds", ItemId.YOMMI_TREE_SEEDS);
+    ItemReq yommiSeeds = new ItemReq("Yommi tree seeds", ItemID.YOMMI_TREE_SEEDS);
 
 
-    ItemReq germinatedSeeds = new ItemReq("Yommi tree seeds", ItemId.YOMMI_TREE_SEEDS_736);
+    ItemReq germinatedSeeds = new ItemReq("Yommi tree seeds", ItemID.YOMMI_TREE_SEEDS_736);
     //germinatedSeeds.setTooltip("You can get more seeds from Ungadulu, and use sacred water on them");
-    ItemReq germinatedSeedsHighlighted = new ItemReq("Yommi tree seeds", ItemId.YOMMI_TREE_SEEDS_736);
+    ItemReq germinatedSeedsHighlighted = new ItemReq("Yommi tree seeds", ItemID.YOMMI_TREE_SEEDS_736);
     //	germinatedSeedsHighlighted.setTooltip("You can get more seeds from Ungadulu, and use sacred water on them");
 
-    ItemReq runeOrDragonAxe = new ItemReq(ItemId.RUNE_AXE);
+    ItemReq runeOrDragonAxe = new ItemReq(ItemID.RUNE_AXE);
 
-    ItemReq ardrigal = new ItemReq("Ardrigal", ItemId.ARDRIGAL);
+    ItemReq ardrigal = new ItemReq("Ardrigal", ItemID.ARDRIGAL);
     //	ardrigal.setTooltip("You can find some in the palm trees north east of Tai Bwo Wannai");
 
-    ItemReq snakeWeed = new ItemReq("Snake weed", ItemId.SNAKE_WEED);
+    ItemReq snakeWeed = new ItemReq("Snake weed", ItemID.SNAKE_WEED);
     //snakeWeed.setTooltip("You can find some in the marshy jungle vines south west of Tai Bwo Wannai");
 
-    ItemReq vialOfWater = new ItemReq("Vial of water", ItemId.VIAL_OF_WATER);
+    ItemReq vialOfWater = new ItemReq("Vial of water", ItemID.VIAL_OF_WATER);
 
-    ItemReq cosmic3 = new ItemReq("Cosmic rune", ItemId.COSMIC_RUNE, 3);
+    ItemReq cosmic3 = new ItemReq("Cosmic rune", ItemID.COSMIC_RUNE, 3);
 
-    ItemReq elemental30 = new ItemReq("Water runes", ItemId.WATER_RUNE, 30);
-    //elemental30.addAlternates(ItemId.FIRE_RUNE,ItemId.EARTH_RUNE,ItemId.AIR_RUNE);
+    ItemReq elemental30 = new ItemReq("Water runes", ItemID.WATER_RUNE, 30);
+    //elemental30.addAlternates(ItemID.FIRE_RUNE,ItemID.EARTH_RUNE,ItemID.AIR_RUNE);
 
 
-    ItemReq unpoweredOrb = new ItemReq("Unpowered orb", ItemId.UNPOWERED_ORB);
+    ItemReq unpoweredOrb = new ItemReq("Unpowered orb", ItemID.UNPOWERED_ORB);
 
-    ItemReq ardrigalMixture = new ItemReq("Ardrigal mixture", ItemId.ARDRIGAL_MIXTURE);
-    ItemReq braveryPotion = new ItemReq("Bravery potion", ItemId.BRAVERY_POTION);
-    ItemReq braveryPotionHighlighted = new ItemReq("Bravery potion", ItemId.BRAVERY_POTION);
-    ItemReq snakeMixture = new ItemReq("Snakeweed mixture", ItemId.SNAKEWEED_MIXTURE);
-    ItemReq rope = new ItemReq("Rope", ItemId.ROPE);
-    ItemReq ropeHighlighted = new ItemReq("Rope", ItemId.ROPE);
-    ItemReq lumpCrystal = new ItemReq("Lump of crystal", ItemId.LUMP_OF_CRYSTAL);
-    ItemReq chunkCrystal = new ItemReq("Chunk of crystal", ItemId.CHUNK_OF_CRYSTAL);
-    ItemReq hunkCrystal = new ItemReq("Hunk of crystal", ItemId.HUNK_OF_CRYSTAL);
-    ItemReq heartCrystal = new ItemReq("Heart crystal", ItemId.HEART_CRYSTAL);
+    ItemReq ardrigalMixture = new ItemReq("Ardrigal mixture", ItemID.ARDRIGAL_MIXTURE);
+    ItemReq braveryPotion = new ItemReq("Bravery potion", ItemID.BRAVERY_POTION);
+    ItemReq braveryPotionHighlighted = new ItemReq("Bravery potion", ItemID.BRAVERY_POTION);
+    ItemReq snakeMixture = new ItemReq("Snakeweed mixture", ItemID.SNAKEWEED_MIXTURE);
+    ItemReq rope = new ItemReq("Rope", ItemID.ROPE);
+    ItemReq ropeHighlighted = new ItemReq("Rope", ItemID.ROPE);
+    ItemReq lumpCrystal = new ItemReq("Lump of crystal", ItemID.LUMP_OF_CRYSTAL);
+    ItemReq chunkCrystal = new ItemReq("Chunk of crystal", ItemID.CHUNK_OF_CRYSTAL);
+    ItemReq hunkCrystal = new ItemReq("Hunk of crystal", ItemID.HUNK_OF_CRYSTAL);
+    ItemReq heartCrystal = new ItemReq("Heart crystal", ItemID.HEART_CRYSTAL);
     //heartCrystal.setTooltip("You'll have to kill the 3 skeletons for the pieces and forge them in the furnace");
-    ItemReq heartCrystal2 = new ItemReq("Heart crystal", ItemId.HEART_CRYSTAL_745);
-    ItemReq darkDagger = new ItemReq("Dark dagger", ItemId.DARK_DAGGER);
+    ItemReq heartCrystal2 = new ItemReq("Heart crystal", ItemID.HEART_CRYSTAL_745);
+    ItemReq darkDagger = new ItemReq("Dark dagger", ItemID.DARK_DAGGER);
     //	darkDagger.setTooltip("You can get another from Echned at the source");
-    ItemReq glowingDagger = new ItemReq("Glowing dagger", ItemId.GLOWING_DAGGER);
-    ItemReq force = new ItemReq("Holy force", ItemId.HOLY_FORCE);
-    ItemReq ItemReqforceHighlighted = new ItemReq(ItemId.HOLY_FORCE);
-    ItemReq yommiTotem = new ItemReq("Yommi totem", ItemId.YOMMI_TOTEM);
+    ItemReq glowingDagger = new ItemReq("Glowing dagger", ItemID.GLOWING_DAGGER);
+    ItemReq force = new ItemReq("Holy force", ItemID.HOLY_FORCE);
+    ItemReq ItemReqforceHighlighted = new ItemReq(ItemID.HOLY_FORCE);
+    ItemReq yommiTotem = new ItemReq("Yommi totem", ItemID.YOMMI_TOTEM);
     //yommiTotem.setTooltip("You'll need to grow another if you've lost it");
-    ItemReq yommiTotemHighlighted = new ItemReq("Yommi totem", ItemId.YOMMI_TOTEM);
+    ItemReq yommiTotemHighlighted = new ItemReq("Yommi totem", ItemID.YOMMI_TOTEM);
     //yommiTotemHighlighted.setTooltip("You'll need to grow another if you've lost it");
-    ItemReq gildedTotem = new ItemReq("Gilded totem", ItemId.GILDED_TOTEM);
+    ItemReq gildedTotem = new ItemReq("Gilded totem", ItemID.GILDED_TOTEM);
     //	gildedTotem.setTooltip("You can get another from Gujuo");
 
 
@@ -341,8 +349,134 @@ public class LegendsQuest implements QuestTask {
                     new RSTile(2432, 4672, 0)
             }
     );
+    RSTile OUTSIDE_LEGENDS_GUILD = new RSTile(2729, 3348, 0);
+    RSArea INSIDE_LEGENDS_GUILD = new RSArea(
+            new RSTile[]{
+                    new RSTile(2732, 3350, 0),
+                    new RSTile(2732, 3364, 0),
+                    new RSTile(2737, 3364, 0),
+                    new RSTile(2737, 3385, 0),
+                    new RSTile(2721, 3385, 0),
+                    new RSTile(2721, 3364, 0),
+                    new RSTile(2726, 3364, 0),
+                    new RSTile(2726, 3350, 0)
+            }
+    );
+
+    RSArea FIRST_LEDGE_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2377, 4717, 0),
+                    new RSTile(2380, 4717, 0),
+                    new RSTile(2380, 4712, 0),
+                    new RSTile(2378, 4711, 0),
+                    new RSTile(2376, 4711, 0)
+            }
+    );
+    RSArea SECOND_LEDGE_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2379, 4717, 0),
+                    new RSTile(2375, 4717, 0),
+                    new RSTile(2373, 4719, 0),
+                    new RSTile(2373, 4723, 0),
+                    new RSTile(2375, 4725, 0),
+                    new RSTile(2375, 4727, 0),
+                    new RSTile(2378, 4727, 0),
+                    new RSTile(2378, 4723, 0),
+                    new RSTile(2376, 4721, 0)
+            }
+    );
+    RSArea THIRD_LEDGE_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2378, 4727, 0),
+                    new RSTile(2376, 4729, 0),
+                    new RSTile(2378, 4731, 0),
+                    new RSTile(2382, 4731, 0),
+                    new RSTile(2382, 4728, 0),
+                    new RSTile(2380, 4729, 0)
+            }
+    );
+
+    RSArea FOURTH_LEDGE_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2381, 4728, 0),
+                    new RSTile(2381, 4731, 0),
+                    new RSTile(2383, 4731, 0),
+                    new RSTile(2385, 4729, 0),
+                    new RSTile(2386, 4729, 0),
+                    new RSTile(2387, 4729, 0),
+                    new RSTile(2387, 4726, 0),
+                    new RSTile(2384, 4726, 0)
+            }
+    );
+    RSArea FIFTH_LEDGE_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2387, 4727, 0),
+                    new RSTile(2387, 4729, 0),
+                    new RSTile(2388, 4731, 0),
+                    new RSTile(2390, 4731, 0),
+                    new RSTile(2391, 4730, 0),
+                    new RSTile(2392, 4728, 0),
+                    new RSTile(2392, 4724, 0),
+                    new RSTile(2389, 4724, 0),
+                    new RSTile(2389, 4727, 0)
+            }
+    );
+
+    RSTile[] PATH_DOWN_CLIF = {
+            // new RSTile(2377, 4711, 0),
+            new RSTile(2377, 4712, 0),
+            new RSTile(2378, 4713, 0),
+            new RSTile(2378, 4714, 0),
+            new RSTile(2378, 4715, 0),
+            new RSTile(2378, 4716, 0),
+            new RSTile(2377, 4717, 0),
+            new RSTile(2376, 4717, 0),
+            new RSTile(2375, 4718, 0),
+            new RSTile(2374, 4719, 0),
+            new RSTile(2374, 4720, 0),
+            new RSTile(2374, 4721, 0),
+            new RSTile(2374, 4722, 0),
+            new RSTile(2375, 4723, 0),
+            new RSTile(2376, 4724, 0),
+            new RSTile(2376, 4725, 0),
+            new RSTile(2376, 4726, 0),
+            new RSTile(2376, 4727, 0),
+            new RSTile(2377, 4728, 0),
+            new RSTile(2378, 4729, 0),
+            new RSTile(2379, 4730, 0),
+            new RSTile(2380, 4730, 0),
+            new RSTile(2381, 4730, 0),
+            new RSTile(2382, 4729, 0),
+            new RSTile(2383, 4728, 0),
+            new RSTile(2384, 4727, 0),
+            new RSTile(2385, 4726, 0),
+            new RSTile(2386, 4727, 0),
+            new RSTile(2387, 4728, 0),
+            new RSTile(2388, 4729, 0),
+            new RSTile(2389, 4729, 0),
+            new RSTile(2390, 4728, 0),
+            new RSTile(2390, 4727, 0),
+            new RSTile(2390, 4726, 0),
+            new RSTile(2390, 4725, 0),
+            new RSTile(2390, 4724, 0),
+            new RSTile(2390, 4723, 0),
+            new RSTile(2390, 4722, 0),
+            new RSTile(2391, 4721, 0),
+            new RSTile(2391, 4720, 0),
+            new RSTile(2390, 4719, 0),
+            new RSTile(2390, 4718, 0),
+            new RSTile(2390, 4717, 0),
+            new RSTile(2389, 4716, 0),
+            new RSTile(2388, 4715, 0),
+            new RSTile(2387, 4714, 0),
+            new RSTile(2386, 4713, 0),
+            new RSTile(2385, 4712, 0),
+            new RSTile(2384, 4711, 0)
+    };
+
+
     AreaRequirement inGuild = new AreaRequirement(guild1, guild2, guild3);
-    AreaRequirement inKhazari = new AreaRequirement(khazari1, khazari2, khazari3, khazari4);
+    AreaRequirement inKharazi = new AreaRequirement(khazari1, khazari2, khazari3, khazari4);
     AreaRequirement inWest = new AreaRequirement(westKhazari);
     AreaRequirement inMiddle = new AreaRequirement(middleKhazari);
     AreaRequirement inEast = new AreaRequirement(eastKhazari);
@@ -357,6 +491,110 @@ public class LegendsQuest implements QuestTask {
     AreaRequirement inChallengeCave = new AreaRequirement(challengeCave);
     AreaRequirement beforeJaggedWall = new AreaRequirement(THIRD_AREA_PT1);
     AreaRequirement afterBarrier = new AreaRequirement(BOULDER_AREA);
+
+
+    /**
+     * STEPS
+     */
+
+    // game setting 0
+    public void startQuest() {
+        cQuesterV2.status = "Starting quest";
+        ConditionalStep startQuest = new ConditionalStep(talkToGuard);
+        startQuest.addStep(inGuild, talkToRadimus);
+        startQuest.execute();
+        if (!inGuild.check()) {
+
+        }
+    }
+
+
+    public void sketchJungle() {
+        if (LegendsUtils.enterForest()) {
+            if (new Conditions(inKharazi, completeWest, completeMiddle).check()) {
+                cQuesterV2.status = "Sketching East";
+                sketchEast.execute();
+            } else if (new Conditions(inKharazi, completeWest).check()) {
+                cQuesterV2.status = "Sketching Middle";
+                sketchMiddle.execute();
+            } else if (inKharazi.check()) {
+                cQuesterV2.status = "Sketching West";
+                sketchWest.execute();
+            }
+        }
+    }
+
+    public void talkWithGujuo() {
+        if (LegendsUtils.enterForest()) {
+            cQuesterV2.status = "Talking to Gujuo";
+            if (spinBull()) {
+                talkToGujuo.execute();
+            }
+        }
+    }
+
+    Conditions talkedToUngadulu = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(229, 1, "The Shaman throws himself down on the floor and starts convulsing."),
+            new WidgetTextRequirement(119, 3, true, "is acting weird and talking a lot of nonsense"));
+
+    Conditions hadSketch = new Conditions(true, LogicType.OR, sketch);
+
+    WidgetTextRequirement searchedMarkedWall = new WidgetTextRequirement(229, 1, "You can see a message on the wall");
+
+    Conditions addedSoulRune = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(229, 1, "You slide the Soul Rune into the first"),
+            new WidgetTextRequirement(229, 1, "You find the letter 'S'"));
+    Conditions addedMindRune = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(229, 1, "You slide the Mind Rune into the second"),
+            new WidgetTextRequirement(229, 1, "You find the letters 'SM'"));
+    Conditions addedEarthRune = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(229, 1, "You slide the Earth Rune into the third"),
+            new WidgetTextRequirement(229, 1, "You find the letters 'SME'"));
+
+    Conditions addedLawRune = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(229, 1, "You slide the Law Rune into the fourth"),
+            new WidgetTextRequirement(229, 1, "You find the letters 'SMEL'"));
+
+    Conditions addedLawRune2 = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(229, 1, "You slide the Law Rune into the fifth"),
+            new WidgetTextRequirement(229, 1, "You find the letters 'SMELL'"));
+
+    // bookAppearing = new ChatMessageRequirement("You feel a powerful force picking you up....");
+    ItemOnTileRequirement bookNearby = new ItemOnTileRequirement(bindingBook);
+
+    // nezNearby = new NpcInteractingRequirement(NpcID.NEZIKCHENED);
+
+    Conditions addedRope = new Conditions(true, new ObjectCondition(ObjectID.WINCH_2935,
+            new RSTile(2761, 9331, 0)));
+    //  echnedNearby = new NpcCondition(NpcID.ECHNED_ZEKIN);
+    // viyeldiNearby = new NpcCondition(NpcID.VIYELDI);
+
+
+    // NpcCondition  ranalphNearby = new NpcCondition(NpcID.RANALPH_DEVERE);
+    //   NpcCondition  irvigNearby = new NpcCondition(NpcID.IRVIG_SENAY);
+    //  NpcCondition sanNearby = new NpcCondition(NpcID.SAN_TOJALON);
+
+    public Map<Integer, QuestStep> loadSteps() {
+        Map<Integer, QuestStep> steps = new HashMap<>();
+    /*    ConditionalStep talkWithGujuo = new ConditionalStep(enterJungleWithRoarer);
+        talkWithGujuo.addStep(gujuoNearby, talkToGujuo);
+        talkWithGujuo.addStep(inKharazi, spinBull());
+
+        steps.put(3, talkWithGujuo);
+        steps.put(4, talkWithGujuo);
+
+        ConditionalStep investigatingTheCave = new ConditionalStep(enterJungleWithRoarer);
+        investigatingTheCave.addStep(new Conditions(inKharazi, talkedToUngadulu, gujuoNearby), talkToGujuoAgain);
+        investigatingTheCave.addStep(new Conditions(inKharazi, talkedToUngadulu), spinBullAgain);
+        investigatingTheCave.addStep(new Conditions(inCaves, talkedToUngadulu), leaveCave);
+        investigatingTheCave.addStep(inCaves, investigateFireWall);
+        investigatingTheCave.addStep(inKharazi, enterMossyRock);
+
+        steps.put(5, investigatingTheCave);
+        steps.put(6, investigatingTheCave);
+        steps.put(7, investigatingTheCave);*/
+        return steps;
+    }
 
     public boolean spinBull() {
         RSItem[] bull = Inventory.find(bullRoarer.getId());
@@ -420,13 +658,13 @@ public class LegendsQuest implements QuestTask {
     UseItemOnObjectStep useMind = new UseItemOnObjectStep(mindRuneHighlight.getId(), ObjectID.MARKED_WALL,
             new RSTile(2779, 9305, 0), "Use a Mind Rune on the marked wall.");
 
-    UseItemOnObjectStep useEarth = new UseItemOnObjectStep(ItemId.EARTH_RUNE, ObjectID.MARKED_WALL,
+    UseItemOnObjectStep useEarth = new UseItemOnObjectStep(ItemID.EARTH_RUNE, ObjectID.MARKED_WALL,
             new RSTile(2779, 9305, 0), "Use a Earth Rune on the marked wall.");
 
-    UseItemOnObjectStep useLaw = new UseItemOnObjectStep(ItemId.LAW_RUNE, ObjectID.MARKED_WALL,
+    UseItemOnObjectStep useLaw = new UseItemOnObjectStep(ItemID.LAW_RUNE, ObjectID.MARKED_WALL,
             new RSTile(2779, 9305, 0), "Use a Law Rune on the marked wall.");
 
-    UseItemOnObjectStep useLaw2 = new UseItemOnObjectStep(ItemId.LAW_RUNE, ObjectID.MARKED_WALL,
+    UseItemOnObjectStep useLaw2 = new UseItemOnObjectStep(ItemID.LAW_RUNE, ObjectID.MARKED_WALL,
             new RSTile(2779, 9305, 0), "Use another Law Rune on the marked wall.");
 
 
@@ -606,7 +844,7 @@ public class LegendsQuest implements QuestTask {
 
     BankTask bankTask = BankTask.builder()
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY)
-                    .item(ItemId.RUNE_PLATEBODY, Amount.of(1)))
+                    .item(ItemID.RUNE_PLATEBODY, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON)
                     .item(21009, Amount.of(1))) //d sword
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HEAD)
@@ -615,23 +853,23 @@ public class LegendsQuest implements QuestTask {
                     .item(1079, Amount.of(1))) //rune legs
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.FEET)
                     .item(4131, Amount.of(1))) //rune boots
-            .addInvItem(ItemId.UNPOWERED_ORB, Amount.of(2))
-            .addInvItem(ItemId.COSMIC_RUNE, Amount.of(6))
-            .addInvItem(ItemId.MACHETE, Amount.of(1))
-            .addInvItem(ItemId.WATER_RUNE, Amount.of(60))
-            .addInvItem(ItemId.LOCKPICK, Amount.of(2))
-            .addInvItem(ItemId.BRAVERY_POTION, Amount.of(1))
-            .addInvItem(ItemId.STAMINA_POTION[0], Amount.of(2))
-            .addInvItem(ItemId.PRAYER_POTION[0], Amount.of(3))
-            .addInvItem(ItemId.ROPE, Amount.of(1))
-            .addInvItem(ItemId.VIAL_OF_WATER, Amount.of(1))
-            .addInvItem(ItemId.RUNE_AXE, Amount.of(1))
-            .addInvItem(ItemId.RUNE_PICKAXE, Amount.of(1))
-            .addInvItem(ItemId.COINS_995, Amount.of(10000))
-            .addInvItem(ItemId.BLESSED_GOLD_BOWL, Amount.of(1))
-            .addInvItem(ItemId.RADIMUS_NOTES_715, Amount.of(1))
-            .addInvItem(ItemId.ARDOUGNE_TELEPORT, Amount.range(5, 10))
-            .addInvItem(ItemId.SHARK, Amount.fill(2))
+            .addInvItem(ItemID.UNPOWERED_ORB, Amount.of(2))
+            .addInvItem(ItemID.COSMIC_RUNE, Amount.of(6))
+            .addInvItem(ItemID.MACHETE, Amount.of(1))
+            .addInvItem(ItemID.WATER_RUNE, Amount.of(60))
+            .addInvItem(ItemID.LOCKPICK, Amount.of(2))
+            .addInvItem(ItemID.BRAVERY_POTION, Amount.of(1))
+            .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(2))
+            .addInvItem(ItemID.PRAYER_POTION[0], Amount.of(3))
+            .addInvItem(ItemID.ROPE, Amount.of(1))
+            .addInvItem(ItemID.VIAL_OF_WATER, Amount.of(1))
+            .addInvItem(ItemID.RUNE_AXE, Amount.of(1))
+            .addInvItem(ItemID.RUNE_PICKAXE, Amount.of(1))
+            .addInvItem(ItemID.COINS_995, Amount.of(10000))
+            .addInvItem(ItemID.BLESSED_GOLD_BOWL, Amount.of(1))
+            .addInvItem(ItemID.RADIMUS_NOTES_715, Amount.of(1))
+            .addInvItem(ItemID.ARDOUGNE_TELEPORT, Amount.range(5, 10))
+            .addInvItem(ItemID.SHARK, Amount.fill(2))
             .build();
 
     public void getArdrigal() {
@@ -765,7 +1003,7 @@ public class LegendsQuest implements QuestTask {
         }
     }
 
-    UseItemOnObjectStep useRopeOnWinch = new UseItemOnObjectStep(ItemId.ROPE, ObjectID.WINCH_2934,
+    UseItemOnObjectStep useRopeOnWinch = new UseItemOnObjectStep(ItemID.ROPE, ObjectID.WINCH_2934,
             new RSTile(2761, 9328, 0), inCaveRoom6, ropeHighlighted);
     //       "Use a rope on the winch. If you've already done so, search it instead.", ropeHighlighted);
 
@@ -784,10 +1022,10 @@ public class LegendsQuest implements QuestTask {
                 Timer.waitCondition(() -> Objects.findNearest(10, 2935).length == 1, 5000, 7000);
             }
             if (Objects.findNearest(10, 2935).length == 1) {
-              drinkBraveryPotion.execute();
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation("Yes, I'll bravely drink the bravery potion.",
-                            "Yes, I'll shimmy down the rope into possible doom.");
+                drinkBraveryPotion.execute();
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation("Yes, I'll bravely drink the bravery potion.",
+                        "Yes, I'll shimmy down the rope into possible doom.");
 
 
                 climbDownWinch.setUseLocalNav(true);
@@ -881,7 +1119,7 @@ public class LegendsQuest implements QuestTask {
             new RSTile(2394, 4679, 0),
             goldBowlBlessed);
 
-    UseItemOnObjectStep useMacheteOnReedsEnd = new UseItemOnObjectStep(ItemId.MACHETE, ObjectID.TALL_REEDS,
+    UseItemOnObjectStep useMacheteOnReedsEnd = new UseItemOnObjectStep(ItemID.MACHETE, ObjectID.TALL_REEDS,
             new RSTile(2836, 2916, 0),
             goldBowlBlessed);
     UseItemOnObjectStep useReedOnPoolEnd = new UseItemOnObjectStep(reed.getId(), ObjectID.WATER_POOL,
@@ -904,7 +1142,7 @@ public class LegendsQuest implements QuestTask {
 
 
 
-    ItemReq completeNotes = new ItemReq("Radimus notes", ItemId.RADIMUS_NOTES_715);
+    ItemReq completeNotes = new ItemReq("Radimus notes", ItemID.RADIMUS_NOTES_715);
 
     // enterJungleToPlant =new DetailedQuestStep( "Return to the Khazari Jungle and be prepared for some fights.",
     //                     runeOrDragonAxe, machete, goldBowlBlessed, germinatedSeeds, combatGear);
@@ -953,7 +1191,7 @@ public class LegendsQuest implements QuestTask {
     }
 
     public void killGhostDudes() {
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 32) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 32) {
             RSNPC[] zombieNpc = NPCs.findNearest(3964, 3965, 3966);
             RSNPC[] nezik = NPCs.findNearest(3962);
             if (Combat.isUnderAttack()) {
@@ -1117,7 +1355,7 @@ public class LegendsQuest implements QuestTask {
                     jumpOverJaggedWall.setUseLocalNav(true);
                     jumpOverJaggedWall.execute();
                 }
-                if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10)
+                if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10)
                     return;
                 searchMarkedWallToSource.setHandleChat(true);
                 searchMarkedWallToSource.execute();
@@ -1126,118 +1364,6 @@ public class LegendsQuest implements QuestTask {
         Inventory.drop(1480); //rocks
         Utils.unselectItem();
     }
-
-    RSArea FIRST_LEDGE_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(2377, 4717, 0),
-                    new RSTile(2380, 4717, 0),
-                    new RSTile(2380, 4712, 0),
-                    new RSTile(2378, 4711, 0),
-                    new RSTile(2376, 4711, 0)
-            }
-    );
-    RSArea SECOND_LEDGE_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(2379, 4717, 0),
-                    new RSTile(2375, 4717, 0),
-                    new RSTile(2373, 4719, 0),
-                    new RSTile(2373, 4723, 0),
-                    new RSTile(2375, 4725, 0),
-                    new RSTile(2375, 4727, 0),
-                    new RSTile(2378, 4727, 0),
-                    new RSTile(2378, 4723, 0),
-                    new RSTile(2376, 4721, 0)
-            }
-    );
-    RSArea THIRD_LEDGE_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(2378, 4727, 0),
-                    new RSTile(2376, 4729, 0),
-                    new RSTile(2378, 4731, 0),
-                    new RSTile(2382, 4731, 0),
-                    new RSTile(2382, 4728, 0),
-                    new RSTile(2380, 4729, 0)
-            }
-    );
-
-    RSArea FOURTH_LEDGE_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(2381, 4728, 0),
-                    new RSTile(2381, 4731, 0),
-                    new RSTile(2383, 4731, 0),
-                    new RSTile(2385, 4729, 0),
-                    new RSTile(2386, 4729, 0),
-                    new RSTile(2387, 4729, 0),
-                    new RSTile(2387, 4726, 0),
-                    new RSTile(2384, 4726, 0)
-            }
-    );
-    RSArea FIFTH_LEDGE_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(2387, 4727, 0),
-                    new RSTile(2387, 4729, 0),
-                    new RSTile(2388, 4731, 0),
-                    new RSTile(2390, 4731, 0),
-                    new RSTile(2391, 4730, 0),
-                    new RSTile(2392, 4728, 0),
-                    new RSTile(2392, 4724, 0),
-                    new RSTile(2389, 4724, 0),
-                    new RSTile(2389, 4727, 0)
-            }
-    );
-
-    RSTile[] PATH_DOWN_CLIF = {
-            // new RSTile(2377, 4711, 0),
-            new RSTile(2377, 4712, 0),
-            new RSTile(2378, 4713, 0),
-            new RSTile(2378, 4714, 0),
-            new RSTile(2378, 4715, 0),
-            new RSTile(2378, 4716, 0),
-            new RSTile(2377, 4717, 0),
-            new RSTile(2376, 4717, 0),
-            new RSTile(2375, 4718, 0),
-            new RSTile(2374, 4719, 0),
-            new RSTile(2374, 4720, 0),
-            new RSTile(2374, 4721, 0),
-            new RSTile(2374, 4722, 0),
-            new RSTile(2375, 4723, 0),
-            new RSTile(2376, 4724, 0),
-            new RSTile(2376, 4725, 0),
-            new RSTile(2376, 4726, 0),
-            new RSTile(2376, 4727, 0),
-            new RSTile(2377, 4728, 0),
-            new RSTile(2378, 4729, 0),
-            new RSTile(2379, 4730, 0),
-            new RSTile(2380, 4730, 0),
-            new RSTile(2381, 4730, 0),
-            new RSTile(2382, 4729, 0),
-            new RSTile(2383, 4728, 0),
-            new RSTile(2384, 4727, 0),
-            new RSTile(2385, 4726, 0),
-            new RSTile(2386, 4727, 0),
-            new RSTile(2387, 4728, 0),
-            new RSTile(2388, 4729, 0),
-            new RSTile(2389, 4729, 0),
-            new RSTile(2390, 4728, 0),
-            new RSTile(2390, 4727, 0),
-            new RSTile(2390, 4726, 0),
-            new RSTile(2390, 4725, 0),
-            new RSTile(2390, 4724, 0),
-            new RSTile(2390, 4723, 0),
-            new RSTile(2390, 4722, 0),
-            new RSTile(2391, 4721, 0),
-            new RSTile(2391, 4720, 0),
-            new RSTile(2390, 4719, 0),
-            new RSTile(2390, 4718, 0),
-            new RSTile(2390, 4717, 0),
-            new RSTile(2389, 4716, 0),
-            new RSTile(2388, 4715, 0),
-            new RSTile(2387, 4714, 0),
-            new RSTile(2386, 4713, 0),
-            new RSTile(2385, 4712, 0),
-            new RSTile(2384, 4711, 0)
-    };
-
 
     public void jumpRocks(RSArea area, RSTile rockTile) {
         General.println("[Debug]: Jumping rocks");
@@ -1378,16 +1504,16 @@ public class LegendsQuest implements QuestTask {
         }
     }
 
-    UseItemOnObjectStep useAxe = new UseItemOnObjectStep(ItemId.RUNE_AXE, ObjectID.ADULT_YOMMI_TREE,
+    UseItemOnObjectStep useAxe = new UseItemOnObjectStep(ItemID.RUNE_AXE, ObjectID.ADULT_YOMMI_TREE,
             new RSTile(2808, 2905),
             Objects.find(20, ObjectID.FELLED_YOMMI_TREE).length > 0, runeOrDragonAxe);
 
-    UseItemOnObjectStep useAxeAgain = new UseItemOnObjectStep(ItemId.RUNE_AXE, ObjectID.FELLED_YOMMI_TREE,
+    UseItemOnObjectStep useAxeAgain = new UseItemOnObjectStep(ItemID.RUNE_AXE, ObjectID.FELLED_YOMMI_TREE,
             new RSTile(2808, 2905),
             Objects.find(20, ObjectID.TRIMMED_YOMMI).length > 0, runeOrDragonAxe);
 
 
-    UseItemOnObjectStep craftTree = new UseItemOnObjectStep(ItemId.RUNE_AXE, ObjectID.TRIMMED_YOMMI,
+    UseItemOnObjectStep craftTree = new UseItemOnObjectStep(ItemID.RUNE_AXE, ObjectID.TRIMMED_YOMMI,
             new RSTile(2808, 2905),
             Objects.find(20, ObjectID.TOTEM_POLE_2954).length > 0, runeOrDragonAxe);
 
@@ -1403,24 +1529,21 @@ public class LegendsQuest implements QuestTask {
         }
     }
 
-    RSTile OUTSIDE_LEGENDS_GUILD = new RSTile(2729, 3348, 0);
-    RSArea INSIDE_LEGENDS_GUILD = new RSArea(
-            new RSTile[]{
-                    new RSTile(2732, 3350, 0),
-                    new RSTile(2732, 3364, 0),
-                    new RSTile(2737, 3364, 0),
-                    new RSTile(2737, 3385, 0),
-                    new RSTile(2721, 3385, 0),
-                    new RSTile(2721, 3364, 0),
-                    new RSTile(2726, 3364, 0),
-                    new RSTile(2726, 3350, 0)
-            }
-    );
+    public void initialiseListeners() {
+        //InventoryObserver inventoryObserver = new InventoryObserver(() -> true);
+        //  inventoryObserver.addListener(this);
+        // inventoryObserver.start();
 
+        InterfaceObserver interfaceObserver = new InterfaceObserver(() -> true);
+        interfaceObserver.addListener(this);
+        interfaceObserver.addRSInterfaceChild(193, 2);
+        interfaceObserver.addRSInterfaceChild(231, 5); // npc's text area
+        interfaceObserver.start();
+    }
 
     @Override
     public String toString() {
-        return "Legends Quest (" + Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) + ")";
+        return "Legends Quest (" + GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) + ")";
     }
 
     @Override
@@ -1430,20 +1553,37 @@ public class LegendsQuest implements QuestTask {
 
     @Override
     public boolean validate() {
-        return Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) < 75;
+        return GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) < 75;
     }
 
     @Override
     public void execute() {
         cQuesterV2.gameSettingInt = LegendsUtils.LEGENDS_GAME_SETTING;
         setUpSteps();
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 8) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 0) {
+            startQuest();
+        }
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 1) {
+            sketchJungle();
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 2) {
+            cQuesterV2.status = "Using notes";
+            useNotes.execute();
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 3) {
+            talkWithGujuo();
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 4) {
+            talkWithGujuo();
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 5) {
+
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 6) {
+
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 7) {
+
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 8) {
             cQuesterV2.status = "Blessing bowl";
             blessBowl();
             fillBowl();
 
-        }
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10) {
             if (!WHOLE_CAVE_AREA.contains(Player.getPosition()) && !WHOLE_CAVE_AREA_2.contains(Player.getPosition()))
                 LegendsUtils.enterForest();
 
@@ -1458,6 +1598,7 @@ public class LegendsQuest implements QuestTask {
                     if (JUST_AFTER_GATE_AREA.contains(Player.getPosition()) &&
                             PathingUtil.localNavigation(new RSTile(2804, 9287, 0)))
                         PathingUtil.movementIdle();
+
                     jumpOverJaggedWall.setUseLocalNav(true);
                     jumpOverJaggedWall.execute();
 
@@ -1472,14 +1613,16 @@ public class LegendsQuest implements QuestTask {
                 if (inCaveRoom5.check() && !bindingBook.check()) {
                     cQuesterV2.status = "Using Gems";
                     useSapphire.useItemOnObject();
+
                     useEmerald.useItemOnObject();
                     useRuby.useItemOnObject();
+
                     useDiamond.setTileRadius(1);
                     useDiamond.useItemOnObject();
+
                     useOpal.setTileRadius(1);
                     useOpal.useItemOnObject();
 
-                    useJade.setTileRadius(1);
                     useJade.setTileRadius(1);
                     useJade.useItemOnObject();
 
@@ -1498,13 +1641,13 @@ public class LegendsQuest implements QuestTask {
 
         }
 
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 12) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 12) {
             // after killing demon in fire circle
             if (!germinatedSeeds.check() && !yommiSeeds.check())
                 talkToUngaduluAfterFight();
             addWaterToSeeds();
         }
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 13) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 13) {
             if (inFire.check() && Utils.clickObject("Fire Wall", "Touch", true)) {
                 Timer.waitCondition(() -> !inFire.check(), 4000, 6000);
             }
@@ -1512,12 +1655,12 @@ public class LegendsQuest implements QuestTask {
             plantSeeds();
         }
 
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
             if (spinBull())
                 talkToGujuoAfterSeeds.execute();
         }
 
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 15) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 15) {
             if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
                 bank(bankTask);
                 getArdrigal();
@@ -1530,12 +1673,12 @@ public class LegendsQuest implements QuestTask {
                 climbDownWinch();
             }
         }
-        if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 16) {
+        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 16) {
             walkDownPath();
             killAll();
             useLumpOnFurnace();
 
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 17) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 17) {
             cQuesterV2.status = "Going to use heart on rock";
             useHeartOnRock.setUseLocalNav(true);
             useHeartOnRock.setHandleChat(true);
@@ -1544,10 +1687,10 @@ public class LegendsQuest implements QuestTask {
             useHeartOnRecess.setHandleChat(true);
             useHeartOnRecess.setUseLocalNav(true);
             useHeartOnRecess.useItemOnObject();
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 18) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 18) {
             enterBoulderArea();
             pushBoulder();
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 19) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 19) {
             pushBoulder();
             cQuesterV2.status = "Talking to Echned";
             talkToEchned.setUseLocalNav(true);
@@ -1555,7 +1698,7 @@ public class LegendsQuest implements QuestTask {
                     "I'll do what I must to get the water.", "Ok, I'll do it.");
             talkToEchned.execute();
 
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 20) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 20) {
             if (!WHOLE_CAVE_AREA.contains(Player.getPosition()) &&
                     !WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
                 if (!LegendsUtils.WHOLE_FOREST_AREA.contains(Player.getPosition()))
@@ -1578,11 +1721,11 @@ public class LegendsQuest implements QuestTask {
                     pushBoulder();
                 killDemonAtRocks();
             }
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 22) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 22) {
             pushBoulder();
             useBowlOnSacredWater.setUseLocalNav(true);
             useBowlOnSacredWater.useItemOnObject();
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 25) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 25) {
             //leave the dungeon and re-enter forest
             if (!LegendsUtils.WHOLE_FOREST_AREA.contains(Player.getPosition()))
                 LegendsUtils.enterForest();
@@ -1614,27 +1757,27 @@ public class LegendsQuest implements QuestTask {
             useAxeAgain.useItemOnObject();
             craftTree.useItemOnObject();
             pickUpTotem.execute();
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 30) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 30) {
             useTotemOnTotemStep();
             if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation();
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 32) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 32) {
             //fight
             killGhostDudes();
 
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 35) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 35) {
             // disable prayer, place totem & handle chat
 
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 40) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 40) {
 
             // wait for Gujuo and handle chat
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 45) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 45) {
             cQuesterV2.status = "Returning to radimus";
             enterLegendsGuild();
             returnToRadimus.setUseLocalNav(true);
             returnToRadimus.execute();
             // talk to Radimus Erkle in the little house in guild
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 50) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 50) {
             cQuesterV2.status = "Returning to radimus in guild";
             enterLegendsGuild();
             talkToRadimusInGuild.setUseLocalNav(true);
@@ -1642,15 +1785,15 @@ public class LegendsQuest implements QuestTask {
             talkToRadimusInGuild.execute();
             // talk to Radimus Erkle in guild
             // claim reward 1
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 55) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 55) {
             // claim reward 2
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 60) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 60) {
             // claim reward 3
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 65) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 65) {
             // claim reward 4
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 70) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 70) {
             //finish dialogue
-        } else if (Game.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 75) {
+        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 75) {
             // Done Quest, close window
         }
 
@@ -1666,4 +1809,64 @@ public class LegendsQuest implements QuestTask {
         return false;
     }
 
+    WidgetTextRequirement completeTextAppeared = new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT,
+            "You have already completed this part of the map.");
+
+    Conditions completeEast = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "Eastern Kharazi Jungle- *** Completed"),
+            new Conditions(inEast, completeTextAppeared));
+    Conditions completeMiddle = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "Middle Kharazi Jungle- *** Completed"),
+            new Conditions(inMiddle, completeTextAppeared));
+    Conditions completeWest = new Conditions(true, LogicType.OR,
+            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "Western Kharazi Jungle- *** Completed"),
+            new Conditions(inWest, completeTextAppeared));
+
+    @Override
+    public void onAppear(RSInterfaceChild rsInterfaceChild) {
+        String message = rsInterfaceChild.getText();
+        if (message == null) {
+            return;
+        }
+
+        if (completeTextAppeared.checkWidget()) {
+
+        }
+
+     /*   if (message.startsWith("You find:")) {
+            Matcher m = BOOKCASE_BOOK_EXTRACTOR.matcher(message);
+            Log.log("Book found");
+            System.out.println(message);
+            if (m.find()) {
+                getBookFromMatcher(m).ifPresent(book -> {
+                    State.get().getLastBookcaseTile().ifPresent(tile -> State.get().getLibrary().mark(tile, book));
+                    State.get().setLastBookcaseTile(null);
+                });
+
+            }
+            return;
+        }*/
+        if (completeTextAppeared.getText().stream().anyMatch(m ->
+                m.toLowerCase().contains(message.toLowerCase(Locale.ROOT)))) {
+            Log.log("[LegendsQuest]: CompleteTextAppeared");
+            completeTextAppeared.setHasPassed(true);
+        }
+        if (message.startsWith("Thanks, human") || message.startsWith("Thank you very much")) {
+            State.get().swapProfessors();
+            State.get().setCurrentAssignment(null);
+            Statistics.get().incrementBooksGained();
+            return;
+        }
+
+
+      /*  Matcher m = NPC_BOOK_EXTRACTOR.matcher(message);
+
+        if (m.find()) {
+            getBookFromMatcher(m).ifPresent(book -> {
+                Log.log(String.format("Next book: %s", book.getName()));
+                State.get().setCurrentAssignment(book);
+            });
+            return;
+        }*/
+    }
 }

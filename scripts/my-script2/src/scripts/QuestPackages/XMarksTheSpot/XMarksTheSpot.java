@@ -41,11 +41,11 @@ public class XMarksTheSpot implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SPADE, 1, 300),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 5, 30),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.SPADE, 1, 300),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 30),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -62,9 +62,9 @@ public class XMarksTheSpot implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         BankManager.open(true);
         BankManager.depositAll(true);
-        BankManager.withdraw(3, true, ItemId.LUMBRIDGE_TELEPORT);
+        BankManager.withdraw(3, true, ItemID.LUMBRIDGE_TELEPORT);
         BankManager.withdraw(1, true, SPADE);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
 
     }

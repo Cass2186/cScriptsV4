@@ -5,7 +5,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 
 public class WoodCuttingConst {
 
@@ -45,19 +45,19 @@ public class WoodCuttingConst {
         if (invAxe.length == 0)
             return false;
 
-        if (axe == ItemId.AXE_IDS[1] && attk >= 5)
+        if (axe == ItemID.AXE_IDS[1] && attk >= 5)
             return invAxe[0].click("Wield");
 
-        else if (axe == ItemId.AXE_IDS[2] && attk >= 20)
+        else if (axe == ItemID.AXE_IDS[2] && attk >= 20)
             return invAxe[0].click("Wield");
 
-        else if (axe == ItemId.AXE_IDS[3] && attk >= 30)
+        else if (axe == ItemID.AXE_IDS[3] && attk >= 30)
             return invAxe[0].click("Wield");
 
-        else if (axe == ItemId.AXE_IDS[4] && attk >= 40)
+        else if (axe == ItemID.AXE_IDS[4] && attk >= 40)
             return invAxe[0].click("Wield");
 
-        else if (axe == ItemId.AXE_IDS[5] && attk >= 60)
+        else if (axe == ItemID.AXE_IDS[5] && attk >= 60)
             return invAxe[0].click("Wield");
 
         return invAxe[0].click("Wield"); //iron axe

@@ -10,7 +10,7 @@ import scripts.BankManager;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Tasks.Mining.Tasks.DepositPayDirt;
 import scripts.Utils;
 
@@ -37,12 +37,12 @@ public class SwitchTask implements Task {
                     .nameContains("Ring of wealth (")
                     .getResults();
             if (invWealth.length > 0) {
-                return Utils.equipItem(ItemId.RING_OF_WEALTH);
+                return Utils.equipItem(ItemID.RING_OF_WEALTH);
 
             } else {
-                BankManager.withdrawArray(ItemId.RING_OF_WEALTH, 1);
+                BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
                 BankManager.close(true);
-                return Utils.equipItem(ItemId.RING_OF_WEALTH);
+                return Utils.equipItem(ItemID.RING_OF_WEALTH);
             }
         }
         return isWealthEquipped();

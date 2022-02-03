@@ -6,7 +6,7 @@ import scripts.API.Task;
 import scripts.BankManager;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Utils;
 
 public class DropLogs implements Task {
@@ -31,7 +31,7 @@ public class DropLogs implements Task {
     @Override
     public void execute() {
         for (int i =0 ; i<3; i++) {
-            Inventory.drop(ItemId.LOG_IDS);
+            Inventory.drop(ItemID.LOG_IDS);
             Utils.unselectItem();
             if (Inventory.getAll().length < 20)
                 break;

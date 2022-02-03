@@ -85,20 +85,20 @@ public class WitchsHouse implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.CHEESE, 5, 300),
-                    new GEItem(ItemId.LEATHER_GLOVES, 1, 300),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 6, 50),
-                    new GEItem(ItemId.LOBSTER, 15, 50),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 50),
-                    new GEItem(ItemId.MIND_RUNE, 200, 20),
-                    new GEItem(ItemId.EARTH_RUNE, 600, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 600, 20),
-                    new GEItem(ItemId.BLUE_WIZ_HAT, 1, 20),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 20),
-                    new GEItem(ItemId.ZAMORAK_MONK_BOTTOM, 1, 70),
-                    new GEItem(ItemId.ZAMORAK_MONK_TOP, 1, 70),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.CHEESE, 5, 300),
+                    new GEItem(ItemID.LEATHER_GLOVES, 1, 300),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 6, 50),
+                    new GEItem(ItemID.LOBSTER, 15, 50),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 50),
+                    new GEItem(ItemID.MIND_RUNE, 200, 20),
+                    new GEItem(ItemID.EARTH_RUNE, 600, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 600, 20),
+                    new GEItem(ItemID.BLUE_WIZARD_HAT, 1, 20),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 20),
+                    new GEItem(ItemID.ZAMORAK_MONK_BOTTOM, 1, 70),
+                    new GEItem(ItemID.ZAMORAK_MONK_TOP, 1, 70),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -120,42 +120,35 @@ public class WitchsHouse implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw(5, true,
-                ItemId.CHEESE);
+                ItemID.CHEESE);
         BankManager.withdraw(1, true,
-                ItemId.LEATHER_GLOVES);
-        Utils.equipItem(ItemId.LEATHER_GLOVES);
+                ItemID.LEATHER_GLOVES);
+        Utils.equipItem(ItemID.LEATHER_GLOVES);
         BankManager.withdraw(1, true,
-                ItemId.BLUE_WIZ_HAT);
+                ItemID.BLUE_WIZARD_HAT);
         BankManager.withdraw(1, true,
-                ItemId.ZAMORAK_MONK_TOP);
+                ItemID.ZAMORAK_MONK_TOP);
         BankManager.withdraw(1, true,
-                ItemId.ZAMORAK_MONK_BOTTOM);
-        Utils.equipItem(
-                ItemId.BLUE_WIZ_HAT);
-        Utils.equipItem(
-                ItemId.ZAMORAK_MONK_TOP);
-        Utils.equipItem(
-                ItemId.ZAMORAK_MONK_BOTTOM);
-        BankManager.withdraw(4, true,
-                ItemId.FALADOR_TELEPORT);
-        BankManager.withdraw(16, true,
-                ItemId.LOBSTER);
+                ItemID.ZAMORAK_MONK_BOTTOM);
+        Utils.equipItem(ItemID.BLUE_WIZARD_HAT);
+        Utils.equipItem(ItemID.ZAMORAK_MONK_TOP);
+        Utils.equipItem(ItemID.ZAMORAK_MONK_BOTTOM);
+        BankManager.withdraw(4, true, ItemID.FALADOR_TELEPORT);
+        BankManager.withdraw(16, true, ItemID.LOBSTER);
+        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+        BankManager.withdraw(300, true, ItemID.MIND_RUNE);
         BankManager.withdraw(1, true,
-                ItemId.STAFF_OF_AIR);
-        BankManager.withdraw(300, true,
-                ItemId.MIND_RUNE);
-        BankManager.withdraw(1, true,
-                ItemId.RING_OF_WEALTH);
+                ItemID.RING_OF_WEALTH);
         BankManager.withdraw(1, true, houseKey);
         BankManager.withdraw(1, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
 
         if (Skills.getCurrentLevel(Skills.SKILLS.MAGIC) >= 13)
             BankManager.withdraw(900, true,
-                    ItemId.FIRE_RUNE);
+                    ItemID.FIRE_RUNE);
         else
             BankManager.withdraw(600, true,
-                    ItemId.EARTH_RUNE);
+                    ItemID.EARTH_RUNE);
 
         Utils.modSleep();
         BankManager.close(true);
@@ -164,9 +157,9 @@ public class WitchsHouse implements QuestTask {
     public void startQuest() {
         cQuesterV2.status = "Starting Quest";
         Utils.equipItem(
-                ItemId.STAFF_OF_AIR);
+                ItemID.STAFF_OF_AIR);
         Utils.equipItem(
-                ItemId.LEATHER_GLOVES);
+                ItemID.LEATHER_GLOVES);
         if (!LARGE_START_AREA.contains(Player.getPosition()))
             PathingUtil.walkToArea(SMALL_START_AREA, false);
 
@@ -182,12 +175,12 @@ public class WitchsHouse implements QuestTask {
     public void enterHouse() {
         cQuesterV2.status = "Entering house";
         if ((!Equipment.isEquipped(
-                ItemId.STAFF_OF_AIR) && Inventory.find(
-                ItemId.STAFF_OF_AIR).length < 1) ||
+                ItemID.STAFF_OF_AIR) && Inventory.find(
+                ItemID.STAFF_OF_AIR).length < 1) ||
                 !BankManager.checkInventoryItems(
-                        ItemId.CHEESE,
-                        ItemId.LOBSTER,
-                        ItemId.MIND_RUNE)) {
+                        ItemID.CHEESE,
+                        ItemID.LOBSTER,
+                        ItemID.MIND_RUNE)) {
             buyItems();
             getItems();
         }
@@ -226,8 +219,8 @@ public class WitchsHouse implements QuestTask {
                     Timer.abc2WaitCondition(() -> preGate.contains(Player.getPosition()), 5000, 8000);
             }
             if (preGate.contains(Player.getPosition())) {
-                if (!Equipment.isEquipped(ItemId.LEATHER_GLOVES))
-                    Utils.equipItem(ItemId.LEATHER_GLOVES);
+                if (!Equipment.isEquipped(ItemID.LEATHER_GLOVES))
+                    Utils.equipItem(ItemID.LEATHER_GLOVES);
 
                 if (Utils.clickObject("Gate", "Open", false))
                     Timer.waitCondition(() -> postGate.contains(Player.getPosition()), 7000, 10000);
@@ -235,7 +228,7 @@ public class WitchsHouse implements QuestTask {
             if (postGate.contains(Player.getPosition())) {
                 if (Inventory.find(magnet).length < 1) {
 
-                    Utils.equipItem(ItemId.STAFF_OF_AIR);
+                    Utils.equipItem(ItemID.STAFF_OF_AIR);
 
                     if (Utils.clickObject(CLOSED_CUPBOARD, "Open", false)) {
                         Timer.waitCondition(() -> Objects.findNearest(20, OPEN_CUPBOARD).length > 0, 5000, 8000);
@@ -281,10 +274,10 @@ public class WitchsHouse implements QuestTask {
             cQuesterV2.status = "Baiting mouse";
 
             Camera.setCameraRotation(General.random(195, 280));
-            RSItem[] invCheese = Inventory.find(ItemId.CHEESE);
+            RSItem[] invCheese = Inventory.find(ItemID.CHEESE);
             if (invCheese.length > 0 && Inventory.find(magnet).length > 0) {
                 if (Clicking.click("Drop", invCheese[0]))
-                    //if (Utils.useItemOnObject(ItemId.CHEESE, "Mouse hole"))
+                    //if (Utils.useItemOnObject(ItemID.CHEESE, "Mouse hole"))
                     Timer.waitCondition(() -> NPCs.findNearest("Mouse").length > 0, 5000, 7000);
 
                 if (Utils.useItemOnNPC(magnet, "Mouse")) {
@@ -440,7 +433,7 @@ public class WitchsHouse implements QuestTask {
             General.println("[Debug]: Retrying");
             Utils.shortSleep();
             if (Inventory.find(
-                    ItemId.CHEESE).length < 1) {
+                    ItemID.CHEESE).length < 1) {
                 getItems();
             }
             enterHouse();
@@ -456,13 +449,13 @@ public class WitchsHouse implements QuestTask {
     RSTile SAFE_TILE = new RSTile(2936, 3459, 0);
 
     public boolean setUpAutocast() {
-        if (!Equipment.isEquipped(ItemId.STAFF_OF_AIR))
-            Utils.equipItem(ItemId.STAFF_OF_AIR);
+        if (!Equipment.isEquipped(ItemID.STAFF_OF_AIR))
+            Utils.equipItem(ItemID.STAFF_OF_AIR);
 
-        if (Equipment.isEquipped(ItemId.STAFF_OF_AIR)) {
-            if (Skills.getCurrentLevel(Skills.SKILLS.MAGIC) >= 13 && Inventory.find(ItemId.FIRE_RUNE).length > 0) {
+        if (Equipment.isEquipped(ItemID.STAFF_OF_AIR)) {
+            if (Skills.getCurrentLevel(Skills.SKILLS.MAGIC) >= 13 && Inventory.find(ItemID.FIRE_RUNE).length > 0) {
                 Autocast.enableAutocast(Autocast.FIRE_STRIKE);
-            } else if (Inventory.find(ItemId.EARTH_RUNE).length > 0)
+            } else if (Inventory.find(ItemID.EARTH_RUNE).length > 0)
                 Autocast.enableAutocast(Autocast.EARTH_STRIKE);
             else {
                 Log.log("[Debug]: Failed to set up autocast, ending script");
@@ -498,7 +491,7 @@ public class WitchsHouse implements QuestTask {
                     Timer.waitCondition(() -> SAFE_TILE.equals(Player.getPosition()), 3500, 5000);
 
                 } else {
-                    RSItem[] lob = Inventory.find(ItemId.LOBSTER);
+                    RSItem[] lob = Inventory.find(ItemID.LOBSTER);
                     if (Combat.getHPRatio() < General.random(55, 66) &&
                             lob.length > 0) {
                         cQuesterV2.status = "Eating";

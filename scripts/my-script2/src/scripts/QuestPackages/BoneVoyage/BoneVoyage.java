@@ -155,9 +155,7 @@ public class BoneVoyage implements QuestTask {
         if (getLength(OLD_COIN_CASE) != 882) {
             OLD_COIN_PLACED = true;
         }
-        if (getLength(POTTERY_CASE) != 882) {
-            POTTERY_PLACED = true;
-        }
+
 
     }
 
@@ -258,11 +256,11 @@ public class BoneVoyage implements QuestTask {
         }
     }
 
-    private void showFind(boolean placed, int itemId) {
+    private void showFind(boolean placed, int ItemID) {
         if (!placed) {
-            showItem(itemId);
+            showItem(ItemID);
         } else {
-            Inventory.drop(itemId);
+            Inventory.drop(ItemID);
         }
     }
 
@@ -281,10 +279,10 @@ public class BoneVoyage implements QuestTask {
         }
     }
 
-    public boolean showItem(int itemId) {
-        if (Inventory.find(itemId).length > 0) {
-            String name = RSItemDefinition.get(itemId).getName();
-            if (Utils.useItemOnNPC(itemId, SINCO_DOAR)) {
+    public boolean showItem(int ItemID) {
+        if (Inventory.find(ItemID).length > 0) {
+            String name = RSItemDefinition.get(ItemID).getName();
+            if (Utils.useItemOnNPC(ItemID, SINCO_DOAR)) {
                 if (name != null)
                     General.println("[Debug]: Showed " + name + " to Sinco Doar", Color.RED);
                 NPCInteraction.waitForConversationWindow();
@@ -348,14 +346,14 @@ public class BoneVoyage implements QuestTask {
     }
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(Arrays.asList(
-            new GEItem(ItemId.VARROCK_TELEPORT, 6, 50),
+            new GEItem(ItemID.VARROCK_TELEPORT, 6, 50),
             new GEItem(VODKA, 2, 500),
             new GEItem(MARRENTIL_UNF, 1, 50),
             new GEItem(DIGSITE_TELEPORT, 6, 25),
             new GEItem(LUMBERYARD_TELEPORT, 6, 25),
-            new GEItem(ItemId.AMULET_OF_GLORY[0], 1, 20),
-            new GEItem(ItemId.SKILLS_NECKLACE[0], 1, 20),
-            new GEItem(ItemId.STAMINA_POTION[0], 2, 20)
+            new GEItem(ItemID.AMULET_OF_GLORY[0], 1, 20),
+            new GEItem(ItemID.SKILLS_NECKLACE[0], 1, 20),
+            new GEItem(ItemID.STAMINA_POTION[0], 2, 20)
     ));
 
 
@@ -370,21 +368,21 @@ public class BoneVoyage implements QuestTask {
     HashMap<Integer, Integer> getItemsMap = new HashMap<>();
 
     public void getItems() {
-        getItemsMap.put(ItemId.AMULET_OF_GLORY[0], 1);
+        getItemsMap.put(ItemID.AMULET_OF_GLORY[0], 1);
 
         cQuesterV2.status = "Getting Items";
         General.println("[Debug]: Getting Items");
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(2, true, VODKA);
         BankManager.withdraw(5, true, DIGSITE_TELEPORT);
         BankManager.withdraw(1, true, MARRENTIL_UNF);
         BankManager.withdraw(3, true, LUMBERYARD_TELEPORT);
-        BankManager.withdraw(3, true, ItemId.VARROCK_TELEPORT);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE[0]);
+        BankManager.withdraw(3, true, ItemID.VARROCK_TELEPORT);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE[0]);
         BankManager.withdraw(1, true, BONE_CHARM);
         BankManager.close(true);
     }

@@ -45,12 +45,12 @@ public class RunecraftBank implements Task {
                     .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HEAD)
                             .item(rune.getTiaraId(), Amount.of(1)))
                     .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.NECK)
-                            .item(ItemId.BINDING_NECKLACE, Amount.of(1)))
+                            .item(ItemID.BINDING_NECKLACE, Amount.of(1)))
                     .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
                             .chargedItem(rune.getChargedTeleItemBaseName(), 2))
                     .addInvItem(rune.getCombiningRuneId(), Amount.fill(28))
                     .addInvItem(rune.getAdditionalTalisman(), Amount.of(1))
-                    .addInvItem(ItemId.PURE_ESSENCE, Amount.fill(1))
+                    .addInvItem(ItemID.PURE_ESSENCE, Amount.fill(1))
                     .build();
         } else if (itemOptional.get().equals(RunecraftItems.FIRE_RUNE)) {
             return BankTask.builder()
@@ -58,7 +58,7 @@ public class RunecraftBank implements Task {
                             .item(rune.getTiaraId(), Amount.of(1)))
                     .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
                             .chargedItem("Ring of dueling", 2))
-                    .addInvItem(ItemId.PURE_ESSENCE, Amount.fill(1))
+                    .addInvItem(ItemID.PURE_ESSENCE, Amount.fill(1))
                     .build();
         }
         return BankTask.builder()
@@ -67,7 +67,7 @@ public class RunecraftBank implements Task {
                 .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
                         .chargedItem("Ring of dueling", 2))
                 .addInvItem(rune.getTeleportId(), Amount.fill(2))
-                .addInvItem(ItemId.PURE_ESSENCE, Amount.fill(1))
+                .addInvItem(ItemID.PURE_ESSENCE, Amount.fill(1))
                 .build();
 
     }
@@ -86,8 +86,8 @@ public class RunecraftBank implements Task {
     }
 
     public void getItemsFireRunes() {
-        if (Inventory.find(ItemId.PURE_ESSENCE).length < 1
-                || !Equipment.isEquipped(ItemId.FIRE_TIARA)) {
+        if (Inventory.find(ItemID.PURE_ESSENCE).length < 1
+                || !Equipment.isEquipped(ItemID.FIRE_TIARA)) {
             goToCWBank();
             open(true);
             depositAll(false);
@@ -96,11 +96,11 @@ public class RunecraftBank implements Task {
             if (getAndEquip(RING_OF_DUELING, "Wear"))
                 depositAll(true);
 
-            if (getAndEquip(ItemId.FIRE_TIARA, "Wear"))
+            if (getAndEquip(ItemID.FIRE_TIARA, "Wear"))
                 depositAll(true);
 
 
-            withdraw(0, true, ItemId.PURE_ESSENCE);
+            withdraw(0, true, ItemID.PURE_ESSENCE);
             close(true);
         }
     }
@@ -189,8 +189,8 @@ public class RunecraftBank implements Task {
 
         ArrayList<ItemReq> itemList = new ArrayList<>();
         itemList.add(new ItemReq(regularRuneId, 0));
-        itemList.add(new ItemReq(ItemId.PURE_ESSENCE, 0));
-        itemList.add(new ItemReq(ItemId.ASTRAL_RUNE, 0));
+        itemList.add(new ItemReq(ItemID.PURE_ESSENCE, 0));
+        itemList.add(new ItemReq(ItemID.ASTRAL_RUNE, 0));
         InventoryRequirement invReq = new InventoryRequirement(itemList);
 
         if (!invReq.check()) {
@@ -226,12 +226,12 @@ public class RunecraftBank implements Task {
     }
 
     public boolean getPouches() {
-        RSItem[] invPouch = Inventory.find(ItemId.ALL_POUCHES);
+        RSItem[] invPouch = Inventory.find(ItemID.ALL_POUCHES);
         if (invPouch.length < 3 && RcVars.get().usingLunarImbue) {
             // gets pouches in case we deposited them somehow
-            withdraw(0, true, ItemId.ALL_POUCHES[0]);
-            withdraw(0, true, ItemId.ALL_POUCHES[1]);
-            withdraw(0, true, ItemId.ALL_POUCHES[2]);
+            withdraw(0, true, ItemID.ALL_POUCHES[0]);
+            withdraw(0, true, ItemID.ALL_POUCHES[1]);
+            withdraw(0, true, ItemID.ALL_POUCHES[2]);
             return true;
         }
         return false;
@@ -248,7 +248,7 @@ public class RunecraftBank implements Task {
 
 
     public void getItemsComboRunes(int talisman, int regularRune, boolean shouldAfk) {
-        if (!itemInInv(talisman, regularRune, ItemId.PURE_ESSENCE)) {
+        if (!itemInInv(talisman, regularRune, ItemID.PURE_ESSENCE)) {
 
 
             RSItem[] p = Inventory.find(Filters.Items.nameContains("pouch").and(Filters.Items.actionsContains("Fill")));
@@ -262,10 +262,10 @@ public class RunecraftBank implements Task {
 
             open(true);
             if (RcVars.get().usingLunarImbue && p.length > 0)
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
             else
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE, talisman);
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE, talisman);
 
             Timer.waitCondition(() -> Inventory.getAll().length < 6, 1500, 2000);
 
@@ -273,52 +273,52 @@ public class RunecraftBank implements Task {
             rodFailSafe();
 
             if (getAndEquip(RING_OF_DUELING, "Wear"))
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
 
-            if (getAndEquip(ItemId.MYSTIC_STEAM_STAFF, "Wield"))
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+            if (getAndEquip(ItemID.MYSTIC_STEAM_STAFF, "Wield"))
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
 
-            if (getAndEquip(ItemId.FIRE_TIARA, "Wear"))
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+            if (getAndEquip(ItemID.FIRE_TIARA, "Wear"))
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
 
             if (RcVars.get().useStamina && Utils.getVarBitValue(25) == 0 && Game.getRunEnergy() < General.random(65, 80)) {
-                getAndEquip(ItemId.STAMINA_POTION, "Drink");
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+                getAndEquip(ItemID.STAMINA_POTION, "Drink");
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
             }
 
             if (getPouches())
                 p = Inventory.find(Filters.Items.nameContains("pouch").and(Filters.Items.actionsContains("Fill")));
 
-            if (getAndEquip(ItemId.BINDING_NECKLACE, "Wear"))
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+            if (getAndEquip(ItemID.BINDING_NECKLACE, "Wear"))
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
 
             if (!itemInInv(regularRune))
-                depositAllExcept(false, regularRune, ItemId.ASTRAL_RUNE,
-                        ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+                depositAllExcept(false, regularRune, ItemID.ASTRAL_RUNE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
 
 
             // if not using lunars, get a talisman
             if (!RcVars.get().usingLunarImbue)
                 withdraw(1, true, talisman);
             else {
-                withdraw(0, true, ItemId.ASTRAL_RUNE);
+                withdraw(0, true, ItemID.ASTRAL_RUNE);
             }
 
             // get essence and binding rune
             withdraw(0, true, regularRune);
-            withdraw(0, true, ItemId.PURE_ESSENCE);
+            withdraw(0, true, ItemID.PURE_ESSENCE);
 
             // fill pouches (if we have any)
             fillPouches();
 
             // refill inv with essence if needed
             if (!Inventory.isFull())
-                withdraw(0, true, ItemId.PURE_ESSENCE);
+                withdraw(0, true, ItemID.PURE_ESSENCE);
 
             Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
             General.sleep(General.random(300, 500));
@@ -332,29 +332,29 @@ public class RunecraftBank implements Task {
     }
 
     public boolean checkItems() {
-        if (!Equipment.isEquipped(ItemId.BINDING_NECKLACE)
+        if (!Equipment.isEquipped(ItemID.BINDING_NECKLACE)
                 || !Equipment.isEquipped(RING_OF_DUELING)) {
             General.println("[Debug]: Missing equipped binding or dueling, ending");
             return false;
         } else if (!RcVars.get().lava) {
-            if (Inventory.find(ItemId.WATER_RUNE).length == 0) {
+            if (Inventory.find(ItemID.WATER_RUNE).length == 0) {
                 General.println("[Debug]: Missing water runes in inventory, ending");
                 return false;
             }
-            if (!RcVars.get().usingLunarImbue && Inventory.find(ItemId.WATER_TALISMAN).length == 0) {
+            if (!RcVars.get().usingLunarImbue && Inventory.find(ItemID.WATER_TALISMAN).length == 0) {
                 General.println("[Debug]: Missing water talisman in inventory, ending");
                 return false;
             }
         } else if (RcVars.get().lava) {
-            if (Inventory.find(ItemId.EARTH_RUNE).length == 0) {
+            if (Inventory.find(ItemID.EARTH_RUNE).length == 0) {
                 General.println("[Debug]: Missing earth runes in inventory, ending");
                 return false;
             }
-            if (!RcVars.get().usingLunarImbue && Inventory.find(ItemId.EARTH_TALISMAN).length == 0) {
+            if (!RcVars.get().usingLunarImbue && Inventory.find(ItemID.EARTH_TALISMAN).length == 0) {
                 General.println("[Debug]: Missing earth talisman in inventory, ending");
                 return false;
             }
-        } else if (RcVars.get().usingLunarImbue && Inventory.find(ItemId.ASTRAL_RUNE).length == 0) {
+        } else if (RcVars.get().usingLunarImbue && Inventory.find(ItemID.ASTRAL_RUNE).length == 0) {
             General.println("[Debug]: Missing astral runes in inventory, ending");
             return false;
         }
@@ -364,7 +364,7 @@ public class RunecraftBank implements Task {
 
   /*  public void getAbyssItems() {
         //GoToAbyss.gloryTeleport("Edgeville");
-        if (!itemInInv(ItemId.PURE_ESSENCE)) {
+        if (!itemInInv(ItemID.PURE_ESSENCE)) {
 
             if (RcVars.get().zanarisCrafting) {
                 RSObject[] altar = Objects.findNearest(30, Filters.Objects.nameContains("Altar").
@@ -377,7 +377,7 @@ public class RunecraftBank implements Task {
                     }
                 }
                 General.println("[Debug]: Going to Zanaris bank");
-                PathingUtil.walkToArea(ItemId.ZANARIS_BANK, false);
+                PathingUtil.walkToArea(ItemID.ZANARIS_BANK, false);
             }
 
             RSItem[] p = Inventory.find(Filters.Items.nameContains("pouch").and(Filters.Items.actionsContains("Fill")));
@@ -390,46 +390,46 @@ public class RunecraftBank implements Task {
                 open(true);
 
             if (RcVars.get().usingLunarImbue && p.length > 0) {
-                depositAllExcept(true, ItemId.DEGRADED_LARGE_POUCH, ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+                depositAllExcept(true, ItemID.DEGRADED_LARGE_POUCH, ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
                 Timer.waitCondition(() -> Inventory.getAll().length < 4, 1500, 2000);
             }
 
             while (Combat.getHP() + 6 < Skills.getActualLevel(Skills.SKILLS.HITPOINTS)) {
                 General.println("[Bank]: Eating food");
-                withdraw(1, true, ItemId.MONKFISH);
+                withdraw(1, true, ItemID.MONKFISH);
                 EatUtil.eatFood();
                 General.sleep(100);
             }
 
 
-            if (!RcVars.get().zanarisCrafting && getAndEquip(ItemId.AMULET_OF_GLORY, "Wear"))
-                depositAllExcept(true, ItemId.DEGRADED_LARGE_POUCH, ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+            if (!RcVars.get().zanarisCrafting && getAndEquip(ItemID.AMULET_OF_GLORY, "Wear"))
+                depositAllExcept(true, ItemID.DEGRADED_LARGE_POUCH, ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
 
             if (RcVars.get().useStamina && Utils.getVarBitValue(25) == 0 || Game.getRunEnergy() < General.random(75, 80)) {
-                getAndEquip(ItemId.STAMINA_POTION, "Drink");
+                getAndEquip(ItemID.STAMINA_POTION, "Drink");
                 //drinks twice if needed
                 if (Game.getRunEnergy() < 60)
-                    getAndEquip(ItemId.STAMINA_POTION, "Drink");
-                depositAllExcept(true, ItemId.DEGRADED_LARGE_POUCH, ItemId.ALL_POUCHES[0], ItemId.ALL_POUCHES[1], ItemId.ALL_POUCHES[2]);
+                    getAndEquip(ItemID.STAMINA_POTION, "Drink");
+                depositAllExcept(true, ItemID.DEGRADED_LARGE_POUCH, ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
             }
 
             if (!Equipment.isEquipped(Filters.Items.nameContains("axe")) && !RcVars.get().zanarisCrafting)
-                getAndEquip(ItemId.RUNE_AXE, "Wield");
+                getAndEquip(ItemID.RUNE_AXE, "Wield");
 
             if (!RcVars.get().zanarisCrafting)
-                withdraw(1, true, ItemId.MONKFISH);
+                withdraw(1, true, ItemID.MONKFISH);
 
-            RSItem[] invPouch = Inventory.find(ItemId.ALL_POUCHES);
+            RSItem[] invPouch = Inventory.find(ItemID.ALL_POUCHES);
             if (invPouch.length < 3) {
                 // gets pouches in case we deposited them somehow
-                withdraw(0, true, ItemId.ALL_POUCHES[0]);
-                withdraw(0, true, ItemId.ALL_POUCHES[1]);
-                withdraw(0, true, ItemId.ALL_POUCHES[2]);
+                withdraw(0, true, ItemID.ALL_POUCHES[0]);
+                withdraw(0, true, ItemID.ALL_POUCHES[1]);
+                withdraw(0, true, ItemID.ALL_POUCHES[2]);
             }
 
 
             // get essence
-            withdraw(0, true, ItemId.PURE_ESSENCE);
+            withdraw(0, true, ItemID.PURE_ESSENCE);
 
             // fill pouches (if we have any)
             for (RSItem pouch : p) {
@@ -440,7 +440,7 @@ public class RunecraftBank implements Task {
             Utils.shortSleep();
 
             if (!Inventory.isFull())
-                withdraw(0, true, ItemId.PURE_ESSENCE);
+                withdraw(0, true, ItemID.PURE_ESSENCE);
 
             Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
             General.sleep(General.random(300, 500));
@@ -452,14 +452,14 @@ public class RunecraftBank implements Task {
 */
 
     public void getItemsRegularRunes(int tiara, boolean useStamina, boolean useTeleTab, int tabId, RunescapeBank bank) {
-        if (Inventory.find(ItemId.PURE_ESSENCE).length < 1 || !Equipment.isEquipped(tiara)) {
+        if (Inventory.find(ItemID.PURE_ESSENCE).length < 1 || !Equipment.isEquipped(tiara)) {
             General.println("[Debug]: Getting Items from Bank: " + bank.toString());
             PathingUtil.walkToTile(bank.getPosition(), 2, true);
 
             open(true);
 
             if (useStamina)
-                depositAllExcept(true, tabId, ItemId.STAMINA_POTION[0], ItemId.STAMINA_POTION[1], ItemId.STAMINA_POTION[2], ItemId.STAMINA_POTION[3]);
+                depositAllExcept(true, tabId, ItemID.STAMINA_POTION[0], ItemID.STAMINA_POTION[1], ItemID.STAMINA_POTION[2], ItemID.STAMINA_POTION[3]);
             else
                 depositAllExcept(true, tabId);
 
@@ -468,12 +468,12 @@ public class RunecraftBank implements Task {
                 Utils.equipItem(tiara);
             }
             if (RcVars.get().useStamina && Inventory.find(Filters.Items.nameContains("Stamina")).length == 0)
-                withdrawArray(ItemId.STAMINA_POTION, 1);
+                withdrawArray(ItemID.STAMINA_POTION, 1);
 
             if (useTeleTab)
                 withdraw(1, true, tabId);
 
-            withdraw(0, true, ItemId.PURE_ESSENCE);
+            withdraw(0, true, ItemID.PURE_ESSENCE);
             General.sleep(General.random(250, 750));
             close(true);
         }
@@ -524,7 +524,7 @@ public class RunecraftBank implements Task {
 
 
     public static boolean gloryTele(String location) {
-        RSItem[] rod = Equipment.find(ItemId.AMULET_OF_GLORY);
+        RSItem[] rod = Equipment.find(ItemID.AMULET_OF_GLORY);
         if (rod.length > 0) {
             for (int i = 0; i < 3; i++) {
                 General.println("[Teleport Manager]: Going to " + location);
@@ -611,11 +611,11 @@ public class RunecraftBank implements Task {
     }
 
 
-    private static boolean checkWithdrawSuccess(int quantity, int itemID) {
-        Timer.waitCondition(() -> Inventory.find(itemID).length > 0, General.random(800, 1500));
-        if (Inventory.find(itemID).length < 1 && !Inventory.isFull()) {
+    private static boolean checkWithdrawSuccess(int quantity, int ItemID) {
+        Timer.waitCondition(() -> Inventory.find(ItemID).length > 0, General.random(800, 1500));
+        if (Inventory.find(ItemID).length < 1 && !Inventory.isFull()) {
             General.println("[Debug]: Seemingly failed to get item, trying again.");
-            return withdraw(quantity, true, itemID);
+            return withdraw(quantity, true, ItemID);
         } else
             return true;
     }
@@ -651,16 +651,16 @@ public class RunecraftBank implements Task {
         return (!Banking.openBank() || !shouldWait || Timer.waitCondition(Banking::isBankScreenOpen, 5000));
     }
 
-    public static boolean withdraw(int num, boolean shouldWait, int itemId) {
+    public static boolean withdraw(int num, boolean shouldWait, int ItemID) {
 
         open(true);
 
         closeHelpWindow();
 
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
 
         if (item.length < 1) {
-            String name = RSItemDefinition.get(itemId).getName();
+            String name = RSItemDefinition.get(ItemID).getName();
             if (name != null)
                 General.println("[Debug]: Missing item: " + name);
             else
@@ -670,7 +670,7 @@ public class RunecraftBank implements Task {
 
         for (int i = 0; i < 5; i++) {
             if (!shouldWait) {
-                if (Banking.withdraw(num, itemId)) {
+                if (Banking.withdraw(num, ItemID)) {
                     General.sleep(General.random(150, 500));
                     return true;
 
@@ -678,8 +678,8 @@ public class RunecraftBank implements Task {
                     General.sleep(General.random(350, 800));
 
             } else {
-                if (Banking.withdraw(num, itemId)) {
-                    if (Timer.waitCondition(() -> inventoryChange(true) || Inventory.find(itemId).length > 0, 4000, 6000))
+                if (Banking.withdraw(num, ItemID)) {
+                    if (Timer.waitCondition(() -> inventoryChange(true) || Inventory.find(ItemID).length > 0, 4000, 6000))
                         return true;
 
                     else
@@ -705,7 +705,7 @@ public class RunecraftBank implements Task {
 
     @Override
     public boolean validate() {
-        RSItem[] tiaras = Inventory.find(ItemId.TIARA);
+        RSItem[] tiaras = Inventory.find(ItemID.TIARA);
         RSItem[] talisman = Inventory.find(Filters.Items.nameContains("talisman"));
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING)) {
             General.println("Abyss: " + RcVars.get().abyssCrafting + " ; Lunars: " +
@@ -716,28 +716,28 @@ public class RunecraftBank implements Task {
 
             //   } else
             if (getLevel() < 14) {
-                return Inventory.find(ItemId.PURE_ESSENCE).length < 1 || !Equipment.isEquipped(ItemId.EARTH_TIARA);
+                return Inventory.find(ItemID.PURE_ESSENCE).length < 1 || !Equipment.isEquipped(ItemID.EARTH_TIARA);
 
             } else if (getLevel() < 19) {
-                return (Inventory.find(ItemId.PURE_ESSENCE).length < 1
-                        || !Equipment.isEquipped(ItemId.FIRE_TIARA));
+                return (Inventory.find(ItemID.PURE_ESSENCE).length < 1
+                        || !Equipment.isEquipped(ItemID.FIRE_TIARA));
 
             } else if (RcVars.get().lava && !RcVars.get().abyssCrafting && !RcVars.get().usingLunarImbue) {
                 General.println("Lava runes at ine 230 of bank");
-                return !itemInInv(ItemId.EARTH_TALISMAN, ItemId.EARTH_RUNE, ItemId.PURE_ESSENCE);
+                return !itemInInv(ItemID.EARTH_TALISMAN, ItemID.EARTH_RUNE, ItemID.PURE_ESSENCE);
 
             } else if (!RcVars.get().abyssCrafting && !RcVars.get().zanarisCrafting) {
 
                 if (RcVars.get().usingLunarImbue && !RcVars.get().lava)
-                    return !itemInInv(ItemId.WATER_RUNE, ItemId.PURE_ESSENCE);
+                    return !itemInInv(ItemID.WATER_RUNE, ItemID.PURE_ESSENCE);
 
                 else if (RcVars.get().usingLunarImbue && RcVars.get().lava)
-                    return !itemInInv(ItemId.EARTH_RUNE, ItemId.PURE_ESSENCE);
+                    return !itemInInv(ItemID.EARTH_RUNE, ItemID.PURE_ESSENCE);
 
-                return !itemInInv(ItemId.WATER_RUNE, ItemId.WATER_TALISMAN, ItemId.PURE_ESSENCE);
+                return !itemInInv(ItemID.WATER_RUNE, ItemID.WATER_TALISMAN, ItemID.PURE_ESSENCE);
 
             } else if (RcVars.get().abyssCrafting || RcVars.get().zanarisCrafting) {
-                return Inventory.find(ItemId.PURE_ESSENCE).length == 0;
+                return Inventory.find(ItemID.PURE_ESSENCE).length == 0;
 
             }
         }
@@ -752,29 +752,29 @@ public class RunecraftBank implements Task {
       /*  if (getLevel() < 14) {
             // get tiaras
         } else if (getLevel() < 14) {
-            //  getItemsRegularRunes(ItemId.EARTH_TIARA, true, true, ItemId.VARROCK_TELEPORT, RunescapeBank.VARROCK_EAST);
+            //  getItemsRegularRunes(ItemID.EARTH_TIARA, true, true, ItemID.VARROCK_TELEPORT, RunescapeBank.VARROCK_EAST);
 
         } else if (getLevel() < 19) {
             getItemsFireRunes();
 
         } else if (RcVars.get().lava && !RcVars.get().abyssCrafting && !RcVars.get().usingLunarImbue) {
             General.println("Lava - no lunars");
-            getItemsComboRunes(ItemId.EARTH_TALISMAN, ItemId.EARTH_RUNE, true);
+            getItemsComboRunes(ItemID.EARTH_TALISMAN, ItemID.EARTH_RUNE, true);
 
 
         } else if (!RcVars.get().abyssCrafting && !RcVars.get().lava && !RcVars.get().zanarisCrafting) {
             //steam runes
             //talismanInvTsk.execute();
-            getItemsComboRunes(ItemId.WATER_TALISMAN, ItemId.WATER_RUNE, true);
+            getItemsComboRunes(ItemID.WATER_TALISMAN, ItemID.WATER_RUNE, true);
             RSTile current = Player.getPosition();
-            if (Inventory.find(ItemId.PURE_ESSENCE).length > 0) {
+            if (Inventory.find(ItemID.PURE_ESSENCE).length > 0) {
                 rodTele("Duel Arena");
                 Timer.waitCondition(() -> !Player.getPosition().equals(current), 3500, 5000);
             }
         } else if (RcVars.get().lava && !RcVars.get().abyssCrafting
                 && RcVars.get().usingLunarImbue && !RcVars.get().zanarisCrafting) {
             General.println("[Debug]: Lava - with lunars");
-            getItemsComboRunes(ItemId.EARTH_TALISMAN, ItemId.EARTH_RUNE, true);
+            getItemsComboRunes(ItemID.EARTH_TALISMAN, ItemID.EARTH_RUNE, true);
             RSTile current = Player.getPosition();
             rodTele("Duel Arena");
             Timer.waitCondition(() -> !Player.getPosition().equals(current), 3500, 5000);

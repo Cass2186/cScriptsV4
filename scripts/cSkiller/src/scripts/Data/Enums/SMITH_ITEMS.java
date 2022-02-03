@@ -6,7 +6,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.Data.SkillTasks;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 
 import java.awt.*;
@@ -18,19 +18,19 @@ public enum SMITH_ITEMS {
 
 
 
-   BRONZE_DAGGER("Dagger", 1, ItemId.BRONZE_BAR,
+   BRONZE_DAGGER("Dagger", 1, ItemID.BRONZE_BAR,
            genericSmithItems.DAGGER.getInterfaceChild(),1,5),
 
-    BRONZE_BOLTS("Bolts", 1, ItemId.BRONZE_BAR,
+    BRONZE_BOLTS("Bolts", 1, ItemID.BRONZE_BAR,
             genericSmithItems.BOLTS.getInterfaceChild(),1,5),
 
-    BRONZE_SCIMITAR("Scimitar", 2, ItemId.BRONZE_BAR,
+    BRONZE_SCIMITAR("Scimitar", 2, ItemID.BRONZE_BAR,
             genericSmithItems.SCIMITAR.getInterfaceChild(),5, 9),
 
-    BRONZE_WARHAMMER("Warhammer", 3, ItemId.BRONZE_BAR,
+    BRONZE_WARHAMMER("Warhammer", 3, ItemID.BRONZE_BAR,
             genericSmithItems.WARHAMMER.getInterfaceChild(),9,18),
 
-    BRONZE_PLATEBODY("Plate body", 5, ItemId.BRONZE_BAR,
+    BRONZE_PLATEBODY("Plate body", 5, ItemID.BRONZE_BAR,
             genericSmithItems.PLATEBODY.getInterfaceChild(), 20, 24);
 
     @Getter
@@ -83,15 +83,15 @@ public enum SMITH_ITEMS {
     private static Skills.SKILLS skill = Skills.SKILLS.SMITHING;
 
     public double getXpFromBarId() {
-        if (this.barId == ItemId.BRONZE_BAR) {
+        if (this.barId == ItemID.BRONZE_BAR) {
             return 12.5;
-        } else if (this.barId == ItemId.IRON_BAR) {
+        } else if (this.barId == ItemID.IRON_BAR) {
             return 25;
-        } else if (this.barId == ItemId.STEEL_BAR) {
+        } else if (this.barId == ItemID.STEEL_BAR) {
             return 37.5;
-        } else if (this.barId == ItemId.MITHRIL_BAR) {
+        } else if (this.barId == ItemID.MITHRIL_BAR) {
             return 50;
-        } else if (this.barId == ItemId.ADAMANTITE_BAR) {
+        } else if (this.barId == ItemID.ADAMANTITE_BAR) {
             return 62.5;
         }
         return -1;
@@ -126,7 +126,7 @@ public enum SMITH_ITEMS {
                     " items", Color.BLACK);
             General.println("[SmithItems]: We need " + i.size() + " sized list for Smith items", Color.BLACK);
         }
-        i.add(new ItemReq(ItemId.HAMMER, 1));
+        i.add(new ItemReq(ItemID.HAMMER, 1));
         return i;
     }
 }

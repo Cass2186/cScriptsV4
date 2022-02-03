@@ -10,10 +10,9 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.API.Priority;
 import scripts.API.Task;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
 import scripts.Tasks.Combat.Data.CrabVars;
 
 
@@ -32,7 +31,7 @@ public class EatDrink implements Task {
 
     public void drinkCombatPotion() {
         if (Skills.getCurrentLevel(Skills.SKILLS.STRENGTH) <= Skills.getActualLevel(Skills.SKILLS.STRENGTH) + scripts.Tasks.Combat.Data.CrabVars.get().add) {
-            RSItem[] combatPot = Inventory.find(ItemId.COMBAT_POTION);
+            RSItem[] combatPot = Inventory.find(ItemID.COMBAT_POTION);
             if (combatPot.length > 0 && combatPot[0].click("Drink")) {
                 CrabVars.get().add = General.random(1, 4);
                 int nextDrinkLevel = Skills.getActualLevel(Skills.SKILLS.STRENGTH) + scripts.Tasks.Combat.Data.CrabVars.get().add;
@@ -67,7 +66,7 @@ public class EatDrink implements Task {
 
     public void drinkPrayerPotion() {
         if (checkPrayer()) {
-            RSItem[] potion = Inventory.find(ItemId.PRAYER_POTION);
+            RSItem[] potion = Inventory.find(ItemID.PRAYER_POTION);
             if (potion.length > 0 && potion[0].click("Drink")) {
                 drinkPPotAt = General.randomSD(4, 22, 14, 4);
                 General.println("[Debug]: Next Drinking Potion at " + drinkPPotAt);
@@ -131,7 +130,7 @@ public class EatDrink implements Task {
 
 
     public boolean checkPrayer() {
-        RSItem[] invPot = Inventory.find(ItemId.PRAYER_POTION);
+        RSItem[] invPot = Inventory.find(ItemID.PRAYER_POTION);
         return invPot.length > 0 && Prayer.getPrayerPoints() < drinkPPotAt && CrabVars.get().usingPrayer;
     }
 
@@ -162,20 +161,20 @@ public class EatDrink implements Task {
                             checkSkill(Skills.SKILLS.RANGED) || CrabVars.get().shouldEat || checkPrayer()
                             || CrabVars.get().shouldDrink || Combat.getHPRatio() < Vars.get().eatAt;
                 }
-                if (Inventory.find(ItemId.RANGING_POTION).length > 0) {
+                if (Inventory.find(ItemID.RANGING_POTION).length > 0) {
                     return checkSkill(Skills.SKILLS.RANGED) || CrabVars.get().shouldEat || checkPrayer()
                             || CrabVars.get().shouldDrink || Combat.getHPRatio() < Vars.get().eatAt;
                 }
-                if (Inventory.find(ItemId.SUPER_STRENGTH_POTION).length > 0) {
+                if (Inventory.find(ItemID.SUPER_STRENGTH_POTION).length > 0) {
                     return checkSkill(Skills.SKILLS.STRENGTH)
                             || CrabVars.get().shouldEat || CrabVars.get().shouldDrink
                             || Combat.getHPRatio() < Vars.get().eatAt;
                 }
-                if (Inventory.find(ItemId.SUPER_ATTACK_POTION).length > 0) {
+                if (Inventory.find(ItemID.SUPER_ATTACK_POTION).length > 0) {
                     return checkSkill(Skills.SKILLS.ATTACK) || CrabVars.get().shouldEat
                             || CrabVars.get().shouldDrink || Combat.getHPRatio() < Vars.get().eatAt;
                 }
-                if (Inventory.find(ItemId.SUPER_DEFENCE_POTION).length > 0) {
+                if (Inventory.find(ItemID.SUPER_DEFENCE_POTION).length > 0) {
                     return checkSkill(Skills.SKILLS.DEFENCE) || CrabVars.get().shouldEat
                             || CrabVars.get().shouldDrink || Combat.getHPRatio() < Vars.get().eatAt;
                 }
@@ -190,11 +189,11 @@ public class EatDrink implements Task {
     public void execute() {
         eat();
         if (!drinkDivinePotion())
-            drinkPotion(ItemId.RANGING_POTION, Skills.SKILLS.RANGED);
-        drinkPotion(ItemId.SUPER_STRENGTH_POTION, Skills.SKILLS.STRENGTH);
-        drinkPotion(ItemId.SUPER_ATTACK_POTION, Skills.SKILLS.ATTACK);
-        drinkPotion(ItemId.SUPER_DEFENCE_POTION, Skills.SKILLS.DEFENCE);
-        drinkPotion(ItemId.SUPER_DEFENCE_POTION, Skills.SKILLS.DEFENCE);
+            drinkPotion(ItemID.RANGING_POTION, Skills.SKILLS.RANGED);
+        drinkPotion(ItemID.SUPER_STRENGTH_POTION, Skills.SKILLS.STRENGTH);
+        drinkPotion(ItemID.SUPER_ATTACK_POTION, Skills.SKILLS.ATTACK);
+        drinkPotion(ItemID.SUPER_DEFENCE_POTION, Skills.SKILLS.DEFENCE);
+        drinkPotion(ItemID.SUPER_DEFENCE_POTION, Skills.SKILLS.DEFENCE);
         drinkCombatPotion();
         drinkPrayerPotion();
     }

@@ -39,23 +39,23 @@ public class MonksFriend implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.LOGS, 1, 300),
-                    new GEItem(ItemId.LOBSTER, 15, 30),
-                    new GEItem(ItemId.JUG_OF_WATER, 1, 50),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 1, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.LOGS, 1, 300),
+                    new GEItem(ItemID.LOBSTER, 15, 30),
+                    new GEItem(ItemID.JUG_OF_WATER, 1, 50),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 1, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LOGS, 1, 1),
-                    new ItemReq(ItemId.LOBSTER, 12, 1),
-                    new ItemReq(ItemId.JUG_OF_WATER, 1, 1),
-                    new ItemReq(ItemId.RING_OF_DUELING[0], 1, 0, true, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LOGS, 1, 1),
+                    new ItemReq(ItemID.LOBSTER, 12, 1),
+                    new ItemReq(ItemID.JUG_OF_WATER, 1, 1),
+                    new ItemReq(ItemID.RING_OF_DUELING[0], 1, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -80,7 +80,7 @@ public class MonksFriend implements QuestTask {
 
 
     public void startQuest() {
-        if (!BankManager.checkInventoryItems(ItemId.JUG_OF_WATER, ItemId.LOGS)) {
+        if (!BankManager.checkInventoryItems(ItemID.JUG_OF_WATER, ItemID.LOGS)) {
             buyItems();
             getItems();
         } else {
@@ -157,7 +157,7 @@ public class MonksFriend implements QuestTask {
     }
 
     public void goToCedric() {
-        if (!BankManager.checkInventoryItems(ItemId.JUG_OF_WATER, ItemId.LOGS)) {
+        if (!BankManager.checkInventoryItems(ItemID.JUG_OF_WATER, ItemID.LOGS)) {
             buyItems();
             getItems();
         } else {
@@ -172,7 +172,7 @@ public class MonksFriend implements QuestTask {
     }
 
     public void step6() {
-        if (!BankManager.checkInventoryItems(ItemId.JUG_OF_WATER, ItemId.LOGS)) {
+        if (!BankManager.checkInventoryItems(ItemID.JUG_OF_WATER, ItemID.LOGS)) {
             buyItems();
             getItems();
         } else {

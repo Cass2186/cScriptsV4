@@ -3,7 +3,7 @@ package scripts.QuestPackages.WhatLiesBelow;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.NpcID;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestStep;
@@ -33,7 +33,7 @@ public class WhatLiesBelow implements QuestTask {
     NPCStep talkToSurokNoLetter = new NPCStep(NpcID.SUROK_MAGIS, new RSTile(3211, 3493, 0),
             new String[]{"Go on, then!", "Go on then!"});
 
-    UseItemOnObjectStep useWandOnAltar = new UseItemOnObjectStep(ItemId.WAND, 34769,
+    UseItemOnObjectStep useWandOnAltar = new UseItemOnObjectStep(ItemID.WAND, 34769,
             new RSTile(2271, 4843, 0), NPCInteraction.waitForConversationWindow());
     //wandHighlight, chaosRunes15);
 

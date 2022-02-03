@@ -7,7 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Tasks.Slayer.SlayerConst.Assign;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
 import scripts.Utils;
@@ -54,14 +54,14 @@ public class SlayerVars {
     /**
      * Intergers
      */
-    public int eatAtHP, playerCount, npcItemId;
+    public int eatAtHP, playerCount, npcItemID;
     public int remainingKills = Game.getSetting(SlayerConst.REMAINING_KILLS_GAMESETTING);
 
     public int slayerPoints = Utils.getVarBitValue(SlayerConst.SLAYER_POINTS_VARBIT);
 
     public int lootValue = 0;
 
-    public int customFoodId = ItemId.MONKFISH;
+    public int customFoodId = ItemID.MONKFISH;
 
     public int attXp, strXp, defXp, mageXp, rangeXp, hpXp, slayerXp, rcXp;
 
@@ -79,7 +79,7 @@ public class SlayerVars {
 
     public int afkLengthMax = 120000;
 
-    public int[] potionToUse = ItemId.SUPER_COMBAT_POTION;
+    public int[] potionToUse = ItemID.SUPER_COMBAT_POTION;
     public int drinkCombatPotion = Skills.SKILLS.STRENGTH.getActualLevel() + General.random(3,6);
 
     public int profit = 0;

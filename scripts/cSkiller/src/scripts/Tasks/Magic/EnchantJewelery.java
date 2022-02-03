@@ -7,18 +7,14 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Bank;
-import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
-import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
-import org.tribot.script.sdk.tasks.EquipmentReq;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.AntiBan;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
 import scripts.Timer;
 
 import java.awt.*;
@@ -27,26 +23,6 @@ import java.util.Optional;
 
 public class EnchantJewelery implements Task {
 
-    public Optional<RSInterface> getSpellInterface(String spellName) {
-        RSInterface book = Interfaces.get(218);
-        if (book != null) {
-            RSInterface[] spells = book.getChildren();
-            return Arrays.stream(spells).filter(s -> s.getComponentName() != null)
-                    .filter(s -> General.stripFormatting(s.getComponentName()).contains(spellName))
-                    .findFirst();
-        }
-        return Optional.empty();
-    }
-
-    public boolean clickSpellString(String spellName) {
-        Optional<RSInterface> spellInter = getSpellInterface(spellName);
-        return spellInter.isPresent() && spellInter.get().click();
-    }
-
-    public Rectangle getScreenPosition(String spellName) {
-        Optional<RSInterface> spellInter = getSpellInterface(spellName);
-        return spellInter.isPresent() ? spellInter.get().getAbsoluteBounds() : null;
-    }
 
 
     public void enchantItems(SpellInfo spell) {
@@ -59,7 +35,7 @@ public class EnchantJewelery implements Task {
 
             RSItem[] enchItem = Inventory.find(spell.getItemId());
             int clickAllChance = General.random(0, 100);
-            if (clickAllChance < General.random(25,45)) {
+            if (clickAllChance < Vars.get().clickAllJeweleryChance) {
                 General.println("[Debug]: Clicking all enchants");
 
                 for (RSItem i : enchItem) {
@@ -71,7 +47,7 @@ public class EnchantJewelery implements Task {
                                     GameTab.TABS.INVENTORY;
                         }, 1550, 2200) && i.click()) {
 
-                            Rectangle hoverPoint = getScreenPosition(spell.getSpellString());
+                            Rectangle hoverPoint = MagicMethods.getScreenPosition(spell.getSpellString());
                             if (hoverPoint != null && !hoverPoint.contains(Mouse.getPos()))
                                 Mouse.moveBox(hoverPoint);
 
@@ -109,7 +85,7 @@ public class EnchantJewelery implements Task {
                 return true;
             else if (s != null && !s.contains(spellName)) {
                 Log.log("[Enchant Jewelery]: Deselecting wrong spell");
-                if (Clicking.click())
+                if (Player.getPosition().click(""))
                     General.sleep(250, 500);
                 return Magic.selectSpell(spellName);
             }

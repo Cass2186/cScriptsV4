@@ -3,7 +3,6 @@ package scripts.Tasks.Prayer;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Player;
-import org.tribot.api2007.Walking;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;

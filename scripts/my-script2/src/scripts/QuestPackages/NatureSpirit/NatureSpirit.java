@@ -65,19 +65,19 @@ public class NatureSpirit implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(SICKLE, 1, 1500),
-                    new GEItem(ItemId.LOBSTER, 16, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.PRAYER_POTION_4, 2, 15),
-                    new GEItem(ItemId.SALVE_GRAVEYARD_TELEPORT, 7, 30),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 40),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 1, 25)
+                    new GEItem(ItemID.LOBSTER, 16, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.PRAYER_POTION_4, 2, 15),
+                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 7, 30),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 40),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LOBSTER, 15, 2)
+                    new ItemReq(ItemID.LOBSTER, 15, 2)
 
             )
     ));
@@ -88,9 +88,9 @@ public class NatureSpirit implements QuestTask {
         General.println("[Debug]: Buying Items");
 
         if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 40) {
-           itemsToBuy.add(new GEItem(ItemId.RUNE_SCIMITAR, 1, 20));
+           itemsToBuy.add(new GEItem(ItemID.RUNE_SCIMITAR, 1, 20));
         } else if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 30) {
-            itemsToBuy.add(new GEItem(ItemId.ADAMANT_SCIMITAR, 1, 50));
+            itemsToBuy.add(new GEItem(ItemID.ADAMANT_SCIMITAR, 1, 50));
         }
         BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
         buyStep.buyItems();
@@ -105,13 +105,13 @@ public class NatureSpirit implements QuestTask {
         BankManager.withdraw(12, true, LOBSTER);
         BankManager.withdraw(5, true, SALVE_GRAVEYARD_TELEPORT);
         BankManager.withdraw(2, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
         BankManager.withdraw(1, true, SICKLE);
         BankManager.withdraw(2, true,
-                ItemId.PRAYER_POTION[0]);
+                ItemID.PRAYER_POTION[0]);
         BankManager.withdraw(1, true, GHOSTSPEAK_AMULET);
         BankManager.withdraw(1, true,
-                ItemId.RING_OF_DUELING[0]);
+                ItemID.RING_OF_DUELING[0]);
         if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 40) {
             BankManager.withdraw(1, true, RUNE_SCIMITAR);
             Utils.equipItem(RUNE_SCIMITAR);
@@ -185,14 +185,14 @@ public class NatureSpirit implements QuestTask {
         Inventory.drop(ROTTEN_FOOD);
         Inventory.drop(PIE_DISH);
         Inventory.drop(WASHING_BOWL);
-        if (Inventory.isFull() && Inventory.find(ItemId.LOBSTER).length > 0) {
-            AccurateMouse.click(Inventory.find(ItemId.LOBSTER)[0], "Eat");
+        if (Inventory.isFull() && Inventory.find(ItemID.LOBSTER).length > 0) {
+            AccurateMouse.click(Inventory.find(ItemID.LOBSTER)[0], "Eat");
         }
 
     }
 
     public void step2() {
-        if (!BankManager.checkInventoryItems(ItemId.LOBSTER, ItemId.STAMINA_POTION[0], SICKLE)) {
+        if (!BankManager.checkInventoryItems(ItemID.LOBSTER, ItemID.STAMINA_POTION[0], SICKLE)) {
             General.println("[Debug]: Don't have necessary items, buying and banking");
             buyItems();
             getItems1();
@@ -515,10 +515,10 @@ public class NatureSpirit implements QuestTask {
         if (ROTTEN_LOG2_AREA.contains(Player.getPosition())) {
             if (Prayer.getPrayerPoints() < 5) {
                 if (Inventory.find(
-                        ItemId.PRAYER_POTION).length > 0) {
+                        ItemID.PRAYER_POTION).length > 0) {
                     cQuesterV2.status = "Drinking Prayer Potion";
                     General.println("[Debug]: " + cQuesterV2.status);
-                    if (AccurateMouse.click(Inventory.find(ItemId.PRAYER_POTION)[0]))
+                    if (AccurateMouse.click(Inventory.find(ItemID.PRAYER_POTION)[0]))
                         General.sleep(General.random(300, 1200));
                 }
             }

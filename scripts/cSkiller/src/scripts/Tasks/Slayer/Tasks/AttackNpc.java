@@ -1,23 +1,18 @@
 package scripts.Tasks.Slayer.Tasks;
 
-import dax.walker.utils.camera.DaxCamera;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSCharacter;
-import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
-import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
-import org.tribot.script.sdk.antiban.Antiban;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
-import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.API.Priority;
@@ -249,10 +244,10 @@ public class AttackNpc implements Task {
                 Utils.drinkPotion(SlayerVars.get().potionNames);
 
             if (MyPlayer.isPoisoned())
-                Utils.drinkPotion(ItemId.ANTIDOTE_PLUS_PLUS);
+                Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
 
             if (Skills.SKILLS.STRENGTH.getCurrentLevel() <= SlayerVars.get().drinkCombatPotion) {
-                if (Utils.drinkPotion(ItemId.SUPER_COMBAT_POTION)) {
+                if (Utils.drinkPotion(ItemID.SUPER_COMBAT_POTION)) {
                     SlayerVars.get().drinkCombatPotion = Skills.SKILLS.STRENGTH.getActualLevel() + General.random(3, 6);
                     Log.log("[Debug]: Next drinking potion at Strength lvl " + SlayerVars.get().drinkCombatPotion);
                 }
@@ -302,10 +297,10 @@ public class AttackNpc implements Task {
                 Utils.drinkPotion(SlayerVars.get().potionNames);
 
             if (MyPlayer.isPoisoned())
-                Utils.drinkPotion(ItemId.ANTIDOTE_PLUS_PLUS);
+                Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
 
             if (Skills.SKILLS.STRENGTH.getCurrentLevel() <= SlayerVars.get().drinkCombatPotion) {
-                if (Utils.drinkPotion(ItemId.SUPER_COMBAT_POTION)) {
+                if (Utils.drinkPotion(ItemID.SUPER_COMBAT_POTION)) {
                     SlayerVars.get().drinkCombatPotion = Skills.SKILLS.STRENGTH.getActualLevel() + General.random(3, 6);
                     Log.log("[Debug]: Next drinking potion at Strength lvl " + SlayerVars.get().drinkCombatPotion);
                 }
@@ -348,7 +343,7 @@ public class AttackNpc implements Task {
 
             if (prayList.size() > 0 && org.tribot.script.sdk.Prayer.getPrayerPoints() < General.random(7, 27)) {
                 General.println("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
             }
             if (SlayerVars.get().assignment != null && SlayerVars.get().assignment.isUseSpecialItem()
                     && npcOptional.isPresent()) {
@@ -365,7 +360,7 @@ public class AttackNpc implements Task {
 
     public static boolean checkSpecialItem(Npc target) {
         if (target != null && target.getHealthBarPercent() < 14) {
-            Optional<InventoryItem> i = Query.inventory().idEquals(ItemId.SLAYER_SPECIAL_ITEMS)
+            Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
                     .findClosestToMouse();
             if (i.isPresent()) {
                 General.println("[CombatUtils]: Using Slayer Item on NPC");
@@ -376,7 +371,7 @@ public class AttackNpc implements Task {
     }
 
     private static boolean useSlayerItemOnNPC(Npc npc) {
-        Optional<InventoryItem> i = Query.inventory().idEquals(ItemId.SLAYER_SPECIAL_ITEMS)
+        Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
                 .findClosestToMouse();
 
         Optional<Npc> n = Query.npcs().isInteractingWithMe().stream().findFirst();
@@ -412,7 +407,7 @@ public class AttackNpc implements Task {
             }
             if (icon != -1 && Prayer.getPrayerPoints() < General.random(7, 27)) {
                 General.println("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
             }
             if (AntiBan.getShouldHover() && Mouse.isInBounds() && name != null) {
                 AntiBan.hoverNextNPC(name.getName());

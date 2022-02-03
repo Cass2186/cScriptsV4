@@ -7,6 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.CreatureOfFenkenstrain.CreatureOfFenkenstrain;
@@ -66,22 +67,22 @@ public class TheFeud implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SHANTAY_PASS, 10, 200),
-                    new GEItem(ItemId.EMPTY_BUCKET, 1, 500),
-                    new GEItem(ItemId.BEER, 4, 500),
-                    new GEItem(ItemId.LEATHER_GLOVES, 1, 300),
-                    new GEItem(ItemId.DESERT_BOOTS, 1, 500),
-                    new GEItem(ItemId.DESERT_ROBE, 1, 500),
-                    new GEItem(ItemId.DESERT_SHIRT, 1, 500),
+                    new GEItem(ItemID.SHANTAY_PASS, 10, 200),
+                    new GEItem(ItemID.BUCKET, 1, 500),
+                    new GEItem(ItemID.BEER, 4, 500),
+                    new GEItem(ItemID.LEATHER_GLOVES, 1, 300),
+                    new GEItem(ItemID.DESERT_BOOTS, 1, 500),
+                    new GEItem(ItemID.DESERT_ROBE, 1, 500),
+                    new GEItem(ItemID.DESERT_SHIRT, 1, 500),
 
-                    new GEItem(ItemId.WATERSKIN[0], 5, 500),
-                    new GEItem(ItemId.MIND_RUNE, 300, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 600, 20),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 50),
-                    new GEItem(ItemId.LOBSTER, 20, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.WATERSKIN[0], 5, 500),
+                    new GEItem(ItemID.MIND_RUNE, 300, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 600, 20),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 50),
+                    new GEItem(ItemID.LOBSTER, 20, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -109,15 +110,15 @@ public class TheFeud implements QuestTask {
         BankManager.withdraw(3000, true, COINS);
         BankManager.withdraw(1, true, WATERSKIN);
         BankManager.withdraw(400, true,
-                ItemId.MIND_RUNE);
+                ItemID.MIND_RUNE);
         BankManager.withdraw(1200, true,
-                ItemId.FIRE_RUNE);
+                ItemID.FIRE_RUNE);
         BankManager.withdraw(1, true,
-                ItemId.STAFF_OF_AIR);
+                ItemID.STAFF_OF_AIR);
         Utils.equipItem(DESERT_BOOTS);
         Utils.equipItem(DESERT_ROBE);
         Utils.equipItem(
-                ItemId.STAFF_OF_AIR);
+                ItemID.STAFF_OF_AIR);
         Utils.equipItem(DESERT_TOP);
         Utils.equipItem(LEATHER_GLOVES);
         BankManager.withdraw(12, true, LOBSTER);
@@ -667,7 +668,7 @@ public class TheFeud implements QuestTask {
     RSArea SAFE_AREA = new RSArea(new RSTile(3336, 2963, 0), new RSTile(3337, 2964, 0));
 
     public void step25() {
-        if (Utils.equipItem(ItemId.STAFF_OF_AIR))
+        if (Utils.equipItem(ItemID.STAFF_OF_AIR))
             Utils.shortSleep();
 
         if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
@@ -756,17 +757,24 @@ public class TheFeud implements QuestTask {
         while (banditChampion.length > 0) {
             General.sleep(50);
             if (Combat.isUnderAttack()) {
+                if (Combat.getHPRatio() < 45)
+                    EatUtil.eatFood(false);
+
                 if (PathingUtil.walkToTile(safeTile2))
                     Utils.idle(4000, 6000);
+
                 if (PathingUtil.clickScreenWalk(safeTile2)) {
-                    Timer.waitCondition(() -> SAFE_AREA2.contains(Player.getPosition()), 6000, 8000);
+                    Timer.waitCondition(() -> SAFE_AREA2.contains(Player.getPosition()), 5000, 7000);
                     Utils.shortSleep();
                 }
-                if (AccurateMouse.click(banditChampion[0], "Attack"))
+                if (!banditChampion[0].isInCombat() &&
+                        AccurateMouse.click(banditChampion[0], "Attack"))
                     Utils.shortSleep();
-
-                banditChampion = NPCs.findNearest("Bandit champion");
+                else {
+                    Waiting.waitNormal(200,50);
+                }
             }
+            banditChampion = NPCs.findNearest("Bandit champion");
         }
     }
 

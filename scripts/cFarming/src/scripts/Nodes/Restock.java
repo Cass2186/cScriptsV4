@@ -6,7 +6,7 @@ import scripts.Data.Vars;
 
 import scripts.GEManager.Exchange;
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
@@ -27,15 +27,15 @@ public class Restock implements Task {
 
         ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
                 Arrays.asList(
-                        new GEItem(ItemId.SPADE, 1, 300),
+                        new GEItem(ItemID.SPADE, 1, 300),
                         new GEItem(Const.SEED_DIBBER, 1, 300),
                         new GEItem(Const.RAKE, 1, 300),
                         new GEItem(Const.ULTRACOMPOST, 20, 30),
-                        new GEItem(ItemId.CAMELOT_TELEPORT, 10, 50),
-                        new GEItem(ItemId.FALADOR_TELEPORT, 10, 50),
-                        new GEItem(ItemId.FENKENSTRAIN_TELE, 10, 50),
-                        new GEItem(ItemId.SKILLS_NECKLACE[2], 2, 30),
-                        new GEItem(ItemId.STAMINA_POTION[0], 5, 30)
+                        new GEItem(ItemID.CAMELOT_TELEPORT, 10, 50),
+                        new GEItem(ItemID.FALADOR_TELEPORT, 10, 50),
+                        new GEItem(ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 10, 50),
+                        new GEItem(ItemID.SKILLS_NECKLACE[2], 2, 30),
+                        new GEItem(ItemID.STAMINA_POTION[0], 5, 30)
                 )
         );
         ;
@@ -45,8 +45,8 @@ public class Restock implements Task {
         if (Vars.get().doingTrees) {
             itemsToBuy.addAll(Arrays.asList(
                     new GEItem(Vars.get().treeId, herbNum, 30),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 10, 30),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 30),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 10, 30),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 30),
                     new GEItem(Const.ULTRACOMPOST, 25, 30)));
 
         } else if (Vars.get().doingAllotments) {

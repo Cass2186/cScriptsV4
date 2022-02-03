@@ -9,7 +9,7 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Waiting;
 import scripts.Data.Vars;
 import scripts.EatUtil;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Timer;
 
 public class EatDrink implements Task {
@@ -21,11 +21,13 @@ public class EatDrink implements Task {
     }
 
     public static boolean breakTeleTab() {
-        RSItem[] tab = Inventory.find(ItemId.VARROCK_TELEPORT);
+        RSItem[] tab = Inventory.find(ItemID.VARROCK_TELEPORT);
         return tab.length > 0 && tab[0].click("Break");
     }
 
     public void eatDrink() {
+        org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
+                org.tribot.script.sdk.Prayer.EAGLE_EYE);
         if (!Vars.get().antifireTimer.isRunning()) {
             RSItem[] superAnti = Inventory.find(22209, 22212, 22215, 22218);
 
@@ -39,10 +41,10 @@ public class EatDrink implements Task {
         if (Combat.getHP() <= Vars.get().eatAtHP) {
             EatUtil.eatFood(true);
         } else if (Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt) {
-            RSItem[] prayer = Inventory.find(ItemId.PRAYER_POTION);
+            RSItem[] prayer = Inventory.find(ItemID.PRAYER_POTION);
             if (prayer.length == 0 && breakTeleTab()) return;
 
-            if (drinkPotion(ItemId.PRAYER_POTION))
+            if (drinkPotion(ItemID.PRAYER_POTION))
                 Waiting.waitNormal(120, 30);
         }
     }
@@ -60,10 +62,10 @@ public class EatDrink implements Task {
 
     @Override
     public boolean validate() {
-        return (Combat.getHP() <= Vars.get().eatAtHP ||
+        return (Combat.getHP() <= Vars.get().eatAtHP);// ||
                 //!Vars.get().antifireTimer.isRunning() ||
-                (Skills.SKILLS.PRAYER.getActualLevel() >= 43 &&
-                        Prayer.getPrayerPoints() < Vars.get().drinkPrayerAt));
+           //     (Skills.SKILLS.PRAYER.getActualLevel() >= 43 &&
+              //          Prayer.getPrayerPoints() < Vars.get().drinkPrayerAt));
     }
 
     @Override

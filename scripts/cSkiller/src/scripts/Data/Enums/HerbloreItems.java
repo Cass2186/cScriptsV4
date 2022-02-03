@@ -4,9 +4,9 @@ import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import scripts.Data.SkillTasks;
-import scripts.ItemId;
+import scripts.*;
 import scripts.Requirements.ItemReq;
-import scripts.Utils;
+
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,28 +16,28 @@ import java.util.Optional;
 
 public enum HerbloreItems {
 
-    ATTACK_POTION(25, ItemId.EYE_OF_NEWT, ItemId.GUAM_POTION_UNF, 3, 12),
-    STRENGTH_POTION(50, ItemId.LIMPWURT, ItemId.TARROMIN_POTION_UNF, 12, 22),
-    RESTORE_POTION(62.5, ItemId.RED_SPIDERS_EGGS, ItemId.HARRALANDER_UNF, 22, 26),
-    ENERGY_POTION(67.5, ItemId.CHOCOLATE_DUST, ItemId.HARRALANDER_POTION_UNF, 26, 38),
-    PRAYER_POTION(87.5, ItemId.SNAPE_GRASS, ItemId.RANARR_POTION_UNF, 38, 45),
-    SUPER_ATTACK_POTION(100, ItemId.EYE_OF_NEWT, ItemId.IRIT_POTION_UNF, 45, 52),
-    SUPER_ENERGY_POTION(117.5, ItemId.MORT_MYRE_FUNGUS, ItemId.AVANTOE_UNF, 52, 55),
-    SUPER_STRENGTH_POTION(125, ItemId.LIMPWURT, ItemId.KWUARM_UNF, 55, 63),
-    SUPER_RESTORE_POTION(142.5, ItemId.RED_SPIDERS_EGGS, ItemId.SNAPDRAGON_UNF, 63, 72),
-    RANGING_POTION(162.5, ItemId.WINE_OF_ZAMORAK, ItemId.DWARF_WEED_UNF, 72, 76);
+    ATTACK_POTION(25, scripts.ItemID.EYE_OF_NEWT, scripts.ItemID.GUAM_POTION_UNF, 3, 12),
+    STRENGTH_POTION(50,scripts. ItemID.LIMPWURT_ROOT, scripts.ItemID.TARROMIN_POTION_UNF, 12, 22),
+    RESTORE_POTION(62.5, scripts.ItemID.RED_SPIDERS_EGGS, scripts.ItemID.HARRALANDER_POTION_UNF, 22, 26),
+    ENERGY_POTION(67.5, scripts.ItemID.CHOCOLATE_DUST, scripts.ItemID.HARRALANDER_POTION_UNF, 26, 38),
+    PRAYER_POTION(87.5, scripts.ItemID.SNAPE_GRASS, scripts.ItemID.RANARR_POTION_UNF, 38, 45),
+    SUPER_ATTACK_POTION(100, scripts.ItemID.EYE_OF_NEWT, scripts.ItemID.IRIT_POTION_UNF, 45, 52),
+    SUPER_ENERGY_POTION(117.5, scripts.ItemID.MORT_MYRE_FUNGUS, scripts.ItemID.AVANTOE_POTION_UNF, 52, 55),
+    SUPER_STRENGTH_POTION(125, scripts.ItemID.LIMPWURT_ROOT, scripts.ItemID.KWUARM_POTION_UNF, 55, 63),
+    SUPER_RESTORE_POTION(142.5, scripts.ItemID.RED_SPIDERS_EGGS, scripts.ItemID.SNAPDRAGON_POTION_UNF, 63, 72),
+    RANGING_POTION(162.5, scripts.ItemID.WINE_OF_ZAMORAK, scripts.ItemID.DWARF_WEED_POTION_UNF, 72, 76);
 
     private double xpPer;
     @Getter
-    private int itemId;
+    private int ItemID;
     @Getter
     private int unfPotionId;
     private int minLevel;
     private int maxLevel;
 
-    HerbloreItems(double xpPer, int itemId, int unfPotionId, int minLevel, int levelMax) {
+    HerbloreItems(double xpPer, int ItemID, int unfPotionId, int minLevel, int levelMax) {
         this.xpPer = xpPer;
-        this.itemId = itemId;
+        this.ItemID = ItemID;
         this.unfPotionId = unfPotionId;
         this.minLevel = minLevel;
         this.maxLevel = levelMax;
@@ -69,7 +69,7 @@ public enum HerbloreItems {
     public static List<ItemReq> getRequiredItemList() {
         List<ItemReq> i = new ArrayList<>();
         if (getCurrentItem().isPresent()) {
-            getCurrentItem().ifPresent(h -> i.add(new ItemReq(h.getItemId(), h.determineResourcesToNextItem())));
+            getCurrentItem().ifPresent(h -> i.add(new ItemReq(h.getItemID(), h.determineResourcesToNextItem())));
             getCurrentItem().ifPresent(h -> i.add(new ItemReq(h.unfPotionId, h.determineResourcesToNextItem())));
             General.println("[HerbloreItems]: We need " + getCurrentItem().get().determineResourcesToNextItem() +
                     " items", Color.BLACK);

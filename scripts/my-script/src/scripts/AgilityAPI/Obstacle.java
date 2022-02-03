@@ -80,11 +80,11 @@ public class Obstacle {
 
     int alchChance = General.random(0,100);
 
-    public void alch(int itemId) {
+    public void alch(int ItemID) {
         if (Vars.get().shouldAlch && alchChance < 70) {
             Log.log("Alching");
            // General.sleep(General.randomSD(300, 120));
-            RSItem[] alch = Inventory.find(itemId);
+            RSItem[] alch = Inventory.find(ItemID);
             if (Magic.isSpellSelected() && alch.length > 0 && alch[0].click())
                 General.sleep(General.randomSD(460, 120));
         }

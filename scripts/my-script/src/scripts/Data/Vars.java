@@ -5,7 +5,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import scripts.AgilityAPI.COURSES;
 import scripts.AntiBan;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Timer;
 
 public class Vars {
@@ -76,7 +76,7 @@ public class Vars {
     public int afkIntervalMax;//9min
 
     public boolean kittenMode = false;
-    public boolean shouldAlch = false;// Inventory.find(ItemId.NATURE_RUNE).length > 0;
+    public boolean shouldAlch = false;// Inventory.find(ItemID.NATURE_RUNE).length > 0;
 
     public boolean afkMode = false;
     public Timer afkTimer;

@@ -187,13 +187,13 @@ public class Move implements Task {
         /**
          *  HERBS
          */
-        if (!Vars.get().doingAllotments) {
+        if (Vars.get().doingHerbs) {
             if (checkForPatchId(Const.FALADOR_HERB_PATCH_ID, Const.FALADOR_FLOWER_PATCH_ID)) {
                 General.println("[Debug]: We are at Falador patch");
                 if (shouldMoveFromPatch(Const.FALADOR_HERB_PATCH_ID)) {
                     General.println("[Debug]: Removed Falador patch from list");
                     // remove it from list of patches to visit
-                    Vars.get().patchesLeftToVisit.remove(Const.faladorPatchObj);
+                    Vars.get().patchesLeftToVisit.remove(Patches.FALADOR_HERB_PATCH);
                     // start a timer here
                     return true;
                 }
@@ -201,8 +201,9 @@ public class Move implements Task {
             } else if (checkForPatchId(Const.CATHERBY_HERB_PATCH_ID, Const.CATHERBY_FLOWER_PATCH_ID)) {
                 // we are at falador patches
                 if (shouldMoveFromPatch(Const.CATHERBY_HERB_PATCH_ID)) {
+                    General.println("[Debug]: Removed Catherby patch from list");
                     // remove it from list of patches to visit
-                    Vars.get().patchesLeftToVisit.remove(Const.catherbyPatchObj);
+                    Vars.get().patchesLeftToVisit.remove(Patches.CATHERBY_HERB_PATCH);
                     // start a timer here
                     return true;
                 }
@@ -210,8 +211,9 @@ public class Move implements Task {
             } else if (checkForPatchId(Const.MORYTANIA_HERB_PATCH_ID, Const.MORYTANIA_FLOWER_PATCH_ID)) {
                 // we are at falador patches
                 if (shouldMoveFromPatch(Const.MORYTANIA_HERB_PATCH_ID)) {
+                    General.println("[Debug]: Removed Morytania patch from list");
                     // remove it from list of patches to visit
-                    Vars.get().patchesLeftToVisit.remove(Const.morytaniaPatchObj);
+                    Vars.get().patchesLeftToVisit.remove(Patches.MORYTANIA_HERB_PATCH);
                     // start a timer here
                     return true;
                 }
@@ -220,7 +222,7 @@ public class Move implements Task {
                 // we are at falador patches
                 if (shouldMoveFromPatch(Const.ARDOUGNE_HERB_PATCH_ID)) {
                     // remove it from list of patches to visit
-                    Vars.get().patchesLeftToVisit.remove(Const.ardougnePatchObj);
+                    Vars.get().patchesLeftToVisit.remove(Patches.ARDOUGNE_HERB_PATCH);
                     // start a timer here
                     return true;
                 }
@@ -229,7 +231,7 @@ public class Move implements Task {
                 // we are at Hosa patches
                 if (shouldMoveFromPatch(Const.HOISIDIUS_HERB_PATCH_ID)) {
                     // remove it from list of patches to visit
-                    Vars.get().patchesLeftToVisit.remove(Const.hosidiusPatchObj);
+                    Vars.get().patchesLeftToVisit.remove(Patches.HOSIDIUS_HERB_PATCH);
                     // start a timer here
                     return true;
                 }
@@ -400,7 +402,7 @@ public class Move implements Task {
                     && !Vars.get().shouldBreak
                     && determineLocation()
                     && FarmingUtils.canMoveToNextSpot()
-                    && !nearHerbPatch();
+                   && !nearHerbPatch();
 
         return false;
     }

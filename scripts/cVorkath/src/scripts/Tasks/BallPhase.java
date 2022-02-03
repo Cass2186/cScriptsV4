@@ -7,11 +7,12 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSProjectile;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import scripts.VorkUtils.VorkthUtil;
 
-public class BallPhase  implements Task{
+public class BallPhase implements Task {
 
-    public  void handleBallAttack() {
+    public void handleBallAttack() {
         RSProjectile[] ball = Projectiles.getAll(p ->
                 p.getGraphicID() == VorkthUtil.BALL_FLAME);
 
@@ -31,7 +32,7 @@ public class BallPhase  implements Task{
                 if (VorkthUtil.walkToTile(dest, false)
                         && VorkthUtil.waitCond(() -> Player.getPosition().equals(dest) ||
                         Projectiles.getAll(p ->
-                                p.getGraphicID() == VorkthUtil.BALL_FLAME).length ==0, 6000))
+                                p.getGraphicID() == VorkthUtil.BALL_FLAME).length == 0, 6000))
                     VorkthUtil.clickVorkath("Attack");
 
             } else {
@@ -40,16 +41,18 @@ public class BallPhase  implements Task{
                 if (VorkthUtil.walkToTile(dest, false)
                         && VorkthUtil.waitCond(() -> Player.getPosition().equals(dest) ||
                         Projectiles.getAll(p ->
-                                p.getGraphicID() == VorkthUtil.BALL_FLAME).length ==0, 6000))
+                                p.getGraphicID() == VorkthUtil.BALL_FLAME).length == 0, 6000))
                     VorkthUtil.clickVorkath("Attack");
             }
         }
+        // short wait until the ball is gone
+        Waiting.waitUntil(200, () -> Projectiles.getAll(p ->
+                p.getGraphicID() == VorkthUtil.BALL_FLAME).length == 0);
     }
 
 
-
     @Override
-    public String toString(){
+    public String toString() {
         return "Ball Attack";
     }
 
@@ -60,8 +63,8 @@ public class BallPhase  implements Task{
 
     @Override
     public boolean validate() {
-        return  Projectiles.getAll(p ->
-                p.getGraphicID() == VorkthUtil.BALL_FLAME).length> 0;
+        return Projectiles.getAll(p ->
+                p.getGraphicID() == VorkthUtil.BALL_FLAME).length > 0;
     }
 
     @Override

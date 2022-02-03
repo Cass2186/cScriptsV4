@@ -5,6 +5,7 @@ import dax.walker.utils.camera.DaxCamera;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
+import org.tribot.api.input.Mouse;
 import org.tribot.api.interfaces.Clickable;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
@@ -16,6 +17,7 @@ import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.awt.*;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -115,11 +117,23 @@ public class VorkthUtil {
     }
 
     public static boolean waitCond(BooleanSupplier waitUntilCondition, Clickable hoverPoint,
-                                   int timeout) {
+                                        int timeout) {
         int sd = timeout / 10;
         return Timing.waitCondition(() -> {
             General.sleep(20, 60);
             hoverPoint.hover();
+            return waitUntilCondition.getAsBoolean();
+        }, General.randomSD(timeout, sd));
+    }
+
+    public static boolean waitCond(BooleanSupplier waitUntilCondition, RSTile hoverPoint,
+                                   int timeout) {
+        Point hover = hoverPoint.getHumanHoverPoint();
+        int sd = timeout / 10;
+        return Timing.waitCondition(() -> {
+            General.sleep(20, 60);
+            if (Mouse.getPos() != hover)
+                Mouse.move(hover);
             return waitUntilCondition.getAsBoolean();
         }, General.randomSD(timeout, sd));
     }

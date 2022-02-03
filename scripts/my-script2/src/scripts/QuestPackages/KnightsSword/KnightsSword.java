@@ -50,16 +50,16 @@ public class KnightsSword implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(REDBERRY_PIE, 1, 500),
-                    new GEItem(ItemId.LOBSTER, 35, 50),
-                    new GEItem(ItemId.STEEL_PICKAXE, 1, 500),
-                    new GEItem(ItemId.IRON_BAR, 4, 50),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
-                    new GEItem(ItemId.PEST_CONTROL_TELEPORT, 5, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 20),
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.LOBSTER, 35, 50),
+                    new GEItem(ItemID.STEEL_PICKAXE, 1, 500),
+                    new GEItem(ItemID.IRON_BAR, 4, 50),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.PEST_CONTROL_TELEPORT, 5, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 20),
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -78,10 +78,10 @@ public class KnightsSword implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[2]);
-        BankManager.withdraw(5, true, ItemId.FALADOR_TELEPORT);
-        BankManager.withdraw(4, true, ItemId.VARROCK_TELEPORT);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[2]);
+        BankManager.withdraw(5, true, ItemID.FALADOR_TELEPORT);
+        BankManager.withdraw(4, true, ItemID.VARROCK_TELEPORT);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
         BankManager.withdraw(1, true, REDBERRY_PIE);
         BankManager.withdraw(8, true, LOBSTER);
         BankManager.withdraw(1, true, STEEL_PICKAXE);
@@ -219,7 +219,7 @@ public class KnightsSword implements QuestTask {
                         Timer.waitCondition(() -> Objects.findNearest(1, BLURITE_ROCK).length > 0 || Combat.isUnderAttack(), 26000, 42000);
                     }
 
-                    RSItem[] invLob = Inventory.find(ItemId.LOBSTER);
+                    RSItem[] invLob = Inventory.find(ItemID.LOBSTER);
                     if (Combat.getHPRatio() < General.random(45, 65) && invLob.length > 0)
                         Clicking.click("Eat", invLob[0]);
 
@@ -227,7 +227,7 @@ public class KnightsSword implements QuestTask {
                         if (Utils.clickObj(BLURITE_ROCK, "Mine"))
                             Timer.waitCondition(() -> Inventory.find(BLURITE_ORE).length > 1, 16000, 22000);
 
-                    invLob = Inventory.find(ItemId.LOBSTER);
+                    invLob = Inventory.find(ItemID.LOBSTER);
                     if (Combat.getHPRatio() < General.random(45, 65) && invLob.length > 0)
                         invLob[0].click("Eat");
                 }

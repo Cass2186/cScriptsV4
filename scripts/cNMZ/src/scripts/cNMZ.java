@@ -4,7 +4,6 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
-import obf.G;
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
@@ -15,6 +14,7 @@ import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
+import scripts.NmzData.Const;
 import scripts.NmzData.Vars;
 import scripts.Tasks.*;
 
@@ -128,7 +128,6 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
                 "cNMZ",
                 "Running For: " + Timing.msToString(getRunningTime()),
                 "Task: " + status,
-                "Overload Timer: " + Timing.msToString(Vars.get().overloadTimer.getRemaining()),
                 "Drinking Absorption at: " + Vars.get().drinkAbsorptionAt,
                 "Eating rockcake at: " + Vars.get().eatRockCakeAt
              //   "Vars.get().add:  " + Vars.get().add
@@ -155,6 +154,17 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
                 );
             }
         }
+        if (Vars.get().usingOverloadPots){
+            myString.add("Overload Timer: " + Timing.msToString(Vars.get().overloadTimer.getRemaining()));
+        }
+        int points = ( Utils.getVarBitValue(Varbits.NMZ_POINTS.getId()) - Const.STARTING_NMZ_POINTS);
+        int pointsHr = (int) (points / timeRanMin);
+        myString.add("NMZ Points Gained: " + (
+                Utils.addCommaToNum(points) + " (" + Utils.addCommaToNum(pointsHr) + "hr)"));
+       /* myString.add("Using Super combat potions? " + Vars.get().usingSuperCombat);
+        myString.add("Using Super prayer potions? " + Vars.get().usingPrayerPots);
+        myString.add("Using Absorptions potions? " + Vars.get().usingAbsorptions);
+        myString.add("Using Overload potions? " + Vars.get().usingOverloadPots);*/
      /*   myString.add("Experience Gained: " + Utils.addCommaToNum(gainedXp) + "xp (+"
                 + gainedLvl + ") || "
                 + "(" + Utils.addCommaToNum(Vars.get().xpHr) + "/hr)"
@@ -169,7 +179,7 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
 
     @Override
     public void onStart() {
-        DrinkPotion.determinePotion();
+
         AntiBan.create();
 
         Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA,
@@ -184,6 +194,8 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
 
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
+
+        DrinkPotion.determinePotion();
     }
 
     @Override
@@ -199,7 +211,7 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
         }
         if (message.toLowerCase().contains("overload have worn off")) {
             General.println("[Debug]: Overload finished message recieved");
-            Vars.get().overloadTimer.setEndIn(0);
+            Vars.get().overloadTimer.setEndIn(1);
         }
     }
 }

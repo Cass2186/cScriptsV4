@@ -3,7 +3,7 @@ package scripts.Data;
 import lombok.Getter;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.PrayerType;
 import scripts.PrayerUtil;
 
@@ -31,7 +31,7 @@ public enum Assign {
             .usingCannon(false)
             .nameContains("Adamant dragon")
             .useSpecialItem(true)
-            .specialItemId(ItemId.ANTI_DRAGON_SHIELD)
+            .specialItemID(ItemID.ANTIDRAGON_SHIELD)
             .useGearType(GearType.MELEE)),
 
     ANKOU(new Assign.Builder()
@@ -51,7 +51,7 @@ public enum Assign {
             .usingCannon(false)
             .nameContains("Banshee")
             .useSpecialItem(true)
-            .specialItemId(ItemId.EAR_MUFFS)
+            .specialItemID(ItemID.EARMUFFS)
             .useGearType(GearType.MELEE)),
 
     BASILISK(new Assign.Builder()
@@ -59,7 +59,7 @@ public enum Assign {
             .usingCannon(false)
             .nameContains("Basilisk")
             .useSpecialItem(true)
-            .specialItemId(ItemId.MIRROR_SHIELD)
+            .specialItemID(ItemID.MIRROR_SHIELD)
             .useGearType(GearType.MELEE)),
 
 
@@ -68,7 +68,7 @@ public enum Assign {
             .usingCannon(false)
             .nameContains("Baby black dragon")
             .useSpecialItem(true)
-            .specialItemId(ItemId.ANTIDRAGON_SHIELD)
+            .specialItemID(ItemID.ANTIDRAGON_SHIELD)
             .useGearType(GearType.MELEE)),
 
     BLACK_DEMON(new Assign.Builder()
@@ -91,7 +91,7 @@ public enum Assign {
             .useCannonTile(Areas.BLUE_DRAGON_CANNON_TILE)
             .nameContains("Baby blue dragon")
             .useSpecialItem(true)
-            .specialItemId(ItemId.ANTI_DRAGON_SHIELD)
+            .specialItemID(ItemID.ANTIDRAGON_SHIELD)
             .useGearType(GearType.MELEE)),
 
     BRINE_RAT(new Assign.Builder()
@@ -160,14 +160,14 @@ public enum Assign {
             .inArea(Areas.GARGOYLE_AREA)
             .usingCannon(false)
             .useSpecialItem(true)
-            .specialItemId(ItemId.ROCK_HAMMER)
+            .specialItemID(ItemID.ROCK_HAMMER)
             .nameContains("Gargoyle")
             .useGearType(GearType.MELEE)),
 
     COCKATRICE(new Builder()
             .inArea(Areas.COCKATRICE_AREA)
             .useSpecialItem(true)
-            .specialItemId(ItemId.MIRROR_SHIELD)
+            .specialItemID(ItemID.MIRROR_SHIELD)
             .nameContains("Cockatrice")
             .useGearType(GearType.MELEE)),
 
@@ -205,7 +205,7 @@ public enum Assign {
             .inArea(Areas.ROCKSLUG_AREA)
             .nameContains("Rockslug")
             .useSpecialItem(true)
-            .specialItemId(ItemId.BAG_OF_SALT)
+            .specialItemID(ItemID.BAG_OF_SALT)
             .useGearType(GearType.MELEE)),
 
     GREATER_DEMON(new Builder()
@@ -242,7 +242,7 @@ public enum Assign {
             .inArea(Areas.HARPIE_BUG_SWARM_AREA)
             .nameContains("Harpie Bug Swarm")
             .useSpecialItem(true)
-            .specialItemId(ItemId.LIT_BUG_LANTERN)
+            .specialItemID(ItemID.LIT_BUG_LANTERN)
             .useGearType(GearType.MELEE)),
 
     LIZARDMAN(new Builder()
@@ -261,7 +261,7 @@ public enum Assign {
     MUTATED_ZYGOMITES(new Builder()
             .inArea(Areas.MUTATED_ZYGOMITE_AREA)
             .useSpecialItem(true)
-            .specialItemId(ItemId.FUNGICIDE_SPRAYER[0])
+            .specialItemID(ItemID.FUNGICIDE_SPRAYER[0])
             .nameContains("Mutated zygomite") //TODO CHECK
             .useGearType(GearType.MELEE)),
 
@@ -335,7 +335,7 @@ public enum Assign {
     private List<Integer> customGearList;
 
     @Getter
-    private int specialItemId = -1;
+    private int specialItemID = -1;
     @Getter
     private GearType gearType = GearType.MELEE;
 
@@ -349,7 +349,7 @@ public enum Assign {
         this.useSpecialItem = builder.useSpecialItem;
         this.cannonTile = builder.cannonTile;
         this.nameList = builder.nameList;
-        this.specialItemId = builder.specialItemId;
+        this.specialItemID = builder.specialItemID;
         this.gearType = builder.gearType;
         this.hopTile = builder.hopTile;
         this.customGearList = builder.customGearList;
@@ -363,7 +363,7 @@ public enum Assign {
         private boolean useSpecialItem;
         private RSTile cannonTile;
         private List<String> nameList;
-        private int specialItemId;
+        private int specialItemID;
         private GearType gearType;
         private RSTile hopTile;
         private List<Integer> customGearList;
@@ -393,8 +393,8 @@ public enum Assign {
             return this;
         }
 
-        public Builder specialItemId(int specialItemId) {
-            this.specialItemId = specialItemId;
+        public Builder specialItemID(int specialItemID) {
+            this.specialItemID = specialItemID;
             return this;
         }
 

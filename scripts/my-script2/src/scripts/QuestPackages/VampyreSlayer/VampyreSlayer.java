@@ -40,19 +40,19 @@ public class VampyreSlayer implements QuestTask {
     RSArea barArea = new RSArea(new RSTile(3218, 3401, 0), new RSTile(3227, 3394, 0));
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.BEER, 1, 300),
+                    new GEItem(ItemID.BEER, 1, 300),
                     new GEItem(garlic, 1, 300),
-                    new GEItem(ItemId.HAMMER, 1, 500),
-                    new GEItem(ItemId.LOBSTER, 15, 50),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 50),
-                    new GEItem(ItemId.MIND_RUNE, 200, 20),
-                    new GEItem(ItemId.EARTH_RUNE, 600, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 600, 20),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 20),
+                    new GEItem(ItemID.HAMMER, 1, 500),
+                    new GEItem(ItemID.LOBSTER, 15, 50),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 50),
+                    new GEItem(ItemID.MIND_RUNE, 200, 20),
+                    new GEItem(ItemID.EARTH_RUNE, 600, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 600, 20),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 20),
 
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -79,7 +79,7 @@ public class VampyreSlayer implements QuestTask {
         BankManager.withdraw(500, true, earthRune);
         BankManager.withdraw(1, true, beer);
         BankManager.withdraw(2, true, varrockTab);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
         Utils.equipItem(airStaff);
     }
@@ -165,13 +165,10 @@ public class VampyreSlayer implements QuestTask {
             vampire = NPCs.findNearest("Count Draynor");
 
             while (vampire.length > 0) {
-                General.sleep(General.random(100, 300));
-                RSItem[] lob = Inventory.find(ItemId.LOBSTER);
-                if (!Combat.isUnderAttack()) {
-                    if (AccurateMouse.click(vampire[0], "Attack")) {
+                General.sleep(100, 300);
+                RSItem[] lob = Inventory.find(ItemID.LOBSTER);
+                if (!Combat.isUnderAttack() && AccurateMouse.click(vampire[0], "Attack")) {
                         Timer.waitCondition(Combat::isUnderAttack, 1000, 4000);
-                        General.sleep(General.random(400, 800));
-                    }
                 }
 
                 if (Game.getSetting(178) == 3) {

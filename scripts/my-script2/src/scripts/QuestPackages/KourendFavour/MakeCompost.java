@@ -11,6 +11,8 @@ import scripts.Tasks.Priority;
 
 public class MakeCompost implements QuestTask {
 
+
+
     private static MakeCompost quest;
 
     public static MakeCompost get() {
@@ -67,6 +69,6 @@ public class MakeCompost implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
     }
 }

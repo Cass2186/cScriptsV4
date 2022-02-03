@@ -5,8 +5,6 @@ import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
-import org.tribot.script.sdk.tasks.BankTaskError;
-import org.tribot.script.sdk.tasks.InsufficientItemError;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
@@ -15,7 +13,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.MiscTasks.BuyItems;
 import scripts.Timer;
@@ -23,7 +21,6 @@ import scripts.Timer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class BankFireMaking implements Task {
 
@@ -48,11 +45,11 @@ public class BankFireMaking implements Task {
             General.println("[Debug]: Missing Log.");
             //  cSkiller.changeRunningBool(false); //ends script
         }
-        if (BankManager.depositAllExcept(false, ItemId.TINDERBOX))
+        if (BankManager.depositAllExcept(false, ItemID.TINDERBOX))
             Timer.waitCondition(() -> Inventory.getAll().length == 1, 2500, 3500);
         List<ItemReq> inv = new ArrayList<>(
                 Arrays.asList(
-                        new ItemReq(ItemId.TINDERBOX, 1),
+                        new ItemReq(ItemID.TINDERBOX, 1),
                         new ItemReq(logId, 0)
 
                 )
@@ -70,18 +67,18 @@ public class BankFireMaking implements Task {
     public void bank() {
         BankManager.open(true);
 
-        //   BankManager.depositAllExcept(true, ItemId.TINDERBOX);
+        //   BankManager.depositAllExcept(true, ItemID.TINDERBOX);
 
         if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 15) {
-            getLog(ItemId.LOG_IDS[0]);
+            getLog(ItemID.LOG_IDS[0]);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 30) {
-            getLog(ItemId.LOG_IDS[1]);
+            getLog(ItemID.LOG_IDS[1]);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 45) {
-            getLog(ItemId.LOG_IDS[2]);
+            getLog(ItemID.LOG_IDS[2]);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 60) {
-            getLog(ItemId.LOG_IDS[3]);
+            getLog(ItemID.LOG_IDS[3]);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 99) {
-            getLog(ItemId.LOG_IDS[4]);
+            getLog(ItemID.LOG_IDS[4]);
         }
         BankManager.close(true);
     }

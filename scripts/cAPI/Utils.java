@@ -106,10 +106,10 @@ public class Utils {
         stageVar = words;
     }
 
-    public static int getNotedId(int itemId) {
-        RSItemDefinition id = RSItemDefinition.get(itemId);
+    public static int getNotedId(int ItemID) {
+        RSItemDefinition id = RSItemDefinition.get(ItemID);
         if (id != null)
-            return RSItemDefinition.get(itemId).getNotedItemID();
+            return RSItemDefinition.get(ItemID).getNotedItemID();
 
         return -1;
     }
@@ -158,7 +158,7 @@ public class Utils {
 
     }
 
-    public static boolean click(int itemId) {
+    public static boolean click(int ItemID) {
 
         return false;
     }
@@ -681,8 +681,8 @@ public class Utils {
 
         for (Entry<Integer, Integer> entry : map.entrySet()) {
 
-            int itemID = entry.getKey();
-            String itemName = RSItemDefinition.get(itemID).getName();
+            int ItemID = entry.getKey();
+            String itemName = RSItemDefinition.get(ItemID).getName();
 
             for (String name : NAMES_TO_REMOVE) {
 
@@ -861,8 +861,8 @@ public class Utils {
 
     }
 
-    public static boolean clickInventoryItem(int itemId) {
-        RSItem[] item = Inventory.find(itemId);
+    public static boolean clickInventoryItem(int ItemID) {
+        RSItem[] item = Inventory.find(ItemID);
         if (item.length > 0) {
             if (item[0].click()) {
                 Constants.idle(250, 900);
@@ -872,8 +872,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean clickInventoryItem(int[] itemId) {
-        RSItem[] item = Inventory.find(itemId);
+    public static boolean clickInventoryItem(int[] ItemID) {
+        RSItem[] item = Inventory.find(ItemID);
         if (item.length > 0) {
             if (item[0].click()) {
                 Constants.idle(250, 900);
@@ -883,8 +883,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean clickInventoryItem(int itemId, String action) {
-        RSItem[] item = Inventory.find(itemId);
+    public static boolean clickInventoryItem(int ItemID, String action) {
+        RSItem[] item = Inventory.find(ItemID);
         if (item.length > 0) {
             if (item[0].click(action)) {
                 Constants.idle(250, 900);
@@ -894,8 +894,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean clickInventoryItem(int[] itemId, String action) {
-        RSItem[] item = Inventory.find(itemId);
+    public static boolean clickInventoryItem(int[] ItemID, String action) {
+        RSItem[] item = Inventory.find(ItemID);
         if (item.length > 0) {
             if (item[0].click(action)) {
                 Constants.idle(250, 900);
@@ -1088,8 +1088,8 @@ public class Utils {
     }
 
 
-    public boolean checkForInventoryItems(ArrayList<Integer> itemIdList) {
-        for (Integer i : itemIdList) {
+    public boolean checkForInventoryItems(ArrayList<Integer> ItemIDList) {
+        for (Integer i : ItemIDList) {
             if (Inventory.find(i).length == 0) {
                 RSItemDefinition def = RSItemDefinition.get(i);
                 if (def != null) {

@@ -83,9 +83,9 @@ public class Obstacle {
         return true;
     }
 
-    public void alch(int itemId) {
+    public void alch(int ItemID) {
         if (Vars.get().shouldAlchAgil) {
-            RSItem[] alch = Inventory.find(itemId);
+            RSItem[] alch = Inventory.find(ItemID);
             if (Magic.isSpellSelected() && alch.length > 0 && alch[0].click())
                 General.sleep(General.randomSD(430, 100));
         }

@@ -34,48 +34,48 @@ public class RatCatchers implements QuestTask {
 
     FollowerRequirement catFollower =
             new FollowerRequirement("A non-overgrown cat following you", NpcCollections.getHuntingCats());
-    ItemRequirement ratPoison = new ItemRequirement("Rat poison", ItemId.RAT_POISON);
+    ItemRequirement ratPoison = new ItemRequirement("Rat poison", ItemID.RAT_POISON);
     // ratPoison.setTooltip("You can get some from under the Clocktower south of Ardougne");
-    ItemRequirement cheese = new ItemRequirement("Cheese", ItemId.CHEESE);
-    //   cheese.addAlternates(ItemId.POISONED_CHEESE);
-    ItemRequirement marrentill = new ItemRequirement("Marrentill", ItemId.MARRENTILL);
-    ItemRequirement unicornHornDust = new ItemRequirement("Unicorn horn dust", ItemId.UNICORN_HORN_DUST);
-    ItemRequirement bucketOfMilk = new ItemRequirement("Bucket of milk", ItemId.BUCKET_OF_MILK);
+    ItemRequirement cheese = new ItemRequirement("Cheese", ItemID.CHEESE);
+    //   cheese.addAlternates(ItemID.POISONED_CHEESE);
+    ItemRequirement marrentill = new ItemRequirement("Marrentill", ItemID.MARRENTILL);
+    ItemRequirement unicornHornDust = new ItemRequirement("Unicorn horn dust", ItemID.UNICORN_HORN_DUST);
+    ItemRequirement bucketOfMilk = new ItemRequirement("Bucket of milk", ItemID.BUCKET_OF_MILK);
     // TODO: Add DS2 as part of check
-    ItemRequirement catspeakAmuletOrDS2 = new ItemRequirement("Catspeak amulet", ItemId.CATSPEAK_AMULET);
-    //  catspeakAmuletOrDS2.addAlternates(ItemId.CATSPEAK_AMULETE);
-    ItemRequirement potOfWeeds = new ItemRequirement("Pot of weeds", ItemId.POT_OF_WEEDS);
+    ItemRequirement catspeakAmuletOrDS2 = new ItemRequirement("Catspeak amulet", ItemID.CATSPEAK_AMULET);
+    //  catspeakAmuletOrDS2.addAlternates(ItemID.CATSPEAK_AMULETE);
+    ItemRequirement potOfWeeds = new ItemRequirement("Pot of weeds", ItemID.POT_OF_WEEDS);
     // potOfWeeds.setTooltip("You can make this by using some weeds on a pot");
-    ItemRequirement tinderbox = new ItemRequirement("Tinderbox", ItemId.TINDERBOX);
-    ItemRequirement coins101 = new ItemRequirement("Coins", ItemId.COINS_995, 101);
-    ItemRequirement coin = new ItemRequirement("Coins", ItemId.COINS_995);
-    ItemRequirement snakeCharm = new ItemRequirement("Snake charm", ItemId.SNAKE_CHARM);
+    ItemRequirement tinderbox = new ItemRequirement("Tinderbox", ItemID.TINDERBOX);
+    ItemRequirement coins101 = new ItemRequirement("Coins", ItemID.COINS_995, 101);
+    ItemRequirement coin = new ItemRequirement("Coins", ItemID.COINS_995);
+    ItemRequirement snakeCharm = new ItemRequirement("Snake charm", ItemID.SNAKE_CHARM);
     //  snakeCharm.canBeObtainedDuringQuest();
 
     ///raw or cooked
     ItemRequirement fish8 = new ItemRequirement(ItemCollections.getFishFood(), 8);
     //   fish8.addAlternates(ItemCollections.getRawFish());
 
-    ItemRequirement varrockTeleport = new ItemRequirement("Varrock teleport", ItemId.VARROCK_TELEPORT);
+    ItemRequirement varrockTeleport = new ItemRequirement("Varrock teleport", ItemID.VARROCK_TELEPORT);
     // ItemRequirement sarimTeleport = new ItemRequirement("Port Sarim teleport", ItemCollections.getAmuletOfGlories());
-    //  sarimTeleport.addAlternates(ItemId.DRAYNOR_MANOR_TELEPORT);
-    //ItemRequirement pollnivneachTeleport = new ItemRequirement("Pollnivneach teleport", ItemId.POLLNIVNEACH_TELEPORT);
-    ItemRequirement ardougneTeleport = new ItemRequirement("Ardougne teleport", ItemId.ARDOUGNE_TELEPORT);
+    //  sarimTeleport.addAlternates(ItemID.DRAYNOR_MANOR_TELEPORT);
+    //ItemRequirement pollnivneachTeleport = new ItemRequirement("Pollnivneach teleport", ItemID.POLLNIVNEACH_TELEPORT);
+    ItemRequirement ardougneTeleport = new ItemRequirement("Ardougne teleport", ItemID.ARDOUGNE_TELEPORT);
 
     ItemRequirement keldagrimTeleport = new ItemRequirement("Mine cart access to Keldagrim from the GE", -1, -1);
-    //keldagrimTeleport.setDisplayItemId(ItemId.MINECART_TICKET);
-    ItemRequirement carpetCoins = new ItemRequirement("Coins for magic carpet travel", ItemId.COINS_995, 1000);
+    //keldagrimTeleport.setDisplayItemID(ItemID.MINECART_TICKET);
+    ItemRequirement carpetCoins = new ItemRequirement("Coins for magic carpet travel", ItemID.COINS_995, 1000);
 
-    ItemRequirement directions = new ItemRequirement("Directions", ItemId.DIRECTIONS);
+    ItemRequirement directions = new ItemRequirement("Directions", ItemID.DIRECTIONS);
 
-    ItemRequirement poisonedCheese1 = new ItemRequirement("Poisoned cheese", ItemId.POISONED_CHEESE);
-    ItemRequirement poisonedCheese2 = new ItemRequirement("Poisoned cheese", ItemId.POISONED_CHEESE, 2);
-    ItemRequirement poisonedCheese3 = new ItemRequirement("Poisoned cheese", ItemId.POISONED_CHEESE, 3);
-    ItemRequirement poisonedCheese4 = new ItemRequirement("Poisoned cheese", ItemId.POISONED_CHEESE, 4);
-    ItemRequirement smoulderingPot = new ItemRequirement("Smouldering pot", ItemId.SMOULDERING_POT);
-    ItemRequirement catantipoison = new ItemRequirement("Cat antipoison", ItemId.CAT_ANTIPOISON);
+    ItemRequirement poisonedCheese1 = new ItemRequirement("Poisoned cheese", ItemID.POISONED_CHEESE);
+    ItemRequirement poisonedCheese2 = new ItemRequirement("Poisoned cheese", ItemID.POISONED_CHEESE, 2);
+    ItemRequirement poisonedCheese3 = new ItemRequirement("Poisoned cheese", ItemID.POISONED_CHEESE, 3);
+    ItemRequirement poisonedCheese4 = new ItemRequirement("Poisoned cheese", ItemID.POISONED_CHEESE, 4);
+    ItemRequirement smoulderingPot = new ItemRequirement("Smouldering pot", ItemID.SMOULDERING_POT);
+    ItemRequirement catantipoison = new ItemRequirement("Cat antipoison", ItemID.CAT_ANTIPOISON);
     //  catantipoison.setTooltip("You can get another from the Apothecary");
-    ItemRequirement musicScroll = new ItemRequirement("Music scroll", ItemId.MUSIC_SCROLL);
+    ItemRequirement musicScroll = new ItemRequirement("Music scroll", ItemID.MUSIC_SCROLL);
     //  musicScroll.setTooltip("You can get another from the snake charmer");
 
 
@@ -268,7 +268,7 @@ public class RatCatchers implements QuestTask {
             "Travel", cat, potOfWeeds, tinderbox);
     NPCStep talkToSmokinJoe = new NPCStep(NpcID.SMOKIN_JOE, new RSTile(2929, 10213, 0), cat, potOfWeeds, tinderbox);
 
-    UseItemOnItemStep lightWeeds = new UseItemOnItemStep(ItemId.TINDERBOX, potOfWeeds.getId(), smoulderingPot.check());
+    UseItemOnItemStep lightWeeds = new UseItemOnItemStep(ItemID.TINDERBOX, potOfWeeds.getId(), smoulderingPot.check());
     ObjectStep usePotOnHole = new ObjectStep(ObjectID.RAT_HOLE_10350, new RSTile(2933, 10212, 0),
             "Use the smouldering pot on the hole east of Joe with your cat following you.",
             smoulderingPot, catFollower, catspeakAmuletOrDS2.equipped());

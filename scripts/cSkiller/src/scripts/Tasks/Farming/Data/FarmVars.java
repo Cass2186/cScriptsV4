@@ -1,10 +1,12 @@
 package scripts.Tasks.Farming.Data;
 
 
+import scripts.Tasks.Farming.Data.Enums.FARM_TASKS;
 import scripts.Tasks.Farming.Data.Enums.Patches;
 import scripts.Timer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FarmVars {
 
@@ -50,6 +52,7 @@ public class FarmVars {
     public int currentHerbId, treeId, fruitTreeId;
     public int currentAllotmentId;
 
+    public List<FARM_TASKS> farmTaskList = new ArrayList<>();
 
     public String currentHerbName;
 

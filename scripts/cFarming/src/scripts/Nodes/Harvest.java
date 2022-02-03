@@ -272,6 +272,8 @@ public class Harvest implements Task {
              //   Vars.get().doingAllotments = false;
                 if (Vars.get().doingHerbs) {
                     Vars.get().shouldBank = true;
+                    Log.log("Harvest]: Po" +
+                            "pulating herb patches");
                     FarmingUtils.populatePatchesToVisit();
                 }
             }

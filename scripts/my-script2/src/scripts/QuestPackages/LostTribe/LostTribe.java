@@ -92,22 +92,22 @@ public class LostTribe implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.STEEL_PICKAXE, 1, 550),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.STEEL_PICKAXE, 1, 550),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
                     new GEItem(UNLIT_CANDLE_LANTERN, 1, 500),
-                    new GEItem(ItemId.LOCKPICK, 1, 500),
-                    new GEItem(ItemId.TINDERBOX, 1, 500),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 40),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 40),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 5, 40),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 25)
+                    new GEItem(ItemID.LOCKPICK, 1, 500),
+                    new GEItem(ItemID.TINDERBOX, 1, 500),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 40),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 40),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 40),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STEEL_PICKAXE, 1, 1)
+                    new ItemReq(ItemID.STEEL_PICKAXE, 1, 1)
 
             )
     ));
@@ -131,12 +131,12 @@ public class LostTribe implements QuestTask {
         BankManager.withdraw(1, true, LOCKPICK);
         BankManager.withdraw(1, true, TINDERBOX);
         BankManager.withdraw(5, true,
-                ItemId.VARROCK_TELEPORT);
+                ItemID.VARROCK_TELEPORT);
         BankManager.withdraw(12,
                 true,
-                ItemId.LUMBRIDGE_TELEPORT);
+                ItemID.LUMBRIDGE_TELEPORT);
         BankManager.withdraw(5, true,
-                ItemId.FALADOR_TELEPORT);
+                ItemID.FALADOR_TELEPORT);
         BankManager.withdraw(2, true, BankManager.STAMINA_POTION[0]);
         BankManager.close(true);
         Utils.useItemOnItem(TINDERBOX, UNLIT_CANDLE_LANTERN);
@@ -359,7 +359,7 @@ public class LostTribe implements QuestTask {
         if (AFTER_TUNNEL_ENTRANCE.contains(Player.getPosition())) {
             cQuesterV2.status = "Navigating Tunnel";
 
-            Utils.drinkPotion(ItemId.STAMINA_POTION);
+            Utils.drinkPotion(ItemID.STAMINA_POTION);
 
             Walking.walkPath(PATH_PT_1);
 

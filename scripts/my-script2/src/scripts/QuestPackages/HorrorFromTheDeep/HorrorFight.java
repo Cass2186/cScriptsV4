@@ -30,34 +30,34 @@ public class HorrorFight implements QuestTask {
 
     InventoryRequirement fightInv = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.CHAOS_RUNE, 400, 50),
-                    new ItemReq(ItemId.LAVA_RUNE, 1200, 300),
-                    new ItemReq(ItemId.WATER_RUNE, 1200, 300),
-                    new ItemReq(ItemId.STAFF_OF_AIR, 1, 0),
-                    new ItemReq(ItemId.LOBSTER, 15, 5),
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.PRAYER_POTION[0], 3, 0)
+                    new ItemReq(ItemID.CHAOS_RUNE, 400, 50),
+                    new ItemReq(ItemID.LAVA_RUNE, 1200, 300),
+                    new ItemReq(ItemID.WATER_RUNE, 1200, 300),
+                    new ItemReq(ItemID.STAFF_OF_AIR, 1, 0),
+                    new ItemReq(ItemID.LOBSTER, 15, 5),
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.PRAYER_POTION[0], 3, 0)
             ))
     );
 
     public static boolean shouldBuyAllBooks = false;
 
     BankTask bankTaskOne = BankTask.builder()
-            .addInvItem(ItemId.CHAOS_RUNE, Amount.of(400))
+            .addInvItem(ItemID.CHAOS_RUNE, Amount.of(400))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY).item(
-                    ItemId.MONKS_ROBE_TOP, Amount.of(1)))
+                    ItemID.MONKS_ROBE_TOP, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS).item(
-                    ItemId.MONKS_ROBE_BOTTOM, Amount.of(1)))
+                    ItemID.MONKS_ROBE_BOTTOM, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON).item(
-                    ItemId.STAFF_OF_AIR, Amount.of(1)))
-            .addInvItem(ItemId.LAVA_RUNE, Amount.of(1200))
-            .addInvItem(ItemId.WATER_RUNE, Amount.of(1200))
-            .addInvItem(ItemId.STAMINA_POTION[0], Amount.of(1))
-            .addInvItem(ItemId.PRAYER_POTION[0], Amount.of(3))
-            .addInvItem(ItemId.COINS, Amount.of(25000))
-            .addInvItem(ItemId.GAMES_NECKLACE[1], Amount.of(1))
-            .addInvItem(ItemId.LOBSTER, Amount.fill(1))
+                    ItemID.STAFF_OF_AIR, Amount.of(1)))
+            .addInvItem(ItemID.LAVA_RUNE, Amount.of(1200))
+            .addInvItem(ItemID.WATER_RUNE, Amount.of(1200))
+            .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(1))
+            .addInvItem(ItemID.PRAYER_POTION[0], Amount.of(3))
+            .addInvItem(ItemID.COINS, Amount.of(25000))
+            .addInvItem(ItemID.GAMES_NECKLACE[1], Amount.of(1))
+            .addInvItem(ItemID.LOBSTER, Amount.fill(1))
             .build();
 
     public boolean setSpell(Autocast spell) {
@@ -203,7 +203,7 @@ public class HorrorFight implements QuestTask {
 
             int prayDrink = General.random(10, 25);
             if (Prayer.getPrayerPoints() < prayDrink) {
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
                 prayDrink = General.random(10, 25);
                 General.println("[Debug]: Next drinking prayer pot at: " + prayDrink);
             }

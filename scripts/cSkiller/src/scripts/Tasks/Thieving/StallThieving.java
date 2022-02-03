@@ -1,6 +1,5 @@
 package scripts.Tasks.Thieving;
 
-import dax.walker.utils.AccurateMouse;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.input.Mouse;
@@ -8,11 +7,9 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
-import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
@@ -155,7 +152,7 @@ public class StallThieving implements Task {
     @Override
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.THIEVING) &&
-                Skills.SKILLS.THIEVING.getActualLevel() >= 5;
+                (Skills.SKILLS.THIEVING.getActualLevel() >= 5 && Skills.SKILLS.THIEVING.getActualLevel() < 55);
     }
 
     @Override
@@ -163,7 +160,7 @@ public class StallThieving implements Task {
         if (Skills.SKILLS.THIEVING.getActualLevel() < 25 && Skills.SKILLS.THIEVING.getActualLevel() >= 5) {
             stealBakersStall();
         } else if (Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 150 && //15% favour
-                Skills.SKILLS.THIEVING.getActualLevel() >= 25) {
+                Skills.SKILLS.THIEVING.getActualLevel() >= 25 && Skills.SKILLS.THIEVING.getActualLevel() < 55) {
             stealFruitStall();
         }
     }

@@ -54,9 +54,9 @@ public class SeaSlug implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(SWAMP_PASTE, 1, 3000),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
@@ -73,7 +73,7 @@ public class SeaSlug implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(1, true, BankManager.STAMINA_POTION[0]);
         BankManager.withdraw(3000, true, COINS);
         BankManager.withdraw(1, true, SWAMP_PASTE);

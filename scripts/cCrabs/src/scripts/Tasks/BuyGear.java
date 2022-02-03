@@ -1,7 +1,7 @@
 package scripts.Tasks;
 
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.QuestSteps.BuyItemsStep;
 
 import java.util.ArrayList;
@@ -12,22 +12,22 @@ public class BuyGear implements Task{
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SNAKESKIN_BANDANA, 1, 500),
-                    new GEItem(ItemId.SNAKESKIN_BOOTS, 1, 500),
-                    new GEItem(ItemId.SNAKESKIN_BODY, 1, 500),
-                    new GEItem(ItemId.SNAKESKIN_CHAPS, 1, 500),
-                    new GEItem(ItemId.SNAKESKIN_SHIELD, 1, 500),
+                    new GEItem(ItemID.SNAKESKIN_BANDANA, 1, 500),
+                    new GEItem(ItemID.SNAKESKIN_BOOTS, 1, 500),
+                    new GEItem(ItemID.SNAKESKIN_BODY, 1, 500),
+                    new GEItem(ItemID.SNAKESKIN_CHAPS, 1, 500),
+                    new GEItem(ItemID.SNAKESKIN_SHIELD, 1, 500),
 
-                    new GEItem(ItemId.BLUE_DHIDE_BODY, 1, 50),
-                    new GEItem(ItemId.BLUE_DHIDE_CHAPS, 1, 50),
-                    new GEItem(ItemId.MAGIC_SHORTBOW, 1, 50),
-                    new GEItem(ItemId.BLUE_DHIDE_VAMBRACES, 1, 50),
+                    new GEItem(ItemID.BLUE_DHIDE_BODY, 1, 50),
+                    new GEItem(ItemID.BLUE_DHIDE_CHAPS, 1, 50),
+                    new GEItem(ItemID.MAGIC_SHORTBOW, 1, 50),
+                    new GEItem(ItemID.BLUE_DHIDE_VAMBRACES, 1, 50),
 
-                    new GEItem(ItemId.SUPER_COMBAT_POTION[0], 2, 15),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 40),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.DRAGON_SCIMITAR, 1, 25)
+                    new GEItem(ItemID.SUPER_COMBAT_POTION[0], 2, 15),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 40),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.DRAGON_SCIMITAR, 1, 25)
             )
     );
 

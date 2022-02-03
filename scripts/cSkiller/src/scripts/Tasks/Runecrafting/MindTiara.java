@@ -13,7 +13,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -36,10 +36,10 @@ public class MindTiara implements Task {
             RSItem[] tiaras = Inventory.find("Tiara");
             RSItem[] talisman = Inventory.find(Filters.Items.nameContains("Talisman"));
             for (RSItem i : tiaras) {
-                int count = Inventory.getCount(ItemId.TIARA);
+                int count = Inventory.getCount(ItemID.TIARA);
                 if (talisman.length >0 &&
                         Utils.useItemOnObject(talisman[0].getID(), "Altar")) {
-                    Timer.waitCondition(() -> Inventory.getCount(ItemId.TIARA) < count, 3500, 5000);
+                    Timer.waitCondition(() -> Inventory.getCount(ItemID.TIARA) < count, 3500, 5000);
                 }
             }
         }
@@ -62,7 +62,7 @@ public class MindTiara implements Task {
 
     @Override
     public boolean validate() {
-        RSItem[] tiaras = Inventory.find(ItemId.TIARA);
+        RSItem[] tiaras = Inventory.find(ItemID.TIARA);
         RSItem[] talisman = Inventory.find(Filters.Items.nameContains("talisman"));
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING) &&
                 tiaras.length > 0 && talisman.length > 0;

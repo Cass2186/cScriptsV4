@@ -16,6 +16,7 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
@@ -34,7 +35,10 @@ public class DragonSlayer implements QuestTask {
         return quest == null ? quest = new DragonSlayer() : quest;
     }
 
-
+    int silkOnDoorVarbit = 3747;
+    int lobsterPotOnDoorVarbit = 3749;
+    int unfireBowlOnDoorVarbit = 3748;
+    int wizardMindBombOnDoorVarbit = 3750;
     int UNFIRED_BOWL = 1791;
     int WIZARDS_MIND_BOMB = 1907;
     int LOBSTER_POT = 301;
@@ -168,39 +172,39 @@ public class DragonSlayer implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ADAMANT_FULL_HELM, 1, 300),
-                    new GEItem(ItemId.ADAMANT_PLATEBODY, 1, 100),
-                    new GEItem(ItemId.ADAMANT_PLATELEGS, 1, 100),
+                    new GEItem(ItemID.ADAMANT_FULL_HELM, 1, 300),
+                    new GEItem(ItemID.ADAMANT_PLATEBODY, 1, 100),
+                    new GEItem(ItemID.ADAMANT_PLATELEGS, 1, 100),
                     new GEItem(ADAMANT_BOOTS, 1, 300),
-                    new GEItem(ItemId.RUNE_SCIMITAR, 1, 30),
-                    new GEItem(ItemId.EXTENDED_SUPER_ANTIFIRE_POTION[0], 1, 30),
-                    new GEItem(ItemId.UNFIRED_BOWL, 1, 300),
+                    new GEItem(ItemID.RUNE_SCIMITAR, 1, 30),
+                    new GEItem(ItemID.EXTENDED_SUPER_ANTIFIRE_POTION[0], 1, 30),
+                    new GEItem(ItemID.UNFIRED_BOWL, 1, 300),
                     new GEItem(WIZARDS_MIND_BOMB, 1, 300),
                     new GEItem(LOBSTER_POT, 1, 300),
                     new GEItem(SILK, 1, 300),
                     new GEItem(LAW_RUNE, 5, 30),
                     new GEItem(ANTI_DRAGON_SHIELD, 1, 300),
-                    new GEItem(ItemId.HAMMER, 1, 300),
+                    new GEItem(ItemID.HAMMER, 1, 300),
                     new GEItem(STEEL_NAILS, 100, 300),
 
-                    new GEItem(ItemId.PLANK, 3, 50),
-                    new GEItem(ItemId.LOBSTER, 30, 50),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 2, 30),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 30),
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 30),
-                    new GEItem(ItemId.PRAYER_POTION[0], 3, 30),
-                    new GEItem(ItemId.SUPER_COMBAT_POTION[0], 1, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 5, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.PLANK, 3, 50),
+                    new GEItem(ItemID.LOBSTER, 30, 50),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 2, 30),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 30),
+                    new GEItem(ItemID.PRAYER_POTION[0], 3, 30),
+                    new GEItem(ItemID.SUPER_COMBAT_POTION[0], 1, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 5, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -223,8 +227,8 @@ public class DragonSlayer implements QuestTask {
         General.sleep(General.random(400, 800));
         BankManager.checkEquippedGlory();
         BankManager.checkCombatBracelet();
-        BankManager.withdraw(5, true, ItemId.VARROCK_TELEPORT);
-        BankManager.withdraw(5, true, ItemId.FALADOR_TELEPORT);
+        BankManager.withdraw(5, true, ItemID.VARROCK_TELEPORT);
+        BankManager.withdraw(5, true, ItemID.FALADOR_TELEPORT);
         if (RANGED) {
             BankManager.withdraw(1, true, ADAMANT_CROSSBOW);
             BankManager.withdraw(350, true, RUBY_BOLTS_E);
@@ -243,13 +247,13 @@ public class DragonSlayer implements QuestTask {
         }
         if (MAGIC) {
             BankManager.withdraw(1, true,
-                    ItemId.STAFF_OF_AIR);
+                    ItemID.STAFF_OF_AIR);
             BankManager.withdraw(300, true,
-                    ItemId.CHAOS_RUNE);
+                    ItemID.CHAOS_RUNE);
             BankManager.withdraw(1200, true,
-                    ItemId.FIRE_RUNE);
+                    ItemID.FIRE_RUNE);
             Utils.equipItem(
-                    ItemId.STAFF_OF_AIR);
+                    ItemID.STAFF_OF_AIR);
         }
         if (MELEE) {
             if (Skills.getActualLevel(Skills.SKILLS.DEFENCE) >= 30) {
@@ -277,18 +281,18 @@ public class DragonSlayer implements QuestTask {
         }
         BankManager.withdraw(1, true, ANTI_DRAGON_SHIELD);
         BankManager.withdraw(16, true,
-                ItemId.LOBSTER);
+                ItemID.LOBSTER);
         BankManager.withdraw(1, true,
-                ItemId.SKILLS_NECKLACE[0]);
+                ItemID.SKILLS_NECKLACE[0]);
         BankManager.withdraw(2, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
         BankManager.withdraw(1, true,
-                ItemId.RING_OF_DUELING[0]);
+                ItemID.RING_OF_DUELING[0]);
         BankManager.close(true);
         Utils.equipItem(
-                ItemId.RING_OF_DUELING[0]);
+                ItemID.RING_OF_DUELING[0]);
         Utils.equipItem(
-                ItemId.COMBAT_BRACELET[0]);
+                ItemID.COMBAT_BRACELET[0]);
         if (Prayer.getPrayerPoints() < 30) {
             //Utils.clanWarsReset();
         }
@@ -646,9 +650,9 @@ public class DragonSlayer implements QuestTask {
     public void checkEat() {
         if (Combat.getHPRatio() < General.random(45, 65)) {
             if (Inventory.find(
-                    ItemId.LOBSTER).length > 0) {
+                    ItemID.LOBSTER).length > 0) {
                 AccurateMouse.click(Inventory.find(
-                        ItemId.LOBSTER)[0], "Eat");
+                        ItemID.LOBSTER)[0], "Eat");
             }
         }
     }
@@ -677,7 +681,7 @@ public class DragonSlayer implements QuestTask {
             BankManager.checkCombatBracelet();
             BankManager.withdraw(1, true, UNFIRED_BOWL);
             BankManager.withdraw(3, true,
-                    ItemId.FALADOR_TELEPORT);
+                    ItemID.FALADOR_TELEPORT);
             BankManager.withdraw(1, true, WIZARDS_MIND_BOMB);
             BankManager.withdraw(1, true, LOBSTER_POT);
             BankManager.withdraw(15000, true, COINS);
@@ -686,7 +690,7 @@ public class DragonSlayer implements QuestTask {
             BankManager.withdraw(90, true, STEEL_NAILS);
             BankManager.withdraw(3, true, PLANK);
             BankManager.withdraw(1, true, MAP_PIECE_1);
-            BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+            BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
             BankManager.close(true);
 
         }
@@ -697,7 +701,7 @@ public class DragonSlayer implements QuestTask {
     public void step5() {
         if (Inventory.find(MAP_PIECE_1).length > 0 && Inventory.find(MAP_PIECE_2).length < 1) {
             if (!BankManager.checkInventoryItems(WIZARDS_MIND_BOMB, UNFIRED_BOWL,
-                    ItemId.FALADOR_TELEPORT, LOBSTER_POT, SILK, STEEL_NAILS, PLANK)) {
+                    ItemID.FALADOR_TELEPORT, LOBSTER_POT, SILK, STEEL_NAILS, PLANK)) {
                 buyItems();
                 getItems2();
             }
@@ -717,6 +721,11 @@ public class DragonSlayer implements QuestTask {
 
     }
 
+    VarbitRequirement usedSilkOnDoor = new VarbitRequirement(silkOnDoorVarbit, 1);
+    VarbitRequirement usedLobsterPotOnDoor = new VarbitRequirement(lobsterPotOnDoorVarbit, 1);
+    VarbitRequirement usedBowlOnDoor = new VarbitRequirement(unfireBowlOnDoorVarbit, 1);
+    VarbitRequirement usedWizardMindBombOnDoor = new VarbitRequirement(wizardMindBombOnDoorVarbit, 1);
+
     public void step6() {
         if (Inventory.find(MAP_PIECE_2).length < 1) {
             if (Inventory.find(MAP_PIECE_1).length > 0 && !IN_VAULT.contains(Player.getPosition()) && oracle) {
@@ -729,17 +738,30 @@ public class DragonSlayer implements QuestTask {
                         = "Using items on Door";
                 General.println("[Debug]: " + cQuesterV2.status
                 );
-                if (Utils.useItemOnObject(UNFIRED_BOWL, MAGIC_DOOR))
+                if (!usedBowlOnDoor.check() &&
+                        Utils.useItemOnObject(UNFIRED_BOWL, MAGIC_DOOR))
                     Waiting.waitUniform(500, 2000);
 
-                if (Utils.useItemOnObject(WIZARDS_MIND_BOMB, MAGIC_DOOR))
+                if (!usedWizardMindBombOnDoor.check() &&
+                        Utils.useItemOnObject(WIZARDS_MIND_BOMB, MAGIC_DOOR))
                     Waiting.waitUniform(500, 2000);
 
-                if (Utils.useItemOnObject(LOBSTER_POT, MAGIC_DOOR))
+                if (!usedLobsterPotOnDoor.check() &&
+                        Utils.useItemOnObject(LOBSTER_POT, MAGIC_DOOR))
                     Waiting.waitUniform(500, 2000);
 
-                if (Utils.useItemOnObject(SILK, MAGIC_DOOR))
-                    Timer.abc2WaitCondition(() -> IN_VAULT.contains(Player.getPosition()), 12000, 15000);
+                if (!usedSilkOnDoor.check() &&
+                        Utils.useItemOnObject(SILK, MAGIC_DOOR)) {
+                    Waiting.waitUniform(1500, 2000);
+                }
+                if (usedBowlOnDoor.check() && usedWizardMindBombOnDoor.check() && usedLobsterPotOnDoor.check() &&
+                        usedSilkOnDoor.check()) {
+                    if (Timer.abc2WaitCondition(() -> IN_VAULT.contains(Player.getPosition())
+                            || Game.isInInstance(), 12000, 15000)) {
+                        Waiting.waitNormal(1500, 200);
+                    }
+                }
+
             }
 
             if (IN_VAULT.contains(Player.getPosition()) || Objects.findNearest(20, 2587).length > 0) {
@@ -750,7 +772,6 @@ public class DragonSlayer implements QuestTask {
                 if (Utils.clickObject(2588, "Search", false)) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
-
                 }
             }
         }
@@ -822,8 +843,8 @@ public class DragonSlayer implements QuestTask {
         BankManager.depositAll(true);
         BankManager.checkEquippedGlory();
         BankManager.checkCombatBracelet();
-        BankManager.withdraw(2, true, ItemId.VARROCK_TELEPORT);
-        BankManager.withdraw(20, true, ItemId.LOBSTER);
+        BankManager.withdraw(2, true, ItemID.VARROCK_TELEPORT);
+        BankManager.withdraw(20, true, ItemID.LOBSTER);
         BankManager.withdraw(1, true, EXTENDED_ANTIFIRE[0]);
         BankManager.withdraw(1, true, MAP_PIECE_1);
         BankManager.withdraw(1, true, MAP_PIECE_2);
@@ -833,8 +854,8 @@ public class DragonSlayer implements QuestTask {
             BankManager.withdraw(1, true, ANTI_DRAGON_SHIELD);
             Utils.equipItem(ANTI_DRAGON_SHIELD);
         }
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(2, true, ItemId.PRAYER_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(2, true, ItemID.PRAYER_POTION[0]);
         BankManager.close(true);
         Utils.useItemOnItem(MAP_PIECE_1, MAP_PIECE_2);
         NPCInteraction.handleConversation();
@@ -882,7 +903,7 @@ public class DragonSlayer implements QuestTask {
 
     public void checkPrayer() {
         if (Prayer.getPrayerPoints() < General.random(5, 15)) {
-            Utils.drinkPotion(ItemId.PRAYER_POTION);
+            Utils.drinkPotion(ItemID.PRAYER_POTION);
         }
     }
 
@@ -902,7 +923,7 @@ public class DragonSlayer implements QuestTask {
         }
         RSNPC[] elvarg = NPCs.findNearest(ELVARG);
         if (FIGHT_AREA.contains(Player.getPosition()) && elvarg.length > 0) {
-            General.sleep(50);
+            General.sleep(500,1200);
 
             if (!Combat.isUnderAttack())
                 CombatUtil.clickTarget(elvarg[0]);
@@ -926,6 +947,7 @@ public class DragonSlayer implements QuestTask {
     public void step13() {
         cQuesterV2.status
                 = "Going to Oziach";
+        Timer.waitCondition(() -> Inventory.find(11279).length > 0, 15000, 22000);
         Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MAGIC);
         Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
         General.println("[Debug]: " + cQuesterV2.status

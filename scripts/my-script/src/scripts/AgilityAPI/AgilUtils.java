@@ -56,25 +56,25 @@ public class AgilUtils {
         }
     }
 
-    public static boolean clickGroundItem(int itemID) {
-        RSGroundItem[] gItem = GroundItems.find(itemID);
+    public static boolean clickGroundItem(int ItemID) {
+        RSGroundItem[] gItem = GroundItems.find(ItemID);
         if (gItem.length > 0) {
 
 
             if (!gItem[0].isClickable())
                 DaxCamera.focus(gItem[0]);
 
-            RSItem[] invItems = Inventory.find(itemID);
+            RSItem[] invItems = Inventory.find(ItemID);
 
             if (gItem[0].getDefinition().isStackable() && invItems.length > 0) {
                 int stack = invItems[0].getStack();
                 if (AccurateMouse.click(gItem[0], "Take")) {
-                    return Timing.waitCondition(() -> Inventory.find(itemID)[0].getStack() > stack, General.random(5000, 7000));
+                    return Timing.waitCondition(() -> Inventory.find(ItemID)[0].getStack() > stack, General.random(5000, 7000));
                 }
             }
 
             if (AccurateMouse.click(gItem[0], "Take")) {
-                return Timing.waitCondition(() -> Inventory.find(itemID).length > invItems.length, General.random(5000, 7000));
+                return Timing.waitCondition(() -> Inventory.find(ItemID).length > invItems.length, General.random(5000, 7000));
             }
         }
         return false;

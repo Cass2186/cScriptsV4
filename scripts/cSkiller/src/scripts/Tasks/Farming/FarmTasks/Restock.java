@@ -3,7 +3,7 @@ package scripts.Tasks.Farming.FarmTasks;
 import org.tribot.api2007.Skills;
 
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.Tasks.Farming.Data.Enums.HERBS;
 import scripts.Tasks.Farming.Data.FarmConst;
@@ -27,15 +27,15 @@ public class Restock implements Task {
 
         ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
                 Arrays.asList(
-                        new GEItem(ItemId.SPADE, 1, 300),
+                        new GEItem(ItemID.SPADE, 1, 300),
                         new GEItem(FarmConst.SEED_DIBBER, 1, 300),
                         new GEItem(FarmConst.RAKE, 1, 300),
                         new GEItem(FarmConst.ULTRACOMPOST, 20, 30),
-                        new GEItem(ItemId.CAMELOT_TELEPORT, 10, 50),
-                        new GEItem(ItemId.FALADOR_TELEPORT, 10, 50),
-                        new GEItem(ItemId.FENKENSTRAIN_TELE, 10, 50),
-                        new GEItem(ItemId.SKILLS_NECKLACE[2], 2, 30),
-                        new GEItem(ItemId.STAMINA_POTION[0], 5, 30)
+                        new GEItem(ItemID.CAMELOT_TELEPORT, 10, 50),
+                        new GEItem(ItemID.FALADOR_TELEPORT, 10, 50),
+                        new GEItem(ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 10, 50),
+                        new GEItem(ItemID.SKILLS_NECKLACE[2], 2, 30),
+                        new GEItem(ItemID.STAMINA_POTION[0], 5, 30)
                 )
         );
         ;
@@ -45,8 +45,8 @@ public class Restock implements Task {
         if (FarmVars.get().doingTrees) {
             itemsToBuy.addAll(Arrays.asList(
                     new GEItem(FarmVars.get().treeId, herbNum, 30),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 10, 30),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 30),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 10, 30),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 30),
                     new GEItem(FarmConst.ULTRACOMPOST, 25, 30)));
 
         } else if (FarmVars.get().doingAllotments) {

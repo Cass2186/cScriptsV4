@@ -9,11 +9,12 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
-import scripts.Data.Enums.HerbloreItems;
+import scripts.ItemID;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+
 import scripts.Requirements.ItemReq;
+import scripts.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -23,35 +24,35 @@ import java.util.stream.Stream;
 
 public enum SpellInfo {
 
-    SAPPHIRE_ENCHANT("Lvl-1 Enchant", SPELL_TYPE.ENCHANT, 17, ItemId.COSMIC_RUNE,
-            ItemId.SAPPHIRE_RING, ItemId.STAFF_OF_WATER, 7, 27),
+    SAPPHIRE_ENCHANT("Lvl-1 Enchant", SPELL_TYPE.ENCHANT, 17, ItemID.COSMIC_RUNE,
+            ItemID.SAPPHIRE_RING, ItemID.STAFF_OF_WATER, 7, 27),
 
-    EMERALD_ENCHANT("Lvl-2 Enchant", SPELL_TYPE.ENCHANT, 27, ItemId.COSMIC_RUNE,
-            ItemId.EMERALD_RING, ItemId.STAFF_OF_AIR, 27, 37),
+    EMERALD_ENCHANT("Lvl-2 Enchant", SPELL_TYPE.ENCHANT, 27, ItemID.COSMIC_RUNE,
+            ItemID.EMERALD_RING, ItemID.STAFF_OF_AIR, 27, 37),
 
     FALADOR_TELEPORT("Falador Teleport", SPELL_TYPE.TELEPORT, 48,
-            List.of(ItemId.LAW_RUNE, ItemId.WATER_RUNE),
-            ItemId.STAFF_OF_AIR, 37, 45),
+            List.of(ItemID.LAW_RUNE, ItemID.WATER_RUNE),
+            ItemID.STAFF_OF_AIR, 37, 45),
 
-    CAMELOT_TELEPORT("Camelot Teleport", SPELL_TYPE.TELEPORT, 55, List.of(ItemId.LAW_RUNE),
-            ItemId.STAFF_OF_AIR, 45, 55),
+    CAMELOT_TELEPORT("Camelot Teleport", SPELL_TYPE.TELEPORT, 55, List.of(ItemID.LAW_RUNE),
+            ItemID.STAFF_OF_AIR, 45, 55),
 
-    HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemId.NATURE_RUNE,
-            Vars.get().alchItem.getId() ),
-            ItemId.STAFF_OF_FIRE, 55,75),
+    HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemID.NATURE_RUNE,
+            Utils.getNotedItemID(Vars.get().alchItem.getId())),
+            ItemID.STAFF_OF_FIRE, 55,75),
 
-    DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemId.COSMIC_RUNE,
-            ItemId.DIAMOND_BRACELET, ItemId.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());
+    DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemID.COSMIC_RUNE,
+            ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());
 
 
-    SpellInfo(String spellString, SPELL_TYPE spellType, double expGained, int rune, int itemId,
+    SpellInfo(String spellString, SPELL_TYPE spellType, double expGained, int rune, int ItemId,
               int staffId, int minLevel, int maxLevel) {
         this.spellString = spellString;
         this.xpPer = expGained;
         this.runes = List.of(rune);
         this.spellType = spellType;
         this.staffId = staffId;
-        this.itemId = itemId;
+        this.ItemId = ItemId;
         this.maxLevel = maxLevel;
         this.minLevel = minLevel;
 
@@ -71,7 +72,7 @@ public enum SpellInfo {
 
 
     /**
-     * use for teleports where there is no itemId
+     * use for teleports where there is no ItemID
      *
      * @param spellString
      * @param expGained
@@ -96,7 +97,7 @@ public enum SpellInfo {
     private List<Integer> runes;
 
     @Getter
-    private int itemId;
+    private int ItemId;
 
     @Getter
     private int staffId;
@@ -176,21 +177,21 @@ public enum SpellInfo {
         if (this.spellType.equals(SPELL_TYPE.ENCHANT)) {
             return BankTask.builder()
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(this.staffId, Amount.of(1)))
-                    .addInvItem(ItemId.COSMIC_RUNE, Amount.fill(1))
-                    .addInvItem(this.itemId, Amount.fill(1))
+                    .addInvItem(ItemID.COSMIC_RUNE, Amount.fill(1))
+                    .addInvItem(this.ItemId, Amount.fill(1))
                     .build();
         } else if (this.spellType == SPELL_TYPE.TELEPORT) {
             if (this.runes.size() == 1) {
                 bnk = BankTask.builder()
                         .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(this.staffId, Amount.of(1)))
-                        .addInvItem(ItemId.LAW_RUNE, Amount.fill(1))
+                        .addInvItem(ItemID.LAW_RUNE, Amount.fill(1))
                         .addInvItem(this.runes.get(0), Amount.fill(1))
                         .build();
 
             } else if (this.runes.size() == 2) {
                 bnk = BankTask.builder()
                         .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(this.staffId, Amount.of(1)))
-                        .addInvItem(ItemId.LAW_RUNE, Amount.fill(1))
+                        .addInvItem(ItemID.LAW_RUNE, Amount.fill(1))
                         .addInvItem(this.runes.get(0), Amount.fill(1))
                         .addInvItem(this.runes.get(1), Amount.fill(1))
                         .build();
@@ -198,15 +199,15 @@ public enum SpellInfo {
             } else {
                 bnk = BankTask.builder()
                         .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(this.staffId, Amount.of(1)))
-                        .addInvItem(ItemId.LAW_RUNE, Amount.fill(1))
+                        .addInvItem(ItemID.LAW_RUNE, Amount.fill(1))
                         .build();
 
             }
         } else {
             bnk = BankTask.builder()
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(this.staffId, Amount.of(1)))
-                    .addInvItem(ItemId.NATURE_RUNE, Amount.fill(1))
-                    .addNotedInvItem(this.itemId+1, Amount.fill(1))
+                    .addInvItem(ItemID.NATURE_RUNE, Amount.fill(1))
+                    .addInvItem(this.ItemId+1, Amount.fill(1))
                     .build();
         }
 

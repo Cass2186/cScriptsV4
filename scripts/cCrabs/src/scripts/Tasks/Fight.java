@@ -163,13 +163,11 @@ public class Fight implements Task {
             if (Combat.getHPRatio() < Vars.get().eatAt) {
                 Utils.shortSleep(); // short sleep so we don't immediately eat
                 Vars.get().shouldEat = true;
-            } else if (chance < 25){
-                int i = General.randomSD(6500,750);
-                Log.log("[Fight]: Short sleep of " + i + "ms" );
-               Waiting.wait(i);
-               //Utils.abc2ReactionSleep(Vars.get().currentTime);
+            } else if (chance < 60) {
+                Utils.idleAfkAction();
 
-            }else {
+            } else {
+                // Utils.idleAfkAction();
                 Utils.abc2ReactionSleep(Vars.get().currentTime);
             }
         }

@@ -133,16 +133,16 @@ public class DepthsOfDespair implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.STAFF_OF_FIRE, 1, 200),
-                    new GEItem(ItemId.MIND_RUNE, 300, 20),
-                    new GEItem(ItemId.AIR_RUNE, 600, 20),
-                    new GEItem(ItemId.LOBSTER, 15, 50),
+                    new GEItem(ItemID.STAFF_OF_FIRE, 1, 200),
+                    new GEItem(ItemID.MIND_RUNE, 300, 20),
+                    new GEItem(ItemID.AIR_RUNE, 600, 20),
+                    new GEItem(ItemID.LOBSTER, 15, 50),
 
-                    new GEItem(ItemId.SKILLS_NECKLACE[0], 1, 20),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 50),
+                    new GEItem(ItemID.SKILLS_NECKLACE[0], 1, 20),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 50),
 
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -153,14 +153,14 @@ public class DepthsOfDespair implements QuestTask {
 
     public void buyItems() {
         if (!BankManager.checkInventoryItems(LOBSTER, MIND_RUNE, AIR_RUNE,
-                ItemId.SKILLS_NECKLACE[0])) {
+                ItemID.SKILLS_NECKLACE[0])) {
          buyStep.buyItems();
         }
     }
 
     public void getItems() {
         if (!BankManager.checkInventoryItems(LOBSTER, MIND_RUNE, AIR_RUNE,
-                ItemId.SKILLS_NECKLACE[0])) {
+                ItemID.SKILLS_NECKLACE[0])) {
             cQuesterV2.status = "Depths of Despair: Getting Items";
             General.println("[Debug]: " + cQuesterV2.status);
             BankManager.open(true);
@@ -171,12 +171,12 @@ public class DepthsOfDespair implements QuestTask {
             BankManager.withdraw(1, true, STAFF_OF_FIRE);
             BankManager.withdraw(300, true, MIND_RUNE);
             BankManager.withdraw(600, true, AIR_RUNE);
-            BankManager.withdraw(1, true, ItemId.ZAMORAK_MONK_BOTTOM);
-            BankManager.withdraw(1, true, ItemId.ZAMORAK_MONK_TOP);
-            Utils.equipItem(ItemId.ZAMORAK_MONK_TOP);
-            Utils.equipItem(ItemId.ZAMORAK_MONK_BOTTOM);
-            BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE[0]);
-            BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
+            BankManager.withdraw(1, true, ItemID.ZAMORAK_MONK_BOTTOM);
+            BankManager.withdraw(1, true, ItemID.ZAMORAK_MONK_TOP);
+            Utils.equipItem(ItemID.ZAMORAK_MONK_TOP);
+            Utils.equipItem(ItemID.ZAMORAK_MONK_BOTTOM);
+            BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE[0]);
+            BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
             BankManager.close(true);
             Utils.equipItem(STAFF_OF_FIRE);
         }
@@ -387,8 +387,8 @@ public class DepthsOfDespair implements QuestTask {
         cQuesterV2.status = "Step 6- Going to Cave";
         General.println("[Debug]: " + cQuesterV2.status);
         if (!CAVE_ENTRANCE.contains(Player.getPosition()) && !WHOLE_CAVE.contains(Player.getPosition())) {
-            if (Inventory.find(ItemId.SKILLS_NECKLACE).length > 0 && !WC_GUILD_TELE_AREA.contains(Player.getPosition())) {
-                if (AccurateMouse.click(Inventory.find(ItemId.SKILLS_NECKLACE)[0], "Rub")) {
+            if (Inventory.find(ItemID.SKILLS_NECKLACE).length > 0 && !WC_GUILD_TELE_AREA.contains(Player.getPosition())) {
+                if (AccurateMouse.click(Inventory.find(ItemID.SKILLS_NECKLACE)[0], "Rub")) {
                     Timer.abc2WaitCondition(() -> Interfaces.get(187, 3, 4) != null, 4000, 6000);
                     Utils.shortSleep();
                 }
@@ -524,8 +524,8 @@ public class DepthsOfDespair implements QuestTask {
         cQuesterV2.status = "Step 11: Going to Finish";
         General.println("[Debug]: " + cQuesterV2.status);
         if (!START_AREA.contains(Player.getPosition()) && Inventory.find(21758).length > 0) {
-            if (Inventory.find(ItemId.SKILLS_NECKLACE).length > 0 && !WC_GUILD_TELE_AREA.contains(Player.getPosition())) {
-                if (AccurateMouse.click(Inventory.find(ItemId.SKILLS_NECKLACE)[0], "Rub"))
+            if (Inventory.find(ItemID.SKILLS_NECKLACE).length > 0 && !WC_GUILD_TELE_AREA.contains(Player.getPosition())) {
+                if (AccurateMouse.click(Inventory.find(ItemID.SKILLS_NECKLACE)[0], "Rub"))
                     Timer.abc2WaitCondition(() -> Interfaces.get(187, 3, 4) != null, 5000, 9000);
 
                 if (Interfaces.get(187, 3, 4) != null)

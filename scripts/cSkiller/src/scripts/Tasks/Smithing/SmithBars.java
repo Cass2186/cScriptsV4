@@ -59,17 +59,17 @@ public class SmithBars implements Task {
 
 
     public void bankForItems(int barId) {
-        if (Inventory.find(ItemId.HAMMER).length < 1 || Inventory.find(barId).length < 5) {
+        if (Inventory.find(ItemID.HAMMER).length < 1 || Inventory.find(barId).length < 5) {
 
             List<ItemReq> inv = new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemId.HAMMER, 1),
+                            new ItemReq(ItemID.HAMMER, 1),
                             new ItemReq(barId, 0)
                     )
             );
 
             BankManager.open(true);
-            BankManager.depositAllExcept(false, ItemId.HAMMER);
+            BankManager.depositAllExcept(false, ItemID.HAMMER);
             Timer.waitCondition(()-> Inventory.getAll().length == 1, 2500,4000);
 
             List<ItemReq> newInv = SkillBank.withdraw(inv);
@@ -89,15 +89,15 @@ public class SmithBars implements Task {
 
         Waiting.waitUntil(5000, ()-> org.tribot.script.sdk.Inventory.getAll().size() > all.size());
 
-        if (barId == ItemId.BRONZE_BAR) {
+        if (barId == ItemID.BRONZE_BAR) {
             return 12.5;
-        } else if (barId == ItemId.IRON_BAR) {
+        } else if (barId == ItemID.IRON_BAR) {
             return 25;
-        } else if (barId == ItemId.STEEL_BAR) {
+        } else if (barId == ItemID.STEEL_BAR) {
             return 37.5;
-        } else if (barId == ItemId.MITHRIL_BAR) {
+        } else if (barId == ItemID.MITHRIL_BAR) {
             return 50;
-        } else if (barId == ItemId.ADAMANTITE_BAR) {
+        } else if (barId == ItemID.ADAMANTITE_BAR) {
             return 62.5;
         }
         return -1;
@@ -125,34 +125,34 @@ public class SmithBars implements Task {
     @Override
     public void execute() {
         if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 5) {
-            smithItem(SMITH_ITEMS.genericSmithItems.DAGGER, ItemId.BRONZE_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.DAGGER, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 9) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemId.BRONZE_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 18) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemId.BRONZE_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 20) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemId.BRONZE_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 24) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemId.IRON_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.IRON_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 33) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemId.IRON_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.IRON_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 39) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemId.IRON_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.IRON_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 48) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemId.STEEL_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.STEEL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 55) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemId.STEEL_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.STEEL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 59) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemId.MITHRIL_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.MITHRIL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 68) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemId.MITHRIL_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.MITHRIL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 75) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemId.MITHRIL_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.MITHRIL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 79) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemId.ADAMANTITE_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.ADAMANTITE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 88) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemId.ADAMANTITE_BAR);
-        } else smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemId.ADAMANTITE_BAR);
+            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.ADAMANTITE_BAR);
+        } else smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.ADAMANTITE_BAR);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.api2007.types.RSTile;
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.QuestPackages.MonksFriend.MonksFriend;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.NPCStep;
@@ -29,10 +29,10 @@ public class ImpCatcher implements QuestTask {
     }
 
 
-    ItemReq blackBead = new ItemReq( ItemId.BLACK_BEAD, 1);
-    ItemReq whiteBead = new ItemReq( ItemId.WHITE_BEAD,1);
-    ItemReq redBead = new ItemReq( ItemId.RED_BEAD,1);
-    ItemReq yellowBead = new ItemReq( ItemId.YELLOW_BEAD,1);
+    ItemReq blackBead = new ItemReq( ItemID.BLACK_BEAD, 1);
+    ItemReq whiteBead = new ItemReq( ItemID.WHITE_BEAD,1);
+    ItemReq redBead = new ItemReq( ItemID.RED_BEAD,1);
+    ItemReq yellowBead = new ItemReq( ItemID.YELLOW_BEAD,1);
 
 
     NPCStep doQuest = new NPCStep("Wizard Mizgog", new RSTile(3103, 3163, 2),
@@ -53,21 +53,21 @@ public class ImpCatcher implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.BLACK_BEAD, 1, 100),
-                    new GEItem(ItemId.RED_BEAD, 1, 100),
-                    new GEItem(ItemId.YELLOW_BEAD, 1, 100),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.WHITE_BEAD, 1, 100),
-                    new GEItem(ItemId.NECKLACE_OF_PASSAGE[0], 1, 100),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.BLACK_BEAD, 1, 100),
+                    new GEItem(ItemID.RED_BEAD, 1, 100),
+                    new GEItem(ItemID.YELLOW_BEAD, 1, 100),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.WHITE_BEAD, 1, 100),
+                    new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 1, 100),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(blackBead, whiteBead, redBead, yellowBead,
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 

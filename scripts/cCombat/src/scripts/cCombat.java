@@ -4,12 +4,14 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Projection;
+import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.Script;
@@ -46,14 +48,16 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         TaskSet tasks = new TaskSet(
                 new AttackNpc(),
                 new LootItems(),
+                new RechargePrayer(),
                 new MoveToArea(),
                 new WorldHop(),
                 new EatDrink(),
                new Bank()
 
+
         );
-        AntiPKThread pkObj = new AntiPKThread("Pk thread");
-        pkObj.start();
+      //  AntiPKThread pkObj = new AntiPKThread("Pk thread");
+    //    pkObj.start();
         Mouse.setSpeed(250);
       //  AntiPKThread.scrollToWorld(AntiPKThread.nextWorld);
           isRunning.set(true);
@@ -136,6 +140,32 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
         return null;
     }
+
+
+    public static void populateInitialMap() {
+        Log.log("[Debug]: Populating intial skills xp HashMap");
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
+            Vars.get().skillStartXpMap.put(s, s.getXP());
+        }
+    }
+
+    public HashMap<Skills.SKILLS, Integer> getXpMap() {
+        HashMap<Skills.SKILLS, Integer> map = new HashMap<>();
+        if (Vars.get().skillStartXpMap == null)
+            populateInitialMap();
+
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
+            int startXp = Vars.get().skillStartXpMap.get(s);
+            if (s.getXP() > startXp) {
+                map.put(s, s.getXP() - startXp);
+                //   System.out.println("updating xp map & dax");
+            }
+        }
+
+        return map;
+    }
+
+
     @Override
     public void onPaint(Graphics g) {
         double timeRan = getRunningTime();
@@ -153,7 +183,30 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
             Polygon p = Projection.getTileBoundsPoly(item.getPosition(), 0);
             g.drawPolygon(p);
         }
-
+        HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
+        for (Skills.SKILLS s : xpMap.keySet()) {
+            int startLvl = Skills.getLevelByXP(Vars.get().skillStartXpMap.get(s));
+            int xpHr = (int) (xpMap.get(s) / timeRanMin);
+            long xpToLevel1 = Skills.getXPToLevel(s, s.getActualLevel() + 1);
+            long ttl = (long) (xpToLevel1 / ((xpMap.get(s) / timeRan)));
+            int gained = s.getActualLevel() - startLvl;
+            if (gained > 0) {
+                myString.add(
+                        StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
+                                + " [" + s.getActualLevel() + " (+" + gained + ")]: "
+                                + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                                "|| TNL: "
+                                + Timing.msToString(ttl)
+                );
+            } else {
+                myString.add(StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
+                        + " [" + s.getActualLevel() + "]: "
+                        + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                        "|| TNL: "
+                        + Timing.msToString(ttl)
+                );
+            }
+        }
 
         PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }
@@ -161,7 +214,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
     @Override
     public void onStart() {
         AntiBan.create();
-
+        populateInitialMap();
         Teleport.blacklistTeleports(Teleport.RING_OF_WEALTH_MISCELLANIA, Teleport.RING_OF_WEALTH_FALADOR);
 
         WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {

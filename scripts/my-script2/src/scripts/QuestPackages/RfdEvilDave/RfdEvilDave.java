@@ -198,8 +198,8 @@ public class RfdEvilDave implements QuestTask {
         BankManager.withdraw(20, true, STEW);
         BankManager.withdraw(4, true, SALMON);
         BankManager.withdraw(3, true, LUMBRIDGE_TAB);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
         BankManager.withdraw(1, true, PET_KITTEN_IDS);
         BankManager.withdraw(1, true, REGULAR_CAT);
         BankManager.checkEquippedGlory();

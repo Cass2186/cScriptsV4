@@ -30,9 +30,9 @@ public class RuneMysteries implements QuestTask {
     int VARROCK_TELEPORT = 8007;
     int LUMBRIDGE_TELEPORT = 8008;
 
-    ItemReq airTalisman = new ItemReq(ItemId.AIR_TALISMAN);
-    ItemReq researchPackage = new ItemReq(ItemId.RESEARCH_PACKAGE);
-    ItemReq notes = new ItemReq(ItemId.NOTES);
+    ItemReq airTalisman = new ItemReq(ItemID.AIR_TALISMAN);
+    ItemReq researchPackage = new ItemReq(ItemID.RESEARCH_PACKAGE);
+    ItemReq notes = new ItemReq(ItemID.NOTES);
 
     NPCStep talkToHoracio = new NPCStep("Duke Horacio", new RSTile(3210, 3220, 1),
             new String[]{"Have you any quests for me?", "Have you any quests for me?", "Yes."});
@@ -53,21 +53,21 @@ public class RuneMysteries implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 4, 60),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 3, 60),
-                    new GEItem(ItemId.NECKLACE_OF_PASSAGE[0], 1, 100),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 4, 60),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 3, 60),
+                    new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 1, 100),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LUMBRIDGE_TELEPORT, 4, 1),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 4, 1),
-                    new ItemReq(ItemId.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 4, 1),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 4, 1),
+                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -91,9 +91,9 @@ public class RuneMysteries implements QuestTask {
             BankManager.depositAll(true);
             BankManager.withdraw(2, true, LUMBRIDGE_TELEPORT);
             BankManager.withdraw(3, true, VARROCK_TELEPORT);
-            BankManager.withdraw(1, true, ItemId.NECKLACE_OF_PASSAGE[0]);
-            BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
-            BankManager.withdraw(1, true, ItemId.RING_OF_WEALTH[0]);
+            BankManager.withdraw(1, true, ItemID.NECKLACE_OF_PASSAGE[0]);
+            BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
+            BankManager.withdraw(1, true, ItemID.RING_OF_WEALTH[0]);
             Banking.close();
         }
     }

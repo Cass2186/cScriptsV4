@@ -35,9 +35,9 @@ public class CooksAssistant implements QuestTask {
                     new GEItem(bucketOfMilk, 1, 800),
                     new GEItem(egg, 1, 500),
                     new GEItem(potOfFlour, 1, 500),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 2, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 2, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -49,7 +49,7 @@ public class CooksAssistant implements QuestTask {
 
     public  void buyItems() {
         if (!BankManager.checkInventoryItems(potOfFlour, egg, bucketOfMilk,
-                ItemId.LUMBRIDGE_TELEPORT)) {
+                ItemID.LUMBRIDGE_TELEPORT)) {
             cQuesterV2.status= "Buying Items";
             General.println("[Debug]: Buying Items");
             buyStep.buyItems();
@@ -58,7 +58,7 @@ public class CooksAssistant implements QuestTask {
 
     public void getItems() {
         if (!BankManager.checkInventoryItems(potOfFlour, egg, bucketOfMilk,
-                ItemId.LUMBRIDGE_TELEPORT)) {
+                ItemID.LUMBRIDGE_TELEPORT)) {
             cQuesterV2.status = "Getting items";
             General.println("[Debug]: Withdrawing Quest items.");
             BankManager.open(true);
@@ -67,15 +67,15 @@ public class CooksAssistant implements QuestTask {
             BankManager.withdraw(1, true, potOfFlour);
             BankManager.withdraw(1, true, egg);
             BankManager.withdraw(1, true, bucketOfMilk);
-            BankManager.withdraw(1, true, ItemId.RING_OF_WEALTH[0]);
-            BankManager.withdraw(2, true, ItemId.LUMBRIDGE_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.RING_OF_WEALTH[0]);
+            BankManager.withdraw(2, true, ItemID.LUMBRIDGE_TELEPORT);
             BankManager.close(true);
         }
     }
 
     public void startQuest() {
         if (!BankManager.checkInventoryItems(potOfFlour, egg, bucketOfMilk,
-                ItemId.LUMBRIDGE_TELEPORT)) {
+                ItemID.LUMBRIDGE_TELEPORT)) {
             General.println("[Debug]: Missing items... buying again.");
             buyItems();
             getItems();
@@ -89,7 +89,7 @@ public class CooksAssistant implements QuestTask {
                 NPCInteraction.handleConversation("What's wrong?");
                 NPCInteraction.handleConversation("I'm always happy to help a cook in distress.");
                 NPCInteraction.handleConversation("Actually, I know where to find this stuff.", "Yes.");
-                NPCInteraction.handleConversation();
+                NPCInteraction.handleConversation("Yes.");
                 Utils.continuingChat();
                 if (Interfaces.get(11, 4) != null) {
                     Interfaces.get(11, 4).click();

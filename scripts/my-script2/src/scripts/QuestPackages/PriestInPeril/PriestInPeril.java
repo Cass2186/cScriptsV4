@@ -52,25 +52,25 @@ public class PriestInPeril implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.PURE_ESSENCE, 50, 30),
-                    new GEItem(ItemId.EMPTY_BUCKET, 1, 500),
-                    new GEItem(ItemId.ADAMANT_SCIMITAR, 1, 100),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.LOBSTER, 15, 30),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 40),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.PURE_ESSENCE, 50, 30),
+                    new GEItem(ItemID.EMPTY_BUCKET, 1, 500),
+                    new GEItem(ItemID.ADAMANT_SCIMITAR, 1, 100),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.LOBSTER, 15, 30),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 40),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LOBSTER, 15, 2),
-                    new ItemReq(ItemId.ADAMANT_SCIMITAR, 1, 1, true, true),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.EMPTY_BUCKET, 1, 1),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LOBSTER, 15, 2),
+                    new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, 1, true, true),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.EMPTY_BUCKET, 1, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -94,6 +94,7 @@ public class PriestInPeril implements QuestTask {
             BankManager.checkEquippedGlory();
             BankManager.depositAll(true);
             initialItemReqs.withdrawItems();
+            BankManager.withdraw(1, true, IRON_KEY);
         }
     }
 
@@ -106,7 +107,7 @@ public class PriestInPeril implements QuestTask {
         BankManager.depositAll(true);
         BankManager.withdraw(25, true, PURE_ESSENCE);
         BankManager.getPotion(
-                ItemId.STAMINA_POTION);
+                ItemID.STAMINA_POTION);
         BankManager.withdraw(3, true, VARROCK_TAB);
         BankManager.close(true);
     }
@@ -278,7 +279,9 @@ public class PriestInPeril implements QuestTask {
         }
     }
 
-    public void step8() {
+
+
+    public void getIronKey() {
         if (Inventory.find(IRON_KEY).length < 1 || Inventory.find(MURKY_WATER).length < 1) {
             if (Inventory.find(BUCKET).length < 1 && Inventory.find(MURKY_WATER).length < 1)
                 getItems1();
@@ -317,36 +320,36 @@ public class PriestInPeril implements QuestTask {
                 if (Inventory.find(GOLDEN_KEY).length > 0) {
                     cQuesterV2.status = "Getting Iron key";
                     RSObject[] monument = Objects.findNearest(25, "Monument");
-                    if (Inventory.find(GOLDEN_KEY).length > 0) {
-                        for (int i = 0; i < monument.length; i++) {
-                            General.sleep(100, 200);
 
-                            if (!monument[i].isClickable())
-                                monument[i].adjustCameraTo();
+                    for (int i = 0; i < monument.length; i++) {
+                        General.sleep(100, 200);
 
-                            if (AccurateMouse.click(monument[i], "Study")) {
-                                Timer.waitCondition(() -> Interfaces.get(272, 8) != null, 8000, 12000);
-                                Utils.idle(500, 2000);
-                            }
-                            if (Interfaces.isInterfaceSubstantiated(272, 8)) {
-                                if (Interfaces.get(272, 8).getComponentItem() == 2945) {
+                        if (!monument[i].isClickable())
+                            monument[i].adjustCameraTo();
 
-                                    if (Interfaces.get(272, 1, 11).click())
-                                        Timer.waitCondition(() -> Interfaces.get(272, 4) == null, 8000, 12000);
+                        if (AccurateMouse.click(monument[i], "Study")) {
+                            Timer.waitCondition(() -> Interfaces.get(272, 8) != null, 8000, 12000);
+                            Utils.idle(500, 2000);
+                        }
+                        if (Interfaces.isInterfaceSubstantiated(272, 8)) {
+                            if (Interfaces.get(272, 8).getComponentItem() == 2945) {
 
-                                    if (AccurateMouse.click(Inventory.find(GOLDEN_KEY)[0], "Use"))
-                                        if (AccurateMouse.click(monument[i], "Use"))
-                                            Timer.waitCondition(() -> Inventory.find(GOLDEN_KEY).length < 1, 8000, 12000);
+                                if (Interfaces.get(272, 1, 11).click())
+                                    Timer.waitCondition(() -> Interfaces.get(272, 4) == null, 8000, 12000);
 
-                                    if (Inventory.find(GOLDEN_KEY).length < 1)
-                                        break;
+                                if (AccurateMouse.click(Inventory.find(GOLDEN_KEY)[0], "Use"))
+                                    if (AccurateMouse.click(monument[i], "Use"))
+                                        Timer.waitCondition(() -> Inventory.find(GOLDEN_KEY).length < 1, 8000, 12000);
 
-                                } else if (Interfaces.get(272, 1, 11) != null) {
-                                    if (Interfaces.get(272, 1, 11).click())
-                                        Timer.waitCondition(() -> Interfaces.get(272, 4) == null, 8000, 12000);
-                                }
+
+
+                            } else if (Interfaces.get(272, 1, 11) != null) {
+                                if (Interfaces.get(272, 1, 11).click())
+                                    Timer.waitCondition(() -> Interfaces.get(272, 4) == null, 8000, 12000);
                             }
                         }
+                        if (Inventory.find(GOLDEN_KEY).length < 1)
+                            break;
                     }
                 }
             }
@@ -446,7 +449,7 @@ public class PriestInPeril implements QuestTask {
             step6();
             step7();
         } else if (Game.getSetting(302) == 5) {
-            step8();
+            getIronKey();
             step9();
         } else if (Game.getSetting(302) == 6) {
             step10();

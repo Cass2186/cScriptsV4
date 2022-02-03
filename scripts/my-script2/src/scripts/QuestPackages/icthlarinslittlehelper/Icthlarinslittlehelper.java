@@ -32,7 +32,7 @@ public class Icthlarinslittlehelper implements QuestTask {
     ItemReq cat, tinderbox, coins600, bagOfSaltOrBucket, willowLog, bucketOfSap, waterskin4, food, jar,
             coinsOrLinen, coins30, linen, holySymbol, unholySymbol, combatGear, prayerPotions, antipoison;
 
-    ItemReq sphinxsToken = new ItemReq("Sphinx's token", ItemId.SPHINXS_TOKEN);
+    ItemReq sphinxsToken = new ItemReq("Sphinx's token", ItemID.SPHINXS_TOKEN);
     //  Requirement catFollower;
 
     //Requirement inSoph, inPyramid, inNorthPyramid, puzzleOpen, givenToken, hasScarabasJar, hasCrondisJar, hasHetJar, hasApmekenJar,
@@ -205,34 +205,34 @@ public class Icthlarinslittlehelper implements QuestTask {
         //   cat = new ItemReq("A cat",ItemCollections.getCats(),NpcCollections.getCats());
 
         //catFollower = new FollowerRequirement("Any cat following you", NpcCollections.getCats());
-        tinderbox = new ItemReq("Tinderbox", ItemId.TINDERBOX);
-        waterskin4 = new ItemReq(ItemId.WATERSKIN[0], 2);
-        coins600 = new ItemReq(ItemId.COINS_995, 600);
-        bagOfSaltOrBucket = new ItemReq(ItemId.BAG_OF_SALT);
+        tinderbox = new ItemReq("Tinderbox", ItemID.TINDERBOX);
+        waterskin4 = new ItemReq(ItemID.WATERSKIN[0], 2);
+        coins600 = new ItemReq(ItemID.COINS_995, 600);
+        bagOfSaltOrBucket = new ItemReq(ItemID.BAG_OF_SALT);
 
-        coinsOrLinen = new ItemReq("Linen or 30 coins to buy some", ItemId.LINEN);
+        coinsOrLinen = new ItemReq("Linen or 30 coins to buy some", ItemID.LINEN);
 
-        coins30 = new ItemReq(ItemId.COINS_995, 30);
+        coins30 = new ItemReq(ItemID.COINS_995, 30);
 
-        willowLog = new ItemReq("Willow logs", ItemId.WILLOW_LOGS);
-        bucketOfSap = new ItemReq("Bucket of sap", ItemId.BUCKET_OF_SAP);
+        willowLog = new ItemReq("Willow logs", ItemID.WILLOW_LOGS);
+        bucketOfSap = new ItemReq("Bucket of sap", ItemID.BUCKET_OF_SAP);
         //    bucketOfSap.setTooltip("You can get this by using a knife on an evergreen tree with a bucket in your " + "inventory");
 
-        food = new ItemReq(ItemId.SHARK, 15, 2);
+        food = new ItemReq(ItemID.SHARK, 15, 2);
 
-        prayerPotions = new ItemReq(ItemId.PRAYER_POTION_4, 3, 0);
-        antipoison = new ItemReq(ItemId.ANTIDOTE_PLUS_PLUS[0], 1);
+        prayerPotions = new ItemReq(ItemID.PRAYER_POTION_4, 3, 0);
+        antipoison = new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 1);
         combatGear = new ItemReq("Combat equipment", -1, -1);
 
 
         //   sphinxsToken.setTooltip("You can get another from the Sphinx");
-        jar = new ItemReq("Canopic jar",ItemId.CANOPIC_JAR );
-          jar.addAlternateItemId(ItemId.CANOPIC_JAR_4679, ItemId.CANOPIC_JAR_4680, ItemId.CANOPIC_JAR_4681);
+        jar = new ItemReq("Canopic jar",ItemID.CANOPIC_JAR );
+          jar.addAlternateItemID(ItemID.CANOPIC_JAR_4679, ItemID.CANOPIC_JAR_4680, ItemID.CANOPIC_JAR_4681);
 
 
-        linen = new ItemReq("Linen", ItemId.LINEN);
+        linen = new ItemReq("Linen", ItemID.LINEN);
 
-        holySymbol = new ItemReq("Holy symbol", ItemId.HOLY_SYMBOL_4682);
+        holySymbol = new ItemReq("Holy symbol", ItemID.HOLY_SYMBOL_4682);
         //   holySymbol.setTooltip("You can get another from the Carpenter in Sophanem");
 
         unholySymbol = new ItemReq("Unholy symbol", 4683);
@@ -242,28 +242,28 @@ public class Icthlarinslittlehelper implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SUMMER_PIE, 3, 50),
-                    new GEItem(ItemId.WATERSKIN[0], 2, 300),
-                    new GEItem(ItemId.SHARK, 6, 50),
-                    new GEItem(ItemId.TINDERBOX, 1, 500),
-                    new GEItem(ItemId.BUCKET_OF_SAP, 1, 500),
-                    new GEItem(ItemId.LINEN, 1, 500),
-                    new GEItem(ItemId.NARDAH_TELEPORT, 5, 50),
-                    new GEItem(ItemId.RUNE_SCIMITAR, 1, 50),
-                    new GEItem(ItemId.BAG_OF_SALT, 1, 500),
-                    new GEItem(ItemId.RUNE_FULL_HELM, 1, 20),
+                    new GEItem(ItemID.SUMMER_PIE, 3, 50),
+                    new GEItem(ItemID.WATERSKIN[0], 2, 300),
+                    new GEItem(ItemID.SHARK, 6, 50),
+                    new GEItem(ItemID.TINDERBOX, 1, 500),
+                    new GEItem(ItemID.BUCKET_OF_SAP, 1, 500),
+                    new GEItem(ItemID.LINEN, 1, 500),
+                    new GEItem(ItemID.NARDAH_TELEPORT, 5, 50),
+                    new GEItem(ItemID.RUNE_SCIMITAR, 1, 50),
+                    new GEItem(ItemID.BAG_OF_SALT, 1, 500),
+                    new GEItem(ItemID.RUNE_FULL_HELM, 1, 20),
                     //combat gear
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], 1, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 5, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 5, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.COINS, 600, 200),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 5, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.COINS, 600, 200),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 5, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 

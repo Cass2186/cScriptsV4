@@ -14,7 +14,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.MiscTasks.BuyItems;
@@ -31,8 +31,8 @@ public class HerbloreBank implements Task {
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STEEL_NAILS, 60),
-                    new ItemReq(ItemId.PLANK, 2)
+                    new ItemReq(ItemID.STEEL_NAILS, 60),
+                    new ItemReq(ItemID.PLANK, 2)
             ))
     );
 
@@ -49,10 +49,10 @@ public class HerbloreBank implements Task {
             BankManager.open(true);
             BankManager.depositAll(true);
 
-            if (Equipment.find(ItemId.AMULET_OF_CHEMISTRY).length < 1) {
+            if (Equipment.find(ItemID.AMULET_OF_CHEMISTRY).length < 1) {
                 General.println("[Herblore Training]: Getting amulet of Chemistry");
-                BankManager.withdraw(1, true, ItemId.AMULET_OF_CHEMISTRY);
-                Utils.equipItem(ItemId.AMULET_OF_CHEMISTRY);
+                BankManager.withdraw(1, true, ItemID.AMULET_OF_CHEMISTRY);
+                Utils.equipItem(ItemID.AMULET_OF_CHEMISTRY);
             }
             List<ItemReq>   newInv = SkillBank.withdraw(inv);
             if (newInv != null && newInv.size() > 0) {
@@ -64,18 +64,6 @@ public class HerbloreBank implements Task {
         }
     }
 
-
-    public void progressive() {
-        int currentLevel = Skills.getCurrentLevel(Skills.SKILLS.HERBLORE);
-        if (Skills.getActualLevel(Skills.SKILLS.HERBLORE) >= SkillTasks.HERBLORE.getEndLevel()) {
-            General.println("[Debug]: Achieved target level of: " + SkillTasks.HERBLORE.getEndLevel());
-            Vars.get().currentTask = null;
-            //cSkiller.changeRunningBool(false);
-            return;
-        }
-        Optional<HerbloreItems> itemOptional = HerbloreItems.getCurrentItem();
-        itemOptional.ifPresent(itm -> getItemsAmuletOfChemistry(itm.getItemId(), itm.getUnfPotionId()));
-    }
 
     @Override
     public String toString() {
@@ -93,33 +81,35 @@ public class HerbloreBank implements Task {
                 .nameContains("unf")
                 .getFirstResult();
 
-        RSItem itemId = Entities.find(ItemEntity::new) //check if noted
+        RSItem ItemID = Entities.find(ItemEntity::new) //check if noted
                 .nameContains("    ")
                 .getFirstResult();
 
         Optional<HerbloreItems> item = HerbloreItems.getCurrentItem();
         if (item.isPresent()){
 
-      //      Log.log("Using itemId of " + item.get().toString());
-            itemId = Entities.find(ItemEntity::new) //check if noted
-                    .idEquals(item.get().getItemId())
+      //      Log.log("Using ItemID of " + item.get().toString());
+            ItemID = Entities.find(ItemEntity::new) //check if noted
+                    .idEquals(item.get().getItemID())
                     .getFirstResult();
-        //    Log.log("Is itemId null?  " + (itemId == null));
+        //    Log.log("Is ItemID null?  " + (ItemID == null));
         }
         if (item.isPresent()){
             unf = Entities.find(ItemEntity::new) //check if noted
                     .idEquals(item.get().getUnfPotionId())
                     .getFirstResult();
         }
-        boolean b = (unf == null || itemId == null);
+        boolean b = (unf == null || ItemID == null);
        // Log.log("[Herblorebank] Is boolean ? " + b);
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.HERBLORE) &&
-                (unf == null || itemId == null);
+                (unf == null || ItemID == null) &&
+        Skills.SKILLS.HERBLORE.getActualLevel()< 38;
     }
 
     @Override
     public void execute() {
-        progressive();
+        Optional<HerbloreItems> itemOptional = HerbloreItems.getCurrentItem();
+        itemOptional.ifPresent(itm -> getItemsAmuletOfChemistry(itm.getItemID(), itm.getUnfPotionId()));
     }
 
     @Override

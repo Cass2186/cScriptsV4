@@ -8,7 +8,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSPlayer;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Log;
+
 import org.tribot.script.sdk.Waiting;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.PlayerEntity;

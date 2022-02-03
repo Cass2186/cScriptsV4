@@ -40,48 +40,48 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STEEL_NAILS, 60),
-                    new ItemReq(ItemId.PLANK, 2),
-                    new ItemReq(ItemId.HAMMER, 1),
-                    new ItemReq(ItemId.SWAMP_TAR, 1),
-                    new ItemReq(ItemId.TINDERBOX, 1),
-                    new ItemReq(ItemId.MOLTEN_GLASS, 1),
-                    new ItemReq(ItemId.FIRE_RUNE, 1),
-                    new ItemReq(ItemId.WATER_RUNE, 1),
-                    new ItemReq(ItemId.EARTH_RUNE, 1),
-                    new ItemReq(ItemId.AIR_RUNE, 1),
-                    new ItemReq(ItemId.BRONZE_ARROW, 1),
-                    new ItemReq(ItemId.BRONZE_SWORD, 1),
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.LOBSTER, 10, 5)
+                    new ItemReq(ItemID.STEEL_NAILS, 60),
+                    new ItemReq(ItemID.PLANK, 2),
+                    new ItemReq(ItemID.HAMMER, 1),
+                    new ItemReq(ItemID.SWAMP_TAR, 1),
+                    new ItemReq(ItemID.TINDERBOX, 1),
+                    new ItemReq(ItemID.MOLTEN_GLASS, 1),
+                    new ItemReq(ItemID.FIRE_RUNE, 1),
+                    new ItemReq(ItemID.WATER_RUNE, 1),
+                    new ItemReq(ItemID.EARTH_RUNE, 1),
+                    new ItemReq(ItemID.AIR_RUNE, 1),
+                    new ItemReq(ItemID.BRONZE_ARROW, 1),
+                    new ItemReq(ItemID.BRONZE_SWORD, 1),
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.LOBSTER, 10, 5)
             ))
     );
 
     public static ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.STEEL_NAILS, 60, 50),
-                    new GEItem(ItemId.PLANK, 2, 50),
-                    new GEItem(ItemId.HAMMER, 1, 500),
-                    new GEItem(ItemId.SWAMP_TAR, 1, 50),
-                    new GEItem(ItemId.TINDERBOX, 1, 500),
-                    new GEItem(ItemId.MOLTEN_GLASS, 1, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 1, 15),
-                    new GEItem(ItemId.EARTH_RUNE, 1, 15),
-                    new GEItem(ItemId.AIR_RUNE, 1, 15),
-                    new GEItem(ItemId.BRONZE_ARROW, 1, 50),
-                    new GEItem(ItemId.BRONZE_SWORD, 1, 50),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 2, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 20),
-                    new GEItem(ItemId.LOBSTER, 25, 15),
-                    new GEItem(ItemId.CHAOS_RUNE, 400, 15),
-                    new GEItem(ItemId.WATER_RUNE, 1250, 15),
-                    new GEItem(ItemId.LAVA_RUNE, 1200, 15),
-                    new GEItem(ItemId.PRAYER_POTION[0], 3, 15),
-                    new GEItem(ItemId.SUMMER_PIE, 1, 15),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 35),
-                    new GEItem(ItemId.MONKS_ROBE_BOTTOM, 1, 350),
-                    new GEItem(ItemId.MONKS_ROBE_TOP, 1, 350)
+                    new GEItem(ItemID.STEEL_NAILS, 60, 50),
+                    new GEItem(ItemID.PLANK, 2, 50),
+                    new GEItem(ItemID.HAMMER, 1, 500),
+                    new GEItem(ItemID.SWAMP_TAR, 1, 50),
+                    new GEItem(ItemID.TINDERBOX, 1, 500),
+                    new GEItem(ItemID.MOLTEN_GLASS, 1, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 1, 15),
+                    new GEItem(ItemID.EARTH_RUNE, 1, 15),
+                    new GEItem(ItemID.AIR_RUNE, 1, 15),
+                    new GEItem(ItemID.BRONZE_ARROW, 1, 50),
+                    new GEItem(ItemID.BRONZE_SWORD, 1, 50),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 2, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 20),
+                    new GEItem(ItemID.LOBSTER, 25, 15),
+                    new GEItem(ItemID.CHAOS_RUNE, 400, 15),
+                    new GEItem(ItemID.WATER_RUNE, 1250, 15),
+                    new GEItem(ItemID.LAVA_RUNE, 1200, 15),
+                    new GEItem(ItemID.PRAYER_POTION[0], 3, 15),
+                    new GEItem(ItemID.SUMMER_PIE, 1, 15),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 35),
+                    new GEItem(ItemID.MONKS_ROBE_BOTTOM, 1, 350),
+                    new GEItem(ItemID.MONKS_ROBE_TOP, 1, 350)
             )
     );
 
@@ -94,14 +94,14 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
 
     NPCStep larissaStep = new NPCStep("Larrissa", new RSTile(2506, 3634, 0), START_DIALOG);
-    NPCStep barbarianStep = new NPCStep("Gunnjorn", HorrorConst.AFTER_PIPE_AGILITY);
+    NPCStep barbarianStep = new NPCStep("Gunnjorn", new RSTile(2541, 3548, 0));
 
     static BuyItemsStep buyInitial = new BuyItemsStep(itemsToBuy);
 
-    UseItemOnObjectStep plankOnBridgeOne = new UseItemOnObjectStep(ItemId.PLANK, "Broken bridge",
+    UseItemOnObjectStep plankOnBridgeOne = new UseItemOnObjectStep(ItemID.PLANK, "Broken bridge",
             HorrorConst.BRIDGE_TILE, NPCInteraction.isConversationWindowUp());
 
-    UseItemOnObjectStep plankOnBridgeTwo = new UseItemOnObjectStep(ItemId.PLANK, "Broken bridge",
+    UseItemOnObjectStep plankOnBridgeTwo = new UseItemOnObjectStep(ItemID.PLANK, "Broken bridge",
             HorrorConst.BRIDGE_TILE_2, NPCInteraction.isConversationWindowUp());
 
 
@@ -204,23 +204,23 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
         }
     }
 
-    UseItemOnObjectStep fireRuneOnDoor = new UseItemOnObjectStep(ItemId.FIRE_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.FIRE_RUNE).length < 1, true);
+    UseItemOnObjectStep fireRuneOnDoor = new UseItemOnObjectStep(ItemID.FIRE_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.FIRE_RUNE).length < 1, true);
 
-    UseItemOnObjectStep airRuneOnDoor = new UseItemOnObjectStep(ItemId.AIR_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.AIR_RUNE).length < 1, true);
+    UseItemOnObjectStep airRuneOnDoor = new UseItemOnObjectStep(ItemID.AIR_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.AIR_RUNE).length < 1, true);
 
-    UseItemOnObjectStep waterRuneOnDoor = new UseItemOnObjectStep(ItemId.WATER_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.WATER_RUNE).length < 1, true);
+    UseItemOnObjectStep waterRuneOnDoor = new UseItemOnObjectStep(ItemID.WATER_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.WATER_RUNE).length < 1, true);
 
-    UseItemOnObjectStep earthRuneOnDoor = new UseItemOnObjectStep(ItemId.EARTH_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.EARTH_RUNE).length < 1, true);
+    UseItemOnObjectStep earthRuneOnDoor = new UseItemOnObjectStep(ItemID.EARTH_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.EARTH_RUNE).length < 1, true);
 
-    UseItemOnObjectStep arrowOnDoor = new UseItemOnObjectStep(ItemId.BRONZE_ARROW, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.BRONZE_ARROW).length < 1, true);
+    UseItemOnObjectStep arrowOnDoor = new UseItemOnObjectStep(ItemID.BRONZE_ARROW, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.BRONZE_ARROW).length < 1, true);
 
-    UseItemOnObjectStep swordOnDoor = new UseItemOnObjectStep(ItemId.BRONZE_SWORD, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.BRONZE_SWORD).length < 1, true);
+    UseItemOnObjectStep swordOnDoor = new UseItemOnObjectStep(ItemID.BRONZE_SWORD, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.BRONZE_SWORD).length < 1, true);
 
 
     public void handleBasementDoor() {
@@ -259,33 +259,33 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
     InventoryRequirement fightInv = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.CHAOS_RUNE, 400, 50),
-                    new ItemReq(ItemId.LAVA_RUNE, 1200, 300),
-                    new ItemReq(ItemId.WATER_RUNE, 1200, 300),
-                    new ItemReq(ItemId.STAFF_OF_AIR, 1, 0),
-                    new ItemReq(ItemId.LOBSTER, 15, 5),
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.PRAYER_POTION[0], 3, 0)
+                    new ItemReq(ItemID.CHAOS_RUNE, 400, 50),
+                    new ItemReq(ItemID.LAVA_RUNE, 1200, 300),
+                    new ItemReq(ItemID.WATER_RUNE, 1200, 300),
+                    new ItemReq(ItemID.STAFF_OF_AIR, 1, 0),
+                    new ItemReq(ItemID.LOBSTER, 15, 5),
+                   // new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.PRAYER_POTION[0], 3, 0)
             ))
     );
 
     public static boolean shouldBuyAllBooks = false;
 
     BankTask bankTaskOne = BankTask.builder()
-            .addInvItem(ItemId.CHAOS_RUNE, Amount.of(400))
-            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY).item(ItemId.MONKS_ROBE_TOP, Amount.of(1)))
-           .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS).item(ItemId.MONKS_ROBE_BOTTOM, Amount.of(1)))
+            .addInvItem(ItemID.CHAOS_RUNE, Amount.of(400))
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY).item(ItemID.MONKS_ROBE_TOP, Amount.of(1)))
+           .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS).item(ItemID.MONKS_ROBE_BOTTOM, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON).item(
-                    ItemId.STAFF_OF_AIR, Amount.of(1)))
+                    ItemID.STAFF_OF_AIR, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.NECK)
                     .chargedItem("Games necklace", 2))
-            .addInvItem(ItemId.LAVA_RUNE, Amount.of(1200))
-            .addInvItem(ItemId.WATER_RUNE, Amount.of(1200))
-            .addInvItem(ItemId.STAMINA_POTION[0], Amount.of(1))
-            .addInvItem(ItemId.PRAYER_POTION[0], Amount.of(3))
-            .addInvItem(ItemId.LOBSTER, Amount.fill(1))
-            .addInvItem(ItemId.COINS, Amount.of(25000))
+            .addInvItem(ItemID.LAVA_RUNE, Amount.of(1200))
+            .addInvItem(ItemID.WATER_RUNE, Amount.of(1200))
+            .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(1))
+            .addInvItem(ItemID.PRAYER_POTION[0], Amount.of(3))
+            .addInvItem(ItemID.LOBSTER, Amount.fill(1))
+            .addInvItem(ItemID.COINS, Amount.of(25000))
             .build();
 
     public boolean setSpell(Autocast spell) {
@@ -431,7 +431,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
             int prayDrink = General.random(10, 25);
             if (Prayer.getPrayerPoints() < prayDrink) {
-                EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
                 prayDrink = General.random(10, 25);
                 General.println("[Debug]: Next drinking prayer pot at: " + prayDrink);
             }
@@ -607,20 +607,20 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
             goUpStairs();
 
             if (Utils.getVarBitValue(46) == 0)
-                useItemOnLight(ItemId.SWAMP_TAR);
+                useItemOnLight(ItemID.SWAMP_TAR);
 
             if (Utils.getVarBitValue(48) == 0)
-                useItemOnLight(ItemId.TINDERBOX);
+                useItemOnLight(ItemID.TINDERBOX);
 
             if (Utils.getVarBitValue(47) == 0)
-                useItemOnLight(ItemId.MOLTEN_GLASS);
+                useItemOnLight(ItemID.MOLTEN_GLASS);
         } else if (Game.getSetting(351) >= 29421572 &&
                 Game.getSetting(HorrorConst.GAME_SETTING) <= 32501764) {
             goDownStairs();
             handleBasementDoor();
         } else if (Game.getSetting(HorrorConst.GAME_SETTING) == 33552388) {
             cQuesterV2.status = "Getting fight items";
-            if (!fightInv.check()) {
+            if (!bankTaskOne.isSatisfied()) {
                 General.println("[Debug]: Executing bankTaskOne");
                 BankManager.open(true);
                 BankManager.depositEquipment();

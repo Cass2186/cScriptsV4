@@ -12,7 +12,7 @@ import scripts.Tasks.Agility.AgilityAPI.AgilUtils;
 public class GoToFaladorStart implements Task {
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Going to Falador Start";
     }
 
@@ -25,15 +25,17 @@ public class GoToFaladorStart implements Task {
     @Override
     public boolean validate() {
         return Vars.get().currentTask != null &&
-                        Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
-                        AgilUtils.isWithinLevelRange(50, 60) &&
-                        Player.getPosition().getPlane() == 0 &&
-                        !AgilityAreas.FALADOR_FINISH_AREA.contains(Player.getPosition());
+                Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
+                AgilUtils.isWithinLevelRange(50, 60) &&
+                Player.getPosition().getPlane() == 0 &&
+                !AgilityAreas.FALADOR_FINISH_AREA.contains(Player.getPosition());
     }
 
     @Override
     public void execute() {
-        PathingUtil.walkToArea(AgilityAreas.FALADOR_FINISH_AREA, false);
+
+        if (!PathingUtil.localNavigation(AgilityAreas.FALADOR_FINISH_AREA))
+            PathingUtil.walkToArea(AgilityAreas.FALADOR_FINISH_AREA, false);
     }
 
     @Override

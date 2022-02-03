@@ -25,26 +25,26 @@ public class DruidicRitual implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.RAW_RAT_MEAT, 1, 150),
-                    new GEItem(ItemId.RAW_BEAR_MEAT, 1, 150),
-                    new GEItem(ItemId.RAW_BEEF, 1, 150),
-                    new GEItem(ItemId.RAW_CHICKEN, 1, 150),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 20),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 20)
+                    new GEItem(ItemID.RAW_RAT_MEAT, 1, 150),
+                    new GEItem(ItemID.RAW_BEAR_MEAT, 1, 150),
+                    new GEItem(ItemID.RAW_BEEF, 1, 150),
+                    new GEItem(ItemID.RAW_CHICKEN, 1, 150),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 20),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 20)
             )
     );
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     BankTask startInv = BankTask.builder()
-            .addInvItem(ItemId.RAW_RAT_MEAT, Amount.of(1))
-            .addInvItem(ItemId.RAW_BEAR_MEAT, Amount.of(1))
-            .addInvItem(ItemId.RAW_BEEF, Amount.of(1))
-            .addInvItem(ItemId.RAW_CHICKEN, Amount.of(1))
-            .addInvItem(ItemId.STAMINA_POTION[0], Amount.of(2))
-            .addInvItem(ItemId.FALADOR_TELEPORT, Amount.of(3))
-            .addInvItem(ItemId.RING_OF_WEALTH[0], Amount.of(1))
+            .addInvItem(ItemID.RAW_RAT_MEAT, Amount.of(1))
+            .addInvItem(ItemID.RAW_BEAR_MEAT, Amount.of(1))
+            .addInvItem(ItemID.RAW_BEEF, Amount.of(1))
+            .addInvItem(ItemID.RAW_CHICKEN, Amount.of(1))
+            .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(2))
+            .addInvItem(ItemID.FALADOR_TELEPORT, Amount.of(3))
+            .addInvItem(ItemID.RING_OF_WEALTH[0], Amount.of(1))
             .build();
 
     public void getStartInv() {
@@ -60,16 +60,16 @@ public class DruidicRitual implements QuestTask {
     }
 
 
-    ItemReq rawRat = new ItemReq("Raw rat meat", ItemId.RAW_RAT_MEAT);
-    ItemReq rawBear = new ItemReq("Raw bear meat", ItemId.RAW_BEAR_MEAT);
-    ItemReq rawBeef = new ItemReq("Raw beef", ItemId.RAW_BEEF);
-    ItemReq rawChicken = new ItemReq("Raw chicken", ItemId.RAW_CHICKEN);
+    ItemReq rawRat = new ItemReq("Raw rat meat", ItemID.RAW_RAT_MEAT);
+    ItemReq rawBear = new ItemReq("Raw bear meat", ItemID.RAW_BEAR_MEAT);
+    ItemReq rawBeef = new ItemReq("Raw beef", ItemID.RAW_BEEF);
+    ItemReq rawChicken = new ItemReq("Raw chicken", ItemID.RAW_CHICKEN);
 
 
-    ItemReq enchantedBear = new ItemReq("Enchanted bear", ItemId.ENCHANTED_BEAR);
-    ItemReq enchantedBeef = new ItemReq("Enchanted beef", ItemId.ENCHANTED_BEEF);
-    ItemReq enchantedChicken = new ItemReq("Enchanted chicken", ItemId.ENCHANTED_CHICKEN);
-    ItemReq enchantedRat = new ItemReq("Enchanted rat", ItemId.ENCHANTED_RAT);
+    ItemReq enchantedBear = new ItemReq("Enchanted bear", ItemID.ENCHANTED_BEAR);
+    ItemReq enchantedBeef = new ItemReq("Enchanted beef", ItemID.ENCHANTED_BEEF);
+    ItemReq enchantedChicken = new ItemReq("Enchanted chicken", ItemID.ENCHANTED_CHICKEN);
+    ItemReq enchantedRat = new ItemReq("Enchanted rat", ItemID.ENCHANTED_RAT);
 
     RSArea sanfewRoom = new RSArea(new RSTile(2893, 3423, 1), new RSTile(2903, 3433, 1));
     RSArea dungeon = new RSArea(new RSTile(2816, 9668, 0), new RSTile(2973, 9855, 0));

@@ -1,11 +1,10 @@
 package scripts.Tasks.Farming.Data;
 
+import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
-import org.tribot.api2007.Inventory;
-import org.tribot.api2007.Objects;
-import org.tribot.api2007.Player;
-import org.tribot.api2007.Skills;
+import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
+import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -82,7 +81,7 @@ public class FarmingUtils {
         FarmVars.get().patchesLeftToVisit.add(Patches.CATHERBY_FRUIT_TREE_PATCH);
 
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 85
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             FarmVars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_FRUIT_TREE_PATCH);
     }
 
@@ -107,7 +106,7 @@ public class FarmingUtils {
         FarmVars.get().patchesLeftToVisit.add(Patches.MORYTANIA_HERB_PATCH);
 
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             FarmVars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_HERB_PATCH);
     }
 
@@ -118,7 +117,7 @@ public class FarmingUtils {
         FarmVars.get().patchesLeftToVisit.add(Patches.VARROCK_TREE_PATCH);
         FarmVars.get().patchesLeftToVisit.add(Patches.STRONGHOLD_TREE_PATCH);
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             FarmVars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_TREE_PATCH);
 
         General.println("[Move]: Populating tree patches - Number: " + FarmVars.get().patchesLeftToVisit.size());
@@ -198,5 +197,57 @@ public class FarmingUtils {
             }
         }
     }
+
+    public static boolean plantHerb(int herbId, int patchId) {
+        FarmingUtils.rakeWeeds(patchId);
+        RSObject[] patch = Objects.findNearest(20, Filters.Objects.nameContains("Herb patch")
+                .and(Filters.Objects.idEquals(patchId)));
+        if (patch.length > 0) {
+            FarmVars.get().status = "Planting herbs";
+            if (Utils.useItemOnObject(herbId, patchId)) {
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
+                Timer.abc2WaitCondition(() -> Player.getAnimation() == -1, 4000, 8000);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static void clearTree() {
+        RSObject[] trees = Objects.findNearest(20, Filters.Objects.actionsContains("Chop down").
+                or(Filters.Objects.actionsContains("Pick-")).and(Filters.Objects.actionsContains("Guide"))); //guide filters out random trees
+        if (trees.length > 0) {
+            FarmVars.get().status = "Clearing Tree";
+
+            RSNPC[] npc = NPCs.findNearest(Filters.NPCs.actionsContains("Pay (tree patch)"));
+            RSNPC[] npc2 = NPCs.findNearest(Filters.NPCs.actionsContains("Pay"));
+            if (npc.length == 0 && npc2.length > 0 && Utils.clickNPC(npc2[0], "Pay", false)) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation("Yes.");
+                Utils.shortSleep();
+                return;
+            }
+            if (npc.length > 0 && Utils.clickNPC(npc[0], "Pay (tree patch)", false)) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation("Yes.");
+                Utils.shortSleep();
+            }
+        }
+    }
+
+    public static boolean plantTreePatch(int herbId, int patchId) {
+        FarmingUtils.rakeWeeds(patchId);
+        RSObject[] patch = Objects.findNearest(20, Filters.Objects.nameContains("Tree patch").and(Filters.Objects.idEquals(patchId)));
+        if (patch.length > 0) {
+            FarmVars.get().status = "Planting herbs";
+            if (Utils.useItemOnObject(herbId, patchId)) {
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
+                Timer.abc2WaitCondition(() -> Player.getAnimation() == -1, 4000, 8000);
+                return true;
+            }
+        }
+        return true;
+    }
+
 
 }

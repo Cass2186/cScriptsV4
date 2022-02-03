@@ -59,17 +59,17 @@ public class GrandTree implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(   ItemId.SUMMER_PIE, 1, 50),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 2, 100),
+                    new GEItem(   ItemID.SUMMER_PIE, 1, 50),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 2, 100),
 
-                    new GEItem( ItemId.NECKLACE_OF_PASSAGE[0], 2, 100),
-                    new GEItem(ItemId.MIND_RUNE, 300, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 600, 20),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 50),
-                    new GEItem(ItemId.LOBSTER, 20, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem( ItemID.NECKLACE_OF_PASSAGE[0], 2, 100),
+                    new GEItem(ItemID.MIND_RUNE, 300, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 1200, 20),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 50),
+                    new GEItem(ItemID.LOBSTER, 20, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -87,16 +87,16 @@ public class GrandTree implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.NECKLACE_OF_PASSAGE[0]);
-        BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
-        BankManager.withdraw(400, true, ItemId.MIND_RUNE);
-        BankManager.withdraw(1200, true, ItemId.FIRE_RUNE);
-        BankManager.withdraw(1, true, ItemId.STAFF_OF_AIR);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(12, true, ItemId.LOBSTER);
+        BankManager.withdraw(1, true, ItemID.NECKLACE_OF_PASSAGE[0]);
+        BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
+        BankManager.withdraw(400, true, ItemID.MIND_RUNE);
+        BankManager.withdraw(1200, true, ItemID.FIRE_RUNE);
+        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(12, true, ItemID.LOBSTER);
         BankManager.withdraw(1000, true, 995);
         if (SUMMER_PIE) {
-            BankManager.withdraw(1, true, ItemId.SUMMER_PIE);
+            BankManager.withdraw(1, true, ItemID.SUMMER_PIE);
         }
         BankManager.close(true);
     }
@@ -107,18 +107,18 @@ public class GrandTree implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.NECKLACE_OF_PASSAGE[0]);
-        BankManager.withdraw(400, true, ItemId.MIND_RUNE);
-        BankManager.withdraw(1200, true, ItemId.FIRE_RUNE);
-        BankManager.withdraw(1, true, ItemId.STAFF_OF_AIR);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(12, true, ItemId.LOBSTER);
+        BankManager.withdraw(1, true, ItemID.NECKLACE_OF_PASSAGE[0]);
+        BankManager.withdraw(400, true, ItemID.MIND_RUNE);
+        BankManager.withdraw(1200, true, ItemID.FIRE_RUNE);
+        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(12, true, ItemID.LOBSTER);
         BankManager.withdraw(1, true, 789);
         BankManager.withdraw(1, true, 790);
         BankManager.withdraw(1, true, 791);
         BankManager.withdraw(1, true, 792);
         if (SUMMER_PIE) {
-            BankManager.withdraw(1, true, ItemId.SUMMER_PIE);
+            BankManager.withdraw(1, true, ItemID.SUMMER_PIE);
         }
         BankManager.close(true);
     }
@@ -490,9 +490,9 @@ public class GrandTree implements QuestTask {
                 Timer.abc2WaitCondition(() -> tree[0].isClickable(), 7000, 9000);
 
                 if (SUMMER_PIE && Inventory.find(
-                        ItemId.SUMMER_PIE).length > 0)
+                        ItemID.SUMMER_PIE).length > 0)
                     if (AccurateMouse.click(Inventory.find(
-                            ItemId.SUMMER_PIE)[0], "Eat"))
+                            ItemID.SUMMER_PIE)[0], "Eat"))
                         General.sleep(General.random(500, 1200));
 
                 if (Utils.clickObj("Tree", "Climb-up"))

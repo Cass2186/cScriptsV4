@@ -10,7 +10,7 @@ import scripts.BankManager;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.Mining.Utils.MLMUtils;
 import scripts.Tasks.MiscTasks.BuyItems;
@@ -25,30 +25,30 @@ public class MiningBank implements Task {
     public static int getBestPickaxe() {
         int lvl = Skills.getActualLevel(Skills.SKILLS.MINING);
         if (lvl > 40)
-            return ItemId.RUNE_PICKAXE;
+            return ItemID.RUNE_PICKAXE;
 
         else if (lvl > 30)
-            return ItemId.ADAMANT_PICKAXE;
+            return ItemID.ADAMANT_PICKAXE;
 
         else if (lvl > 20)
-            return ItemId.MITHRIL_PICKAXE;
+            return ItemID.MITHRIL_PICKAXE;
 
         else if (lvl > 5)
-            return ItemId.STEEL_PICKAXE;
+            return ItemID.STEEL_PICKAXE;
 
-        return ItemId.IRON_PICKAXE;
+        return ItemID.IRON_PICKAXE;
     }
 
 
     public boolean canEquipPickAxe() {
         int lvl = Skills.getActualLevel(Skills.SKILLS.ATTACK);
-        if (getBestPickaxe() == ItemId.RUNE_PICKAXE)
+        if (getBestPickaxe() == ItemID.RUNE_PICKAXE)
             return lvl > 39;
-        else if (getBestPickaxe() == ItemId.ADAMANT_PICKAXE)
+        else if (getBestPickaxe() == ItemID.ADAMANT_PICKAXE)
             return lvl > 29;
-        else if (getBestPickaxe() == ItemId.MITHRIL_PICKAXE)
+        else if (getBestPickaxe() == ItemID.MITHRIL_PICKAXE)
             return lvl > 19;
-        else if (getBestPickaxe() == ItemId.STEEL_PICKAXE)
+        else if (getBestPickaxe() == ItemID.STEEL_PICKAXE)
             return lvl > 4;
 
         return true; //iron
@@ -64,7 +64,7 @@ public class MiningBank implements Task {
 
         if (!MLMUtils.WHOLE_MLM_AREA.contains(Player.getPosition())) {
             General.println("[Mining Training]: Adding skills necklace to required items");
-            inv.add(new ItemReq(ItemId.SKILLS_NECKLACE[2], 1));
+            inv.add(new ItemReq(ItemID.SKILLS_NECKLACE[2], 1));
         }
 
         BankManager.open(true);

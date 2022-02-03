@@ -30,45 +30,45 @@ public class APorcineOfInterest implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ADAMANT_SCIMITAR, 1, 100),
-                    new GEItem(ItemId.IRON_PLATEBODY, 1, 200),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 20),
-                    new GEItem(ItemId.IRON_PLATELEGS, 1, 200),
-                    new GEItem(ItemId.IRON_FULL_HELM, 1, 200),
-                    new GEItem(ItemId.IRON_KITESHIELD, 1, 200),
-                    new GEItem(ItemId.LOBSTER, 20, 200),
-                    new GEItem(ItemId.PRAYER_POTION_4, 2, 15),
-                    new GEItem(ItemId.ROPE, 1, 200),
-                    new GEItem(ItemId.KNIFE, 1, 200)
+                    new GEItem(ItemID.ADAMANT_SCIMITAR, 1, 100),
+                    new GEItem(ItemID.IRON_PLATEBODY, 1, 200),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 20),
+                    new GEItem(ItemID.IRON_PLATELEGS, 1, 200),
+                    new GEItem(ItemID.IRON_FULL_HELM, 1, 200),
+                    new GEItem(ItemID.IRON_KITESHIELD, 1, 200),
+                    new GEItem(ItemID.LOBSTER, 20, 200),
+                    new GEItem(ItemID.PRAYER_POTION4, 2, 15),
+                    new GEItem(ItemID.ROPE, 1, 200),
+                    new GEItem(ItemID.KNIFE, 1, 200)
 
             )
     );
 
     InventoryRequirement initialItems = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.ADAMANT_SCIMITAR, 1, true, true),
-                    new ItemReq(ItemId.IRON_PLATEBODY, 1, true, true),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 1, 0, true, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 0),
-                    new ItemReq(ItemId.IRON_PLATELEGS, 1, true, true),
-                    new ItemReq(ItemId.IRON_FULL_HELM, 1, true, true),
-                    new ItemReq(ItemId.IRON_KITESHIELD, 1, true, true),
-                    new ItemReq(ItemId.LOBSTER, 14, 4),
-                    new ItemReq(ItemId.PRAYER_POTION_4, 2, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 1, true, true),
-                    new ItemReq(ItemId.ROPE, 1),
-                    new ItemReq(ItemId.KNIFE, 1)
+                    new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, true, true),
+                    new ItemReq(ItemID.IRON_PLATEBODY, 1, true, true),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.IRON_PLATELEGS, 1, true, true),
+                    new ItemReq(ItemID.IRON_FULL_HELM, 1, true, true),
+                    new ItemReq(ItemID.IRON_KITESHIELD, 1, true, true),
+                    new ItemReq(ItemID.LOBSTER, 14, 4),
+                    new ItemReq(ItemID.PRAYER_POTION4, 2, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 1, true, true),
+                    new ItemReq(ItemID.ROPE, 1),
+                    new ItemReq(ItemID.KNIFE, 1)
             ))
     );
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
 
-    ItemReq rope = new ItemReq("Rope", ItemId.ROPE);
-    ItemReq slashItem = new ItemReq("A knife or slash weapon", ItemId.KNIFE);
-    ItemReq reinforcedGoggles = new ItemReq(ItemId.REINFORCED_GOGGLES, 1, true);
-    ItemReq hoof = new ItemReq("Sourhog foot", ItemId.SOURHOG_FOOT);
+    ItemReq rope = new ItemReq("Rope", ItemID.ROPE);
+    ItemReq slashItem = new ItemReq("A knife or slash weapon", ItemID.KNIFE);
+    ItemReq reinforcedGoggles = new ItemReq(ItemID.REINFORCED_GOGGLES, 1, true);
+    ItemReq hoof = new ItemReq("Sourhog foot", ItemID.SOURHOG_FOOT);
 
     RSArea cave = new RSArea(new RSTile(3152, 9669, 0), new RSTile(3181, 9720, 0));
     AreaRequirement inCave = new AreaRequirement(cave);
@@ -80,7 +80,7 @@ public class APorcineOfInterest implements QuestTask {
     NPCStep talkToSarah = new NPCStep("Sarah", new RSTile(3033, 3293, 0));
 
 
-    UseItemOnObjectStep useRopeOnHole = new UseItemOnObjectStep(ItemId.ROPE, 40341,
+    UseItemOnObjectStep useRopeOnHole = new UseItemOnObjectStep(ItemID.ROPE, 40341,
             new RSTile(3151, 3346, 0),
             "Use a rope on the Strange Hole east of Draynor Manor.", rope);
 
@@ -195,7 +195,7 @@ public class APorcineOfInterest implements QuestTask {
             talkToSpria.execute();
         } else if (Utils.getVarBitValue(setting) == 25) {
             if (!Combat.isUnderAttack()) {
-                Utils.equipItem(ItemId.REINFORCED_GOGGLES, "Wear");
+                Utils.equipItem(ItemID.REINFORCED_GOGGLES, "Wear");
                 if (!Game.isInInstance()) {
                     cQuesterV2.status = "Entering hole again";
                     enterHoleAgain.execute();

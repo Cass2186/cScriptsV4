@@ -2,14 +2,18 @@ package scripts.Data;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import scripts.Requirements.AreaRequirement;
 
-public  class Areas {
+public class Areas {
+
+    public static  RSArea UNDEAD_DRUID_AREA = new RSArea(new RSTile(1805, 9932, 0), new RSTile(1795, 9953, 0));
 
     /**
      * just before shed to zanaris
      */
+
     public static RSArea SWAMP_AREA = new RSArea(new RSTile(3201, 3170, 0), new RSTile(3199, 3167, 0));
-    public static   RSArea SOURHOG_ENTRANCE_AREA = new RSArea(new RSTile(3147, 3348, 0), new RSTile(3151, 3344, 0));
+    public static RSArea SOURHOG_ENTRANCE_AREA = new RSArea(new RSTile(3147, 3348, 0), new RSTile(3151, 3344, 0));
     public static RSArea TREE_STRONGHOLD_FAILSAFE = new RSArea(new RSTile(2461, 3444, 0), 5);
     public static RSArea NIEVE_AREA = new RSArea(new RSTile(2433, 3423, 0), 4);
     public static RSTile BRONZE_DRAGON_SAFE_TILE = new RSTile(1655, 10103, 0);
@@ -34,8 +38,8 @@ public  class Areas {
                     new RSTile(1673, 10059, 0)
             }
     );
-    public static  RSArea lavaTeleArea = new RSArea(
-            new RSTile[] {
+    public static RSArea lavaTeleArea = new RSArea(
+            new RSTile[]{
                     new RSTile(3175, 3749, 0),
                     new RSTile(3173, 3749, 0),
                     new RSTile(3171, 3746, 0),
@@ -44,7 +48,7 @@ public  class Areas {
                     new RSTile(3175, 3750, 0)
             }
     );
-    public static  RSArea WHOLE_WILDERNESS = new RSArea(new RSTile(3365, 3524, 0), new RSTile(2963, 3967, 0));
+    public static RSArea WHOLE_WILDERNESS = new RSArea(new RSTile(3365, 3524, 0), new RSTile(2963, 3967, 0));
 
     public static RSArea ABBERANT_SPECTRE_AREA_1 = new RSArea(new RSTile(2467, 9786, 0), new RSTile(2474, 9773, 0));
     public static RSArea WHOLE_ZANARIS = new RSArea(new RSTile(2508, 4404, 0), new RSTile(2369, 4481, 0));
@@ -123,7 +127,7 @@ public  class Areas {
                     new RSTile(3114, 9868, 0)
             }
     );
-    public static  RSArea BRINE_RAT_AREA = new RSArea(new RSTile(2700, 10138, 0), new RSTile(2713, 10128, 0));
+    public static RSArea BRINE_RAT_AREA = new RSArea(new RSTile(2700, 10138, 0), new RSTile(2713, 10128, 0));
     public static RSArea WHOLE_BRINE_RAT_CAVE = new RSArea(new RSTile(2685, 10153, 0), new RSTile(2742, 10116, 0));
     public static RSArea HILL_GIANT_AREA = new RSArea(new RSTile[]{new RSTile(3112, 9854, 0), new RSTile(3128, 9854, 0), new RSTile(3127, 9819, 0), new RSTile(3092, 9824, 0), new RSTile(3094, 9839, 0)});
     public static RSArea ICEFIEND_AREA = new RSArea(new RSTile[]{new RSTile(3025, 3466, 0), new RSTile(2995, 3467, 0), new RSTile(3002, 3481, 0), new RSTile(3006, 3489, 0), new RSTile(3012, 3489, 0), new RSTile(3014, 3479, 0), new RSTile(3022, 3476, 0)});
@@ -153,7 +157,7 @@ public  class Areas {
     public static RSArea ROCKSLUG_AREA = new RSArea(new RSTile(2811, 10024, 0), new RSTile(2789, 10008, 0));
 
     public static RSArea SOURHOG_AREA = new RSArea(
-            new RSTile[] {
+            new RSTile[]{
                     new RSTile(3156, 9704, 0),
                     new RSTile(3158, 9704, 0),
                     new RSTile(3167, 9706, 0),
@@ -236,5 +240,230 @@ public  class Areas {
     public static RSTile ELF_CANNON_TILE = new RSTile(2201, 3259, 0);
     public static RSTile BLUE_DRAGON_CANNON_TILE = new RSTile(2918, 9802, 0);
     public static RSTile DAGGANOTH_CANNON_TILE = new RSTile(2523, 10025, 0);
-    public static RSTile SUQAH_CANNON_TILE = new RSTile(2113, 3945,0);
+    public static RSTile SUQAH_CANNON_TILE = new RSTile(2113, 3945, 0);
+
+
+    /**
+     * DAGGANOTH KINGS
+     */
+    public static RSArea WB_DUNGEON_1_PT_2 = new RSArea(
+            new RSTile[]{
+                    new RSTile(2492, 10165, 0),
+                    new RSTile(2496, 10168, 0),
+                    new RSTile(2503, 10170, 0),
+                    new RSTile(2551, 10170, 0),
+                    new RSTile(2551, 10165, 0),
+                    new RSTile(2548, 10160, 0),
+                    new RSTile(2552, 10154, 0),
+                    new RSTile(2552, 10150, 0),
+                    new RSTile(2550, 10141, 0),
+                    new RSTile(2542, 10142, 0),
+                    new RSTile(2542, 10156, 0),
+                    new RSTile(2532, 10157, 0),
+                    new RSTile(2530, 10160, 0),
+                    new RSTile(2524, 10156, 0),
+                    new RSTile(2513, 10158, 0),
+                    new RSTile(2502, 10155, 0),
+                    new RSTile(2492, 10162, 0)
+            }
+    );
+    public static AreaRequirement wbDungeon1Pt2 = new AreaRequirement(WB_DUNGEON_1_PT_2);
+
+    public static RSArea WB_DUNGEON_1_PT_2_LADDER_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2545, 10147, 0),
+                    new RSTile(2546, 10147, 0),
+                    new RSTile(2546, 10146, 0),
+                    new RSTile(2548, 10144, 0),
+                    new RSTile(2548, 10142, 0),
+                    new RSTile(2546, 10140, 0),
+                    new RSTile(2545, 10140, 0),
+                    new RSTile(2542, 10143, 0),
+                    new RSTile(2542, 10144, 0)
+            }
+    );
+    public static AreaRequirement wbDungeon1LadderArea = new AreaRequirement(WB_DUNGEON_1_PT_2_LADDER_AREA);
+
+    public static RSArea WB_DUNGEON_2 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1884, 4413, 0),
+                    new RSTile(1906, 4413, 0),
+                    new RSTile(1911, 4409, 0),
+                    new RSTile(1911, 4400, 0),
+                    new RSTile(1901, 4397, 0),
+                    new RSTile(1895, 4394, 0),
+                    new RSTile(1890, 4382, 0),
+                    new RSTile(1905, 4378, 0),
+                    new RSTile(1914, 4373, 0),
+                    new RSTile(1916, 4369, 0),
+                    new RSTile(1929, 4369, 0),
+                    new RSTile(1940, 4362, 0),
+                    new RSTile(1952, 4366, 0),
+                    new RSTile(1952, 4372, 0),
+                    new RSTile(1965, 4372, 0),
+                    new RSTile(1965, 4361, 0),
+                    new RSTile(1947, 4353, 0),
+                    new RSTile(1931, 4357, 0),
+                    new RSTile(1921, 4361, 0),
+                    new RSTile(1915, 4361, 0),
+                    new RSTile(1901, 4357, 0),
+                    new RSTile(1884, 4356, 0),
+                    new RSTile(1878, 4360, 0),
+                    new RSTile(1877, 4379, 0),
+                    new RSTile(1881, 4391, 0),
+                    new RSTile(1888, 4400, 0),
+                    new RSTile(1883, 4405, 0)
+            }
+    );
+    public static AreaRequirement wbDungeon2 = new AreaRequirement(WB_DUNGEON_2);
+
+    public static RSArea WB_DUNGEON_3_PT_1 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1795, 4398, 1),
+                    new RSTile(1796, 4388, 1),
+                    new RSTile(1809, 4388, 1),
+                    new RSTile(1815, 4393, 1),
+                    new RSTile(1815, 4395, 1),
+                    new RSTile(1811, 4397, 1)
+            }
+    );
+    public static AreaRequirement wbDungeon3Pt1 = new AreaRequirement(WB_DUNGEON_3_PT_1);
+
+    public static RSArea WB_DUNGEON_3_PT_2 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1801, 4385, 1),
+                    new RSTile(1794, 4385, 1),
+                    new RSTile(1794, 4371, 1),
+                    new RSTile(1803, 4365, 1),
+                    new RSTile(1808, 4369, 1),
+                    new RSTile(1807, 4374, 1),
+                    new RSTile(1802, 4379, 1)
+            }
+    );
+    public static AreaRequirement wbDungeon3Pt2 = new AreaRequirement(WB_DUNGEON_3_PT_2);
+
+    public static RSArea WB_DUNGEON_3_PT_3 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1827, 4364, 1),
+                    new RSTile(1827, 4359, 1),
+                    new RSTile(1834, 4359, 1),
+                    new RSTile(1836, 4357, 1),
+                    new RSTile(1867, 4357, 1),
+                    new RSTile(1867, 4363, 1),
+                    new RSTile(1869, 4365, 1),
+                    new RSTile(1869, 4372, 1),
+                    new RSTile(1860, 4372, 1),
+                    new RSTile(1860, 4365, 1),
+                    new RSTile(1858, 4363, 1),
+                    new RSTile(1832, 4363, 1),
+                    new RSTile(1830, 4364, 1)
+            }
+    );
+    public static AreaRequirement wbDungeon3Pt3 = new AreaRequirement(WB_DUNGEON_3_PT_3);
+
+    public static RSArea WB_DUNGEON_3_PT_4 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1862, 4388, 1),
+                    new RSTile(1867, 4388, 1),
+                    new RSTile(1867, 4400, 1),
+                    new RSTile(1868, 4407, 1),
+                    new RSTile(1888, 4407, 1),
+                    new RSTile(1889, 4405, 1),
+                    new RSTile(1894, 4405, 1),
+                    new RSTile(1894, 4411, 1),
+                    new RSTile(1891, 4413, 1),
+                    new RSTile(1862, 4413, 1),
+                    new RSTile(1860, 4404, 1),
+                    new RSTile(1860, 4398, 1)
+            }
+    );
+    public static AreaRequirement wbDungeon3Pt4 = new AreaRequirement(WB_DUNGEON_3_PT_4);
+
+    public static RSArea WB_DUNGEON_4_PT_1 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1796, 4389, 2),
+                    new RSTile(1805, 4387, 2),
+                    new RSTile(1805, 4382, 2),
+                    new RSTile(1800, 4378, 2),
+                    new RSTile(1794, 4380, 2),
+                    new RSTile(1794, 4385, 2)
+            }
+    );
+    public static AreaRequirement wbDungeon4Pt1 = new AreaRequirement(WB_DUNGEON_4_PT_1);
+
+    public static RSArea WB_DUNGEON_4_PT_2 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1797, 4374, 2),
+                    new RSTile(1797, 4363, 2),
+                    new RSTile(1821, 4356, 2),
+                    new RSTile(1829, 4362, 2),
+                    new RSTile(1818, 4374, 2)
+            }
+    );
+    public static AreaRequirement wbDungeon4Pt2 = new AreaRequirement(WB_DUNGEON_4_PT_2);
+
+    public static RSArea WB_DUNGEON_4_PT_3 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1807, 4397, 2),
+                    new RSTile(1807, 4388, 2),
+                    new RSTile(1818, 4388, 2),
+                    new RSTile(1823, 4379, 2),
+                    new RSTile(1830, 4384, 2),
+                    new RSTile(1837, 4385, 2),
+                    new RSTile(1837, 4390, 2),
+                    new RSTile(1825, 4397, 2)
+            }
+    );
+    public static AreaRequirement wbDungeon4Pt3 = new AreaRequirement(WB_DUNGEON_4_PT_3);
+
+    public static RSArea WB_DUNGEON_4_PT_4 = new RSArea(
+            new RSTile[] {
+                    new RSTile(1858, 4390, 2),
+                    new RSTile(1861, 4372, 2),
+                    new RSTile(1868, 4372, 2),
+                    new RSTile(1871, 4390, 2)
+            }
+    );
+    public static AreaRequirement wbDungeon4Pt4 = new AreaRequirement(WB_DUNGEON_4_PT_3);
+
+
+    public static RSArea WB_DUNGEON_5_PT_1 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1794, 4412, 3),
+                    new RSTile(1808, 4412, 3),
+                    new RSTile(1808, 4401, 3),
+                    new RSTile(1801, 4399, 3),
+                    new RSTile(1794, 4402, 3)
+            }
+    );
+    public static AreaRequirement wbDungeon5Pt1 = new AreaRequirement(WB_DUNGEON_5_PT_1);
+
+    public static RSArea WB_DUNGEON_5_PT_2 = new RSArea(
+            new RSTile[]{
+                    new RSTile(1824, 4411, 3),
+                    new RSTile(1824, 4400, 3),
+                    new RSTile(1834, 4401, 3),
+                    new RSTile(1830, 4395, 3),
+                    new RSTile(1830, 4392, 3),
+                    new RSTile(1834, 4388, 3),
+                    new RSTile(1852, 4401, 3),
+                    new RSTile(1854, 4408, 3),
+                    new RSTile(1849, 4412, 3),
+                    new RSTile(1828, 4411, 3)
+            }
+    );
+    public static AreaRequirement wbDungeon5Pt2 = new AreaRequirement(WB_DUNGEON_5_PT_2);
+
+   public static RSArea WB_DUNGEON_4_PT_5  = new RSArea(
+            new RSTile[] {
+                    new RSTile(1808, 4411, 2),
+                    new RSTile(1809, 4401, 2),
+                    new RSTile(1824, 4401, 2),
+                    new RSTile(1824, 4406, 2),
+                    new RSTile(1818, 4410, 2)
+            }
+    );
+    public static AreaRequirement wbDungeon4Pt5 = new AreaRequirement(WB_DUNGEON_4_PT_5);
+    public static   RSArea DK_AREA = new RSArea(new RSTile(2938, 4426, 0), new RSTile(2892, 4471, 0));
+    public static AreaRequirement dkArea = new AreaRequirement(DK_AREA);
 }

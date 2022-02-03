@@ -71,24 +71,24 @@ public class HolyGrail implements QuestTask {
     public static final int SACKS = 23;
     public static final int DOOR_24 = 24;
     private static HolyGrail quest;
-    ItemRequirement excalibur = new ItemRequirement("Excalibur", ItemId.EXCALIBUR);
-    ItemRequirement holyTableNapkin = new ItemRequirement("Holy Table Napkin", ItemId.HOLY_TABLE_NAPKIN);
-    ItemRequirement twoMagicWhistles = new ItemRequirement("Magic Whistles", ItemId.MAGIC_WHISTLE, 2);
-    ItemRequirement threeCamelotTele = new ItemRequirement("Camelot Teleports", ItemId.CAMELOT_TELEPORT, 3);
-    ItemRequirement ardyTele = new ItemRequirement("Ardougne Teleport", ItemId.ARDOUGNE_TELEPORT);
-    ItemRequirement faladorTele = new ItemRequirement("Falador Teleport", ItemId.FALADOR_TELEPORT);
-    ItemRequirement sixtyCoins = new ItemRequirement("Coins", ItemId.COINS_995, 60);
-    ItemRequirement antipoison = new ItemRequirement("Antipoison", ItemId.ANTIPOISON4);
+    ItemRequirement excalibur = new ItemRequirement("Excalibur", ItemID.EXCALIBUR);
+    ItemRequirement holyTableNapkin = new ItemRequirement("Holy Table Napkin", ItemID.HOLY_TABLE_NAPKIN);
+    ItemRequirement twoMagicWhistles = new ItemRequirement("Magic Whistles", ItemID.MAGIC_WHISTLE, 2);
+    ItemRequirement threeCamelotTele = new ItemRequirement("Camelot Teleports", ItemID.CAMELOT_TELEPORT, 3);
+    ItemRequirement ardyTele = new ItemRequirement("Ardougne Teleport", ItemID.ARDOUGNE_TELEPORT);
+    ItemRequirement faladorTele = new ItemRequirement("Falador Teleport", ItemID.FALADOR_TELEPORT);
+    ItemRequirement sixtyCoins = new ItemRequirement("Coins", ItemID.COINS_995, 60);
+    ItemRequirement antipoison = new ItemRequirement("Antipoison", ItemID.ANTIPOISON4);
     //  ItemRequirement food = new ItemRequirement("Food", ItemCollections.getGoodEatingFood(), -1);
     ItemRequirement combatGear = new ItemRequirement("A weapon and armour", -1, -1);
     ItemRequirement emptyInvSpot = new ItemRequirement("Empty Inventory Spot", -1, 1);
-    ItemRequirement goldFeather = new ItemRequirement("Magic gold feather", ItemId.MAGIC_GOLD_FEATHER);
-    ItemRequirement grailBell = new ItemRequirement("Grail Bell", ItemId.GRAIL_BELL);
-    ItemRequirement oneMagicWhistle = new ItemRequirement("Magic Whistle", ItemId.MAGIC_WHISTLE);
-    ItemRequirement grail = new ItemRequirement("Holy Grail", ItemId.HOLY_GRAIL);
-    ItemRequirement highlightMagicWhistle1 = new ItemRequirement("Magic Whistle", ItemId.MAGIC_WHISTLE, 2);
-    ItemRequirement highlightMagicWhistle2 = new ItemRequirement("Magic Whistle", ItemId.MAGIC_WHISTLE);
-    ItemRequirement highlightGrailBell = new ItemRequirement("Grail Bell", ItemId.GRAIL_BELL);
+    ItemRequirement goldFeather = new ItemRequirement("Magic gold feather", ItemID.MAGIC_GOLD_FEATHER);
+    ItemRequirement grailBell = new ItemRequirement("Grail Bell", ItemID.GRAIL_BELL);
+    ItemRequirement oneMagicWhistle = new ItemRequirement("Magic Whistle", ItemID.MAGIC_WHISTLE);
+    ItemRequirement grail = new ItemRequirement("Holy Grail", ItemID.HOLY_GRAIL);
+    ItemRequirement highlightMagicWhistle1 = new ItemRequirement("Magic Whistle", ItemID.MAGIC_WHISTLE, 2);
+    ItemRequirement highlightMagicWhistle2 = new ItemRequirement("Magic Whistle", ItemID.MAGIC_WHISTLE);
+    ItemRequirement highlightGrailBell = new ItemRequirement("Grail Bell", ItemID.GRAIL_BELL);
     RSArea camelotGround = new RSArea(new RSTile(2744, 3517, 0), new RSTile(2733, 3483, 0));
     RSArea camelotUpstairsRSArea1 = new RSArea(new RSTile(2768, 3517, 1), new RSTile(2757, 3506, 1));
     RSArea camelotUpstairsRSArea2 = new RSArea(new RSTile(2764, 3517, 1), new RSTile(2748, 3496, 1));
@@ -124,7 +124,7 @@ public class HolyGrail implements QuestTask {
     AreaRequirement inDraynorManorSecondFloor = new AreaRequirement(draynorManorSecondFloor);
     AreaRequirement inDraynorManorTopFloor = new AreaRequirement(draynorManorTopFloor);
     AreaRequirement inMagicWhistleRoom = new AreaRequirement(magicWhistleRoom);
-    GroundItemStep takeWhistles = new GroundItemStep(ItemId.MAGIC_WHISTLE,
+    GroundItemStep takeWhistles = new GroundItemStep(ItemID.MAGIC_WHISTLE,
             new RSTile(3107, 3359, 2), holyTableNapkin, inMagicWhistleRoom);
     AreaRequirement inTeleportLocation = new AreaRequirement(teleportLocation);
     //AreaRequirement inFisherKingRealmEntrance = new AreaRequirement(fisherKingRealmEntrance);
@@ -169,56 +169,56 @@ public class HolyGrail implements QuestTask {
     RSArea WHISTLE_ROOM = new RSArea(new RSTile(3112, 3357, 2), new RSTile(3104, 3361, 2));
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 10, 150),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 1, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 5, 30),
-                    new GEItem(ItemId.RUNE_SCIMITAR, 1, 35),
-                    new GEItem(ItemId.MONKS_ROBE_TOP, 1, 250),
-                    new GEItem(ItemId.MONKS_ROBE_BOTTOM, 1, 250),
-                    new GEItem(ItemId.PRAYER_POTION_4, 3, 20),
-                    new GEItem(ItemId.LOBSTER, 15, 40),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
-                    new GEItem(ItemId.SUPER_COMBAT_POTION[0], 2, 20),
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], 2, 65),
-                    new GEItem(ItemId.STAMINA_POTION[0], 4, 30),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 30),
-                    new GEItem(ItemId.SKILLS_NECKLACE[2], 2, 30),
-                    new GEItem(ItemId.COMBAT_BRACELET[2], 1, 30)
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 10, 150),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 1, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 5, 30),
+                    new GEItem(ItemID.RUNE_SCIMITAR, 1, 35),
+                    new GEItem(ItemID.MONKS_ROBE_TOP, 1, 250),
+                    new GEItem(ItemID.MONKS_ROBE_BOTTOM, 1, 250),
+                    new GEItem(ItemID.PRAYER_POTION_4, 3, 20),
+                    new GEItem(ItemID.LOBSTER, 15, 40),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.SUPER_COMBAT_POTION[0], 2, 20),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 2, 65),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 30),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 30),
+                    new GEItem(ItemID.SKILLS_NECKLACE[2], 2, 30),
+                    new GEItem(ItemID.COMBAT_BRACELET[2], 1, 30)
 
             )
     );
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.CAMELOT_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 1, 0, true, true),
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 1)
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 1)
             )));
     InventoryRequirement entranaInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.CAMELOT_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.ANTIDOTE_PLUS_PLUS[0], 1, 0),
-                    new ItemReq(ItemId.COINS_995, 5000, 500),
-                    new ItemReq(ItemId.SKILLS_NECKLACE[2], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 0)))
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 0),
+                    new ItemReq(ItemID.COINS_995, 5000, 500),
+                    new ItemReq(ItemID.SKILLS_NECKLACE[2], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0)))
     );
     InventoryRequirement fightInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.CAMELOT_TELEPORT, 6, 0),
-                    new ItemReq(ItemId.ANTIDOTE_PLUS_PLUS[0], 1, 0),
-                    new ItemReq(ItemId.COINS_995, 5000, 500),
-                    new ItemReq(ItemId.RUNE_SCIMITAR, 1, 0, true, true),
-                    new ItemReq(ItemId.MONKS_ROBE_BOTTOM, 1, 1, true, true),
-                    new ItemReq(ItemId.MONKS_ROBE_TOP, 1, 1, true, true),
-                    new ItemReq(ItemId.PRAYER_POTION_4, 3, 1),
-                    new ItemReq(ItemId.MAGIC_WHISTLE, 2, 2),
-                    new ItemReq(ItemId.LOBSTER, 8, 2),
-                    new ItemReq(ItemId.EXCALIBUR, 1, 0, true, false),
-                    new ItemReq(ItemId.FALADOR_TELEPORT, 2, 0),
-                    new ItemReq(ItemId.SUPER_COMBAT_POTION[0], 1, 0),
-                    new ItemReq(ItemId.SKILLS_NECKLACE[2], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 0)))
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 6, 0),
+                    new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 0),
+                    new ItemReq(ItemID.COINS_995, 5000, 500),
+                    new ItemReq(ItemID.RUNE_SCIMITAR, 1, 0, true, true),
+                    new ItemReq(ItemID.MONKS_ROBE_BOTTOM, 1, 1, true, true),
+                    new ItemReq(ItemID.MONKS_ROBE_TOP, 1, 1, true, true),
+                    new ItemReq(ItemID.PRAYER_POTION_4, 3, 1),
+                    new ItemReq(ItemID.MAGIC_WHISTLE, 2, 2),
+                    new ItemReq(ItemID.LOBSTER, 8, 2),
+                    new ItemReq(ItemID.EXCALIBUR, 1, 0, true, false),
+                    new ItemReq(ItemID.FALADOR_TELEPORT, 2, 0),
+                    new ItemReq(ItemID.SUPER_COMBAT_POTION[0], 1, 0),
+                    new ItemReq(ItemID.SKILLS_NECKLACE[2], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0)))
     );
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
     RSTile COMBAT_TILE = new RSTile(2795, 4722, 0);
@@ -299,7 +299,7 @@ public class HolyGrail implements QuestTask {
                     Timer.waitCondition(() -> WHISTLE_ROOM.contains(Player.getPosition()), 5000, 7000);
             }
             for (int i = 0; i < 4; i++) {
-                RSItem[] whistles = Inventory.find(ItemId.MAGIC_WHISTLE);
+                RSItem[] whistles = Inventory.find(ItemID.MAGIC_WHISTLE);
                 if (whistles.length > 1)
                     break;
                 takeWhistles.pickUpItem();
@@ -379,7 +379,7 @@ public class HolyGrail implements QuestTask {
                     Timer.waitCondition(() -> ttn.get().isHealthBarVisible(), 3000, 4500);
             }
 
-            RSItem[] combat = Inventory.find(ItemId.SUPER_COMBAT_POTION);
+            RSItem[] combat = Inventory.find(ItemID.SUPER_COMBAT_POTION);
             if (combat.length > 0 &&
                     Skills.getCurrentLevel(Skills.SKILLS.STRENGTH) <= Skills.getActualLevel(Skills.SKILLS.STRENGTH) + 2) {
                 //drink super combat if w/in 2 levels of actual

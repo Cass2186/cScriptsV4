@@ -56,7 +56,7 @@ public class CraftRunes implements Task {
             Walking.blindWalkTo(altarTile.getRandomTile());
             Timer.waitCondition(() -> altar[0].isClickable(), 7000, 12000);
             if (Utils.clickObject("Altar", "Craft-rune", false)) {
-                Timer.abc2WaitCondition(() -> Inventory.find(ItemId.PURE_ESSENCE).length < 1, 9000, 15000);
+                Timer.abc2WaitCondition(() -> Inventory.find(ItemID.PURE_ESSENCE).length < 1, 9000, 15000);
             }
         }
     }
@@ -103,7 +103,7 @@ public class CraftRunes implements Task {
             message = "Crafting Runes";
 
             General.println("here - line 104");
-            if (Inventory.find(ItemId.PURE_ESSENCE).length > 0
+            if (Inventory.find(ItemID.PURE_ESSENCE).length > 0
                     && Utils.useItemOnObject(runeId, "Altar")) {
 
                 if (!RcVars.get().usingLunarImbue)
@@ -114,7 +114,7 @@ public class CraftRunes implements Task {
                     Timer.waitCondition(() -> Player.getAnimation() != -1, 9000, 15000);
                     return Timer.waitCondition(() -> Player.getAnimation() == -1, 9000, 15000);
                 }
-                return Timer.waitCondition(() -> Inventory.find(ItemId.PURE_ESSENCE).length == 0, 9000, 15000);
+                return Timer.waitCondition(() -> Inventory.find(ItemID.PURE_ESSENCE).length == 0, 9000, 15000);
             }
         }
         return false;
@@ -143,7 +143,7 @@ public class CraftRunes implements Task {
                     Timer.waitCondition(() -> Player.getAnimation() != -1, 9000, 15000);
                     Timer.waitCondition(() -> Player.getAnimation() == -1, 9000, 15000);
                 } else
-                    Timer.waitCondition(() -> Inventory.find(ItemId.PURE_ESSENCE).length == 0, 9000, 15000);
+                    Timer.waitCondition(() -> Inventory.find(ItemID.PURE_ESSENCE).length == 0, 9000, 15000);
             }
             if (!Inventory.isFull())
                 emptyPouches();
@@ -154,7 +154,7 @@ public class CraftRunes implements Task {
                     Timer.waitCondition(() -> Player.getAnimation() != -1, 9000, 15000);
                     Timer.waitCondition(() -> Player.getAnimation() == -1, 9000, 15000);
                 } else
-                    Timer.waitCondition(() -> Inventory.find(ItemId.PURE_ESSENCE).length == 0, 9000, 15000);
+                    Timer.waitCondition(() -> Inventory.find(ItemID.PURE_ESSENCE).length == 0, 9000, 15000);
             }
             if (RcVars.get().abyssCrafting)
                 RunecraftBank.gloryTele("Edgeville");
@@ -214,14 +214,14 @@ public class CraftRunes implements Task {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING)) {
             // Lava and NOT imbue
             if (RcVars.get().lava && !RcVars.get().usingLunarImbue) {
-                return atAltar() && Inventory.find(ItemId.PURE_ESSENCE).length > 0
-                        && Inventory.find(ItemId.EARTH_TALISMAN).length > 0
+                return atAltar() && Inventory.find(ItemID.PURE_ESSENCE).length > 0
+                        && Inventory.find(ItemID.EARTH_TALISMAN).length > 0
                         && !RcVars.get().collectPouches;
 
             }
             // lava and Imbue
             if (RcVars.get().lava && RcVars.get().usingLunarImbue) {
-                return atAltar() && Inventory.find(ItemId.PURE_ESSENCE).length > 0
+                return atAltar() && Inventory.find(ItemID.PURE_ESSENCE).length > 0
                         && !RcVars.get().collectPouches;
 
             }
@@ -230,8 +230,8 @@ public class CraftRunes implements Task {
                     && !RcVars.get().abyssCrafting && !RcVars.get().zanarisCrafting &&
                     RunecraftBank.getLevel() >= 19) {
 
-                return atAltar() && Inventory.find(ItemId.PURE_ESSENCE).length > 0
-                        && Inventory.find(ItemId.WATER_TALISMAN).length > 0
+                return atAltar() && Inventory.find(ItemID.PURE_ESSENCE).length > 0
+                        && Inventory.find(ItemID.WATER_TALISMAN).length > 0
                         && !RcVars.get().collectPouches;
 
             }
@@ -239,12 +239,12 @@ public class CraftRunes implements Task {
             if (!RcVars.get().lava
                     && !RcVars.get().abyssCrafting && !RcVars.get().zanarisCrafting && RunecraftBank.getLevel() >= 19) {
 
-                return atAltar() && Inventory.find(ItemId.PURE_ESSENCE).length > 0
+                return atAltar() && Inventory.find(ItemID.PURE_ESSENCE).length > 0
                         && !RcVars.get().collectPouches;
             }
 
             // mostly redundant with the previous one
-            return atAltar() && Inventory.find(ItemId.PURE_ESSENCE).length > 0 && !RcVars.get().collectPouches;
+            return atAltar() && Inventory.find(ItemID.PURE_ESSENCE).length > 0 && !RcVars.get().collectPouches;
         }
         return false;
     }
@@ -261,16 +261,16 @@ public class CraftRunes implements Task {
             craftRunesAltar(FIRE_ALTAR_TILE);
 
         } else if (RcVars.get().lava) {
-            craftCombinationRune(ItemId.EARTH_RUNE);
+            craftCombinationRune(ItemID.EARTH_RUNE);
             if (!Inventory.isFull()) {
                 emptyPouches();
-                craftCombinationRune(ItemId.EARTH_RUNE);
+                craftCombinationRune(ItemID.EARTH_RUNE);
             }
         } else if (!RcVars.get().abyssCrafting && !RcVars.get().zanarisCrafting) {
-            craftCombinationRune(ItemId.WATER_RUNE);
+            craftCombinationRune(ItemID.WATER_RUNE);
             if (!Inventory.isFull()) {
                 emptyPouches();
-                craftCombinationRune(ItemId.WATER_RUNE);
+                craftCombinationRune(ItemID.WATER_RUNE);
             }
         } else {
             craftRunes();

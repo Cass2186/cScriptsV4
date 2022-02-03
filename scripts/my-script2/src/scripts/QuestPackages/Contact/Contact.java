@@ -1,5 +1,6 @@
 package scripts.QuestPackages.Contact;
 
+import com.trilezstudios.updater.hooks.NPC;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
@@ -24,7 +25,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Contact implements QuestTask{
+public class Contact implements QuestTask {
 
     private static Contact quest;
 
@@ -102,19 +103,19 @@ public class Contact implements QuestTask{
     */
 
     public void setupItemRequirements() {
-        lightSource = new ItemReq(ItemId.LIT_CANDLE, 1);
-        tinderbox = new ItemReq(ItemId.TINDERBOX, 1);
-        parchment = new ItemReq("Parchment", ItemId.PARCHMENT);
+        lightSource = new ItemReq(ItemID.LIT_CANDLE, 1);
+        tinderbox = new ItemReq(ItemID.TINDERBOX, 1);
+        parchment = new ItemReq("Parchment", ItemID.PARCHMENT);
 
 
-        food = new ItemReq(ItemId.SHARK, 10, 1);
+        food = new ItemReq(ItemID.SHARK, 10, 1);
 
-        prayerPotions = new ItemReq(ItemId.PRAYER_POTION_4, 4, 1);
+        prayerPotions = new ItemReq(ItemID.PRAYER_POTION_4, 4, 1);
 
-        keris = new ItemReq("Keris", ItemId.KERIS);
+        keris = new ItemReq("Keris", ItemID.KERIS);
 
-        coins = new ItemReq("Coins for carpet rides", ItemId.COINS_995);
-        glory = new ItemReq(ItemId.AMULET_OF_GLORY[2], 1, 0, true);
+        coins = new ItemReq("Coins for carpet rides", ItemID.COINS_995);
+        glory = new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true);
     }
 
     public void setupRSAreas() {
@@ -233,54 +234,54 @@ public class Contact implements QuestTask{
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SNAKESKIN_BANDANA, 1, 500),
-                    new GEItem(ItemId.SNAKESKIN_BOOTS, 1, 300),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 20),
-                    new GEItem(ItemId.RED_DHIDE_BODY, 1, 50),
-                    new GEItem(ItemId.RED_DHIDE_CHAPS, 1, 50),
-                    new GEItem(ItemId.RED_DHIDE_VAMBRACES, 1, 50),
-                    new GEItem(ItemId.RED_DHIDE_SHIELD, 1, 100),
-                    new GEItem(ItemId.RUNITE_BOLTS, 500, 15),
-                    new GEItem(ItemId.RUNE_CROSSBOW, 1, 25),
-                    new GEItem(ItemId.SHARK, 25, 20),
-                    new GEItem(ItemId.PRAYER_POTION_4, 5, 15),
-                    new GEItem(ItemId.NARDAH_TELEPORT, 6, 30),
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], 2, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 4, 20),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
-                    new GEItem(ItemId.TINDERBOX, 1, 200),
-                    new GEItem(ItemId.CANDLE, 1, 500),
-                    new GEItem(ItemId.WATERSKIN[0], 1, 500)
+                    new GEItem(ItemID.SNAKESKIN_BANDANA, 1, 500),
+                    new GEItem(ItemID.SNAKESKIN_BOOTS, 1, 300),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20),
+                    new GEItem(ItemID.RED_DHIDE_BODY, 1, 50),
+                    new GEItem(ItemID.RED_DHIDE_CHAPS, 1, 50),
+                    new GEItem(ItemID.RED_DHIDE_VAMBRACES, 1, 50),
+                    new GEItem(ItemID.RED_DHIDE_SHIELD, 1, 100),
+                    new GEItem(ItemID.RUNITE_BOLTS, 500, 15),
+                    new GEItem(ItemID.RUNE_CROSSBOW, 1, 25),
+                    new GEItem(ItemID.SHARK, 25, 20),
+                    new GEItem(ItemID.PRAYER_POTION_4, 5, 15),
+                    new GEItem(ItemID.NARDAH_TELEPORT, 6, 30),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 2, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 20),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.TINDERBOX, 1, 200),
+                    new GEItem(ItemID.CANDLE, 1, 500),
+                    new GEItem(ItemID.WATERSKIN[0], 1, 500)
             )
     );
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     BankTask startInv = BankTask.builder()
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemId.SNAKESKIN_BANDANA, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.NECK).item(ItemId.AMULET_OF_GLORY[2], Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemId.SNAKESKIN_BOOTS, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemId.RED_DHIDE_BODY, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemId.RED_DHIDE_CHAPS, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemId.RED_DHIDE_VAMBRACES, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.SHIELD).item(ItemId.RED_DHIDE_SHIELD, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemId.RUNITE_BOLTS, Amount.of(500)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemId.AVAS_ACCUMULATOR, Amount.of(1)))
-            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.RUNE_CROSSBOW, Amount.of(1)))
-            .addInvItem(ItemId.SHARK, Amount.of(13))
-            .addInvItem(ItemId.PRAYER_POTION_4, Amount.of(5))
-            .addInvItem(ItemId.NARDAH_TELEPORT, Amount.fill(2))
-            .addInvItem(ItemId.ANTIDOTE_PLUS_PLUS[0], Amount.of(2))
-            .addInvItem(ItemId.STAMINA_POTION[0], Amount.of(2))
-            .addInvItem(ItemId.VARROCK_TELEPORT, Amount.of(5))
-            .addInvItem(ItemId.COINS, Amount.of(2000))
-            .addInvItem(ItemId.TINDERBOX, Amount.of(1))
-            .addInvItem(ItemId.CANDLE, Amount.of(1))
-            .addInvItem(ItemId.WATERSKIN[0], Amount.of(1))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemID.SNAKESKIN_BANDANA, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.NECK).item(ItemID.AMULET_OF_GLORY[2], Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemID.RED_DHIDE_BODY, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemID.RED_DHIDE_CHAPS, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemID.RED_DHIDE_VAMBRACES, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.SHIELD).item(ItemID.RED_DHIDE_SHIELD, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemID.RUNITE_BOLTS, Amount.of(500)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemID.AVAS_ACCUMULATOR, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.RUNE_CROSSBOW, Amount.of(1)))
+            .addInvItem(ItemID.SHARK, Amount.of(13))
+            .addInvItem(ItemID.PRAYER_POTION_4, Amount.of(5))
+            .addInvItem(ItemID.NARDAH_TELEPORT, Amount.fill(2))
+            .addInvItem(ItemID.ANTIDOTE_PLUS_PLUS[0], Amount.of(2))
+            .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(2))
+            .addInvItem(ItemID.VARROCK_TELEPORT, Amount.of(5))
+            .addInvItem(ItemID.COINS, Amount.of(2000))
+            .addInvItem(ItemID.TINDERBOX, Amount.of(1))
+            .addInvItem(ItemID.CANDLE, Amount.of(1))
+            .addInvItem(ItemID.WATERSKIN[0], Amount.of(1))
             .build();
 
     public void getStartInv() {
-        if (!startInv.isSatisfied() && Inventory.find(ItemId.LIT_CANDLE).length == 0) {
+        if (!startInv.isSatisfied() && Inventory.find(ItemID.LIT_CANDLE).length == 0) {
             cQuesterV2.status = "Buying start items";
             buyStep.buyItems();
             BankManager.open(true);
@@ -288,9 +289,9 @@ public class Contact implements QuestTask{
             cQuesterV2.status = "Getting start items";
             startInv.execute();
         }
-        if (Inventory.find(ItemId.LIT_CANDLE).length == 0) {
+        if (Inventory.find(ItemID.LIT_CANDLE).length == 0) {
             BankManager.close(true);
-            if (Utils.useItemOnItem(ItemId.TINDERBOX, ItemId.CANDLE))
+            if (Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.CANDLE))
                 General.sleep(450, 750);
         }
     }
@@ -356,7 +357,7 @@ public class Contact implements QuestTask{
     );
 
     public void checkLightSource() {
-        if (!lightSource.check() && Utils.useItemOnItem(ItemId.TINDERBOX, ItemId.CANDLE))
+        if (!lightSource.check() && Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.CANDLE))
             Timer.waitCondition(() -> lightSource.check(), 1200, 2000);
     }
 
@@ -453,7 +454,7 @@ public class Contact implements QuestTask{
                             Timer.waitCondition(Player::isMoving, 1500);
                         }
                         if (Player.isMoving()) {
-                            Waiting.waitNormal(2000,300);
+                            Waiting.waitNormal(2000, 300);
                             Log.log("[Debug]: Breaking loop");
                             break;
                         }
@@ -533,7 +534,7 @@ public class Contact implements QuestTask{
         if (Prayer.getPrayerPoints() < 15)
             PrayerUtil.drinkPrayerPotion();
 
-        if (Combat.isUnderAttack()){
+        if (Combat.isUnderAttack()) {
 
         }
     }
@@ -549,7 +550,7 @@ public class Contact implements QuestTask{
                 Timer.waitCondition(() -> Combat.isUnderAttack() || fightArea.contains(Player.getPosition()), 15000, 20000);
             }
             if (Game.isInInstance()) {
-              //  Combat.setAutoRetaliate(false);
+                //  Combat.setAutoRetaliate(false);
 
                 /**
                  *
@@ -558,8 +559,8 @@ public class Contact implements QuestTask{
                  */
                 checkPrayer(true, Prayer.PRAYERS.PROTECT_FROM_MISSILES);
                 Prayer.enable(Prayer.PRAYERS.HAWK_EYE);
-                RSItem[] anti = Inventory.find(ItemId.ANTIDOTE_PLUS_PLUS);
-                if (anti.length > 0 && MyPlayer.isPoisoned()){
+                RSItem[] anti = Inventory.find(ItemID.ANTIDOTE_PLUS_PLUS);
+                if (anti.length > 0 && MyPlayer.isPoisoned()) {
                     anti[0].click("Drink");
                 }
 
@@ -570,7 +571,7 @@ public class Contact implements QuestTask{
                 cQuesterV2.status = "Fighing";
 
                 RSTile safeTile = fightCenter.translate(5, 0);
-                RSTile lureTile = safeTile.translate(-22,-8);
+                RSTile lureTile = safeTile.translate(-22, -8);
                 if (safeTile.distanceTo(Player.getPosition()) > 1) {
                     if (PathingUtil.clickScreenWalk(safeTile))
                         PathingUtil.movementIdle();
@@ -585,9 +586,9 @@ public class Contact implements QuestTask{
                     Timer.waitCondition(Combat::isUnderAttack, 2500, 4000);
 
                     eatAndDrink();
-                    if (MyPlayer.isPoisoned()){
-                        RSItem[] anitdote = Inventory.find(ItemId.ANTIDOTE_PLUS_PLUS);
-                        if (anitdote.length > 0 && anitdote[0].click("Drink")){
+                    if (MyPlayer.isPoisoned()) {
+                        RSItem[] anitdote = Inventory.find(ItemID.ANTIDOTE_PLUS_PLUS);
+                        if (anitdote.length > 0 && anitdote[0].click("Drink")) {
                             targ[0].click("Attack");
                         }
                     }
@@ -634,7 +635,7 @@ public class Contact implements QuestTask{
         setupSteps();
 
         if (Utils.getVarBitValue(VARBIT) == 0) {
-  getStartInv();
+            getStartInv();
             cQuesterV2.status = "Talking to high priest";
             talkToHighPriest.execute();
         } else if (Utils.getVarBitValue(VARBIT) == 10) {
@@ -661,6 +662,8 @@ public class Contact implements QuestTask{
         } else if (Utils.getVarBitValue(VARBIT) == 70) {
             cQuesterV2.status = "Talking to Osman: Outside Soph";
             talkToOsmanOutsideSoph.execute();
+            if (NPCInteraction.isConversationWindowUp())
+                NPCInteraction.handleConversation();
             Utils.cutScene();
         } else if (Utils.getVarBitValue(VARBIT) == 90) {
             cQuesterV2.status = "Going down to dungeon";
@@ -673,8 +676,9 @@ public class Contact implements QuestTask{
             fight();
 
         } else if (Utils.getVarBitValue(VARBIT) == 120) {
-            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MISSILES)){
-            Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MISSILES);
+            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MISSILES)) {
+                Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MISSILES, Prayer.PRAYERS.EAGLE_EYE,
+                        Prayer.PRAYERS.HAWK_EYE);
             }
             cQuesterV2.status = "Going down to Finish";
             returnToHighPriest.execute();

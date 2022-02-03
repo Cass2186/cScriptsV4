@@ -17,8 +17,6 @@ import scripts.Tasks.Task;
 public class LightHouseSteps implements QuestTask {
 
 
-
-
     public static void goToLightHouse(){
         if (HorrorConst.OUTSIDE_LIGHTHOUSE.contains(Player.getPosition()) ||
                 (!HorrorConst.OUTSIDE_LIGHTHOUSE.contains(Player.getPosition())) &&
@@ -40,7 +38,7 @@ public class LightHouseSteps implements QuestTask {
             if (Utils.clickObject(4617, "Search", true)) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Take all three books");
-                Timer.abc2WaitCondition(() -> Inventory.find(HorrorConst.HORROR_JOURNAL).length > 0, 5000, 8000);
+                Timer.waitCondition(() -> Inventory.find(HorrorConst.HORROR_JOURNAL).length > 0, 2500, 4000);
             }
         }
     }
@@ -105,23 +103,23 @@ public class LightHouseSteps implements QuestTask {
         }
     }
 
-    UseItemOnObjectStep fireRuneOnDoor = new UseItemOnObjectStep(ItemId.FIRE_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.FIRE_RUNE).length < 1, true);
+    UseItemOnObjectStep fireRuneOnDoor = new UseItemOnObjectStep(ItemID.FIRE_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.FIRE_RUNE).length < 1, true);
 
-    UseItemOnObjectStep airRuneOnDoor = new UseItemOnObjectStep(ItemId.AIR_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.AIR_RUNE).length < 1, true);
+    UseItemOnObjectStep airRuneOnDoor = new UseItemOnObjectStep(ItemID.AIR_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.AIR_RUNE).length < 1, true);
 
-    UseItemOnObjectStep waterRuneOnDoor = new UseItemOnObjectStep(ItemId.WATER_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.WATER_RUNE).length < 1, true);
+    UseItemOnObjectStep waterRuneOnDoor = new UseItemOnObjectStep(ItemID.WATER_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.WATER_RUNE).length < 1, true);
 
-    UseItemOnObjectStep earthRuneOnDoor = new UseItemOnObjectStep(ItemId.EARTH_RUNE, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.EARTH_RUNE).length < 1, true);
+    UseItemOnObjectStep earthRuneOnDoor = new UseItemOnObjectStep(ItemID.EARTH_RUNE, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.EARTH_RUNE).length < 1, true);
 
-    UseItemOnObjectStep arrowOnDoor = new UseItemOnObjectStep(ItemId.BRONZE_ARROW, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.BRONZE_ARROW).length < 1, true);
+    UseItemOnObjectStep arrowOnDoor = new UseItemOnObjectStep(ItemID.BRONZE_ARROW, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.BRONZE_ARROW).length < 1, true);
 
-    UseItemOnObjectStep swordOnDoor = new UseItemOnObjectStep(ItemId.BRONZE_SWORD, HorrorConst.BASEMENT_DOOR_ID,
-            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemId.BRONZE_SWORD).length < 1, true);
+    UseItemOnObjectStep swordOnDoor = new UseItemOnObjectStep(ItemID.BRONZE_SWORD, HorrorConst.BASEMENT_DOOR_ID,
+            HorrorConst.BASEMENT_DOOR_TILE, Inventory.find(ItemID.BRONZE_SWORD).length < 1, true);
 
 
     public void handleBasementDoor() {
@@ -184,13 +182,13 @@ public class LightHouseSteps implements QuestTask {
             goUpStairs();
 
             if (Utils.getVarBitValue(46) == 0)
-                useItemOnLight(ItemId.SWAMP_TAR);
+                useItemOnLight(ItemID.SWAMP_TAR);
 
             if (Utils.getVarBitValue(48) == 0)
-                useItemOnLight(ItemId.TINDERBOX);
+                useItemOnLight(ItemID.TINDERBOX);
 
             if (Utils.getVarBitValue(47) == 0)
-                useItemOnLight(ItemId.MOLTEN_GLASS);
+                useItemOnLight(ItemID.MOLTEN_GLASS);
         } else {
             goDownStairs();
             handleBasementDoor();

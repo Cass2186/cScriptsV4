@@ -45,13 +45,13 @@ public class FishingContest implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(garlic, 1, 500),
-                    new GEItem(ItemId.FISHING_ROD, 1, 500),
-                    new GEItem(ItemId.SKILLS_NECKLACE[0], 1, 50),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 10, 50),
-                    new GEItem(ItemId.SPADE, 1, 500),
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.FISHING_ROD, 1, 500),
+                    new GEItem(ItemID.SKILLS_NECKLACE[0], 1, 50),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 10, 50),
+                    new GEItem(ItemID.SPADE, 1, 500),
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 

@@ -124,21 +124,21 @@ public class MerlinsCrystal implements QuestTask {
         return steps;
     }*/
 
-    ItemReq  bread = new ItemReq("Bread", ItemId.BREAD);
-    ItemReq  tinderbox = new ItemReq("Tinderbox", ItemId.TINDERBOX);
-    ItemReq   bucketOfWaxOptional = new ItemReq("Bucket of wax (obtainable during quest)", ItemId.BUCKET_OF_WAX);
-    ItemReq  bucketOfWax = new ItemReq("Bucket of wax", ItemId.BUCKET_OF_WAX);
-    ItemReq  batBones = new ItemReq("Bat bones", ItemId.BAT_BONES);
-    ItemReq  batBonesOptional = new ItemReq("Bat bones (obtainable during quest)", ItemId.BAT_BONES);
-  //  ItemReq   varrockTeleport = new ItemReq(ItemId.VARROCK_TELEPORT);
-    //ItemReq   camelotTeleport = new ItemReq(ItemId.CAMELOT_TELEPORT);
-  //  ItemReq   twoFaladorTeleports = new ItemReq(ItemId.FALADOR_TELEPORT, 2);
+    ItemReq  bread = new ItemReq("Bread", ItemID.BREAD);
+    ItemReq  tinderbox = new ItemReq("Tinderbox", ItemID.TINDERBOX);
+    ItemReq   bucketOfWaxOptional = new ItemReq("Bucket of wax (obtainable during quest)", ItemID.BUCKET_OF_WAX);
+    ItemReq  bucketOfWax = new ItemReq("Bucket of wax", ItemID.BUCKET_OF_WAX);
+    ItemReq  batBones = new ItemReq("Bat bones", ItemID.BAT_BONES);
+    ItemReq  batBonesOptional = new ItemReq("Bat bones (obtainable during quest)", ItemID.BAT_BONES);
+  //  ItemReq   varrockTeleport = new ItemReq(ItemID.VARROCK_TELEPORT);
+    //ItemReq   camelotTeleport = new ItemReq(ItemID.CAMELOT_TELEPORT);
+  //  ItemReq   twoFaladorTeleports = new ItemReq(ItemID.FALADOR_TELEPORT, 2);
         //  combatGear = new ItemReq("Combat gear + food for Sir Mordred (level 39)", -1, -1);
-        //  combatGear.setDisplayItemId(BankSlotIcons.getCombatGear());
-        ItemReq  blackCandle = new ItemReq("Black candle", ItemId.BLACK_CANDLE);
-    ItemReq  litBlackCandle = new ItemReq("Lit black candle", ItemId.LIT_BLACK_CANDLE);
-    ItemReq  excalibur = new ItemReq("Excalibur", ItemId.EXCALIBUR);
-    ItemReq   equippedExcalibur = new ItemReq(ItemId.EXCALIBUR, 1, true, true);
+        //  combatGear.setDisplayItemID(BankSlotIcons.getCombatGear());
+        ItemReq  blackCandle = new ItemReq("Black candle", ItemID.BLACK_CANDLE);
+    ItemReq  litBlackCandle = new ItemReq("Lit black candle", ItemID.LIT_BLACK_CANDLE);
+    ItemReq  excalibur = new ItemReq("Excalibur", ItemID.EXCALIBUR);
+    ItemReq   equippedExcalibur = new ItemReq(ItemID.EXCALIBUR, 1, true, true);
 
 
     public void loadRSAreas() {
@@ -294,24 +294,24 @@ public class MerlinsCrystal implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(BREAD, 1, 500),
-                    new GEItem(ItemId.BUCKET_OF_WAX, 1, 400),
-                    new GEItem(ItemId.BAT_BONES, 1, 300),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 6, 50),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 7, 50),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 7, 50),
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], 3, 50),
-                    new GEItem(ItemId.SKILLS_NECKLACE[2], 1, 30),
-                    new GEItem(ItemId.LOBSTER, 15, 50),
-                    new GEItem(ItemId.TINDERBOX, 1, 50),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 1, 50),
-                    new GEItem(ItemId.MIND_RUNE, 300, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 900, 20),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 50),
+                    new GEItem(ItemID.BUCKET_OF_WAX, 1, 400),
+                    new GEItem(ItemID.BAT_BONES, 1, 300),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 6, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 7, 50),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 7, 50),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 3, 50),
+                    new GEItem(ItemID.SKILLS_NECKLACE[2], 1, 30),
+                    new GEItem(ItemID.LOBSTER, 15, 50),
+                    new GEItem(ItemID.TINDERBOX, 1, 50),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 1, 50),
+                    new GEItem(ItemID.MIND_RUNE, 300, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 900, 20),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 50),
 
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 20),
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20),
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -324,14 +324,14 @@ public class MerlinsCrystal implements QuestTask {
 
     InventoryRequirement fightInv = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.CHAOS_RUNE, 400, 50),
-                    new ItemReq(ItemId.LAVA_RUNE, 1200, 300),
-                    new ItemReq(ItemId.WATER_RUNE, 1200, 300),
-                    new ItemReq(ItemId.STAFF_OF_AIR, 1, 0),
-                    new ItemReq(ItemId.LOBSTER, 15, 5),
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.PRAYER_POTION[0], 3, 0)
+                    new ItemReq(ItemID.CHAOS_RUNE, 400, 50),
+                    new ItemReq(ItemID.LAVA_RUNE, 1200, 300),
+                    new ItemReq(ItemID.WATER_RUNE, 1200, 300),
+                    new ItemReq(ItemID.STAFF_OF_AIR, 1, 0),
+                    new ItemReq(ItemID.LOBSTER, 15, 5),
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.PRAYER_POTION[0], 3, 0)
             ))
     );
 
@@ -340,24 +340,24 @@ public class MerlinsCrystal implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         BankManager.open(true);
         BankManager.depositAll(true);
-        BankManager.withdraw(7, true, ItemId.CAMELOT_TELEPORT);
-        BankManager.withdraw(1, true, ItemId.TINDERBOX);
-        BankManager.withdraw(5, true, ItemId.FALADOR_TELEPORT);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[2]);
-        BankManager.withdraw(1, true, ItemId.GAMES_NECKLACE[0]);
-        BankManager.withdraw(1, true, ItemId.BUCKET_OF_WAX);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemId.BAT_BONES);
-        BankManager.withdraw(1, true, ItemId.BREAD);
+        BankManager.withdraw(7, true, ItemID.CAMELOT_TELEPORT);
+        BankManager.withdraw(1, true, ItemID.TINDERBOX);
+        BankManager.withdraw(5, true, ItemID.FALADOR_TELEPORT);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[2]);
+        BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
+        BankManager.withdraw(1, true, ItemID.BUCKET_OF_WAX);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.BAT_BONES);
+        BankManager.withdraw(1, true, ItemID.BREAD);
 
-        BankManager.withdraw(2, true, ItemId.BLACK_CANDLE);
-        BankManager.withdraw(1, true, ItemId.STAFF_OF_AIR);
-        Utils.equipItem(ItemId.STAFF_OF_AIR);
-        BankManager.withdraw(300, true, ItemId.MIND_RUNE);
-        BankManager.withdraw(800, true, ItemId.FIRE_RUNE);
-        BankManager.withdraw(13, true, ItemId.LOBSTER);
-        BankManager.withdraw(2, true, ItemId.VARROCK_TELEPORT);
-        BankManager.withdraw(1, true, ItemId.EXCALIBUR);
+        BankManager.withdraw(2, true, ItemID.BLACK_CANDLE);
+        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+        Utils.equipItem(ItemID.STAFF_OF_AIR);
+        BankManager.withdraw(300, true, ItemID.MIND_RUNE);
+        BankManager.withdraw(800, true, ItemID.FIRE_RUNE);
+        BankManager.withdraw(13, true, ItemID.LOBSTER);
+        BankManager.withdraw(2, true, ItemID.VARROCK_TELEPORT);
+        BankManager.withdraw(1, true, ItemID.EXCALIBUR);
         BankManager.close(true);
     }
 
@@ -461,9 +461,9 @@ public class MerlinsCrystal implements QuestTask {
             checkEat();
             if (SECOND_FLOOR_STAIRS_UP.contains(Player.getPosition())) {
                 if (Utils.clickObj("Staircase", "Climb-up")) {
-                    Timer.waitCondition(() -> !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 10000, 15000);
+                    Timer.waitCondition(() -> !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 7000, 15000);
                     checkEat();
-                    if (Combat.isUnderAttack())
+                    if (Combat.isUnderAttack() && !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()))
                         Timer.abc2WaitCondition(() -> !Combat.isUnderAttack(), 6000, 9000);
                 }
             }
@@ -497,7 +497,7 @@ public class MerlinsCrystal implements QuestTask {
             while (mordred.length > 0) {
                 cQuesterV2.status = "Killing Mordred";
                 General.sleep(100);
-                Utils.equipItem(ItemId.STAFF_OF_AIR);
+                Utils.equipItem(ItemID.STAFF_OF_AIR);
                 if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE))
                     Autocast.enableAutocast(Autocast.FIRE_STRIKE);
 
@@ -524,8 +524,8 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void getBlackCandle() {
-        if (Inventory.find(ItemId.BLACK_CANDLE).length < 1 && Inventory.find(LIT_BLACK_CANDLE).length < 1) {
-            if (!BankManager.checkInventoryItems(ItemId.BUCKET_OF_WAX)) {
+        if (Inventory.find(ItemID.BLACK_CANDLE).length < 1 && Inventory.find(LIT_BLACK_CANDLE).length < 1) {
+            if (!BankManager.checkInventoryItems(ItemID.BUCKET_OF_WAX)) {
                 buyItems();
                 getItems();
             }
@@ -537,7 +537,7 @@ public class MerlinsCrystal implements QuestTask {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Have you got any black candles?");
                 NPCInteraction.handleConversation();
-                if (Inventory.find(ItemId.BLACK_CANDLE).length < 1) {
+                if (Inventory.find(ItemID.BLACK_CANDLE).length < 1) {
                     if (NpcChat.talkToNPC("Candle maker")) {
                         NPCInteraction.waitForConversationWindow();
                         NPCInteraction.handleConversation();
@@ -549,7 +549,7 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void ladyofthelake() {
-        if (Inventory.find(ItemId.EXCALIBUR).length < 1) {
+        if (Inventory.find(ItemID.EXCALIBUR).length < 1) {
             cQuesterV2.status = "Going to lady of the lake";
             PathingUtil.walkToTile(ladyOfTheLakeTile);
             if (NpcChat.talkToNPC("The Lady of the Lake")) {
@@ -561,7 +561,7 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void goToPortSarim() {
-        if (Inventory.find(ItemId.EXCALIBUR).length < 1) {
+        if (Inventory.find(ItemID.EXCALIBUR).length < 1) {
             cQuesterV2.status = "Going to Port Sarim";
 
             if (PathingUtil.walkToTile(new RSTile(3016, 3247, 0)))
@@ -577,7 +577,7 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void goToAltar() {
-        invItem1 = Inventory.find(ItemId.EXCALIBUR);
+        invItem1 = Inventory.find(ItemID.EXCALIBUR);
         if (invItem1.length > 0) {
             cQuesterV2.status = "Going to Chaos Altar";
             PathingUtil.walkToTile(chaosAltarTile);
@@ -590,7 +590,7 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void summon() {
-        RSItem[]  invItem1 = Inventory.find(ItemId.EXCALIBUR);
+        RSItem[]  invItem1 = Inventory.find(ItemID.EXCALIBUR);
         RSItem[] invBatBones = Inventory.find(batBones.getId());
         checkItems(batBones.getId());
         if (Inventory.find(excalibur.getId()).length > 0 && Inventory.find(batBones.getId()).length > 0 &&
@@ -617,7 +617,7 @@ public class MerlinsCrystal implements QuestTask {
         cQuesterV2.status = "Freeing Merlin";
         PathingUtil.walkToTile(merlinTile);
 
-        if (Utils.useItemOnObject(ItemId.EXCALIBUR, "Giant crystal")) {
+        if (Utils.useItemOnObject(ItemID.EXCALIBUR, "Giant crystal")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Yes certainly.");
             NPCInteraction.handleConversation();
@@ -633,8 +633,8 @@ public class MerlinsCrystal implements QuestTask {
         }
     }
 
-    public void checkItems(int... itemId) {
-        if (!BankManager.checkInventoryItems(itemId)) {
+    public void checkItems(int... ItemID) {
+        if (!BankManager.checkInventoryItems(ItemID)) {
             General.println("[Debug]: Missing an item, going to check bank and buy if needed.");
             buyItems();
             getItems();

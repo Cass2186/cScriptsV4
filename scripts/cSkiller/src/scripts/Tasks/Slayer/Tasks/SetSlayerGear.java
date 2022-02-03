@@ -73,9 +73,9 @@ public class SetSlayerGear implements Task {
         }
     }
 
-    public static String getItemName(int itemId) {
+    public static String getItemName(int ItemID) {
 
-        RSItemDefinition itemDef = RSItemDefinition.get(itemId);
+        RSItemDefinition itemDef = RSItemDefinition.get(ItemID);
         if (itemDef != null) {
             String itemName = itemDef.getName();
 
@@ -115,26 +115,26 @@ public class SetSlayerGear implements Task {
     }
 
 
-    private static boolean equipItem(int itemId) {
-        RSItem[] invItemEquip = Inventory.find(Filters.Items.actionsEquals("Equip").and(Filters.Items.idEquals(itemId)));
-        RSItem[] invItemWield = Inventory.find(Filters.Items.actionsEquals("Wield").and(Filters.Items.idEquals(itemId)));
-        RSItem[] invItemWear = Inventory.find(Filters.Items.actionsEquals("Wear").and(Filters.Items.idEquals(itemId)));
+    private static boolean equipItem(int ItemID) {
+        RSItem[] invItemEquip = Inventory.find(Filters.Items.actionsEquals("Equip").and(Filters.Items.idEquals(ItemID)));
+        RSItem[] invItemWield = Inventory.find(Filters.Items.actionsEquals("Wield").and(Filters.Items.idEquals(ItemID)));
+        RSItem[] invItemWear = Inventory.find(Filters.Items.actionsEquals("Wear").and(Filters.Items.idEquals(ItemID)));
 
         if (invItemEquip.length > 0) {
             if (invItemEquip[0].click("Equip"))
-                Timer.waitCondition(() -> Equipment.find(itemId).length > 0, 3000, 5000);
+                Timer.waitCondition(() -> Equipment.find(ItemID).length > 0, 3000, 5000);
             Utils.microSleep();
             return true;
         }
         if (invItemWield.length > 0) {
             if (invItemWield[0].click("Wield"))
-                Timer.waitCondition(() -> Equipment.find(itemId).length > 0, 3000, 5000);
+                Timer.waitCondition(() -> Equipment.find(ItemID).length > 0, 3000, 5000);
             Utils.microSleep();
             return true;
         }
         if (invItemWear.length > 0) {
             if (invItemWear[0].click("Wear"))
-                Timer.waitCondition(() -> Equipment.find(itemId).length > 0, 3000, 5000);
+                Timer.waitCondition(() -> Equipment.find(ItemID).length > 0, 3000, 5000);
             Utils.microSleep();
             return true;
         }

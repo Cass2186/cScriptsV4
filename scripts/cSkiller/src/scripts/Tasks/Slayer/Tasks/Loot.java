@@ -110,52 +110,37 @@ public class Loot implements Task {
     }
 
     public void getLoot() {
-        RSGroundItem[] groundItems = GroundItems.getAll();
         RSGroundItem loot = getLootItem();
         if (loot != null) {
             int inv = Inventory.getAll().length;
 
             if (SlayerVars.get().fightArea.contains(loot)) {
-
-             //   RSItemDefinition def = loot.getDefinition();
                 String name = "";
                 int id = loot.getID();
 
 
-              /*  if (def != null) {
+                int value = GrandExchange.getPrice(id);
 
-                    name = def.getName();
-                    if (def.isNoted()) {
-                        id = def.getID() - 1;
-                    }*/
+                General.println("[Loot]: Looting " + name);
 
-                    int value = GrandExchange.getPrice(id);
+                if (Inventory.isFull() && !itemIsStackableAndInInventory(loot))
+                    eatForSpace();
 
-                    General.println("[Loot]: Looting " + name);
-
-                    if (Inventory.isFull() && !itemIsStackableAndInInventory(loot))
-                        eatForSpace();
-
-                    if (loot.getPosition().distanceTo(Player.getPosition()) > 8 && !loot.isClickable()) {
-                        PathingUtil.localNavigation(loot.getPosition());
-                        Timer.waitCondition(loot::isClickable, 4500, 7000);
-                    }
-
-
-                    if (!loot.isClickable())
-                        DaxCamera.focus(loot);
-
-                    if (DynamicClicking.clickRSGroundItem(loot, "Take")) {
-                        Timer.waitCondition(() -> Inventory.getAll().length > inv ||
-                                Player.getPosition().equals(loot.getPosition()), 5000, 7000);
-                        General.println("[Debug]: Done looting");
-                        SlayerVars.get().lootValue = SlayerVars.get().lootValue + value;
-                    }
-
-                } else {
-                    Log.log("[Debug]: loot Definition is null");
+                if (loot.getPosition().distanceTo(Player.getPosition()) > 8 && !loot.isClickable()) {
+                    PathingUtil.localNavigation(loot.getPosition());
+                    Timer.waitCondition(loot::isClickable, 4500, 7000);
                 }
-           // }
+
+                if (!loot.isClickable())
+                    DaxCamera.focus(loot);
+
+                if (DynamicClicking.clickRSGroundItem(loot, "Take")) {
+                    Timer.slowWaitCondition(() -> Inventory.getAll().length > inv ||
+                            Player.getPosition().equals(loot.getPosition()), 5000, 7000);
+                    General.println("[Debug]: Done looting");
+                    SlayerVars.get().lootValue = SlayerVars.get().lootValue + value;
+                }
+            }
         }
     }
 

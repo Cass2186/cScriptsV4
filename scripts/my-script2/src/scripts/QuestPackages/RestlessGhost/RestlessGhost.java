@@ -39,23 +39,23 @@ public class RestlessGhost implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 7, 50),
-                    new GEItem(ItemId.NECKLACE_OF_PASSAGE[0], 1, 100),
-                    new GEItem(ItemId.LOBSTER, 12, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 7, 50),
+                    new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 1, 100),
+                    new GEItem(ItemID.LOBSTER, 12, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LOBSTER, 15, 2),
-                    new ItemReq(ItemId.ADAMANT_SCIMITAR, 1, 1, true, true),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.EMPTY_BUCKET, 1, 1),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LOBSTER, 15, 2),
+                    new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, 1, true, true),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.EMPTY_BUCKET, 1, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -73,11 +73,11 @@ public class RestlessGhost implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(6, true, ItemId.LOBSTER);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(4, true, ItemId.LUMBRIDGE_TELEPORT);
-        BankManager.withdraw(1, true, ItemId.NECKLACE_OF_PASSAGE[0]);
-        BankManager.withdraw(1, true, ItemId.RING_OF_WEALTH[0]);
+        BankManager.withdraw(6, true, ItemID.LOBSTER);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(4, true, ItemID.LUMBRIDGE_TELEPORT);
+        BankManager.withdraw(1, true, ItemID.NECKLACE_OF_PASSAGE[0]);
+        BankManager.withdraw(1, true, ItemID.RING_OF_WEALTH[0]);
         BankManager.close(true);
     }
 
@@ -156,13 +156,13 @@ public class RestlessGhost implements QuestTask {
     private void failSafe() {
         if (GRAVEYARD_HOUSE.contains(Player.getPosition())) {
             cQuesterV2.status = "Failsafe";
-            RSItem[] item = Inventory.find(ItemId.RING_OF_WEALTH);
+            RSItem[] item = Inventory.find(ItemID.RING_OF_WEALTH);
             if (item.length > 0) {
                 if (item[0].click("Rub"))
                     Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(219, 1, 2), 5000, 8000);
             }
 
-            item = Equipment.find(ItemId.RING_OF_WEALTH);
+            item = Equipment.find(ItemID.RING_OF_WEALTH);
             if (item.length > 0) {
                 if (item[0].click("Rub"))
                     Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(219, 1, 2), 5000, 8000);

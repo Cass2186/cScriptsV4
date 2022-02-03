@@ -5,6 +5,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Chatbox;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ClientOfKourend.ClientOfKourend;
@@ -49,28 +50,28 @@ public class AscentOfArceuus implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 200),
-                    new GEItem(ItemId.MIND_RUNE, 400, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 1200, 20),
-                    new GEItem(ItemId.LOBSTER, 12, 60),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 200),
+                    new GEItem(ItemID.MIND_RUNE, 400, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 1200, 20),
+                    new GEItem(ItemID.LOBSTER, 12, 60),
                     new GEItem(BATTLEFRONT_TELEPORT, 4, 100),
-                    new GEItem(ItemId.COMBAT_BRACELET[2], 1, 20),
-                    new GEItem(ItemId.SKILLS_NECKLACE[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.COMBAT_BRACELET[2], 1, 20),
+                    new GEItem(ItemID.SKILLS_NECKLACE[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
                     new ItemReq(BATTLEFRONT_TELEPORT, 4),
-                    new ItemReq(ItemId.COMBAT_BRACELET[2], 1, 0, true, true),
-                    new ItemReq(ItemId.LOBSTER, 10, 1),
-                    new ItemReq(ItemId.MIND_RUNE, 400, 30),
-                    new ItemReq(ItemId.FIRE_RUNE, 1200, 90),
-                    new ItemReq(ItemId.STAFF_OF_AIR, 1, 1, true, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 3, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.COMBAT_BRACELET[2], 1, 0, true, true),
+                    new ItemReq(ItemID.LOBSTER, 10, 1),
+                    new ItemReq(ItemID.MIND_RUNE, 400, 30),
+                    new ItemReq(ItemID.FIRE_RUNE, 1200, 90),
+                    new ItemReq(ItemID.STAFF_OF_AIR, 1, 1, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -163,8 +164,8 @@ public class AscentOfArceuus implements QuestTask {
             Timer.waitCondition(() -> Combat.isUnderAttack(), 5000, 7000);
             CombatUtil.waitUntilOutOfCombat("Tormented soul", eatAt);
         }
-        if (Combat.getHPRatio() < eatAt && Inventory.find(ItemId.LOBSTER).length > 0) {
-            Inventory.find(ItemId.LOBSTER)[0].click("Eat");
+        if (Combat.getHPRatio() < eatAt && Inventory.find(ItemID.LOBSTER).length > 0) {
+            Inventory.find(ItemID.LOBSTER)[0].click("Eat");
             Utils.microSleep();
         }
 
@@ -204,6 +205,9 @@ public class AscentOfArceuus implements QuestTask {
 
     private void step8() {
         cQuesterV2.status = "Going to Grave";
+        if (NEAR_BIG_DUDES.contains(Player.getPosition())){
+            Utils.clickInventoryItem(ItemID.BATTLEFRONT_TELEPORT);
+        }
         PathingUtil.walkToArea(GRAVE_AREA);
         if (Utils.clickObject("Ancient Grave", "Inspect", false)) {
             NPCInteraction.waitForConversationWindow();
@@ -215,15 +219,18 @@ public class AscentOfArceuus implements QuestTask {
     private void step9() {
         cQuesterV2.status = "Going to Bush 1";
         PathingUtil.walkToTile(BUSH_TILE_1, 1, false);
+        PathingUtil.movementIdle();
         if (Utils.clickObject("Bush", "Inspect", false)) {
             Utils.modSleep();
         }
+
     }
 
 
     private void step10() {
         cQuesterV2.status = "Going to Plant";
         PathingUtil.walkToTile(BUSH_TILE_2, 1, false);
+        PathingUtil.movementIdle();
         if (Utils.clickObject("Plant", "Inspect", false)) {
             Utils.modSleep();
         }
@@ -232,6 +239,8 @@ public class AscentOfArceuus implements QuestTask {
     private void step11() {
         cQuesterV2.status = "Going to Plant 2";
         PathingUtil.walkToTile(BUSH_TILE_3, 1, false);
+        PathingUtil.movementIdle();
+
         if (Utils.clickObject("Plant", "Inspect", false)) {
             Utils.modSleep();
         }
@@ -240,6 +249,7 @@ public class AscentOfArceuus implements QuestTask {
     private void step12() {
         cQuesterV2.status = "Going to Tree stump";
         PathingUtil.walkToTile(BUSH_TILE_4, 1, false);
+        PathingUtil.movementIdle();
         if (Utils.clickObject("Tree stump", "Inspect", false)) {
             Utils.modSleep();
         }
@@ -248,7 +258,8 @@ public class AscentOfArceuus implements QuestTask {
     private void step13() {
         cQuesterV2.status = "Going to Plant 5";
         PathingUtil.walkToTile(BUSH_TILE_5, 1, false);
-        if (Utils.clickObject("Plant", "Inspect", false)) {
+        PathingUtil.movementIdle();
+        if (Utils.clickObject(34624, "Inspect", false)) {
             Utils.modSleep();
         }
     }
@@ -256,7 +267,7 @@ public class AscentOfArceuus implements QuestTask {
     private void step14() {
         cQuesterV2.status = "Going to Plant 6";
         PathingUtil.walkToTile(BUSH_TILE_6, 1, false);
-
+        PathingUtil.movementIdle();
         if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE))
             Autocast.enableAutocast(Autocast.FIRE_STRIKE);
 
@@ -267,8 +278,8 @@ public class AscentOfArceuus implements QuestTask {
 
             CombatUtil.waitUntilOutOfCombat("Trapped Soul", 45);
 
-            if (Combat.getHPRatio() < 45 && Inventory.find(ItemId.LOBSTER).length > 0) {
-                Inventory.find(ItemId.LOBSTER)[0].click("Eat");
+            if (Combat.getHPRatio() < 45 && Inventory.find(ItemID.LOBSTER).length > 0) {
+                Inventory.find(ItemID.LOBSTER)[0].click("Eat");
                 Utils.microSleep();
             }
 

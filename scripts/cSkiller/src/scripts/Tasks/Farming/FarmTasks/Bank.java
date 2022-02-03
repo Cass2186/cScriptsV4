@@ -7,7 +7,8 @@ import org.tribot.api2007.Login;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
 import scripts.BankManager;
-import scripts.ItemId;
+import scripts.ItemID;
+import scripts.Requirements.ItemReq;
 import scripts.Tasks.Farming.Data.FarmConst;
 import scripts.Tasks.Farming.Data.FarmVars;
 import scripts.Tasks.Farming.Data.Methods;
@@ -17,7 +18,10 @@ import scripts.Utils;
 import scripts.Varbits;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class Bank implements Task {
 
@@ -53,10 +57,28 @@ public class Bank implements Task {
         return FarmVars.get().usingBottomless = false;
     }
 
+    List<ItemReq> itemReqList = new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq.Builder()
+                            .idEquals(FarmConst.FENKENSTRAINS_TAB)
+                            .amount(5)
+                            .build(),
+                    new ItemReq.Builder()
+                            .idEquals(FarmConst.MAGIC_SECATEURS)
+                            .amount(1)
+                            .shouldEquip(true)
+                            .build(),
+                    new ItemReq(FarmConst.SEED_DIBBER, 1),
+                    new ItemReq(FarmConst.SPADE, 1),
+                    new ItemReq(FarmConst.RAKE, 1),
+                    new ItemReq(FarmConst.CAMELOT_TAB, 5),
+                    new ItemReq(FarmConst.FALADOR_TAB, 5)
+            ));
+
     private void inventorySetUp(int herbId) {
         int herbNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             herbNum = 6;
             General.println("[Bank]: We can use the farming guild, getting an extra seed");
         }
@@ -81,11 +103,10 @@ public class Bank implements Task {
         invMap.put(FarmConst.SEED_DIBBER, 1);
         invMap.put(FarmConst.SPADE, 1);
         invMap.put(FarmConst.LIMPWURT_SEEDS, 10);
-        invMap.put(FarmConst.SPADE, 1);
-      //  BankHandler.withdrawItems(invMap);
+        //  BankHandler.withdrawItems(invMap);
 
-        BankManager.withdrawArray(ItemId.SKILLS_NECKLACE, 1);
-        BankManager.withdrawArray(ItemId.STAMINA_POTION, 1);
+        BankManager.withdrawArray(ItemID.SKILLS_NECKLACE, 1);
+        BankManager.withdrawArray(ItemID.STAMINA_POTION, 1);
         BankManager.close(true);
 
         FarmVars.get().startInvValue = Utils.getInventoryValue();
@@ -105,7 +126,7 @@ public class Bank implements Task {
     private void allotmentInventorySetUp(int herbId) {
         int herbNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 45
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             herbNum = 6;
             General.println("[Bank]: We can use the farming guild, getting an extra seed");
         }
@@ -128,9 +149,9 @@ public class Bank implements Task {
         BankManager.withdraw(5, true, FarmConst.FALADOR_TAB);
         BankManager.withdraw(1, true, FarmConst.RAKE);
         BankManager.withdraw(1, true, FarmConst.SEED_DIBBER);
-        BankManager.withdraw(1, true, ItemId.SPADE);
-        BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION);
+        BankManager.withdraw(1, true, ItemID.SPADE);
+        BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION);
         BankManager.close(true);
         FarmVars.get().startInvValue = Utils.getInventoryValue();
 
@@ -153,10 +174,10 @@ public class Bank implements Task {
         }
         int treeNum = 4;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 85
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             treeNum = 4;
             General.println("[Bank]: We can use the farming guild, getting an extra fruit sappling");
-            BankManager.withdrawArray(ItemId.SKILLS_NECKLACE, 1);
+            BankManager.withdrawArray(ItemID.SKILLS_NECKLACE, 1);
         }
         if (!BankManager.withdraw(treeNum, true, treeId)) {
             General.println("[Debug]: Missing Tree sapplings");
@@ -186,10 +207,10 @@ public class Bank implements Task {
         }
         int treeNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             treeNum = 6;
             General.println("[Bank]: We can use the farming guild, getting an extra seed");
-            BankManager.withdrawArray(ItemId.SKILLS_NECKLACE, 1);
+            BankManager.withdrawArray(ItemID.SKILLS_NECKLACE, 1);
         }
         if (!BankManager.withdraw(treeNum, true, treeId)) {
             General.println("[Debug]: Missing Tree sapplings");
@@ -236,7 +257,7 @@ public class Bank implements Task {
         FarmVars.get().status = "Banking";
         if (FarmVars.get().doingTrees) {
             getTreeItems();
-        } else if (FarmVars.get().doingFruitTrees){
+        } else if (FarmVars.get().doingFruitTrees) {
             fruitTreeInvSetup(FarmVars.get().fruitTreeId);
         }
         /**
@@ -303,7 +324,7 @@ public class Bank implements Task {
     public boolean validate() {
         if (Login.getLoginState() == Login.STATE.INGAME) {
             //   Plant.determineHerbId();
-            if (FarmVars.get().doingFruitTrees){
+            if (FarmVars.get().doingFruitTrees) {
                 if (FarmVars.get().usingBottomless || Inventory.find(FarmConst.BOTTOMLESS_COMPOST).length > 0) {
                     if (!BankManager.checkInventoryItems(FarmVars.get().fruitTreeId, FarmConst.VARROCK_TAB,
                             FarmConst.CAMELOT_TAB, FarmConst.ARDOUNGE_TAB,
@@ -314,9 +335,8 @@ public class Bank implements Task {
                     }
                 }
                 return FarmVars.get().shouldBank = false;
-            }
-            else if (FarmVars.get().doingTrees) {
-               // Plant.determineTreeId();
+            } else if (FarmVars.get().doingTrees) {
+                // Plant.determineTreeId();
                 if (FarmVars.get().usingBottomless || Inventory.find(FarmConst.BOTTOMLESS_COMPOST).length > 0) {
                     if (!BankManager.checkInventoryItems(FarmVars.get().treeId, FarmConst.VARROCK_TAB,
                             FarmConst.LUMBRIDGE_TAB, FarmConst.FALADOR_TAB,

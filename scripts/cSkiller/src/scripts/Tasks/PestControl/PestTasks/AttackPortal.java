@@ -8,7 +8,6 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Waiting;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;

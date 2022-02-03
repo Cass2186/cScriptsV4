@@ -31,9 +31,9 @@ public class TouristTrap implements QuestTask {
         return quest == null ? quest = new TouristTrap() : quest;
     }
 
-    ItemRequirement shantayPass = new ItemRequirement(ItemId.SHANTAY_PASS, 10, 1);
-    ItemRequirement bronzeBar = new ItemRequirement(ItemId.BRONZE_BAR, 3, 1);
-    ItemRequirement hammer = new ItemRequirement(ItemId.HAMMER, 1, 1);
+    ItemRequirement shantayPass = new ItemRequirement(ItemID.SHANTAY_PASS, 10, 1);
+    ItemRequirement bronzeBar = new ItemRequirement(ItemID.BRONZE_BAR, 3, 1);
+    ItemRequirement hammer = new ItemRequirement(ItemID.HAMMER, 1, 1);
 
     public int feather = 314; //need 60
     public int waterskin4 = 1823; // need 6
@@ -164,7 +164,7 @@ public class TouristTrap implements QuestTask {
     public void makeArrowShafts() {
         cQuesterV2.status = "Making arrow shafts";
         General.println("[Debug]: " + cQuesterV2.status);
-        if (Inventory.find(ItemId.LOGS).length < 1) {
+        if (Inventory.find(ItemID.LOGS).length < 1) {
             BankManager.open(true);
             BankManager.depositAllExcept(true, KNIFE, ARROW_SHAFTS);
 
@@ -173,19 +173,19 @@ public class TouristTrap implements QuestTask {
             if (BankManager.getCount(ARROW_SHAFTS) > 400)
                 BankManager.withdraw(0, ARROW_SHAFTS);
             else {
-                BankManager.withdraw(0, true, ItemId.LOGS);
+                BankManager.withdraw(0, true, ItemID.LOGS);
                 BankManager.close(true);
             }
         }
 
-        if (Utils.useItemOnItem(KNIFE, ItemId.LOGS)) {
+        if (Utils.useItemOnItem(KNIFE, ItemID.LOGS)) {
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(270, 14), 4000, 6000);
 
             if (Interfaces.isInterfaceSubstantiated(270, 14)) {
 
                 if (Interfaces.get(270, 14).click())
                     Timer.abc2WaitCondition(() -> (Interfaces.get(233, 2) != null || Inventory.find(
-                            ItemId.LOGS).length < 1), 35000, 40000);
+                            ItemID.LOGS).length < 1), 35000, 40000);
             }
         }
     }
@@ -198,22 +198,22 @@ public class TouristTrap implements QuestTask {
     }
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(Arrays.asList(
-            new GEItem(ItemId.KNIFE, 1, 500),
-            new GEItem(ItemId.BRONZE_BAR, 3, 500),
-            new GEItem(ItemId.FEATHERS, 25, 500),
-            new GEItem(ItemId.SHANTAY_PASS, 12, 500),
-            new GEItem(ItemId.DESERT_SHIRT, 1, 500),
-            new GEItem(ItemId.DESERT_BOOTS, 1, 500),
-            new GEItem(ItemId.DESERT_ROBE, 1, 500),
-            new GEItem(ItemId.WATERSKIN[0], 6, 500),
-            new GEItem(ItemId.LOBSTER, 20, 50),
-            new GEItem(ItemId.AMULET_OF_GLORY[0], 2, 20),
-            new GEItem(ItemId.STAMINA_POTION[0], 5, 30),
-            new GEItem(ItemId.HAMMER, 1, 500),
-            new GEItem(ItemId.MIND_RUNE, 300, 50),
-            new GEItem(ItemId.FIRE_RUNE, 900, 50),
-            new GEItem(ItemId.STAFF_OF_AIR, 1, 200),
-            new GEItem(ItemId.PRAYER_POTION_4, 4, 20)
+            new GEItem(ItemID.KNIFE, 1, 500),
+            new GEItem(ItemID.BRONZE_BAR, 3, 500),
+            new GEItem(ItemID.FEATHERS, 25, 500),
+            new GEItem(ItemID.SHANTAY_PASS, 12, 500),
+            new GEItem(ItemID.DESERT_SHIRT, 1, 500),
+            new GEItem(ItemID.DESERT_BOOTS, 1, 500),
+            new GEItem(ItemID.DESERT_ROBE, 1, 500),
+            new GEItem(ItemID.WATERSKIN[0], 6, 500),
+            new GEItem(ItemID.LOBSTER, 20, 50),
+            new GEItem(ItemID.AMULET_OF_GLORY[0], 2, 20),
+            new GEItem(ItemID.STAMINA_POTION[0], 5, 30),
+            new GEItem(ItemID.HAMMER, 1, 500),
+            new GEItem(ItemID.MIND_RUNE, 300, 50),
+            new GEItem(ItemID.FIRE_RUNE, 900, 50),
+            new GEItem(ItemID.STAFF_OF_AIR, 1, 200),
+            new GEItem(ItemID.PRAYER_POTION_4, 4, 20)
     ));
 
 
@@ -223,7 +223,7 @@ public class TouristTrap implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         if (Skills.SKILLS.FLETCHING.getActualLevel() < 10) {
             int xpTo10 = Skills.getXPToLevel(Skills.SKILLS.FLETCHING, 10);
-            itemsToBuy.add(    new GEItem(ItemId.LOGS, ((xpTo10 / 5) + 5), 50));
+            itemsToBuy.add(    new GEItem(ItemID.LOGS, ((xpTo10 / 5) + 5), 50));
         }
         BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
         buyStep.buyItems();
@@ -235,30 +235,30 @@ public class TouristTrap implements QuestTask {
         BankManager.open(true);
         BankManager.depositAll(true);
         BankManager.depositEquipment();
-        BankManager.withdraw(1, true, ItemId.DESERT_BOOTS);
-        BankManager.withdraw(1, true,  ItemId.DESERT_ROBE);
-        BankManager.withdraw(1, true,  ItemId.DESERT_SHIRT);
-        Utils.equipItem( ItemId.DESERT_BOOTS);
-        Utils.equipItem(ItemId.DESERT_ROBE);
-        Utils.equipItem(ItemId.DESERT_SHIRT);
+        BankManager.withdraw(1, true, ItemID.DESERT_BOOTS);
+        BankManager.withdraw(1, true,  ItemID.DESERT_ROBE);
+        BankManager.withdraw(1, true,  ItemID.DESERT_SHIRT);
+        Utils.equipItem( ItemID.DESERT_BOOTS);
+        Utils.equipItem(ItemID.DESERT_ROBE);
+        Utils.equipItem(ItemID.DESERT_SHIRT);
         BankManager.withdraw(3, true, waterskin4);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
-        BankManager.withdraw(1, true, ItemId.HAMMER);
-        BankManager.withdraw(300, true, ItemId.MIND_RUNE);
-        BankManager.withdraw(900, true, ItemId.FIRE_RUNE);
-        BankManager.withdraw(3, true, ItemId.BRONZE_BAR);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(1, true, ItemID.HAMMER);
+        BankManager.withdraw(300, true, ItemID.MIND_RUNE);
+        BankManager.withdraw(900, true, ItemID.FIRE_RUNE);
+        BankManager.withdraw(3, true, ItemID.BRONZE_BAR);
         BankManager.withdraw(50, true, feather);
-        BankManager.withdraw(5, true, ItemId.SHANTAY_PASS);
-        BankManager.withdraw(1, true, ItemId.STAFF_OF_AIR);
-        BankManager.withdraw(7, true, ItemId.LOBSTER);
-        BankManager.withdraw(3, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
-        BankManager.withdraw(2, true, ItemId.PRAYER_POTION[0]);
+        BankManager.withdraw(5, true, ItemID.SHANTAY_PASS);
+        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+        BankManager.withdraw(7, true, ItemID.LOBSTER);
+        BankManager.withdraw(3, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
+        BankManager.withdraw(2, true, ItemID.PRAYER_POTION[0]);
         BankManager.close(true);
         Utils.modSleep();
-        Utils.equipItem(ItemId.AMULET_OF_GLORY[0]);
-        Utils.equipItem(ItemId.RING_OF_DUELING[0]);
-        Utils.equipItem(ItemId.STAFF_OF_AIR);
+        Utils.equipItem(ItemID.AMULET_OF_GLORY[0]);
+        Utils.equipItem(ItemID.RING_OF_DUELING[0]);
+        Utils.equipItem(ItemID.STAFF_OF_AIR);
         if (Prayer.getPrayerPoints() < 30 && Skills.getCurrentLevel(Skills.SKILLS.PRAYER) > 42) {
             Utils.clanWarsReset();
         }
@@ -320,7 +320,7 @@ public class TouristTrap implements QuestTask {
 
     public void killCaptain() {
         if (Inventory.find(metalKey).length < 1) {
-            if (Prayer.getPrayerPoints() < 30 && Skills.getCurrentLevel(Skills.SKILLS.PRAYER) > 42 && Inventory.find(ItemId.PRAYER_POTION).length < 1 && Inventory.find(metalKey).length < 1)
+            if (Prayer.getPrayerPoints() < 30 && Skills.getCurrentLevel(Skills.SKILLS.PRAYER) > 42 && Inventory.find(ItemID.PRAYER_POTION).length < 1 && Inventory.find(metalKey).length < 1)
                 Utils.clanWarsReset();
 
             cQuesterV2.status = "Killing Captain for key";
@@ -354,12 +354,12 @@ public class TouristTrap implements QuestTask {
                 Timer.waitCondition(() -> !Combat.isUnderAttack() || Prayer.getPrayerPoints() < drinkAt
                         || Combat.getHPRatio() < 50, 50000, 70000);
 
-                if (Combat.getHPRatio() < 50 && Inventory.find(ItemId.FOOD_IDS).length > 0) {
-                    Inventory.find(ItemId.FOOD_IDS)[0].click();
+                if (Combat.getHPRatio() < 50 && Inventory.find(ItemID.FOOD_IDS).length > 0) {
+                    Inventory.find(ItemID.FOOD_IDS)[0].click();
                     Utils.microSleep();
 
-                } else if (Prayer.getPrayerPoints() < drinkAt && Inventory.find(ItemId.PRAYER_POTION).length > 0) {
-                    Inventory.find(ItemId.PRAYER_POTION)[0].click();
+                } else if (Prayer.getPrayerPoints() < drinkAt && Inventory.find(ItemID.PRAYER_POTION).length > 0) {
+                    Inventory.find(ItemID.PRAYER_POTION)[0].click();
                     Utils.microSleep();
 
                 } else if (!Combat.isUnderAttack())
@@ -598,7 +598,7 @@ public class TouristTrap implements QuestTask {
         if (ANVIL_AREA.contains(Player.getPosition()) && bronzeBar.check()) {
             cQuesterV2.status = "Making Dart";
             General.println("[Debug]: " + cQuesterV2.status);
-            if (Utils.useItemOnObject(ItemId.BRONZE_BAR, "An experimental anvil")) {
+            if (Utils.useItemOnObject(ItemID.BRONZE_BAR, "An experimental anvil")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes. I'd like to try.");
                 NPCInteraction.handleConversation();
@@ -965,12 +965,12 @@ public class TouristTrap implements QuestTask {
             BankManager.withdraw(1, true, hammer.getId());
             BankManager.withdraw(3, true, bronzeBar.getId());
             BankManager.withdraw(3, true, waterskin4);
-            BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+            BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
             BankManager.withdraw(10, true, lobster);
             BankManager.withdraw(1, true, metalKey);
             BankManager.withdraw(1, true, CHEST_KEY);
-            BankManager.withdraw(3, true, ItemId.SHANTAY_PASS);
-            BankManager.withdraw(3, true, ItemId.BRONZE_BAR);
+            BankManager.withdraw(3, true, ItemID.SHANTAY_PASS);
+            BankManager.withdraw(3, true, ItemID.BRONZE_BAR);
             BankManager.withdraw(3, true, jailKey);
             BankManager.withdraw(50, true, feather);
             BankManager.withdraw(1, true, PLANS);

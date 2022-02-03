@@ -1,13 +1,14 @@
 package scripts.Tasks.Construction;
 
+import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
-import javafx.scene.paint.Stop;
-import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
+import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
@@ -17,8 +18,25 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
+import scripts.Requirements.ItemRequirement;
+import scripts.Tasks.Construction.ConsData.Furniture;
+import scripts.Tasks.Construction.ConsData.House;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 public class MakeFurniture implements Task {
+
+    private int stopLevel;
+    private List<ItemRequirement> itemRequirements;
+    private Furniture furniture;
+
+    public static final RSArea RIMMINGTON = new RSArea(new RSTile(2944, 3201, 0), new RSTile(2961, 3225, 0));
+    private final int CONSTRUCTION_MASTER = 458;
+
+    public static EnumSet<Furniture> furnitureSet = EnumSet.noneOf(Furniture.class);
+
 
 
     int PARENT_INTERFACE = 458;
@@ -109,30 +127,39 @@ public class MakeFurniture implements Task {
     }
 
     public void buildFurniture(FURNITURE furniture) {
-        if (Inventory.find(furniture.getPlankId()).length >= furniture.getPlankNum()) {
-            removeFurniture(furniture.getObjectName());
 
-            RSObject obj = Entities.find(ObjectEntity::new)
-                    .idEquals(furniture.getSpaceId())
-                    .actionsContains("Build")
-                    .getFirstResult();
+        RSObject[] furnitureObject = org.tribot.api2007.Objects.findNearest(25, furniture.getObjectName());
+        if (furnitureObject.length > 0) {
+            if (Inventory.find(furniture.getPlankId()).length >= furniture.getPlankNum()) {
+                if (House.isViewerOpen())
+                    House.closeViewer();
+                removeFurniture(furniture.getObjectName());
 
-            if (obj != null && Utils.clickObject(obj, "Build")) {
-                Timer.quickWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
-                Utils.idlePredictableAction();
-            } else {
-                //Log.log("[Debug]: Force closing interfaces");
-                RSInterface close = Interfaces.findWhereAction("Close", PARENT_INTERFACE);
-                if (close != null && close.click()) {
-                    Timer.quickWaitCondition(() -> !Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
+                RSObject obj = Entities.find(ObjectEntity::new)
+                        .idEquals(furniture.getSpaceId())
+                        .actionsContains("Build")
+                        .getFirstResult();
+
+                if (obj != null && Utils.clickObject(obj, "Build")) {
+                    Timer.quickWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
                     Utils.idlePredictableAction();
+                } else {
+                    //Log.log("[Debug]: Force closing interfaces");
+                    RSInterface close = Interfaces.findWhereAction("Close", PARENT_INTERFACE);
+                    if (close != null && close.click()) {
+                        Timer.quickWaitCondition(() -> !Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
+                        Utils.idlePredictableAction();
+                    }
+                }
+                if (Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE)) {
+                    Keyboard.typeString(furniture.getKeyString());
+                    if (Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 6000))
+                        Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 4500, 6000);
                 }
             }
-            if (Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE)) {
-                Keyboard.typeString(furniture.getKeyString());
-                if (Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 6000))
-                    Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 4500, 6000);
-            }
+        }else {
+            Log.log("[Debug]: Need to build rooms");
+           // House.buildRoom(furniture.getRoom());
         }
     }
 
@@ -206,5 +233,19 @@ public class MakeFurniture implements Task {
     @Override
     public String taskName() {
         return "Construction";
+    }
+
+    private void trainConstruction(Furniture furniture) {
+        this.furniture = furniture;
+        RSObject[] furnitureObject = org.tribot.api2007.Objects.findNearest(25, furniture.getObjectIds());
+        if (furnitureObject.length > 0) {
+            if (House.isViewerOpen())
+                House.closeViewer();
+            else if (!furnitureObject[0].isClickable()) {
+                if (Walking.blindWalkTo(furnitureObject[0].getPosition()))
+                    Waiting.waitUntil(() -> furnitureObject[0].isOnScreen());
+            }
+        }// else
+           // House.buildRoom(furniture.getRoom());
     }
 }

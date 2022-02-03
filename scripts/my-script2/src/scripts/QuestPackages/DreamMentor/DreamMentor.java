@@ -3,10 +3,13 @@ package scripts.QuestPackages.DreamMentor;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
@@ -14,6 +17,7 @@ import org.tribot.script.sdk.tasks.EquipmentReq;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.GEManager.GEItem;
 import scripts.*;
+import scripts.QuestPackages.FamilyCrest.FamilyCrest;
 import scripts.QuestSteps.*;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
@@ -25,13 +29,17 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class DreamMentor implements QuestTask{
+public class DreamMentor implements QuestTask {
+    private static DreamMentor quest;
 
+    public static DreamMentor get() {
+        return quest == null ? quest = new DreamMentor() : quest;
+    }
     String message;
 
     public static final int BIRDSEYE_JACK = 6126;
     public static final int ONEIROMANCER = 3835;
-    int[] TRIDENT_ARRAY = {ItemId.TRIDENT_OF_THE_SEAS, ItemId.TRIDENT_OF_THE_SEAS_FULL};
+    int[] TRIDENT_ARRAY = {ItemID.TRIDENT_OF_THE_SEAS, ItemID.TRIDENT_OF_THE_SEAS_FULL};
 
     /**
      * AREAS
@@ -110,23 +118,23 @@ public class DreamMentor implements QuestTask{
 
     UseItemOnObjectStep fillVialWithWater = new UseItemOnObjectStep(11151, 16705,
             new RSTile(2091, 3921, 0),
-            Inventory.find(ItemId.DREAM_VIAL_WATER).length == 1);
+            Inventory.find(ItemID.DREAM_VIAL_WATER).length == 1);
 
-    UseItemOnItemStep addGoutweed = new UseItemOnItemStep(ItemId.DREAM_VIAL_WATER, ItemId.GOUTWEED,
-            Inventory.find(ItemId.DREAM_VIAL_WATER).length == 0);
+    UseItemOnItemStep addGoutweed = new UseItemOnItemStep(ItemID.DREAM_VIAL_WATER, ItemID.GOUTWEED,
+            Inventory.find(ItemID.DREAM_VIAL_WATER).length == 0);
 
-    UseItemOnItemStep useHammerOnAstralRune = new UseItemOnItemStep(ItemId.HAMMER, ItemId.ASTRAL_RUNE,
-            Inventory.find(ItemId.ASTRAL_RUNE_SHARDS).length == 1);
+    UseItemOnItemStep useHammerOnAstralRune = new UseItemOnItemStep(ItemID.HAMMER, ItemID.ASTRAL_RUNE,
+            Inventory.find(ItemID.ASTRAL_RUNE_SHARDS).length == 1);
 
 
-    UseItemOnItemStep usePestleOnShards = new UseItemOnItemStep(ItemId.ASTRAL_RUNE_SHARDS, ItemId.PESTLE_MORTAR,
-            Inventory.find(ItemId.GROUND_ASTRAL_RUNE).length == 1);
+    UseItemOnItemStep usePestleOnShards = new UseItemOnItemStep(ItemID.ASTRAL_RUNE_SHARDS, ItemID.PESTLE_AND_MORTAR,
+            Inventory.find(ItemID.GROUND_ASTRAL_RUNE).length == 1);
 
-    UseItemOnItemStep useGroundAstralOnVial = new UseItemOnItemStep(ItemId.GROUND_ASTRAL_RUNE, ItemId.DREAM_VIAL_HERB,
-            Inventory.find(ItemId.DREAM_POTION).length == 1);
+    UseItemOnItemStep useGroundAstralOnVial = new UseItemOnItemStep(ItemID.GROUND_ASTRAL_RUNE, ItemID.DREAM_VIAL_HERB,
+            Inventory.find(ItemID.DREAM_POTION).length == 1);
     // check action
-    UseItemOnObjectStep lightBrazier = new UseItemOnObjectStep(ItemId.TINDERBOX, 17025,
-            new RSTile(2073, 3912, 0), Game.isInInstance());
+    UseItemOnObjectStep lightBrazier = new UseItemOnObjectStep(ItemID.TINDERBOX, 17025,
+            new RSTile(2073, 3911, 0), Game.isInInstance());
     //    sealOfPassage,tinderbox,combatGear);
 
 
@@ -145,115 +153,115 @@ public class DreamMentor implements QuestTask{
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.TINDERBOX, 1, 100),
-                    new GEItem(ItemId.PESTLE_MORTAR, 1, 300),
-                    new GEItem(ItemId.ASTRAL_RUNE, 1, 40),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.LUNAR_ISLE_TELEPORT, 6, 25),
-                    new GEItem(ItemId.HAMMER, 1, 100),
-                    new GEItem(ItemId.POTATOES10, 1, 100),
-                    new GEItem(ItemId.ONIONS10, 1, 100),
-                    new GEItem(ItemId.CABBAGES10, 1, 100),
-                    new GEItem(ItemId.SHARK, 40, 25),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 25),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.BLACK_DHIDE_SHIELD, 1, 50),
-                    new GEItem(ItemId.BLACK_DHIDE_BODY, 1, 25),
-                    new GEItem(ItemId.BLACK_DHIDE_CHAPS, 1, 25),
-                    new GEItem(ItemId.BLACK_DHIDE_VAMBRACES, 1, 25),
+                    new GEItem(ItemID.TINDERBOX, 1, 100),
+                    new GEItem(ItemID.PESTLE_AND_MORTAR, 1, 300),
+                    new GEItem(ItemID.ASTRAL_RUNE, 1, 40),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.LUNAR_ISLE_TELEPORT, 6, 25),
+                    new GEItem(ItemID.HAMMER, 1, 100),
+                    new GEItem(ItemID.POTATOES10, 1, 100),
+                    new GEItem(ItemID.ONIONS10, 1, 100),
+                    new GEItem(ItemID.CABBAGES10, 1, 100),
+                    new GEItem(ItemID.SHARK, 40, 25),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 25),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.BLACK_DHIDE_SHIELD, 1, 50),
+                    new GEItem(ItemID.BLACK_DHIDE_BODY, 1, 25),
+                    new GEItem(ItemID.BLACK_DHIDE_CHAPS, 1, 25),
+                    new GEItem(ItemID.BLACK_DHIDE_VAMBRACES, 1, 25),
                     new GEItem(12504, 1, 25), //bandos coif
-                    new GEItem(ItemId.RUNE_CROSSBOW, 1, 25),
-                    new GEItem(ItemId.RUNITE_BOLTS, 500, 25)
+                    new GEItem(ItemID.RUNE_CROSSBOW, 1, 25),
+                    new GEItem(ItemID.RUNITE_BOLTS, 500, 25)
 
             )
     );
 
     InventoryRequirement initialItems = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.TINDERBOX, 1),
-                    new ItemReq(ItemId.PESTLE_MORTAR, 1),
-                    new ItemReq(ItemId.ASTRAL_RUNE, 1),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.LUNAR_ISLE_TELEPORT, 6, 0),
-                    new ItemReq(ItemId.SEAL_OF_PASSAGE, 1),
-                    new ItemReq(ItemId.HAMMER, 1),
-                    new ItemReq(ItemId.POTATOES10, 1),
-                    new ItemReq(ItemId.ONIONS10, 1),
-                    new ItemReq(ItemId.CABBAGES10, 1),
-                    new ItemReq(ItemId.GOUTWEED, 1),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.TINDERBOX, 1),
+                    new ItemReq(ItemID.PESTLE_AND_MORTAR, 1),
+                    new ItemReq(ItemID.ASTRAL_RUNE, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.LUNAR_ISLE_TELEPORT, 6, 0),
+                    new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
+                    new ItemReq(ItemID.HAMMER, 1),
+                    new ItemReq(ItemID.POTATOES10, 1),
+                    new ItemReq(ItemID.ONIONS10, 1),
+                    new ItemReq(ItemID.CABBAGES10, 1),
+                    new ItemReq(ItemID.GOUTWEED, 1),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             ))
     );
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
-    ItemReq tridentReq = new ItemReq(ItemId.TRIDENT_OF_THE_SEAS, 1, true, true);
+    ItemReq tridentReq = new ItemReq(ItemID.TRIDENT_OF_THE_SEAS, 1, true, true);
     InventoryRequirement fightItems;
 
     public void populateItemRequirements() {
-        tridentReq.addAlternateItemId(ItemId.TRIDENT_OF_THE_SEAS_FULL);
+        tridentReq.addAlternateItemID(ItemID.TRIDENT_OF_THE_SEAS_FULL);
         if (Skills.getActualLevel(Skills.SKILLS.RANGED) < 70) {
             fightItems = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemId.TINDERBOX, 1),
-                            new ItemReq(ItemId.SEAL_OF_PASSAGE, 1),
+                            new ItemReq(ItemID.TINDERBOX, 1),
+                            new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
                             tridentReq,
-                            new ItemReq(ItemId.MYSTIC_BOOTS, 1, true, true),
-                            new ItemReq(ItemId.MYSTIC_GLOVES, 1, true, true),
-                            new ItemReq(ItemId.MYSTIC_HAT, 1, true, true),
-                            new ItemReq(ItemId.MYSTIC_ROBE_BOTTOM, 1, true, true),
-                            new ItemReq(ItemId.MYSTIC_ROBE_TOP, 1, true, true),
-                            new ItemReq(ItemId.OCCULT_NECKLACE, 1, true, true),
+                            new ItemReq(ItemID.MYSTIC_BOOTS, 1, true, true),
+                            new ItemReq(ItemID.MYSTIC_GLOVES, 1, true, true),
+                            new ItemReq(ItemID.MYSTIC_HAT, 1, true, true),
+                            new ItemReq(ItemID.MYSTIC_ROBE_BOTTOM, 1, true, true),
+                            new ItemReq(ItemID.MYSTIC_ROBE_TOP, 1, true, true),
+                            new ItemReq(ItemID.OCCULT_NECKLACE, 1, true, true),
                             new ItemReq(12504, 1, 0),
-                            new ItemReq(ItemId.DREAM_POTION, 1, 0),
-                            new ItemReq(ItemId.LUNAR_ISLE_TELEPORT, 1, 0),
-                            new ItemReq(ItemId.SHARK, 0, 1)
+                            new ItemReq(ItemID.DREAM_POTION, 1, 0),
+                            new ItemReq(ItemID.LUNAR_ISLE_TELEPORT, 1, 0),
+                            new ItemReq(ItemID.SHARK, 0, 1)
 
                     )));
         } else {
             fightItems = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemId.TINDERBOX, 1),
-                            new ItemReq(ItemId.SEAL_OF_PASSAGE, 1),
+                            new ItemReq(ItemID.TINDERBOX, 1),
+                            new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
                             //  tridentReq,
-                            new ItemReq(ItemId.BLACK_DHIDE_VAMBRACES, 1, true, true),
-                            new ItemReq(ItemId.BLACK_DHIDE_BODY, 1, true, true),
-                            new ItemReq(ItemId.BLACK_DHIDE_CHAPS, 1, true, true),
-                            new ItemReq(ItemId.RUNE_CROSSBOW, 1, true, true),
-                            new ItemReq(ItemId.RUNITE_BOLTS, 500, true, true),
-                            new ItemReq(ItemId.AMULET_OF_GLORY[2], 1, true, true),
-                            new ItemReq(ItemId.SNAKESKIN_BOOTS, 1, true, true),
-                            new ItemReq(ItemId.DREAM_POTION, 1, 0),
-                            new ItemReq(ItemId.LUNAR_ISLE_TELEPORT, 1, 0),
-                            new ItemReq(ItemId.SHARK, 0, 1)
+                            new ItemReq(ItemID.BLACK_DHIDE_VAMBRACES, 1, true, true),
+                            new ItemReq(ItemID.BLACK_DHIDE_BODY, 1, true, true),
+                            new ItemReq(ItemID.BLACK_DHIDE_CHAPS, 1, true, true),
+                            new ItemReq(ItemID.RUNE_CROSSBOW, 1, true, true),
+                            new ItemReq(ItemID.RUNITE_BOLTS, 500, true, true),
+                            new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, true, true),
+                            new ItemReq(ItemID.SNAKESKIN_BOOTS, 1, true, true),
+                            new ItemReq(ItemID.DREAM_POTION, 1, 0),
+                            new ItemReq(ItemID.LUNAR_ISLE_TELEPORT, 1, 0),
+                            new ItemReq(ItemID.SHARK, 0, 1)
 
                     )));
         }
     }
 
     BankTask fightTask = BankTask.builder()
-            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.AMMO).item(ItemId.RUNITE_BOLTS, Amount.fill(100))) // mith arrows
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.AMMO).item(ItemID.RUNITE_BOLTS, Amount.fill(100))) // mith arrows
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HANDS)
-                    .item(ItemId.BLACK_DHIDE_VAMBRACES, Amount.of(1)))
+                    .item(ItemID.BLACK_DHIDE_VAMBRACES, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY)
-                    .item(ItemId.BLACK_DHIDE_BODY, Amount.of(1)))
+                    .item(ItemID.BLACK_DHIDE_BODY, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS)
-                    .item(ItemId.BLACK_DHIDE_CHAPS, Amount.of(1)))
+                    .item(ItemID.BLACK_DHIDE_CHAPS, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON)
-                    .item(ItemId.RUNE_CROSSBOW, Amount.of(1)))
+                    .item(ItemID.RUNE_CROSSBOW, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.NECK)
-                    .item(ItemId.AMULET_OF_GLORY[2], Amount.of(1)))
+                    .item(ItemID.AMULET_OF_GLORY[2], Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.SHIELD)
-                    .item(ItemId.BLACK_DHIDE_SHIELD, Amount.of(1)))
+                    .item(ItemID.BLACK_DHIDE_SHIELD, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.FEET)
-                    .item(ItemId.SNAKESKIN_BOOTS, Amount.of(1)))
+                    .item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.CAPE)
-                    .item(ItemId.AVAS_ACCUMULATOR, Amount.of(1)))
-            .addInvItem(ItemId.SEAL_OF_PASSAGE, Amount.of(1))
-            .addInvItem(ItemId.TINDERBOX, Amount.of(1))
-            .addInvItem(ItemId.DREAM_POTION, Amount.of(1))
-            .addInvItem(ItemId.LUNAR_ISLE_TELEPORT, Amount.of(1))
-            .addInvItem(ItemId.SHARK, Amount.fill(6))
+                    .item(ItemID.AVAS_ACCUMULATOR, Amount.of(1)))
+            .addInvItem(ItemID.SEAL_OF_PASSAGE, Amount.of(1))
+            .addInvItem(ItemID.TINDERBOX, Amount.of(1))
+            .addInvItem(ItemID.DREAM_POTION, Amount.of(1))
+            .addInvItem(ItemID.LUNAR_ISLE_TELEPORT, Amount.of(1))
+            .addInvItem(ItemID.SHARK, Amount.fill(6))
             .build();
 
 
@@ -262,7 +270,7 @@ public class DreamMentor implements QuestTask{
         if (!fightItems.check()) {
 
             cQuesterV2.status = "Getting fight items";
-          //  fightItems.withdrawItems();
+            //  fightItems.withdrawItems();
             fightTask.execute();
         }
     }
@@ -272,7 +280,7 @@ public class DreamMentor implements QuestTask{
 
     public void getSealOfPassage() {
         if (RELLEKA_AREA.contains(Player.getPosition())) {
-            if (Inventory.find(ItemId.SEAL_OF_PASSAGE).length == 0) {
+            if (Inventory.find(ItemID.SEAL_OF_PASSAGE).length == 0) {
                 General.println("[Debug]: Getting a seal of passage");
                 talkToBrundtForSeal.execute();
             }
@@ -347,9 +355,10 @@ public class DreamMentor implements QuestTask{
     }
 
     public void buyAndGetItems() {
-        scripts.cQuesterV2.status = "Buying items";
-        General.println("[Debug]: Buying Items");
+
         if (!initialItems.check() && !Game.isInInstance()) {
+            scripts.cQuesterV2.status = "Buying items";
+            General.println("[Debug]: Buying Items");
             buyStep.buyItems();
             initialItems.withdrawItems();
         }
@@ -368,19 +377,22 @@ public class DreamMentor implements QuestTask{
             General.println("[Debug]: Sleeping  until in instance");
             Timer.waitCondition(Game::isInInstance, 10000, 12000);
             General.println("[Debug]: Sleeping 4-5s");
-            General.sleep(4000, 5000);
+            General.sleep(5000, 6000);
         }
     }
 
     public void startQuest() {
-        if (initialItems.check()) {
+        if (initialItems.check() && !Game.isInInstance()) {
             scripts.cQuesterV2.status = "Going to start";
             goToMine();
         }
         if (Game.isInInstance()) {
             scripts.cQuesterV2.status = "Talking to fallen man";
+            Log.log("[Debug]: " + scripts.cQuesterV2.status);
+            talkToCyrisus.setRadius(10);
+            talkToCyrisus.setUseLocalNav(true);
             talkToCyrisus.execute();
-            General.sleep(3000,4000);
+            General.sleep(3000, 4000);
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
         }
@@ -500,14 +512,14 @@ public class DreamMentor implements QuestTask{
             RSItem[] item = Inventory.find(food);
             int num = item.length;
             int b = 0;
-            for (int i =0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 General.println("[Debug]: Eat loop");
                 General.sleep(10, 40);
                 if (eatFood()) {
                     b++;
-                    General.sleep(100,220);
+                    General.sleep(100, 220);
                 }
-                if (Inventory.find(food).length <= num - 2 || b ==2)
+                if (Inventory.find(food).length <= num - 2 || b == 2)
                     break;
             }
             eatAt = General.random(28, 44);
@@ -519,10 +531,10 @@ public class DreamMentor implements QuestTask{
         RSNPC[] npc = NPCs.find(npcId);
         if (npc.length > 0 &&
                 org.tribot.script.sdk.Combat.getSpecialAttackPercent() >= 50) {
-            if (!Equipment.isEquipped(ItemId.DRAGON_DAGGERP_5698)) {
-                Utils.equipItem(ItemId.DRAGON_DAGGERP_5698, "Wield");
+            if (!Equipment.isEquipped(ItemID.DRAGON_DAGGERP_5698)) {
+                Utils.equipItem(ItemID.DRAGON_DAGGERP_5698, "Wield");
             }
-            if (!Equipment.isEquipped(ItemId.DRAGON_DAGGERP_5698)) {
+            if (!Equipment.isEquipped(ItemID.DRAGON_DAGGERP_5698)) {
                 int currentSpec = org.tribot.script.sdk.Combat.getSpecialAttackPercent();
                 int num = 1;
                 if (currentSpec == 100)
@@ -563,7 +575,7 @@ public class DreamMentor implements QuestTask{
                     //  ddsSpec(3473);
                     eat();
 
-                    if (Equipment.isEquipped(ItemId.DRAGON_DAGGERP_5698))
+                    if (Equipment.isEquipped(ItemID.DRAGON_DAGGERP_5698))
                         Utils.equipItem(TRIDENT_ARRAY[0], "Wield");
 
                     if (AccurateMouse.click(inadeq[0], "Attack")) {
@@ -582,11 +594,24 @@ public class DreamMentor implements QuestTask{
                 NPCInteraction.handleConversation();
                 return;
             }
+            RSNPC[] npcTwo = NPCs.find(3474);
             RSNPC[] npc = NPCs.find(3474, 3475);
             if (npc.length > 0) {
+
                 RSObject[] book = Objects.findNearest(30, "Our lives");
                 if (book.length > 0) {
                     eat();
+                    if (npcTwo.length > 0 && npcTwo[0].getHealthPercent() == 0){
+                        General.println("[Debug]: NPC 2 is dead, walking out from safe spot momentarily");
+                        RSTile walkOutTile = book[0].getPosition().translate(0, 3);
+                        if (!walkOutTile.isClickable())
+                            DaxCamera.focus(walkOutTile);
+
+                        if (DynamicClicking.clickRSTile(walkOutTile, "Walk here")) {
+                            Waiting.waitNormal(700,50);
+                        }
+                        Timer.waitCondition(()-> NPCs.find( 3475).length > 0 , 3500,4500);
+                    }
 
                     RSTile safeTile = book[0].getPosition().translate(-1, 1);
                     if (!Player.getPosition().equals(safeTile)) {
@@ -609,7 +634,7 @@ public class DreamMentor implements QuestTask{
                     //  ddsSpec(3473);
                     eat();
 
-                    if (Equipment.isEquipped(ItemId.DRAGON_DAGGERP_5698))
+                    if (Equipment.isEquipped(ItemID.DRAGON_DAGGERP_5698))
                         Utils.equipItem(TRIDENT_ARRAY[0], "Wield");
 
                     if (AccurateMouse.click(npc[0], "Attack")) {
@@ -624,7 +649,7 @@ public class DreamMentor implements QuestTask{
 
     //example
     BankTask bankTaskOne = BankTask.builder()
-            .addInvItem(ItemId.TINDERBOX, Amount.of(1))
+            .addInvItem(ItemID.TINDERBOX, Amount.of(1))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON).item(
                     1329, Amount.of(1)))
             .build();
@@ -646,14 +671,14 @@ public class DreamMentor implements QuestTask{
 
                     eat();
 
-                    if (Equipment.isEquipped(ItemId.DRAGON_DAGGERP_5698))
+                    if (Equipment.isEquipped(ItemID.DRAGON_DAGGERP_5698))
                         Utils.equipItem(TRIDENT_ARRAY[0], "Wield");
                     int b = General.random(3, 5);
                     for (int i = 0; i < b; i++) {
                         if (AccurateMouse.click(inadeq[0], "Attack")) {
                             General.sleep(750, 2200);
                         }
-                        if(inadeq[0].isInCombat())
+                        if (inadeq[0].isInCombat())
                             break;
                     }
                 }
@@ -676,7 +701,7 @@ public class DreamMentor implements QuestTask{
 
     @Override
     public boolean validate() {
-        return true;
+        return cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
@@ -801,9 +826,9 @@ public class DreamMentor implements QuestTask{
                 && Utils.getVarBitValue(3623) == 100
                 && Utils.getVarBitValue(HEALTH_VARBIT) == 100
                 && Utils.getVarBitValue(3634) == 4 && Utils.getVarBitValue(2430) == 0) {
-            if (Inventory.find(ItemId.DREAM_POTION).length == 0) {
+            if (Inventory.find(ItemID.DREAM_POTION).length == 0) {
                 General.println("[Debug]: Going to fill vial");
-                if (Inventory.find(ItemId.DREAM_VIAL_EMPTY).length == 1)
+                if (Inventory.find(ItemID.DREAM_VIAL_EMPTY).length == 1)
                     fillVialWithWater.useItemOnObject();
                 addGoutweed.execute();
                 useHammerOnAstralRune.execute();
@@ -813,8 +838,10 @@ public class DreamMentor implements QuestTask{
                 General.println("[Debug]: Going light brazer");
                 if (!Game.isInInstance()) // && !fightItems.check())
                     getFightItems();
-                else
-                    lightBrazier.useItemOnObject();
+
+                lightBrazier.useItemOnObject();
+                talkToCyrisusForDream.execute();
+                Timer.waitCondition(() -> Game.isInInstance(), 7000, 1000);
             }
         }
         if (Utils.getVarBitValue(3618) == 24
@@ -828,7 +855,8 @@ public class DreamMentor implements QuestTask{
                 if (!fightItems.check()) {
                     getFightItems();
                 }
-
+                lightBrazier.useItemOnObject();
+                General.println("[Debug]: Going Talk to cyrisus for dream");
                 talkToCyrisusForDream.execute();
                 Timer.waitCondition(() -> Game.isInInstance(), 7000, 1000);
             }
@@ -860,7 +888,7 @@ public class DreamMentor implements QuestTask{
 
         }
         if (Utils.getVarBitValue(3618) == 28) {
-            //done
+            cQuesterV2.taskList.remove(this);
         }
     }
 

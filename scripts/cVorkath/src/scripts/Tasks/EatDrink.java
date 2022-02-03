@@ -10,7 +10,7 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.EatUtil;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.PrayerUtil;
 import scripts.Timer;
 import scripts.VorkUtils.Vars;
@@ -28,7 +28,7 @@ public class EatDrink implements Task{
 
     public void handlePotions(){
         if (Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt){
-            if (Inventory.find(ItemId.PRAYER_POTION).length ==0){
+            if (Inventory.find(ItemID.PRAYER_POTION).length ==0){
                 //tele out
             }
             PrayerUtil.drinkPrayerPotion();

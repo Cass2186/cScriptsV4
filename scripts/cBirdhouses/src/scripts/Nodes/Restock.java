@@ -8,7 +8,7 @@ import scripts.BankManager;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
@@ -55,15 +55,15 @@ public class Restock implements Task {
             BankManager.open(true);
             if (Banking.find(Const.get().DIGSITE_PENDANT).length == 0) {
                 BankManager.depositAll(true);
-                BankManager.withdraw(1, true, ItemId.STAFF_OF_FIRE);
-                Utils.equipItem(ItemId.STAFF_OF_FIRE);
+                BankManager.withdraw(1, true, ItemID.STAFF_OF_FIRE);
+                Utils.equipItem(ItemID.STAFF_OF_FIRE);
                 BankManager.withdraw(100, true, Const.get().COSMIC_RUNE);
                 BankManager.withdraw(0, true, Const.get().RUBY_NECKLACE);
                 BankManager.close(true);
             }
         }
         else{
-           // MagicUtils.castEnchant(Const.get().RUBY_NECKLACE, ItemId.STAFF_OF_FIRE, "Lvl-3 Enchant");
+           // MagicUtils.castEnchant(Const.get().RUBY_NECKLACE, ItemID.STAFF_OF_FIRE, "Lvl-3 Enchant");
         }
     }
 

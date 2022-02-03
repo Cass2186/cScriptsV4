@@ -25,13 +25,13 @@ public class HazeelCult implements QuestTask {
     }
 
 
-    GEItem lobster = new GEItem(ItemId.LOBSTER, 15, 25);
-    GEItem staminaPots = new GEItem(ItemId.STAMINA_POTION[0], 2, 15);
-    GEItem glory = new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 10);
-    GEItem ringOfDueling = new GEItem(ItemId.RING_OF_DUELING[0], 1, 15);
-    GEItem mindRune = new GEItem(ItemId.MIND_RUNE, 300, 15);
-    GEItem fireRune = new GEItem(ItemId.FIRE_RUNE, 900, 1);
-    GEItem staffOfAir = new GEItem(ItemId.STAFF_OF_AIR, 1, 150);
+    GEItem lobster = new GEItem(ItemID.LOBSTER, 15, 25);
+    GEItem staminaPots = new GEItem(ItemID.STAMINA_POTION[0], 2, 15);
+    GEItem glory = new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 10);
+    GEItem ringOfDueling = new GEItem(ItemID.RING_OF_DUELING[0], 1, 15);
+    GEItem mindRune = new GEItem(ItemID.MIND_RUNE, 300, 15);
+    GEItem fireRune = new GEItem(ItemID.FIRE_RUNE, 900, 1);
+    GEItem staffOfAir = new GEItem(ItemID.STAFF_OF_AIR, 1, 150);
 
     ArrayList toBuy = new ArrayList(Arrays.asList(
             lobster,
@@ -77,15 +77,15 @@ public class HazeelCult implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(12, true, ItemId.LOBSTER);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
-        BankManager.withdraw(1, true, ItemId.STAFF_OF_AIR);
-        Utils.equipItem(ItemId.STAFF_OF_AIR);
-        BankManager.withdraw(300, true, ItemId.MIND_RUNE);
-        BankManager.withdraw(800, true, ItemId.FIRE_RUNE);
+        BankManager.withdraw(12, true, ItemID.LOBSTER);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
+        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+        Utils.equipItem(ItemID.STAFF_OF_AIR);
+        BankManager.withdraw(300, true, ItemID.MIND_RUNE);
+        BankManager.withdraw(800, true, ItemID.FIRE_RUNE);
         BankManager.close(true);
-        Utils.equipItem(ItemId.RING_OF_DUELING[0]);
+        Utils.equipItem(ItemID.RING_OF_DUELING[0]);
     }
 
 

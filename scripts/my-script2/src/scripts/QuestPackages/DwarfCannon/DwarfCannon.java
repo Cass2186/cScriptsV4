@@ -59,25 +59,25 @@ public class DwarfCannon implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.LOBSTER, 10, 45),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 5, 40),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.SKILLS_NECKLACE[2], 2, 25),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 25),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.HAMMER, 1, 250)
+                    new GEItem(ItemID.LOBSTER, 10, 45),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 40),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.SKILLS_NECKLACE[2], 2, 25),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 25),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.HAMMER, 1, 250)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.LOBSTER, 10, 2),
-                    new ItemReq(ItemId.CAMELOT_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 1),
-                    new ItemReq(ItemId.FALADOR_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.HAMMER, 1, 1),
-                    new ItemReq(ItemId.SKILLS_NECKLACE[2], 2, 1),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LOBSTER, 10, 2),
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 1),
+                    new ItemReq(ItemID.FALADOR_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.HAMMER, 1, 1),
+                    new ItemReq(ItemID.SKILLS_NECKLACE[2], 2, 1),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -92,17 +92,17 @@ public class DwarfCannon implements QuestTask {
     public void getQuestItems() {
         cQuesterV2.status = "Banking";
         if (Inventory.find(
-                ItemId.HAMMER).length < 1 || Inventory.find(
-                ItemId.CAMELOT_TELEPORT).length < 1 || Inventory.find(
-                ItemId.faladorTab).length < 1) {
+                ItemID.HAMMER).length < 1 || Inventory.find(
+                ItemID.CAMELOT_TELEPORT).length < 1 || Inventory.find(
+                ItemID.FALADOR_TELEPORT).length < 1) {
             BankManager.open(true);
             BankManager.depositAll(true);
-            BankManager.withdraw(1, true, ItemId.HAMMER);
-            BankManager.withdraw(4, true, ItemId.LOBSTER);
-            BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
-            BankManager.withdraw(3, true, ItemId.CAMELOT_TELEPORT);
-            BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE[2]);
-            BankManager.withdraw(3, true, ItemId.faladorTab);
+            BankManager.withdraw(1, true, ItemID.HAMMER);
+            BankManager.withdraw(4, true, ItemID.LOBSTER);
+            BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
+            BankManager.withdraw(3, true, ItemID.CAMELOT_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE[2]);
+            BankManager.withdraw(3, true, ItemID.FALADOR_TELEPORT);
             BankManager.close(true);
         }
     }

@@ -155,20 +155,20 @@ public class RfdMonkey implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ROPE, 1, 300),
-                    new GEItem(ItemId.APE_ATOL_TAB, 6, 50),
-                    new GEItem(ItemId.PRAYER_POTION_4, 4, 20),
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], 3, 30),
-                    new GEItem(ItemId.KNIFE, 1, 300),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 5, 50),
-                    new GEItem(ItemId.SHARK, 15, 50),
+                    new GEItem(ItemID.ROPE, 1, 300),
+                    new GEItem(ItemID.APE_ATOLL_TELEPORT, 6, 50),
+                    new GEItem(ItemID.PRAYER_POTION_4, 4, 20),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 3, 30),
+                    new GEItem(ItemID.KNIFE, 1, 300),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 50),
+                    new GEItem(ItemID.SHARK, 15, 50),
                     new GEItem(BANANA, 1, 500),
                     new GEItem(MONKEY_NUTS, 1, 500),
-                    new GEItem(ItemId.SUPER_COMBAT_POTION[0], 2, 15),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 40),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.DRAGON_SCIMITAR, 1, 25)
+                    new GEItem(ItemID.SUPER_COMBAT_POTION[0], 2, 15),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 40),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.DRAGON_SCIMITAR, 1, 25)
             )
     );
 
@@ -181,25 +181,25 @@ public class RfdMonkey implements QuestTask {
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.COINS, 5000, 1000),
-                    new ItemReq(ItemId.DRAGON_SCIMITAR, 1, 1, true, true),
-                    new ItemReq(ItemId.ROPE, 1, 1),
+                    new ItemReq(ItemID.COINS, 5000, 1000),
+                    new ItemReq(ItemID.DRAGON_SCIMITAR, 1, 1, true, true),
+                    new ItemReq(ItemID.ROPE, 1, 1),
                     new ItemReq(APE_ATOL_TAB, 5, 1),
-                    new ItemReq(ItemId.PESTLE_MORTAR, 1, 1),
+                    new ItemReq(ItemID.PESTLE_AND_MORTAR, 1, 1),
                     new ItemReq(M_SPEAK_AMULET, 1, 1, true, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 1),
-                    new ItemReq(ItemId.KNIFE, 1, 1),
-                    new ItemReq(ItemId.LUMBRIDGE_TELEPORT, 5, 2),
-                    new ItemReq(ItemId.SHARK, 6, 1),
-                    new ItemReq(ItemId.KARAMJAN_MONKEY_GREEGREE, 1, 1, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 1),
+                    new ItemReq(ItemID.KNIFE, 1, 1),
+                    new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 5, 2),
+                    new ItemReq(ItemID.SHARK, 6, 1),
+                    new ItemReq(ItemID.KARAMJAN_MONKEY_GREEGREE, 1, 1, true),
                     new ItemReq(MONKEY_NUTS, 1, 1),
                     new ItemReq(BANANA, 1, 1),
                     new ItemReq(DRAMEN_STAFF, 1, 1, true),
-                    new ItemReq(ItemId.SUPER_COMBAT_POTION[0], 1, 0),
+                    new ItemReq(ItemID.SUPER_COMBAT_POTION[0], 1, 0),
 
-                    new ItemReq(ItemId.PRAYER_POTION[0], 4, 1),
-                    new ItemReq(ItemId.ANTIDOTE_PLUS_PLUS[0], 1, 0, true),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.PRAYER_POTION[0], 4, 1),
+                    new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 0, true),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -257,7 +257,7 @@ public class RfdMonkey implements QuestTask {
             if (!LARGE_SHOP_AREA.contains(Player.getPosition())) {
                 cQuesterV2.status = "Going to talisman Shop - Gate walk";
 
-                RSItem[] invStam = Inventory.find(ItemId.STAMINA_POTION);
+                RSItem[] invStam = Inventory.find(ItemID.STAMINA_POTION);
                 if (invStam.length > 0 && invStam[0].click("Drink"))
                     Utils.microSleep();
                 //todo
@@ -381,7 +381,7 @@ public class RfdMonkey implements QuestTask {
                 General.println("[Debug]: " + cQuesterV2.status);
 
                 if (Prayer.getPrayerPoints() < General.random(10, 25))
-                    EatUtil.drinkPotion(ItemId.PRAYER_POTION);
+                    EatUtil.drinkPotion(ItemID.PRAYER_POTION);
 
                 RSNPC[] targ = NPCs.findNearest(name);
 
@@ -495,12 +495,12 @@ public class RfdMonkey implements QuestTask {
         }
     }
 
-    public void useItemOnTempleMonkey(int itemId) {
+    public void useItemOnTempleMonkey(int ItemID) {
         leaveAwowogeiArea();
         if (!THREE_MONKEY_AREA.contains(Player.getPosition()))
             PathingUtil.localNavigation(THREE_MONKEY_AREA.getRandomTile());
         cQuesterV2.status = "Using item on 1 of Monkeys";
-        if (Utils.useItemOnNPC(itemId, "Kikazaru")) {
+        if (Utils.useItemOnNPC(ItemID, "Kikazaru")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
         }
@@ -530,13 +530,13 @@ public class RfdMonkey implements QuestTask {
                     Inventory.drop(BANANA);
                     EatUtil.eatFood();
                 }
-                if (Utils.useItemOnObject(ItemId.ROPE, RED_BANANA_TREE_ID)) { // spelling might be wrong
+                if (Utils.useItemOnObject(ItemID.ROPE, RED_BANANA_TREE_ID)) { // spelling might be wrong
                     Timer.waitCondition(() -> Inventory.find(RED_BANANA).length > 0, 4000, 6000);
                 }
-                if (Inventory.find(ItemId.KNIFE).length == 0) {
+                if (Inventory.find(ItemID.KNIFE).length == 0) {
                     // drop b/c we don't have a knife for some reason
                 }
-                if (Utils.useItemOnItem(ItemId.KNIFE, RED_BANANA))
+                if (Utils.useItemOnItem(ItemID.KNIFE, RED_BANANA))
                     Timer.waitCondition(() -> Inventory.find(RED_BANANA).length == 0, 4000, 6000);
 
                 sliced = Inventory.find(SLICED_RED_BANANA);
@@ -606,7 +606,7 @@ public class RfdMonkey implements QuestTask {
             if (Utils.clickObj("Bush", "Pick")) { //picks nut
 
             }
-            if (Utils.useItemOnItem(TCHIKI_MONKEY_NUTS, ItemId.PESTLE_MORTAR)) {
+            if (Utils.useItemOnItem(TCHIKI_MONKEY_NUTS, ItemID.PESTLE_AND_MORTAR)) {
 
             }
             if (Utils.useItemOnItem(SNAKE_CORPSE, TCHIKI_NUT_PASTE)) {
@@ -702,7 +702,7 @@ public class RfdMonkey implements QuestTask {
             if (NUT_AREA.contains(Player.getPosition())) {
                 for (int i = 0; i < 3; i++) {
                     RSItem[] invNuts = Inventory.find(TCHIKI_MONKEY_NUTS);
-                    RSItem[] unneededItems = Inventory.find(ItemId.ROPE, ItemId.KNIFE, MONKEY_NUTS, BANANA);
+                    RSItem[] unneededItems = Inventory.find(ItemID.ROPE, ItemID.KNIFE, MONKEY_NUTS, BANANA);
                     if (Inventory.isFull() && unneededItems.length > 0) {
                         Inventory.drop(unneededItems);
                         Utils.unselectItem();
@@ -783,7 +783,7 @@ public class RfdMonkey implements QuestTask {
     int COOKED_STUFFED_SNAKE = 7579;
 
     public void makeStuffedSnake() {
-        if (Utils.useItemOnItem(ItemId.PESTLE_MORTAR, TCHIKI_MONKEY_NUTS)) {
+        if (Utils.useItemOnItem(ItemID.PESTLE_AND_MORTAR, TCHIKI_MONKEY_NUTS)) {
             Timer.waitCondition(() -> Inventory.find(TCHIKI_MONKEY_NUTS).length == 0, 5000, 7000);
             General.sleep(500, 1000);
         }

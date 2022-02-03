@@ -10,13 +10,12 @@ import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.Objects;
-import org.tribot.api2007.types.RSNPC;
-import org.tribot.api2007.types.RSObject;
-import org.tribot.api2007.types.RSPlayer;
+import org.tribot.api2007.types.*;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
@@ -34,9 +33,12 @@ import scripts.Tasks.Combat.CrabTasks.EatDrink;
 import scripts.Tasks.Combat.CrabTasks.Fight;
 import scripts.Tasks.Combat.CrabTasks.MoveToCrabTile;
 import scripts.Tasks.Combat.CrabTasks.ResetAggro;
+import scripts.Tasks.Herblore.MixTar;
+import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
 import scripts.Tasks.PestControl.PestTasks.AttackPortal;
 import scripts.Tasks.PestControl.PestTasks.DefendKnight;
 import scripts.Tasks.PestControl.PestTasks.EnterBoat;
+import scripts.Tasks.Smithing.BlastFurnace.BfTasks.*;
 import scripts.Tasks.SorceressGarden.ElementalCollisionDetector;
 import scripts.dax.tracker.DaxTracker;
 import scripts.skillergui.SkillerGUI;
@@ -147,7 +149,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
     }
 
 
-    public void populateInitialMap() {
+    public static void populateInitialMap() {
         Log.log("[Debug]: Populating intial skills xp HashMap");
         for (Skills.SKILLS s : Skills.SKILLS.values()) {
             Vars.get().skillStartXpMap.put(s, s.getXP());
@@ -281,8 +283,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
         Log.log("Username is " + user);
         Log.log("Location is " + lcn);
 
-        if (Tribot.getUsername().equals("cass2186") || Tribot.getUsername().equals("Whipz")
-                || Tribot.getUsername().equals("SkrrtNick")) {
+        if (Tribot.getUsername().equalsIgnoreCase("cass2186") || Tribot.getUsername().equalsIgnoreCase("Whipz")
+                || Tribot.getUsername().equalsIgnoreCase("SkrrtNick") || Tribot.getUsername().equalsIgnoreCase("Destinbrown1225")) {
 
         } else {
             Log.log("[Debug]: Username is not permitted");
@@ -326,7 +328,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 new DropLogs(),
                 new HerbloreBank(),
                 new MixItemsHerblore(),
-                // new MixTar(),
+                 new MixTar(),
                 new BuyItems(),
                 new CollectOre(),
                 new DepositPayDirt(),
@@ -347,9 +349,9 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 new SetTrap(),
                 new Falconry(),
                 new scripts.Tasks.Magic.Teleport(),
-                   new DefendKnight(),
-                   new AttackPortal(),
-                   new EnterBoat(),
+                new DefendKnight(),
+                //new AttackPortal(),
+                new EnterBoat(),
                 new Pollniveach(),
                 new GoToStart(),
                 new GoToTreeGnome(),
@@ -385,24 +387,24 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 new SlayerRestock(),
                 new GetTask(),
                 new Loot(),
-                new SmithBars(),
+              //  new SmithBars(),
                 new BuyHouse(),
                 new EatDrink(),
                 new Fight(),
                 new MoveToCrabTile(),
                 new ResetAggro(),
-                // new Bank(),
-                //   new CollectBars(),
-                //  new DepositOre(),
-                // new MoveToBF(),
-                // new PayForeman(),
-                //  new RefillCoffer(),
-                //  new Stamina(),
-                // new StartQuest(),
+                 new BlastFurnaceBank(),
+                   new CollectBars(),
+                  new DepositOre(),
+                 new MoveToBF(),
+                 new PayForeman(),
+                  new RefillCoffer(),
+                  new Stamina(),
+                 new StartQuest(),
                 new PrayerBank(),
-                new SpringRun(),
+                new SpringRun()
                 //MiniBreak.get(),
-                new MakeCannonballs()
+               // new MakeCannonballs()
 
         );
 
@@ -578,8 +580,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 Optional<Polygon> tile = n.getTile().getBounds();
                 if (tile.isPresent()) {
                     g.drawPolygon(tile.get());
-                g.drawString("angle: " + n.getOrientation().getAngle(),
-                       (int) tile.get().getBounds2D().getX(), (int)tile.get().getBounds2D().getY() );
+                    g.drawString("angle: " + n.getOrientation().getAngle(),
+                            (int) tile.get().getBounds2D().getX(), (int) tile.get().getBounds2D().getY());
 
                 }
 
@@ -686,6 +688,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
     @Override
     public void onBreakEnd() {
+        safetyTimer.reset();
         Vars.get().isOnBreak = false;
     }
 
@@ -726,18 +729,27 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
 
     private void endOnDeath(String message) {
-        if (message.toLowerCase().contains("you are dead") || message.toLowerCase().contains("you died")) {
-            General.println("[Message Listner]: Death Message received, ending script");
-            isRunning.set(false);
-            throw
-                    new NullPointerException();
+        if (Vars.get().currentTask != null && Vars.get().currentTask != SkillTasks.PEST_CONTROL) {
+            if (message.toLowerCase().contains("you are dead") || message.toLowerCase().contains("you died")) {
+                General.println("[Message Listner]: Death Message received, ending script");
+                isRunning.set(false);
+                throw
+                        new NullPointerException();
+            }
         }
     }
 
 
     @Override
     public void serverMessageReceived(String message) {
-
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.FIREMAKING)) {
+            if (message.contains("You can't light a fire")) {
+                Vars.get().shouldResetFireMaking = true;
+            }
+        }
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.FIREMAKING)) {
+            BlastFurnaceBank.coalBagMessaageHandler(message);
+        }
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SLAYER)) {
             GetTask.handleNewTaskMessage(message);
             GetTask.handleTaskMessage(message);
@@ -754,6 +766,18 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
         }
         if (message.contains("green dragon"))
             Log.log("[Message]: " + message);
+        if (message.equals("You don't find anything useful here.")) {
+            State.get().getLastBookcaseTile().ifPresent(tile -> {
+
+                if (Utils.isLookingTowards(Player.getRSPlayer(), tile, 1)) {
+                    State.get().getLibrary().mark(tile, null);
+                    State.get().setLastBookcaseTile(null);
+                } else {
+                    Log.log("Misclicked bookcase");
+                    State.get().setLastBookcaseTile(null);
+                }
+            });
+        }
         endOnMessage(message, "green dragon");
         endOnMessage(message, "earth warrior");
         endOnDeath(message);

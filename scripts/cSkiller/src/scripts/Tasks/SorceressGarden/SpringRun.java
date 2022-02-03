@@ -1,6 +1,5 @@
 package scripts.Tasks.SorceressGarden;
 
-import org.tribot.api2007.Game;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;

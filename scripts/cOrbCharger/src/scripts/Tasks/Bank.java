@@ -6,7 +6,7 @@ import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
 import scripts.BankManager;
 import scripts.Data.Const;
-import scripts.ItemId;
+import scripts.ItemID;
 
 public class Bank implements Task{
 

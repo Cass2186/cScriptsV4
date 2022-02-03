@@ -27,20 +27,20 @@ public class DoricsQuest implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.CLAY, 6, 200),
-                    new GEItem(ItemId.COPPER_ORE, 4, 200),
-                    new GEItem(ItemId.IRON_ORE, 2, 50),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.CLAY, 6, 200),
+                    new GEItem(ItemID.COPPER_ORE, 4, 200),
+                    new GEItem(ItemID.IRON_ORE, 2, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
 
 
-    ItemReq clay = new ItemReq( ItemId.CLAY, 6);
-    ItemReq copper = new ItemReq( ItemId.COPPER_ORE, 4);
-    ItemReq  iron = new ItemReq( ItemId.IRON_ORE, 2);
+    ItemReq clay = new ItemReq( ItemID.CLAY, 6);
+    ItemReq copper = new ItemReq( ItemID.COPPER_ORE, 4);
+    ItemReq  iron = new ItemReq( ItemID.IRON_ORE, 2);
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
@@ -53,9 +53,9 @@ public class DoricsQuest implements QuestTask {
                     clay,
                     copper,
                     iron,
-                    new ItemReq(ItemId.FALADOR_TELEPORT, 3),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true,
+                    new ItemReq(ItemID.FALADOR_TELEPORT, 3),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true,
                             true)
             ))
     );

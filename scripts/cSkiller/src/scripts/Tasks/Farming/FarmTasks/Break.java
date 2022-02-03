@@ -4,7 +4,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Login;
 import org.tribot.api2007.types.RSInterfaceComponent;
-import scripts.Tasks.Farming.Data.Enums.Trees;
+import scripts.Tasks.Farming.Data.Enums.TREES;
 import scripts.Tasks.Farming.Data.FarmVars;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
@@ -18,20 +18,20 @@ public class Break implements Task {
 
 
     public static int determineBreakLengthTree() {
-        if (FarmVars.get().treeId == Trees.OAK_SAPPLING.getId()) {
-            return Trees.OAK_SAPPLING.getTimeToGrowMs();
+        if (FarmVars.get().treeId == TREES.OAK_SAPPLING.getId()) {
+            return TREES.OAK_SAPPLING.getTimeToGrowMs();
 
-        } else if (FarmVars.get().treeId == Trees.WILLOW_SAPPLING.getId()) {
-            return Trees.WILLOW_SAPPLING.getTimeToGrowMs();
+        } else if (FarmVars.get().treeId == TREES.WILLOW_SAPPLING.getId()) {
+            return TREES.WILLOW_SAPPLING.getTimeToGrowMs();
 
-        } else if (FarmVars.get().treeId == Trees.MAPLE_SAPPLING.getId()) {
-            return Trees.MAPLE_SAPPLING.getTimeToGrowMs();
+        } else if (FarmVars.get().treeId == TREES.MAPLE_SAPPLING.getId()) {
+            return TREES.MAPLE_SAPPLING.getTimeToGrowMs();
 
-        } else if (FarmVars.get().treeId == Trees.YEW_SAPPLING.getId()) {
-            return Trees.YEW_SAPPLING.getTimeToGrowMs();
+        } else if (FarmVars.get().treeId == TREES.YEW_SAPPLING.getId()) {
+            return TREES.YEW_SAPPLING.getTimeToGrowMs();
 
-        } else if (FarmVars.get().treeId == Trees.MAGIC_SAPPLING.getId()) {
-            return Trees.MAGIC_SAPPLING.getTimeToGrowMs();
+        } else if (FarmVars.get().treeId == TREES.MAGIC_SAPPLING.getId()) {
+            return TREES.MAGIC_SAPPLING.getTimeToGrowMs();
         }
 
         return 60000; //10 min if not specified

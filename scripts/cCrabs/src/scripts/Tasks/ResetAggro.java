@@ -12,6 +12,7 @@ import scripts.Data.Const;
 import scripts.Data.CrabTile;
 import scripts.Data.Vars;
 import scripts.PathingUtil;
+import scripts.Utils;
 
 
 public class ResetAggro implements Task {
@@ -88,12 +89,16 @@ public class ResetAggro implements Task {
 
     @Override
     public boolean validate() {
-        return Login.getLoginState().equals(Login.STATE.INGAME) &&
+        return //Login.getLoginState().equals(Login.STATE.INGAME) &&
                 (Vars.get().shouldResetAggro || Fight.checkAggro());
     }
 
     @Override
     public void execute() {
+        if (!Login.getLoginState().equals(Login.STATE.INGAME)){
+            Login.login();
+            Utils.shortSleep();
+        }
         if (Vars.get().crabResetArea == null) {
             determineResetArea(Vars.get().crabTile);
         }

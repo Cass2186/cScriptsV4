@@ -13,13 +13,10 @@ import scripts.BankManager;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.EntitySelector.Entities;
-import scripts.EntitySelector.finders.prefabs.ItemEntity;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.MiscTasks.BuyItems;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,17 +46,17 @@ public class WoodcuttingBank implements Task {
 
     public static int getBestAxe() {
         if (Skills.getCurrentLevel(Skills.SKILLS.WOODCUTTING) < 6) {
-            return ItemId.AXE_IDS[0]; //iron
+            return ItemID.AXE_IDS[0]; //iron
         } else if (Skills.getCurrentLevel(Skills.SKILLS.WOODCUTTING) < 21) {
-            return ItemId.AXE_IDS[1]; //steel
+            return ItemID.AXE_IDS[1]; //steel
         } else if (Skills.getCurrentLevel(Skills.SKILLS.WOODCUTTING) < 31) {
-            return ItemId.AXE_IDS[2]; //mithril
+            return ItemID.AXE_IDS[2]; //mithril
         } else if (Skills.getCurrentLevel(Skills.SKILLS.WOODCUTTING) < 41) {
-            return ItemId.AXE_IDS[3]; //adamant
+            return ItemID.AXE_IDS[3]; //adamant
         } else if (Skills.getCurrentLevel(Skills.SKILLS.WOODCUTTING) < 61) {
-            return ItemId.AXE_IDS[4]; //rune
+            return ItemID.AXE_IDS[4]; //rune
         } else
-            return ItemId.AXE_IDS[5]; //dragon
+            return ItemID.AXE_IDS[5]; //dragon
     }
 
 

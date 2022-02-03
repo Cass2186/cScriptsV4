@@ -133,28 +133,28 @@ public class UndergroundPass implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ROPE, 6, 300),
+                    new GEItem(ItemID.ROPE, 6, 300),
                     new GEItem(IRON_ARROW, 20, 300),
-                    new GEItem(ItemId.PLANK, 1, 300),
-                    new GEItem(ItemId.SPADE, 1, 300),
-                    new GEItem(ItemId.EMPTY_BUCKET, 1, 300),
-                    new GEItem(ItemId.TINDERBOX, 1, 300),
+                    new GEItem(ItemID.PLANK, 1, 300),
+                    new GEItem(ItemID.SPADE, 1, 300),
+                    new GEItem(ItemID.EMPTY_BUCKET, 1, 300),
+                    new GEItem(ItemID.TINDERBOX, 1, 300),
                     new GEItem(SUMMER_PIE_ARRAY[0], 20, 30),
-                    new GEItem(ItemId.SHARK, 20, 30),
+                    new GEItem(ItemID.SHARK, 20, 30),
 
-                    new GEItem(ItemId.WEST_ARDOUGNE_TELEPORT, 5, 30),
+                    new GEItem(ItemID.WEST_ARDOUGNE_TELEPORT, 5, 30),
 
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 15),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 1, 15),
-                    new GEItem(ItemId.STAMINA_POTION[0], 6, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 15),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 1, 15),
+                    new GEItem(ItemID.STAMINA_POTION[0], 6, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -195,7 +195,7 @@ public class UndergroundPass implements QuestTask {
         BankManager.withdraw(1, true, BUCKET);
         BankManager.withdraw(1, true, TINDERBOX);
         BankManager.withdraw(2000, true, 995);
-        BankManager.withdraw(5, true, ItemId.WEST_ARDOUGNE_TELEPORT);
+        BankManager.withdraw(5, true, ItemID.WEST_ARDOUGNE_TELEPORT);
 
         if (Skills.getCurrentLevel(Skills.SKILLS.RANGED) >= 50) {
             BankManager.withdraw(1, true, BLUE_DHIDE_BODY);
@@ -227,7 +227,7 @@ public class UndergroundPass implements QuestTask {
         }
         BankManager.open(true);
         BankManager.withdraw(12, true, SUMMER_PIE_ARRAY[0]);
-        BankManager.withdraw(5, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(5, true, ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
     }
 
@@ -1198,7 +1198,7 @@ public class UndergroundPass implements QuestTask {
     RSArea INFRONT_OF_KLANKS_HOUSE = new RSArea(new RSTile(2327, 9801, 0), new RSTile(2324, 9802, 0));
 
     private void drinkStamina() {
-        RSItem[] stamina = Inventory.find(ItemId.STAMINA_POTION);
+        RSItem[] stamina = Inventory.find(ItemID.STAMINA_POTION);
 
         if (stamina.length > 0 && Game.getSetting(1575) == 0) {
             stamina[0].click();

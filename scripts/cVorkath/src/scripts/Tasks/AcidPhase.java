@@ -1,6 +1,6 @@
 package scripts.Tasks;
 
-import obf.Ti;
+
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.*;

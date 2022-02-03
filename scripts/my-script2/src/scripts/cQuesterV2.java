@@ -8,9 +8,7 @@ import dax.shared.helpers.questing.QuestHelper;
 import dax.teleports.Teleport;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.NPCs;
-import org.tribot.api2007.Skills;
+import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
@@ -19,7 +17,11 @@ import org.tribot.script.sdk.Log;
 import scripts.MoneyMaking.ClockWorks.MakeClockWork;
 import scripts.QuestPackages.APorcineOfInterest.APorcineOfInterest;
 import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
+import scripts.QuestPackages.AscentOfArceuus.AscentOfArceuus;
 import scripts.QuestPackages.Barcrawl.BarCrawl;
+import scripts.QuestPackages.BigChompyBirdHunting.BigChompyBirdHunting;
+import scripts.QuestPackages.Biohazard.Biohazard;
+import scripts.QuestPackages.BlackKnightsFortress.BlackKnightsFortress;
 import scripts.QuestPackages.BoneVoyage.BoneVoyage;
 import scripts.QuestPackages.ClientOfKourend.ClientOfKourend;
 import scripts.QuestPackages.Contact.Contact;
@@ -37,11 +39,13 @@ import scripts.QuestPackages.ElementalWorkshopI.ElementalWorkshop;
 import scripts.QuestPackages.EnterTheAbyss.EnterTheAbyss;
 import scripts.QuestPackages.ErnestTheChicken.ErnestTheChicken;
 import scripts.QuestPackages.FairyTalePt1.FairyTalePt1;
+import scripts.QuestPackages.FamilyCrest.FamilyCrest;
 import scripts.QuestPackages.FightArena.FightArena;
 import scripts.QuestPackages.FishingContest.FishingContest;
 import scripts.QuestPackages.FremTrials.FremTrials;
 import scripts.QuestPackages.GertrudesCat.GertrudesCat;
 import scripts.QuestPackages.GhostsAhoy.GhostsAhoy;
+import scripts.QuestPackages.GoblinDiplomacy.GoblinDiplomacy;
 import scripts.QuestPackages.GrandTree.GrandTree;
 import scripts.QuestPackages.HauntedMine.HauntedMine;
 import scripts.QuestPackages.HazeelCult.HazeelCult;
@@ -52,28 +56,39 @@ import scripts.QuestPackages.HorrorFromTheDeep.HorrorFromTheDeep;
 import scripts.QuestPackages.ImpCatcher.ImpCatcher;
 import scripts.QuestPackages.JunglePotion.JunglePotion;
 import scripts.QuestPackages.KnightsSword.KnightsSword;
+import scripts.QuestPackages.KourendFavour.ArceuusLibrary.ArceuusLibrary;
+import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestPackages.KourendFavour.MakeCompost;
 import scripts.QuestPackages.LegendsQuest.LegendsQuest;
+import scripts.QuestPackages.LostCity.LostCity;
 import scripts.QuestPackages.LostTribe.LostTribe;
 import scripts.QuestPackages.LunarDiplomacy.*;
 import scripts.QuestPackages.MerlinsCrystal.MerlinsCrystal;
 import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
 import scripts.QuestPackages.MonksFriend.MonksFriend;
+import scripts.QuestPackages.MountainDaughter.MountainDaughter;
+import scripts.QuestPackages.MurderMystery.MurderMystery;
 import scripts.QuestPackages.NatureSpirit.NatureSpirit;
 import scripts.QuestPackages.OneSmallFavour.OneSmallFavour;
 
+import scripts.QuestPackages.PlagueCity.PlagueCity;
 import scripts.QuestPackages.PriestInPeril.PriestInPeril;
 import scripts.QuestPackages.RestlessGhost.RestlessGhost;
 import scripts.QuestPackages.RfdCook.RfdCook;
 import scripts.QuestPackages.RfdEvilDave.RfdEvilDave;
 import scripts.QuestPackages.RfdGoblin.RfdGoblin;
 import scripts.QuestPackages.RfdMonkey.RfdMonkey;
+import scripts.QuestPackages.RfdSkratch.RfdSkratch;
+import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
 import scripts.QuestPackages.SeaSlug.SeaSlug;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
+import scripts.QuestPackages.TempleOfIkov.TempleOfIkov;
 import scripts.QuestPackages.TheFeud.TheFeud;
+import scripts.QuestPackages.TheGolem.TheGolem;
 import scripts.QuestPackages.TouristTrap.TouristTrap;
 import scripts.QuestPackages.TreeGnomeVillage.TreeGnomeVillage;
+import scripts.QuestPackages.TrollStronghold.TrollStronghold;
 import scripts.QuestPackages.UnderGroundPass.UndergroundPass;
 import scripts.QuestPackages.VampyreSlayer.VampyreSlayer;
 import scripts.QuestPackages.VarrockMuseum.VarrockMuseum;
@@ -82,6 +97,7 @@ import scripts.QuestPackages.WitchsHouse.WitchsHouse;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestPackages.ZogreFleshEaters.ZogreFleshEaters;
+import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.TaskSet;
 import scripts.QuestUtils.Vars;
@@ -125,6 +141,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             }
         });
         Utils.setCameraZoomAboveDefault();
+        if (!Combat.isAutoRetaliateOn())
+            Combat.setAutoRetaliate(true);
     }
 
     @Override
@@ -154,7 +172,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
 
         isRunning.set(true);
         while (isRunning.get()) {
-            General.sleep(20, 40);
+            General.sleep(50);
             QuestTask task = tasks.getValidTask();
             if (cQuesterV2.taskList.size() == 0) {
                 Log.log("[Debug]: Finished all quests");
@@ -224,7 +242,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     taskList.add(HazeelCult.get());
                 } else if (arg.toLowerCase().contains("heroes")) {
                     General.println("[Args]: Added Heroes quest");
-                    // taskList.addAll(Arrays.asList(new HeroesQuestBlackArmsGang()));
+                     taskList.addAll(Arrays.asList(HeroesQuestBlackArmsGang.get()));
                 } else if (arg.toLowerCase().contains("lunardiplomacy")) {
                     General.println("[Args]: Added Lunar Diplomacy");
                     taskList.addAll(Arrays.asList(new ChanceChallenge(),
@@ -237,11 +255,11 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     //   taskList.addAll(Arrays.asList(new OneSmallFavour()));
                 } else if (arg.toLowerCase().contains("pheonix")) {
                     General.println("[Args]: Added Shield of Arav Pheonix Gang");
-                    //     taskList.addAll(Arrays.asList(new PheonixGang()));
+                         taskList.addAll(Arrays.asList( PheonixGang.get()));
                 }
                 if (arg.toLowerCase().contains("blackarm")) {
                     General.println("[Args]: Added Shield of Arav Black arms Gang");
-                    //    taskList.addAll(Arrays.asList(new BlackArmsGang()));
+                    taskList.addAll(List.of( BlackArmsGang.get()));
                 }
                 if (arg.toLowerCase().contains("fishingcontest")) {
                     General.println("[Args]: Added Fishing Contest");
@@ -259,6 +277,9 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     General.println("[Args]: Added RfdCook Questline");
                     //TODO add gertrudes cat, sea slug and fm training
                     taskList.add(CooksAssistant.get());
+                    taskList.add(GertrudesCat.get());
+                    if (Skills.SKILLS.FIREMAKING.getActualLevel() >= 30)
+                        taskList.add(SeaSlug.get());
                     taskList.add(FishingContest.get());
                     taskList.add(RfdCook.get());
                 }
@@ -424,7 +445,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     taskList.add(DemonSlayer.get());
                 } else if (arg.toLowerCase().contains("bonevoyage")) {
                     General.println("[Args]: Added Bone voyage");
-                    //taskList.add(Rune.get());
+                    taskList.add(RuneMysteries.get());
                     //  taskList.add(VarrockMuseum.get());
                     taskList.add(BoneVoyage.get());
                 } else if (arg.toLowerCase().contains("grandtree")) {
@@ -436,26 +457,90 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 } else if (arg.toLowerCase().contains("rfdgoblin")) {
                     General.println("[Args]: Added RFD Goblin");
                     taskList.add(RfdGoblin.get());
-                }
-                else if (arg.toLowerCase().contains("merlin")) {
+                } else if (arg.toLowerCase().contains("merlin")) {
                     General.println("[Args]: Added Merlin's crystal");
                     taskList.add(MerlinsCrystal.get());
-                }
-                else if (arg.toLowerCase().contains("hosafavour")) {
+                } else if (arg.toLowerCase().contains("hosafavour")) {
                     General.println("[Args]: Added Hosidius favour");
                     taskList.add(MakeCompost.get());
-                }
-                else if (arg.toLowerCase().contains("runemysteries")) {
+                } else if (arg.toLowerCase().contains("runemysteries")) {
                     General.println("[Args]: Added Rune Mysteries");
                     taskList.add(RuneMysteries.get());
-                }
-                else if (arg.toLowerCase().contains("elementalworkshop")) {
+                } else if (arg.toLowerCase().contains("elementalworkshop")) {
                     General.println("[Args]: Added Elemental Workshop");
                     taskList.add(ElementalWorkshop.get());
-                }
-                else if (arg.toLowerCase().contains("hauntedmine")) {
+                } else if (arg.toLowerCase().contains("hauntedmine")) {
                     General.println("[Args]: Added haunted Mine");
                     taskList.add(HauntedMine.get());
+                } else if (arg.toLowerCase().contains("tarnslair") ||
+                        arg.toLowerCase().contains("lairoftarn")) {
+                    General.println("[Args]: Added Tarn's Lair");
+                    taskList.add(TarnRoute.get());
+                }
+                else if (arg.toLowerCase().contains("familycrest")) {
+                    General.println("[Args]: Added Family crest");
+                    taskList.add(FamilyCrest.get());
+                }
+                else if (arg.toLowerCase().contains("test")) {
+                    General.println("[Args]: Added Test");
+                    taskList.add(TestClass.get());
+                }
+                else if (arg.toLowerCase().contains("murdermystery")) {
+                    General.println("[Args]: Added Murder Mystery");
+                    taskList.add(MurderMystery.get());
+                }
+                else if (arg.toLowerCase().contains("goblindiplomacy")) {
+                    General.println("[Args]: Added goblin Diplomacy");
+                    taskList.add(GoblinDiplomacy.get());
+                }
+                else if (arg.toLowerCase().contains("romeo")) {
+                    General.println("[Args]: Added Romeo and Juliet");
+                    taskList.add(RomeoAndJuliet.get());
+                }
+                else if (arg.toLowerCase().contains("biohazard")) {
+                    General.println("[Args]: Added Biohazard");
+                    taskList.add(Biohazard.get());
+                }
+                else if (arg.toLowerCase().contains("plaguecity")) {
+                    General.println("[Args]: Added Plague City");
+                    taskList.add(PlagueCity.get());
+                }   else if (arg.toLowerCase().contains("blackknight")) {
+                    General.println("[Args]: Added Black Knights fortress");
+                    taskList.add(BlackKnightsFortress.get());
+                }
+
+                else if (arg.toLowerCase().contains("mtd")) {
+                    General.println("[Args]: Added Mountain Daughter");
+                    taskList.add(MountainDaughter.get());
+                }
+                else if (arg.toLowerCase().contains("library")) {
+                    General.println("[Args]: Added Arceuus library");
+                    taskList.add(ArceuusLibrary.get());
+                }
+                else if (arg.toLowerCase().contains("ascentofarceuus")) {
+                    General.println("[Args]: Added Ascent of Arceuus");
+                    taskList.add(AscentOfArceuus.get());
+                }
+                else if (arg.toLowerCase().contains("rfdskratch")) {
+                    General.println("[Args]: Added RFD skratch ");
+                    taskList.add(BigChompyBirdHunting.get());
+                    taskList.add(RfdSkratch.get());
+                }
+                else if (arg.toLowerCase().contains("bigchompy")) {
+                    General.println("[Args]: Added Big Chompy");
+                    taskList.add(BigChompyBirdHunting.get());
+                }
+                else if (arg.toLowerCase().contains("lostcity")) {
+                    General.println("[Args]: Added Lost City");
+                    taskList.add(LostCity.get());
+                }
+                else if (arg.toLowerCase().contains("templeofikov")) {
+                    General.println("[Args]: Added  Temple of Ikov");
+                    taskList.add(TempleOfIkov.get());
+                }
+                else if (arg.toLowerCase().contains("trollstronghold")) {
+                    General.println("[Args]: Added  Troll Stronghold");
+                    taskList.add(TrollStronghold.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -491,6 +576,11 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     "Viewport scale: " + Game.getViewportScale()
             ));
         }
+        if (taskList.get(0).equals(FamilyCrest.get())){
+            myString.add("northRoomLever " + FamilyCrest.northRoomLever);
+            myString.add("northWallLever " + FamilyCrest.northWallLever);
+            myString.add("southRoomLever " + FamilyCrest.southRoomLever);
+        }
 
         PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }
@@ -518,7 +608,18 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             ZogreFleshEaters.handlePortraitMessage(message);
         }
         // if (RFD_PIRATE) RfdPirate.handleRockMessage(message);
-
+        if (taskList.get(0).equals(ArceuusLibrary.get())) {
+            if (message.equals("You don't find anything useful here.")) {
+                State.get().getLastBookcaseTile().ifPresent(tile -> {
+                    if (Utils.isLookingTowards(Player.getRSPlayer(), tile, 1)) {
+                        State.get().getLibrary().mark(tile, null);
+                        State.get().setLastBookcaseTile(null);
+                    } else {
+                        State.get().setLastBookcaseTile(null);
+                    }
+                });
+            }
+        }
 
         //  if (ZOGRE_FLESH_EATERS)
         //      ZogreFleshEaters.handlePortraitMessage(message);

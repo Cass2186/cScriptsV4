@@ -44,10 +44,6 @@ public class WaterfallQuest implements QuestTask {
             inGolrieRoom, gotPebble, inEndRoom, inEnd2;
 
 
-    //RSAreas
-    RSArea gnomeBasement, glarialTomb, falls, endRoom, end2, hudonIsland, deadTreeIsland, ledge, upstairsInHouse, golrieRoom;
-
-
     /*   public Map<Integer, QuestStep> loadSteps() {
            Quests.WATERFALL_QUEST.getGameSetting();
            loadRSAreas();
@@ -109,43 +105,43 @@ public class WaterfallQuest implements QuestTask {
        }
    */
 
-    ItemReq highlightRope = new ItemReq("Rope", ItemId.ROPE);
-    ItemReq rope = new ItemReq("Rope", ItemId.ROPE);
+    ItemReq highlightRope = new ItemReq("Rope", ItemID.ROPE);
+    ItemReq rope = new ItemReq("Rope", ItemID.ROPE);
 
-    ItemReq book = new ItemReq("Book on baxtorian", ItemId.BOOK_ON_BAXTORIAN);
-    ItemReq glarialsPebble = new ItemReq("Glarial's pebble", ItemId.GLARIALS_PEBBLE);
+    ItemReq book = new ItemReq("Book on baxtorian", ItemID.BOOK_ON_BAXTORIAN);
+    ItemReq glarialsPebble = new ItemReq("Glarial's pebble", ItemID.GLARIALS_PEBBLE);
     //glarialsPebble.setTooltip("You can get another from Golrie under the Tree Gnome Village");
-    ItemReq glarialsUrn = new ItemReq("Glarial's urn", ItemId.GLARIALS_URN);
+    ItemReq glarialsUrn = new ItemReq("Glarial's urn", ItemID.GLARIALS_URN);
     // glarialsUrn.setTooltip("You can get another from the chest in Glarial's tomb");
-    ItemReq glarialsAmulet = new ItemReq(ItemId.GLARIALS_AMULET);
+    ItemReq glarialsAmulet = new ItemReq(ItemID.GLARIALS_AMULET);
     // glarialsAmulet.setTooltip("You can get another from the chest in Glarial's tomb");
-    ItemReq unequippedAmulet = new ItemReq("Glarial's amulet", ItemId.GLARIALS_AMULET);
+    ItemReq unequippedAmulet = new ItemReq("Glarial's amulet", ItemID.GLARIALS_AMULET);
     ItemReq key = new ItemReq("Key", 293);
     ItemReq baxKey = new ItemReq("Key", 298);
 
-    ItemReq airRunes = new ItemReq("Air runes", ItemId.AIR_RUNE, 6);
-    ItemReq airRune = new ItemReq("Air rune", ItemId.AIR_RUNE);
-    ItemReq earthRunes = new ItemReq("Earth runes", ItemId.EARTH_RUNE, 6);
-    ItemReq earthRune = new ItemReq("Earth rune", ItemId.EARTH_RUNE);
-    ItemReq waterRunes = new ItemReq("Water runes", ItemId.WATER_RUNE, 6);
-    ItemReq waterRune = new ItemReq("Water rune", ItemId.WATER_RUNE);
+    ItemReq airRunes = new ItemReq("Air runes", ItemID.AIR_RUNE, 6);
+    ItemReq airRune = new ItemReq("Air rune", ItemID.AIR_RUNE);
+    ItemReq earthRunes = new ItemReq("Earth runes", ItemID.EARTH_RUNE, 6);
+    ItemReq earthRune = new ItemReq("Earth rune", ItemID.EARTH_RUNE);
+    ItemReq waterRunes = new ItemReq("Water runes", ItemID.WATER_RUNE, 6);
+    ItemReq waterRune = new ItemReq("Water rune", ItemID.WATER_RUNE);
 
     //   gamesNecklace = new ItemReq("Games necklace", ItemCollections.getGamesNecklaces());
     //   food = new ItemReq("Food", ItemCollections.getGoodEatingFood(), -1);
 
 
-    public void loadRSAreas() {
-        gnomeBasement = new RSArea(new RSTile(2497, 9552, 0), new RSTile(2559, 9593, 0));
-        glarialTomb = new RSArea(new RSTile(2524, 9801, 0), new RSTile(2557, 9849, 0));
-        golrieRoom = new RSArea(new RSTile(2502, 9576, 0), new RSTile(2523, 9593, 0));
-        hudonIsland = new RSArea(new RSTile(2510, 3476, 0), new RSTile(2515, 3482, 0));
-        deadTreeIsland = new RSArea(new RSTile(2512, 3465, 0), new RSTile(2513, 3475, 0));
-        ledge = new RSArea(new RSTile(2510, 3462, 0), new RSTile(2513, 3464, 0));
-        upstairsInHouse = new RSArea(new RSTile(2516, 3424, 1), new RSTile(2520, 3431, 1));
-        falls = new RSArea(new RSTile(2556, 9861, 0), new RSTile(2595, 9920, 0));
-        endRoom = new RSArea(new RSTile(2561, 9902, 0), new RSTile(2570, 9917, 0));
-        end2 = new RSArea(new RSTile(2599, 9890, 0), new RSTile(2608, 9916, 0));
-    }
+
+        RSArea  gnomeBasement = new RSArea(new RSTile(2497, 9552, 0), new RSTile(2559, 9593, 0));
+        RSArea  glarialTomb = new RSArea(new RSTile(2524, 9801, 0), new RSTile(2557, 9849, 0));
+        RSArea  golrieRoom = new RSArea(new RSTile(2502, 9576, 0), new RSTile(2523, 9593, 0));
+        RSArea  hudonIsland = new RSArea(new RSTile(2510, 3476, 0), new RSTile(2515, 3482, 0));
+        RSArea  deadTreeIsland = new RSArea(new RSTile(2512, 3465, 0), new RSTile(2513, 3475, 0));
+        RSArea  ledge = new RSArea(new RSTile(2510, 3462, 0), new RSTile(2513, 3464, 0));
+        RSArea  upstairsInHouse = new RSArea(new RSTile(2516, 3424, 1), new RSTile(2520, 3431, 1));
+        RSArea  falls = new RSArea(new RSTile(2556, 9861, 0), new RSTile(2595, 9920, 0));
+        RSArea   endRoom = new RSArea(new RSTile(2561, 9902, 0), new RSTile(2570, 9917, 0));
+        RSArea   end2 = new RSArea(new RSTile(2599, 9890, 0), new RSTile(2608, 9916, 0));
+
 
     public void setupConditions() {
         onDeadTreeIsland = new AreaRequirement(deadTreeIsland);
@@ -206,10 +202,12 @@ public class WaterfallQuest implements QuestTask {
             new RSTile(2509, 3494, 0), "Board");
 
     NPCStep talkToHudon = new NPCStep(NpcID.HUDON, new RSTile(2511, 3484, 0));
-    ObjectStep useRopeOnRock = new ObjectStep(ObjectID.ROCK, new RSTile(2512, 3468, 0), "Use a rope on the rock to" +
-            " the south.", highlightRope);
+    UseItemOnObjectStep useRopeOnRock = new UseItemOnObjectStep(ItemID.ROPE, ObjectID.ROCK,
+            new RSTile(2512, 3476, 0),  preLedgeArea.contains(Player.getPosition()),
+             highlightRope);
 
-    ObjectStep useRopeOnTree = new ObjectStep(ObjectID.DEAD_TREE_2020, new RSTile(2512, 3465, 0), "Use a rope on the dead tree.", highlightRope);
+    UseItemOnObjectStep useRopeOnTree = new UseItemOnObjectStep(ItemID.ROPE, ObjectID.DEAD_TREE_2020, new RSTile(2513, 34680),
+            "Use a rope on the dead tree.", highlightRope);
 
     ObjectStep getInBarrel = new ObjectStep(ObjectID.BARREL_2022, new RSTile(2512, 3463, 0), "Get in the barrel.");
 
@@ -234,7 +232,7 @@ public class WaterfallQuest implements QuestTask {
     ObjectStep useRopeOnRockFinal = new ObjectStep(ObjectID.ROCK, new RSTile(2512, 3468, 0), "Use a rope on the " +
             "rock to the south.", highlightRope);
     ;
-    ObjectStep useRopeOnTreeFinal = new ObjectStep(ObjectID.DEAD_TREE_2020, new RSTile(2512, 3465, 0), "Use a rope on the dead tree.", highlightRope);
+    ObjectStep useRopeOnTreeFinal = new ObjectStep(ObjectID.DEAD_TREE_2020, new RSTile(2513, 3468, 0), "Use a rope on the dead tree.", highlightRope);
 
     ObjectStep enterFalls = new ObjectStep(ObjectID.DOOR_2010, new RSTile(2511, 3464, 0), "EQUIP Glarial's amulet, then enter the falls.", glarialsAmulet);
 
@@ -251,29 +249,29 @@ public class WaterfallQuest implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.LOBSTER, 20, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 25),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 20),
-                    new GEItem(ItemId.ROPE, 4, 200),
-                    new GEItem(ItemId.WATER_RUNE, 10, 20),
-                    new GEItem(ItemId.AIR_RUNE, 10, 20),
-                    new GEItem(ItemId.EARTH_RUNE, 10, 20),
-                    new GEItem(ItemId.AIR_RUNE, 10, 20),
-                    new GEItem(ItemId.EARTH_RUNE, 4, 200),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 2, 40),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 2, 40),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 2, 40)
+                    new GEItem(ItemID.LOBSTER, 20, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 25),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 20),
+                    new GEItem(ItemID.ROPE, 4, 200),
+                    new GEItem(ItemID.WATER_RUNE, 10, 20),
+                    new GEItem(ItemID.AIR_RUNE, 10, 20),
+                    new GEItem(ItemID.EARTH_RUNE, 10, 20),
+                    new GEItem(ItemID.AIR_RUNE, 10, 20),
+                    new GEItem(ItemID.EARTH_RUNE, 4, 200),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 2, 40),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 2, 40),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 2, 40)
             )
     );
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 1, 0),
-                    new ItemReq(ItemId.ROPE, 1, 1),
-                    new ItemReq(ItemId.LOBSTER, 8, 2),
-                    new ItemReq(ItemId.RING_OF_DUELING[0], 1, 0, true)
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0),
+                    new ItemReq(ItemID.ROPE, 1, 1),
+                    new ItemReq(ItemID.LOBSTER, 8, 2),
+                    new ItemReq(ItemID.RING_OF_DUELING[0], 1, 0, true)
             ))
     );
 
@@ -288,7 +286,7 @@ public class WaterfallQuest implements QuestTask {
     }
 
     public void buyItems() {
-        if (Inventory.find(ItemId.LOBSTER).length < 7 || Inventory.find(ItemId.ROPE).length < 1) {
+        if (Inventory.find(ItemID.LOBSTER).length < 7 || Inventory.find(ItemID.ROPE).length < 1) {
             buyInitial.buyItems();
             Exchange.clickCollect();
             startInventory.withdrawItems();
@@ -308,7 +306,7 @@ public class WaterfallQuest implements QuestTask {
         if (goToHudonIsland()) {
             cQuesterV2.status = "Using rope on Rock";
             useRopeOnRock.execute();
-            return Timer.waitCondition(() -> onDeadTreeIsland.check(), 5500, 7500);
+            return Timer.waitCondition(() -> onDeadTreeIsland.check(), 8500, 11500);
         }
         return onDeadTreeIsland.check();
     }
@@ -317,7 +315,7 @@ public class WaterfallQuest implements QuestTask {
         if (goToDeadTreeIsland()) {
             cQuesterV2.status = "Using rope on tree";
             useRopeOnTree.execute();
-            return Timer.waitCondition(() -> onLedge.check(), 5500, 7500);
+            return Timer.slowWaitCondition(() -> onLedge.check(), 5500, 7500);
         }
         return onLedge.check();
     }
@@ -411,13 +409,13 @@ public class WaterfallQuest implements QuestTask {
             BankManager.checkEquippedGlory();
             BankManager.depositAll(true);
             BankManager.withdraw(1, true,
-                    ItemId.GAMES_NECKLACE[0]);
+                    ItemID.GAMES_NECKLACE[0]);
             BankManager.withdraw(1, true, rope.getId());
             BankManager.withdraw(8, true, lobster);
             BankManager.withdraw(1, true,
-                    ItemId.STAMINA_POTION[0]);
+                    ItemID.STAMINA_POTION[0]);
             BankManager.withdraw(1, true,
-                    ItemId.RING_OF_DUELING[0]);
+                    ItemID.RING_OF_DUELING[0]);
 
             Utils.idle(200, 1500);
             BankManager.close(true);
@@ -465,12 +463,12 @@ public class WaterfallQuest implements QuestTask {
         if (raftCrashArea.contains(Player.getPosition())) {
             PathingUtil.localNavigation(endOfCrashSite);
             General.sleep(General.random(1000, 3000));
-            if (Utils.useItemOnObject(ItemId.ROPE, 1996))
+            if (Utils.useItemOnObject(ItemID.ROPE, 1996))
                 Timer.abc2WaitCondition(() -> preLedgeArea.contains(Player.getPosition()), 14000, 18000);
         }
 
         if (preLedgeArea.contains(Player.getPosition()))
-            if (Utils.useItemOnObject(ItemId.ROPE, 2020))
+            if (Utils.useItemOnObject(ItemID.ROPE, 2020))
                 Timer.abc2WaitCondition(() -> LEDGE.contains(Player.getPosition()), 12000, 15000);
 
         if (LEDGE.contains(Player.getPosition()))
@@ -543,13 +541,13 @@ public class WaterfallQuest implements QuestTask {
             BankManager.depositAllExcept(true, pebble);
             General.sleep(General.random(300, 600));
             BankManager.withdraw(12, true,
-                    ItemId.LOBSTER);
+                    ItemID.LOBSTER);
             BankManager.withdraw(1, true,
-                    ItemId.GAMES_NECKLACE);
+                    ItemID.GAMES_NECKLACE);
             BankManager.withdraw(1, true,
-                    ItemId.STAMINA_POTION[0]);
+                    ItemID.STAMINA_POTION[0]);
             BankManager.withdraw(1, true,
-                    ItemId.STAMINA_POTION[1]);
+                    ItemID.STAMINA_POTION[1]);
             BankManager.close(true);
         }
         if (Inventory.find(pebble).length > 0) {
@@ -560,7 +558,7 @@ public class WaterfallQuest implements QuestTask {
     }
 
     public static void checkEat() {
-        RSItem[] invLob = Inventory.find(ItemId.LOBSTER);
+        RSItem[] invLob = Inventory.find(ItemID.LOBSTER);
 
         if (Combat.getHPRatio() < 60 && invLob.length > 0) {
             AccurateMouse.click(invLob[0], "Eat");
@@ -627,7 +625,7 @@ public class WaterfallQuest implements QuestTask {
             }
 
             if (undergroundArea2.contains(Player.getPosition()) && Inventory.find(necklace).length > 0 && Inventory.find(urn).length > 0) {
-                Utils.equipItem(ItemId.GAMES_NECKLACE);
+                Utils.equipItem(ItemID.GAMES_NECKLACE);
                 PathingUtil.walkToTile(RunescapeBank.BARBARIAN_OUTPOST.getPosition());
                 checkEat();
 
@@ -638,7 +636,7 @@ public class WaterfallQuest implements QuestTask {
 
     public static void getItems2() {
         if (!BankManager.checkInventoryItems(
-                ItemId.LOBSTER, urn, necklace, ItemId.WATER_RUNE, ItemId.AIR_RUNE, ItemId.EARTH_RUNE, ItemId.ROPE)) {
+                ItemID.LOBSTER, urn, necklace, ItemID.WATER_RUNE, ItemID.AIR_RUNE, ItemID.EARTH_RUNE, ItemID.ROPE)) {
             cQuesterV2.status = "Banking for final step";
             Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
             BankManager.open(true);
@@ -646,18 +644,18 @@ public class WaterfallQuest implements QuestTask {
             BankManager.depositAll(true);
             General.sleep(General.random(300, 600));
             BankManager.withdraw(10, true, lobster);
-            BankManager.withdraw(1, true, ItemId.GAMES_NECKLACE);
+            BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE);
             BankManager.withdraw(1, true, urn);
             BankManager.withdraw(1, true, necklace);
-            BankManager.withdraw(6, true, ItemId.EARTH_RUNE);
-            BankManager.withdraw(6, true, ItemId.AIR_RUNE);
-            BankManager.withdraw(6, true, ItemId.WATER_RUNE);
-            BankManager.withdraw(1, true, ItemId.ROPE);
+            BankManager.withdraw(6, true, ItemID.EARTH_RUNE);
+            BankManager.withdraw(6, true, ItemID.AIR_RUNE);
+            BankManager.withdraw(6, true, ItemID.WATER_RUNE);
+            BankManager.withdraw(1, true, ItemID.ROPE);
             BankManager.withdraw(1, true, pebble);
             BankManager.withdraw(1, true,
-                    ItemId.STAMINA_POTION);
+                    ItemID.STAMINA_POTION);
             BankManager.withdraw(1, true,
-                    ItemId.RING_OF_WEALTH);
+                    ItemID.RING_OF_WEALTH);
             BankManager.close(true);
         }
 
@@ -683,13 +681,12 @@ public class WaterfallQuest implements QuestTask {
             if (raftCrashArea.contains(Player.getPosition())) {
                 Walking.blindWalkTo(endOfCrashSite);
                 General.sleep(General.random(1000, 2000));
-                if (Utils.useItemOnObject(ItemId.ROPE
-                        , "Rock"))
+                if (Utils.useItemOnObject(ItemID.ROPE, 1996))
                     Timer.waitCondition(() -> preLedgeArea.contains(Player.getPosition()), 12000, 15000);
 
             }
             if (preLedgeArea.contains(Player.getPosition()))
-                if (Utils.useItemOnObject(ItemId.ROPE, 2020))
+                if (Utils.useItemOnObject(ItemID.ROPE, 2020))
                     Timer.waitCondition(() -> ledge.contains(Player.getPosition()), 5000, 7000);
 
             if (ledge.contains(Player.getPosition())) {
@@ -754,7 +751,7 @@ public class WaterfallQuest implements QuestTask {
             for (RSObject obj : pillars){
                 useRunesOnPillars(obj);
             }
-            /*RSItem[] waterRune = Inventory.find(ItemId.WATER_RUNE);
+            /*RSItem[] waterRune = Inventory.find(ItemID.WATER_RUNE);
             if (waterRune.length > 0) {
                 if (waterRune[0].getStack() == 6) {
                     useRunesOnPillars(0);
@@ -775,8 +772,8 @@ public class WaterfallQuest implements QuestTask {
                     useRunesOnPillars(2);
                 }
             }*/
-            if (Inventory.find(ItemId.WATER_RUNE).length < 1 && Inventory.find(ItemId.EARTH_RUNE).length < 1 &&
-                    Inventory.find(ItemId.AIR_RUNE).length < 1) {
+            if (Inventory.find(ItemID.WATER_RUNE).length < 1 && Inventory.find(ItemID.EARTH_RUNE).length < 1 &&
+                    Inventory.find(ItemID.AIR_RUNE).length < 1) {
                 if (Utils.useItemOnObject(necklace, 2006)) {
                     Utils.idle(4000, 9000);
                     NPCInteraction.waitForConversationWindow();
@@ -804,25 +801,25 @@ public class WaterfallQuest implements QuestTask {
         if (PathingUtil.clickScreenWalk(pillarNum.getPosition())){
             PathingUtil.movementIdle();
         }
-        if (Inventory.find(ItemId.EARTH_RUNE).length > 0) {
-            int stack = Inventory.find(ItemId.EARTH_RUNE)[0].getStack();
-            if (Utils.useItemOnObject(ItemId.EARTH_RUNE, pillarNum))
-                Timer.waitCondition(() -> Inventory.find(ItemId.EARTH_RUNE).length < 1 ||
-                        Inventory.find(ItemId.EARTH_RUNE)[0].getStack() < stack, 5000);
+        if (Inventory.find(ItemID.EARTH_RUNE).length > 0) {
+            int stack = Inventory.find(ItemID.EARTH_RUNE)[0].getStack();
+            if (Utils.useItemOnObject(ItemID.EARTH_RUNE, pillarNum))
+                Timer.slowWaitCondition(() -> Inventory.find(ItemID.EARTH_RUNE).length < 1 ||
+                        Inventory.find(ItemID.EARTH_RUNE)[0].getStack() < stack, 4500, 5000);
 
         }
-        if (Inventory.find(ItemId.AIR_RUNE).length > 0) {
-            int stack = Inventory.find(ItemId.AIR_RUNE)[0].getStack();
-            if (Utils.useItemOnObject(ItemId.AIR_RUNE, pillarNum))
-                Timer.waitCondition(() -> Inventory.find(ItemId.AIR_RUNE).length < 1
-                        || Inventory.find(ItemId.AIR_RUNE)[0].getStack() < stack, 5000);
+        if (Inventory.find(ItemID.AIR_RUNE).length > 0) {
+            int stack = Inventory.find(ItemID.AIR_RUNE)[0].getStack();
+            if (Utils.useItemOnObject(ItemID.AIR_RUNE, pillarNum))
+                Timer.waitCondition(() -> Inventory.find(ItemID.AIR_RUNE).length < 1
+                        || Inventory.find(ItemID.AIR_RUNE)[0].getStack() < stack, 5000);
 
         }
-        if (Inventory.find(ItemId.WATER_RUNE).length > 0) {
-            int stack = Inventory.find(ItemId.WATER_RUNE)[0].getStack();
-            if (Utils.useItemOnObject(ItemId.WATER_RUNE, pillarNum))
-                Timer.waitCondition(() -> Inventory.find(ItemId.WATER_RUNE).length < 1
-                        || Inventory.find(ItemId.WATER_RUNE)[0].getStack() < stack, 5000);
+        if (Inventory.find(ItemID.WATER_RUNE).length > 0) {
+            int stack = Inventory.find(ItemID.WATER_RUNE)[0].getStack();
+            if (Utils.useItemOnObject(ItemID.WATER_RUNE, pillarNum))
+                Timer.waitCondition(() -> Inventory.find(ItemID.WATER_RUNE).length < 1
+                        || Inventory.find(ItemID.WATER_RUNE)[0].getStack() < stack, 5000);
 
         }
     }
@@ -830,28 +827,28 @@ public class WaterfallQuest implements QuestTask {
 
     public void useRunesOnPillars(int pillarNumber) {
 
-        if (Inventory.find(ItemId.EARTH_RUNE).length > 0) {
-            int stack = Inventory.find(ItemId.EARTH_RUNE)[0].getStack();
-            Utils.selectInvItem(ItemId.EARTH_RUNE);
+        if (Inventory.find(ItemID.EARTH_RUNE).length > 0) {
+            int stack = Inventory.find(ItemID.EARTH_RUNE)[0].getStack();
+            Utils.selectInvItem(ItemID.EARTH_RUNE);
             if (AccurateMouse.click(pillars[pillarNumber], "Use")) {
-                Timer.waitCondition(() -> Inventory.find(ItemId.EARTH_RUNE).length < 1 ||
-                        Inventory.find(ItemId.EARTH_RUNE)[0].getStack() < stack, 5000);
+                Timer.waitCondition(() -> Inventory.find(ItemID.EARTH_RUNE).length < 1 ||
+                        Inventory.find(ItemID.EARTH_RUNE)[0].getStack() < stack, 5000);
             }
         }
-        if (Inventory.find(ItemId.AIR_RUNE).length > 0) {
-            int stack = Inventory.find(ItemId.AIR_RUNE)[0].getStack();
-            Utils.selectInvItem(ItemId.AIR_RUNE);
+        if (Inventory.find(ItemID.AIR_RUNE).length > 0) {
+            int stack = Inventory.find(ItemID.AIR_RUNE)[0].getStack();
+            Utils.selectInvItem(ItemID.AIR_RUNE);
             if (AccurateMouse.click(pillars[pillarNumber], "Use")) {
-                Timer.waitCondition(() -> Inventory.find(ItemId.AIR_RUNE).length < 1
-                        || Inventory.find(ItemId.AIR_RUNE)[0].getStack() < stack, 5000);
+                Timer.waitCondition(() -> Inventory.find(ItemID.AIR_RUNE).length < 1
+                        || Inventory.find(ItemID.AIR_RUNE)[0].getStack() < stack, 5000);
             }
         }
-        if (Inventory.find(ItemId.WATER_RUNE).length > 0) {
-            int stack = Inventory.find(ItemId.WATER_RUNE)[0].getStack();
-            Utils.selectInvItem(ItemId.WATER_RUNE);
+        if (Inventory.find(ItemID.WATER_RUNE).length > 0) {
+            int stack = Inventory.find(ItemID.WATER_RUNE)[0].getStack();
+            Utils.selectInvItem(ItemID.WATER_RUNE);
             if (AccurateMouse.click(pillars[pillarNumber], "Use")) {
-                Timer.waitCondition(() -> Inventory.find(ItemId.WATER_RUNE).length < 1
-                        || Inventory.find(ItemId.WATER_RUNE)[0].getStack() < stack, 5000);
+                Timer.waitCondition(() -> Inventory.find(ItemID.WATER_RUNE).length < 1
+                        || Inventory.find(ItemID.WATER_RUNE)[0].getStack() < stack, 5000);
             }
         }
     }
@@ -870,7 +867,6 @@ public class WaterfallQuest implements QuestTask {
     @Override
     public void execute() {
         setupConditions();
-        loadRSAreas();
 
         if (Game.getSetting(65) == 0) { // start quest
             buyItems();
@@ -910,11 +906,11 @@ public class WaterfallQuest implements QuestTask {
 
     @Override
     public String questName() {
-        return "Waterfall Quest";
+        return "Waterfall Quest (" + Game.getSetting(65) +")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
     }
 }

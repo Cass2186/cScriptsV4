@@ -48,7 +48,7 @@ public class MakeClockWork implements QuestTask {
 
     @Override
     public void execute() {
-        RSItem[] bars = org.tribot.api2007.Inventory.find(ItemId.STEEL_BAR);
+        RSItem[] bars = org.tribot.api2007.Inventory.find(ItemID.STEEL_BAR);
         if (Game.isInInstance() ) {
             for (RSItem b : bars) {
                 int exp = Skill.CRAFTING.getXp();
@@ -61,7 +61,7 @@ public class MakeClockWork implements QuestTask {
                     Timer.waitCondition(() -> Skill.CRAFTING.getXp() > exp, 3000, 4000);
                     Waiting.waitNormal(150,33);
                 }
-                if (org.tribot.api2007.Inventory.find(ItemId.STEEL_BAR).length == 0)
+                if (org.tribot.api2007.Inventory.find(ItemID.STEEL_BAR).length == 0)
                     break;
             }
         }
@@ -84,14 +84,14 @@ public class MakeClockWork implements QuestTask {
 
 
     public static boolean hasRequiredItems() {
-        return Inventory.getCount(ItemId.COINS_995) > 367 && ((Inventory.getCount(ItemId.STEEL_BAR) > 0)
-                || ClockWorkVars.useButler && Inventory.getCount(ItemId.STEEL_BAR + 1) > 0);
+        return Inventory.getCount(ItemID.COINS_995) > 367 && ((Inventory.getCount(ItemID.STEEL_BAR) > 0)
+                || ClockWorkVars.useButler && Inventory.getCount(ItemID.STEEL_BAR + 1) > 0);
     }
 
 
     boolean needsButler() {
-        return (Inventory.contains(ItemId.STEEL_BAR + 1) && !Inventory.contains(ItemId.STEEL_BAR)) ||
-                (Inventory.isFull() && !Inventory.contains(ItemId.STEEL_BAR));
+        return (Inventory.contains(ItemID.STEEL_BAR + 1) && !Inventory.contains(ItemID.STEEL_BAR)) ||
+                (Inventory.isFull() && !Inventory.contains(ItemID.STEEL_BAR));
     }
     public void leaveHouse() {
         if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
@@ -103,15 +103,15 @@ public class MakeClockWork implements QuestTask {
     }
 
     private void bankBars(){
-        if (!Inventory.contains(ItemId.STEEL_BAR)) {
+        if (!Inventory.contains(ItemID.STEEL_BAR)) {
             PathingUtil.walkToTile(RunescapeBank.VARROCK_WEST.getPosition());
             BankManager.open(true);
-            BankManager.depositAllExcept(ItemId.VARROCK_TELEPORT,
-                    ItemId.TELEPORT_TO_HOUSE, ItemId.COINS);
-            BankManager.withdraw(0, true, ItemId.STEEL_BAR);
+            BankManager.depositAllExcept(ItemID.VARROCK_TELEPORT,
+                    ItemID.TELEPORT_TO_HOUSE, ItemID.COINS);
+            BankManager.withdraw(0, true, ItemID.STEEL_BAR);
             BankManager.close(true);
             BankManager.close(true);
-            RSItem[] tele = org.tribot.api2007.Inventory.find(ItemId.TELEPORT_TO_HOUSE);
+            RSItem[] tele = org.tribot.api2007.Inventory.find(ItemID.TELEPORT_TO_HOUSE);
             if (tele.length > 0 && tele[0].click("Break")) {
                 Waiting.waitNormal(5000, 500);
             }

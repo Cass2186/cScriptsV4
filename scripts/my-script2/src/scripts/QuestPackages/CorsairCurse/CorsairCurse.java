@@ -2,7 +2,7 @@ package scripts.QuestPackages.CorsairCurse;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.NpcID;
 import scripts.ObjectID;
 import scripts.QuestPackages.RfdCook.RfdCook;
@@ -28,8 +28,8 @@ public class CorsairCurse implements QuestTask {
 
     ItemRequirement combatGear = new ItemRequirement("Combat gear + food to defeat Ithoi (level 34), who uses magic", -1, -1);
 
-    ItemRequirement spade = new ItemRequirement("Spade", ItemId.SPADE);
-    ItemRequirement tinderbox = new ItemRequirement("Tinderbox", ItemId.TINDERBOX);
+    ItemRequirement spade = new ItemRequirement("Spade", ItemID.SPADE);
+    ItemRequirement tinderbox = new ItemRequirement("Tinderbox", ItemID.TINDERBOX);
     ItemRequirement ogreArtfact = new ItemRequirement("Ogre artefact", 21837);
 
 
@@ -113,7 +113,7 @@ public class CorsairCurse implements QuestTask {
         talkToTess.addDialogStep("I've come to return what Arsen stole.");
 
         ObjectStep goUpFromTess = new ObjectStep(ObjectID.VINE_LADDER_31790, new RSTile(2012, 9005, 1), "Leave the cavern.");
-        ClickItemStep digSand = new ClickItemStep(ItemId.SPADE, "Dig" ,new RSTile(2504, 2840, 0));
+        ClickItemStep digSand = new ClickItemStep(ItemID.SPADE, "Dig" ,new RSTile(2504, 2840, 0));
         digSand.addDialogStep("Search for the possessed doll and face the consequences.");
         //    digSand.addSubSteps(goUpFromTess);
 
@@ -164,7 +164,7 @@ public class CorsairCurse implements QuestTask {
 
         ObjectStep goDownFromIthoi3 = new ObjectStep(ObjectID.STAIRS_31735, new RSTile(2529, 2834, 1), "Use your tinderbox on the driftwood under Ithoi's hut.");
         ObjectStep useTinderboxOnWood = new ObjectStep(31724, new RSTile(2531, 2838, 0), "Use your tinderbox on the driftwood under Ithoi's hut.", tinderbox);
-       // useTinderboxOnWood.addIcon(ItemId.TINDERBOX);
+       // useTinderboxOnWood.addIcon(ItemID.TINDERBOX);
      //   useTinderboxOnWood.addSubSteps(goDownFromIthoi3);
 
         ObjectStep goOntoShip3 = new ObjectStep(ObjectID.GANGPLANK_31756, new RSTile(2578, 2839, 0), "Talk to Captain Tock on the ship.");

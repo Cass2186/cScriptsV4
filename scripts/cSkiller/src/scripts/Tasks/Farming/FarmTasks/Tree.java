@@ -32,7 +32,8 @@ public class Tree implements Task {
     }
 
     public void plantTree(int herbId, int patchId) {
-        RSObject[] patch = Objects.findNearest(20, Filters.Objects.nameContains("Tree patch").and(Filters.Objects.idEquals(patchId)));
+        RSObject[] patch = Objects.findNearest(20,
+                Filters.Objects.nameContains("Tree patch").and(Filters.Objects.idEquals(patchId)));
         if (patch.length > 0) {
             FarmVars.get().status = "Planting Tree";
             if (Utils.useItemOnObject(herbId, patchId)) {

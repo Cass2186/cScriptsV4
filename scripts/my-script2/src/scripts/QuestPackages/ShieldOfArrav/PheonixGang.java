@@ -22,6 +22,12 @@ import java.util.function.Predicate;
 
 public class PheonixGang implements QuestTask, QuestInterface {
 
+    private static PheonixGang quest;
+
+    public static PheonixGang get() {
+        return quest == null ? quest = new PheonixGang() : quest;
+    }
+
     int RELDO = 6203;
     int BARAEK = 2881;
     int STRAVEN = 5212;
@@ -36,8 +42,8 @@ public class PheonixGang implements QuestTask, QuestInterface {
 
     ObjectStep searchBookcase = new ObjectStep(2402,
             new RSTile(3212, 3494, 0),
-            "Search",
-            Inventory.find(ItemId.BOOK).length > 0);
+            "Check",
+            Inventory.find(ItemID.BOOK).length > 0);
 
 
     Predicate<RSObject> predicate = Filters.Objects
@@ -55,20 +61,20 @@ public class PheonixGang implements QuestTask, QuestInterface {
     ObjectStep getShieldHalf = new ObjectStep(2403, new RSTile(3235, 9762, 0),
             "Open", Objects.findNearest(3, 2404).length > 0);
     ObjectStep getShieldHalf1 = new ObjectStep(2404, new RSTile(3235, 9762, 0),
-            Inventory.find(ItemId.BROKEN_SHIELD).length > 0, "Search", true);
+            Inventory.find(ItemID.BROKEN_SHIELD).length > 0, "Search", true);
 
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 5, 0),
-                    new ItemReq(ItemId.COINS, 500, 200),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0)
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 5, 0),
+                    new ItemReq(ItemID.COINS, 500, 200),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0)
             )
     ));
 
     public void getShield() {
-        if (Inventory.find(ItemId.BROKEN_SHIELD).length == 0
-         && Inventory.find(ItemId.HALF_CERTIFICATE).length == 0) {
+        if (Inventory.find(ItemID.BROKEN_SHIELD).length == 0
+         && Inventory.find(ItemID.HALF_CERTIFICATE).length == 0) {
             General.println("[Debug]: Getting shield");
             getShieldHalf.setUseLocalNav(true);
             getShieldHalf1.setUseLocalNav(true);
@@ -85,7 +91,7 @@ public class PheonixGang implements QuestTask, QuestInterface {
             NPCInteraction.isConversationWindowUp();
             NPCInteraction.handleConversation();
         }
-        RSItem[] book = Inventory.find(ItemId.BOOK);
+        RSItem[] book = Inventory.find(ItemID.BOOK);
         if (book.length > 0 && book[0].click("Read")) {
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(397, 7), 5000, 8000);
         }
@@ -150,18 +156,18 @@ public class PheonixGang implements QuestTask, QuestInterface {
     }
 
     public void talkToHaigen(){
-        if (Inventory.find(ItemId.BROKEN_SHIELD).length ==1) {
+        if (Inventory.find(ItemID.BROKEN_SHIELD).length ==1) {
             General.println("[Debug]: Going to currator");
             talkToHaig.execute();
         }
     }
 
     public void getFullCert(){
-        if ( Inventory.find(ItemId.HALF_CERTIFICATE).length == 1) {
+        if ( Inventory.find(ItemID.HALF_CERTIFICATE).length == 1) {
 
         }
-        if ( Inventory.find(ItemId.HALF_CERTIFICATE).length == 1
-        && Inventory.find(ItemId.HALF_CERTIFICATE_11174).length == 1) {
+        if ( Inventory.find(ItemID.HALF_CERTIFICATE).length == 1
+        && Inventory.find(ItemID.HALF_CERTIFICATE_11174).length == 1) {
 
             //combine
             NPCInteraction.waitForConversationWindow();
@@ -171,7 +177,8 @@ public class PheonixGang implements QuestTask, QuestInterface {
 
 
     String message = "";
-
+    ItemReq certificate = new ItemReq(ItemID.CERTIFICATE);
+    NPCStep talkToRoald = new NPCStep(5215, new RSTile(3222, 3473, 0), certificate);
     @Override
     public String toString(){
         return message;
@@ -216,6 +223,11 @@ public class PheonixGang implements QuestTask, QuestInterface {
             //trade over key
             talkToHaigen();
             getFullCert();
+            Timer.waitCondition(()-> Inventory.find(ItemID.HALF_CERTIFICATE_11174).length >0, 50000);
+        }
+        if (certificate.check()) {
+            talkToRoald.execute();
+
         }
         else if (Game.getSetting(145) == 7) {
        //done

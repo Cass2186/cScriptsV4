@@ -13,6 +13,7 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
@@ -251,22 +252,22 @@ public class FremTrials implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 15, 35),
-                    new GEItem(ItemId.SHARK, 25, 25),
-                    new GEItem(ItemId.RING_OF_RECOIL, 4, 50),
-                    new GEItem(ItemId.BEER, 1, 300),
-                    new GEItem(ItemId.AIR_RUNE, 3000, 30),
-                    new GEItem(ItemId.MIND_RUNE, 1500, 30),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 15, 35),
+                    new GEItem(ItemID.SHARK, 25, 25),
+                    new GEItem(ItemID.RING_OF_RECOIL, 4, 50),
+                    new GEItem(ItemID.BEER, 1, 300),
+                    new GEItem(ItemID.AIR_RUNE, 3000, 30),
+                    new GEItem(ItemID.MIND_RUNE, 1500, 30),
 
-                    new GEItem(ItemId.RAW_SHARK, 1, 50),
-                    new GEItem(ItemId.LOBSTER, 25, 30),
-                    new GEItem(ItemId.STAFF_OF_FIRE, 1, 150),
-                    new GEItem(ItemId.BLUE_WIZ_HAT, 1, 300),
-                    new GEItem(ItemId.BLUE_WIZ_TOP, 1, 300),
+                    new GEItem(ItemID.RAW_SHARK, 1, 50),
+                    new GEItem(ItemID.LOBSTER, 25, 30),
+                    new GEItem(ItemID.STAFF_OF_FIRE, 1, 150),
+                    new GEItem(ItemID.BLUE_WIZARD_HAT, 1, 300),
+                    new GEItem(ItemID.BLUE_WIZARD_ROBE, 1, 300),
 
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 5, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 5, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -284,7 +285,7 @@ public class FremTrials implements QuestTask {
                     "Yes, I am interested.", "I want to become a Fremennik!"});
 
     public void startQuest() {
-        if (!BankManager.checkInventoryItems(ItemId.CAMELOT_TELEPORT, ItemId.MIND_RUNE, ItemId.AIR_RUNE, tinderbox)) {
+        if (!BankManager.checkInventoryItems(ItemID.CAMELOT_TELEPORT, ItemID.MIND_RUNE, ItemID.AIR_RUNE, tinderbox)) {
             buyItems();
             getItemsPart1();
         }
@@ -330,11 +331,11 @@ public class FremTrials implements QuestTask {
                 Utils.equipItem(ringOfRecoil);
                 BankManager.withdraw(24, true, shark);
                 BankManager.withdraw(5, true, camelotTab);
-                BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+                BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
                 General.sleep(General.random(100, 800));
                 BankManager.close(true);
             }
-            //   if (Inventory.find(ItemId.CAMELOT_TELEPORT).length > 0) {
+            //   if (Inventory.find(ItemID.CAMELOT_TELEPORT).length > 0) {
             //    Clicking.click("Break", Inventory.find(camelotTab));
             //   General.sleep(General.random(3000, 6000));
             //  }
@@ -1135,7 +1136,7 @@ public class FremTrials implements QuestTask {
 
     public void sigmundPart2() {
         checkSpecialItem();
-        while (invExoticFlower.length < 1) {
+     //   while (invExoticFlower.length < 1) {
             thoraTalk();
             checkSpecialItem();
             General.sleep(100);
@@ -1219,8 +1220,8 @@ public class FremTrials implements QuestTask {
                 checkSpecialItem();
             }
             checkSpecialItem();
-        }
-        if (invExoticFlower.length > 0) {
+       // }
+        if (Inventory.find(3698).length > 0) {
             talkToSigmund();
         }
     }
@@ -1488,11 +1489,11 @@ public class FremTrials implements QuestTask {
         BankManager.withdraw2(1600, true, airRune);
         BankManager.withdraw2(2, true, STAMINA_POTION[0]);
         BankManager.withdraw2(1, true, staffOfFire);
-        BankManager.withdraw2(1, true, ItemId.BLUE_WIZ_TOP);
-        BankManager.withdraw2(1, true, ItemId.BLUE_WIZ_HAT);
+        BankManager.withdraw2(1, true, ItemID.BLUE_WIZARD_ROBE);
+        BankManager.withdraw2(1, true, ItemID.BLUE_WIZARD_HAT);
         BankManager.close(true);
-        Utils.equipItem(ItemId.BLUE_WIZ_TOP);
-        Utils.equipItem(ItemId.BLUE_WIZ_HAT);
+        Utils.equipItem(ItemID.BLUE_WIZARD_ROBE);
+        Utils.equipItem(ItemID.BLUE_WIZARD_HAT);
         Utils.equipItem(staffOfFire);
     }
 
@@ -1604,8 +1605,8 @@ public class FremTrials implements QuestTask {
     }
 
     public void killLanzig() { // need a door check
-        if (!BankManager.checkInventoryItems(ItemId.MIND_RUNE, ItemId.AIR_RUNE, ItemId.LOBSTER) ||
-                Equipment.find(ItemId.STAFF_OF_FIRE).length < 1) {
+        if (!BankManager.checkInventoryItems(ItemID.MIND_RUNE, ItemID.AIR_RUNE, ItemID.LOBSTER) ||
+                Equipment.find(ItemID.STAFF_OF_FIRE).length < 1) {
             buyItems();
             getItemsPart1();
         }
@@ -2247,7 +2248,7 @@ public class FremTrials implements QuestTask {
 
 
                 if (Combat.getHPRatio() < General.random(45, 65) && Inventory.find(
-                        ItemId.LOBSTER).length > 0) // low health, eat food
+                        ItemID.LOBSTER).length > 0) // low health, eat food
                     AccurateMouse.click(Inventory.find(379)[0], "Eat");
 
                 if (safeTile1.isClickable() && !safeTile1.equals(Player.getPosition())) { // we are not standing on the safetile, so we move there
@@ -2304,9 +2305,9 @@ public class FremTrials implements QuestTask {
                 Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 
             if (Combat.getHPRatio() < General.random(40, 65) && Inventory.find(
-                    ItemId.LOBSTER).length > 0)  // low health, eat food
+                    ItemID.LOBSTER).length > 0)  // low health, eat food
                 AccurateMouse.click(Inventory.find(
-                        ItemId.LOBSTER)[0], "Eat");
+                        ItemID.LOBSTER)[0], "Eat");
 
             if (SE_SAFE_TILE.isClickable() && !SE_SAFE_TILE.equals(Player.getPosition())) { // we are not standing on the safetile, so we move there
                 PathingUtil.clickScreenWalk(SE_SAFE_TILE);

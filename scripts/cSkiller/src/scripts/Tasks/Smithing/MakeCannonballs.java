@@ -10,14 +10,12 @@ import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
-import scripts.Data.Enums.HerbloreItems;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Requirements.ItemReq;
-import scripts.Tasks.MiscTasks.BuyItems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,12 +24,12 @@ import java.util.List;
 public class MakeCannonballs implements Task {
 
     public void bankForItems() {
-        if (Inventory.find(4).length == 0 || Inventory.find(ItemId.STEEL_BAR).length == 0) {
+        if (Inventory.find(4).length == 0 || Inventory.find(ItemID.STEEL_BAR).length == 0) {
 
             List<ItemReq> inv = new ArrayList<>(
                     Arrays.asList(
                             new ItemReq(4, 1),
-                            new ItemReq(ItemId.STEEL_BAR, 0)
+                            new ItemReq(ItemID.STEEL_BAR, 0)
                     )
             );
 
@@ -66,11 +64,11 @@ public class MakeCannonballs implements Task {
             }
 
             if (MakeScreen.isOpen()) {
-                MakeScreen.makeAll(ItemId.CANNONBALL);
+                MakeScreen.makeAll(ItemID.CANNONBALL);
                 Timer.skillingWaitCondition(() -> {
                             Waiting.waitNormal(250, 45);
                             AntiBan.timedActions();
-                            return Inventory.find(ItemId.STEEL_BAR).length == 0;
+                            return Inventory.find(ItemID.STEEL_BAR).length == 0;
                         },
                         135000, 145000);
                 int i =   General.randomSD(3500, 650);

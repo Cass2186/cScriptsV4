@@ -6,7 +6,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.NpcID;
 import scripts.QuestPackages.HorrorFromTheDeep.HorrorFromTheDeep;
 import scripts.QuestSteps.BuyItemsStep;
@@ -32,25 +32,25 @@ public class BarCrawl implements QuestTask {
     }
 
 
-    ItemReq coins208 = new ItemReq("Coins", ItemId.COINS_995, 208);
-    ItemReq coins50 = new ItemReq("Coins", ItemId.COINS_995, 50);
-    ItemReq coins10 = new ItemReq("Coins", ItemId.COINS_995, 10);
-    ItemReq coins70 = new ItemReq("Coins", ItemId.COINS_995, 70);
-    ItemReq coins8 = new ItemReq("Coins", ItemId.COINS_995, 8);
-    ItemReq coins7 = new ItemReq("Coins", ItemId.COINS_995, 7);
-    ItemReq coins15 = new ItemReq("Coins", ItemId.COINS_995, 15);
-    ItemReq coins18 = new ItemReq("Coins", ItemId.COINS_995, 18);
-    ItemReq coins12 = new ItemReq("Coins", ItemId.COINS_995, 12);
+    ItemReq coins208 = new ItemReq("Coins", ItemID.COINS_995, 208);
+    ItemReq coins50 = new ItemReq("Coins", ItemID.COINS_995, 50);
+    ItemReq coins10 = new ItemReq("Coins", ItemID.COINS_995, 10);
+    ItemReq coins70 = new ItemReq("Coins", ItemID.COINS_995, 70);
+    ItemReq coins8 = new ItemReq("Coins", ItemID.COINS_995, 8);
+    ItemReq coins7 = new ItemReq("Coins", ItemID.COINS_995, 7);
+    ItemReq coins15 = new ItemReq("Coins", ItemID.COINS_995, 15);
+    ItemReq coins18 = new ItemReq("Coins", ItemID.COINS_995, 18);
+    ItemReq coins12 = new ItemReq("Coins", ItemID.COINS_995, 12);
 
-    ItemReq gamesNecklace = new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0);
-    ItemReq varrockTeleport = new ItemReq(ItemId.VARROCK_TELEPORT, 5, 1);
-    ItemReq faladorTeleport = new ItemReq(ItemId.FALADOR_TELEPORT, 5, 1);
-    ItemReq glory = new ItemReq(ItemId.AMULET_OF_GLORY[0], 1, 0, true);
-    ItemReq combatBracelet = new ItemReq(ItemId.COMBAT_BRACELET[2], 1, 0, true);
-    ItemReq camelotTeleport = new ItemReq(ItemId.CAMELOT_TELEPORT, 5, 1);
-    ItemReq duelingRing = new ItemReq(ItemId.RING_OF_DUELING[0], 1, 0, true);
+    ItemReq gamesNecklace = new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0);
+    ItemReq varrockTeleport = new ItemReq(ItemID.VARROCK_TELEPORT, 5, 1);
+    ItemReq faladorTeleport = new ItemReq(ItemID.FALADOR_TELEPORT, 5, 1);
+    ItemReq glory = new ItemReq(ItemID.AMULET_OF_GLORY[0], 1, 0, true);
+    ItemReq combatBracelet = new ItemReq(ItemID.COMBAT_BRACELET[2], 1, 0, true);
+    ItemReq camelotTeleport = new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 1);
+    ItemReq duelingRing = new ItemReq(ItemID.RING_OF_DUELING[0], 1, 0, true);
 
-    ItemReq barcrawlCard = new ItemReq( 455);
+    ItemReq barcrawlCard = new ItemReq(455);
 //		barcrawlCard.setTooltip("If you've lost it you can get another from the Barbarian Guard");
 
 
@@ -63,7 +63,7 @@ public class BarCrawl implements QuestTask {
     VarplayerRequirement notTalkedToBlueMoon = new VarplayerRequirement(77, false, 3);
     VarplayerRequirement notTalkedToJollyBoar = new VarplayerRequirement(77, false, 9);
     VarplayerRequirement notTalkedToRisingSun = new VarplayerRequirement(77, false, 11);
-    VarplayerRequirement notTalkedToRustyAnchor = new VarplayerRequirement(77, false,12);
+    VarplayerRequirement notTalkedToRustyAnchor = new VarplayerRequirement(77, false, 12);
     VarplayerRequirement notTalkedToZambo = new VarplayerRequirement(77, false, 10);
     VarplayerRequirement notTalkedToDeadMansChest = new VarplayerRequirement(77, false, 5);
     VarplayerRequirement notTalkedToFlyingHorseInn = new VarplayerRequirement(77, false, 7);
@@ -73,14 +73,14 @@ public class BarCrawl implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 1, 100),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[0], 1, 20),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
-                    new GEItem(ItemId.COMBAT_BRACELET[2], 5, 50),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 5, 50),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 1, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 30)
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 1, 100),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[0], 1, 20),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.COMBAT_BRACELET[2], 5, 50),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 50),
+                    new GEItem(ItemID.RING_OF_DUELING[0], 1, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 30)
             )
     );
 
@@ -93,8 +93,8 @@ public class BarCrawl implements QuestTask {
                     glory,
                     camelotTeleport,
                     duelingRing,
-                    new ItemReq(ItemId.COINS_995, 5000,1000),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2,0)
+                    new ItemReq(ItemID.COINS_995, 5000, 1000),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0)
             ))
     );
 
@@ -141,9 +141,9 @@ public class BarCrawl implements QuestTask {
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
-    public void checkItemsAfterStart(){
+    public void checkItemsAfterStart() {
         itemsToStart.add(barcrawlCard);
-        if (!itemsToStart.check()){
+        if (!itemsToStart.check()) {
             cQuesterV2.status = "Buying items";
             buyStep.buyItems();
             cQuesterV2.status = "Getting items";
@@ -152,7 +152,7 @@ public class BarCrawl implements QuestTask {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Barcrawl";
     }
 
@@ -170,10 +170,11 @@ public class BarCrawl implements QuestTask {
     @Override
     public void execute() {
         Log.log("setting 77 is " + Game.getSetting(77));
-        if (Game.getSetting(77) == 2)
+        if (Game.getSetting(77) == 2 || Game.getSetting(76) == 6) {
             cQuesterV2.taskList.remove(this);
-       else if (notTalkedToGuard.check()){
-            if (!itemsToStart.check()){
+        }
+        else if (notTalkedToGuard.check()) {
+            if (!itemsToStart.check()) {
                 cQuesterV2.status = "Buying items";
                 buyStep.buyItems();
                 cQuesterV2.status = "Getting items";
@@ -181,62 +182,52 @@ public class BarCrawl implements QuestTask {
             }
             cQuesterV2.status = "Going to Start";
             talkToGuard.execute();
-        } else if (notTalkedToBlueMoon.check()){
+        } else if (notTalkedToBlueMoon.check()) {
             checkItemsAfterStart();
             cQuesterV2.status = "Going to bluemoon inn";
             talkToBlueMoon.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToJollyBoar.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToJollyBoar.check()) {
             cQuesterV2.status = "Going to Jolly boar";
             talkToJollyBoar.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToRisingSun.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToRisingSun.check()) {
             cQuesterV2.status = "Going to Rising Sun";
             talkToRisingSun.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToRustyAnchor.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToRustyAnchor.check()) {
             cQuesterV2.status = "Going to Rusy anchor";
             talkToRustyAnchor.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToZambo.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToZambo.check()) {
             cQuesterV2.status = "Going to Zambo";
             talkToZambo.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToDeadMansChest.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToDeadMansChest.check()) {
             cQuesterV2.status = "Going to Dead Mans chest";
             talkToDeadMansChest.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToFlyingHorseInn.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToFlyingHorseInn.check()) {
             cQuesterV2.status = "Going to Flying horse inn";
             talkToFlyingHorseInn.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToForestersArms.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToForestersArms.check()) {
             cQuesterV2.status = "Going to Foresters Arms";
             talkToForestersArms.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToBlurberry.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToBlurberry.check()) {
             cQuesterV2.status = "Going to Blurberry";
             talkToBlurberry.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (notTalkedToDragonInn.check()){
+            Waiting.waitNormal(6000, 600);
+        } else if (notTalkedToDragonInn.check()) {
             cQuesterV2.status = "Going to Dragon inn";
             talkToDragonInn.execute();
-            Waiting.waitNormal(6000,600);
-        }
-        else if (Game.getSetting(77) == 8185){
+            Waiting.waitNormal(6000, 600);
+        } else if (Game.getSetting(77) == 8185) {
             cQuesterV2.status = "Going to Finish";
             talkToGuardAgain.execute();
 
-        }    else if (Game.getSetting(77) == 2){
+        } else if (Game.getSetting(77) == 2 || Game.getSetting(76) == 6) {
             cQuesterV2.taskList.remove(this);
         }
     }

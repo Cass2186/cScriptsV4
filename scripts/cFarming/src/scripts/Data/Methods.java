@@ -28,8 +28,8 @@ public class Methods {
         }
     }
 
-    public static boolean hasItem(int itemId, int quantity) {
-        RSItem[] item = Inventory.find(itemId);
+    public static boolean hasItem(int ItemID, int quantity) {
+        RSItem[] item = Inventory.find(ItemID);
         if (item.length > 0) {
             RSItemDefinition itemDef = item[0].getDefinition();
             if (itemDef != null) {

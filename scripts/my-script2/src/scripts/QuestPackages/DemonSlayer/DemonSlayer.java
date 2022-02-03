@@ -171,13 +171,13 @@ public class DemonSlayer implements QuestTask {
     public static int gameSetting = 0;
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(Arrays.asList(
-            new GEItem(ItemId.VARROCK_TELEPORT, 6, 50),
+            new GEItem(ItemID.VARROCK_TELEPORT, 6, 50),
             new GEItem(bucketOfWater, 1, 500),
             new GEItem(bones, 25, 50),
-            new GEItem(ItemId.COMBAT_BRACELET[0], 1, 25),
-            new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 20),
-            new GEItem(ItemId.SKILLS_NECKLACE[0], 1, 20),
-            new GEItem(ItemId.STAMINA_POTION[0], 2, 20)
+            new GEItem(ItemID.COMBAT_BRACELET[0], 1, 25),
+            new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 20),
+            new GEItem(ItemID.SKILLS_NECKLACE[0], 1, 20),
+            new GEItem(ItemID.STAMINA_POTION[0], 2, 20)
     ));
 
     public void buyItems() {
@@ -196,10 +196,10 @@ public class DemonSlayer implements QuestTask {
         BankManager.checkCombatBracelet();
         BankManager.withdraw(5, true, varrockTab);
         BankManager.withdraw(1, true,
-                ItemId.NECKLACE_OF_PASSAGE[0]);
+                ItemID.NECKLACE_OF_PASSAGE[0]);
         BankManager.withdraw(5, true, 995);
         BankManager.withdraw(1, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
         Banking.close();
     }
 
@@ -212,10 +212,10 @@ public class DemonSlayer implements QuestTask {
             Banking.depositAll();
             BankManager.withdraw2(3, true, varrockTab);
             BankManager.withdraw2(1, true,
-                    ItemId.NECKLACE_OF_PASSAGE[0]);
+                    ItemID.NECKLACE_OF_PASSAGE[0]);
             BankManager.withdraw2(25, true, bones);
             BankManager.withdraw2(1, true,
-                    ItemId.STAMINA_POTION[0]);
+                    ItemID.STAMINA_POTION[0]);
             Banking.close();
         }
     }
@@ -303,9 +303,9 @@ public class DemonSlayer implements QuestTask {
             BankManager.withdraw(5, true, varrockTab);
             BankManager.withdraw(25, true, bones);
             BankManager.withdraw(1, true,
-                    ItemId.NECKLACE_OF_PASSAGE[0]);
+                    ItemID.NECKLACE_OF_PASSAGE[0]);
             BankManager.withdraw(1, true,
-                    ItemId.STAMINA_POTION[0]);
+                    ItemID.STAMINA_POTION[0]);
             BankManager.close(true);
         }
     }
@@ -350,7 +350,7 @@ public class DemonSlayer implements QuestTask {
         BankManager.withdraw(1, true, key1);
         BankManager.withdraw(1, true, key2);
         BankManager.withdraw(1, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
     }
 
@@ -405,7 +405,7 @@ public class DemonSlayer implements QuestTask {
         Banking.depositAll();
         BankManager.withdraw(2, true, varrockTab);
         BankManager.withdraw(25, true, lobster);
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
     }
 

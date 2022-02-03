@@ -2,14 +2,14 @@ package scripts.API;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Inventory;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.NmzData.NmzConst;
 import scripts.NmzData.Vars;
 
 public class NmzUtils {
 
     public static void determinePotions() {
-        if (Inventory.find(ItemId.PRAYER_POTION).length > 0) {
+        if (Inventory.find(ItemID.PRAYER_POTION).length > 0) {
             General.println("[Debug]: Using prayer potions");
             Vars.get().usingPrayerPots = true;
             Vars.get().usingAbsorptions = false;

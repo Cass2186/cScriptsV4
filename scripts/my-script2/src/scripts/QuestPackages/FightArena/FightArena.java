@@ -69,14 +69,14 @@ public class FightArena implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 100),
-                    new GEItem(ItemId.MIND_RUNE, 400, 25),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 5, 50),
-                    new GEItem(ItemId.FIRE_RUNE, 1200, 20),
-                    new GEItem(ItemId.LOBSTER, 15, 35),
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 100),
+                    new GEItem(ItemID.MIND_RUNE, 400, 25),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 50),
+                    new GEItem(ItemID.FIRE_RUNE, 1200, 20),
+                    new GEItem(ItemID.LOBSTER, 15, 35),
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -96,29 +96,29 @@ public class FightArena implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw2(5, true,
-                ItemId.CAMELOT_TELEPORT);
+                ItemID.CAMELOT_TELEPORT);
         BankManager.withdraw2(1, true,
-                ItemId.STAFF_OF_AIR);
+                ItemID.STAFF_OF_AIR);
         BankManager.withdraw2(25, true, COINS);
         BankManager.withdraw2(500, true,
-                ItemId.MIND_RUNE);
+                ItemID.MIND_RUNE);
         BankManager.withdraw2(1500, true,
-                ItemId.FIRE_RUNE);
+                ItemID.FIRE_RUNE);
         BankManager.withdraw2(12, true,
-                ItemId.LOBSTER);
+                ItemID.LOBSTER);
         BankManager.withdraw2(1, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
         BankManager.withdraw2(1, true,
-                ItemId.RING_OF_WEALTH[0]);
+                ItemID.RING_OF_WEALTH[0]);
         Banking.close();
         Utils.equipItem(staffOfAir);
     }
 
     public void startQuest() {
         if (!BankManager.checkInventoryItems(
-                ItemId.FIRE_RUNE,
-                ItemId.MIND_RUNE,
-                ItemId.LOBSTER)) {
+                ItemID.FIRE_RUNE,
+                ItemID.MIND_RUNE,
+                ItemID.LOBSTER)) {
             buyItems();
             getItems();
         }
@@ -586,7 +586,7 @@ public class FightArena implements QuestTask {
         if (PathingUtil.clickScreenWalk(END_SAFE_TILE))
             Utils.shortSleep();
 
-        Utils.equipItem(ItemId.RING_OF_WEALTH[0]);
+        Utils.equipItem(ItemID.RING_OF_WEALTH[0]);
 
         if (COMBAT_AREA.contains(Player.getPosition()) && NPCInteraction.isConversationWindowUp())
             NPCInteraction.handleConversation();

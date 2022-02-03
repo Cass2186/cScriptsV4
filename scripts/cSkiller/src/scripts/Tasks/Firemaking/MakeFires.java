@@ -42,28 +42,28 @@ public class MakeFires implements Task {
         return false;
     }
 
-    public boolean isItemSelected(int itemID) {
+    public boolean isItemSelected(int ItemID) {
         return Game.getItemSelectionState() == 1;
     }
 
     public static int getCurrentLogID(){
         if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) <15){
-            return ItemId.LOG_IDS[0];
+            return ItemID.LOG_IDS[0];
         } else  if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) <30){
-            return ItemId.OAK_LOGS;
+            return ItemID.OAK_LOGS;
         }else  if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) <45){
-            return ItemId.WILLOW_LOGS;
+            return ItemID.WILLOW_LOGS;
         }else  if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) <60){
-            return ItemId.MAPLE_LOGS;
+            return ItemID.MAPLE_LOGS;
         }else  if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) <99){
-            return ItemId.YEW_LOGS;
+            return ItemID.YEW_LOGS;
         }
-        return ItemId.LOG_IDS[0];
+        return ItemID.LOG_IDS[0];
     }
 
     public void lightFire(int logIndex) {
-        RSItem[] t = Inventory.find(ItemId.TINDERBOX);
-        RSItem[] invLogs = Inventory.find(ItemId.LOG_IDS[logIndex]);
+        RSItem[] t = Inventory.find(ItemID.TINDERBOX);
+        RSItem[] invLogs = Inventory.find(ItemID.LOG_IDS[logIndex]);
         int invSize = Inventory.getAll().length;
 
         if (invLogs.length > 0 && t.length > 0) {
@@ -76,7 +76,7 @@ public class MakeFires implements Task {
                     PathingUtil.walkToArea(FireMakingAreas.STARTING_AREA_2, false);
 
 
-            if (isItemSelected(ItemId.TINDERBOX)) {
+            if (isItemSelected(ItemID.TINDERBOX)) {
 
                 if (invLogs[0].click("Use")) {
                     message = "Waiting...";
@@ -93,11 +93,11 @@ public class MakeFires implements Task {
             } else {
                 message = "Lighting fire";
                 General.println("[Debug]: Lighting Fire");
-                if (Utils.useItemOnItem(ItemId.TINDERBOX, ItemId.LOG_IDS[logIndex]))
+                if (Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.LOG_IDS[logIndex]))
                     Timer.waitCondition(() -> Inventory.getAll().length < invSize, 2500, 3500);
 
                 // hover next log
-                invLogs = Inventory.find(ItemId.LOG_IDS[logIndex]);
+                invLogs = Inventory.find(ItemID.LOG_IDS[logIndex]);
                 if (invLogs.length > 0 && t[0].click("Use")) {
                     AntiBan.waitItemInteractionDelay();
                     invLogs[0].hover();

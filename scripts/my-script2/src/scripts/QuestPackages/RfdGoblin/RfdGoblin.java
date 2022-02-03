@@ -62,37 +62,37 @@ public class RfdGoblin implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
                     new GEItem(blueDye, 1, 500),
-                    new GEItem(ItemId.BREAD, 1, 300),
-                    new GEItem(ItemId.KNIFE, 1, 300),
+                    new GEItem(ItemID.BREAD, 1, 300),
+                    new GEItem(ItemID.KNIFE, 1, 300),
                     new GEItem(orange, 1, 500),
                     new GEItem(spice, 1, 500),
-                    new GEItem(ItemId.FISHING_BAIT, 1, 300),
+                    new GEItem(ItemID.FISHING_BAIT, 1, 300),
                     new GEItem(bucketOfWater, 1, 300),
                     new GEItem(charcoal, 1, 300),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 3, 300),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 3, 300),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STAMINA_POTION[0], 3, 0),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 2, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 2, 0),
                     new ItemReq(blueDye, 1),
-                    new ItemReq(ItemId.BREAD, 1),
-                    new ItemReq(ItemId.KNIFE, 1),
+                    new ItemReq(ItemID.BREAD, 1),
+                    new ItemReq(ItemID.KNIFE, 1),
                     new ItemReq(orange, 1),
                     new ItemReq(spice, 1),
-                    new ItemReq(ItemId.FISHING_BAIT, 1),
+                    new ItemReq(ItemID.FISHING_BAIT, 1),
                     new ItemReq(bucketOfWater, 1),
                     new ItemReq(charcoal, 1),
-                    new ItemReq(ItemId.LUMBRIDGE_TELEPORT, 3, 1),
-                    new ItemReq(ItemId.FALADOR_TELEPORT, 5, 1),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 3, 1),
+                    new ItemReq(ItemID.FALADOR_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 

@@ -10,7 +10,7 @@ import org.tribot.script.sdk.tasks.BankTaskError;
 import scripts.BankManager;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
 import scripts.Timer;
@@ -31,8 +31,8 @@ public class HouseBank implements Task {
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STEEL_NAILS, 60),
-                    new ItemReq(ItemId.PLANK, 2)
+                    new ItemReq(ItemID.STEEL_NAILS, 60),
+                    new ItemReq(ItemID.PLANK, 2)
             ))
     );
 
@@ -59,7 +59,7 @@ public class HouseBank implements Task {
                     .actionsContains("Pray")
                     .getFirstResult());
             return altar.map(a -> {
-                return a.click("Pray") &&
+                return Utils.clickObj(a.getID(),"Pray") &&
                         Timer.waitCondition(() -> Prayer.getPrayerPoints() ==
                                 Skills.getActualLevel(Skills.SKILLS.PRAYER), 8000, 10000);
             }).orElse(false);
@@ -73,8 +73,9 @@ public class HouseBank implements Task {
                 .nameContains("Lunar Isle Portal")
                 .actionsContains("Enter")
                 .getFirstResult());
+
         return p.map(port -> {
-            return port.click("Enter") &&
+            return Utils.clickObj(port.getID(), "Enter") &&
                     Timer.waitCondition(() -> VorkthUtil.LUNAR_ISLE_AREA.contains(Player.getPosition()),
                             8000, 10000);
         }).orElse(false);
@@ -87,7 +88,7 @@ public class HouseBank implements Task {
                 .actionsContains("Bank")
                 .getFirstResult();
         if (booth != null && Utils.clickObject(booth, "Bank")) {
-            return Timer.waitCondition(Banking::isBankLoaded, 5000);
+            return Timer.waitCondition(Banking::isBankLoaded, 7000);
         }
         return Banking.isBankLoaded();
     }
@@ -129,7 +130,7 @@ public class HouseBank implements Task {
     @Override
     public boolean validate() {
         int amountFood = Inventory.getCount(Vars.get().foodId);
-        int amountPrayerPot = Inventory.find(ItemId.PRAYER_POTION).length;
+        int amountPrayerPot = Inventory.find(ItemID.PRAYER_POTION).length;
         int extendedAnti = Inventory.find(22209, 22212, 22215, 22218).length;
 
         return isInHouse() || (Vars.get().minimumFoodAmount >= amountFood ||
@@ -147,7 +148,7 @@ public class HouseBank implements Task {
         castHomeTele();
         if (restorePrayer()) {
             leaveViaPortal();
-            Waiting.waitNormal(750,150);
+            Waiting.waitNormal(750, 150);
         }
         handleBank();
         leaveLunarIsle();

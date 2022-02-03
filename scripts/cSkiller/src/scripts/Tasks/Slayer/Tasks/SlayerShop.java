@@ -20,7 +20,7 @@ public class SlayerShop implements Task {
     int CHILD_ITEMS_INTERFACE = 16;
 
     private void goToTurael() {
-        RSItem[] invitem = Inventory.find(ItemId.GAMES_NECKLACE);
+        RSItem[] invitem = Inventory.find(ItemID.GAMES_NECKLACE);
         if (invitem.length < 1) {
             if (!Areas.TURAEL_AREA.contains(Player.getPosition())) {
                 BankManager.open(true);
@@ -30,17 +30,17 @@ public class SlayerShop implements Task {
 
                 BankManager.checkEquippedGlory();
 
-                if (!BankManager.withdraw(1, true, ItemId.GAMES_NECKLACE))
+                if (!BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE))
                     SlayerVars.get().shouldRestock = true;
 
                 BankManager.withdraw(0, true, 995);
-                BankManager.withdraw(1, true, ItemId.VARROCK_TELEPORT);
+                BankManager.withdraw(1, true, ItemID.VARROCK_TELEPORT);
                 BankManager.close(true);
                 Utils.shortSleep();
             }
         }
 
-        if (Inventory.find(ItemId.GAMES_NECKLACE).length > 0)
+        if (Inventory.find(ItemID.GAMES_NECKLACE).length > 0)
             PathingUtil.walkToArea(Areas.TURAEL_AREA);
     }
 
@@ -54,7 +54,7 @@ public class SlayerShop implements Task {
                 BankManager.depositAll(true);
 
             BankManager.withdraw(0, true, 995);
-            BankManager.withdraw(1, true, ItemId.VARROCK_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.VARROCK_TELEPORT);
             BankManager.close(true);
 
         }
@@ -85,29 +85,29 @@ public class SlayerShop implements Task {
     public boolean buyIceCooler() {
         if (openShop()) {
             if (Interfaces.isInterfaceSubstantiated(PARENT_SHOP_INTERFACE, CHILD_ITEMS_INTERFACE)
-                    && Inventory.find(ItemId.COINS).length > 0) {
+                    && Inventory.find(ItemID.COINS).length > 0) {
                 for (int i = 0; i < 5; i++)
                     if (InterfaceUtil.searchInterfaceItemAndClickAction(PARENT_SHOP_INTERFACE, CHILD_ITEMS_INTERFACE,
-                            ItemId.ICE_COOLER, "Buy 50"))
+                            ItemID.ICE_COOLER, "Buy 50"))
                         Utils.microSleep();
             }
-            return Timer.waitCondition(() -> Inventory.find(ItemId.ICE_COOLER).length > 0, 7000, 10000);
+            return Timer.waitCondition(() -> Inventory.find(ItemID.ICE_COOLER).length > 0, 7000, 10000);
         }
 
         return false;
     }
 
-    public boolean buyItemIn10Repeat(int itemId, int numberOfRepeats) {
+    public boolean buyItemIn10Repeat(int Item, int numberOfRepeats) {
         if (openShop()) {
             if (Interfaces.isInterfaceSubstantiated(PARENT_SHOP_INTERFACE, CHILD_ITEMS_INTERFACE)
-                    && Inventory.find(ItemId.COINS).length > 0) {
+                    && Inventory.find(ItemID.COINS).length > 0) {
 
                 for (int i = 0; i < numberOfRepeats; i++)
                     if (InterfaceUtil.searchInterfaceItemAndClickAction(PARENT_SHOP_INTERFACE,
-                            CHILD_ITEMS_INTERFACE, itemId, "Buy 10"))
+                            CHILD_ITEMS_INTERFACE, Item, "Buy 10"))
                         Utils.microSleep();
             }
-            return Timer.waitCondition(() -> Inventory.find(itemId).length > 0, 7000, 10000);
+            return Timer.waitCondition(() -> Inventory.find(Item).length > 0, 7000, 10000);
         }
         return false;
     }
@@ -146,12 +146,12 @@ public class SlayerShop implements Task {
     @Override
     public void execute() {
         if (SlayerVars.get().needsGem) {
-            buyItem(ItemId.ENCHANTED_GEM);
+            buyItem(ItemID.ENCHANTED_GEM);
             Utils.shortSleep();
             SlayerVars.get().needsGem = false;
         }
         if (SlayerVars.get().needFungicide) {
-            buyItemIn10Repeat(ItemId.FUNGICIDE_SPRAYER[0], 3);
+            buyItemIn10Repeat(ItemID.FUNGICIDE_SPRAYER[0], 3);
             SlayerVars.get().needFungicide = false;
         }
         if (SlayerVars.get().slayerShopRestock) {
@@ -159,11 +159,11 @@ public class SlayerShop implements Task {
             Utils.shortSleep();
         }
         if (SlayerVars.get().needBootsOfStone) {
-            buyItem(ItemId.BOOTS_OF_STONE);
+            buyItem(ItemID.BOOTS_OF_STONE);
             SlayerVars.get().needBootsOfStone = false;
         }
         if (SlayerVars.get().needRockHammer) {
-            buyItem(ItemId.ROCK_HAMMER);
+            buyItem(ItemID.ROCK_HAMMER);
             SlayerVars.get().needRockHammer = false;
         }
         closeShop();

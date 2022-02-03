@@ -14,20 +14,20 @@ import scripts.Data.Vars;
 
 public class MakeGlass implements Task {
 
-    public void makeGlassItem(String nameInMenu, int itemId) {
-        if (Inventory.find(ItemId.MOLTEN_GLASS).length > 0 && Inventory.find(ItemId.GLASSBLOWING_PIPE).length > 0) {
-            RSItemDefinition def = RSItemDefinition.get(itemId);
+    public void makeGlassItem(String nameInMenu, int ItemID) {
+        if (Inventory.find(scripts.ItemID.MOLTEN_GLASS).length > 0 && Inventory.find(scripts.ItemID.GLASSBLOWING_PIPE).length > 0) {
+            RSItemDefinition def = RSItemDefinition.get(ItemID);
             if (def != null) {
                 General.println("[Debug]: Making glass item: " + def.getName());
 
                 if (Banking.isBankScreenOpen())
                     BankManager.close(true);
 
-                if (Utils.useItemOnItem(ItemId.GLASSBLOWING_PIPE, ItemId.MOLTEN_GLASS)) {
-                    Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(ItemId.GLASS_PARENT_ID), 4000, 7000);
-                    if (InterfaceUtil.getInterfaceKeyAndPress(ItemId.GLASS_PARENT_ID, nameInMenu)) {
+                if (Utils.useItemOnItem(scripts.ItemID.GLASSBLOWING_PIPE, scripts.ItemID.MOLTEN_GLASS)) {
+                    Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(scripts.ItemID.GLASS_PARENT_ID), 4000, 7000);
+                    if (InterfaceUtil.getInterfaceKeyAndPress(scripts.ItemID.GLASS_PARENT_ID, nameInMenu)) {
                         Timer.abc2SkillingWaitCondition(() ->
-                                Inventory.find(ItemId.MOLTEN_GLASS).length < 1 ,60000, 75000);
+                                Inventory.find(scripts.ItemID.MOLTEN_GLASS).length < 1 ,60000, 75000);
                     }
                 }
             }
@@ -51,8 +51,8 @@ public class MakeGlass implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CRAFTING)
 
-                && (Inventory.find(ItemId.MOLTEN_GLASS).length > 0 &&
-                Inventory.find(ItemId.GLASSBLOWING_PIPE).length > 0);
+                && (Inventory.find(ItemID.MOLTEN_GLASS).length > 0 &&
+                Inventory.find(ItemID.GLASSBLOWING_PIPE).length > 0);
     }
 
     @Override
@@ -62,25 +62,25 @@ public class MakeGlass implements Task {
             return;
         }
         if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 5)
-            makeGlassItem("beer glass", ItemId.BEER_GLASS);
+            makeGlassItem("beer glass", ItemID.BEER_GLASS);
 
         else if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 12)
-            makeGlassItem("candle lantern", ItemId.CANDLE_LANTERN);
+            makeGlassItem("candle lantern", ItemID.CANDLE_LANTERN);
 
         else if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 33)
-            makeGlassItem("oil lamp", ItemId.OIL_LAMP);
+            makeGlassItem("oil lamp", ItemID.OIL_LAMP);
 
         else if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 42)
-            makeGlassItem("vial", ItemId.VIAL);
+            makeGlassItem("vial", ItemID.VIAL);
 
         else if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 46)
-            makeGlassItem("fishbowl", ItemId.FISH_BOWL);
+            makeGlassItem("fishbowl", ItemID.EMPTY_FISHBOWL);
 
         else if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 80) { //49 usually
-            makeGlassItem("staff orb", ItemId.UNPOWERED_ORB);
+            makeGlassItem("staff orb", ItemID.UNPOWERED_ORB);
 
         } else if (Skills.getActualLevel(Skills.SKILLS.CRAFTING) < 87)
-            makeGlassItem("lantern lens", ItemId.LANTERN_LENS);
+            makeGlassItem("lantern lens", ItemID.LANTERN_LENS);
         else
             makeGlassItem("light orb", 10980);
 

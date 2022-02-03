@@ -33,9 +33,9 @@ public class RefillCoffer implements Task {
 
     @Override
     public boolean validate() {
-        return Vars.get().currentTask != null
-                && Vars.get().currentTask.equals(SkillTasks.SMITHING)
-        && Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.value) < refillAt;
+        return Vars.get().currentTask != null &&
+                Vars.get().currentTask.equals(SkillTasks.SMITHING) &&
+                Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.value) < refillAt;
     }
 
     @Override

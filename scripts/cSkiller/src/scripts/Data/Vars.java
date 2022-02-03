@@ -6,7 +6,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import scripts.AntiBan;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Tasks.Magic.Alch;
 import scripts.Timer;
 import scripts.dax.tracker.DaxTracker;
@@ -63,8 +63,11 @@ public class Vars {
     public boolean switchingTasks = false;
 
     //cooking
-    public boolean doingWines = Skills.getActualLevel(Skills.SKILLS.COOKING) >= 54;
+    public boolean doingWines = Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35;
 
+
+    //Magic
+    public int clickAllJeweleryChance = General.random(25,45);
     //mining
     public int oreDeposits = 0;
 

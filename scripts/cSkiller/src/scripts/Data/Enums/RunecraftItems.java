@@ -7,7 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.script.sdk.Log;
 import scripts.Data.SkillTasks;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.Runecrafting.RunecraftData.RcConst;
 
@@ -19,13 +19,13 @@ import java.util.Optional;
 public enum RunecraftItems {
 
     AIR_RUNE(1, 9, 5),
-    EARTH_RUNE(9, 14, 6.5, RcConst.EARTH_ALTAR_AREA, ItemId.EARTH_TIARA, ItemId.VARROCK_TELEPORT,
+    EARTH_RUNE(9, 14, 6.5, RcConst.EARTH_ALTAR_AREA, ItemID.EARTH_TIARA, ItemID.VARROCK_TELEPORT,
             RunescapeBank.VARROCK_EAST),
     FIRE_RUNE(14, 19, 7, RcConst.FIRE_ALTAR_AREA,
-            ItemId.FIRE_TIARA, "Ring of dueling", RunescapeBank.CASTLE_WARS),
+            ItemID.FIRE_TIARA, "Ring of dueling", RunescapeBank.CASTLE_WARS),
     STEAM_RUNE(19, 99, 9.3, RcConst.FIRE_ALTAR_AREA,
-            ItemId.FIRE_TIARA, "Ring of dueling",
-            ItemId.WATER_TALISMAN, ItemId.WATER_RUNE, true, RunescapeBank.CASTLE_WARS);
+            ItemID.FIRE_TIARA, "Ring of dueling",
+            ItemID.WATER_TALISMAN, ItemID.WATER_RUNE, true, RunescapeBank.CASTLE_WARS);
     // LAVA_RUNE;
 
     @Getter
@@ -139,7 +139,7 @@ public enum RunecraftItems {
 
             // and binding if neeeded
             if (currentItem.get().usingBindingNecklace) {
-                currentItem.ifPresent(item -> i.add(new ItemReq(ItemId.BINDING_NECKLACE,
+                currentItem.ifPresent(item -> i.add(new ItemReq(ItemID.BINDING_NECKLACE,
                         item.determineResourcesToNextItem() / 220,
                         true, true)));
             }
@@ -155,12 +155,12 @@ public enum RunecraftItems {
                 currentItem.ifPresent(item -> i.add(new ItemReq(item.combiningRuneId,
                         item.determineResourcesToNextItem())));
 
-            currentItem.ifPresent(item -> i.add(new ItemReq(ItemId.PURE_ESSENCE,
+            currentItem.ifPresent(item -> i.add(new ItemReq(ItemID.PURE_ESSENCE,
                     item.determineResourcesToNextItem())));
             //add ROD or tele tab
             if (currentItem.get().equals(RunecraftItems.FIRE_RUNE) ||
                     currentItem.get().equals(RunecraftItems.STEAM_RUNE)) {
-                currentItem.ifPresent(item -> i.add(new ItemReq(ItemId.RING_OF_DUELING[0],
+                currentItem.ifPresent(item -> i.add(new ItemReq(ItemID.RING_OF_DUELING[0],
                         item.determineResourcesToNextItem() / 50)));
             } else {
                 currentItem.ifPresent(item -> i.add(new ItemReq(item.getTeleportId(),

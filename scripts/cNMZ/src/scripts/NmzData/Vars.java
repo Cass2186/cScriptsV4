@@ -39,8 +39,8 @@ public class Vars {
     public int add = General.random(5, 10);
     public int drinkAt = General.random(7, 25);
     public int eatAt = General.random(3, 10);
-    public double drinkPrayAtPercentage = General.randomSD(6, 72, 43, 18);
-    public int eatRockCakeAt =  General.randomSD(2, 12, 4, 2);
+    public double drinkPrayAtPercentage =General.randomSD(6, 65, 40, 12);
+    public int eatRockCakeAt =   General.randomSD(2, 7, 3, 2);
 
     public int drinkAbsorptionAt = General.random(100, 250);
     public int drinkAbsorptionUpTo = General.random(400, 800);

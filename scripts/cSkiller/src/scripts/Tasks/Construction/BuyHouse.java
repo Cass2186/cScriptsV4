@@ -1,27 +1,20 @@
 package scripts.Tasks.Construction;
 
-import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
-import org.tribot.script.sdk.types.EquipmentItem;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
-import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.QuestSteps.NPCStep;
 import scripts.Requirements.ItemReq;
-import scripts.Requirements.ItemRequirement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BuyHouse implements Task {
@@ -35,10 +28,10 @@ public class BuyHouse implements Task {
     NPCStep getHouse = new NPCStep(ESTATE_AGENT_ID, VARROCK_AGENT_AREA.getRandomTile(), new String[]{
             "How can I get a house?", "Yes please!"});
 
-    ItemReq coins = new ItemReq(ItemId.COINS, 1000, 1000);
+    ItemReq coins = new ItemReq(ItemID.COINS, 1000, 1000);
 
 
-    BankTask invTask = BankTask.builder().addInvItem(ItemId.COINS, Amount.of(1000))
+    BankTask invTask = BankTask.builder().addInvItem(ItemID.COINS, Amount.of(1000))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
                     .chargedItem("Ring of wealth", 1))
             .build();
@@ -56,7 +49,7 @@ public class BuyHouse implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.MEDIUM;
+        return Priority.HIGH;
     }
 
     @Override

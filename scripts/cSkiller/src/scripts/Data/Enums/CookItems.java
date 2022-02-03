@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import scripts.Data.SkillTasks;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 
 import java.util.ArrayList;
@@ -12,10 +12,10 @@ import java.util.List;
 
 public enum CookItems {
 
-    ANCHOVIES(30, 321, 1, 25),
-    TROUT(70, 335, 25, 42),
-    SALMON(90, 331, 42, 54),
-    WINE(200,  ItemId.GRAPES, 54, SkillTasks.COOKING.getEndLevel());
+    ANCHOVIES(30, 321, 1, 15),
+    TROUT(70, 335, 15, 30),
+    SALMON(90, 331, 30, 35),
+    WINE(200,  ItemID.GRAPES, 35, SkillTasks.COOKING.getEndLevel());
 
     private int xpPer;
     @Getter
@@ -30,7 +30,7 @@ public enum CookItems {
         this.minLevel = startLevel;
         this.maxLevel = endLevel;
 
-        if (this.id == ItemId.GRAPES)
+        if (this.id == ItemID.GRAPES)
             this.id2 = 1937; //for wine (this ID is Jug of Water)
     }
 
@@ -53,6 +53,7 @@ public enum CookItems {
         int lvl = Skills.getActualLevel(Skills.SKILLS.COOKING);
         for (CookItems b : values()) {
             if (b.maxLevel > lvl && b.minLevel <= lvl){
+
                // General.println("[CookItems]: Raw food id is: " + b.getId());
                 return b.getId();
             }
@@ -63,7 +64,13 @@ public enum CookItems {
     public static List<ItemReq> getRequiredRawFood() {
         List<ItemReq> i = new ArrayList<>();
         for (CookItems b : values()) {
-            i.add(new ItemReq(b.id, b.determineCookAmount()));
+            if (b == CookItems.WINE) {
+                i.add(new ItemReq(b.id, b.determineCookAmount()));
+                i.add(new ItemReq(ItemID.JUG_OF_WATER, b.determineCookAmount()));
+            } else {
+                i.add(new ItemReq(b.getId(), b.determineCookAmount()));
+            }
+
         }
         General.println("[CookItems]: getRequiredRawFood ListSize is " + i.size());
         return i;

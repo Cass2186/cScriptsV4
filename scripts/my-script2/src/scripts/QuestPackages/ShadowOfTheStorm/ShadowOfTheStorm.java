@@ -3,9 +3,11 @@ package scripts.QuestPackages.ShadowOfTheStorm;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.apache.commons.lang3.ArrayUtils;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.tasks.BankTask;
 import scripts.*;
@@ -17,6 +19,7 @@ import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShadowOfTheStorm implements QuestTask {
@@ -26,6 +29,7 @@ public class ShadowOfTheStorm implements QuestTask {
     public static ShadowOfTheStorm get() {
         return quest == null ? quest = new ShadowOfTheStorm() : quest;
     }
+
     /**
      * (0, "Caldar");
      * (1, "Nahudu");
@@ -96,25 +100,38 @@ public class ShadowOfTheStorm implements QuestTask {
     String code5;
     String code6;
 
+    private final HashMap<Integer, String> words = new HashMap<Integer, String>() {{
+        put(0, "Caldar");
+        put(1, "Nahudu");
+        put(2, "Agrith-Naar");
+        put(3, "Camerinthum");
+        put(4, "Tarren");
+    }};
+
+    private boolean reverse;
+    private String[] incantationOrder;
+    private int incantationPosition = 0;
+
+
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(Arrays.asList(
-            new GEItem(ItemId.VIAL, 1, 500),
-            new GEItem(ItemId.PESTLE_MORTAR, 1, 500),
+            new GEItem(ItemID.VIAL, 1, 500),
+            new GEItem(ItemID.PESTLE_AND_MORTAR, 1, 500),
             new GEItem(blackDesertRobe, 1, 500),
-            new GEItem(ItemId.SHANTAY_PASS, 15, 500),
+            new GEItem(ItemID.SHANTAY_PASS, 15, 500),
             new GEItem(blackDesertShirt, 1, 500),
-            new GEItem(ItemId.SILVER_BAR, 3, 500),
-            new GEItem(ItemId.BLACK_CAPE, 1, 500),
-            new GEItem(ItemId.WATERSKIN[0], 5, 500),
-            new GEItem(ItemId.HAMMER, 1, 500),
-            new GEItem(ItemId.CHISEL, 1, 500),
-            new GEItem(ItemId.MONKFISH, 25, 50),
-            new GEItem(ItemId.NECKLACE_OF_PASSAGE[0], 2, 50),
-            new GEItem(ItemId.WATERSKIN[0], 6, 500),
-            new GEItem(ItemId.LOBSTER, 20, 50),
-            new GEItem(ItemId.AMULET_OF_GLORY[0], 2, 20),
-            new GEItem(ItemId.STAMINA_POTION[0], 5, 30),
-            new GEItem(ItemId.PRAYER_POTION_4, 4, 20),
-            new GEItem(ItemId.SUPER_COMBAT_POTION[0], 1, 20)
+            new GEItem(ItemID.SILVER_BAR, 3, 500),
+            new GEItem(ItemID.BLACK_CAPE, 1, 500),
+            new GEItem(ItemID.WATERSKIN[0], 5, 500),
+            new GEItem(ItemID.HAMMER, 1, 500),
+            new GEItem(ItemID.CHISEL, 1, 500),
+            new GEItem(ItemID.MONKFISH, 25, 50),
+            new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 2, 50),
+            new GEItem(ItemID.WATERSKIN[0], 6, 500),
+            new GEItem(ItemID.LOBSTER, 20, 50),
+            new GEItem(ItemID.AMULET_OF_GLORY[0], 2, 20),
+            new GEItem(ItemID.STAMINA_POTION[0], 5, 30),
+            new GEItem(ItemID.PRAYER_POTION_4, 4, 20),
+            new GEItem(ItemID.SUPER_COMBAT_POTION[0], 1, 20)
     ));
 
 
@@ -125,7 +142,7 @@ public class ShadowOfTheStorm implements QuestTask {
         if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 60) {
             itemsToBuy.add(new GEItem(DRAGON_SWORD, 1, 50));
         } else {
-            itemsToBuy.add(new GEItem(ItemId.RUNE_SCIMITAR, 1, 50));
+            itemsToBuy.add(new GEItem(ItemID.RUNE_SCIMITAR, 1, 50));
         }
         BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
         buyStep.buyItems();
@@ -148,7 +165,7 @@ public class ShadowOfTheStorm implements QuestTask {
         BankManager.withdraw(1, true, blackMushroomInk);
         BankManager.withdraw(500, true, coins);
         BankManager.withdraw(3, true, waterskin4);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(1, true, passage5);
         BankManager.withdraw(5, true, shantyPass);
         BankManager.withdraw(1, true, SILVERLIGHT);
@@ -243,7 +260,7 @@ public class ShadowOfTheStorm implements QuestTask {
 
     public void step4() {
         cQuesterV2.status = "Sleeping before cutscene";
-        General.sleep(10000);
+        Timer.waitCondition(() -> Utils.inCutScene(), 15000);
         cQuesterV2.status = "Cutscene idle";
         Utils.cutScene();
 
@@ -255,8 +272,8 @@ public class ShadowOfTheStorm implements QuestTask {
         if (!NPCInteraction.isConversationWindowUp()) {
             // talk to person, likely disconnected
         }
-
-        if (NPCInteraction.isConversationWindowUp()) {
+        getIncantation(false);
+       /* if (NPCInteraction.isConversationWindowUp()) {
             for (int i = 0; i < 5; i++) {
                 if (!NPCInteraction.isConversationWindowUp())
                     NpcChat.talkToNPC("Denath");
@@ -269,7 +286,7 @@ public class ShadowOfTheStorm implements QuestTask {
                         textInter.getText().contains("Tarren")) {
                     code = textInter.getText();
                     General.println("[Debug]: Code is: " + code);
-                    parseCode();
+
                     return;
                 } else if (optionsInter != null) {
                     InterfaceUtil.clickInterfaceText(219, 1, "I forgot the incantation.");
@@ -280,12 +297,12 @@ public class ShadowOfTheStorm implements QuestTask {
                         General.sleep(1500, 2500);
                 }
             }
-        }
+        }*/
     }
 
     boolean didWeGetCodeFromBook = false;
 
-    public void parseCode() {
+    /*public void parseCode() {
         if (code != null) {
             if (code.contains("The incantation is"))
                 code1 = code.split("The incantation is ")[1];
@@ -318,21 +335,37 @@ public class ShadowOfTheStorm implements QuestTask {
                 }
             }
         }
-    }
+    }*/
 
-    public void getIncantation() { // called at the ceremony
+
+    public void getIncantation(boolean reverse) { // called at the ceremony
         cQuesterV2.status = "Getitng incantation";
         General.println("[Debug]: Getting incantation.");
 
-        RSNPC[] denath = NPCs.find("Denath");
+        /*RSNPC[] denath = NPCs.find("Denath");
         if (denath.length > 0 && !denath[0].isClickable()) {
             if (PathingUtil.localNavigation(denath[0].getPosition())) {
                 PathingUtil.movementIdle();
                 General.sleep(250, 500);
             }
-        }
+        }*/
 
-        if (NpcChat.talkToNPC("Denath"))
+        if (incantationOrder != null || (Utils.getVarBitValue(1374) == 0 && Utils.getVarBitValue(1375) == 0)) {
+            return;
+        }
+        incantationOrder = new String[]{
+                words.get(Utils.getVarBitValue(1373)),
+                words.get(Utils.getVarBitValue(1374)),
+                words.get(Utils.getVarBitValue(1375)),
+                words.get(Utils.getVarBitValue(1376)),
+                words.get(Utils.getVarBitValue(1377))
+        };
+        if (reverse) {
+            ArrayUtils.reverse(incantationOrder);
+        }
+        String incantString = "Say the following in order: " + String.join(", ", incantationOrder);
+        Log.log("[Debug]: " + incantString);
+      /*  if (NpcChat.talkToNPC("Denath"))
             NPCInteraction.waitForConversationWindow();
 
         for (int i = 0; i < 10; i++) {
@@ -365,14 +398,14 @@ public class ShadowOfTheStorm implements QuestTask {
                 Timer.waitCondition(() -> Interfaces.get(217, 4) == null,
                         1500, 2500);
                 General.sleep(1500, 2500);
-            }
-            General.sleep(250, 550);
-        }
+            }*/
+        General.sleep(250, 550);
+
     }
 
     public void step5() {
-        if (code == null)
-            getIncantation();
+        //if (code == null)
+        //   getIncantation(false);
 
         cQuesterV2.status = "Talking to Jennifer";
         if (Inventory.find(demonicSigilMould).length < 1) {
@@ -394,7 +427,6 @@ public class ShadowOfTheStorm implements QuestTask {
         if (matthew.length > 0) {
             if (PathingUtil.localNavigation(matthew[0].getPosition())) {
                 PathingUtil.movementIdle();
-                General.sleep(250, 500);
             }
             if (NpcChat.talkToNPC("Matthew")) {
                 NPCInteraction.waitForConversationWindow();
@@ -415,7 +447,7 @@ public class ShadowOfTheStorm implements QuestTask {
                 PathingUtil.walkToArea(edgevillBank);
                 BankManager.open(true);
                 BankManager.withdraw(2, true, SILVER_BAR);
-                BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
+                BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
                 BankManager.close(true);
             }
             if (Inventory.find(SILVER_BAR).length > 0) {
@@ -469,18 +501,16 @@ public class ShadowOfTheStorm implements QuestTask {
         if (Inventory.find(demonicTomb).length < 1) {
             PathingUtil.walkToArea(kiln3);
             kiln = Objects.find(20, 10242);
-            if (kiln.length > 0) {
-                if (AccurateMouse.click(kiln[0], "Look-in"))
-                    Timer.waitCondition(() -> Inventory.find(demonicTomb).length > 0, 5000, 8000);
-            }
+            if (kiln.length > 0 && AccurateMouse.click(kiln[0], "Look-in"))
+                Timer.waitCondition(() -> Inventory.find(demonicTomb).length > 0, 5000, 8000);
+
         }
         if (Inventory.find(demonicTomb).length < 1) {
             PathingUtil.walkToArea(kiln4);
             kiln = Objects.find(20, 10245);
-            if (kiln.length > 0) {
-                if (AccurateMouse.click(kiln[0], "Look-in"))
-                    Timer.waitCondition(() -> Inventory.find(demonicTomb).length > 0, 5000, 8000);
-            }
+            if (kiln.length > 0 && AccurateMouse.click(kiln[0], "Look-in"))
+                Timer.waitCondition(() -> Inventory.find(demonicTomb).length > 0, 5000, 8000);
+
         }
     }
 
@@ -542,9 +572,9 @@ public class ShadowOfTheStorm implements QuestTask {
         if (NPCInteraction.isConversationWindowUp())
             NPCInteraction.handleConversation();
 
-        if (code == null) {
-            getIncantation();
-        }
+
+        getIncantation(false);
+
         cQuesterV2.status = "Going to chanting tile";
         RSNPC[] partrik = NPCs.find("Patrick");
         if (partrik.length > 0) {
@@ -553,7 +583,7 @@ public class ShadowOfTheStorm implements QuestTask {
         }
 
         List<String> codeList = new ArrayList<>(
-                Arrays.asList(code2, code3, code4, code5, code6));
+                Arrays.asList(incantationOrder));
 
         for (String s : codeList) {
             General.println("[Debug]: " + s);
@@ -563,7 +593,7 @@ public class ShadowOfTheStorm implements QuestTask {
         if (sigil.length > 0 && sigil[0].click("Chant")) {
             String[] strr = new String[codeList.size()];
             NPCInteraction.waitForConversationWindow();
-            Waiting.waitNormal(1000,100);
+            Waiting.waitNormal(1000, 100);
             int i = 0;
             for (String s : codeList) {
                 i++;
@@ -613,6 +643,7 @@ public class ShadowOfTheStorm implements QuestTask {
             NPCInteraction.handleConversation();
             Timer.waitCondition(() -> Utils.getVarBitValue(1382) == 1 &&
                     Utils.getVarBitValue(1380) == 2, 7000, 9000);
+            Utils.shortSleep();
             // NPCInteraction.handleConversation();
         }
     }
@@ -656,13 +687,14 @@ public class ShadowOfTheStorm implements QuestTask {
         PathingUtil.walkToArea(uzerArea);
         General.println("[Debug]: Varbit for Golem (353) is " + Utils.getVarBitValue(GOLEM_VARBIT));
         cQuesterV2.status = "Using implement on golem";
-        if (Utils.getVarBitValue(GOLEM_VARBIT) == 0 &&
+        RSNPC[] golem = NPCs.findNearest(GOLEM_ID);
+        if (golem.length > 0 &&
                 Utils.useItemOnNPC(strangeImplement, GOLEM_ID)) {
-            Timer.waitCondition(() -> Utils.getVarBitValue(GOLEM_VARBIT) == 1, 7500, 9000);
+            Timer.slowWaitCondition(() -> golem[0].getPosition().distanceTo(Player.getPosition()) < 1.5,
+                    5500, 7000);
         }
         cQuesterV2.status = "Talking to golem";
-        if (Utils.getVarBitValue(GOLEM_VARBIT) == 1 &&
-                NpcChat.talkToNPC("Clay golem")) {
+        if (NpcChat.talkToNPC("Clay golem")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
         }
@@ -677,7 +709,7 @@ public class ShadowOfTheStorm implements QuestTask {
             BankManager.checkEquippedGlory();
             BankManager.depositAll(true);
             BankManager.withdraw(1, true, waterskin4);
-            BankManager.withdrawArray(ItemId.NECKLACE_OF_PASSAGE, 1);
+            BankManager.withdrawArray(ItemID.NECKLACE_OF_PASSAGE, 1);
             BankManager.withdraw(1, true, BankManager.STAMINA_POTION[0]);
             BankManager.withdraw(3, true, prayerPotion4);
             BankManager.withdraw(1, true, demonicTomb);
@@ -762,7 +794,7 @@ public class ShadowOfTheStorm implements QuestTask {
     int PAGE_NUM_INTERFACE = 10;
     int NEXT_PAGE_BUTTON = 78;
 
-    public void getIncantationFromBook() {
+ /*   public void getIncantationFromBook() {
         if (code == null) {
             didWeGetCodeFromBook = true;
             RSInterface bookParent = Interfaces.get(BOOK_INTERFACE);
@@ -802,11 +834,11 @@ public class ShadowOfTheStorm implements QuestTask {
             }
 
         }
-    }
+    }*/
 
 
     public void step15() {
-        getIncantationFromBook();
+        getIncantation(true);
         cQuesterV2.status = "Chanting incantation";
         RSNPC[] matthew = NPCs.find("Matthew");
         Combat.setAutoRetaliate(false);
@@ -824,17 +856,14 @@ public class ShadowOfTheStorm implements QuestTask {
             General.sleep(100, 400);
         }
 
+
         RSItem[] sigil = Inventory.find(demonicSigil);
 
         //backwards list
-        List<String> codeList;
-        if (!didWeGetCodeFromBook) {
-            codeList = new ArrayList<>(
-                    Arrays.asList(code6, code5, code4, code3, code2));
-        } else {
-            codeList = new ArrayList<>(
-                    Arrays.asList(code2, code3, code4, code5, code6));
-        }
+        getIncantation(true);
+        List<String> codeList = new ArrayList<>(
+                Arrays.asList(incantationOrder));
+
 
         for (String s : codeList)
             General.println("[Debug]: " + s);
@@ -842,7 +871,7 @@ public class ShadowOfTheStorm implements QuestTask {
         if (sigil.length > 0 && sigil[0].click("Chant")) {
 
             NPCInteraction.waitForConversationWindow();
-            Waiting.waitUniform(1000,1200);
+            Waiting.waitUniform(1000, 1200);
             int i = 0;
             for (String s : codeList) {
                 i++;
@@ -902,7 +931,7 @@ public class ShadowOfTheStorm implements QuestTask {
                     General.sleep(General.random(300, 500));
 
             if (Prayer.getPrayerPoints() < General.random(10, 20)) {
-                AccurateMouse.click(Inventory.find(ItemId.PRAYER_POTION)[0], "Drink");
+                AccurateMouse.click(Inventory.find(ItemID.PRAYER_POTION)[0], "Drink");
                 General.sleep(General.random(300, 500));
             }
             demon = NPCs.find("Agrith Naar");
@@ -980,7 +1009,7 @@ public class ShadowOfTheStorm implements QuestTask {
             step8();
             step9();
         } else if (RSVarBit.get(1372).getValue() == 80) {// the one that is 10 before this is just between the time you're done talking to mathew and when dave starts takling
-            getIncantation();
+            getIncantation(false);
             step10(); // doing chant
         } else if (RSVarBit.get(1372).getValue() == 90) {
             step11(); // get gr1ound sigil

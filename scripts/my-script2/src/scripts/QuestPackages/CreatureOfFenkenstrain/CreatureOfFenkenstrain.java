@@ -35,37 +35,37 @@ public class CreatureOfFenkenstrain implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SALVE_GRAVEYARD_TELEPORT, 6, 50),
-                    new GEItem(ItemId.HAMMER, 1, 500),
-                    new GEItem(ItemId.SILVER_BAR, 1, 200),
-                    new GEItem(ItemId.BRONZE_WIRE, 3, 300),
-                    new GEItem(ItemId.NEEDLE, 1, 500),
-                    new GEItem(ItemId.THREAD, 5, 500),
-                    new GEItem(ItemId.SPADE, 1, 500),
-                    new GEItem(ItemId.RUNE_SCIMITAR, 1, 50),
-                    new GEItem(ItemId.MONKFISH, 10, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 1, 50),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 6, 50),
+                    new GEItem(ItemID.HAMMER, 1, 500),
+                    new GEItem(ItemID.SILVER_BAR, 1, 200),
+                    new GEItem(ItemID.BRONZE_WIRE, 3, 300),
+                    new GEItem(ItemID.NEEDLE, 1, 500),
+                    new GEItem(ItemID.THREAD, 5, 500),
+                    new GEItem(ItemID.SPADE, 1, 500),
+                    new GEItem(ItemID.RUNE_SCIMITAR, 1, 50),
+                    new GEItem(ItemID.MONKFISH, 10, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.MONKFISH, 8, 1),
-                    new ItemReq(ItemId.RUNE_SCIMITAR, 1, 1, true, true),
-                    new ItemReq(ItemId.SALVE_GRAVEYARD_TELEPORT, 6, 1),
-                    new ItemReq(ItemId.HAMMER, 1, 1),
+                    new ItemReq(ItemID.MONKFISH, 8, 1),
+                    new ItemReq(ItemID.RUNE_SCIMITAR, 1, 1, true, true),
+                    new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 6, 1),
+                    new ItemReq(ItemID.HAMMER, 1, 1),
 
-                    new ItemReq(ItemId.SILVER_BAR, 1, 1),
-                    new ItemReq(ItemId.BRONZE_WIRE, 3, 3),
-                    new ItemReq(ItemId.NEEDLE, 1, 1),
-                    new ItemReq(ItemId.THREAD, 5, 5),
-                    new ItemReq(ItemId.SPADE, 1),
-                    new ItemReq(ItemId.COINS, 5000, 200),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 1, 0, true, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 3, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true, true)
+                    new ItemReq(ItemID.SILVER_BAR, 1, 1),
+                    new ItemReq(ItemID.BRONZE_WIRE, 3, 3),
+                    new ItemReq(ItemID.NEEDLE, 1, 1),
+                    new ItemReq(ItemID.THREAD, 5, 5),
+                    new ItemReq(ItemID.SPADE, 1),
+                    new ItemReq(ItemID.COINS, 5000, 200),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true, true)
             )
     ));
 
@@ -79,27 +79,27 @@ public class CreatureOfFenkenstrain implements QuestTask {
     RSArea graveIsland = new RSArea(new RSTile(3484, 3585, 0), new RSTile(3517, 3561, 0));
     RSArea castleTower = new RSArea(new RSTile(3544, 3543, 2), new RSTile(3552, 3536, 2));
     RSArea monsterTower = new RSArea(new RSTile(3544, 3558, 2), new RSTile(3553, 3551, 2));
-    ItemReq canes = new ItemReq("Garden Cane", ItemId.GARDEN_CANE);
-    ItemReq extendedBrush3 = new ItemReq("Extended Brush", ItemId.EXTENDED_BRUSH_4193);
-    ItemReq conductorMould = new ItemReq("Conductor Mold", ItemId.CONDUCTOR_MOULD);
-    ItemReq lightningRod = new ItemReq("Lightning Rod", ItemId.CONDUCTOR);
-    ItemReq towerKey = new ItemReq("Tower Key", ItemId.TOWER_KEY);
-    ItemReq pickledBrain = new ItemReq("Pickled Brain", ItemId.PICKLED_BRAIN);
-    ItemReq obsidianAmulet = new ItemReq("Obsidian Amulet", ItemId.OBSIDIAN_AMULET);
-    ItemReq marbleAmulet = new ItemReq("Marble Amulet", ItemId.MARBLE_AMULET);
-    ItemReq starAmulet = new ItemReq("Star Amulet", ItemId.STAR_AMULET);
-    ItemReq decapitatedHead = new ItemReq("Decapitated Head", ItemId.DECAPITATED_HEAD);
-    ItemReq decapitatedHeadWithBrain = new ItemReq( ItemId.DECAPITATED_HEAD_4198);
+    ItemReq canes = new ItemReq("Garden Cane", ItemID.GARDEN_CANE);
+    ItemReq extendedBrush3 = new ItemReq("Extended Brush", ItemID.EXTENDED_BRUSH_4193);
+    ItemReq conductorMould = new ItemReq("Conductor Mold", ItemID.CONDUCTOR_MOULD);
+    ItemReq lightningRod = new ItemReq("Lightning Rod", ItemID.CONDUCTOR);
+    ItemReq towerKey = new ItemReq("Tower Key", ItemID.TOWER_KEY);
+    ItemReq pickledBrain = new ItemReq("Pickled Brain", ItemID.PICKLED_BRAIN);
+    ItemReq obsidianAmulet = new ItemReq("Obsidian Amulet", ItemID.OBSIDIAN_AMULET);
+    ItemReq marbleAmulet = new ItemReq("Marble Amulet", ItemID.MARBLE_AMULET);
+    ItemReq starAmulet = new ItemReq("Star Amulet", ItemID.STAR_AMULET);
+    ItemReq decapitatedHead = new ItemReq("Decapitated Head", ItemID.DECAPITATED_HEAD);
+    ItemReq decapitatedHeadWithBrain = new ItemReq( ItemID.DECAPITATED_HEAD_4198);
     ItemReq armor = new ItemReq("Armour and weapons defeat a level 51 monster and run past level 72 monsters", -1, -1);
 
-    ItemReq cavernKey = new ItemReq("Tavern Key", ItemId.CAVERN_KEY);
-    ItemReq torso = new ItemReq("Torso", ItemId.TORSO);
-    ItemReq legs = new ItemReq("Legs", ItemId.LEGS);
-    ItemReq arms = new ItemReq("Arms", ItemId.ARMS);
-    ItemReq shedKey = new ItemReq("Shed key", ItemId.SHED_KEY);
-    ItemReq fenkenstrainTeleports = new ItemReq("Fenkenstrain's Castle Teleport", ItemId.FENKENSTRAINS_CASTLE_TELEPORT, 2);
-    ItemReq teleportToFurnace = new ItemReq(ItemId.AMULET_OF_GLORY[2]);
-    ItemReq coins = new ItemReq("Coins at least", ItemId.COINS_995, 100);
+    ItemReq cavernKey = new ItemReq("Tavern Key", ItemID.CAVERN_KEY);
+    ItemReq torso = new ItemReq("Torso", ItemID.TORSO);
+    ItemReq legs = new ItemReq("Legs", ItemID.LEGS);
+    ItemReq arms = new ItemReq("Arms", ItemID.ARMS);
+    ItemReq shedKey = new ItemReq("Shed key", ItemID.SHED_KEY);
+    ItemReq fenkenstrainTeleports = new ItemReq("Fenkenstrain's Castle Teleport", ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 2);
+    ItemReq teleportToFurnace = new ItemReq(ItemID.AMULET_OF_GLORY[2]);
+    ItemReq coins = new ItemReq("Coins at least", ItemID.COINS_995, 100);
     Conditions hasCavernKey = new Conditions(LogicType.OR, cavernKey, new VarbitRequirement(199, 1));
     ItemOnTileRequirement keyNearby = new ItemOnTileRequirement(cavernKey);
     Conditions hasTorso = new Conditions(LogicType.OR, torso, new VarbitRequirement(188, 1));
@@ -120,9 +120,9 @@ public class CreatureOfFenkenstrain implements QuestTask {
     Requirement followingGardenerForHead, inExperiementCave, inGraveIsland, inCastleTower,
             usedTowerKey, inMonsterTower, usedShedKey;
 
-    ClickItemStep getTorso = new ClickItemStep(ItemId.SPADE, "Dig", new RSTile(3503, 3576, 0));
-    ClickItemStep getArm = new ClickItemStep(ItemId.SPADE, "Dig", new RSTile(3504, 3576, 0));
-    ClickItemStep getLeg = new ClickItemStep(ItemId.SPADE, "Dig", new RSTile(3505, 3576, 0));
+    ClickItemStep getTorso = new ClickItemStep(ItemID.SPADE, "Dig", new RSTile(3503, 3576, 0));
+    ClickItemStep getArm = new ClickItemStep(ItemID.SPADE, "Dig", new RSTile(3504, 3576, 0));
+    ClickItemStep getLeg = new ClickItemStep(ItemID.SPADE, "Dig", new RSTile(3505, 3576, 0));
 
     QuestStep getPickledBrain, talkToFrenkenstrain, goUpstairsForStar, combineAmulet, pickupKey,
             goDownstairsForStar, talkToGardenerForHead, goToHeadGrave, combinedHead,  killExperiment,
@@ -184,26 +184,26 @@ public class CreatureOfFenkenstrain implements QuestTask {
         return steps;*/
 
 
-    ItemReq brush = new ItemReq("Brush", ItemId.GARDEN_BRUSH);
-    ItemReq coins50 = new ItemReq("Coins", ItemId.COINS_995, 50);
+    ItemReq brush = new ItemReq("Brush", ItemID.GARDEN_BRUSH);
+    ItemReq coins50 = new ItemReq("Coins", ItemID.COINS_995, 50);
 
-    ItemReq hammer = new ItemReq("Hammer", ItemId.HAMMER);
-    ItemReq ghostSpeakAmulet = new ItemReq("Ghostspeak amulet", ItemId.GHOST_SPEAK_AMULET);
-    ItemReq silverBar = new ItemReq("Silver bar", ItemId.SILVER_BAR);
-    ItemReq bronzeWire = new ItemReq("Bronze wires", ItemId.BRONZE_WIRE, 3);
-    ItemReq needle = new ItemReq("Needle", ItemId.NEEDLE);
-    ItemReq thread = new ItemReq("Threads", ItemId.THREAD, 5);
-    ItemReq spade = new ItemReq("Spade", ItemId.SPADE);
+    ItemReq hammer = new ItemReq("Hammer", ItemID.HAMMER);
+    ItemReq ghostSpeakAmulet = new ItemReq("Ghostspeak amulet", ItemID.GHOSTSPEAK_AMULET);
+    ItemReq silverBar = new ItemReq("Silver bar", ItemID.SILVER_BAR);
+    ItemReq bronzeWire = new ItemReq("Bronze wires", ItemID.BRONZE_WIRE, 3);
+    ItemReq needle = new ItemReq("Needle", ItemID.NEEDLE);
+    ItemReq thread = new ItemReq("Threads", ItemID.THREAD, 5);
+    ItemReq spade = new ItemReq("Spade", ItemID.SPADE);
 
 
     public void setupItemReqs() {
         //ItemReq telegrab = new ItemReq("Telegrab runes", new ItemReq("Law rune",
-        //        ItemId.LAW_RUNE), new ItemReq("Air rune", ItemId.AIR_RUNE));
+        //        ItemID.LAW_RUNE), new ItemReq("Air rune", ItemID.AIR_RUNE));
 
 
-        brush.addAlternateItemId(ItemId.EXTENDED_BRUSH, ItemId.EXTENDED_BRUSH_4192);
+        brush.addAlternateItemID(ItemID.EXTENDED_BRUSH, ItemID.EXTENDED_BRUSH_4192);
 
-        teleportToFurnace.addAlternateItemId(ItemId.AMULET_OF_GLORY[3], ItemId.AMULET_OF_GLORY[4], ItemId.AMULET_OF_GLORY[5]);
+        teleportToFurnace.addAlternateItemID(ItemID.AMULET_OF_GLORY[3], ItemID.AMULET_OF_GLORY[4], ItemID.AMULET_OF_GLORY[5]);
         //  staminaPotion = new ItemReq("Stamina potions", ItemCollections.getStaminaPotions(), -1);
     }
 
@@ -263,7 +263,7 @@ public class CreatureOfFenkenstrain implements QuestTask {
                 ghostSpeakAmulet);
         talkToGardenerForHead.addDialogStep("What happened to your head?");
 
-        goToHeadGrave = new ClickItemStep(ItemId.SPADE, "Dig", new RSTile(3608, 3490, 0));
+        goToHeadGrave = new ClickItemStep(ItemID.SPADE, "Dig", new RSTile(3608, 3490, 0));
 
         combinedHead = new UseItemOnItemStep(decapitatedHead.getId(), pickledBrain.getId(),
                 decapitatedHeadWithBrain.check());

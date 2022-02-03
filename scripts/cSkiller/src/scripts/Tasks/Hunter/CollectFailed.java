@@ -9,7 +9,6 @@ import org.tribot.api2007.types.RSObject;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Hunter.HunterData.HunterConst;
-import scripts.Tasks.Hunter.HunterData.TrapTypes;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Timer;

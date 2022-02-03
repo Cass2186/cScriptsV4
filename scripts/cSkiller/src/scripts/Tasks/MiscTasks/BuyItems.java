@@ -1,12 +1,14 @@
 package scripts.Tasks.MiscTasks;
 
 import org.tribot.api.General;
+import org.tribot.api2007.Inventory;
+import org.tribot.script.sdk.Log;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
 import scripts.GEManager.Exchange;
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.Requirements.ItemReq;
 import scripts.rsitem_services.GrandExchange;
@@ -28,13 +30,13 @@ public class BuyItems implements Task {
 
     public static ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    //   new GEItem(ItemId.STEEL_NAILS, 60, 50),
+                    //   new GEItem(ItemID.STEEL_NAILS, 60, 50),
             )
     );
 
     public ArrayList<GEItem> itemList = new ArrayList<GEItem>(
             Arrays.asList(
-                    //   new GEItem(ItemId.STEEL_NAILS, 60, 50),
+                    //   new GEItem(ItemID.STEEL_NAILS, 60, 50),
             )
     );
 
@@ -45,11 +47,11 @@ public class BuyItems implements Task {
         if (list != null) {
             for (ItemReq i : list) {
                 if (i.getAmount() == 0) {
-                    General.println("[BuyItems]: Continuing");
+                    General.println("[BuyItems]: Continuing due to amout == 0");
                     continue;
                 }
                 General.println("[BuyItems]: Adding buy item x" + i.getAmount(), Color.green);
-                if (GrandExchange.getPrice(i.getId()) < 1000 && i.getAmount()  < 10) {
+                if (GrandExchange.getPrice(i.getId()) < 1000 && i.getAmount() < 10) {
                     listToBuy.add(new GEItem(i.getId(), i.getAmount(), 350));
                 } else
                     listToBuy.add(new GEItem(i.getId(), i.getAmount(), 35));
@@ -57,8 +59,11 @@ public class BuyItems implements Task {
                 General.println("[BuyItems]: Items to buy size: " + listToBuy.size());
             }
 
-            if (listToBuy.size() > 0)
-                listToBuy.add(new GEItem(ItemId.RING_OF_WEALTH[0], 1, 15));
+            if (listToBuy.size() > 0) {
+                General.println("[BuyItems]: Adding RoW(5) to buy list ");
+                listToBuy.add(new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25));
+
+            }
 
         }
         if (listToBuy.size() == 0)
@@ -71,8 +76,14 @@ public class BuyItems implements Task {
         BuyItemsStep buy = new BuyItemsStep(this.itemList);
         BankManager.open(true);
         BankManager.depositAll(true);
-        BankManager.withdrawArray(ItemId.RING_OF_WEALTH,  1);
-        BankManager.withdrawArray(ItemId.AMULET_OF_GLORY,  1);
+        BankManager.setUnNoted();
+        if (!org.tribot.script.sdk.GrandExchange.isNearby() && Inventory.find(ItemID.RING_OF_WEALTH).length ==0) {
+            Log.log("[BuyItemsStep]: Need RoW, not at GE");
+            BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+        }
+       // if (!org.tribot.script.sdk.GrandExchange.isNearby())
+        //    BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+       // BankManager.withdrawArray(ItemID.AMULET_OF_GLORY, 1);
         buy.buyItems();
         Exchange.clickCollect();
         itemList.clear();

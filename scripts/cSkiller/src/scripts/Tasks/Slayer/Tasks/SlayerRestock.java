@@ -46,12 +46,12 @@ public class SlayerRestock implements Task {
         if (BankManager.open(true)) {
             BankManager.turnNotesOn();
             BankManager.depositAll(true);
-            BankManager.withdraw(0, true, ItemId.SKILLS_NECKLACE[5]);
-            BankManager.withdraw(0, true, ItemId.SKILLS_NECKLACE[4]);
-            BankManager.withdraw(0, true, ItemId.SKILLS_NECKLACE[3]);
-            BankManager.withdraw(0, true, ItemId.AMULET_OF_GLORY[5]);
-            BankManager.withdraw(0, true, ItemId.AMULET_OF_GLORY[4]);
-            BankManager.withdraw(0, true, ItemId.AMULET_OF_GLORY[3]);
+            BankManager.withdraw(0, true, ItemID.SKILLS_NECKLACE[5]);
+            BankManager.withdraw(0, true, ItemID.SKILLS_NECKLACE[4]);
+            BankManager.withdraw(0, true, ItemID.SKILLS_NECKLACE[3]);
+            BankManager.withdraw(0, true, ItemID.AMULET_OF_GLORY[5]);
+            BankManager.withdraw(0, true, ItemID.AMULET_OF_GLORY[4]);
+            BankManager.withdraw(0, true, ItemID.AMULET_OF_GLORY[3]);
 
             BankManager.close(true);
         }
@@ -72,12 +72,12 @@ public class SlayerRestock implements Task {
         if (BankManager.open(true)) {
             BankManager.turnNotesOn();
             BankManager.depositAll(true);
-            BankManager.withdraw(0, true, ItemId.PRAYER_POTION[0]);
-            BankManager.withdraw(0, true, ItemId.PRAYER_POTION[1]);
-            BankManager.withdraw(0, true, ItemId.PRAYER_POTION[2]);
-            BankManager.withdraw(0, true, ItemId.SUPER_STRENGTH[0]);
-            BankManager.withdraw(0, true, ItemId.SUPER_STRENGTH[1]);
-            BankManager.withdraw(0, true, ItemId.SUPER_STRENGTH[2]);
+            BankManager.withdraw(0, true, ItemID.PRAYER_POTION[0]);
+            BankManager.withdraw(0, true, ItemID.PRAYER_POTION[1]);
+            BankManager.withdraw(0, true, ItemID.PRAYER_POTION[2]);
+            BankManager.withdraw(0, true, ItemID.SUPER_STRENGTH[0]);
+            BankManager.withdraw(0, true, ItemID.SUPER_STRENGTH[1]);
+            BankManager.withdraw(0, true, ItemID.SUPER_STRENGTH[2]);
 
             BankManager.close(true);
         }
@@ -106,9 +106,9 @@ public class SlayerRestock implements Task {
         General.println("[Debug]: Decanting Stamina potions to (2) doses");
         if (BankManager.open(true)) {
             BankManager.turnNotesOn();
-            BankManager.withdraw(0, true, ItemId.STAMINA_POTION[0]);
-            BankManager.withdraw(0, true, ItemId.STAMINA_POTION[2]);
-            BankManager.withdraw(0, true, ItemId.STAMINA_POTION[3]);
+            BankManager.withdraw(0, true, ItemID.STAMINA_POTION[0]);
+            BankManager.withdraw(0, true, ItemID.STAMINA_POTION[2]);
+            BankManager.withdraw(0, true, ItemID.STAMINA_POTION[3]);
             BankManager.withdraw(0, 995);
             BankManager.close(true);
         }
@@ -135,55 +135,55 @@ public class SlayerRestock implements Task {
 
    private static ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SALVE_GRAVEYARD_TELEPORT, 6, 50),
-                    new GEItem(ItemId.CANDLE, 1, 500),
-                    new GEItem(ItemId.PRAYER_POTION[0], SlayerVars.get().restockNumber + 5, 15),
-                    new GEItem(ItemId.EXPEDITIOUS_BRACELET, 10, 50),
-                    new GEItem(ItemId.FALADOR_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemId.VARROCK_TELEPORT, SlayerVars.get().restockNumber * 5, 50),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemId.ARDOUGNE_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemId.SHANTAY_PASS, 20, 550),
-                    new GEItem(ItemId.BRASS_KEY, 1, 250),
-                    new GEItem(ItemId.ROPE, 1, 250),
-                    new GEItem(ItemId.MIRROR_SHIELD, 1, 250),
-                    new GEItem(ItemId.BOOTS_OF_STONE, 1, 250),
-                    new GEItem(ItemId.MONKFISH, SlayerVars.get().restockNumber* 15, 25),
-                    new GEItem(ItemId.SUPER_COMBAT_POTION[0], SlayerVars.get().restockNumber / 2, 15),
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0], SlayerVars.get().restockNumber / 4, 50),
-                    new GEItem(ItemId.MONKFISH, SlayerVars.get().restockNumber * General.random(30, 40), 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2],  SlayerVars.get().restockNumber / 3, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], SlayerVars.get().restockNumber / 2, 15),
-                    new GEItem(ItemId.RING_OF_DUELING[0], SlayerVars.get().restockNumber / 3, 25),
-                    new GEItem(ItemId.GAMES_NECKLACE[0], SlayerVars.get().restockNumber / 3, 25),
-                    new GEItem(ItemId.SKILLS_NECKLACE[0], SlayerVars.get().restockNumber / 4, 25),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemId.IORWERTH_CAMP_TELEPORT, 5, 30),
-                    new GEItem(ItemId.LUNAR_ISLE_TELEPORT, 5, 30)
-
+                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 6, 50),
+                    new GEItem(ItemID.CANDLE, 1, 500),
+                    new GEItem(ItemID.PRAYER_POTION[0], SlayerVars.get().restockNumber + 5, 15),
+                    new GEItem(ItemID.EXPEDITIOUS_BRACELET, 10, 50),
+                    new GEItem(ItemID.FALADOR_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
+                    new GEItem(ItemID.VARROCK_TELEPORT, SlayerVars.get().restockNumber * 5, 50),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
+                    new GEItem(ItemID.ARDOUGNE_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
+                    new GEItem(ItemID.SHANTAY_PASS, 20, 550),
+                    new GEItem(ItemID.BRASS_KEY, 1, 250),
+                    new GEItem(ItemID.ROPE, 1, 250),
+                    new GEItem(ItemID.MIRROR_SHIELD, 1, 250),
+                    new GEItem(ItemID.BOOTS_OF_STONE, 1, 250),
+                    new GEItem(ItemID.MONKFISH, SlayerVars.get().restockNumber* 15, 25),
+                    new GEItem(ItemID.SUPER_COMBAT_POTION[0], SlayerVars.get().restockNumber / 2, 15),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], SlayerVars.get().restockNumber / 4, 50),
+                    new GEItem(ItemID.MONKFISH, SlayerVars.get().restockNumber * General.random(30, 40), 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2],  SlayerVars.get().restockNumber / 3, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], SlayerVars.get().restockNumber / 2, 15),
+                    new GEItem(ItemID.RING_OF_DUELING[0], SlayerVars.get().restockNumber / 3, 25),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], SlayerVars.get().restockNumber / 3, 25),
+                    new GEItem(ItemID.SKILLS_NECKLACE[0], SlayerVars.get().restockNumber / 4, 25),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.IORWERTH_CAMP_TELEPORT, 5, 30),
+                    new GEItem(ItemID.LUNAR_ISLE_TELEPORT, 5, 30),
+              new GEItem(ItemID.TINDERBOX, 1, 500)
             )
     );
 
     public static  ArrayList<GEItem> getRetockList(){
 
-        if (!Equipment.isEquipped(ItemId.SLAYER_HELM) || !Equipment.isEquipped(ItemId.SLAYER_HELM_I)) {
-            itemsToBuy.add(new GEItem(ItemId.EAR_MUFFS, 1, 300));
-            itemsToBuy.add(new GEItem(ItemId.SPINY_HELM, 1, 300));
+        if (!Equipment.isEquipped(ItemID.SLAYER_HELMET) || !Equipment.isEquipped(ItemID.SLAYER_HELMET_I)) {
+            itemsToBuy.add(new GEItem(ItemID.EARMUFFS, 1, 300));
+            itemsToBuy.add(new GEItem(ItemID.SPINY_HELMET, 1, 300));
         }
 
         if (SlayerVars.get().use_cannon){
 
         }
-        itemsToBuy.add(new GEItem(ItemId.ROPE, 1, 300));
-        itemsToBuy.add(new GEItem(ItemId.BAG_OF_SALT, 250, 30));
-        itemsToBuy.add(new GEItem(ItemId.WATERSKIN[0], 15, 300));
+        itemsToBuy.add(new GEItem(ItemID.ROPE, 1, 300));
+        itemsToBuy.add(new GEItem(ItemID.BAG_OF_SALT, 250, 30));
+        itemsToBuy.add(new GEItem(ItemID.WATERSKIN[0], 15, 300));
 
         if (Skills.getActualLevel(Skills.SKILLS.SLAYER) >= 55) {
             if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 65) {
-                itemsToBuy.add(new GEItem(ItemId.LEAFBLADE_BATTLEAXE, 1, 30));
+                itemsToBuy.add(new GEItem(ItemID.LEAFBLADED_BATTLEAXE, 1, 30));
             } else {
-                itemsToBuy.add(new GEItem(ItemId.LEAF_BLADED_SWORD, 1, 50));
+                itemsToBuy.add(new GEItem(ItemID.LEAFBLADED_SWORD, 1, 50));
 
             }
         }

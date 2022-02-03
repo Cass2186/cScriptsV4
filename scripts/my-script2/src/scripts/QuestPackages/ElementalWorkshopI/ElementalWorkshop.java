@@ -3,10 +3,7 @@ package scripts.QuestPackages.ElementalWorkshopI;
 import dax.walker.utils.AccurateMouse;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
-import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSItem;
-import org.tribot.api2007.types.RSTile;
-import org.tribot.api2007.types.RSVarBit;
+import org.tribot.api2007.types.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
@@ -60,81 +57,81 @@ public class ElementalWorkshop implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.KNIFE, 1, 600),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 200),
-                    new GEItem(ItemId.MIND_RUNE, 300, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 900, 20),
-                    new GEItem(ItemId.STEEL_PICKAXE, 1, 200),
-                    new GEItem(ItemId.NEEDLE, 1, 600),
-                    new GEItem(ItemId.THREAD, 5, 600),
-                    new GEItem(ItemId.LEATHER, 1, 600),
-                    new GEItem(ItemId.HAMMER, 1, 600),
+                    new GEItem(ItemID.KNIFE, 1, 600),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 200),
+                    new GEItem(ItemID.MIND_RUNE, 300, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 900, 20),
+                    new GEItem(ItemID.STEEL_PICKAXE, 1, 200),
+                    new GEItem(ItemID.NEEDLE, 1, 600),
+                    new GEItem(ItemID.THREAD, 5, 600),
+                    new GEItem(ItemID.LEATHER, 1, 600),
+                    new GEItem(ItemID.HAMMER, 1, 600),
                     new GEItem(COAL, 4, 60),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 5, 60),
-                    new GEItem(ItemId.LOBSTER, 12, 60),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 60),
+                    new GEItem(ItemID.LOBSTER, 12, 60),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.KNIFE, 1, 1),
-                    new ItemReq(ItemId.NEEDLE, 1, 1),
-                    new ItemReq(ItemId.STEEL_PICKAXE, 1, 1),
-                    new ItemReq(ItemId.THREAD, 5, 5),
-                    new ItemReq(ItemId.LEATHER, 1, 1),
-                    new ItemReq(ItemId.HAMMER, 1, 1),
+                    new ItemReq(ItemID.KNIFE, 1, 1),
+                    new ItemReq(ItemID.NEEDLE, 1, 1),
+                    new ItemReq(ItemID.STEEL_PICKAXE, 1, 1),
+                    new ItemReq(ItemID.THREAD, 5, 5),
+                    new ItemReq(ItemID.LEATHER, 1, 1),
+                    new ItemReq(ItemID.HAMMER, 1, 1),
                     new ItemReq(COAL, 4),
-                    new ItemReq(ItemId.CAMELOT_TELEPORT, 4, 1),
-                    new ItemReq(ItemId.LOBSTER, 9, 1),
-                    new ItemReq(ItemId.MIND_RUNE, 300, 30),
-                    new ItemReq(ItemId.FIRE_RUNE, 900, 90),
-                    new ItemReq(ItemId.STAFF_OF_AIR, 1, 1, true, true),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 4, 1),
+                    new ItemReq(ItemID.LOBSTER, 9, 1),
+                    new ItemReq(ItemID.MIND_RUNE, 300, 30),
+                    new ItemReq(ItemID.FIRE_RUNE, 900, 90),
+                    new ItemReq(ItemID.STAFF_OF_AIR, 1, 1, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     public void buyItems() {
-        cQuesterV2.status = "Buying Items";
-        General.println("[Debug]: " + cQuesterV2.status);
-        buyStep.buyItems();
+        if(!initialItemReqs.check()) {
+            cQuesterV2.status = "Buying Items";
+            General.println("[Debug]: " + cQuesterV2.status);
+            buyStep.buyItems();
+        }
     }
 
     public void getItems() {
-        cQuesterV2.status = "Getting Items";
-        General.println("[Debug]: " + cQuesterV2.status);
-        BankManager.open(true);
-        BankManager.checkEquippedGlory();
-        BankManager.depositAll(true);
-        initialItemReqs.withdrawItems();
-        Autocast.enableAutocast(Autocast.FIRE_STRIKE);
-        if (!BankManager.checkInventoryItems(KNIFE, STEEL_PICKAXE, NEEDLE, THREAD, LEATHER, HAMMER, COAL, CAMELOT_TAB, LOBSTER)) {
-            buyItems();
-            getItems();
+        if(!initialItemReqs.check()) {
+            cQuesterV2.status = "Getting Items";
+            General.println("[Debug]: " + cQuesterV2.status);
+            BankManager.open(true);
+            BankManager.checkEquippedGlory();
+            BankManager.depositAll(true);
+            initialItemReqs.withdrawItems();
+            Autocast.enableAutocast(Autocast.FIRE_STRIKE);
+            if (!BankManager.checkInventoryItems(KNIFE, STEEL_PICKAXE, NEEDLE, THREAD, LEATHER, HAMMER, COAL, CAMELOT_TAB, LOBSTER)) {
+                buyItems();
+                getItems();
+            }
         }
 
     }
 
     public void startQuest() {
         cQuesterV2.status = "Starting Quest";
-        PathingUtil.walkToArea(START_AREA);
+        PathingUtil.walkToTile(new RSTile(2715,3481,0 ));
         if (Utils.clickObj(26113, "Search"))
-            Timer.abc2WaitCondition(() -> Inventory.find(BATTERED_BOOK).length > 0, 8000, 12000);
+            Timer.abc2WaitCondition(() -> Inventory.find(BATTERED_BOOK).length > 0, 7000, 9000);
 
         RSItem[] book = Inventory.find(BATTERED_BOOK);
-        if (book.length > 0) {
-
-            if (AccurateMouse.click(book[0], "Read"))
-                Timer.waitCondition(() -> Interfaces.get(49, 112) != null, 5000, 8700);
-
-            General.sleep(General.random(500, 2500));
-            if (Interfaces.get(49, 112) != null) {
-                Interfaces.get(49, 112).click();
-                General.sleep(General.random(500, 1500));
+        if (book.length > 0 && book[0].click("Read")) {
+            Timer.waitCondition(() -> Interfaces.get(49) != null, 2000, 2700);
+            RSInterface close = Interfaces.findWhereAction("Close", 49);
+            if (close != null && close.click()) {
+                General.sleep(700, 1200);
             }
         }
     }
@@ -144,7 +141,7 @@ public class ElementalWorkshop implements QuestTask {
             cQuesterV2.status = "Getting key";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Utils.useItemOnItem(KNIFE, BATTERED_BOOK))
-                Timer.abc2WaitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
+                Timer.waitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
 
         }
     }
@@ -152,9 +149,9 @@ public class ElementalWorkshop implements QuestTask {
     public void enterUnderground() {
         cQuesterV2.status = "Going underground";
         PathingUtil.walkToArea(WALL_AREA);
-        if (!BEHIND_WALL.contains(Player.getPosition()))
-            if (Utils.clickObj(26114, "Open"))
-                Timer.waitCondition(() -> BEHIND_WALL.contains(Player.getPosition()), 8000);
+        if (!BEHIND_WALL.contains(Player.getPosition()) &&
+                Utils.clickObj(26114, "Open"))
+            Timer.slowWaitCondition(() -> BEHIND_WALL.contains(Player.getPosition()), 7000, 8500);
     }
 
     public void goDownStairs() {
@@ -165,8 +162,6 @@ public class ElementalWorkshop implements QuestTask {
     }
 
     public void fixWaterWheels() {
-        fixWestWheel();
-
         if (!EAST_WATER_WHEEL.contains(Player.getPosition())) {
             cQuesterV2.status = "Fixing East Wheel";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -175,12 +170,15 @@ public class ElementalWorkshop implements QuestTask {
                 PathingUtil.movementIdle();
         }
 
-
         if (Utils.clickObj(3403, "Turn")) {
             Timer.waitCondition(() -> Player.getAnimation() != -1, 6000, 9000);
             General.sleep(1500, 3500);
-
         }
+
+        if(pullLever())
+            return;
+
+        fixWestWheel();
     }
 
     public void fixWestWheel() {
@@ -199,35 +197,16 @@ public class ElementalWorkshop implements QuestTask {
         }
     }
 
-    public void fixWaterWheels2() {
-        fixWestWheel();
-
-        if (!EAST_WATER_WHEEL.contains(Player.getPosition())) {
-            cQuesterV2.status = "Fixing East Wheel";
-            General.println("[Debug]: " + cQuesterV2.status);
-
-            if (PathingUtil.localNavigation(new RSTile(2726, 9907, 0)))
-                Timer.waitCondition(() -> EAST_WATER_WHEEL.contains(Player.getPosition()), 12000);
-        }
-
-        if (Utils.clickObj(3403, "Turn")) {
-            Timer.waitCondition(() -> Player.getAnimation() != -1, 6000, 9000);
-            General.sleep(General.random(1500, 3500));
-        }
-
-
-        fixWestWheel();
-    }
-
-
-    public void pullLever() {
+    public boolean pullLever() {
         if (RSVarBit.get(2058).getValue() == 1 && RSVarBit.get(2059).getValue() == 1
                 && RSVarBit.get(2060).getValue() == 0) { //varbit 2059 = 1 here
             if (Utils.clickObj(3406, "Pull")) {
                 Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 6000);
                 General.sleep(General.random(500, 3000));
+                return true;
             }
         }
+        return false;
     }
 
     public void fixBellows() {
@@ -392,7 +371,7 @@ public class ElementalWorkshop implements QuestTask {
             pullLever();
         }
         if (RSVarBit.get(4605).getValue() == 0 && (RSVarBit.get(2058).getValue() == 0 || RSVarBit.get(2059).getValue() == 0)) {
-            fixWaterWheels2();
+            fixWaterWheels();
             pullLever();
         }
         if (RSVarBit.get(2058).getValue() == 1 && RSVarBit.get(2059).getValue() == 1 && RSVarBit.get(2060).getValue() == 0) { //varbit 2059 = 1 here

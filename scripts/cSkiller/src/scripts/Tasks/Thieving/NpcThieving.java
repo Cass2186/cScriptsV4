@@ -3,16 +3,14 @@ package scripts.Tasks.Thieving;
 import dax.walker.utils.camera.DaxCamera;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
-import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
-
-import java.awt.*;
+import scripts.Data.SkillTasks;
+import scripts.Data.Vars;
 
 public class NpcThieving implements Task {
 
@@ -125,13 +123,17 @@ public class NpcThieving implements Task {
 
     @Override
     public boolean validate() {
-        return false;
+        return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.THIEVING) &&
+                (Skills.SKILLS.THIEVING.getActualLevel() < 5 ||
+                Skills.SKILLS.THIEVING.getActualLevel() >= 55) ;
     }
 
     @Override
     public void execute() {
         if (Skills.SKILLS.THIEVING.getActualLevel() < 5){
             // men/women
+        } else if (Skills.SKILLS.THIEVING.getActualLevel() >=55){
+            stealNPC("Knight of Ardougne");
         }
     }
 

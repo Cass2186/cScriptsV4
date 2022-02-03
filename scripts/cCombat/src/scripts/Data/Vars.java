@@ -7,7 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Timer;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class Vars {
     /**
      * Strings
      */
-    public String[] targets = {"Lava dragon"};
+    public String[] targets = {"Undead Druid"};
 
     public String status = "Initializing...";
 
@@ -37,6 +37,21 @@ public class Vars {
     public ArrayList<String> potionNames = new ArrayList<>();
 
     public HashMap<Integer, Integer> restockList = new HashMap<>();
+    public boolean killingUndeadDruids = true;
+
+    public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
+
+    public int startAgilityXp = Skills.getXP(Skills.SKILLS.AGILITY);
+    public int startCraftingXp = Skills.getXP(Skills.SKILLS.CRAFTING);
+    public int startConstructionXp = Skills.getXP(Skills.SKILLS.CONSTRUCTION);
+    public int startCoookingXp = Skills.getXP(Skills.SKILLS.COOKING);
+    public int startFishingXp = Skills.getXP(Skills.SKILLS.FISHING);
+    public int startHerbloreXp = Skills.getXP(Skills.SKILLS.HERBLORE);
+    public int startFiremakingXp = Skills.getXP(Skills.SKILLS.FIREMAKING);
+    public int startMagicXp = Skills.getXP(Skills.SKILLS.MAGIC);
+    public int startMiningXp = Skills.getXP(Skills.SKILLS.MINING);
+    public int startWoodcuttingXp = Skills.getXP(Skills.SKILLS.WOODCUTTING);
+    public int startHunterXp = Skills.getXP(Skills.SKILLS.HUNTER);
 
     /**
      * Tiles and Areas
@@ -45,7 +60,7 @@ public class Vars {
 
     public RSTile safeTile = new RSTile(3208, 3812, 0);
 
-    public RSArea fightArea = new RSArea(safeTile, 8);
+    public RSArea fightArea = Areas.UNDEAD_DRUID_AREA;
 
     public List<Integer> gearIdList;
 
@@ -53,14 +68,14 @@ public class Vars {
     /**
      * Intergers
      */
-    public int playerCount, npcItemId, remainingKills;
+    public int playerCount, npcItemID, remainingKills;
 
     public int eatAtHP = Combat.getMaxHP() - General.random(22,40);
     public int drinkPrayerAt = General.random(5, 25);
 
     public int lootValue = 0;
 
-    public int customFoodId = ItemId.MONKFISH;
+    public int customFoodId = ItemID.MONKFISH;
 
     public int attXp, strXp, defXp, mageXp, rangeXp, hpXp, slayerXp, rcXp;
 
@@ -77,7 +92,7 @@ public class Vars {
 
     public int afkLengthMax = 120000;
 
-    public int[] potionToUse = ItemId.SUPER_COMBAT_POTION;
+    public int[] potionToUse = ItemID.SUPER_COMBAT_POTION;
 
     public int profit = 0;
 

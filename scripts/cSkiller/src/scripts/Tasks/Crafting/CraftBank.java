@@ -6,11 +6,11 @@ import org.tribot.api2007.Inventory;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
-import scripts.Data.Enums.CraftItems;
+import scripts.Data.Enums.Crafting.CraftItems;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.MiscTasks.BuyItems;
 import scripts.Timer;
@@ -22,35 +22,35 @@ import java.util.List;
 public class CraftBank implements Task {
 
     public void withdrawGlass() {
-      /*  if (Inventory.find(ItemId.GLASSBLOWING_PIPE).length < 1) {
+      /*  if (Inventory.find(ItemID.GLASSBLOWING_PIPE).length < 1) {
             BankManager.open(true);
-            if (Banking.find(ItemId.GLASSBLOWING_PIPE).length < 1) {
+            if (Banking.find(ItemID.GLASSBLOWING_PIPE).length < 1) {
                 General.println("[Debug]: Missing glassblowing pipe.");
                 cSkiller.changeRunningBool(false); //ends script
             }
             BankManager.depositAll(true);
-            BankManager.withdraw(1, ItemId.GLASSBLOWING_PIPE, true);
+            BankManager.withdraw(1, ItemID.GLASSBLOWING_PIPE, true);
         }*/
 
-        if (Inventory.find(ItemId.MOLTEN_GLASS).length == 0 ||
-                Inventory.find(ItemId.GLASSBLOWING_PIPE).length == 0) {
+        if (Inventory.find(ItemID.MOLTEN_GLASS).length == 0 ||
+                Inventory.find(ItemID.GLASSBLOWING_PIPE).length == 0) {
             BankManager.open(true);
-            if (Banking.isBankScreenOpen() && Banking.find(ItemId.MOLTEN_GLASS).length < 1) {
+            if (Banking.isBankScreenOpen() && Banking.find(ItemID.MOLTEN_GLASS).length < 1) {
                 General.println("[Debug]: Missing molten glass.");
                 //  cSkiller.changeRunningBool(false); //ends script
             }
-            if (BankManager.depositAllExcept(false, ItemId.GLASSBLOWING_PIPE))
+            if (BankManager.depositAllExcept(false, ItemID.GLASSBLOWING_PIPE))
                 Timer.waitCondition(() -> Inventory.getAll().length == 1, 2500, 3500); // this is faster than making deposite true
             List<ItemReq> inv;
-            if (Inventory.find(ItemId.GLASSBLOWING_PIPE).length < 1) {
+            if (Inventory.find(ItemID.GLASSBLOWING_PIPE).length < 1) {
                 inv = new ArrayList<>(
                         Arrays.asList(
-                                new ItemReq(ItemId.GLASSBLOWING_PIPE, 1),
-                                new ItemReq(ItemId.MOLTEN_GLASS, 0)
+                                new ItemReq(ItemID.GLASSBLOWING_PIPE, 1),
+                                new ItemReq(ItemID.MOLTEN_GLASS, 0)
                         )
                 );
             } else {
-                inv = new ArrayList<>(List.of(new ItemReq(ItemId.MOLTEN_GLASS, 0)));
+                inv = new ArrayList<>(List.of(new ItemReq(ItemID.MOLTEN_GLASS, 0)));
             }
 
 
@@ -79,8 +79,8 @@ public class CraftBank implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CRAFTING)
                 &&
-                (Inventory.find(ItemId.MOLTEN_GLASS).length == 0 ||
-                        Inventory.find(ItemId.GLASSBLOWING_PIPE).length == 0);
+                (Inventory.find(ItemID.MOLTEN_GLASS).length == 0 ||
+                        Inventory.find(ItemID.GLASSBLOWING_PIPE).length == 0);
     }
 
     @Override

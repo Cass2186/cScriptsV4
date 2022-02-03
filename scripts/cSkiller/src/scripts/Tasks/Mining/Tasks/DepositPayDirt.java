@@ -39,7 +39,7 @@ public class DepositPayDirt implements Task {
     }
 
     public boolean getHammer() {
-        RSItem[] hammer = Inventory.find(ItemId.HAMMER);
+        RSItem[] hammer = Inventory.find(ItemID.HAMMER);
         RSItem[] payDirt = Inventory.find("Pay-dirt");
         if (hammer.length == 0) {
             if (Inventory.isFull() && payDirt.length > 0) {
@@ -47,10 +47,10 @@ public class DepositPayDirt implements Task {
                     General.sleep(200, 500);
             }
             if (Utils.clickObject("Crate", "Search", false))
-                return Timer.waitCondition(() -> Inventory.find(ItemId.HAMMER).length > 0, 6000, 9000);
+                return Timer.waitCondition(() -> Inventory.find(ItemID.HAMMER).length > 0, 6000, 9000);
         }
 
-        return Inventory.find(ItemId.HAMMER).length > 0;
+        return Inventory.find(ItemID.HAMMER).length > 0;
     }
 
     public void repairStruts() {

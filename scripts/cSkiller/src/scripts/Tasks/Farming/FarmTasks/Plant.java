@@ -4,11 +4,12 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
-import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
-import scripts.Tasks.Farming.Data.Enums.Trees;
+import scripts.Tasks.Farming.Data.Enums.Patches;
+import scripts.Tasks.Farming.Data.Enums.TREES;
 import scripts.Tasks.Farming.Data.FarmConst;
+import scripts.Tasks.Farming.Data.FarmTask;
 import scripts.Tasks.Farming.Data.FarmVars;
 
 import scripts.Tasks.Farming.Data.FarmingUtils;
@@ -184,6 +185,9 @@ public class Plant implements Task {
             plantTree(FarmConst.VAROCK_TREE_PATCH_ID);
             plantTree(FarmConst.TAVERLY_TREE_PATCH_ID);
             plantTree(FarmConst.LUMBRIDGE_TREE_PATCH_ID);
+            // how to make a tree task, then call .execute();
+            new TreeTask(TREES.getCurrentTreeId(),  Patches.FALADOR_TREE_PATCH.getPatchIds().get(0),
+                    Patches.FALADOR_TREE_PATCH.getPatchArea());
             if (plantTree(FarmConst.GNOME_STRONGHOLD_TREE_PATCH_ID)) {
                 General.println("[Debug]: Starting tree timer");
                 // FarmVars.get().treeTimer = new Timer(28800 * 1000); // 480min

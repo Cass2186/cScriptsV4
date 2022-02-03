@@ -1,14 +1,9 @@
 package scripts.Tasks.Fishing;
 
 import org.tribot.api.General;
-import org.tribot.api.Timing;
 import org.tribot.api2007.*;
-import org.tribot.api2007.types.RSItem;
-import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Skill;
-import org.tribot.script.sdk.query.ItemQuery;
-import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -37,14 +32,14 @@ public class Fish implements Task {
         if (isBarbFishing()) {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemId.FEATHERS, 5000, 50),
+                            new ItemReq(ItemID.FEATHER, 5000, 50),
                             new ItemReq(BARBARIAN_ROD, 1)
                     )));
         } else {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemId.FEATHERS, 5000, 50),
-                            new ItemReq(ItemId.FLY_FISHING_ROD, 1)
+                            new ItemReq(ItemID.FEATHER, 5000, 50),
+                            new ItemReq(ItemID.FLY_FISHING_ROD, 1)
                     ))
             );
         }
@@ -60,8 +55,8 @@ public class Fish implements Task {
             List<ItemReq> newInv = SkillBank.withdraw(inventorySetUp.getInvList());
             if (newInv != null && newInv.size() > 0) {
                 List<ItemReq> i = new ArrayList<>();
-                i.add(new ItemReq(ItemId.FEATHERS, 5000));
-                i.add(new ItemReq(ItemId.FLY_FISHING_ROD, 1));
+                i.add(new ItemReq(ItemID.FEATHER, 5000));
+                i.add(new ItemReq(ItemID.FLY_FISHING_ROD, 1));
                 General.println("[Fishing Training]: Creating buy list");
                 BuyItems.itemsToBuy = BuyItems.populateBuyList(i);
                 return;
@@ -99,13 +94,14 @@ public class Fish implements Task {
                 Utils.unselectItem();
                 message = "Clicking fishing spot";
                 if (isBarbFishing() && Utils.clickNPC("Fishing spot", "Use-rod"))
-                    Timer.waitCondition(() ->
+                    Timer.slowWaitCondition(() ->
                             Player.getAnimation() != -1, 4200, 5000);
                 else if (Utils.clickNPC(FISHING_NPC_ID, "Lure"))
-                    Timer.waitCondition(() ->
+                    Timer.slowWaitCondition(() ->
                             Player.getAnimation() != -1,4200, 5000);
 
             }
+            Waiting.waitNormal(500,50);
             if (Player.getAnimation() != -1) {
                 message = "Fishing idle...";
                 General.println(message);

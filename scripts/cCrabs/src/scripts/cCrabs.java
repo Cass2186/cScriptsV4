@@ -66,6 +66,7 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                 new ResetAggro()
         );
         Utils. setCameraZoomAboveDefault();
+        super.setLoginBotState(false);
         isRunning.set(true);
         while (isRunning.get()) {
             General.sleep(50, 150);

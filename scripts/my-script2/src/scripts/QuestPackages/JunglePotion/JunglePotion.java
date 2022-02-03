@@ -49,12 +49,12 @@ public class JunglePotion implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ANTIDOTE_PLUS_PLUS[0],3, 50),
-                    new GEItem(ItemId.LOBSTER, 12, 50),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 20),
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0],3, 50),
+                    new GEItem(ItemID.LOBSTER, 12, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20),
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -73,10 +73,10 @@ public class JunglePotion implements QuestTask {
         BankManager.open(true);
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(2, true, ItemId.ANTIDOTE_PLUS_PLUS[0]);
-        BankManager.withdraw(12, true, ItemId.LOBSTER);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS[0]);
+        BankManager.withdraw(12, true, ItemID.LOBSTER);
         BankManager.close(true);
     }
 

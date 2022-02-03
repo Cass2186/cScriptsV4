@@ -7,7 +7,7 @@ import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
-import scripts.ItemId;
+import scripts.ItemID;
 
 public class Const {
 
@@ -83,21 +83,21 @@ public class Const {
     public static int getBestScimitar() {
         int level = Skills.getActualLevel(Skills.SKILLS.ATTACK);
         if (level < 5) {
-            return ItemId.IRON_SCIMITAR;
+            return ItemID.IRON_SCIMITAR;
         } else if (level < 20) {
-          //  return ItemId.STEEL_SCIMITAR;
+          //  return ItemID.STEEL_SCIMITAR;
         }
         else if (level < 30) {
-            return ItemId.MITHRIL_SCIMITAR;
+            return ItemID.MITHRIL_SCIMITAR;
         }
         else if (level < 40) {
-            return ItemId.ADAMANT_SCIMITAR;
+            return ItemID.ADAMANT_SCIMITAR;
         }
         else if (level < 60) {
-            return ItemId.RUNE_SCIMITAR;
+            return ItemID.RUNE_SCIMITAR;
         }
         else {
-            return ItemId.DRAGON_SWORD;
+            return ItemID.DRAGON_SWORD;
         }
         return -1;
     }
@@ -136,14 +136,14 @@ public class Const {
        switch(getBestArmorType()){
            case IRON:
                return BankTask.builder()
-                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemId.IRON_FULL_HELM, Amount.of(1)))
-                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemId.IRON_PLATEBODY, Amount.of(1)))
-                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemId.IRON_PLATELEGS, Amount.of(1)))
-                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.SHIELD).item(ItemId.IRON_KITESHIELD, Amount.of(1)))
+                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemID.IRON_FULL_HELM, Amount.of(1)))
+                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemID.IRON_PLATEBODY, Amount.of(1)))
+                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemID.IRON_PLATELEGS, Amount.of(1)))
+                       .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.SHIELD).item(ItemID.IRON_KITESHIELD, Amount.of(1)))
                        .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).chargedItem("Combat bracelet", 1))
                        .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).chargedItem("Amulet of glory", 1))
                        .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).chargedItem("Ring of wealth", 1))
-                       // .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemId.IRON_BOOTS, Amount.of(1)))
+                       // .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemID.IRON_BOOTS, Amount.of(1)))
                        .build();
            case STEEL:
 

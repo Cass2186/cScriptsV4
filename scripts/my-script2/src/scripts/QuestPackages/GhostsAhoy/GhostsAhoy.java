@@ -1,5 +1,7 @@
 package scripts.QuestPackages.GhostsAhoy;
 
+import dax.api_lib.DaxWalker;
+import dax.teleports.Teleport;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
@@ -32,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class GhostsAhoy implements QuestTask{
+public class GhostsAhoy implements QuestTask {
     private static GhostsAhoy quest;
 
     public static GhostsAhoy get() {
@@ -43,7 +45,7 @@ public class GhostsAhoy implements QuestTask{
     int VARBIT = 217;
 
     HashMap<Integer, Integer> invMap = new HashMap<>();
-    ItemReq intialEctoTokens =   new ItemReq(ItemId.ECTO_TOKENS, 35, 30);
+    ItemReq intialEctoTokens = new ItemReq(ItemID.ECTOTOKEN, 35, 30);
 
     NPCStep oldManStep = new NPCStep(2997, new RSTile(3617, 3543, 1), new String[]{"Is this your toy boat?"});
     NPCStep necrovarusBoneKeyStep = new NPCStep(GhostsAhoyConst.NECROVARUS_ID, GhostsAhoyConst.NECROVOUS_TILE);
@@ -85,62 +87,62 @@ public class GhostsAhoy implements QuestTask{
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.BUCKET_OF_MILK, 1, 100),
-                    new GEItem(ItemId.SILK, 1, 300),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 20),
-                    new GEItem(ItemId.SPADE, 1, 300),
-                    new GEItem(ItemId.YELLOW_DYE, 3, 300),
-                    new GEItem(ItemId.BLUE_DYE, 3, 300),
-                    new GEItem(ItemId.RED_DYE, 3, 300),
-                    new GEItem(ItemId.POT, 7, 300),
-                    new GEItem(ItemId.BONES, 7, 100),
-                    new GEItem(ItemId.EMPTY_BUCKET, 8, 300),
-                    new GEItem(ItemId.SALVE_GRAVEYARD_TELEPORT, 10, 50),
-                    new GEItem(ItemId.OAK_LONGBOW, 1, 300),
-                    new GEItem(ItemId.KNIFE, 1, 200),
-                    new GEItem(ItemId.STAMINA_POTION[0], 4, 20),
-                    new GEItem(ItemId.NEEDLE, 1, 1000),
-                    new GEItem(ItemId.THREAD, 1, 75),
-                    new GEItem(ItemId.LOGS, 1, 25),
-                    new GEItem(ItemId.TINDERBOX, 1, 250),
-                    new GEItem(ItemId.LEATHER_GLOVES, 1, 500),
-                    new GEItem(ItemId.BOWL_OF_WATER, 1, 500),
-                    new GEItem(ItemId.STAFF_OF_FIRE, 1, 35),
-                    new GEItem(ItemId.MIND_RUNE, 350, 35),
-                    new GEItem(ItemId.AIR_RUNE, 700, 35),
-                    new GEItem(ItemId.STAMINA_POTION[0], 4, 35),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 35)
+                    new GEItem(ItemID.BUCKET_OF_MILK, 2, 500),
+                    new GEItem(ItemID.SILK, 1, 300),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20),
+                    new GEItem(ItemID.SPADE, 1, 300),
+                    new GEItem(ItemID.YELLOW_DYE, 3, 300),
+                    new GEItem(ItemID.BLUE_DYE, 3, 300),
+                    new GEItem(ItemID.RED_DYE, 3, 300),
+                    new GEItem(ItemID.POT, 7, 300),
+                    new GEItem(ItemID.BONES, 7, 100),
+                    new GEItem(ItemID.BUCKET, 8, 300),
+                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 10, 50),
+                    new GEItem(ItemID.OAK_LONGBOW, 1, 300),
+                    new GEItem(ItemID.KNIFE, 1, 200),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 20),
+                    new GEItem(ItemID.NEEDLE, 1, 1000),
+                    new GEItem(ItemID.THREAD, 1, 75),
+                    new GEItem(ItemID.LOGS, 1, 25),
+                    new GEItem(ItemID.TINDERBOX, 1, 250),
+                    new GEItem(ItemID.LEATHER_GLOVES, 1, 500),
+                    new GEItem(ItemID.BOWL_OF_WATER, 3, 500),
+                    new GEItem(ItemID.STAFF_OF_FIRE, 1, 35),
+                    new GEItem(ItemID.MIND_RUNE, 350, 35),
+                    new GEItem(ItemID.AIR_RUNE, 700, 35),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 35),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 35)
             )
     );
 
     InventoryRequirement itemsForTokens = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.BONES, 7, 0),
-                    new ItemReq(ItemId.POT, 7, 0),
-                    new ItemReq(ItemId.EMPTY_BUCKET, 8, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 0),
-                    new ItemReq(ItemId.SALVE_GRAVEYARD_TELEPORT, 0),
-                    new ItemReq(ItemId.GHOST_SPEAK_AMULET, 1, 0, true)
+                    new ItemReq(ItemID.BONES, 7, 0),
+                    new ItemReq(ItemID.POT, 7, 0),
+                    new ItemReq(ItemID.BUCKET, 8, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.ECTOTOKEN, 35, 0),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 0),
+                    new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 0),
+                    new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1, 0, true)
             ))
     );
 
     InventoryRequirement itemsForStep1 = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.GHOST_SPEAK_AMULET, 1, 1, true),
-                    new ItemReq(ItemId.SALVE_GRAVEYARD_TELEPORT, 0, 0),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 0, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1, 1, true),
+                    new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 0, 0),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 0, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
 
-                    new ItemReq(ItemId.BUCKET_OF_SLIME, 1),
-                    new ItemReq(ItemId.ECTO_TOKENS, 35, 10),
-                    new ItemReq(ItemId.LEATHER_GLOVES, 1, 1, true),
-                    new ItemReq(ItemId.LOGS, 2, 0),
-                    new ItemReq(ItemId.TINDERBOX, 1, 0),
-                    new ItemReq(ItemId.BOWL_OF_WATER, 2),
-                    new ItemReq(ItemId.BUCKET_OF_MILK, 2),
-                    new ItemReq(ItemId.NETTLES, 2)
+                    new ItemReq(ItemID.BUCKET_OF_SLIME, 1),
+                    new ItemReq(ItemID.ECTOTOKEN, 35, 10),
+                    new ItemReq(ItemID.LEATHER_GLOVES, 1, 1, true),
+                    new ItemReq(ItemID.LOGS, 2, 0),
+                    new ItemReq(ItemID.TINDERBOX, 1, 0),
+                    new ItemReq(ItemID.BOWL_OF_WATER, 2),
+                    new ItemReq(ItemID.BUCKET_OF_MILK, 2),
+                    new ItemReq(ItemID.NETTLES, 2)
 
             ))
     );
@@ -153,31 +155,31 @@ public class GhostsAhoy implements QuestTask{
 
     InventoryRequirement itemsForStep2 = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.GHOST_SPEAK_AMULET, 1),
-                    new ItemReq(ItemId.SALVE_GRAVEYARD_TELEPORT, 0),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1),
+                    new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1),
+                    new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 0),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1),
 
-                    new ItemReq(ItemId.MODEL_SHIP, 1),
-                    new ItemReq(ItemId.NEEDLE, 1),
-                    new ItemReq(ItemId.THREAD, 1),
-                    new ItemReq(ItemId.KNIFE, 1),
-                    new ItemReq(ItemId.SPADE, 1),
-                    new ItemReq(ItemId.MIND_RUNE, 300),
-                    new ItemReq(ItemId.AIR_RUNE, 600),
+                    new ItemReq(ItemID.MODEL_SHIP, 1),
+                    new ItemReq(ItemID.NEEDLE, 1),
+                    new ItemReq(ItemID.THREAD, 1),
+                    new ItemReq(ItemID.KNIFE, 1),
+                    new ItemReq(ItemID.SPADE, 1),
+                    new ItemReq(ItemID.MIND_RUNE, 300),
+                    new ItemReq(ItemID.AIR_RUNE, 600),
 
-                    new ItemReq(ItemId.STAFF_OF_FIRE, 1),
-                    new ItemReq(ItemId.NETTLES, 1),
-                    new ItemReq(ItemId.STAFF_OF_FIRE, 1),
-                    new ItemReq(ItemId.BLUE_DYE, 3),
-                    new ItemReq(ItemId.RED_DYE, 3),
-                    new ItemReq(ItemId.YELLOW_DYE, 3),
-                    new ItemReq(ItemId.ECTO_TOKENS, 0),
-                    new ItemReq(ItemId.SILK, 1),
-                    new ItemReq(ItemId.REPAIRED_SHIP, 1),
-                    new ItemReq(ItemId.COINS, 5000, 600),
-                    new ItemReq(ItemId.OAK_LONGBOW, 1),
-                    new ItemReq(ItemId.BUCKET_OF_SLIME, 1)
+                    new ItemReq(ItemID.STAFF_OF_FIRE, 1),
+                    new ItemReq(ItemID.NETTLES, 1),
+                    new ItemReq(ItemID.STAFF_OF_FIRE, 1),
+                    new ItemReq(ItemID.BLUE_DYE, 3),
+                    new ItemReq(ItemID.RED_DYE, 3),
+                    new ItemReq(ItemID.YELLOW_DYE, 3),
+                    new ItemReq(ItemID.ECTOTOKEN, 0),
+                    new ItemReq(ItemID.SILK, 1),
+                    new ItemReq(ItemID.REPAIRED_SHIP, 1),
+                    new ItemReq(ItemID.COINS, 5000, 600),
+                    new ItemReq(ItemID.OAK_LONGBOW, 1),
+                    new ItemReq(ItemID.BUCKET_OF_SLIME, 1)
             ))
     );
 
@@ -212,20 +214,20 @@ public class GhostsAhoy implements QuestTask{
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         itemsForStep2.withdrawItems();
-        Utils.equipItem(ItemId.GHOST_SPEAK_AMULET);
-        Utils.equipItem(ItemId.STAFF_OF_FIRE, "Wield");
+        Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
+        Utils.equipItem(ItemID.STAFF_OF_FIRE, "Wield");
     }
 
 
     private void getItemsForQuestStep1() {
-        if (Inventory.find(ItemId.ECTO_TOKENS).length > 0 ||
-                (BankCache.isInitialized() && BankCache.getStack(ItemId.ECTO_TOKENS) > 25)) {
+        if (Inventory.find(ItemID.ECTOTOKEN).length > 0 ||
+                (BankCache.isInitialized() && BankCache.getStack(ItemID.ECTOTOKEN) > 25)) {
             itemsForStep1.withdrawItems();
             BankManager.close(true);
-            Utils.equipItem(ItemId.GHOST_SPEAK_AMULET);
-            Utils.equipItem(ItemId.LEATHER_GLOVES);
+            Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
+            Utils.equipItem(ItemID.LEATHER_GLOVES);
         } else {
-            Log.log("[Debug]: Either bankCache is not intialiazed (" +BankCache.isInitialized() + ") or we're missing ectotokens");
+            Log.log("[Debug]: Either bankCache is not intialiazed (" + BankCache.isInitialized() + ") or we're missing ectotokens");
         }
     }
 
@@ -235,6 +237,9 @@ public class GhostsAhoy implements QuestTask{
     public void buyAndGetItems() {
         scripts.cQuesterV2.status = "Buying items";
         General.println("[Debug]: Buying Items");
+        if (!itemsForTokens.check()) {
+
+        }
         buyStep.buyItems();
         scripts.cQuesterV2.status = "Withdrawing items";
         General.println("[Debug]: Withdrawing Items");
@@ -243,64 +248,66 @@ public class GhostsAhoy implements QuestTask{
 
 
     public void getEctoFundus() {
-        if (Inventory.find(ItemId.ECTO_TOKENS).length < 1) {
-            if (!GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemId.EMPTY_BUCKET).length > 0 &&
-                    Inventory.find(ItemId.BONEMEAL).length < 1) {
+        if (itemsForTokens.check() && !intialEctoTokens.check()) {
+
+            if (!GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length > 0 &&
+                    Inventory.find(ItemID.BONEMEAL).length < 1) {
                 scripts.cQuesterV2.status = "Going to Ectofuntus";
                 General.println("[Debug]: " + scripts.cQuesterV2.status);
                 PathingUtil.walkToTile(new RSTile(3683, 9888, 0), 2, false);
                 Timer.waitCondition(() -> GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()), 15000, 20000);
             }
-            if (GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemId.EMPTY_BUCKET).length > 0 &&
-                    Inventory.find(ItemId.BONEMEAL).length < 1) {
+            if (GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length > 0 &&
+                    Inventory.find(ItemID.BONEMEAL).length < 1) {
                 scripts.cQuesterV2.status = "Getting Slime";
                 General.println("[Debug]: " + scripts.cQuesterV2.status);
 
-                if (Utils.useItemOnObject(ItemId.EMPTY_BUCKET, "Pool of Slime"))
-                    Timer.abc2WaitCondition(() -> Inventory.find(ItemId.EMPTY_BUCKET).length < 1, 20000, 25000);
+                if (Utils.useItemOnObject(ItemID.BUCKET, "Pool of Slime"))
+                    Timer.abc2WaitCondition(() -> Inventory.find(ItemID.BUCKET).length < 1, 20000, 25000);
             }
 
-            if (!GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemId.EMPTY_BUCKET).length < 1 &&
-                    Inventory.find(ItemId.BONES).length > 0) {
+            if (!GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length < 1 &&
+                    Inventory.find(ItemID.BONES).length > 0) {
                 scripts.cQuesterV2.status = "Going to grinder";
                 General.println("[Debug]: " + scripts.cQuesterV2.status);
                 PathingUtil.walkToArea(GhostsAhoyConst.BONE_CRUSHER_AREA, false);
             }
-            if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemId.BONEMEAL).length < 7) {
+            if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BONEMEAL).length < 7) {
                 scripts.cQuesterV2.status = "Getting bonemeal";
                 General.println("[Debug]: " + scripts.cQuesterV2.status);
                 if (Utils.clickObject("Bin", "Empty", false))
                     PathingUtil.movementIdle();
 
-                if (Utils.useItemOnObject(ItemId.BONES, "Loader"))
+                if (Utils.useItemOnObject(ItemID.BONES, "Loader"))
                     Timer.abc2WaitCondition(() ->
-                            Inventory.find(Filters.Items.nameContains("onemeal")).length ==7,
+                                    Inventory.find(Filters.Items.nameContains("onemeal")).length == 7,
                             85000, 95000);
-                Waiting.waitNormal(500,50);
+                Waiting.waitNormal(500, 50);
             }
 
-            if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemId.BONES).length < 1) {
+            if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BONES).length < 1) {
                 scripts.cQuesterV2.status = "Worshiping Ectofuntus";
                 General.println("[Debug]: " + scripts.cQuesterV2.status);
                 PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
             }
 
-            if (Inventory.find(ItemId.BONEMEAL).length > 0) {
+            if (Inventory.find(ItemID.BONEMEAL).length > 0) {
                 scripts.cQuesterV2.status = "Worshiping Ectofuntus";
                 General.println("[Debug]: " + scripts.cQuesterV2.status);
                 PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
 
                 for (int i = 0; i < 7; i++) {
-                    RSItem[] invBoneMeal = Inventory.find(ItemId.BONEMEAL);
+                    RSItem[] invBoneMeal = Inventory.find(ItemID.BONEMEAL);
 
                     if (Utils.clickObject("Ectofuntus", "Worship", false))
-                        Timer.waitCondition(() -> Inventory.find(ItemId.BONEMEAL).length < invBoneMeal.length, 4000, 9000);
+                        Timer.waitCondition(() -> Inventory.find(ItemID.BONEMEAL).length < invBoneMeal.length, 4000, 9000);
 
                 }
-                Utils.equipItem(ItemId.GHOST_SPEAK_AMULET);
+                Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
 
             }
             claimEctoTokens();
+
         }
     }
 
@@ -308,72 +315,73 @@ public class GhostsAhoy implements QuestTask{
 
 
     public void claimEctoTokens() {
-        if (Inventory.find(ItemId.BONES).length < 1 && Inventory.find(ItemId.ECTO_TOKENS).length < 1) {
+        if (Inventory.find(ItemID.BONES).length < 1 && Inventory.find(ItemID.ECTOTOKEN).length < 1) {
             scripts.cQuesterV2.status = "Going to claim ecto-tokens";
             General.println("[Debug]: " + scripts.cQuesterV2.status);
             PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
-            Utils.equipItem(ItemId.GHOST_SPEAK_AMULET);
+            Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
             claimEctoTokens.execute();
         }
     }
 
 
     public void makeNettleTea() {
-        RSItem[] nettleTea = Inventory.find(ItemId.NETTLE_TEA);
+        RSItem[] nettleTea = Inventory.find(ItemID.NETTLE_TEA);
         if (nettleTea.length == 0) {
             scripts.cQuesterV2.status = "Making Nettle tea";
 
-            if (Utils.useItemOnItem(ItemId.NETTLES, ItemId.BOWL_OF_WATER)) {
+            if (Utils.useItemOnItem(ItemID.NETTLES, ItemID.BOWL_OF_WATER)) {
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(270), 1500, 2000);
                 if (Interfaces.isInterfaceSubstantiated(270)) {
                     Keyboard.typeKeys((char) KeyEvent.VK_SPACE);
-                    Timer.waitCondition(() -> Inventory.find(ItemId.NETTLE_WATER).length > 0, 1500, 2000);
+                    Timer.waitCondition(() -> Inventory.find(ItemID.NETTLEWATER).length > 0, 1500, 2000);
                 }
             }
 
-            if (Utils.useItemOnItem(ItemId.TINDERBOX, ItemId.LOGS))
+            if (Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.LOGS))
                 Timer.waitCondition(() -> Objects.findNearest(3, "Fire").length > 0, 7000, 10000);
 
-            if (Utils.useItemOnObject(ItemId.NETTLE_WATER, "Fire")) {
+            if (Utils.useItemOnObject(ItemID.NETTLEWATER, "Fire")) {
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(270) ||
-                        Inventory.find(ItemId.NETTLE_TEA).length > 0, 2500, 3200);
+                        Inventory.find(ItemID.NETTLE_TEA).length > 0, 2500, 3200);
                 if (Interfaces.isInterfaceSubstantiated(270)) {
                     Keyboard.typeKeys((char) KeyEvent.VK_SPACE);
-                    Timer.waitCondition(() -> Inventory.find(ItemId.NETTLE_WATER).length > 0, 1500, 2000);
+                    Timer.waitCondition(() -> Inventory.find(ItemID.NETTLEWATER).length > 0, 1500, 2000);
                 }
             }
         }
     }
 
     public void pickNettles() {
-        if (Inventory.find(ItemId.ECTO_TOKENS).length > 0){
-        RSItem[] nettles = Inventory.find(ItemId.NETTLES, ItemId.NETTLE_TEA);
-        if (nettles.length < 3) {
-            scripts.cQuesterV2.status = "Getting nettles (x3)";
-            //equip leather gloves
-            if (Equipment.isEquipped(ItemId.LEATHER_GLOVES))
-                Utils.equipItem(ItemId.LEATHER_GLOVES);
-            RSArea nettleArea = new RSArea(new RSTile(3089, 3468, 0), new RSTile(3091, 3468, 0));
-            PathingUtil.walkToTile(GhostsAhoyConst.NETTLE_TILE, 2, false);
-            for (int i = 0; i < 3; i++) {
-                RSObject net = Entities.find(ObjectEntity::new)
-                        .inArea(nettleArea)
-                        .idEquals(1181)
-                        .getFirstResult();
+        if (Inventory.find(ItemID.ECTOTOKEN).length > 0) {
+            RSItem[] nettles = Inventory.find(ItemID.NETTLES, ItemID.NETTLE_TEA);
+            if (nettles.length < 3) {
+                scripts.cQuesterV2.status = "Getting nettles (x3)";
+                //equip leather gloves
+                if (!Equipment.isEquipped(ItemID.LEATHER_GLOVES))
+                    Utils.equipItem(ItemID.LEATHER_GLOVES);
 
-                int b = i;
-                General.println("[Debug]: Picknettles b = " + b);
-                if (net != null && Utils.clickObject(net, "Pick", false))
-                    Timer.waitCondition(() -> Inventory.find(ItemId.NETTLES).length > b, 3500, 4500);
+                RSArea nettleArea = new RSArea(new RSTile(3089, 3468, 0), new RSTile(3091, 3468, 0));
+                PathingUtil.walkToTile(GhostsAhoyConst.NETTLE_TILE, 2, false);
+                for (int i = 0; i < 3; i++) {
+                    RSObject net = Entities.find(ObjectEntity::new)
+                            .inArea(nettleArea)
+                            .idEquals(1181)
+                            .getFirstResult();
 
-                General.sleep(150, 450);
+                    int b = i;
+                    General.println("[Debug]: Picknettles b = " + b);
+                    if (net != null && Utils.clickObject(net, "Pick", false))
+                        Timer.waitCondition(() -> Inventory.find(ItemID.NETTLES).length > b, 3500, 4500);
+
+                    General.sleep(500, 750);
+                }
             }
-        }
         }
     }
 
     public void startQuest() {
-        if (Inventory.find(ItemId.ECTO_TOKENS).length > 0) {
+        if (Inventory.find(ItemID.ECTOTOKEN).length > 0) {
             scripts.cQuesterV2.status = "Going to start";
             enterPortPhysmatis();
             questStartStep.execute();
@@ -389,20 +397,20 @@ public class GhostsAhoy implements QuestTask{
     public void makeCupOfTea() {
         scripts.cQuesterV2.status = "Making tea for crone";
         makeNettleTea();
-        if (Inventory.find(ItemId.CUP_OF_TEA).length == 0 &&
-                Utils.useItemOnItem(ItemId.NETTLE_TEA, ItemId.PORCELAIN_CUP))
-            Timer.waitCondition(() -> Inventory.find(ItemId.CUP_OF_TEA).length > 0, 1500, 2000);
+        if (Inventory.find(ItemID.CUP_OF_TEA).length == 0 &&
+                Utils.useItemOnItem(ItemID.NETTLE_TEA, ItemID.PORCELAIN_CUP))
+            Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA).length > 0, 1500, 2000);
 
-        if (Inventory.find(ItemId.CUP_OF_TEA).length > 0 &&
-                Utils.useItemOnItem(ItemId.BUCKET_OF_MILK, ItemId.CUP_OF_TEA))
-            Timer.waitCondition(() -> Inventory.find(ItemId.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
+        if (Inventory.find(ItemID.CUP_OF_TEA).length > 0 &&
+                Utils.useItemOnItem(ItemID.BUCKET_OF_MILK, ItemID.CUP_OF_TEA))
+            Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
     }
 
     public void useTeaOnCrone() {
-        if ( Utils.useItemOnItem(ItemId.BUCKET_OF_MILK, ItemId.CUP_OF_TEA))
-            Timer.waitCondition(() -> Inventory.find(ItemId.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
+        if (Utils.useItemOnItem(ItemID.BUCKET_OF_MILK, ItemID.CUP_OF_TEA))
+            Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
 
-        if (Utils.useItemOnNPC(ItemId.CUP_OF_TEA_W_MILK, GhostsAhoyConst.CRONE_ID)) {
+        if (Utils.useItemOnNPC(ItemID.CUP_OF_TEA_W_MILK, GhostsAhoyConst.CRONE_ID)) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
         }
@@ -410,8 +418,8 @@ public class GhostsAhoy implements QuestTask{
 
 
     public void repairShip() {
-        if (Utils.useItemOnItem(ItemId.THREAD, ItemId.MODEL_SHIP))
-            Timer.waitCondition(() -> Inventory.find(ItemId.REPAIRED_SHIP).length > 0, 1500, 2500);
+        if (Utils.useItemOnItem(ItemID.THREAD, ItemID.MODEL_SHIP))
+            Timer.waitCondition(() -> Inventory.find(ItemID.REPAIRED_SHIP).length > 0, 1500, 2500);
     }
 
     public void goToBoat() {
@@ -513,7 +521,7 @@ public class GhostsAhoy implements QuestTask{
 
     public void dyeShip(int finalDye, String partName) {
         if (Inventory.find(finalDye).length >= 1 &&
-                Utils.useItemOnItem(finalDye, ItemId.REPAIRED_SHIP)) {
+                Utils.useItemOnItem(finalDye, ItemID.REPAIRED_SHIP)) {
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(219, 1), 2000, 4000);
             General.println("[DyeShip]: Coloring boat part: " + partName);
             int dyeNum = Inventory.find(finalDye).length;
@@ -534,19 +542,19 @@ public class GhostsAhoy implements QuestTask{
             if (part != null) {
                 if (part.equals(GhostsAhoyConst.COLOR.ORANGE)) {
                     General.println("[Debug]: Making orange");
-                    makeAndDye(ItemId.YELLOW_DYE, ItemId.RED_DYE, ItemId.ORANGE_DYE, partName);
+                    makeAndDye(ItemID.YELLOW_DYE, ItemID.RED_DYE, ItemID.ORANGE_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.PURPLE)) {
                     General.println("[Debug]: Making Purple");
-                    makeAndDye(ItemId.BLUE_DYE, ItemId.RED_DYE, ItemId.PURPLE_DYE, partName);
+                    makeAndDye(ItemID.BLUE_DYE, ItemID.RED_DYE, ItemID.PURPLE_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.GREEN)) {
                     General.println("[Debug]: Making green");
-                    makeAndDye(ItemId.BLUE_DYE, ItemId.YELLOW_DYE, ItemId.GREEN_DYE, partName);
+                    makeAndDye(ItemID.BLUE_DYE, ItemID.YELLOW_DYE, ItemID.GREEN_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.YELLOW)) {
-                    dyeShip(ItemId.YELLOW_DYE, partName);
+                    dyeShip(ItemID.YELLOW_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.RED)) {
-                    dyeShip(ItemId.RED_DYE, partName);
+                    dyeShip(ItemID.RED_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.BLUE)) {
-                    dyeShip(ItemId.BLUE_DYE, partName);
+                    dyeShip(ItemID.BLUE_DYE, partName);
                 }
             }
         }
@@ -567,7 +575,6 @@ public class GhostsAhoy implements QuestTask{
 
         oldManStep.execute();
     }
-
 
 
     public void openChest() {
@@ -662,7 +669,7 @@ public class GhostsAhoy implements QuestTask{
                 if (AccurateMouse.walkScreenTile(DIG_TILE))
                     PathingUtil.movementIdle();
 
-                if (Utils.clickInventoryItem(ItemId.SPADE)) {
+                if (Utils.clickInventoryItem(ItemID.SPADE)) {
                     Timer.slowWaitCondition(() -> Inventory.find(GhostsAhoyConst.BOOK_OF_HORACIO)
                             .length == 1, 5500, 6500);
                 }
@@ -723,7 +730,7 @@ public class GhostsAhoy implements QuestTask{
 
     public void makeGhostSheet() {
         if (Inventory.find(GhostsAhoyConst.SHEET).length == 1 &&
-                Utils.useItemOnItem(ItemId.BUCKET_OF_SLIME, GhostsAhoyConst.SHEET)) {
+                Utils.useItemOnItem(ItemID.BUCKET_OF_SLIME, GhostsAhoyConst.SHEET)) {
             Timer.waitCondition(() -> Inventory.find(GhostsAhoyConst.GHOST_SHEET).length == 1, 3500, 5000);
         }
         if (!Equipment.isEquipped(GhostsAhoyConst.GHOST_SHEET)) {
@@ -1034,13 +1041,14 @@ public class GhostsAhoy implements QuestTask{
 
     @Override
     public boolean validate() {
-        return          cQuesterV2.taskList.get(0).equals(GhostsAhoy.get());
+        return cQuesterV2.taskList.get(0).equals(GhostsAhoy.get());
     }
 
     @Override
     public void execute() {
+        Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA);
         if (!checkRequirements()) {
-            Log.log("[Debug]: Missing Restless ghost requirement");
+            Log.log("[Debug]: Missing Restless ghost or 20 cooking requirement");
             cQuesterV2.taskList.remove(GhostsAhoy.get());
             return;
         }
@@ -1049,9 +1057,9 @@ public class GhostsAhoy implements QuestTask{
         General.println("[Debug]: VARBIT 214: " + Utils.getVarBitValue(214));
 
         if (Utils.getVarBitValue(VARBIT) == 0) {
-         buyAndGetItems();
-           getEctoFundus();
-          claimEctoTokens();
+            buyAndGetItems();
+            getEctoFundus();
+            claimEctoTokens();
             getItemsForQuestStep1();
             pickNettles();
             startQuest();
@@ -1070,11 +1078,11 @@ public class GhostsAhoy implements QuestTask{
             croneStep4.execute();
         } else if (Utils.getVarBitValue(VARBIT) == 4 &&
                 Utils.getVarBitValue(214) == 0) {
-        General.println("At line 1030");
+            General.println("At line 1030");
             RSItem[] dyes = Entities.find(ItemEntity::new)
                     .nameContains("dye")
                     .getResults();
-            if (Inventory.find(ItemId.MODEL_SHIP).length == 0 && Inventory.find(4254).length == 0) {
+            if (Inventory.find(ItemID.MODEL_SHIP).length == 0 && Inventory.find(4254).length == 0) {
                 cQuesterV2.status = "Crone step 4";
                 croneStep4.execute();
                 cQuesterV2.status = "Getting items";
@@ -1090,7 +1098,7 @@ public class GhostsAhoy implements QuestTask{
                     .getResults();
 
 
-            if (Inventory.find(ItemId.MODEL_SHIP).length == 0 && Inventory.find(4254).length == 0) {
+            if (Inventory.find(ItemID.MODEL_SHIP).length == 0 && Inventory.find(4254).length == 0) {
                 croneStep4.execute();
                 getItems3();
             } else if (dyes.length == 0) {
@@ -1155,7 +1163,7 @@ public class GhostsAhoy implements QuestTask{
                 Utils.getVarBitValue(214) == 3 &&
                 Utils.getVarBitValue(215) == 1 &&
                 Utils.getVarBitValue(217) == 4) {
-
+            Inventory.drop(GhostsAhoyConst.GHOST_SHEET); //can prevent using charter boats if dax walking
             // talk to Necrovarus (no dialog)
             getBoneKey();
         } else if (Utils.getVarBitValue(209) == 31 &&
@@ -1175,7 +1183,7 @@ public class GhostsAhoy implements QuestTask{
                 Utils.getVarBitValue(214) == 3 &&
                 Utils.getVarBitValue(215) == 1 &&
                 Utils.getVarBitValue(217) == 5) {
-
+            Inventory.drop(GhostsAhoyConst.GHOST_SHEET);
             giveCroneRobes();
 
         } else if (Utils.getVarBitValue(209) == 31 &&
@@ -1184,6 +1192,7 @@ public class GhostsAhoy implements QuestTask{
                 Utils.getVarBitValue(214) == 3 &&
                 Utils.getVarBitValue(215) == 1 &&
                 Utils.getVarBitValue(217) == 6) {
+            Inventory.drop(GhostsAhoyConst.GHOST_SHEET); //can prevent using charter boats if dax walking
             cQuesterV2.status = "Going to necrovarus";
             if (equipGhostspeakAmulet())
                 necrovarusFinal.execute();
@@ -1194,7 +1203,7 @@ public class GhostsAhoy implements QuestTask{
                 Utils.getVarBitValue(214) == 3 &&
                 Utils.getVarBitValue(215) == 1 &&
                 Utils.getVarBitValue(217) == 7) {
-
+            Inventory.drop(GhostsAhoyConst.GHOST_SHEET); //can prevent using charter boats if dax walking
             cQuesterV2.status = "Going to Velorina";
             velorinaStep2.execute();
 

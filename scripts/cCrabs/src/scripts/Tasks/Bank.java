@@ -12,7 +12,7 @@ import scripts.BankManager;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.PathingUtil;
 import scripts.Requirements.ItemRequirement;
 
@@ -27,12 +27,12 @@ public class Bank implements Task {
         getRangedGearTask().execute();
       //  BankManager.open(true);
       //  BankManager.depositAll(true);
-        BankManager.withdraw(11000, true, ItemId.COINS);
+        BankManager.withdraw(11000, true, ItemID.COINS);
         BankManager.withdraw(12, true, Const.get().FOOD_IDS[1]);
         if (Vars.get().ranging){
-            BankManager.withdraw(10, true, ItemId.RANGING_POTION[0]);
+            BankManager.withdraw(10, true, ItemID.RANGING_POTION[0]);
         }
-        BankManager.withdraw(1, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
         BankManager.close(true);
     }
 
@@ -43,46 +43,46 @@ public class Bank implements Task {
 
         } else if (Skills.SKILLS.RANGED.getActualLevel() >= 50) {
             return BankTask.builder()
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemId.SNAKESKIN_BANDANA, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemId.BLUE_DHIDE_BODY, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemId.BLUE_DHIDE_VAMBRACES, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemId.BLUE_DHIDE_CHAPS, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemId.SNAKESKIN_BOOTS, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.MAGIC_SHORTBOW, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemID.SNAKESKIN_BANDANA, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemID.BLUE_DHIDE_BODY, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemID.BLUE_DHIDE_VAMBRACES, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemID.BLUE_DHIDE_CHAPS, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.MAGIC_SHORTBOW, Amount.of(1)))
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.NECK).chargedItem("Amulet of glory", 1))
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.RING).chargedItem("Ring of wealth", 1))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemId.RUNE_ARROW, Amount.fill(750)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemId.AVAS_ACCUMULATOR, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemID.RUNE_ARROW, Amount.fill(750)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemID.AVAS_ACCUMULATOR, Amount.of(1)))
                     .build();
 
         }
         else if (Skills.SKILLS.RANGED.getActualLevel() >= 40) {
             return BankTask.builder()
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemId.SNAKESKIN_BANDANA, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemId.GREEN_DHIDE_BODY, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemId.GREEN_DHIDE_VAMBRACES, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemId.GREEN_DHIDE_CHAPS, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemId.SNAKESKIN_BOOTS, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.YEW_SHORTBOW, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemID.SNAKESKIN_BANDANA, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemID.GREEN_DHIDE_BODY, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemID.GREEN_DHIDE_VAMBRACES, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemID.GREEN_DHIDE_CHAPS, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.YEW_SHORTBOW, Amount.of(1)))
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.NECK).chargedItem("Amulet of glory", 1))
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.RING).chargedItem("Ring of wealth", 1))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemId.RUNE_ARROW, Amount.fill(750)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemId.AVAS_ATTRACTOR, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemID.RUNE_ARROW, Amount.fill(750)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemID.AVAS_ATTRACTOR, Amount.of(1)))
                     .build();
 
         }
         else if (Skills.SKILLS.RANGED.getActualLevel() >= 30) {
             return BankTask.builder()
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemId.SNAKESKIN_BANDANA, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemId.BLUE_DHIDE_BODY, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemId.BLUE_DHIDE_VAMBRACES, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemId.BLUE_DHIDE_CHAPS, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemId.SNAKESKIN_BOOTS, Amount.of(1)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemId.MAGIC_SHORTBOW, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HEAD).item(ItemID.SNAKESKIN_BANDANA, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.BODY).item(ItemID.BLUE_DHIDE_BODY, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.HANDS).item(ItemID.BLUE_DHIDE_VAMBRACES, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.LEGS).item(ItemID.BLUE_DHIDE_CHAPS, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.FEET).item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.MAGIC_SHORTBOW, Amount.of(1)))
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.NECK).chargedItem("Amulet of glory", 1))
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.RING).chargedItem("Ring of wealth", 1))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemId.RUNE_ARROW, Amount.fill(750)))
-                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemId.AVAS_ACCUMULATOR, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.AMMO).item(ItemID.RUNE_ARROW, Amount.fill(750)))
+                    .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.CAPE).item(ItemID.AVAS_ACCUMULATOR, Amount.of(1)))
                     .build();
 
         }

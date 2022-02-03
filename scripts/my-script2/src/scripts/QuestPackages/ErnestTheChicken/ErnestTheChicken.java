@@ -176,25 +176,31 @@ public class ErnestTheChicken implements QuestTask {
         } else if (inBasement.check()) {
             handleLever("Lever A");
             //pullDownLeverA
+        } else if (!WHOLE_BASEMENT.contains(Player.getPosition())) {
+            cQuesterV2.status = "Getting Oil can";
+            General.println("[Debug]: " + cQuesterV2.status);
+            PathingUtil.walkToTile(B_LEVER, 2, false);
+            Timer.abc2WaitCondition(() -> WHOLE_BASEMENT.contains(Player.getPosition()), 14000, 18000);
+
         }
 
     }
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SPADE, 1, 300),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.SPADE, 1, 300),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.STAMINA_POTION[0], 3, 0),
-                    new ItemReq(ItemId.AMULET_OF_GLORY[2], 2, 0),
-                    new ItemReq(ItemId.SPADE, 1, 1),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 2, 0),
+                    new ItemReq(ItemID.SPADE, 1, 1),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 
@@ -218,8 +224,8 @@ public class ErnestTheChicken implements QuestTask {
             BankManager.checkEquippedGlory();
             BankManager.checkCombatBracelet();
             BankManager.withdraw(1, true, SPADE);
-            BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
-            BankManager.withdraw(2, true, ItemId.AMULET_OF_GLORY[0]);
+            BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+            BankManager.withdraw(2, true, ItemID.AMULET_OF_GLORY[0]);
             BankManager.close(true);
         }
     }
@@ -256,7 +262,7 @@ public class ErnestTheChicken implements QuestTask {
                 General.println("[Debug]: " + cQuesterV2.status);
                 if (!FISH_FOOD_ROOM.contains(Player.getPosition())) {
                     PathingUtil.walkToTile(new RSTile(3108, 3356, 1));
-                    Timer.waitCondition(()-> FISH_FOOD_ROOM.contains(Player.getPosition()), 9000, 12000);
+                    Timer.waitCondition(() -> FISH_FOOD_ROOM.contains(Player.getPosition()), 9000, 12000);
                 }
 
                 if (FISH_FOOD_ROOM.contains(Player.getPosition())) {
@@ -445,7 +451,7 @@ public class ErnestTheChicken implements QuestTask {
         //PathingUtil.localNavigation(leverTile);
         RSObject[] lever = Objects.findNearest(20, leverName);
         if (lever.length > 0) {
-            Walking.blindWalkTo(lever[0].getPosition());
+            PathingUtil.localNavigation(lever[0].getPosition());
             if (Timer.waitCondition(() -> Objects.findNearest(20, leverName)[0].isClickable(), 9000, 12000))
                 Utils.microSleep();
             if (AccurateMouse.click(lever[0], "Pull") &&
@@ -514,7 +520,7 @@ public class ErnestTheChicken implements QuestTask {
         if (Game.getSetting(32) == 2) {
             pressureGuage();
             getRubberTube();
-            getOilCan();
+            getOilCanOld();
             finishQuest();
         }
         if (Game.getSetting(32) == 3) {
@@ -536,7 +542,7 @@ public class ErnestTheChicken implements QuestTask {
 
     @Override
     public String questName() {
-        return "Ernest the chicken";
+        return "Ernest the chicken (" + Game.getSetting(32) + ")";
     }
 
     @Override

@@ -69,24 +69,24 @@ public class RfdCook implements QuestTask {
                     new GEItem(greenmansAle, 1, 500),
                     new GEItem(fruitBlast, 1, 350),
                     new GEItem(ashes, 1, 350),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 5, 35),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 5, 35),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 4, 35),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 35),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 35),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 4, 35),
                     new GEItem(potOfFlour, 2, 500),
                     new GEItem(bowlOfWater, 2, 500),
                     new GEItem(asgarnianAles, 6, 1000),
                     new GEItem(bucketOfMilk, 2, 800),
                     new GEItem(egg, 2, 500),
 
-                    new GEItem(ItemId.LEATHER_GLOVES, 1, 500),
-                    new GEItem(ItemId.MIND_RUNE, 400, 20),
-                    new GEItem(ItemId.FIRE_RUNE, 800, 20),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 100),
-                    new GEItem(ItemId.LOBSTER, 20, 30),
+                    new GEItem(ItemID.LEATHER_GLOVES, 1, 500),
+                    new GEItem(ItemID.MIND_RUNE, 400, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 800, 20),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 100),
+                    new GEItem(ItemID.LOBSTER, 20, 30),
 
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 

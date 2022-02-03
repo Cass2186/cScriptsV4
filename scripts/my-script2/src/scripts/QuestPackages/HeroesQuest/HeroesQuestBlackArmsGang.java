@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -24,6 +25,11 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 public class HeroesQuestBlackArmsGang implements QuestTask {
+    private static HeroesQuestBlackArmsGang quest;
+
+    public static HeroesQuestBlackArmsGang get() {
+        return quest == null ? quest = new HeroesQuestBlackArmsGang() : quest;
+    }
 
     // NPCs
     int KATRINE = 5210;
@@ -47,32 +53,32 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     int ROCK_SLIDE = 2634;
 
 
-    ItemReq iceGloves = new ItemReq(ItemId.ICE_GLOVES, 1, true);
-    ItemReq equippedIceGloves = new ItemReq(ItemId.ICE_GLOVES, 1, true);
-    ItemReq fishingBait = new ItemReq(ItemId.FISHING_BAIT);
-    ItemReq jailKey = new ItemReq(ItemId.JAIL_KEY);
-    ItemReq dustyKey = new ItemReq(ItemId.DUSTY_KEY);
-    ItemReq harralanderUnf = new ItemReq(ItemId.HARRALANDER_POTION_UNF);
-    ItemReq pickaxe = new ItemReq(ItemId.MITHRIL_PICKAXE); // can be any
-    ItemReq blamishSlime = new ItemReq(ItemId.BLAMISH_SNAIL_SLIME);
-    ItemReq blamishOil = new ItemReq(ItemId.BLAMISH_OIL);
-    ItemReq oilRod = new ItemReq(ItemId.OILY_FISHING_ROD);
-    ItemReq lavaEel = new ItemReq(ItemId.LAVA_EEL);
-    ItemReq rawLavaEel = new ItemReq(ItemId.RAW_LAVA_EEL);
+    ItemReq iceGloves = new ItemReq(ItemID.ICE_GLOVES, 1, true);
+    ItemReq equippedIceGloves = new ItemReq(ItemID.ICE_GLOVES, 1, true);
+    ItemReq fishingBait = new ItemReq(ItemID.FISHING_BAIT);
+    ItemReq jailKey = new ItemReq(ItemID.JAIL_KEY);
+    ItemReq dustyKey = new ItemReq(ItemID.DUSTY_KEY);
+    ItemReq harralanderUnf = new ItemReq(ItemID.HARRALANDER_POTION_UNF);
+    ItemReq pickaxe = new ItemReq(ItemID.MITHRIL_PICKAXE); // can be any
+    ItemReq blamishSlime = new ItemReq(ItemID.BLAMISH_SNAIL_SLIME);
+    ItemReq blamishOil = new ItemReq(ItemID.BLAMISH_OIL);
+    ItemReq oilRod = new ItemReq(ItemID.OILY_FISHING_ROD);
+    ItemReq lavaEel = new ItemReq(ItemID.LAVA_EEL);
+    ItemReq rawLavaEel = new ItemReq(ItemID.RAW_LAVA_EEL);
 
-    ItemReq thievesArmband = new ItemReq(ItemId.THIEVES_ARMBAND);
+    ItemReq thievesArmband = new ItemReq(ItemID.THIEVES_ARMBAND);
 
     //rangedMage = new ItemReq("A ranged or magic attack method", -1, -1);
 
-    ItemReq miscKey = new ItemReq(ItemId.MISCELLANEOUS_KEY);
-    ItemReq blackFullHelm = new ItemReq(ItemId.BLACK_FULL_HELM, 1, true);
-    ItemReq blackPlatebody = new ItemReq(ItemId.BLACK_PLATEBODY, 1, true);
-    ItemReq blackPlatelegs = new ItemReq(ItemId.BLACK_PLATELEGS, 1, true);
-    ItemReq idPapers = new ItemReq(ItemId.ID_PAPERS);
-    ItemReq candlestick = new ItemReq(ItemId.PETES_CANDLESTICK);
-    ItemReq gripsKey = new ItemReq(ItemId.GRIPS_KEYRING);
+    ItemReq miscKey = new ItemReq(ItemID.MISCELLANEOUS_KEY);
+    ItemReq blackFullHelm = new ItemReq(ItemID.BLACK_FULL_HELM, 1, true);
+    ItemReq blackPlatebody = new ItemReq(ItemID.BLACK_PLATEBODY, 1, true);
+    ItemReq blackPlatelegs = new ItemReq(ItemID.BLACK_PLATELEGS, 1, true);
+    ItemReq idPapers = new ItemReq(ItemID.ID_PAPERS);
+    ItemReq candlestick = new ItemReq(ItemID.PETES_CANDLESTICK);
+    ItemReq gripsKey = new ItemReq(ItemID.GRIPS_KEYRING);
 
-    ItemReq fireFeather = new ItemReq(ItemId.FIRE_FEATHER);
+    ItemReq fireFeather = new ItemReq(ItemID.FIRE_FEATHER);
 
 
     NPCStep talkToAchietties = new NPCStep("Achietties", new RSTile(2904, 3511, 0),
@@ -83,12 +89,12 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     NPCStep talkToGerrant = new NPCStep(2891, new RSTile(3013, 3224, 0),
             new String[]{"I want to find out how to catch a lava eel."});
 
-    UseItemOnItemStep makeBlamishOil = new UseItemOnItemStep(ItemId.HARRALANDER_POTION_UNF,
-            ItemId.BLAMISH_SNAIL_SLIME,
-            Inventory.find(ItemId.BLAMISH_OIL).length > 0);
+    UseItemOnItemStep makeBlamishOil = new UseItemOnItemStep(ItemID.HARRALANDER_POTION_UNF,
+            ItemID.BLAMISH_SNAIL_SLIME,
+            Inventory.find(ItemID.BLAMISH_OIL).length > 0);
 
-    UseItemOnItemStep useOilOnRod = new UseItemOnItemStep(ItemId.BLAMISH_OIL, ItemId.FISHING_ROD,
-            Inventory.find(ItemId.OILY_FISHING_ROD).length > 0);
+    UseItemOnItemStep useOilOnRod = new UseItemOnItemStep(ItemID.BLAMISH_OIL, ItemID.FISHING_ROD,
+            Inventory.find(ItemID.OILY_FISHING_ROD).length > 0);
 
     NPCStep killJailerForKey = new NPCStep("Jailer", new RSTile(2930, 9692, 0));
     NPCStep getDustyFromAdventurer = new NPCStep(4925, new RSTile(2933, 9687, 0),
@@ -97,7 +103,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     NPCStep fishLavaEel = new NPCStep(4928, new RSTile(2887, 9767, 0),
             oilRod, fishingBait);
     UseItemOnObjectStep cookLavaEel = new UseItemOnObjectStep(rawLavaEel.getId(), "Range",
-            CATHERBY_RANGE_TILE, Inventory.find(ItemId.LAVA_EEL).length > 0);
+            CATHERBY_RANGE_TILE, Inventory.find(ItemID.LAVA_EEL).length > 0);
 
     /*************************
      *  Black Arm Gang steps
@@ -105,7 +111,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     NPCStep talkToKatrine = new NPCStep(KATRINE, new RSTile(3185, 3385, 0),
             new String[]{"Is there any way I can get the rank of master thief?"});
 
-    ObjectStep tryToEnterTrobertHouse = new ObjectStep(2626, new RSTile(2811, 3170, 0),
+    ObjectStep tryToEnterTrobertHouse = new ObjectStep(2626, new RSTile(2810, 3170, 0),
             "Open", NPCInteraction.isConversationWindowUp());
 
     NPCStep talkToTrobert = new NPCStep(TROBERT, new RSTile(2807, 3174, 0),
@@ -123,9 +129,9 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     ObjectStep getKeyFromGrip = new ObjectStep(2635, new RSTile(2776, 3196, 0));
 
 
-    GroundItemStep pickupKey = new GroundItemStep(ItemId.GRIPS_KEYRING);
+    GroundItemStep pickupKey = new GroundItemStep(ItemID.GRIPS_KEYRING);
 
-    UseItemOnObjectStep enterTreasureRoom = new UseItemOnObjectStep(ItemId.GRIPS_KEYRING, 2621,
+    UseItemOnObjectStep enterTreasureRoom = new UseItemOnObjectStep(ItemID.GRIPS_KEYRING, 2621,
             new RSTile(2764, 3197, 0), NPCInteraction.isConversationWindowUp());
 
     ObjectStep openChest = new ObjectStep(2632, new RSTile(2766, 3199, 0),
@@ -157,6 +163,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     NPCStep talkToCharlie = new NPCStep(CHARLIE_THE_COOK, new RSTile(2790, 3191, 0),
             new String[]{"I'm looking for a gherkin...",
                     "I want to steal Scarface Pete's candlesticks."});
+    RSArea TREASURE_ROOM = new RSArea(new RSTile(2764, 3196, 0), new RSTile(2769, 3199, 0));
 
     RSArea KITCHEN_AREA = new RSArea(new RSTile(2800, 3190, 0), new RSTile(2787, 3193, 0));
     RSArea GARDEN_AREA = new RSArea(
@@ -209,7 +216,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
     NPCStep goToEntrana = new NPCStep(1167, new RSTile(3047, 3236, 0), new String[]{"Yes, okay, I'm ready to go."}, equippedIceGloves);
     NPCStep killFireBird = new NPCStep(ENTRANA_FIREBIRD, new RSTile(2840, 3374, 0), equippedIceGloves);
-    GroundItemStep pickupFireFeather = new GroundItemStep(ItemId.FIRE_FEATHER);
+    GroundItemStep pickupFireFeather = new GroundItemStep(ItemID.FIRE_FEATHER);
 
     NPCStep finishQuest = new NPCStep(ACHIETTIES, new RSTile(2904, 3511, 0),
             fireFeather, thievesArmband, lavaEel);
@@ -280,24 +287,25 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.FALADOR_TELEPORT, 5, 40),
-                    new GEItem(ItemId.ARDOUGNE_TELEPORT, 5, 40),
-                    new GEItem(ItemId.CAMELOT_TELEPORT, 5, 40),
-                    new GEItem(ItemId.BLACK_FULL_HELM, 1, 40),
-                    new GEItem(ItemId.BLACK_PLATEBODY, 1, 40),
-                    new GEItem(ItemId.BLACK_PLATELEGS, 1, 40),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 5, 40),
+                    new GEItem(ItemID.ARDOUGNE_TELEPORT, 5, 40),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 40),
+                    new GEItem(ItemID.BLACK_FULL_HELM, 1, 40),
+                    new GEItem(ItemID.BLACK_PLATEBODY, 1, 40),
+                    new GEItem(ItemID.BLACK_PLATELEGS, 1, 40),
 
-                    new GEItem(ItemId.GAMES_NECKLACE[0], 1, 35),
-                    new GEItem(ItemId.LOBSTER, 25, 35),
-                    new GEItem(ItemId.ANTI_DRAGON_SHIELD, 1, 200),
-                    new GEItem(ItemId.HARRALANDER_POTION_UNF, 1, 50),
-                    new GEItem(ItemId.FISHING_ROD, 1, 250),
-                    new GEItem(ItemId.FISHING_BAIT, 1, 500),
-                    new GEItem(ItemId.STAFF_OF_FIRE, 1, 35),
-                    new GEItem(ItemId.MIND_RUNE, 350, 35),
-                    new GEItem(ItemId.AIR_RUNE, 700, 35),
-                    new GEItem(ItemId.STAMINA_POTION[0], 4, 35),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 10, 35)
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 1, 35),
+                    new GEItem(ItemID.LOBSTER, 25, 35),
+                    new GEItem(ItemID.ANTIDRAGON_SHIELD, 1, 200),
+                    new GEItem(ItemID.HARRALANDER_POTION_UNF, 1, 50),
+                    new GEItem(ItemID.FISHING_ROD, 1, 250),
+                    new GEItem(ItemID.FISHING_BAIT, 1, 500),
+                    new GEItem(ItemID.STAFF_OF_FIRE, 1, 35),
+                    new GEItem(ItemID.CHAOS_RUNE, 350, 35),
+                    new GEItem(ItemID.AIR_RUNE, 700, 35),
+                    new GEItem(ItemID.PRAYER_POTION[0], 2, 35),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 35),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 35)
             )
     );
 
@@ -305,25 +313,24 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemId.FALADOR_TELEPORT, 5, 0),
-                    new ItemReq(ItemId.CAMELOT_TELEPORT, 5, 0),
-                    new ItemReq(ItemId.ARDOUGNE_TELEPORT, 5, 0),
-                    new ItemReq(ItemId.BLACK_PLATELEGS, 1, 0),
-                    new ItemReq(ItemId.BLACK_PLATEBODY, 1, 0),
-                    new ItemReq(ItemId.BLACK_FULL_HELM, 1, 0),
-                    new ItemReq(ItemId.COINS, 2000, 50),
-                    new ItemReq(ItemId.AIR_RUNE, 600, 100),
-                    new ItemReq(ItemId.MIND_RUNE, 200, 25),
-                    new ItemReq(ItemId.GAMES_NECKLACE[0], 1, 0, true),
-                    new ItemReq(ItemId.LOBSTER, 8, 1),
-                    new ItemReq(ItemId.ANTI_DRAGON_SHIELD, 1, 0, true, true),
-                    new ItemReq(ItemId.HARRALANDER_POTION_UNF, 1, 0),
-                    new ItemReq(ItemId.FISHING_BAIT, 1, 0),
-                    new ItemReq(ItemId.FISHING_ROD, 1, 0),
-                    new ItemReq(ItemId.STAFF_OF_FIRE, 1, 0, true, true),
-                    new ItemReq(ItemId.VARROCK_TELEPORT, 10, 0),
-                    new ItemReq(ItemId.STAMINA_POTION[0], 2, 0),
-                    new ItemReq(ItemId.ICE_GLOVES, 1, 0, true, true)
+                    new ItemReq(ItemID.FALADOR_TELEPORT, 5, 0),
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 0),
+                    new ItemReq(ItemID.ARDOUGNE_TELEPORT, 5, 0),
+                    new ItemReq(ItemID.COINS, 2000, 50),
+                    new ItemReq(ItemID.AIR_RUNE, 600, 100),
+                    new ItemReq(ItemID.CHAOS_RUNE, 200, 25),
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0, true),
+                    new ItemReq(ItemID.LOBSTER, 7, 1),
+                    new ItemReq(ItemID.RUNE_PICKAXE, 7, 1),
+                    new ItemReq(ItemID.ANTIDRAGON_SHIELD, 1, 0, true, true),
+                    new ItemReq(ItemID.HARRALANDER_POTION_UNF, 1, 0),
+                    new ItemReq(ItemID.FISHING_BAIT, 1, 0),
+                    new ItemReq(ItemID.FISHING_ROD, 1, 0),
+                    new ItemReq(ItemID.STAFF_OF_FIRE, 1, 0, true, true),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 10, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.PRAYER_POTION[0],1,0),
+                    new ItemReq(ItemID.ICE_GLOVES, 1, 0, true, true)
             )
     ));
 
@@ -348,23 +355,29 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
     public RSArea JAIL_CELL = new RSArea(new RSTile(2928, 9689, 0), new RSTile(2934, 9683, 0));
 
-    UseItemOnObjectStep keyOnJailCell = new UseItemOnObjectStep(ItemId.JAIL_KEY, 2631,
+    UseItemOnObjectStep keyOnJailCell = new UseItemOnObjectStep(ItemID.JAIL_KEY, 2631,
             new RSTile(2930, 9692, 0),
             JAIL_CELL.contains(Player.getPosition()));
 
     public void getDustyKey() {
         if (!dustyKey.check()) {
+            Autocast.enableAutocast(Autocast.FIRE_BOLT);
             cQuesterV2.status = "Getting Dusty Key";
             General.println("[Debug]: Getting a dusty key");
             if (!JAIL_CELL.contains(Player.getPosition())) {
                 PathingUtil.walkToTile(new RSTile(2930, 9692, 0), 2, false);
                 RSNPC[] jailer = NPCs.find("Jailer");
-                if (!jailKey.check() && jailer.length > 0 && CombatUtil.clickTarget(jailer[0]))
+                if (!jailKey.check() && jailer.length > 0 && CombatUtil.clickTarget(jailer[0])) {
                     CombatUtil.waitUntilOutOfCombat(35);
+                    Waiting.waitNormal(200, 20);
+                }
 
-                Utils.clickGroundItem(ItemId.JAIL_KEY);
+
+                Utils.clickGroundItem(ItemID.JAIL_KEY);
 
                 if (jailKey.check() && !JAIL_CELL.contains(Player.getPosition())) {
+                    Walking.blindWalkTo(new RSTile(2930, 9690, 0));
+                    PathingUtil.movementIdle();
                     keyOnJailCell.useItemOnObject();
                 }
             }
@@ -411,14 +424,14 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
     public void enterMansion() {
         cQuesterV2.status = "Entering Mansion";
-        if (!Equipment.isEquipped(ItemId.BLACK_PLATEBODY))
-            Utils.equipItem(ItemId.BLACK_PLATEBODY);
+        if (!Equipment.isEquipped(ItemID.BLACK_PLATEBODY))
+            Utils.equipItem(ItemID.BLACK_PLATEBODY);
 
-        if (!Equipment.isEquipped(ItemId.BLACK_FULL_HELM))
-            Utils.equipItem(ItemId.BLACK_FULL_HELM);
+        if (!Equipment.isEquipped(ItemID.BLACK_FULL_HELM))
+            Utils.equipItem(ItemID.BLACK_FULL_HELM);
 
-        if (!Equipment.isEquipped(ItemId.BLACK_PLATELEGS))
-            Utils.equipItem(ItemId.BLACK_PLATELEGS);
+        if (!Equipment.isEquipped(ItemID.BLACK_PLATELEGS))
+            Utils.equipItem(ItemID.BLACK_PLATELEGS);
 
         enterMansion.execute();
 
@@ -447,7 +460,6 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
         }
     }
 
-    RSArea TREASURE_ROOM = new RSArea(new RSTile(2764, 3196, 0), new RSTile(2769, 3199, 0));
 
     public void searchChest() {
         if (gripsKey.check() && !TREASURE_ROOM.contains(Player.getPosition())) {
@@ -468,17 +480,20 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
             if (Equipment.getItems().length > 2) {
                 BankManager.open(true);
                 BankManager.depositEquipment();
+                BankManager.deposit(ItemID.RUNE_PICKAXE, 1);
                 BankManager.checkEquippedGlory();
-                BankManager.withdraw(1, true, ItemId.ICE_GLOVES);
+                BankManager.withdraw(1, true, ItemID.ICE_GLOVES);
                 BankManager.close(true);
             }
-            Utils.equipItem(ItemId.ICE_GLOVES);
-            killFireBird.setInteractionString("Attack");
-            killFireBird.setRadius(6);
-            killFireBird.execute();
-            if (Timer.waitCondition(() -> Combat.isUnderAttack(), 6000, 8000))
-                Timer.waitCondition(() -> GroundItems.find(ItemId.FIRE_FEATHER).length > 0, 10000, 15000);
-            pickupFireFeather.pickUpItem();
+            Utils.equipItem(ItemID.ICE_GLOVES);
+            if (!pickupFireFeather.isItemOnGround()) {
+                killFireBird.setInteractionString("Attack");
+                killFireBird.setRadius(6);
+                killFireBird.execute();
+                if (Timer.waitCondition(() -> Combat.isUnderAttack(), 6000, 8000))
+                    Timer.waitCondition(() -> GroundItems.find(ItemID.FIRE_FEATHER).length > 0, 10000, 15000);
+            }
+            pickupFireFeather.execute();
         }
     }
 
@@ -491,13 +506,18 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
                 herblore.meetsSkillRequirement() && mining.meetsSkillRequirement();
     }
 
-    public void getStartItems(){
+    public void getStartItems() {
         if (!startInventory.check()) {
             cQuesterV2.status = "Getting and buying items";
             Log.log("[Debug]: Getting and buying items");
             buyStep.buyItems();
             BankManager.open(true);
             BankManager.depositEquipment();
+            if (inBlackArmGang.check()) {
+                startInventory.add(new ItemReq(ItemID.BLACK_PLATELEGS, 1, 0));
+                startInventory.add(new ItemReq(ItemID.BLACK_PLATEBODY, 1, 0));
+                startInventory.add(new ItemReq(ItemID.BLACK_FULL_HELM, 1, 0));
+            }
             startInventory.withdrawItems();
         }
     }
@@ -522,12 +542,21 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
         if (Game.getSetting(188) == 0) {
             getStartItems();
-            cQuesterV2.status = "Starting quest";
-            Log.log("[Debug]: starting quest");
-            talkToAchietties.execute();
+            iceGloves.setAcceptEquipped(true);
+            if (!iceGloves.check()) {
+                GetIceGloves.get().execute();
+                getStartItems();
+            } else {
+                cQuesterV2.status = "Starting quest";
+                Log.log("[Debug]: starting quest");
+                talkToAchietties.execute();
+            }
         } else if (Game.getSetting(188) == 1) {
             iceGloves.setAcceptEquipped(true);
-            if (!oilRod.hasItem())
+            if (!iceGloves.check()) {
+                GetIceGloves.get().execute();
+                getStartItems();
+            } else if (!oilRod.hasItem())
                 getOilyRod();
             else if (!lavaEel.check())
                 getLavaEel();
@@ -567,8 +596,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
             } else if (Game.getSetting(188) == 13) {
                 cQuesterV2.status = "Finishing quest";
                 finishQuest.execute();
-                //TODO remove this
-                cQuesterV2.isRunning.set(false);
+                cQuesterV2.taskList.remove(this);
 
             }
         } else if (iceGloves.check() && oilRod.check() && lavaEel.check()) {
@@ -601,26 +629,27 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
                 enterPhoenixBase.setTileRadius(2);
                 enterPhoenixBase.execute();
                 bringCandlestickToStraven.execute();
-            }else if (Game.getSetting(188) == 6) {
+            } else if (Game.getSetting(188) == 6) {
                 cQuesterV2.status = "Pheonix gang - Going to entrana";
-
+                if (!fireFeather.check())
+                    goToEntrana();
                 cQuesterV2.status = "Finishing quest";
                 finishQuest.execute();
-                //TODO remove this
-                cQuesterV2.isRunning.set(false);
+                cQuesterV2.taskList.remove(this);
             }
+
 
         }
     }
 
     @Override
     public String questName() {
-        return null;
+        return "Heroes Quest";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return Skills.SKILLS.FISHING.getActualLevel() >= 53;
     }
 
 }

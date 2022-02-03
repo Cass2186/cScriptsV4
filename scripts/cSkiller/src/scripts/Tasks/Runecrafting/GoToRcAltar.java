@@ -12,7 +12,7 @@ import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.PathingUtil;
 import scripts.Tasks.Runecrafting.RunecraftData.RcConst;
 import scripts.Tasks.Runecrafting.RunecraftData.RcVars;
@@ -21,8 +21,8 @@ import scripts.Utils;
 
 public class GoToRcAltar implements Task {
     public void goToEarthAltar() {
-        if (((Inventory.find(ItemId.PURE_ESSENCE).length > 0 || Inventory.find("Tiara").length > 0)
-                && Equipment.isEquipped(ItemId.EARTH_TIARA)) && !atAltar()) {
+        if (((Inventory.find(ItemID.PURE_ESSENCE).length > 0 || Inventory.find("Tiara").length > 0)
+                && Equipment.isEquipped(ItemID.EARTH_TIARA)) && !atAltar()) {
 
             PathingUtil.walkToArea(RcConst.EARTH_ALTAR_AREA, false);
 
@@ -73,7 +73,7 @@ public class GoToRcAltar implements Task {
     }
 
     public boolean rodTele(String location) {
-        RSItem[] rod = Equipment.find(ItemId.RING_OF_DUELING);
+        RSItem[] rod = Equipment.find(ItemID.RING_OF_DUELING);
         if (rod.length > 0) {
             for (int i = 0; i < 3; i++) {
                 General.println("[Teleport Manager]: Going to " + location);
@@ -109,15 +109,15 @@ public class GoToRcAltar implements Task {
             if (!RcVars.get().usingLunarImbue && RunecraftBank.getLevel() < 14) {
                 return !CraftRunes.atAltar()
                     //    && Inventory.find(Filters.Items.nameContains("talisman")).length > 0
-                        && Inventory.find(ItemId.PURE_ESSENCE).length > 0
-                        && Equipment.isEquipped(ItemId.EARTH_TIARA);
+                        && Inventory.find(ItemID.PURE_ESSENCE).length > 0
+                        && Equipment.isEquipped(ItemID.EARTH_TIARA);
             } else if (!RcVars.get().usingLunarImbue && RunecraftBank.getLevel() >= 19) {
                 return !CraftRunes.atAltar()
                         && Inventory.find(Filters.Items.nameContains("talisman")).length > 0
-                        && Inventory.find(ItemId.PURE_ESSENCE).length > 0;
+                        && Inventory.find(ItemID.PURE_ESSENCE).length > 0;
             }
             return !CraftRunes.atAltar()
-                    && Inventory.find(ItemId.PURE_ESSENCE).length > 0;
+                    && Inventory.find(ItemID.PURE_ESSENCE).length > 0;
         }
         return false;
     }

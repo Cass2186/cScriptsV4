@@ -157,19 +157,19 @@ public class FairyTalePt1 implements QuestTask {
     ArrayList<GEItem> itemsToBuyInitial = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(SECATEURS, 1, 500),
-                    new GEItem(ItemId.SPADE, 1, 500),
-                    new GEItem(ItemId.FALADOR_TELEPORT, 10, 50),
-                    new GEItem(ItemId.LUMBRIDGE_TELEPORT, 5, 50),
-                    new GEItem(ItemId.MONKFISH, 20, 50),
-                    new GEItem(ItemId.VARROCK_TELEPORT, 5, 50),
-                    new GEItem(ItemId.MONKS_ROBE_BOTTOM, 1, 500),
-                    new GEItem(ItemId.MONKS_ROBE_TOP, 1, 500),
-                    new GEItem(ItemId.SALVE_GRAVEYARD_TELEPORT, 5, 50),
-                    new GEItem(ItemId.PRAYER_POTION_4, 4, 20),
+                    new GEItem(ItemID.SPADE, 1, 500),
+                    new GEItem(ItemID.FALADOR_TELEPORT, 10, 50),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 50),
+                    new GEItem(ItemID.MONKFISH, 20, 50),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 5, 50),
+                    new GEItem(ItemID.MONKS_ROBE_BOTTOM, 1, 500),
+                    new GEItem(ItemID.MONKS_ROBE_TOP, 1, 500),
+                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 5, 50),
+                    new GEItem(ItemID.PRAYER_POTION_4, 4, 20),
 
-                    new GEItem(ItemId.COMBAT_BRACELET[0], 1, 20),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.COMBAT_BRACELET[0], 1, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -192,16 +192,16 @@ public class FairyTalePt1 implements QuestTask {
         BankManager.withdraw(1, true, SPADE);
         BankManager.withdraw(1, true, DRAMEN_STAFF);
         BankManager.withdraw(1, true, GHOSTSPEAK_AMULET);
-        BankManager.withdraw(1, true, ItemId.AMULET_OF_GLORY[0]);
-        BankManager.withdraw(8, true, ItemId.FALADOR_TELEPORT);
-        BankManager.withdraw(8, true, ItemId.VARROCK_TELEPORT);
-        BankManager.withdraw(8, true, ItemId.LUMBRIDGE_TELEPORT);
-        BankManager.withdraw(3, true, ItemId.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemId.MONKS_ROBE_TOP);
-        BankManager.withdraw(1, true, ItemId.MONKS_ROBE_BOTTOM);
+        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
+        BankManager.withdraw(8, true, ItemID.FALADOR_TELEPORT);
+        BankManager.withdraw(8, true, ItemID.VARROCK_TELEPORT);
+        BankManager.withdraw(8, true, ItemID.LUMBRIDGE_TELEPORT);
+        BankManager.withdraw(3, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.MONKS_ROBE_TOP);
+        BankManager.withdraw(1, true, ItemID.MONKS_ROBE_BOTTOM);
         Banking.close();
-        Utils.equipItem(ItemId.MONKS_ROBE_TOP);
-        Utils.equipItem(ItemId.MONKS_ROBE_BOTTOM);
+        Utils.equipItem(ItemID.MONKS_ROBE_TOP);
+        Utils.equipItem(ItemID.MONKS_ROBE_BOTTOM);
         Utils.equipItem(GHOSTSPEAK_AMULET);
         Utils.equipItem(DRAMEN_STAFF);
     }
@@ -534,7 +534,7 @@ public class FairyTalePt1 implements QuestTask {
         BankManager.getAllList();
         int crushedGemInBank = BankManager.getCount(CRUSHED_GEMSTONE);
         BankManager.withdraw(0, true, 995);
-        BankManager.withdrawArray(ItemId.RING_OF_WEALTH, 1);
+        BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
         BankManager.close(true);
 
         if (GET_MORT_MYRE_FUNGUS)
@@ -775,17 +775,17 @@ public class FairyTalePt1 implements QuestTask {
         BankManager.withdraw(1, true, GHOSTSPEAK_AMULET);
         BankManager.withdraw(1, true, SALVE_TELE);
         BankManager.withdraw(1, true,
-                ItemId.AMULET_OF_GLORY[0]);
+                ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(5, true,
-                ItemId.FALADOR_TELEPORT);
+                ItemID.FALADOR_TELEPORT);
         BankManager.withdraw(5, true,
-                ItemId.VARROCK_TELEPORT);
+                ItemID.VARROCK_TELEPORT);
         BankManager.withdraw(5, true,
-                ItemId.LUMBRIDGE_TELEPORT);
+                ItemID.LUMBRIDGE_TELEPORT);
         BankManager.withdraw(1, true,
-                ItemId.STAMINA_POTION[0]);
+                ItemID.STAMINA_POTION[0]);
         BankManager.withdraw(11, true, MONKFISH);
-        BankManager.withdraw(4, true, ItemId.PRAYER_POTION[0]);
+        BankManager.withdraw(4, true, ItemID.PRAYER_POTION[0]);
         Banking.close();
         Utils.equipItem(GHOSTSPEAK_AMULET);
         Utils.equipItem(DRAMEN_STAFF);
@@ -914,7 +914,7 @@ public class FairyTalePt1 implements QuestTask {
             }
 
             if (Prayer.getPrayerPoints() < General.random(8, 20))
-                Utils.drinkPotion(ItemId.PRAYER_POTION);
+                Utils.drinkPotion(ItemID.PRAYER_POTION);
 
             if (GroundItems.find(QUEENS_SECATEURS).length > 0) {
                 cQuesterV2.status = "Looting queens secateurs";
@@ -975,10 +975,10 @@ public class FairyTalePt1 implements QuestTask {
             if (BankManager.withdraw(1, true, RED_VINE_WORM))
                 return;
             BankManager.depositAll(true);
-            BankManager.withdraw(1, true, ItemId.SKILLS_NECKLACE);
-            BankManager.withdraw(1, true, ItemId.RING_OF_WEALTH);
+            BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE);
+            BankManager.withdraw(1, true, ItemID.RING_OF_WEALTH);
             BankManager.withdraw(1, true, SPADE);
-            BankManager.withdraw(1, true, ItemId.STAMINA_POTION);
+            BankManager.withdraw(1, true, ItemID.STAMINA_POTION);
 
             BankManager.close(true);
         }

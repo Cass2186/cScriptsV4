@@ -14,7 +14,6 @@ import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Slayer.SlayerConst.Areas;
-import scripts.Tasks.Slayer.SlayerConst.Assign;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 
 
@@ -324,14 +323,14 @@ public class MoveToArea implements Task {
     public void setupLumbridgeSwamp() {
         if (RSVarBit.get(LUMBRIDGE_SWAMP_ROPE_VARBIT).getValue() == 0) {
             General.println("[Debug]: Setting up lumbridge swamp cave");
-            if (Inventory.find(ItemId.ROPE).length < 1) {
+            if (Inventory.find(ItemID.ROPE).length < 1) {
                 BankManager.open(true);
-                BankManager.withdraw(1, true, ItemId.ROPE);
+                BankManager.withdraw(1, true, ItemID.ROPE);
                 BankManager.close(true);
             }
             PathingUtil.walkToArea(Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE);
-            if (Utils.useItemOnObject(ItemId.ROPE, "Dark hole")) {
-                Timer.waitCondition(() -> Inventory.find(ItemId.ROPE).length < 1, 6000, 9000);
+            if (Utils.useItemOnObject(ItemID.ROPE, "Dark hole")) {
+                Timer.waitCondition(() -> Inventory.find(ItemID.ROPE).length < 1, 6000, 9000);
                 NPCInteraction.handleConversation();
                 if (NPCInteraction.isConversationWindowUp())
                     Keyboard.typeString(" ");
@@ -371,36 +370,36 @@ public class MoveToArea implements Task {
         if (SlayerVars.get().needDustyKey) {
             SlayerVars.get().status = "Getting Dusty Key";
             General.println("[Debug]: Getting a dusty key");
-            if (Inventory.find(ItemId.DUSTY_KEY).length < 1) {
+            if (Inventory.find(ItemID.DUSTY_KEY).length < 1) {
                 SlayerVars.get().status = "Getting Dusty Key";
 
                 PathingUtil.walkToArea(Areas.JAILER_AREA);
                 RSNPC[] jailer = NPCs.findNearest("Jailer");
                 if (jailer.length > 0 && CombatUtil.clickTarget(jailer[0]))
-                    Timer.waitCondition(() -> GroundItems.find(ItemId.JAIL_KEY).length > 0
+                    Timer.waitCondition(() -> GroundItems.find(ItemID.JAIL_KEY).length > 0
                             || Combat.getHPRatio() < 35, 30000, 45000);
 
-                if (Combat.getHPRatio() < 35 && Inventory.find(ItemId.FOOD_IDS).length > 0)
-                    if (AccurateMouse.click(Inventory.find(ItemId.FOOD_IDS)[0], "Eat"))
+                if (Combat.getHPRatio() < 35 && Inventory.find(ItemID.FOOD_IDS).length > 0)
+                    if (AccurateMouse.click(Inventory.find(ItemID.FOOD_IDS)[0], "Eat"))
                         Utils.idle(150, 600);
 
-                if (GroundItems.find(ItemId.JAIL_KEY).length > 0) {
-                    if (Inventory.isFull() && Inventory.find(ItemId.FOOD_IDS).length > 0)
-                        if (AccurateMouse.click(Inventory.find(ItemId.FOOD_IDS)[0], "Eat"))
+                if (GroundItems.find(ItemID.JAIL_KEY).length > 0) {
+                    if (Inventory.isFull() && Inventory.find(ItemID.FOOD_IDS).length > 0)
+                        if (AccurateMouse.click(Inventory.find(ItemID.FOOD_IDS)[0], "Eat"))
                             Utils.idle(150, 600);
 
-                    if (AccurateMouse.click(GroundItems.find(ItemId.JAIL_KEY)[0], "Take"))
-                        Timer.waitCondition(() -> Inventory.find(ItemId.JAIL_KEY).length > 0, 9000, 12000);
+                    if (AccurateMouse.click(GroundItems.find(ItemID.JAIL_KEY)[0], "Take"))
+                        Timer.waitCondition(() -> Inventory.find(ItemID.JAIL_KEY).length > 0, 9000, 12000);
                 }
 
-                if (Inventory.find(ItemId.JAIL_KEY).length > 0 && Areas.JAILER_AREA.contains(Player.getPosition())) {
+                if (Inventory.find(ItemID.JAIL_KEY).length > 0 && Areas.JAILER_AREA.contains(Player.getPosition())) {
                     if (PathingUtil.localNavigation(new RSTile(2931, 9690, 0)))
                         Utils.shortSleep();
-                    if (Utils.useItemOnObject(ItemId.JAIL_KEY, DOOR_ID))
+                    if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
                         Timer.waitCondition(() -> Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
                 }
                 if (Areas.JAIL_CELL.contains(Player.getPosition())) {
-                    if (Inventory.isFull() && Inventory.find(ItemId.FOOD_IDS).length > 0)
+                    if (Inventory.isFull() && Inventory.find(ItemID.FOOD_IDS).length > 0)
                         if (EatUtil.eatFood(false))
                             Utils.microSleep();
 
@@ -411,9 +410,9 @@ public class MoveToArea implements Task {
                         NPCInteraction.handleConversation();
                         Utils.shortSleep();
                     }
-                    if (Inventory.find(ItemId.DUSTY_KEY).length > 0) {
+                    if (Inventory.find(ItemID.DUSTY_KEY).length > 0) {
                         SlayerVars.get().needDustyKey = false;
-                        if (Utils.useItemOnObject(ItemId.JAIL_KEY, DOOR_ID))
+                        if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
                             Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
                     }
                 }
@@ -479,7 +478,7 @@ public class MoveToArea implements Task {
 
 
     public void goToBrineRats() {
-        RSItem[] spade = Inventory.find(ItemId.SPADE);
+        RSItem[] spade = Inventory.find(ItemID.SPADE);
         if (spade.length > 0) {
             if (!Areas.BRINE_RAT_AREA.contains(Player.getPosition()) &&
                     !Areas.WHOLE_BRINE_RAT_CAVE.contains(Player.getPosition())) {
@@ -503,7 +502,7 @@ public class MoveToArea implements Task {
 
         if (!Areas.WHOLE_ZANARIS.contains(Player.getPosition())) {
             General.println("[MoveToArea]: Going to zanaris");
-            Utils.equipItem(ItemId.DRAMEN_STAFF);
+            Utils.equipItem(ItemID.DRAMEN_STAFF);
             shouldMoveDoubleCheck(Areas.MUTATED_ZYGOMITE_AREA);
 
         }
@@ -548,7 +547,7 @@ public class MoveToArea implements Task {
     }
 
     public void goToElves() {
-        RSItem[] i = Inventory.find(ItemId.IORWERTH_CAMP_TELEPORT);
+        RSItem[] i = Inventory.find(ItemID.IORWERTH_CAMP_TELEPORT);
         if (Banking.isInBank() && i.length > 0) {
             RSTile current = Player.getPosition();
             if (i[0].click())
@@ -561,7 +560,7 @@ public class MoveToArea implements Task {
         if (SlayerVars.get().use_cannon && SlayerVars.get().fightArea != null) {
             if (SlayerVars.get().fightArea.getRandomTile().distanceTo(Player.getPosition()) < 35) {
                 RSObject[] cannon = Objects.findNearest(30, Filters.Objects.inArea(SlayerVars.get().fightArea));
-                RSItem[] inv = Inventory.find(ItemId.CANNON_IDS);
+                RSItem[] inv = Inventory.find(ItemID.CANNON_IDS);
                 if (cannon.length > 0 && inv.length == 4) {
                     General.println("[MoveToArea] There appears to be a cannon that is not ours in our fight area.");
                     return SlayerVars.get().otherCannonInOurArea = true;

@@ -24,26 +24,26 @@ public class WitchsPotion implements QuestTask {
         return quest == null ? quest = new WitchsPotion() : quest;
     }
 
-    ItemReq ratTail = new ItemReq("Rat's tail", ItemId.RATS_TAIL);
-    ItemReq onion = new ItemReq("Onion", ItemId.ONION);
-    ItemReq cookedMeat = new ItemReq("Burnt meat", ItemId.COOKED_MEAT);
-    ItemReq burntMeat = new ItemReq("Burnt meat", ItemId.BURNT_MEAT);
-    ItemReq eyeOfNewt = new ItemReq("Eye of newt", ItemId.EYE_OF_NEWT, 1);
+    ItemReq ratTail = new ItemReq("Rat's tail", ItemID.RATS_TAIL);
+    ItemReq onion = new ItemReq("Onion", ItemID.ONION);
+    ItemReq cookedMeat = new ItemReq("Burnt meat", ItemID.COOKED_MEAT);
+    ItemReq burntMeat = new ItemReq("Burnt meat", ItemID.BURNT_MEAT);
+    ItemReq eyeOfNewt = new ItemReq("Eye of newt", ItemID.EYE_OF_NEWT, 1);
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.ONION, 1, 300),
-                    new GEItem(ItemId.COOKED_MEAT, 1, 300),
-                    new GEItem(ItemId.EYE_OF_NEWT, 1, 300),
-                    new GEItem(ItemId.STAMINA_POTION[0], 1, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.ONION, 1, 300),
+                    new GEItem(ItemID.COOKED_MEAT, 1, 300),
+                    new GEItem(ItemID.EYE_OF_NEWT, 1, 300),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(onion, cookedMeat, eyeOfNewt,
-                    new ItemReq(ItemId.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemId.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
 

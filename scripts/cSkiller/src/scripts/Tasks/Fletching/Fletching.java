@@ -58,7 +58,7 @@ public class Fletching implements Task {
             message = "Banking...";
             General.println("[Debug]: " + message);
             BankManager.open(true);
-            BankManager.depositAllExcept(true, ItemId.KNIFE, ItemId.FEATHERS);
+            BankManager.depositAllExcept(true, ItemID.KNIFE, ItemID.FEATHERS);
             BankManager.withdraw(0, true, item);
             BankManager.close(true);
         }
@@ -67,32 +67,32 @@ public class Fletching implements Task {
 
     public void fletchingMethod() {
         if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 20) {
-            makeItemAllStackable(ItemId.FEATHERS, ItemId.ARROW_SHAFT, "Headless arrow");
-            bank(ItemId.ARROW_SHAFT);
+            makeItemAllStackable(ItemID.FEATHERS, ItemID.ARROW_SHAFT, "Headless arrow");
+            bank(ItemID.ARROW_SHAFT);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 25) {
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[1], "Oak shortbow");
-            bank(ItemId.LOG_IDS[1]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[1], "Oak shortbow");
+            bank(ItemID.LOG_IDS[1]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 35) {
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[1], "Oak longbow");
-            bank(ItemId.LOG_IDS[1]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[1], "Oak longbow");
+            bank(ItemID.LOG_IDS[1]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 40) { //willow short
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[2], "Willow shortbow");
-            bank(ItemId.LOG_IDS[2]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[2], "Willow shortbow");
+            bank(ItemID.LOG_IDS[2]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 50) { //willow long
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[2], "Willow longbow");
-            bank(ItemId.LOG_IDS[2]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[2], "Willow longbow");
+            bank(ItemID.LOG_IDS[2]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 55) { //maple shortbow
-            makeItemAll(ItemId.KNIFE,ItemId. LOG_IDS[3], "Maple shortbow");
-            bank(ItemId.LOG_IDS[3]);
+            makeItemAll(ItemID.KNIFE,ItemID. LOG_IDS[3], "Maple shortbow");
+            bank(ItemID.LOG_IDS[3]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 65) { //maple longbow
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[3], "Maple longbow");
-            bank(ItemId.LOG_IDS[3]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[3], "Maple longbow");
+            bank(ItemID.LOG_IDS[3]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 70) {
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[4], "Yew shortbow");// yew short
-            bank(ItemId.LOG_IDS[4]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[4], "Yew shortbow");// yew short
+            bank(ItemID.LOG_IDS[4]);
         } else if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 75) {
-            makeItemAll(ItemId.KNIFE, ItemId.LOG_IDS[4], "Yew longbow");// yew long
-            bank(ItemId.LOG_IDS[4]);
+            makeItemAll(ItemID.KNIFE, ItemID.LOG_IDS[4], "Yew longbow");// yew long
+            bank(ItemID.LOG_IDS[4]);
         }
     }
 

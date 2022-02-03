@@ -72,7 +72,7 @@ public class ZogreFleshEaters implements QuestTask {
     RSArea OUTSIDE_WIZARDS_GUILD = new RSArea(new RSTile(2597, 3089, 0), new RSTile(2600, 3086, 0));
     RSArea SITHIK_ROOM = new RSArea(new RSTile(2592, 3103, 1), new RSTile(2590, 3104, 1));
 
-    String Zavistic_Rarve_CHAT_1 = "I'm here about the sticks..err Zogres";
+    String Zavistic_Rarve_CHAT_1 = "I'm here about the sicks...err Zogres";
     String Sithik_Ints_CHAT_1 = "Do you mind if I look around?";
     public static String portraitString = "A classic realist charcoal portrait of Sithik.";
 
@@ -81,8 +81,9 @@ public class ZogreFleshEaters implements QuestTask {
         if (Game.getSetting(293) < 65) {
             General.println("[Debug]: Need to complete big chompy bird hunting");
             return false;
-        } else if (Skills.getActualLevel(Skills.SKILLS.SMITHING) < 4 || Skills.getActualLevel(Skills.SKILLS.RANGED) < 30) {
-            General.println("[Debug]: have 30 ranged and 4 smithing");
+        } else if (Skills.getActualLevel(Skills.SKILLS.SMITHING) < 4 ||
+                Skills.getActualLevel(Skills.SKILLS.RANGED) < 60) {
+            General.println("[Debug]: have 60 ranged (my requirement) and 4 smithing");
             return false;
         } else if (Game.getSetting(175) < 12) {
             General.println("[Debug]: Need to complete Jungle potion");
@@ -93,21 +94,21 @@ public class ZogreFleshEaters implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(ItemId.SANFEW_SERUM[0], 2, 30),
-                    new GEItem(ItemId.MONKFISH, 15, 30),
-                    new GEItem(ItemId.STAFF_OF_AIR, 1, 300),
+                    new GEItem(ItemID.SANFEW_SERUM[0], 2, 30),
+                    new GEItem(ItemID.MONKFISH, 15, 30),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 300),
                     new GEItem(RELICYMS_BALM_4, 2, 300),
-                    new GEItem(ItemId.SNAKESKIN_BANDANA, 1, 300),
-                    new GEItem(ItemId.SNAKESKIN_BOOTS, 1, 300),
+                    new GEItem(ItemID.SNAKESKIN_BANDANA, 1, 300),
+                    new GEItem(ItemID.SNAKESKIN_BOOTS, 1, 300),
                     new GEItem(OGRE_COMP_BOW, 1, 300),
                     new GEItem(MAGIC_SHORTBOW, 1, 50),
                     new GEItem(RUNE_ARROW, 500, 30),
                     new GEItem(RUNE_BRUTAL_ARROWS, 150, 20),
                     new GEItem(SUPER_RESTORE[0], 2, 20),
-                    new GEItem(ItemId.RING_OF_DUELING[0], 2, 30),
-                    new GEItem(ItemId.AMULET_OF_GLORY[2], 2, 30),
-                    new GEItem(ItemId.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemId.RING_OF_WEALTH[0], 1, 25)
+                    new GEItem(ItemID.RING_OF_DUELING[0], 2, 30),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
@@ -119,9 +120,9 @@ public class ZogreFleshEaters implements QuestTask {
             itemsToBuy.add(new GEItem(BLACK_VAMBS, 1, 50));
             itemsToBuy.add(new GEItem(BLACK_CHAPS, 1, 50));
         } else if (Skills.SKILLS.RANGED.getActualLevel() >= 60) {
-            itemsToBuy.add(new GEItem(ItemId.RED_DHIDE_BODY, 1, 50));
-            itemsToBuy.add(new GEItem(ItemId.RED_DHIDE_CHAPS, 1, 50));
-            itemsToBuy.add(new GEItem(ItemId.RED_DHIDE_VAMBRACES, 1, 50));
+            itemsToBuy.add(new GEItem(ItemID.RED_DHIDE_BODY, 1, 50));
+            itemsToBuy.add(new GEItem(ItemID.RED_DHIDE_CHAPS, 1, 50));
+            itemsToBuy.add(new GEItem(ItemID.RED_DHIDE_VAMBRACES, 1, 50));
         }
         BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
         buyStep.buyItems();
@@ -136,9 +137,9 @@ public class ZogreFleshEaters implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw(1, true, SUPER_RESTORE[0]);
-        BankManager.withdraw(12, true, ItemId.MONKFISH);
-        BankManager.withdraw(1, true, ItemId.RING_OF_DUELING[0]);
-        BankManager.withdraw(2, true, ItemId.STAMINA_POTION[0]);
+        BankManager.withdraw(12, true, ItemID.MONKFISH);
+        BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
         //  BankManager.withdraw(250, true, Const.get().CHAOS_RUNE);
         //  BankManager.withdraw(600, true, Const.get().EARTH_RUNE);
         //  BankManager.withdraw(1, true, Const.get().STAFF_OF_AIR);
@@ -151,12 +152,12 @@ public class ZogreFleshEaters implements QuestTask {
             Utils.equipItem(BLACK_BODY);
             Utils.equipItem(BLACK_CHAPS);
         } else if (Skills.SKILLS.RANGED.getActualLevel() >= 60) {
-            BankManager.withdraw(1, true, ItemId.RED_DHIDE_BODY);
-            BankManager.withdraw(1, true, ItemId.RED_DHIDE_VAMBRACES);
-            BankManager.withdraw(1, true, ItemId.RED_DHIDE_CHAPS);
-            Utils.equipItem(ItemId.RED_DHIDE_CHAPS);
-            Utils.equipItem(ItemId.RED_DHIDE_BODY);
-            Utils.equipItem(ItemId.RED_DHIDE_VAMBRACES);
+            BankManager.withdraw(1, true, ItemID.RED_DHIDE_BODY);
+            BankManager.withdraw(1, true, ItemID.RED_DHIDE_VAMBRACES);
+            BankManager.withdraw(1, true, ItemID.RED_DHIDE_CHAPS);
+            Utils.equipItem(ItemID.RED_DHIDE_CHAPS);
+            Utils.equipItem(ItemID.RED_DHIDE_BODY);
+            Utils.equipItem(ItemID.RED_DHIDE_VAMBRACES);
         }
         BankManager.withdraw(1, true, SNAKESKIN_BANDANA);
         BankManager.withdraw(1, true, SNAKESKIN_BOOTS);
@@ -165,7 +166,7 @@ public class ZogreFleshEaters implements QuestTask {
         Utils.equipItem(SNAKESKIN_BOOTS);
         Utils.equipItem(SNAKESKIN_BANDANA);
         Utils.equipItem(AVAS_ACCUMULATOR);
-        Utils.equipItem(ItemId.RING_OF_DUELING[0]);
+        Utils.equipItem(ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(500, true, RUNE_ARROW);
         BankManager.withdraw(150, true, RUNE_BRUTAL_ARROWS);
         BankManager.withdraw(150, true, OGRE_COMP_BOW);
@@ -264,7 +265,7 @@ public class ZogreFleshEaters implements QuestTask {
         }
         if (Combat.getHPRatio() < General.random(30, 50)) {
             cQuesterV2.status = "Eating";
-            RSItem[] food = Inventory.find(ItemId.MONKFISH);
+            RSItem[] food = Inventory.find(ItemID.MONKFISH);
             if (food.length > 0 && food[0].click()) {
                 Utils.microSleep();
             }
@@ -285,7 +286,7 @@ public class ZogreFleshEaters implements QuestTask {
         if (backpack.length > 0 && Inventory.find(TANKARD).length == 0) {
             cQuesterV2.status = "Opening backpack";
             if (Inventory.getAll().length > 24) {
-                RSItem[] food = Inventory.find(ItemId.MONKFISH);
+                RSItem[] food = Inventory.find(ItemID.MONKFISH);
                 if (food.length > 0)
                     if (food[0].click())
                         Utils.microSleep();
@@ -358,7 +359,7 @@ public class ZogreFleshEaters implements QuestTask {
     private void eatForSpace() {
         if (Inventory.isFull()) {
             cQuesterV2.status = "Eating for Space";
-            RSItem[] food = Inventory.find(ItemId.MONKFISH);
+            RSItem[] food = Inventory.find(ItemID.MONKFISH);
             if (food.length > 0 && food[0].click())
                 Timer.waitCondition(() -> Player.getAnimation() != -1, 2500, 3500);
 
@@ -501,7 +502,7 @@ public class ZogreFleshEaters implements QuestTask {
         PathingUtil.walkToArea(OUTSIDE_WIZARDS_GUILD);
         if (Utils.clickObj("Bell", "Ring")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("I have some items that I'd like you to look at.");
+            NPCInteraction.handleConversation(Zavistic_Rarve_CHAT_1, "I have some items that I'd like you to look at.");
             NPCInteraction.handleConversation();
         }
     }
@@ -605,7 +606,7 @@ public class ZogreFleshEaters implements QuestTask {
             RSNPC[] slash = NPCs.findNearest("Slash Bash");
             if (slash.length == 0) {
                 PathingUtil.localNavigation(new RSTile(2482, 9445, 0));
-                if (Utils.clickObj("Stand", "Search")) {
+                if (Utils.clickObj(6897, "Search")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
                     if (PathingUtil.clickScreenWalk(SAFE_TILE))
@@ -708,6 +709,7 @@ public class ZogreFleshEaters implements QuestTask {
     public void execute() {
         if (!checkRequirements()) {
             cQuesterV2.taskList.remove(this);
+            return;
         }
 
         if (Game.getSetting(GAME_SETTING) == 0) {

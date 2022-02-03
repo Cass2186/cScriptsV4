@@ -37,7 +37,8 @@ public enum SkillTasks {
     THIEVING(16, 5, 5, SKILLS.THIEVING), //use Fight arena for 1-14
     WOODCUTTING(17, 1, 1, SKILLS.WOODCUTTING), // use Monk's Friend for 1-13
     PEST_CONTROL(18, 99, 99, SKILLS.HITPOINTS),
-    SORCERESS_GARDEN(18, 1, 1, SKILLS.THIEVING);
+    KOUREND_FAVOUR(19, 99, 99, SKILLS.HITPOINTS),
+    SORCERESS_GARDEN(20, 1, 1, SKILLS.THIEVING);
 
     @Getter
     @Setter

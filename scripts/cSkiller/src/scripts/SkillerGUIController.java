@@ -44,19 +44,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @FXML
     @DoNotRename
     private TextField agilityGoalLevelBox, herbloreGoalLevelBox,
-            craftingGoalLevelBox, atkLvlGoalBox, defLvlGoalBox, rangedLvlGoalBox, strLvlGoalBox;
-
-    @FXML
-    @DoNotRename
-    private TextField fletchingGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField miningGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField firemakingGoalLevelBox;
+            craftingGoalLevelBox, atkLvlGoalBox, defLvlGoalBox, rangedLvlGoalBox, strLvlGoalBox,
+            miningGoalLevelBox ,chancetoClickJewleryBox, fletchingGoalLevelBox ,firemakingGoalLevelBox;
 
     @FXML
     @DoNotRename
@@ -170,6 +159,9 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         handler.save("last", settings);
         updateSkillEndLevel(event);
         updateSkillSwitchTimer(event);
+        updateAfkDuration(event);
+        updateAFKFrequency(event);
+        //updateABC2Modifier(event);
         if (useMlmBox1.isSelected())
             Vars.get().useMLM = true;
         else
@@ -397,6 +389,11 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         thievingGoalLevelBox.setText(String.valueOf(Skills.SKILLS.THIEVING.getActualLevel()));
         switchSkillMinTime.setText(String.valueOf(Vars.get().skillSwitchMin / 60000));
         switchSkillMaxTime.setText(String.valueOf(Vars.get().skillSwitchMax / 60000));
+        afkEveryAverage.setText(String.valueOf(Vars.get().afkFrequencyAvg/1000));
+        afkEverySD.setText(String.valueOf(Vars.get().afkFrequencySD/1000));
+        afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg/1000));
+        afkForSD.setText(String.valueOf(Vars.get().afkDurationSD/1000));
+        chancetoClickJewleryBox.setText(String.valueOf(Vars.get().clickAllJeweleryChance));
 
         for (SkillTasks s : SkillTasks.values()) {
             startingSkillDropDown.getItems().add(s.getSkillName());
