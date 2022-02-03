@@ -4,12 +4,14 @@ import org.tribot.api.General;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.GrandExchange;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
+import org.tribot.script.sdk.Log;
 import scripts.BankManager;
 import scripts.GEManager.Exchange;
 import scripts.GEManager.GEItem;
-import scripts.ItemId;
+import scripts.ItemID;
 import scripts.Utils;
 
 import java.awt.*;
@@ -33,7 +35,7 @@ public class BuyItemsStep {
         General.println("[BuyItemStep]: Buying Items");
         getItemCache();
         ArrayList<GEItem> list = updatePurchaseQuantities(invList);
-       // if (list.size() > 0)
+        // if (list.size() > 0)
         for (GEItem i : list) {
 
             Exchange.buyItem(i);
@@ -49,9 +51,12 @@ public class BuyItemsStep {
             General.println("[Debug]: Caching bank");
             BankManager.open(true);
             BankManager.depositAll(true);
-            BankManager.withdraw(0, true, ItemId.COINS);
+            BankManager.withdraw(0, true, ItemID.COINS);
             BankManager.setUnNoted();
-            BankManager.withdrawArray(ItemId.RING_OF_WEALTH, 1);
+            if (!org.tribot.script.sdk.GrandExchange.isNearby() && Inventory.find(ItemID.RING_OF_WEALTH).length ==0) {
+                Log.log("[BuyItemsStep]: need RoW, not at GE");
+                BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+            }
             this.bankCache = Banking.getAllList();
         }
         if (this.gearCache == null) {
@@ -65,17 +70,17 @@ public class BuyItemsStep {
         ArrayList<GEItem> updatedList = new ArrayList<>();
         for (GEItem i : itemList) {
             int quantity = determinePurchaseAmount(i);
-            if (quantity <= 0){
+            if (quantity <= 0) {
                 continue;
             }
-            GEItem item = new GEItem(i.getItemId(), quantity, i.getPercentIncrease());
+            GEItem item = new GEItem(i.getItemID(), quantity, i.getPercentIncrease());
             updatedList.add(item);
             if (updatedList.contains(i)) {
-                General.println("[BuyItemsSteps]: updatePurchaseQuanties determines we need " + quantity + " of item " + i.getItemId(), Color.CYAN);
+                General.println("[BuyItemsSteps]: updatePurchaseQuanties determines we need " + quantity + " of item " + i.getItemID(), Color.CYAN);
             }
 
         }
-        ArrayList<GEItem> updated =  updatedList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<GEItem> updated = updatedList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
         General.println("[BuyItemsSteps]: updatedList Size = " + updatedList.size());
         General.println("[BuyItemsSteps]: updated Size = " + updated.size());
         return updatedList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
@@ -88,11 +93,11 @@ public class BuyItemsStep {
         myItems.addAll(this.gearCache);
         int numOfItem;
         int stack = 0;
-        Optional<RSItemDefinition> itemDef = Optional.ofNullable(RSItemDefinition.get(item.getItemId()));
+        Optional<RSItemDefinition> itemDef = Optional.ofNullable(RSItemDefinition.get(item.getItemID()));
 
         for (int i = 0; i < myItems.size(); i++) { //itterates through cached bank/gear items
-            String itemName = RSItemDefinition.get(item.getItemId()).getName();
-            if (item.getItemId() == myItems.get(i).getID()) {
+            String itemName = RSItemDefinition.get(item.getItemID()).getName();
+            if (item.getItemID() == myItems.get(i).getID()) {
                 stack = myItems.get(i).getStack();
                 if (stack > 0) {
                     General.println("[GEItem]: We already have " + stack + " of " + itemName);

@@ -83,12 +83,12 @@ public abstract class CacheablePriceService<T>
         }
     }
 
-    protected Optional<T> tryGetItemData(int itemId)
+    protected Optional<T> tryGetItemData(int ItemID)
     {
         updateCacheIfNecessary();
         return isCacheOlderThan(outdatedHours)
                 ? Optional.empty()
-                : Optional.ofNullable(dataCache.get(itemId));
+                : Optional.ofNullable(dataCache.get(ItemID));
     }
 
     /**

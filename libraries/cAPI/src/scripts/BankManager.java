@@ -2,25 +2,34 @@ package scripts;
 
 import dax.api_lib.DaxWalker;
 import dax.walker.utils.AccurateMouse;
+import dax.walker.utils.TribotUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.BankSettings;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.cache.BankCache;
+import org.tribot.script.sdk.interfaces.Item;
+import org.tribot.script.sdk.interfaces.Stackable;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
 import org.tribot.script.sdk.tasks.InsufficientItemError;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.Requirements.ItemReq;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BankManager {
 
+    private static final String CHARGED_GLORY = "Amulet of glory(";
+    private static final String UNCHARGED_GLORY = "Amulet of glory";
     // public static ArrayList<BankItem> inventoryList = new ArrayList<>();
 
     public static final int[] GAMES_NECKLACE = {3853, 3855, 3857, 3859, 3861, 3863, 3865, 3867};
@@ -68,6 +77,241 @@ public class BankManager {
 
     public void performBankTask(BankTask task) {
 
+    }
+
+    private static void withdrawInvItems(List<ItemReq> invReqs) {
+        // List<Pair<Integer, Integer>> withdrew = new ArrayList<>();
+        HashMap<Integer, Integer> withdrew = new HashMap();
+        invReqs.stream()
+                //.map(i-> new Pair(i.getId(), (i.getAmount()- Inventory.getCount(i.getId()))))
+                .filter(i -> i.getAmount() > 0)
+                //  .sortedBy(it.second.endInclusive)
+                .forEach(item -> {
+                    int id = item.getId();
+                    boolean isNoted = item.isItemNoted();
+                    int amt = item.getAmount();
+                    int startInvCount = org.tribot.script.sdk.Inventory.getCount(id);
+                    int bankCount = BankCache.getStack(id);
+
+                    // Check if we have the amount we need in the bank. If not, bind an error
+                    if (bankCount < amt) {
+                        Log.log("[Bank]: Insufficient item in bank with ID: " + id);
+
+                        if (item.getAlternateItemIDs().
+                                stream().anyMatch(jar -> BankCache.getStack(jar) >= item.getAmount())) {
+                            // we have an acceptable alternate in bank
+                            Optional<Integer> optional = item
+                                    .getAlternateItemIDs().
+                                    stream()
+                                    .filter(i -> BankCache.getStack(i) >= item.getAmount()).findAny();
+                            if (optional.isPresent()) {
+                                id = optional.get();
+                            }
+                        }
+                    }
+                    if (bankCount < amt) {
+                        // Special case: If we don't need any of this item and there is none in the bank, skip
+                        //  if (bankCount == 0 && amt == 0)
+                        //     return; //@forEach
+
+
+                        if (BankSettings.isNoteEnabled() != isNoted) {
+                            BankSettings.setNoteEnabled(isNoted);
+                            Waiting.waitNormal(85, 15);
+                        }
+
+                        Bank.withdrawAll(id);
+                    } else {
+                        if (BankSettings.isNoteEnabled() != isNoted) {
+                            BankSettings.setNoteEnabled(isNoted);
+                            Waiting.waitNormal(85, 15);
+                        }
+                        amt = (amt - startInvCount);
+                        //prevents attempting to withdraw if we have enough
+                        if (amt > 0)
+                            Bank.withdraw(id, amt - startInvCount);
+                    }
+
+                    withdrew.put(id, startInvCount);
+                    Waiting.waitNormal(69, 16);
+                });
+        // Wait and confirm all inv items were withdrawn correctly
+        for (Integer i : withdrew.keySet()) {
+            Waiting.waitUntil(2500, () ->
+                    org.tribot.script.sdk.Inventory.getCount(i) > withdrew.get(i));
+        }
+    }
+
+
+    private static void withdrawAndEquipItems(List<ItemReq> equipReqs) {
+        //filter our list to items that are supposed to be equipped but fail the check (i.e. aren't equipped or enough)
+        List<ItemReq> equipmentToWithdrawAndEquip = equipReqs.stream().filter(req ->
+                req.isShouldEquip() && !req.check()).collect(Collectors.toList());
+
+        var currentInvItems = org.tribot.script.sdk.Inventory.getAll();
+
+        if (currentInvItems.size() == 28 && equipmentToWithdrawAndEquip.size() > 0) {
+            // Oh no, our inv is full of stuff we need but we need to equip things
+            Bank.deposit(currentInvItems.get(currentInvItems.size() - 1).getId(), 1); // Make room
+            Waiting.waitUntil(2000, () -> org.tribot.script.sdk.Inventory.getAll().size() < 28);
+            Waiting.waitNormal(345, 67);
+            currentInvItems = org.tribot.script.sdk.Inventory.getAll(); // reset inv to reflect current state
+        }
+
+        // We will equip items using the amount of free inv space we have.
+        // So if we have 1 space, we will withdraw 1 item, equip, repeat.
+        // If we have more spaces than equipment to wear, then we withdraw everything up front
+        int invFreeSpaces = 28 - currentInvItems.size();
+        int i = 0;
+        while (i < equipmentToWithdrawAndEquip.size()) {
+            Waiting.wait(25);
+            List<Integer> skippedIndices = new ArrayList<>();
+
+            int i2 = i;
+            while (i2 < equipmentToWithdrawAndEquip.size() && (i2 - i - skippedIndices.size()) < invFreeSpaces) {
+                Waiting.wait(25);
+                int id = equipmentToWithdrawAndEquip.get(i2).getId();
+                int amt = equipmentToWithdrawAndEquip.get(i2).getAmount();
+                // val slot = equipReqs[i2].slot
+                Optional<Item> bankOptionalItem = Bank.getAll()
+                        .stream().filter(item -> item.getId() == id)
+                        .findFirst();
+                int bankCount = bankOptionalItem.map(Stackable::getStack).orElse(0);
+
+                // Check if we have the amount we need in the bank. If not, bind an error
+                if (bankCount < amt) {
+                    Log.log("[Banking]: We have insufficient item: " + id + " | Need: " + amt);
+                    //InsufficientEquipmentError(slot, id, amt.start, bankCount).toEither < Unit > ().bind()
+                }
+
+                // If we have nothing in the bank, it's okay to just continue at this point because
+                // what we have equipped is sufficient
+                if (bankCount != 0) {
+
+                    if (BankSettings.isNoteEnabled()) {
+                        BankSettings.setNoteEnabled(false);
+                        Waiting.waitNormal(85, 15);
+                    }
+
+                    if (bankCount <= amt) {
+                        Bank.withdrawAll(id);
+                    } else {
+                        Bank.withdraw(id, amt);
+                    }
+
+                    Waiting.waitNormal(67, 13);
+                } else {
+                    skippedIndices.add(i2);
+                }
+
+                i2++;
+            }
+
+            // Wait for everything to actually appear in the inventory and then equip
+            for (int x = 0; x < i2; x++) {
+                // If we skipped this item, we don't need to equip it
+                if (skippedIndices.contains(x)) {
+                    continue;
+                }
+
+                int id = equipmentToWithdrawAndEquip.get(x).getId();
+                Waiting.waitUntil(2500, () -> org.tribot.script.sdk.Inventory.getCount(id) > 0);
+
+                InventoryItem item = Query.inventory().idEquals(id).findFirst().orElse(null);
+                if (item != null) {
+                    if (org.tribot.script.sdk.Equipment.equip(item))
+                        Waiting.waitNormal(121, 30);
+                } else {
+                    //UnknownError.toEither<Unit> ().bind()
+                }
+            }
+
+            // Confirm everything is equipped
+            for (int x = 0; x < i2; x++) {
+                // If we skipped this item, we don't need to wait for it to be equipped
+                if (skippedIndices.contains(x)) {
+                    continue;
+                }
+                int y = x;
+                Waiting.waitUntil(2500, () ->
+                        org.tribot.script.sdk.Equipment.contains(equipmentToWithdrawAndEquip.get(y).getId()));
+            }
+            i = i2;
+        }
+    }
+
+  /*  private void depositInventory( List<ItemReq> invReqs, List<EquipmentReq>  equipReqs) {
+        // First get all the maximum withdraws. The amount will be negative if we need to deposit
+        List<ItemReq> withdrawsToMake = invReqs.stream().map(it ->
+                new ItemReq(it.getId(), (it.getAmount() - Inventory.getCount(it.getId()))))
+                .collect(Collectors.toList());
+
+        val equipmentWithdrawsToMake = equipReqs
+                .filter { !it.isSatisfied() }
+            .mapNotNull { it.item }
+            .map {
+            Pair(it.first, it.second.getWithdrawAmount(Inventory.getCount(it.first)).endInclusive)
+        }
+
+        // Let's calculate all the completely unrelated items that we need to deposit all of
+        val unrelatedItemDepositsToMake = Inventory.getAll()
+                .distinctBy { it.id }
+            .filter { invItem -> withdrawsToMake.none { it.first == invItem.id } }
+            .map { Pair(it.id, Inventory.getCount(it.id)) }
+
+        // And combine them with the "withdraws" that are negative (aka deposits)
+        val combined = withdrawsToMake.filter { it.second < 0 } +
+                equipmentWithdrawsToMake.filter { it.second < 0 } +
+                unrelatedItemDepositsToMake;
+
+        if (withdrawsToMake.any { it.second <= 0 }) {
+            // We must have something in our inv that we need if we have a negative or 0 withdraw
+            val currentInvState = combined.map { Inventory.getCount(it.first) }
+
+            // Iterate and execute on the deposits
+            for (entry in combined) {
+                Bank.deposit(entry.first, abs(entry.second)).bind()
+                Waiting.waitNormal(192, 29)
+            }
+
+            // Wait for the deposits to register
+            combined.forEachIndexed { i, entry ->
+                    val expectedNewAmt = currentInvState[i] - abs(entry.second)
+                Waiting.waitUntil(2500) { Inventory.getCount(entry.first) == expectedNewAmt }.bind()
+            }
+        }
+        else if (Inventory.getAll().isNotEmpty()) {
+            // We have nothing we need, so deposit all if inv contains anything
+            Bank.depositInventory().bind()
+            Waiting.waitUntil(2500) { Inventory.getAll().size == 0 }.bind()
+            Waiting.waitNormal(254, 38)
+        }
+    }*/
+
+
+    public static void withdrawList(List<ItemReq> itemReqList) {
+        for (int i = 0; i < 5; i++) {
+            if (itemReqList.stream().anyMatch(it -> !it.check())) {
+                if (!Bank.isOpen()) {
+                    Bank.open();
+                    Waiting.waitNormal(375, 45);
+                }
+                //on first or last attempt
+                if (i == 0 || i == 4)
+                    Bank.depositInventory();
+
+                // Deposit everything that needs deposited
+                //depositInventory(invReqs, equipReqs);
+                //  depositEquipment(equipReqs);
+
+                withdrawAndEquipItems(itemReqList);
+
+                withdrawInvItems(itemReqList);
+                if (itemReqList.stream().noneMatch(it -> !it.check()))
+                    Bank.close();
+            } else
+                break;
+        }
     }
 
     /**
@@ -132,11 +376,11 @@ public class BankManager {
      * 1st is for an item ID,
      * 2nd is an int Array (item id)
      */
-    private static boolean checkWithdrawSuccess(int quantity, int itemID) {
-        Timer.waitCondition(() -> Inventory.find(itemID).length > 0, 800, 1500);
-        if (Inventory.find(itemID).length < 1 && !Inventory.isFull()) {
+    private static boolean checkWithdrawSuccess(int quantity, int ItemID) {
+        Timer.waitCondition(() -> Inventory.find(ItemID).length > 0, 800, 1500);
+        if (Inventory.find(ItemID).length < 1 && !Inventory.isFull()) {
             Log.log("[Debug]: Seemingly failed to get item, trying again.");
-            return BankManager.withdraw(quantity, true, itemID);
+            return BankManager.withdraw(quantity, true, ItemID);
         } else
             return true;
     }
@@ -188,11 +432,11 @@ public class BankManager {
     }
 
 
-    public static void determinePurchaseAmounts(int itemID, int quanitity) {
+    public static void determinePurchaseAmounts(int ItemID, int quanitity) {
         for (int i = 0; i < items.size(); i++) {
             stack = 0;
-            String itemName = RSItemDefinition.get(itemID).getName();
-            if (itemID == items.get(i).getID()) {
+            String itemName = RSItemDefinition.get(ItemID).getName();
+            if (ItemID == items.get(i).getID()) {
                 stack = items.get(i).getStack();
                 if (stack > 0) {
                     Log.log("[Debug]: We already have " + stack + " of " + itemName);
@@ -204,7 +448,7 @@ public class BankManager {
                 } */
             }
         }
-        String itemName = RSItemDefinition.get(itemID).getName();
+        String itemName = RSItemDefinition.get(ItemID).getName();
         itemsToBuy = quanitity - stack;
         Log.log("[Debug]: Need to buy " + itemsToBuy + " of " + itemName);
     }
@@ -263,7 +507,7 @@ public class BankManager {
                 if (Banking.openBank()) {
                     if (Timer.quickWaitCondition(Bank::isOpen, 4500, 6000))
                         Utils.idlePredictableAction();
-                        break;
+                    break;
                 }
             }
         }
@@ -304,7 +548,7 @@ public class BankManager {
             Log.log("[BankManager]: Depositing all");
 
             Banking.depositAll();
-            if(Timer.waitCondition(() -> Inventory.getAll().length == 0, 2000, 5000)){
+            if (Timer.waitCondition(() -> Inventory.getAll().length == 0, 2000, 5000)) {
                 Utils.idlePredictableAction();
             }
 
@@ -334,20 +578,20 @@ public class BankManager {
     }
 
 
-    public static boolean withdraw(int num, boolean shouldWait, int itemId) {
+    public static boolean withdraw(int num, boolean shouldWait, int ItemID) {
         if (!Bank.isOpen())
             open(true);
 
         closeHelpWindow();
 
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
 
         if (item.length < 1) {
-            String name = RSItemDefinition.get(itemId).getName();
+            String name = RSItemDefinition.get(ItemID).getName();
             if (name != null)
                 Log.log("[BankManager]: Missing bank item: " + name);
             else
-                Log.log("[BankManager]: Missing bank item: " + itemId);
+                Log.log("[BankManager]: Missing bank item: " + ItemID);
             return false;
         }
 
@@ -355,7 +599,7 @@ public class BankManager {
         for (int i = 0; i < 5; i++) {
             if (!shouldWait) {
                 // if we aren't waiting for inventory to change we
-                if (Banking.withdraw(num, itemId)) {
+                if (Banking.withdraw(num, ItemID)) {
                     Utils.microSleep();
                     return true;
 
@@ -364,8 +608,8 @@ public class BankManager {
 
             } else {
 
-                if (Banking.withdraw(num, itemId)) {
-                    if (Timer.waitCondition(() -> inventoryChange(true) || Inventory.find(itemId).length > 0, 4000, 6000))
+                if (Banking.withdraw(num, ItemID)) {
+                    if (Timer.waitCondition(() -> inventoryChange(true) || Inventory.find(ItemID).length > 0, 4000, 6000))
                         return true;
 
                     else
@@ -387,10 +631,10 @@ public class BankManager {
     /**
      * @param num
      * @param shouldWait
-     * @param itemId
+     * @param ItemID
      * @return
      */
-    public static boolean withdraw(int num, boolean shouldWait, int[] itemId) {
+    public static boolean withdraw(int num, boolean shouldWait, int[] ItemID) {
         General.sleep(General.randomSD(50, 400, 250, 75)); // sleep here so withdraws are not back to back speedy
 
         if (!Banking.isBankScreenOpen())
@@ -399,9 +643,9 @@ public class BankManager {
         closeHelpWindow();
         closeBankSearch();
 
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
         if (item.length < 1) {
-            Log.log("[Debug]: Missing Bank item: " + RSItemDefinition.get(itemId[0]).getName());
+            Log.log("[Debug]: Missing Bank item: " + RSItemDefinition.get(ItemID[0]).getName());
             return false;
         }
 
@@ -411,7 +655,7 @@ public class BankManager {
         for (int i = 0; i < 5; i++) {
             if (!shouldWait) {
 
-                if (Banking.withdraw(num, itemId)) {
+                if (Banking.withdraw(num, ItemID)) {
                     Utils.microSleep();
                     return true;
 
@@ -420,8 +664,8 @@ public class BankManager {
 
             } else {
 
-                if (Banking.withdraw(num, itemId)) {
-                    if (Timer.waitCondition(() -> inventoryChange(true) || Inventory.find(itemId).length > 0, 4000, 6000))
+                if (Banking.withdraw(num, ItemID)) {
+                    if (Timer.waitCondition(() -> inventoryChange(true) || Inventory.find(ItemID).length > 0, 4000, 6000))
                         return true;
 
                     else
@@ -432,28 +676,28 @@ public class BankManager {
         return false;
     }
 
-    public static boolean withdraw(int num, int itemId, boolean endIfNoItem) {
+    public static boolean withdraw(int num, int ItemID, boolean endIfNoItem) {
         if (!Banking.isBankScreenOpen()) {
             open(true);
             closeHelpWindow();
         }
 
         closeBankSearch();
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
         if (item.length < 1) {
 
             if (endIfNoItem) {
-                Log.log("[BankManager]: Missing bank item: " + RSItemDefinition.get(itemId).getName());
-                throw new IllegalStateException("Missing bank Item: " + RSItemDefinition.get(itemId).getName());
+                Log.log("[BankManager]: Missing bank item: " + RSItemDefinition.get(ItemID).getName());
+                throw new IllegalStateException("Missing bank Item: " + RSItemDefinition.get(ItemID).getName());
 
             } else {
-                Log.log("[BankManager]: Missing bank item: " + RSItemDefinition.get(itemId).getName());
+                Log.log("[BankManager]: Missing bank item: " + RSItemDefinition.get(ItemID).getName());
                 return false;
             }
 
         } else if (item[0].getStack() < num) {
-            Log.log("[BankManager]: Missing bank item: " + RSItemDefinition.get(itemId).getName());
-            throw new IllegalStateException("[BankManager Error]: Missing bank Item in adequate amounts: " + RSItemDefinition.get(itemId).getName());
+            Log.log("[BankManager]: Missing bank item: " + RSItemDefinition.get(ItemID).getName());
+            throw new IllegalStateException("[BankManager Error]: Missing bank Item in adequate amounts: " + RSItemDefinition.get(ItemID).getName());
         }
 
         if (Inventory.isFull()) {
@@ -462,7 +706,7 @@ public class BankManager {
         }
 
         for (int i = 0; i < 5; i++) {
-            if (Banking.withdraw(num, itemId)) {
+            if (Banking.withdraw(num, ItemID)) {
                 return Timer.waitCondition(() -> inventoryChange(true), 2500, 6000);
 
             } else
@@ -471,7 +715,7 @@ public class BankManager {
         return false;
     }
 
-    public static boolean withdraw(boolean restockItem, int num, int itemId) {
+    public static boolean withdraw(boolean restockItem, int num, int ItemID) {
         if (!Banking.isBankScreenOpen()) {
             open(true);
             if (Interfaces.isInterfaceSubstantiated(664, 28))
@@ -479,20 +723,20 @@ public class BankManager {
                     Timer.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(664, 28), 4000);
         }
         closeBankSearch();
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
         if (item.length < 1) {
 
             if (restockItem) {
-                Log.log("[BankManager]: Missing item: " + RSItemDefinition.get(itemId).getName());
+                Log.log("[BankManager]: Missing item: " + RSItemDefinition.get(ItemID).getName());
                 return true;
 
             } else {
-                Log.log("[BankManager]: Missing item: " + RSItemDefinition.get(itemId).getName());
+                Log.log("[BankManager]: Missing item: " + RSItemDefinition.get(ItemID).getName());
                 return false;
             }
 
         } else if (item[0].getStack() < num) {
-            Log.log("[Debug]: Missing adequate amounts of item: " + RSItemDefinition.get(itemId).getName());
+            Log.log("[Debug]: Missing adequate amounts of item: " + RSItemDefinition.get(ItemID).getName());
             return false;
         }
 
@@ -502,7 +746,7 @@ public class BankManager {
         }
 
         for (int i = 0; i < 5; i++) {
-            if (Banking.withdraw(num, itemId))
+            if (Banking.withdraw(num, ItemID))
                 return true;
 
             else
@@ -511,7 +755,7 @@ public class BankManager {
         return false;
     }
 
-    public static boolean withdraw(int num, int itemId) { // same as above but default waits
+    public static boolean withdraw(int num, int ItemID) { // same as above but default waits
         if (!Banking.isBankScreenOpen()) {
             open(true);
             if (Interfaces.isInterfaceSubstantiated(664, 28))
@@ -519,7 +763,7 @@ public class BankManager {
                     Timer.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(664, 28), 4000);
         }
         closeBankSearch();
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
         if (item.length < 1) {
             return false;
         }
@@ -528,16 +772,16 @@ public class BankManager {
         return Banking.withdrawItem(item[0], num) || Timer.waitCondition(() -> inventoryChange(true), 2500);
     }
 
-    public static boolean withdraw2(int num, boolean shouldWait, int itemId) {
+    public static boolean withdraw2(int num, boolean shouldWait, int ItemID) {
         if (!Banking.isBankScreenOpen()) {
             open(true);
             if (Interfaces.isInterfaceSubstantiated(664, 28))
                 if (Interfaces.get(664, 28, 0).click())
                     Timer.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(664, 28), 4000);
         }
-        RSItem[] item = Banking.find(itemId);
+        RSItem[] item = Banking.find(ItemID);
         if (item.length < 1) {
-            Log.log("[BankManager]: Missing item: " + RSItemDefinition.get(itemId).getName());
+            Log.log("[BankManager]: Missing item: " + RSItemDefinition.get(ItemID).getName());
             return false;
         }
         if (Inventory.isFull() && num == 0) {
@@ -545,19 +789,19 @@ public class BankManager {
         }
         if (Banking.withdrawItem(item[0], num))
             Timer.waitCondition(() -> inventoryChange(true), 2500);
-        return checkWithdrawSuccess(num, itemId);
+        return checkWithdrawSuccess(num, ItemID);
     }
 
 
-    public static boolean deposit(int num, int itemId) {
+    public static boolean deposit(int num, int ItemID) {
         if (!Bank.isOpen())
             open(true);
 
         closeHelpWindow();
 
-        Banking.deposit(num, itemId);
-        RSItem[] item = Inventory.find(itemId);
-        return item.length <= 0 || !Banking.deposit(num, itemId) || Timer.waitCondition(() -> inventoryChange(true), 2500);
+        Banking.deposit(num, ItemID);
+        RSItem[] item = Inventory.find(ItemID);
+        return item.length <= 0 || !Banking.deposit(num, ItemID) || Timer.waitCondition(() -> inventoryChange(true), 2500);
     }
 
 
@@ -573,7 +817,7 @@ public class BankManager {
     public static boolean setNoted() {
         RSInterfaceChild noteButton = Interfaces.get(12, 25);
         if (Game.getSetting(115) != 1 && noteButton != null &&
-            noteButton.click()){
+                noteButton.click()) {
             Timer.waitCondition(BankManager::areNotesOn, 2000, 3000);
         }
         return areNotesOn();
@@ -584,11 +828,12 @@ public class BankManager {
         RSInterfaceChild itemButton = Interfaces.get(12, 23);
         Log.log("[BankManager]: Selecting Unnoted items");
         if (Game.getSetting(115) == 1 && button != null &&
-                button.click()){
+                button.click()) {
             Timer.waitCondition(() -> !BankManager.areNotesOn(), 2000, 3000);
         }
         return !areNotesOn();
     }
+
     public static boolean toggleNoted(boolean enable) {
         return enable ? setNoted() : setUnNoted();
     }
@@ -600,6 +845,61 @@ public class BankManager {
         // says if true in the method call parameters, returns that inventory has increased size (length),
     }
 
+    private static Set<String> getItemsNotWorn(Set<String> items) {
+        return items.stream()
+                .filter(item -> !Equipment.isEquipped(item))
+                .collect(Collectors.toSet());
+    }
+
+    public static boolean withdrawAndEquip(Set<String> itemsToEquip) {
+
+        Set<String> itemsNotWorn = getItemsNotWorn(itemsToEquip);
+
+        boolean withdrawn = itemsNotWorn.stream()
+                .filter(item -> Inventory.getCount(item) == 0)
+                .allMatch(item -> Banking.withdraw(1, item));
+
+        if (withdrawn
+                && Timer.waitCondition(() -> Inventory.getAllList().stream()
+                .map(TribotUtil::getName)
+                .collect(Collectors.toSet()).containsAll(itemsNotWorn), General.random(2000, 3000))) {
+
+            boolean worn = Inventory.findList(rsItem -> itemsNotWorn.contains(TribotUtil.getName(rsItem))).stream()
+                    .allMatch(rsItem -> AccurateMouse.click(rsItem, "Wear", "Equip"));
+
+            if (worn && Timer.waitCondition(() -> getItemsNotWorn(itemsToEquip).size() == 0, General.random(1000, 2000))) {
+                Waiting.waitNormal(100,25);
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+
+
+
+    public static boolean withdrawGloryIfRequired() {
+        if (Optional.ofNullable(Equipment.getItem(Equipment.SLOTS.AMULET))
+                .map(TribotUtil::getName)
+                .filter(itemName -> itemName.contains(CHARGED_GLORY))
+                .isPresent()) {
+            //We have a glory already
+            return true;
+        }
+
+        return Arrays.stream(Banking.find(rsItem -> TribotUtil.getName(rsItem).contains(CHARGED_GLORY)))
+                .map(TribotUtil::getName)
+                .filter(StringUtils::isNotBlank)
+                .sorted()
+                .findFirst()
+                .map(Collections::singleton)
+                .map(BankManager::withdrawAndEquip)
+                .orElse(false)
+                && Banking.deposit(0, UNCHARGED_GLORY);
+    }
+
 
     public static boolean checkEquippedGlory() {
         if (!Equipment.isEquipped(CHARGED_GLORIES)) {
@@ -609,12 +909,15 @@ public class BankManager {
             if (Inventory.isFull())
                 BankManager.depositAll(true);
 
-            BankManager.withdrawArray(ItemId.AMULET_OF_GLORY, 1);
-            Timer.waitCondition(() -> Inventory.find(ItemId.AMULET_OF_GLORY).length > 0, 2500, 4000);
-            RSItem[] invGlory = Inventory.find(ItemId.AMULET_OF_GLORY);
+            BankManager.withdrawArray(
+                    ItemID.AMULET_OF_GLORY
+                  , 1);
+
+            Timer.waitCondition(() -> Inventory.find(ItemID.AMULET_OF_GLORY).length > 0, 2500, 4000);
+            RSItem[] invGlory = Inventory.find(ItemID.AMULET_OF_GLORY);
             if (invGlory.length > 0) {
                 if (invGlory[0].click("Wear"))
-                    return Timer.waitCondition(() -> Equipment.isEquipped(ItemId.AMULET_OF_GLORY), 2500, 4000);
+                    return Timer.waitCondition(() -> Equipment.isEquipped(ItemID.AMULET_OF_GLORY), 2500, 4000);
             } else
                 return false;
         }
@@ -626,7 +929,7 @@ public class BankManager {
         if (!Equipment.isEquipped(11118, 11120, 11122, 11124, 11972, 11974)) {
             BankManager.open(true);
             if (Banking.isBankScreenOpen()) {
-                if (withdraw(1, true, ItemId.COMBAT_BRACELET)) {
+                if (withdraw(1, true, ItemID.COMBAT_BRACELET)) {
                     RSItem[] invItem = Inventory.find(COMBAT_BRACELET);
                     if (invItem.length > 0) {
                         return AccurateMouse.click(invItem[0], "Wear");
@@ -641,17 +944,17 @@ public class BankManager {
     }
 
 
-    public static boolean getTeleItem(int itemID, int alternate1, int alternate2, int alternate3) { // need a check for having inventory items
-        RSItem[] bankCount = Banking.find(itemID);
+    public static boolean getTeleItem(int ItemID, int alternate1, int alternate2, int alternate3) { // need a check for having inventory items
+        RSItem[] bankCount = Banking.find(ItemID);
         Log.log("[BankManager] bankCount length = " + bankCount.length);
         if (bankCount.length > 0) { //checks if we have the item
-            String itemName = RSItemDefinition.get(itemID).getName(); // converts ID to its actual name
+            String itemName = RSItemDefinition.get(ItemID).getName(); // converts ID to its actual name
             Log.log("[Debug]: Getting: " + itemName);  // prints the actual item name from the ID entered
-            BankManager.withdraw(1, true, itemID);
+            BankManager.withdraw(1, true, ItemID);
             return Timer.waitCondition(() -> inventoryChange(true), 2500);
 
         } else {
-            Log.log("[BankManager]: Missing item: " + itemID);
+            Log.log("[BankManager]: Missing item: " + ItemID);
             bankCount = Banking.find(alternate1);
             if (bankCount.length > 0) {
                 String itemName = RSItemDefinition.get(alternate1).getName(); // converts ID to its actual name

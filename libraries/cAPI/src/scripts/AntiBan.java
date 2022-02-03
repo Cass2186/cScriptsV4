@@ -362,9 +362,6 @@ public class AntiBan {
             return;
 
         try {
-
-
-
             getABCUtil().sleep(time);
 
         } catch (InterruptedException e) {
