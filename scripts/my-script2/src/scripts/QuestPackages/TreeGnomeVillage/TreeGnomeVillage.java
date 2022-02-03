@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.ChatScreen;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.FightArena.FightArena;
@@ -385,32 +386,34 @@ public class TreeGnomeVillage implements QuestTask {
             while (Interfaces.get(217) != null || Interfaces.get(231) != null || Interfaces.get(229) != null) {
                 General.sleep(20, 75);
                 if (InterfaceUtil.clickInterfaceText(217, "continue")) {
-                    General.sleep(General.random(300, 600));
+                    General.sleep(600, 900);
                 }
-
+                Optional<String> text = ChatScreen.getMessage();
+                if (text.isEmpty())
+                    break;
                 if (Interfaces.isInterfaceSubstantiated(231, 5)) {
-                    if (Interfaces.get(231, 5).getText().contains("My legs")) {
+                    if (text.get().contains("My legs")) {
                         General.println("[Debug]: Answer is 4");
                         code = "0004";
                         break;
                     }
                 }
                 if (Interfaces.isInterfaceSubstantiated(231, 5)) {
-                    if (Interfaces.get(231, 5).getText().contains("Less than my hands")) {
+                    if (text.get().contains("Less than my hands")) {
                         General.println("[Debug]: Answer is 1");
                         code = "0001";
                         break;
                     }
                 }
                 if (Interfaces.isInterfaceSubstantiated(231, 5)) {
-                    if (Interfaces.get(231, 5).getText().contains("More than my head, less than my fingers")) {
+                    if (General.stripFormatting(text.get()).contains("More than my head, less than my fingers")) {
                         General.println("[Debug]: Answer is 2");
                         code = "0002";
                         break;
                     }
                 }
                 if (Interfaces.isInterfaceSubstantiated(231, 5)) {
-                    if (Interfaces.get(231, 5).getText().contains("More than we, less than our feet")) {
+                    if (General.stripFormatting(text.get()).contains("More than we, less than our feet")) {
                         General.println("[Debug]: Answer is 3");
                         code = "0003";
                         break;
