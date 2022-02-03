@@ -77,6 +77,7 @@ import scripts.QuestPackages.RestlessGhost.RestlessGhost;
 import scripts.QuestPackages.RfdCook.RfdCook;
 import scripts.QuestPackages.RfdEvilDave.RfdEvilDave;
 import scripts.QuestPackages.RfdGoblin.RfdGoblin;
+import scripts.QuestPackages.RfdLumbridgeGuide.RfdLumbridgeGuide;
 import scripts.QuestPackages.RfdMonkey.RfdMonkey;
 import scripts.QuestPackages.RfdSkratch.RfdSkratch;
 import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
@@ -541,6 +542,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 else if (arg.toLowerCase().contains("trollstronghold")) {
                     General.println("[Args]: Added  Troll Stronghold");
                     taskList.add(TrollStronghold.get());
+                }
+                else if (arg.toLowerCase().contains("rfdguide")) {
+                    General.println("[Args]: Added  RFD Guide");
+                    taskList.add(RfdLumbridgeGuide.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

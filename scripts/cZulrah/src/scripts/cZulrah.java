@@ -49,13 +49,6 @@ public class cZulrah extends Script implements AnimationListener, TickListener, 
     }
 
 
-    @Getter(AccessLevel.PACKAGE)
-    private Npc zulrah;
-
-
-    private ZulrahInstance instance;
-
-
    /* @Subscribe
     private void onNpcSpawned(NpcSpawned event) {
         NPC npc = event.getNpc();
@@ -88,11 +81,11 @@ public class cZulrah extends Script implements AnimationListener, TickListener, 
 
             switch (prayer) {
                 case PROTECT_FROM_MAGIC:
-                    Log.log("Should pray Magic");
+                    Log.debug("[cZulrah]: Should pray Magic");
                     Vars.get().shouldPrayMagic = true;
                     break;
                 case PROTECT_FROM_MISSILES:
-                    Log.log("Should pray Missles");
+                    Log.debug("[cZulrah]: Should pray Missles");
                     Vars.get().shouldPrayRanged = true;
                     break;
             }
@@ -148,10 +141,12 @@ public class cZulrah extends Script implements AnimationListener, TickListener, 
                 "RangedPrayer: " + Vars.get().shouldPrayRanged,
                 "Task: " + status
         ));
+
         if (TickObserver.instance != null) {
             ZulrahPhase currentPhase = TickObserver.instance.getPhase();
             LocalTile startTile = TickObserver.instance.getStartLocation();
             if (currentPhase != null) {
+                myString.add(currentPhase.toString());
                 LocalTile localTile = currentPhase.getStandTile(startTile);
                 if (localTile.getBounds().isPresent())
                     g.drawPolygon(localTile.getBounds().get());

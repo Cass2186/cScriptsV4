@@ -76,7 +76,7 @@ public class NpcCondition extends ConditionForStep {
         }
     }
 
-    public void checkNpcChanged(NpcChanged npcChanged) {
+   /* public void checkNpcChanged(NpcChanged npcChanged) {
         if (npcs.contains(npcChanged.getNpc()) && npcChanged.getNpc().getId() != this.npcID) {
             this.npcs.remove(npcChanged.getNpc());
             npcInScene = false;
@@ -86,7 +86,7 @@ public class NpcCondition extends ConditionForStep {
             this.npcs.add(npcChanged.getNpc());
             npcInScene = true;
         }
-    }
+    }*/
 
 
     public void updateHandler() {
