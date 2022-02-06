@@ -14,9 +14,12 @@ import java.util.Optional;
 
 public class WidgetTextRequirement implements Requirement {
 
-    @Setter
+
     @Getter
-    protected boolean hasPassed;
+    @Setter
+    private boolean hasPassed;
+
+
     protected boolean onlyNeedToPassOnce;
 
     @Getter
@@ -72,6 +75,7 @@ public class WidgetTextRequirement implements Requirement {
                 widget = widget.get().getChild(childChildId);
             }
             if (widget.isPresent()) {
+                //Log.debug("[WidgetTextReq]: widget is present");
                 for (String textOption : text) {
                     if (checkChildren) {
                         if (getChildren(widget.get(), textOption)) {
@@ -80,7 +84,7 @@ public class WidgetTextRequirement implements Requirement {
                     }
                     Optional<String> textOptional = widget.get().getText();
                     if (textOptional.isPresent() && textOptional.get().contains(textOption)) {
-                        Log.log("[WidgetTextReq]: Widget Text requirement has been validated true");
+                        Log.debug("[WidgetTextReq]: Widget Text requirement has been validated true");
                         return true;
                     }
                 }

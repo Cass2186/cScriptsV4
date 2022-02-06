@@ -58,6 +58,7 @@ public class DetailedQuestStep implements QuestStep {
         requirements.addAll(newRequirements);
     }
 
+
     public void addSafeSpots(WorldTile... worldPoints) {
         for (WorldTile worldPoint : worldPoints) {
             markedTiles.add(worldPoint);

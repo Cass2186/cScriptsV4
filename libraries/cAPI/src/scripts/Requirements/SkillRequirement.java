@@ -1,6 +1,9 @@
 package scripts.Requirements;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.api2007.Skills;
+
+import java.util.Locale;
 
 public class SkillRequirement implements Requirement{
 
@@ -19,6 +22,12 @@ public class SkillRequirement implements Requirement{
 
     }
 
+    @Override
+    public String toString(){
+        return "Missing Skill requirement of level " + this.minLevel + " for " +
+                StringUtils.capitalize(this.skill.toString().toLowerCase(Locale.ROOT));
+
+    }
     @Override
     public boolean check() {
         return meetsSkillRequirement();

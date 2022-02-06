@@ -14,6 +14,7 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
@@ -63,7 +64,15 @@ public class ObjectStep implements QuestStep {
     private int tileRadius = 2;
 
     @Getter
+    @Setter
+    private int[]alternateItems ;
+
+    @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
+
+
+    @Getter
+    private final List<QuestStep> substeps = new ArrayList<>();
 
     public ObjectStep(int objectId, RSTile tile) {
         this.objectId = objectId;
@@ -157,18 +166,20 @@ public class ObjectStep implements QuestStep {
     public void addDialogStep(String... dialog) {
         if (this.chat == null)  //shouldnt happen as its instantiated immediately
             return;
-
+        this.handleChat = true;
         this.chat.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
     }
 
     @Override
     public void addSubSteps(QuestStep... substep) {
 
+            this.substeps.addAll(Arrays.asList(substep));
+
     }
 
     @Override
     public void addSubSteps(Collection<QuestStep> substeps) {
-
+        this.substeps.addAll(substeps);
     }
 
     public Optional<LocalTile> getWalkableTile(LocalTile tile) {
@@ -178,11 +189,21 @@ public class ObjectStep implements QuestStep {
                 .findBestInteractable();
     }
 
+    public void addAlternateObjects(int... ids){
+
+    }
+
     @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
             Log.error("[ObjectStep]: We failed a requirement to execute this NPCStep");
             return;
+        }
+        if (this.substeps.size() > 0){
+            General.println("[NPCStep]: There are substeps for this NPCStep, executing them");
+            for (QuestStep sub : this.substeps){
+                sub.execute();
+            }
         }
 
         if (this.tile != null) {
@@ -211,6 +232,7 @@ public class ObjectStep implements QuestStep {
             Log.info("[ObjectStep]: Executing prior action boolean supplier");
             Timer.waitCondition(this.priorAction, 5000,7000);
         }
+
         Log.info("[ObjectStep]: Interacting with object: " + this.objectId + " with: " + this.objectAction);
 
         if (this.predicate != null) {
@@ -237,6 +259,7 @@ public class ObjectStep implements QuestStep {
 
             }
         }
+
         RSObject tileObj = Entities.find(ObjectEntity::new)
                 .tileEquals(this.tile)
                 .idEquals(this.objectId)
@@ -262,7 +285,34 @@ public class ObjectStep implements QuestStep {
             // will end after click if no wait condition
             Timer.waitCondition(() -> this.waitCond, 6000, 9000);
         }
-
+        else if (this.alternateItems != null) {
+            Optional<GameObject> ob = Query.gameObjects()
+                    .tileEquals(Utils.getWorldTileFromRSTile(this.tile))
+                    .idEquals(this.alternateItems)
+                    .findClosest();
+            if (Utils.clickObj(ob, this.objectAction)
+                    || Utils.clickObject(this.objectId, this.objectAction, false)) {
+                if (!handleChat) {
+                    if (NPCInteraction.isConversationWindowUp())
+                        NPCInteraction.handleConversation();
+                } else {
+                    Log.debug("[ObjectStep]: Handling chat");
+                    NPCInteraction.waitForConversationWindow();
+                    if (chat != null && NPCInteraction.isConversationWindowUp()) {
+                        String[] s = new String[chat.size()];
+                        NPCInteraction.handleConversation(chat.toArray(s));
+                    } else if (NPCInteraction.isConversationWindowUp()) {
+                        NPCInteraction.handleConversation();
+                    }
+                    return;
+                }
+                // will end after click if no wait condition
+                Timer.waitCondition(() -> this.waitCond, 6000, 9000);
+            }
+        }
     }
-
+    @Override
+    public String toString(){
+        return "";
+    }
 }

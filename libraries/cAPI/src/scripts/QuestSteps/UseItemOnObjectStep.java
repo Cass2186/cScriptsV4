@@ -162,7 +162,7 @@ public class UseItemOnObjectStep implements QuestStep{
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes");
+                NPCInteraction.handleConversation("Yes", "Yes.");
             }
             return Timer.waitCondition(() -> waitCond, 5000, 8000);
         } else if (Utils.useItemOnObject(this.ItemID, this.objectName)) {

@@ -35,6 +35,11 @@ public class ItemOnTileRequirement implements Requirement {
         this.ItemID = itemReq.getId();
     }
 
+    public ItemOnTileRequirement(int id) {
+        this.ItemID = id;
+        this.tile = null;
+    }
+
 
     @Override
     public boolean check() {

@@ -76,27 +76,7 @@ public class NpcCondition extends ConditionForStep {
         }
     }
 
-<<<<<<< Updated upstream
-   /* public void checkNpcChanged(NpcChanged npcChanged) {
-=======
-  /*  public void checkNpcChanged(NpcChanged npcChanged) {
->>>>>>> Stashed changes
-        if (npcs.contains(npcChanged.getNpc()) && npcChanged.getNpc().getId() != this.npcID) {
-            this.npcs.remove(npcChanged.getNpc());
-            npcInScene = false;
-        }
 
-        if (npcChanged.getNpc().getId() == this.npcID) {
-            this.npcs.add(npcChanged.getNpc());
-            npcInScene = true;
-        }
-<<<<<<< Updated upstream
-    }*/
-
-=======
-    }
-*/
->>>>>>> Stashed changes
 
     public void updateHandler() {
         npcInScene = false;

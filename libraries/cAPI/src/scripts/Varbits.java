@@ -567,8 +567,6 @@ public enum Varbits {
     @Getter
     public int id;
 
-    @Getter
-    public int value = getId();
 
     Varbits(int value) {
         this.id = value;

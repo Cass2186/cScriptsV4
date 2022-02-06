@@ -12,9 +12,10 @@ import scripts.Requirements.Requirement;
 
 import java.util.*;
 
-public class ClickItemStep implements QuestStep{
+public class ClickItemStep implements QuestStep {
 
     private int ItemID;
+    private String itemName;
     private String interactionString;
     private RSTile tile;
     private List<String> dialog;
@@ -50,6 +51,13 @@ public class ClickItemStep implements QuestStep{
     }
 
 
+    public ClickItemStep(String itemName, String interactionString, RSTile tile, Requirement... reqs) {
+        this.ItemID = -1;
+        this.itemName = itemName;
+        this.interactionString = interactionString;
+        this.tile = tile;
+        this.requirements.addAll(Arrays.asList(reqs));
+    }
 
 
     public void addDialogStep(String dialog) {
@@ -84,21 +92,46 @@ public class ClickItemStep implements QuestStep{
             General.println("[ClickItemSteps]: We failed a requirement to execute this ClickItemStep");
             return;
         }
+        if (this.ItemID != -1) {
+            RSItem[] item = Inventory.find(this.ItemID);
+            if (item.length > 0) {
+                if (this.tile != null && PathingUtil.localNavigation(this.tile)) {
+                    PathingUtil.movementIdle();
+                } else if (this.tile != null && PathingUtil.walkToTile(this.tile)) {
+                    PathingUtil.movementIdle();
+                }
+                if (dialog == null) {
+                    item[0].click(this.interactionString);
 
-        RSItem[] item = Inventory.find(this.ItemID);
-        if (item.length > 0) {
-            if (this.tile != null && PathingUtil.localNavigation(this.tile)) {
-                PathingUtil.movementIdle();
-            } else if (this.tile != null && PathingUtil.walkToTile(this.tile)){
-                PathingUtil.movementIdle();
+                } else if (item[0].click(this.interactionString)) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation(this.interactionString);
+
+                }
             }
-            if (dialog == null) {
-                item[0].click(this.interactionString);
-
-            } else if (item[0].click(this.interactionString)) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation(this.interactionString);
-
+        } else if (this.itemName != null) {
+            RSItem[] invItem = Inventory.find(this.itemName);
+            if (invItem.length > 0) {
+                if (this.tile != null) {
+                    for (int i = 0; i < 4; i++) {
+                        if (this.tile.isClickable() && this.tile.click("Walk here")){
+                            PathingUtil.movementIdle();
+                        }
+                        else if (PathingUtil.localNavigation(this.tile)) {
+                            PathingUtil.movementIdle();
+                        } else if (PathingUtil.walkToTile(this.tile)) {
+                            PathingUtil.movementIdle();
+                        }
+                        if (Player.getPosition().equals(this.tile))
+                            break;
+                    }
+                }
+                if (dialog == null) {
+                    invItem[0].click(this.interactionString);
+                } else if (invItem[0].click(this.interactionString)) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation(this.interactionString);
+                }
             }
         }
 

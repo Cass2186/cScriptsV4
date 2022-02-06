@@ -6,6 +6,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.query.Query;
 import scripts.PathingUtil;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
 import scripts.Utils;
@@ -30,6 +31,10 @@ public class GroundItemStep implements QuestStep {
     }
 
     public GroundItemStep(ItemReq req) {
+        this.itemID = req.getId();
+    }
+
+    public GroundItemStep(ItemRequirement req) {
         this.itemID = req.getId();
     }
 

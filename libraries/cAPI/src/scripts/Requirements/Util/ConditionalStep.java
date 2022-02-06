@@ -1,6 +1,8 @@
 package scripts.Requirements.Util;
 
 import dax.shared.helpers.questing.Quest;
+import lombok.Getter;
+import lombok.Setter;
 import org.tribot.api.General;
 import scripts.QuestSteps.QuestStep;
 import scripts.Requirements.Requirement;
@@ -14,9 +16,28 @@ public class ConditionalStep implements QuestStep {
 
     protected boolean started = false;
 
+    /* Locking applies to ConditionalSteps. Intended to be used as a method of
+     forcing a step to run if it's been locked */
+    private boolean locked;
+
     protected final LinkedHashMap<Requirement, QuestStep> steps = new LinkedHashMap<>();
     //   protected final List<ChatMessageRequirement> chatConditions = new ArrayList<>();
     // protected final List<NpcCondition> npcConditions = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private boolean isLockable;
+
+    @Getter
+    @Setter
+    private boolean blocker;
+
+    @Getter
+    private boolean unlockable = true;
+
+    @Getter
+    @Setter
+    private Requirement lockingCondition;
 
     protected QuestStep currentStep;
 
@@ -74,6 +95,19 @@ public class ConditionalStep implements QuestStep {
             currentStep = null;
         }
     }
+
+
+
+
+    public void setLockedManually(boolean isLocked)
+    {
+        locked = isLocked;
+    }
+
+
+
+
+
     @Override
     public void execute() {
         updateSteps();
@@ -100,4 +134,5 @@ public class ConditionalStep implements QuestStep {
     public void addSubSteps(Collection<QuestStep> substeps) {
 
     }
+
 }

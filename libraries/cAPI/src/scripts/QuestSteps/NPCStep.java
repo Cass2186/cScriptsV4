@@ -1,5 +1,6 @@
 package scripts.QuestSteps;
 
+import com.trilezstudios.updater.hooks.NPC;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import dax.walker_engine.local_pathfinding.Reachable;
 import lombok.Builder;
@@ -12,9 +13,11 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.Quest;
-import scripts.NpcChat;
-import scripts.PathingUtil;
+import org.tribot.script.sdk.types.WorldTile;
+import scripts.*;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
 
@@ -49,11 +52,18 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
     private int radius = 3;
 
     @Getter
+    private Optional<Prayer> prayer;
+
+
+    private String description = "";
+
+    @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
 
     @Getter
     private final List<QuestStep> substeps = new ArrayList<>();
 
+    private List<WorldTile> markedTiles = new ArrayList<>();
 
     public NPCStep(int npcID, RSArea npcArea) {
         this.npcID = npcID;
@@ -63,6 +73,7 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
     public NPCStep(int npcID, RSTile npcTile, String description) {
         this.npcID = npcID;
         this.npcTile = npcTile;
+        this.description = description;
     }
 
     public NPCStep(int npcID, RSTile npcTile) {
@@ -177,6 +188,27 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
         this.requirements.addAll(Arrays.asList(requirements));
     }
 
+    //TODO implement this
+    public void addAlternateNpcs(int... ids) {
+
+    }
+
+    public void addSafeSpots(WorldTile... worldPoints) {
+        markedTiles.addAll(Arrays.asList(worldPoints));
+    }
+
+    //call this on the step to make it kill the npc instead of making a method
+    //then call .execute as you normall would
+    public void setAsKillNpcStep(Optional<Prayer> prayer) {
+        this.isCombatStep = true;
+        this.setInteractionString("Attack");
+        this.prayer = prayer;
+    }
+
+    public void setAsKillNpcStep() {
+        setAsKillNpcStep(Optional.empty());
+    }
+
     @Override
     public void addDialogStep(String... dialog) {
         if (listChatOptions == null) {
@@ -185,13 +217,23 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
         Collections.addAll(listChatOptions, dialog);
     }
 
+
     @Override
     public void addSubSteps(QuestStep... substep) {
         this.substeps.addAll(Arrays.asList(substep));
     }
+
     @Override
     public void addSubSteps(Collection<QuestStep> substeps) {
         this.substeps.addAll(substeps);
+    }
+
+    @Override
+    public String toString() {
+        if (this.description != null)
+            return this.description;
+
+        return "NPC Step";
     }
 
     @Override
@@ -200,9 +242,9 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
             General.println("[NPCStep]: We failed a requirement to execute this NPCStep");
             return;
         }
-        if (this.substeps.size() > 0){
+        if (this.substeps.size() > 0) {
             General.println("[NPCStep]: There are substeps for this NPCStep, executing them");
-            for (QuestStep sub : this.substeps){
+            for (QuestStep sub : this.substeps) {
                 sub.execute();
             }
         }
@@ -212,18 +254,18 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
                 General.println("[NPCStep]: Blind walking to location");
                 Walking.blindWalkTo(this.area.getRandomTile());
             }
-               //attempt to generate a local path first, if that fails call dax walker
-            if (!PathingUtil.walkToArea(this.area, false) )
+            //attempt to generate a local path first, if that fails call dax walker
+            if (!PathingUtil.walkToArea(this.area, false))
                 PathingUtil.localNavigation(this.area.getRandomTile());
 
 
             // check we're moving before we do a longer timeout for movement
             if (Timer.waitCondition(Player::isMoving, 1500, 2250))
                 Timer.waitCondition(() -> this.area.contains(Player.getPosition()), 6500, 9500);
-        } else if (this.npcTile != null){
+        } else if (this.npcTile != null) {
             //attempt to generate a local path first, if that fails call dax walker
 //            if (!PathingUtil.localNavigation(this.npcTile))
-                PathingUtil.walkToTile(this.npcTile, radius, false);
+            PathingUtil.walkToTile(this.npcTile, radius, false);
 
 
             // check we're moving before we do a longer timeout for movement
@@ -231,8 +273,44 @@ public class NPCStep extends DetailedQuestStep implements QuestStep {
                 Timer.slowWaitCondition(() -> this.npcTile.isClickable(), 8500, 9500);
             Log.log("[NpcStep]: Done walking");
         }
-        if (this.isCombatStep)
-            setInteractionString("Attack");
+
+        if (this.isCombatStep) {
+            // interact to start dialog or combat if not already in combat
+            if (!MyPlayer.isHealthBarVisible() && NpcChat.talkToNPC(this.npcID, this.interactionString))
+                Timer.waitCondition(() -> MyPlayer.isHealthBarVisible() ||
+                        NPCInteraction.isConversationWindowUp(), 4500, 5500);
+
+            // handle dialog if up
+            if (NPCInteraction.isConversationWindowUp()) {
+                if (listChatOptions != null && listChatOptions.size() > 0)
+                    NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
+                else
+                    NPCInteraction.handleConversation();
+            }
+            if (this.prayer.isPresent()) {
+                if (Prayer.getPrayerPoints() < 15) {
+                    Utils.drinkPotion(ItemID.PRAYER_POTION);
+                }
+                this.prayer.map(Prayer::enable);
+            }
+
+            // handle safespot
+            if (this.markedTiles != null) {
+                WorldTile tile = this.markedTiles.get(0);
+                if (!tile.equals(MyPlayer.getPosition()) && tile.interact("Walk here")) {
+                    PathingUtil.movementIdle();
+                    //re-engage NPC
+                    NpcChat.talkToNPC(this.npcID, this.interactionString);
+                }
+            }
+
+
+            // handle food
+
+
+            return;
+        }
+
 
         if (NpcChat.talkToNPC(this.rsnpc, this.interactionString) ||
                 (this.npcName != null && NpcChat.talkToNPC(this.npcName)) ||
