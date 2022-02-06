@@ -652,7 +652,7 @@ public class MountainDaughter implements QuestTask {
         if (!KENDAL_SAFE_SPOT_AREA.contains(Player.getPosition()))
             Utils.blindWalkToTile(SAFE_TILE);
 
-        if (SAFE_TILE.equals(Player.getPosition())) {
+        if (KENDAL_SAFE_SPOT_AREA.contains(Player.getPosition())) {
             RSNPC[] kendal = NPCs.find("The Kendal");
 
             if (kendal.length > 0) {

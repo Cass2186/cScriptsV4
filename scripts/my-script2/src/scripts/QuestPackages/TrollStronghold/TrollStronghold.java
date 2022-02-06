@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSGroundItem;
+import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
@@ -17,6 +18,7 @@ import scripts.Requirements.Requirement;
 import scripts.Requirements.SkillRequirement;
 import scripts.Tasks.Priority;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,6 +88,7 @@ public class TrollStronghold implements QuestTask {
                     new GEItem(ItemID.COMBAT_BRACELET[2], 1, 20),
                     new GEItem(ItemID.GAMES_NECKLACE[0], 1, 70),
                     new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.PRAYER_POTION[0], 3, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
@@ -95,7 +98,7 @@ public class TrollStronghold implements QuestTask {
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
         General.println("[Debug]: " + cQuesterV2.status);
-  buyStep.buyItems();
+        buyStep.buyItems();
     }
 
     public void getItems() {
@@ -112,6 +115,7 @@ public class TrollStronghold implements QuestTask {
         BankManager.withdraw(1200, true, ItemID.FIRE_RUNE);
         BankManager.withdraw(18, true, ItemID.LOBSTER);
         BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
+        BankManager.withdraw(3, true, ItemID.PRAYER_POTION[0]);
         BankManager.withdraw(1, true, CLIMBING_BOOTS);
         BankManager.close(true);
         Utils.equipItem(CLIMBING_BOOTS);
@@ -136,7 +140,7 @@ public class TrollStronghold implements QuestTask {
             Utils.drinkPotion(ItemID.STAMINA_POTION);
     }
 
-    public void step2() {
+    public void goToDadFight() {
         if (!Equipment.isEquipped(CLIMBING_BOOTS)) {
             buyItems();
             getItems();
@@ -184,7 +188,9 @@ public class TrollStronghold implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (PathingUtil.localNavigation(new RSTile(2877, 3622, 0)))
                 PathingUtil.movementIdle();
-
+            else if (PathingUtil.blindWalkToTile(new RSTile(2877, 3622, 0))){
+                PathingUtil.movementIdle();
+            }
             if (Utils.clickObj("Rocks", "Climb")) {
                 Timer.waitCondition(() -> AFTER_ROCKS_2_TO_ROCKS_3.contains(Player.getPosition()), 12000);
                 Utils.idle(2000, 6000);
@@ -207,8 +213,11 @@ public class TrollStronghold implements QuestTask {
         if (SAFE_AREA.contains(Player.getPosition()) && Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
             cQuesterV2.status = "Fighting Dad";
             General.println("[Debug]: " + cQuesterV2.status);
+            if (NPCInteraction.isConversationWindowUp())
             NPCInteraction.handleConversation();
-            if (Utils.clickNPC("Dad", "Attack")) {
+
+            RSNPC[] dad = NPCs.findNearest("Dad");
+            if (dad.length > 0 && !dad[0].isInCombat() && Utils.clickNPC("Dad", "Attack")) {
                 NPCInteraction.handleConversation();
                 Timer.waitCondition(() -> Combat.isUnderAttack() || !SAFE_AREA.contains(Player.getPosition()), 3500, 5000);
                 cQuesterV2.status = "Waiting...";
@@ -226,7 +235,7 @@ public class TrollStronghold implements QuestTask {
         }
     }
 
-    public void step3() {
+    public void navigateCavesToStronghold() {
         if (SAFE_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to Cave";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -249,6 +258,9 @@ public class TrollStronghold implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (PathingUtil.localNavigation(CAVE_EXIT))
                 PathingUtil.movementIdle();
+            else if (PathingUtil.blindWalkToArea(CAVE_EXIT)){
+                PathingUtil.movementIdle();
+            }
 
             if (Utils.clickObj(3758, "Exit"))
                 Timer.abc2WaitCondition(() -> !INSIDE_CAVE.contains(Player.getPosition()), 6000, 8000);
@@ -257,7 +269,7 @@ public class TrollStronghold implements QuestTask {
     }
 
 
-    public void step4() {
+    public void navigateStronghold() {
         if (!WHOLE_STRONGHOLD_LEVEL2.contains(Player.getPosition()) && Inventory.find(PRISON_KEY).length < 1 && !WHOLE_STRONGHOLD_LEVEL1.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to stronghold";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -298,9 +310,12 @@ public class TrollStronghold implements QuestTask {
             if (Walking.blindWalkTo(new RSTile(2821, 10070, 2)))
                 PathingUtil.movementIdle();
 
+
+
             if (Utils.clickNPC("Troll General", "Attack")) {
                 Timer.waitCondition(() -> Combat.isUnderAttack(), 10000);
-                Timer.waitCondition(() -> !Combat.isUnderAttack() && GroundItems.find(PRISON_KEY).length > 0, 120000);
+                Timer.waitCondition(() -> !Combat.isUnderAttack() && GroundItems.find(PRISON_KEY).length > 0,
+                        120000);
                 Utils.idle(500, 3000);
             }
 
@@ -338,7 +353,10 @@ public class TrollStronghold implements QuestTask {
                     Utils.idle(2000, 4000);
             }
 
-            PathingUtil.localNavigation(DOOR_AREA);
+            if(PathingUtil.localNavigation(DOOR_AREA))
+                PathingUtil.movementIdle();
+            else if (PathingUtil.blindWalkToArea(DOOR_AREA))
+                PathingUtil.movementIdle();
             if (Utils.clickObj(3780, "Unlock"))
                 Utils.idle(2000, 6000);
 
@@ -440,7 +458,7 @@ public class TrollStronghold implements QuestTask {
 
     @Override
     public void execute() {
-        if (!checkRequirements()){
+        if (!checkRequirements()) {
             Log.log("[Debug]; Missing a requirement for Troll Stronghold (death plateau & 15 agility)");
             cQuesterV2.taskList.remove(this);
             return;
@@ -451,11 +469,11 @@ public class TrollStronghold implements QuestTask {
             startQuest();
         }
         if (Game.getSetting(317) == 10) {
-            step2();
+            goToDadFight();
         }
         if (Game.getSetting(317) == 20) {
-            step3();
-            step4();
+            navigateCavesToStronghold();
+            navigateStronghold();
             step5();
         }
         if (Game.getSetting(317) == 30) {
@@ -484,7 +502,7 @@ public class TrollStronghold implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-        SkillRequirement agil =   new SkillRequirement(Skills.SKILLS.AGILITY, 15);
+        SkillRequirement agil = new SkillRequirement(Skills.SKILLS.AGILITY, 15);
         return Game.getSetting(QuestVarPlayer.QUEST_DEATH_PLATEAU.getId()) >= 80 && agil.check();
     }
 

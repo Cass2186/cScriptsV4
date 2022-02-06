@@ -2,6 +2,7 @@ package scripts.QuestPackages.TouristTrap;
 
 import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
@@ -16,7 +17,9 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.Barcrawl.BarCrawl;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.*;
+import scripts.Requirements.Util.Conditions;
+import scripts.Requirements.Util.Operation;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
@@ -38,9 +41,6 @@ public class TouristTrap implements QuestTask {
     public int feather = 314; //need 60
     public int waterskin4 = 1823; // need 6
 
-    int mindRune = 558; // need 300
-    int fireRune = 554; // need 900
-    int staffOfAir = 1381;
     int lobster = 379; // need 10
     int metalKey = 1839;
     int jailKey = 1840;
@@ -54,17 +54,24 @@ public class TouristTrap implements QuestTask {
     int ANA_IN_BARREL = 1842;
     int KNIFE = 946;
 
-    enum REWARDS{
+    enum REWARDS {
+        AGILITY("Agility."),
+        SMITHING("Smithing."),
+        FLETCHING("Fletching."),
+        THIEVING("Thieving");
 
+        @Getter
+        private String text;
+
+        REWARDS(String string){
+            this.text= string;
+        }
     }
 
-    public static String thievingReward = "Thieving";
-    public static  String agilityReward = "Agility.";
-    public static  String smithingReward = "Smithing.";
-    public static String fletchingReward = "Fletching.";
 
-    public static String skill1 = agilityReward;
-    public static String skill2 = agilityReward;
+    public static String skill1 = REWARDS.AGILITY.getText();
+    public static String skill2 = REWARDS.AGILITY.getText();
+
 
     String[] CAPTAIN_CHAT_ARRAY = {
             "Wow! A real captain!",
@@ -84,10 +91,7 @@ public class TouristTrap implements QuestTask {
 
 
     String[] slave6 = {"Yeah, okay, let's give it a go.", "Yeah, I'll give it another go."};
-    String[] slave8 = {"Yes, I'll trade." ,"Yeah, I'll trade."};
-
-    String alShabim1 = "I'm look for a pineapple.";
-    String alShabim2 = "Yes, I'm interested.";
+    String[] slave8 = {"Yes, I'll trade.", "Yeah, I'll trade."};
 
     String[] CAPTAIN_SIAD = {"I wanted to have a chat?",
             "You seem to have a lot of books!",
@@ -134,9 +138,57 @@ public class TouristTrap implements QuestTask {
     RSArea OFF_CLIFF = new RSArea(new RSTile(3269, 3041, 0), new RSTile(3265, 3037, 0));
     RSArea WHOLE_LEFT_SIDE_OF_MINE = new RSArea(new RSTile(3281, 9410, 0), new RSTile(3265, 9465, 0));
 
-    public static final RSTile[] PATH_TO_ANNA = new RSTile[]{new RSTile(3319, 9431, 0), new RSTile(3316, 9433, 0), new RSTile(3313, 9435, 0), new RSTile(3310, 9435, 0), new RSTile(3307, 9435, 0), new RSTile(3307, 9438, 0), new RSTile(3307, 9442, 0), new RSTile(3304, 9444, 0), new RSTile(3301, 9447, 0), new RSTile(3299, 9450, 0), new RSTile(3297, 9453, 0), new RSTile(3296, 9456, 0), new RSTile(3296, 9460, 0), new RSTile(3297, 9463, 0), new RSTile(3300, 9465, 0)};
-    public static final RSTile[] NEW_PATH_TO_ANNA = new RSTile[]{new RSTile(3319, 9431, 0), new RSTile(3318, 9431, 0), new RSTile(3317, 9431, 0), new RSTile(3317, 9432, 0), new RSTile(3316, 9433, 0), new RSTile(3315, 9434, 0), new RSTile(3314, 9434, 0), new RSTile(3313, 9435, 0), new RSTile(3312, 9435, 0), new RSTile(3311, 9435, 0), new RSTile(3310, 9435, 0), new RSTile(3309, 9435, 0), new RSTile(3308, 9435, 0), new RSTile(3307, 9435, 0), new RSTile(3307, 9436, 0), new RSTile(3307, 9437, 0), new RSTile(3307, 9438, 0), new RSTile(3307, 9439, 0), new RSTile(3307, 9440, 0), new RSTile(3307, 9442, 0), new RSTile(3306, 9442, 0), new RSTile(3305, 9443, 0), new RSTile(3304, 9444, 0), new RSTile(3303, 9445, 0), new RSTile(3302, 9446, 0), new RSTile(3301, 9447, 0), new RSTile(3300, 9448, 0), new RSTile(3299, 9449, 0), new RSTile(3299, 9450, 0), new RSTile(3299, 9451, 0), new RSTile(3298, 9453, 0), new RSTile(3297, 9454, 0), new RSTile(3296, 9455, 0), new RSTile(3296, 9456, 0), new RSTile(3296, 9457, 0), new RSTile(3296, 9458, 0), new RSTile(3296, 9459, 0), new RSTile(3296, 9460, 0), new RSTile(3296, 9461, 0), new RSTile(3296, 9462, 0), new RSTile(3297, 9463, 0), new RSTile(3298, 9464, 0), new RSTile(3299, 9465, 0), new RSTile(3300, 9466, 0), new RSTile(3301, 9466, 0), new RSTile(3302, 9466, 0), new RSTile(3303, 9466, 0), new RSTile(3304, 9466, 0)};
+    final RSTile[] PATH_TO_ANNA = new RSTile[]{new RSTile(3319, 9431, 0), new RSTile(3316, 9433, 0), new RSTile(3313, 9435, 0), new RSTile(3310, 9435, 0), new RSTile(3307, 9435, 0), new RSTile(3307, 9438, 0), new RSTile(3307, 9442, 0), new RSTile(3304, 9444, 0), new RSTile(3301, 9447, 0), new RSTile(3299, 9450, 0), new RSTile(3297, 9453, 0), new RSTile(3296, 9456, 0), new RSTile(3296, 9460, 0), new RSTile(3297, 9463, 0), new RSTile(3300, 9465, 0)};
+    final RSTile[] NEW_PATH_TO_ANNA = new RSTile[]{new RSTile(3319, 9431, 0), new RSTile(3318, 9431, 0), new RSTile(3317, 9431, 0), new RSTile(3317, 9432, 0), new RSTile(3316, 9433, 0), new RSTile(3315, 9434, 0), new RSTile(3314, 9434, 0), new RSTile(3313, 9435, 0), new RSTile(3312, 9435, 0), new RSTile(3311, 9435, 0), new RSTile(3310, 9435, 0), new RSTile(3309, 9435, 0), new RSTile(3308, 9435, 0), new RSTile(3307, 9435, 0), new RSTile(3307, 9436, 0), new RSTile(3307, 9437, 0), new RSTile(3307, 9438, 0), new RSTile(3307, 9439, 0), new RSTile(3307, 9440, 0), new RSTile(3307, 9442, 0), new RSTile(3306, 9442, 0), new RSTile(3305, 9443, 0), new RSTile(3304, 9444, 0), new RSTile(3303, 9445, 0), new RSTile(3302, 9446, 0), new RSTile(3301, 9447, 0), new RSTile(3300, 9448, 0), new RSTile(3299, 9449, 0), new RSTile(3299, 9450, 0), new RSTile(3299, 9451, 0), new RSTile(3298, 9453, 0), new RSTile(3297, 9454, 0), new RSTile(3296, 9455, 0), new RSTile(3296, 9456, 0), new RSTile(3296, 9457, 0), new RSTile(3296, 9458, 0), new RSTile(3296, 9459, 0), new RSTile(3296, 9460, 0), new RSTile(3296, 9461, 0), new RSTile(3296, 9462, 0), new RSTile(3297, 9463, 0), new RSTile(3298, 9464, 0), new RSTile(3299, 9465, 0), new RSTile(3300, 9466, 0), new RSTile(3301, 9466, 0), new RSTile(3302, 9466, 0), new RSTile(3303, 9466, 0), new RSTile(3304, 9466, 0)};
     ArrayList<RSTile> tilePath = new ArrayList<RSTile>(Arrays.asList(NEW_PATH_TO_ANNA));
+
+    /**
+     * Runelite Areas
+     */
+    RSArea jail = new RSArea(new RSTile(3284, 3031, 0), new RSTile(3287, 3037, 0));
+    RSArea camp = new RSArea(new RSTile(3274, 3014, 0), new RSTile(3305, 3037, 1));
+    RSArea upstairs = new RSArea(new RSTile(3284, 3031, 1), new RSTile(3293, 3037, 1));
+    RSArea slope = new RSArea(new RSTile(3282, 3032, 0), new RSTile(3283, 3037, 0));
+    RSArea cliff = new RSArea(new RSTile(3279, 3037, 0), new RSTile(3281, 3038, 0));
+    RSArea secondCliff = new RSArea(new RSTile(3273, 3035, 0), new RSTile(3278, 3039, 0));
+
+    RSArea mine1 = new RSArea(new RSTile(3266, 9410, 0), new RSTile(3282, 9466, 0));
+    RSArea deepMine = new RSArea(new RSTile(3282, 9408, 0), new RSTile(3326, 9470, 0));
+    RSArea deepMineP1 = new RSArea(new RSTile(3283, 9409, 0), new RSTile(3314, 9427, 0));
+    RSArea deepMineP2P1 = new RSArea(new RSTile(3315, 9416, 0), new RSTile(3326, 9470, 0));
+    RSArea deepMineP2P2 = new RSArea(new RSTile(3293, 9429, 0), new RSTile(3314, 9470, 0));
+    RSArea miningRoom = new RSArea(new RSTile(3283, 9427, 0), new RSTile(3292, 9454, 0));
+
+
+    AreaRequirement inJail = new AreaRequirement(jail);
+    AreaRequirement inCamp = new AreaRequirement(camp);
+    AreaRequirement inMine1 = new AreaRequirement(mine1);
+    AreaRequirement inUpstairs = new AreaRequirement(upstairs);
+    AreaRequirement inDeepMine = new AreaRequirement(deepMine);
+    AreaRequirement inDeepMineP1 = new AreaRequirement(deepMineP1);
+    AreaRequirement inDeepMineP2 = new AreaRequirement(deepMineP2P1, deepMineP2P2);
+    AreaRequirement inMiningRoom = new AreaRequirement(miningRoom);
+
+    AreaRequirement onSlope = new AreaRequirement(slope);
+    AreaRequirement onCliff = new AreaRequirement(cliff);
+    AreaRequirement onSecondCliff = new AreaRequirement(secondCliff);
+    AreaRequirement inJailEscape = new AreaRequirement(jail, slope, cliff, secondCliff);
+
+    //    hasSlaveClothes = new ItemRequirements(slaveTop, slaveBoot, slaveRobe);
+
+    Conditions searchedBookcase = new Conditions(true, new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "You notice several books on the subject of sailing."));
+    Conditions distractedSiad = new Conditions(true, new WidgetTextRequirement(229, 1, "The captain starts rambling on about his days as a salty sea dog. He<br>looks quite distracted..."));
+
+    VarbitRequirement anaPlacedOnCartOfLift = new VarbitRequirement(2805, 1);
+
+    // TODO: Better detection of if Ana is on the surface or in the underground barrel
+    VarplayerRequirement anaOnSurface =new VarplayerRequirement(197,22, Operation.GREATER_EQUAL);
+
+    // TODO: This only gets set the first time. If you somehow lose Ana between here and the cart it remains set. Need to add more logic around this
+    VarbitRequirement anaOnSurfaceInBarrel = new VarbitRequirement(2808, 1);
+    VarbitRequirement anaOnCart = new VarbitRequirement(2809, 1);
+    VarbitRequirement anaFree = new VarbitRequirement(3733, 1);
+
 
     public void checkLevel() {
         if (Skills.getActualLevel(Skills.SKILLS.FLETCHING) < 10) {
@@ -217,13 +269,12 @@ public class TouristTrap implements QuestTask {
     ));
 
 
-
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
         General.println("[Debug]: " + cQuesterV2.status);
         if (Skills.SKILLS.FLETCHING.getActualLevel() < 10) {
             int xpTo10 = Skills.getXPToLevel(Skills.SKILLS.FLETCHING, 10);
-            itemsToBuy.add(    new GEItem(ItemID.LOGS, ((xpTo10 / 5) + 5), 50));
+            itemsToBuy.add(new GEItem(ItemID.LOGS, ((xpTo10 / 5) + 5), 50));
         }
         BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
         buyStep.buyItems();
@@ -236,9 +287,9 @@ public class TouristTrap implements QuestTask {
         BankManager.depositAll(true);
         BankManager.depositEquipment();
         BankManager.withdraw(1, true, ItemID.DESERT_BOOTS);
-        BankManager.withdraw(1, true,  ItemID.DESERT_ROBE);
-        BankManager.withdraw(1, true,  ItemID.DESERT_SHIRT);
-        Utils.equipItem( ItemID.DESERT_BOOTS);
+        BankManager.withdraw(1, true, ItemID.DESERT_ROBE);
+        BankManager.withdraw(1, true, ItemID.DESERT_SHIRT);
+        Utils.equipItem(ItemID.DESERT_BOOTS);
         Utils.equipItem(ItemID.DESERT_ROBE);
         Utils.equipItem(ItemID.DESERT_SHIRT);
         BankManager.withdraw(3, true, waterskin4);
@@ -369,15 +420,13 @@ public class TouristTrap implements QuestTask {
     }
 
     public void removeGear() {
-        if (Inventory.find(metalKey).length > 0) {
+        if (Inventory.find(metalKey).length > 0 && !Combat.isUnderAttack()) {
             Utils.microSleep(); // in case the killing doesn't call the sleep after
             cQuesterV2.status = "Disabling prayer and unequiping items.";
             General.println("[Debug]: " + cQuesterV2.status);
             Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
             Equipment.remove(Equipment.SLOTS.AMULET);
-            Utils.microSleep();
             Equipment.remove(Equipment.SLOTS.WEAPON);
-            Utils.microSleep();
             Equipment.remove(Equipment.SLOTS.CAPE);
             Equipment.remove(Equipment.SLOTS.HELMET);
             Equipment.remove(Equipment.SLOTS.ARROW);
@@ -440,8 +489,8 @@ public class TouristTrap implements QuestTask {
                 NPCInteraction.handleConversation(SLAVE_CHAT_1);
                 cQuesterV2.status = "Waiting on guards to move...";
                 General.println("[Debug]: " + cQuesterV2.status);
-                if(Timer.waitCondition(() ->
-                        Query.npcs().inArea(Area.fromRadius(MyPlayer.getPosition(),2))
+                if (Timer.waitCondition(() ->
+                        Query.npcs().inArea(Area.fromRadius(MyPlayer.getPosition(), 2))
                                 .nameContains("Guard").stream().findAny().isEmpty(), 45000, 60000)) {
                     NPCInteraction.handleConversation(slave6);
                     NPCInteraction.handleConversation(slave8);
@@ -465,8 +514,8 @@ public class TouristTrap implements QuestTask {
                 cQuesterV2.status = "Waiting on guards to move...";
                 General.println("[Debug]: " + cQuesterV2.status);
 
-                if(Timer.waitCondition(() ->
-                        Query.npcs().inArea(Area.fromRadius(MyPlayer.getPosition(),2))
+                if (Timer.waitCondition(() ->
+                        Query.npcs().inArea(Area.fromRadius(MyPlayer.getPosition(), 2))
                                 .nameContains("Guard").stream().findAny().isEmpty(), 45000, 60000)) {
                     NPCInteraction.handleConversation(slave6);
                     NPCInteraction.handleConversation(slave8);
@@ -489,7 +538,7 @@ public class TouristTrap implements QuestTask {
     }
 
 
-    public void step5() {
+    public void goToEndOfMine() {
         cQuesterV2.status = "Going to end of mine";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.localNavigation(END_OF_MINE);
@@ -500,7 +549,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step6() {
+    public void leaveMine() {
         if (END_OF_MINE.contains(Player.getPosition())) {
             cQuesterV2.status = "Leaving mine";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -512,7 +561,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step7() {
+    public void goToAlShabim() {
         if (!ALSHABIM_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to Al Shabim";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -528,7 +577,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step8() {
+    public void getPlans() {
         cQuesterV2.status = "Going to get plans";
         General.println("[Debug]: " + cQuesterV2.status);
         if (!WATER_BOWL_ROOM.contains(Player.getPosition()) && !SECOND_FLOOR.contains(Player.getPosition()))
@@ -565,7 +614,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step9() {
+    public void returnToAlShabim() {
         if (SECOND_FLOOR.contains(Player.getPosition()))
             if (Utils.clickObj("Ladder", "Climb-down", false))
                 Timer.abc2WaitCondition(() -> WATER_BOWL_ROOM.contains(Player.getPosition()), 10000, 12000);
@@ -585,7 +634,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step10() {
+    public void makeDart() {
         if (!ANVIL_AREA.contains(Player.getPosition())) {
             PathingUtil.walkToTile(new RSTile(3169, 3045, 0), 2, false);
             General.sleep(General.random(5000, 7000));
@@ -668,7 +717,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step11() {
+    public void goToAlShabimThree() {
         cQuesterV2.status = "Going to Al Shabim";
         General.println("[Debug]: " + cQuesterV2.status);
 
@@ -689,7 +738,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step12() {
+    public void goToMineAndTalkToGuard() {
         cQuesterV2.status = "Going to Mine";
         General.println("[Debug]: " + cQuesterV2.status);
         if (!MINE_ENTRANCE.contains(Player.getPosition()) && !WHOLE_LEFT_SIDE_OF_MINE.contains(Player.getPosition())
@@ -719,7 +768,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step13() {
+    public void getBarrel() {
         if (END_OF_MINE.contains(Player.getPosition()) && Inventory.find(PINEAPPLE_ID).length < 1)
             if (Utils.clickObj(2699, "Walk through"))
                 Timer.abc2WaitCondition(() -> AFTER_MINE_CAVE.contains(Player.getPosition()), 9000, 13000);
@@ -727,13 +776,16 @@ public class TouristTrap implements QuestTask {
         if (AFTER_MINE_CAVE.contains(Player.getPosition()))
             PathingUtil.localNavigation(BARREL_AREA);
 
-        if (BARREL_AREA.contains(Player.getPosition()) && Inventory.find(BARREL_ID).length < 1)
+        if (Inventory.find(BARREL_ID).length < 1)
             if (Utils.clickObj(2681, "Search")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yeah, cool!");
                 NPCInteraction.handleConversation();
             }
+    }
 
+    public void sendBarrel() {
+        getBarrel();
         if (BARREL_AREA.contains(Player.getPosition()) && Inventory.find(BARREL_ID).length > 0) {
             if (Utils.clickObj(2684, "Search")) {
                 NPCInteraction.waitForConversationWindow();
@@ -748,35 +800,48 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step14() {
-        cQuesterV2.status = "Going to Ana";
-        General.println("[Debug]: " + cQuesterV2.status);
-        if (AFTER_CART_RIDE_1.contains(Player.getPosition())) {
-            Walking.walkPath(PATH_TO_ANNA);
-            Timer.abc2WaitCondition(() -> ANNA_AREA.contains(Player.getPosition()), 12000, 16000);
+    public void getAna() {
+        if (Inventory.find(ItemID.ANA_IN_A_BARREL).length == 0) {
+            cQuesterV2.status = "Going to Ana";
+            General.println("[Debug]: " + cQuesterV2.status);
+            if (AFTER_CART_RIDE_1.contains(Player.getPosition())) {
+                Walking.walkPath(PATH_TO_ANNA);
+                Timer.abc2WaitCondition(() -> ANNA_AREA.contains(Player.getPosition()), 12000, 16000);
+            }
+            cQuesterV2.status = "Getting Ana";
+            if (Utils.useItemOnNPC(BARREL_ID, "Ana")) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation();
+            }
         }
-        if (Utils.useItemOnNPC(BARREL_ID, "Ana")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
-            Walking.invertPath(PATH_TO_ANNA);
-            Timer.abc2WaitCondition(() -> AFTER_CART_RIDE_1.contains(Player.getPosition()), 10000, 13000);
+        if (Inventory.find(ItemID.ANA_IN_A_BARREL).length > 0) {
+            cQuesterV2.status = "Going to Tracks";
+            if (PathingUtil.localNavigation(AFTER_CART_RIDE_1))
+                Timer.slowWaitCondition(() -> AFTER_CART_RIDE_1.contains(Player.getPosition()), 10000, 13000);
+            else if (PathingUtil.blindWalkToArea(AFTER_CART_RIDE_1)) {
+                Timer.slowWaitCondition(() -> AFTER_CART_RIDE_1.contains(Player.getPosition()), 10000, 13000);
+            }
         }
     }
 
-    public void step15() {
+    public void sendAnaDownTrack() {
+        //failsafe if we are still in ana area
+        if (ANNA_AREA.contains(Player.getPosition())) {
+            cQuesterV2.status = "Going to Tracks";
+            if (PathingUtil.localNavigation(AFTER_CART_RIDE_1))
+                Timer.slowWaitCondition(() -> AFTER_CART_RIDE_1.contains(Player.getPosition()), 10000, 13000);
+            else if (PathingUtil.blindWalkToArea(AFTER_CART_RIDE_1)) {
+                Timer.slowWaitCondition(() -> AFTER_CART_RIDE_1.contains(Player.getPosition()), 10000, 13000);
+            }
+        }
         cQuesterV2.status = "Sending Ana down track";
         General.println("[Debug]: " + cQuesterV2.status);
-        if (ANNA_AREA.contains(Player.getPosition())) {
-            Walking.walkPath(Walking.invertPath(PATH_TO_ANNA));
-            Timer.abc2WaitCondition(() -> AFTER_CART_RIDE_1.contains(Player.getPosition()), 10000, 13000);
-        }
-        if (AFTER_CART_RIDE_1.contains(Player.getPosition())) {
-            if (Utils.useItemOnObject(ANA_IN_BARREL, 2684))
-                Timer.abc2WaitCondition(() -> Objects.findNearest(20, 2684).length < 1, 25000, 30000);
-        }
+        if (Utils.useItemOnObject(ANA_IN_BARREL, 2684))
+            Timer.waitCondition(() -> Objects.findNearest(20, 2684).length < 1, 25000, 30000);
+
     }
 
-    public void step16() {
+    public void getAnaFromBarrel() {
         if (AFTER_CART_RIDE_1.contains(Player.getPosition())) {
             cQuesterV2.status = "Going Ana.";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -804,7 +869,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step17() {
+    public void putAnaOnWinch() {
         if (!WINCH_AREA.contains(Player.getPosition()) && Inventory.find(ANA_IN_BARREL).length > 0) {
             cQuesterV2.status = "Going to Winch";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -823,7 +888,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step18() {
+    public void returnToSurface() {
         if (WINCH_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to Surface";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -848,11 +913,15 @@ public class TouristTrap implements QuestTask {
 
         if (INSIDE_MINE_DOOR.contains(Player.getPosition())) {
             if (Utils.clickObj("Mine door entrance", "Open"))
-                Timer.abc2WaitCondition(() -> MINE_ENTRANCE.contains(Player.getPosition()), 8000, 12000);
+                Timer.slowWaitCondition(() -> MINE_ENTRANCE.contains(Player.getPosition()), 8000, 12000);
         }
+    }
+    public void getAnaFromWinch(){
+        returnToSurface();
+
         if (MINE_ENTRANCE.contains(Player.getPosition())) {
             PathingUtil.walkToTile(new RSTile(3280, 3018, 0), 2, false);
-            Timer.abc2WaitCondition(() -> OUTSIDE_WINCH.contains(Player.getPosition()), 12000, 15000);
+            Timer.slowWaitCondition(() -> OUTSIDE_WINCH.contains(Player.getPosition()), 12000, 15000);
         }
         if (OUTSIDE_WINCH.contains(Player.getPosition())) {
             if (Utils.clickObj(18888, "Operate")) {
@@ -869,7 +938,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step19() {
+    public void putAnaOnCart() {
         if (Inventory.find(ANA_IN_BARREL).length > 0) {
             cQuesterV2.status = "Putting Ana in cart";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -897,18 +966,21 @@ public class TouristTrap implements QuestTask {
             "You can't leave me here, I'll get killed!"
     };
 
+
     public void step20() {
         if (NpcChat.talkToNPC(4653)) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation(cartArray);
-            NPCInteraction.handleConversation("One wagon wheel says to the other, 'I'll see you around'.");
-            NPCInteraction.handleConversation("'One good turn deserves another'");
-            NPCInteraction.handleConversation("Fired... no, shot perhaps!");
-            NPCInteraction.handleConversation("In for a penny in for a pound.");
-            NPCInteraction.handleConversation("Well, you see, it's like this...");
-            NPCInteraction.handleConversation("Prison riot in ten minutes, get your cart out of here!");
-            NPCInteraction.handleConversation("You can't leave me here, I'll get killed!");
-            NPCInteraction.handleConversation();
+            if (NPCInteraction.isConversationWindowUp()) {
+                NPCInteraction.handleConversation("One wagon wheel says to the other, 'I'll see you around'.");
+                NPCInteraction.handleConversation("'One good turn deserves another'");
+                NPCInteraction.handleConversation("Fired... no, shot perhaps!");
+                NPCInteraction.handleConversation("In for a penny in for a pound.");
+                NPCInteraction.handleConversation("Well, you see, it's like this...");
+                NPCInteraction.handleConversation("Prison riot in ten minutes, get your cart out of here!");
+                NPCInteraction.handleConversation("You can't leave me here, I'll get killed!");
+                NPCInteraction.handleConversation();
+            }
 
         }
         if (Utils.clickObj("Wooden cart", "Search")) {
@@ -919,7 +991,7 @@ public class TouristTrap implements QuestTask {
         }
     }
 
-    public void step21() {
+    public void finishQuest() {
         cQuesterV2.status = "Finishing";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(START_AREA);
@@ -954,7 +1026,6 @@ public class TouristTrap implements QuestTask {
     }
 
 
-
     public void bank2() {
         if (Utils.checkAllRequirements(bronzeBar, hammer, shantayPass)) {
             cQuesterV2.status = "Banking for Items";
@@ -984,114 +1055,114 @@ public class TouristTrap implements QuestTask {
     @Override
     public void execute() {
         if (!checkRequirements()) {
-            cQuesterV2.taskList.remove(TouristTrap.get());
+            cQuesterV2.taskList.remove(this);
             return;
         }
         // determineRewards();
-
-        if (Game.getSetting(197) == 0) {
+        int gameSetting = QuestVarPlayer.QUEST_THE_TOURIST_TRAP.getId();
+        if (Game.getSetting(gameSetting) == 0) {
             buyItems();
             trainFletching();
             getItems();
             startQuest();
         }
-        if (Game.getSetting(197) == 1) {
+        if (Game.getSetting(gameSetting) == 1) {
             talkToCaptain();
         }
-        if (Game.getSetting(197) == 3) {
+        if (Game.getSetting(gameSetting) == 3) {
             talkToCaptain();
         }
-        if (Game.getSetting(197) == 4) {
+        if (Game.getSetting(gameSetting) == 4) {
             step3();
         }
-        if (Game.getSetting(197) == 5) {
+        if (Game.getSetting(gameSetting) == 5) {
             escapePrison();
             getNewKey();
             step4();
         }
-        if (Game.getSetting(197) == 6) {
+        if (Game.getSetting(gameSetting) == 6) {
             escapePrison();
             getNewKey();
             step4a();
         }
-        if (Game.getSetting(197) == 8) {
+        if (Game.getSetting(gameSetting) == 8) {
             escapePrison();
             getNewKey();
             step4b();
         }
-        if (Game.getSetting(197) == 9) {
+        if (Game.getSetting(gameSetting) == 9) {
             escapePrison();
             getNewKey();
-            step5();
+            goToEndOfMine();
         }
-        if (Game.getSetting(197) == 10) {
+        if (Game.getSetting(gameSetting) == 10) {
             escapePrison();
             getNewKey();
-            step6();
-            step7();
+            leaveMine();
+            goToAlShabim();
         }
-        if (Game.getSetting(197) == 11) {
+        if (Game.getSetting(gameSetting) == 11) {
             escapePrison();
             getNewKey();
-             bank2();
+            bank2();
 
-            step8();
+            getPlans();
         }
-        if (Game.getSetting(197) == 12) {
+        if (Game.getSetting(gameSetting) == 12) {
             escapePrison();
             bank2();
-            step9();
+            returnToAlShabim();
         }
-        if (Game.getSetting(197) == 13) {
-            step10();
+        if (Game.getSetting(gameSetting) == 13) {
+            makeDart();
         }
-        if (Game.getSetting(197) == 14) {
+        if (Game.getSetting(gameSetting) == 14) {
             addFeatherToDartTip();
         }
-        if (Game.getSetting(197) == 15) { // can make darts at the end of this step!
-            step11();
+        if (Game.getSetting(gameSetting) == 15) { // can make darts at the end of this step!
+            goToAlShabimThree();
         }
-        if (Game.getSetting(197) == 16) {
+        if (Game.getSetting(gameSetting) == 16) {
             getNewKey();
-            step12();
+            goToMineAndTalkToGuard();
         }
-        if (Game.getSetting(197) == 17) {
-            step13();
+        if (Game.getSetting(gameSetting) == 17) {
+            sendBarrel();
         }
-        if (Game.getSetting(197) == 18) {
-            step14();
+        if (Game.getSetting(gameSetting) == 18) {
+            getAna();
         }
-        if (Game.getSetting(197) == 19) {
-            step15();
+        if (Game.getSetting(gameSetting) == 19) {
+            sendAnaDownTrack();
         }
-        if (Game.getSetting(197) == 20) {
-            step16();
+        if (Game.getSetting(gameSetting) == 20) {
+            getAnaFromBarrel();
         }
-        if (Game.getSetting(197) == 21) {
-            step17();
+        if (Game.getSetting(gameSetting) == 21) {
+            putAnaOnWinch();
         }
-        if (Game.getSetting(197) == 22) {
-            step18();
+        if (Game.getSetting(gameSetting) == 22) {
+            getAnaFromWinch();
         }
-        if (Game.getSetting(197) == 24) {
-            step19();
+        if (Game.getSetting(gameSetting) == 24) {
+            putAnaOnCart();
         }
-        if (Game.getSetting(197) == 25) {
+        if (Game.getSetting(gameSetting) == 25) {
             step20();
         }
-        if (Game.getSetting(197) == 26) {
-            step21();
+        if (Game.getSetting(gameSetting) == 26) {
+            finishQuest();
         }
-        if (Game.getSetting(197) == 27) {
+        if (Game.getSetting(gameSetting) == 27) {
             claimRewards();
         }
-        if (Game.getSetting(197) == 28) {
+        if (Game.getSetting(gameSetting) == 28) {
             claimRewards();
         }
-        if (Game.getSetting(197) == 29) {
+        if (Game.getSetting(gameSetting) == 29) {
             claimRewards();
         }
-        if (Game.getSetting(197) == 30) {
+        if (Game.getSetting(gameSetting) == 30) {
             Utils.closeQuestCompletionWindow();
             NPCInteraction.handleConversation();
             cQuesterV2.taskList.remove(TouristTrap.get());
@@ -1112,7 +1183,7 @@ public class TouristTrap implements QuestTask {
 
     @Override
     public String questName() {
-        return "Tourist Trap (" + Game.getSetting(197)+ ")";
+        return "Tourist Trap (" + Game.getSetting(197) + ")";
     }
 
     @Override
