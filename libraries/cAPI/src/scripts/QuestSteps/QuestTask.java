@@ -1,6 +1,11 @@
 package scripts.QuestSteps;
 
+import scripts.Requirements.InventoryRequirement;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+
+import java.util.List;
 
 public interface QuestTask {
 
@@ -13,5 +18,9 @@ public interface QuestTask {
     String questName();
 
     boolean checkRequirements();
-   // List<Requirement> getGeneralRequirements()
+
+    List<Requirement> getGeneralRequirements();
+
+    List<ItemRequirement> getBuyList();
+
 }
