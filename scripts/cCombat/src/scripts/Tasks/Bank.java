@@ -59,7 +59,7 @@ public class Bank implements Task {
 
     @Override
     public boolean validate() {
-        return Inventory.isFull();
+        return Inventory.isFull() || !Inventory.contains(ItemID.SHARK);
     }
 
     @Override

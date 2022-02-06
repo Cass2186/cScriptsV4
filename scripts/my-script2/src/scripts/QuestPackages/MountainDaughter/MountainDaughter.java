@@ -104,13 +104,12 @@ public class MountainDaughter implements QuestTask {
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     public void buyItems() {
-        if (PURCHASE) {
-            cQuesterV2.status = "Buying Items";
-            General.println("[Debug]: " + cQuesterV2.status);
-            buyStep.buyItems();
-            PURCHASE = false;
-        }
+        cQuesterV2.status = "Buying Items";
+        General.println("[Debug]: " + cQuesterV2.status);
+        buyStep.buyItems();
+
     }
+
 
     public void getItems() {
         cQuesterV2.status = "Getting Items";
@@ -134,7 +133,6 @@ public class MountainDaughter implements QuestTask {
         BankManager.withdraw(300, true, ItemID.MIND_RUNE);
         BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(900, true, ItemID.FIRE_RUNE);
-        Utils.modSleep();
         BankManager.close(true);
     }
 
@@ -147,7 +145,7 @@ public class MountainDaughter implements QuestTask {
 
     RSTile MAIN_TENT_DOOR_TILE = new RSTile(2805, 3672, 0);
     RSArea WHOLE_CAMP = new RSArea(
-            new RSTile[] {
+            new RSTile[]{
                     new RSTile(2760, 3659, 0),
                     new RSTile(2768, 3659, 0),
                     new RSTile(2771, 3657, 0),
@@ -159,6 +157,7 @@ public class MountainDaughter implements QuestTask {
                     new RSTile(2772, 3670, 0)
             }
     );
+
     public void goToCamp() {
         cQuesterV2.status = "Going to Camp";
         if (!POST_ROCK.contains(Player.getPosition()) && !WHOLE_CAMP.contains(Player.getPosition())) {
@@ -175,7 +174,7 @@ public class MountainDaughter implements QuestTask {
             if (Utils.clickObj(5847, "Climb-over")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-                if(Timer.waitCondition(()-> WHOLE_CAMP.contains(Player.getPosition()), 7000))
+                if (Timer.waitCondition(() -> WHOLE_CAMP.contains(Player.getPosition()), 7000))
                     return;
 
             }
@@ -796,8 +795,8 @@ public class MountainDaughter implements QuestTask {
         }
 
         if (Game.getSetting(423) == 0) {
-            // buyItems();
-            //  getItems();
+             buyItems();
+             getItems();
             startQuest();
 
         } else if (Game.getSetting(423) == 10) {

@@ -169,14 +169,14 @@ public class AttackNpc implements Task {
             Combat.setAutoRetaliate(true);
 
         org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                org.tribot.script.sdk.Prayer.HAWK_EYE);
+                org.tribot.script.sdk.Prayer.EAGLE_EYE);
 
         Optional<Npc> attackingMe = getNpcToAttack();
 
         if (attackingMe.isPresent()) {
 
             org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                    org.tribot.script.sdk.Prayer.HAWK_EYE);
+                    org.tribot.script.sdk.Prayer.EAGLE_EYE);
 
             if (!attackingMe.get().isHealthBarVisible() && attackingMe.get().getHealthBarPercent() != 0 &&
                     attackingMe.map(t -> t.interact("Attack")).orElse(false)) {
@@ -210,12 +210,8 @@ public class AttackNpc implements Task {
                 EatUtil.eatFood();
             }
 
-            RSCharacter target = Combat.getTargetEntity();
-            if (target != null)
-                return !Combat.isUnderAttack() || !EatUtil.hasFood()
-                        || (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
-
-            return !Combat.isUnderAttack() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
+            return !Combat.isUnderAttack() || !EatUtil.hasFood() ||
+                    (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 7);
         });
     }
 

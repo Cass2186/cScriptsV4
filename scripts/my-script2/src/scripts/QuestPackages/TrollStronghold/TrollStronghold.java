@@ -10,12 +10,15 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
 import scripts.*;
+import scripts.GEManager.GEItem;
+import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.Requirement;
 import scripts.Requirements.SkillRequirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TrollStronghold implements QuestTask {
@@ -73,29 +76,26 @@ public class TrollStronghold implements QuestTask {
     RSTile[] PATH_TO_STOP_PRAY_AREA = new RSTile[]{new RSTile(2913, 3687, 0), new RSTile(2912, 3690, 0), new RSTile(2910, 3693, 0), new RSTile(2908, 3696, 0), new RSTile(2905, 3699, 0), new RSTile(2902, 3700, 0), new RSTile(2899, 3701, 0), new RSTile(2896, 3702, 0), new RSTile(2893, 3702, 0), new RSTile(2889, 3702, 0), new RSTile(2886, 3702, 0), new RSTile(2883, 3700, 0), new RSTile(2880, 3697, 0), new RSTile(2879, 3694, 0), new RSTile(2876, 3693, 0), new RSTile(2873, 3690, 0)};
     RSTile[] PATH_TO_STRONHOLD = new RSTile[]{new RSTile(2873, 3690, 0), new RSTile(2870, 3687, 0), new RSTile(2868, 3684, 0), new RSTile(2868, 3681, 0), new RSTile(2868, 3678, 0), new RSTile(2868, 3675, 0), new RSTile(2868, 3672, 0), new RSTile(2868, 3669, 0), new RSTile(2865, 3666, 0), new RSTile(2862, 3663, 0), new RSTile(2859, 3663, 0), new RSTile(2856, 3665, 0), new RSTile(2853, 3668, 0), new RSTile(2851, 3671, 0), new RSTile(2851, 3674, 0), new RSTile(2850, 3677, 0), new RSTile(2853, 3681, 0), new RSTile(2857, 3685, 0), new RSTile(2858, 3688, 0), new RSTile(2858, 3691, 0), new RSTile(2855, 3693, 0), new RSTile(2852, 3694, 0), new RSTile(2849, 3694, 0), new RSTile(2846, 3694, 0), new RSTile(2843, 3691, 0), new RSTile(2840, 3690, 0)};
 
+    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 200),
+                    new GEItem(ItemID.MIND_RUNE, 400, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 1200, 20),
+                    new GEItem(ItemID.LOBSTER, 20, 60),
+                    new GEItem(ItemID.CLIMBING_BOOTS, 1, 500),
+                    new GEItem(ItemID.COMBAT_BRACELET[2], 1, 20),
+                    new GEItem(ItemID.GAMES_NECKLACE[0], 1, 70),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
+            )
+    );
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+
 
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
         General.println("[Debug]: " + cQuesterV2.status);
-       /* GEManager.getCoins();
-        GEManager.buyItem(
-                ItemID.MIND_RUNE, 100, 400);
-        GEManager.buyItem(
-                ItemID.FIRE_RUNE, 100, 1200);
-        GEManager.buyItem(
-                ItemID.STAFF_OF_AIR, 100, 1);
-        GEManager.buyItem(
-                ItemID.LOBSTER, 100, 20);
-        GEManager.buyItem(CLIMBING_BOOTS, 300, 1);
-        GEManager.buyItem(
-                ItemID.STAMINA_POTION[0], 15, 2);
-        GEManager.buyItem(
-                ItemID.GAMES_NECKLACE[0], 45, 1);
-        GEManager.buyItem(
-                ItemID.COMBAT_BRACELET[0], 20, 1);
-
-        GEManager.collectItems();
-        GEManager.closeGE();*/
+  buyStep.buyItems();
     }
 
     public void getItems() {

@@ -1,6 +1,5 @@
 package scripts.Tasks;
 
-import dax.walker.utils.camera.DaxCamera;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.GroundItems;
@@ -10,16 +9,23 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GroundItem;
 import scripts.*;
 import scripts.Data.Areas;
 import scripts.Data.Vars;
 import scripts.rsitem_services.GrandExchange;
 import scripts.rsitem_services.runelite.RuneLitePriceService;
 
+import java.util.List;
+import java.util.Optional;
+
 public class LootItems implements Task {
 
-    public static int MINIMUM_LOOT_PRICE = 750;
+    public static int MINIMUM_LOOT_PRICE = 1000;
 
     int[] customLootIds = {
             19677, // ancient shart
@@ -62,14 +68,14 @@ public class LootItems implements Task {
                     id = def.getID() - 1;
                 }
                 if (GrandExchange.getPrice(id) > Vars.get().minLootValue) {
-                        return true;
+                    return true;
 
                 } else if (def != null && (def.isStackable() || def.isNoted())) {
                     int individualPrice = GrandExchange.getPrice(id);
                     int amount = groundItems[i].getStack();
                     int value = individualPrice * amount;
 
-                    if (value > Vars.get().minLootValue && new RSArea(Player.getPosition(),5)
+                    if (value > Vars.get().minLootValue && new RSArea(Player.getPosition(), 5)
                             .contains(groundItems[i]))
                         if (groundItems[i].isClickable())
                             return true;
@@ -81,114 +87,64 @@ public class LootItems implements Task {
         return false;
     }
 
-    public RSGroundItem getLootItem() {
+    public Optional<GroundItem> getLootItem() {
+        List<GroundItem> groundItemList = Query.groundItems()
+                .inArea(Utils.getAreaFromRSArea(Areas.UNDEAD_DRUID_AREA))
+                .nameNotContains("Burnt bones", "Ashes")
+                .toList();
 
-        RSGroundItem[] groundItems = GroundItems.getAll();
-
-        if (groundItems.length > 0) {
-            for (int i = 0; i < groundItems.length; i++) {
-                RSItemDefinition def = groundItems[i].getDefinition();
-                if (!Areas.UNDEAD_DRUID_AREA.contains(groundItems[i].getPosition()))
-                    continue;
-
-                int id = groundItems[i].getID();
-
-                if (def == null)
-                    return null;
-
-                if (def.isNoted())
-                    id = def.getID() - 1;
-
-                for (int cust : customLootIds)
-                    if (id == cust)
-                        return groundItems[i];
-
-                if (GrandExchange.getPrice(id) > Vars.get().minLootValue) {
-
-
-                    if (!def.getName().contains("Burnt bones")
-                            && !def.getName().contains("ashes")) {
-                        General.println("returning item line 96");
-                        return groundItems[i];
-
-                    }
-                } else if (def.isStackable() || def.isNoted()) {
-
-                    int individualPrice = GrandExchange.getPrice(id);
-                    int amount = groundItems[i].getStack();
-                    int value = individualPrice * amount;
-
-                    if (value > Vars.get().minLootValue) {
-
-                        if (groundItems[i].isClickable())
-                            return groundItems[i];
-                    }
+        for (GroundItem g : groundItemList) {
+            if (GrandExchange.getPrice(g.getId()) > Vars.get().minLootValue) {
+                return Optional.of(g);
+            } else if (g.getDefinition().isStackable() || g.getDefinition().isNoted()) {
+                int individualPrice = GrandExchange.getPrice(g.getId());
+                int amount = g.getStack();
+                int value = individualPrice * amount;
+                if (value > Vars.get().minLootValue) {
+                    Log.debug("[Loot] Item is " + g.getName());
+                    return Optional.of(g);
                 }
             }
         }
-
-        return null;
+        return Optional.empty();
     }
 
-    public void getLoot() {
+    public boolean pickupLootItem() {
         RSGroundItem[] groundItems = GroundItems.getAll();
-        RSGroundItem loot = getLootItem();
-        if (loot != null) {
-            int inv = Inventory.getAll().length;
-            if (!Areas.UNDEAD_DRUID_AREA.contains(loot.getPosition()))
-               return;
+        Optional<GroundItem> loot = getLootItem();
+        if (loot.isEmpty()) return false;
 
-           // if (SlayerVars.get().fightArea.contains(loot)) {
+        int inv = Inventory.getAll().length;
 
-                RSItemDefinition def = loot.getDefinition();
-                String name = "";
-                int id = loot.getID();
-
-
-                if (def != null) {
-
-                    name = def.getName();
-                    if (def.isNoted()) {
-                        id = def.getID() - 1;
-                    }
-
-                    int value = GrandExchange.getPrice(id);
-
-                    General.println("[Debug]: Looting " + name);
-
-                    if (Inventory.isFull() && !itemIsStackableAndInInventory(loot))
-                        eatForSpace();
-
-                    if (loot.getPosition().distanceTo(Player.getPosition()) > 8 && !loot.isClickable()) {
-                       return;
-                     //   PathingUtil.localNavigation(loot.getPosition());
-                        //Timer.waitCondition(loot::isClickable, 4500,7000);
-                    }
-
-                    if (!loot.isClickable())
-                        loot.adjustCameraTo();
-
-                    if (DynamicClicking.clickRSGroundItem(loot, "Take " + name)) {
-                        Timer.slowWaitCondition(() -> loot.getPosition().equals(Player.getPosition()), 5000, 7000);
-                        General.println("[Debug]: Done looting");
-                        Vars.get().lootValue = Vars.get().lootValue + value;
-                        Waiting.waitNormal(300,45);
-                    }
-
-               // }
-            }
+        int id = loot.get().getId();
+        if (loot.get().getDefinition().isNoted()) {
+            id = id - 1;
         }
-    }
 
+        int value = GrandExchange.getPrice(id);
 
-    private boolean itemIsStackableAndInInventory(RSGroundItem item) {
-        RSItem[] inventory = Inventory.find(item.getID());
-        if (inventory.length > 0) {
-            RSItemDefinition def = inventory[0].getDefinition();
-            return def != null && def.isStackable();
+        General.println("[Debug]: Looting " + loot.get().getName());
 
+        if (Inventory.isFull() && !itemIsStackableAndInInventory(loot.get()))
+            eatForSpace();
+
+        if (loot.get().interact("Take")) {
+            Timer.slowWaitCondition(() ->
+                    loot.get().getTile().equals(MyPlayer.getPosition()),
+                    5000, 7000);
+            General.println("[Debug]: Done looting");
+            Vars.get().lootValue = Vars.get().lootValue + value;
+            Waiting.waitNormal(300, 45);
+            return true;
         }
         return false;
+    }
+
+
+    private boolean itemIsStackableAndInInventory(GroundItem item) {
+        RSItem[] inventory = Inventory.find(item.getId());
+        return inventory.length > 0 &&
+                item.getDefinition().isStackable();
     }
 
 
@@ -204,7 +160,8 @@ public class LootItems implements Task {
 
     @Override
     public boolean validate() {
-        return shouldLoot() && Vars.get().fightArea.contains(Player.getPosition());
+        return getLootItem().isPresent()
+                && Vars.get().fightArea.contains(Player.getPosition());
     }
 
     @Override
@@ -212,6 +169,6 @@ public class LootItems implements Task {
         RSItem[] closedBag = Inventory.find(ItemID.LOOTING_BAG);
         if (closedBag.length > 0 && closedBag[0].click("Open"))
             Utils.microSleep();
-        getLoot();
+        pickupLootItem();
     }
 }

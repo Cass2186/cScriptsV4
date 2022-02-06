@@ -709,7 +709,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
 
     // spinBullToBless =new DetailedQuestStep( "Spin the bull roarer until Gujuo appears.",bullRoarerHighlight, goldBowl);
 
-    NPCStep talkToGujuoWithBowl = new NPCStep(NpcID.GUJUO, Player.getPosition());
+    NPCStep talkToGujuoWithBowl = new NPCStep(NpcID.GUJUO, new RSTile(2784, 2936, 0));
 
 
     UseItemOnObjectStep useMacheteOnReeds = new UseItemOnObjectStep(machete.getId(), ObjectID.TALL_REEDS,
@@ -794,12 +794,23 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
     }
 
     public void plantSeeds() {
-        cQuesterV2.status = "Leaving cave with seeds";
-        leaveCaveWithSeed.setUseLocalNav(true);
-        leaveCaveWithSeed.execute();
-        useMacheteOnReedsAgain.useItemOnObject();
-        useReedOnPoolAgain.useItemOnObject();
+        if (inCaves.check()) {
+            cQuesterV2.status = "Leaving cave with seeds";
+            leaveCaveWithSeed.setUseLocalNav(true);
+            leaveCaveWithSeed.execute();
+        }
+        if (!inCaves.check() && !inKharazi.check()) {
+            cQuesterV2.status = "Entering Forest";
+            LegendsUtils.enterForest();
+        }
+        if (!reed.check())
+            useMacheteOnReedsAgain.useItemOnObject();
+
+        if (!goldBowlFull.check()) {
+            useReedOnPoolAgain.useItemOnObject();
+        }
         cQuesterV2.status = "Planting seeds";
+        plantSeed.setUseLocalNav(true);
         plantSeed.useItemOnObject();
     }
 
@@ -816,10 +827,12 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             NPCInteraction.isConversationWindowUp(), germinatedSeedsHighlighted, goldBowlFull);
 
     UseItemOnObjectStep useMacheteOnReedsAgain = new UseItemOnObjectStep(machete.getId(), ObjectID.TALL_REEDS,
-            new RSTile(2836, 2916, 0), Inventory.find(reed.getId()).length == 0, machete);
+            new RSTile(2836, 2916, 0), Inventory.find(reed.getId()).length == 0,
+            machete);
 
     UseItemOnObjectStep useReedOnPoolAgain = new UseItemOnObjectStep(reed.getId(), ObjectID.WATER_POOL,
-            new RSTile(2838, 2916, 0), Inventory.find(goldBowlBlessed.getId()).length == 0,
+            new RSTile(2838, 2916, 0),
+            Inventory.find(goldBowlBlessed.getId()).length == 0,
             reed, goldBowlBlessed);
 
 
@@ -1799,7 +1812,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                         }
                         searchMarkedWall.setUseLocalNav(true);
                         searchMarkedWall.execute();
-                        Timer.waitCondition(()-> inCaveRoom5.check(), 2500,4000);
+                        Timer.waitCondition(() -> inCaveRoom5.check(), 2500, 4000);
                     }
                     if (inCaveRoom5.check() && !bindingBook.check()) {
                         cQuesterV2.status = "Using Gems";
@@ -1827,8 +1840,8 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                     }
                 }
                 if (goldBowlFull.check() && bindingBook.check()) {
-                    if (inCaveRoom5.check() && LegendsUtils.enterForest()){
-                        if (inKharazi.check()){
+                    if (inCaveRoom5.check() && LegendsUtils.enterForest()) {
+                        if (inKharazi.check()) {
                             enterMossyRockWithBowl.execute();
                         }
                     }
@@ -1853,7 +1866,9 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             }
 
             if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
-                if (spinBull())
+                plantSeeds();
+
+                if (inKharazi.check() && spinBull())
                     talkToGujuoAfterSeeds.execute();
             }
 

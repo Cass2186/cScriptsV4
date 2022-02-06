@@ -18,7 +18,7 @@ public class AttackZulrah implements Task {
         if (notInteractedWith.map(z -> z.interact("Attack")).orElse(false)) {
             return true;
         } else if (zul != null && !zul.isHealthBarVisible())
-            return zul.interact("Attack");
+            return zul.interact("Attack") ;
 
         return false;
     }

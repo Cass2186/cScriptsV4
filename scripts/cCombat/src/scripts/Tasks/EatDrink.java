@@ -6,11 +6,13 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Prayer;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
 import scripts.Data.Vars;
 import scripts.EatUtil;
 import scripts.ItemID;
 import scripts.Timer;
+import scripts.Utils;
 
 public class EatDrink implements Task {
 
@@ -28,7 +30,8 @@ public class EatDrink implements Task {
     public void eatDrink() {
         org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
                 org.tribot.script.sdk.Prayer.EAGLE_EYE);
-        if (!Vars.get().antifireTimer.isRunning()) {
+        if (!Vars.get().killingUndeadDruids &&
+                !Vars.get().antifireTimer.isRunning()) {
             RSItem[] superAnti = Inventory.find(22209, 22212, 22215, 22218);
 
             if (superAnti.length == 0 && breakTeleTab()) return;
@@ -38,6 +41,7 @@ public class EatDrink implements Task {
                 Waiting.waitNormal(120, 30);
             }
         }
+
         if (Combat.getHP() <= Vars.get().eatAtHP) {
             EatUtil.eatFood(true);
         } else if (Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt) {
@@ -46,6 +50,15 @@ public class EatDrink implements Task {
 
             if (drinkPotion(ItemID.PRAYER_POTION))
                 Waiting.waitNormal(120, 30);
+
+            //re-enable if it got disabled
+            org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
+                    org.tribot.script.sdk.Prayer.EAGLE_EYE);
+        }
+        int maxLevel = (int) Utils.getLevelBoost(Skills.SKILLS.RANGED);
+        if (Skill.RANGED.getCurrentLevel() <= (maxLevel - General.random(4,6)) ||
+                Skill.RANGED.getCurrentLevel() == Skill.RANGED.getActualLevel()){
+            Utils.drinkPotion(ItemID.RANGING_POTION);
         }
     }
 

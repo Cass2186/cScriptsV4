@@ -85,14 +85,14 @@ public class Vars {
 
     public int restockNumber = 6;
 
-    public int minLootValue = 750;
+    public int minLootValue = 1000;
     public int kills = 0;
 
     public int afkLengthMin = 30000;
 
     public int afkLengthMax = 120000;
 
-    public int[] potionToUse = ItemID.SUPER_COMBAT_POTION;
+    public int[] potionToUse = ItemID.RANGING_POTION;
 
     public int profit = 0;
 
