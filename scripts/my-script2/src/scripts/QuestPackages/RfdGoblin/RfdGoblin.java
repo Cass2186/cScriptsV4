@@ -12,10 +12,13 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RfdGoblin implements QuestTask {
 
@@ -333,5 +336,15 @@ public class RfdGoblin implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Game.getSetting(678) == 3; //rfd cook done
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

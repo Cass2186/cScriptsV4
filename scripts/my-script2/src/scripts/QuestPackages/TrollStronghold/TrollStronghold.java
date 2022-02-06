@@ -14,6 +14,7 @@ import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Requirements.SkillRequirement;
 import scripts.Tasks.Priority;
@@ -506,4 +507,9 @@ public class TrollStronghold implements QuestTask {
         return Game.getSetting(QuestVarPlayer.QUEST_DEATH_PLATEAU.getId()) >= 80 && agil.check();
     }
 
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

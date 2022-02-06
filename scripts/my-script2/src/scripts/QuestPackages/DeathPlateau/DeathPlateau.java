@@ -20,6 +20,7 @@ import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class DeathPlateau implements QuestTask {
 
@@ -607,4 +608,14 @@ public class DeathPlateau implements QuestTask {
         return true;
     }
 
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

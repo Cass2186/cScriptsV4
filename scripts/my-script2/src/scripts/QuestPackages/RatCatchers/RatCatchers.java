@@ -7,18 +7,16 @@ import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.QuestPackages.HauntedMine.HauntedMine;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.FollowerRequirement;
-import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.*;
 import scripts.Requirements.Items.FollowerItemRequirement;
 import scripts.Requirements.Items.ItemCollections;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
-import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RatCatchers implements QuestTask {
@@ -436,5 +434,15 @@ public class RatCatchers implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

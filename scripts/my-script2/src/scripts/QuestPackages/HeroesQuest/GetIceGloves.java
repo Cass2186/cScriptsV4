@@ -13,11 +13,14 @@ import scripts.QuestPackages.ShieldOfArrav.PheonixGang;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class GetIceGloves implements QuestTask {
@@ -230,4 +233,13 @@ public class GetIceGloves implements QuestTask {
                 && !HeroesQuestConst.WHOLE_QUEEN_AREA.contains(Player.getPosition()));
     }
 
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

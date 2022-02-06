@@ -10,8 +10,12 @@ import scripts.QuestSteps.QuestStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestSteps.UseItemOnObjectStep;
 import scripts.Quests;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
+
+import java.util.List;
 
 public class WhatLiesBelow implements QuestTask {
 
@@ -75,6 +79,16 @@ public class WhatLiesBelow implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 
 }

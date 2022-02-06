@@ -14,9 +14,7 @@ import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.VarbitRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
@@ -24,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -1046,5 +1045,15 @@ public class DragonSlayer implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

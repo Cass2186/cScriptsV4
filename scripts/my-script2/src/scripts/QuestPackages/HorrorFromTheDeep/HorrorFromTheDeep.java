@@ -17,14 +17,13 @@ import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.AscentOfArceuus.AscentOfArceuus;
 import scripts.QuestSteps.*;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.SkillRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class HorrorFromTheDeep implements QuestTask, QuestInterface {
@@ -655,5 +654,13 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
     public boolean checkRequirements() {
         return true;
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

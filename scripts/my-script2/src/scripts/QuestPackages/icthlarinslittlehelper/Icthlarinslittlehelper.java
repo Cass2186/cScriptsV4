@@ -692,4 +692,14 @@ public class Icthlarinslittlehelper implements QuestTask {
 
         return true;
     }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

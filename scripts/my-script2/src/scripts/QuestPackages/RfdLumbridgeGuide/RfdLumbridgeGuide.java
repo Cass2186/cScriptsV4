@@ -15,13 +15,12 @@ import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class RfdLumbridgeGuide implements QuestTask {
@@ -544,5 +543,15 @@ public class RfdLumbridgeGuide implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

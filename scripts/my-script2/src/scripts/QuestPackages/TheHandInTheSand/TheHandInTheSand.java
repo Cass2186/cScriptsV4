@@ -278,5 +278,12 @@ public class TheHandInTheSand implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Utils.checkAllRequirements(getGeneralRequirements().toArray(Requirement[]::new));
+
+    }
+
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

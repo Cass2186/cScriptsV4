@@ -11,9 +11,7 @@ import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
+import scripts.Requirements.*;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
@@ -325,5 +323,15 @@ public class BlackKnightsFortress implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

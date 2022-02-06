@@ -10,10 +10,13 @@ import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class VampyreSlayer implements QuestTask {
 
@@ -168,7 +171,7 @@ public class VampyreSlayer implements QuestTask {
                 General.sleep(100, 300);
                 RSItem[] lob = Inventory.find(ItemID.LOBSTER);
                 if (!Combat.isUnderAttack() && AccurateMouse.click(vampire[0], "Attack")) {
-                        Timer.waitCondition(Combat::isUnderAttack, 1000, 4000);
+                    Timer.waitCondition(Combat::isUnderAttack, 1000, 4000);
                 }
 
                 if (Game.getSetting(178) == 3) {
@@ -225,5 +228,15 @@ public class VampyreSlayer implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Skills.SKILLS.MAGIC.getActualLevel() >= 9;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

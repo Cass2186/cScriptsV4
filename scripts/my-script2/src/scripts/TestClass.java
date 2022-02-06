@@ -25,6 +25,8 @@ import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.awt.*;
@@ -485,5 +487,15 @@ public class TestClass implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

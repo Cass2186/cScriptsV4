@@ -19,10 +19,7 @@ import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CreatureOfFenkenstrain implements QuestTask {
 
@@ -426,5 +423,15 @@ public class CreatureOfFenkenstrain implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Skills.SKILLS.CRAFTING.getActualLevel() >= 20 && Skills.SKILLS.THIEVING.getActualLevel() >= 25;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

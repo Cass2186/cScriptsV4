@@ -18,6 +18,7 @@ import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LunarDiplomacy implements QuestTask {
@@ -842,5 +843,14 @@ public class LunarDiplomacy implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

@@ -15,10 +15,13 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class KnightsSword implements QuestTask {
 
@@ -344,5 +347,15 @@ public class KnightsSword implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Skills.SKILLS.MINING.getActualLevel() >= 10;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

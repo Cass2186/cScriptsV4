@@ -12,10 +12,13 @@ import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.AreaRequirement;
 import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Requirements.Util.Operation;
 import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 import scripts.cQuesterV2;
+
+import java.util.List;
 
 public class CorsairCurse implements QuestTask {
 
@@ -207,5 +210,15 @@ public class CorsairCurse implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

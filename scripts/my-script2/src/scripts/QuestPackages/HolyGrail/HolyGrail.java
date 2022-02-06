@@ -13,14 +13,12 @@ import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class HolyGrail implements QuestTask {
@@ -533,5 +531,14 @@ public class HolyGrail implements QuestTask {
 
         return Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 40
                 && Game.getSetting(Quests.MERLINS_CRYSTAL.getGameSetting()) == 7; //merlin's crystal
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

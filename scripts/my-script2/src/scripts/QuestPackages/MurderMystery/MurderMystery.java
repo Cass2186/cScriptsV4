@@ -3,6 +3,7 @@ package scripts.QuestPackages.MurderMystery;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
@@ -14,15 +15,14 @@ import scripts.QuestSteps.*;
 import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Items.ItemRequirements;
+import scripts.Requirements.Requirement;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
+import scripts.Timer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MurderMystery implements QuestTask {
 
@@ -961,5 +961,13 @@ public class MurderMystery implements QuestTask {
     public boolean checkRequirements() {
         return true;
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

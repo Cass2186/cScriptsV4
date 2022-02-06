@@ -16,14 +16,12 @@ import org.tribot.script.sdk.tasks.EquipmentReq;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.ItemOnTileRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.VarbitRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Contact implements QuestTask {
 
@@ -719,4 +717,13 @@ public class Contact implements QuestTask {
         return true;
     }
 
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

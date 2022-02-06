@@ -4,7 +4,11 @@ package scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryTasks;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryUtils;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+
+import java.util.List;
 
 
 public class DeliverBookTask implements QuestTask {
@@ -47,5 +51,13 @@ public class DeliverBookTask implements QuestTask {
         return "Delivering book";
     }
 
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

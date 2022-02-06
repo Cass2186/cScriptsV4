@@ -13,10 +13,13 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.FairyTalePt1.FairyTalePt1;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class JunglePotion implements QuestTask {
 
@@ -316,5 +319,15 @@ public class JunglePotion implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Game.getSetting(Quests.DRUIDIC_RITUAL.getGameSetting()) == 4;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

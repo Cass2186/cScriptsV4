@@ -14,10 +14,12 @@ import scripts.QuestPackages.RestlessGhost.RestlessGhost;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class ZogreFleshEaters implements QuestTask {
@@ -853,5 +855,15 @@ public class ZogreFleshEaters implements QuestTask {
     @Override
     public boolean validate() {
         return cQuesterV2.taskList.get(0).equals(this);
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

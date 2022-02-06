@@ -13,11 +13,14 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AscentOfArceuus implements QuestTask {
 
@@ -471,5 +474,15 @@ public class AscentOfArceuus implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Skills.getCurrentLevel(Skills.SKILLS.HUNTER) >= 12 && RSVarBit.get(4896).getValue() >= 200;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

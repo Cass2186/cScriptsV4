@@ -19,11 +19,14 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RfdSkratch.RfdSkratch;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class BigChompyBirdHunting implements QuestTask {
@@ -666,4 +669,14 @@ public class BigChompyBirdHunting implements QuestTask {
     public boolean checkRequirements() {
         return checkLevel();
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
+
 }

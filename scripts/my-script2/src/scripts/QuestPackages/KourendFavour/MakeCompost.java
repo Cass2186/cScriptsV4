@@ -7,7 +7,11 @@ import org.tribot.api2007.types.RSItem;
 import scripts.*;
 import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+
+import java.util.List;
 
 public class MakeCompost implements QuestTask {
 
@@ -70,5 +74,15 @@ public class MakeCompost implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

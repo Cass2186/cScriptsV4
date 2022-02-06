@@ -352,6 +352,14 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
             Log.debug("[PrinceAliRescue]: Has given third = true");
         }
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 
 }

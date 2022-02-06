@@ -276,4 +276,14 @@ public class ATailOfTwoCats implements QuestTask {
     public boolean checkRequirements() {
         return false;
     }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

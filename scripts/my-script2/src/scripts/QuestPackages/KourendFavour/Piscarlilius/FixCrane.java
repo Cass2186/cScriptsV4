@@ -11,7 +11,11 @@ import scripts.*;
 
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+
+import java.util.List;
 
 public class FixCrane implements QuestTask {
 
@@ -89,6 +93,16 @@ public class FixCrane implements QuestTask {
     @Override
     public String toString() {
         return "Repairing Crane";
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 
 }

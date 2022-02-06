@@ -11,8 +11,12 @@ import scripts.*;
 import scripts.QuestSteps.QuestStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestSteps.UseItemOnObjectStep;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
+
+import java.util.List;
 
 public class LightHouseSteps implements QuestTask {
 
@@ -197,11 +201,21 @@ public class LightHouseSteps implements QuestTask {
 
     @Override
     public String questName() {
-        return null;
+        return "Horror from the Deep";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

@@ -16,8 +16,11 @@ import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.QuestPackages.DragonSlayer.DragonSlayer;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
+import java.util.List;
 import java.util.Optional;
 
 public class MakeClockWork implements QuestTask {
@@ -137,6 +140,16 @@ public class MakeClockWork implements QuestTask {
             Timer.waitCondition(()-> Query.inventory().nameContains("Steel bar").isNotNoted().findFirst().isPresent(),
                     2000,4000);
         }
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 
 }

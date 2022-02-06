@@ -17,6 +17,8 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.GroundItemStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.awt.event.KeyEvent;
@@ -606,5 +608,15 @@ public class PlagueCity implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

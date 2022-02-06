@@ -10,6 +10,7 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import scripts.*;
@@ -24,6 +25,7 @@ import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.zip.InflaterInputStream;
 
 public class TouristTrap implements QuestTask {
@@ -63,8 +65,8 @@ public class TouristTrap implements QuestTask {
         @Getter
         private String text;
 
-        REWARDS(String string){
-            this.text= string;
+        REWARDS(String string) {
+            this.text = string;
         }
     }
 
@@ -182,7 +184,7 @@ public class TouristTrap implements QuestTask {
     VarbitRequirement anaPlacedOnCartOfLift = new VarbitRequirement(2805, 1);
 
     // TODO: Better detection of if Ana is on the surface or in the underground barrel
-    VarplayerRequirement anaOnSurface =new VarplayerRequirement(197,22, Operation.GREATER_EQUAL);
+    VarplayerRequirement anaOnSurface = new VarplayerRequirement(197, 22, Operation.GREATER_EQUAL);
 
     // TODO: This only gets set the first time. If you somehow lose Ana between here and the cart it remains set. Need to add more logic around this
     VarbitRequirement anaOnSurfaceInBarrel = new VarbitRequirement(2808, 1);
@@ -606,6 +608,9 @@ public class TouristTrap implements QuestTask {
 
             cQuesterV2.status = "Looting chest";
             General.println("[Debug]: " + cQuesterV2.status);
+            if (Inventory.isFull())
+                EatUtil.eatFood();
+
             if (Utils.useItemOnObject(CHEST_KEY, "Chest")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
@@ -746,9 +751,8 @@ public class TouristTrap implements QuestTask {
                 && !END_OF_MINE.contains(Player.getPosition())) {
             PathingUtil.walkToArea(MINE_ENTRANCE);
 
-            if (MINE_ENTRANCE.contains(Player.getPosition()))
-                if (Utils.clickObj("Mine door entrance", "Open"))
-                    Timer.abc2WaitCondition(() -> INSIDE_MINE_DOOR.contains(Player.getPosition()), 8000, 12000);
+            if (Utils.clickObj("Mine door entrance", "Open"))
+                Timer.abc2WaitCondition(() -> INSIDE_MINE_DOOR.contains(Player.getPosition()), 8000, 12000);
         }
 
         if (INSIDE_MINE_DOOR.contains(Player.getPosition())) {
@@ -758,7 +762,7 @@ public class TouristTrap implements QuestTask {
                 Timer.abc2WaitCondition(() -> END_OF_MINE.contains(Player.getPosition()), 55000, 70000);
         }
 
-        if (END_OF_MINE.contains(Player.getPosition()) && Inventory.find(PINEAPPLE_ID).length > 0) {
+        if (Inventory.find(PINEAPPLE_ID).length > 0) {
             if (NpcChat.talkToNPC("Guard")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
@@ -771,7 +775,7 @@ public class TouristTrap implements QuestTask {
     public void getBarrel() {
         if (END_OF_MINE.contains(Player.getPosition()) && Inventory.find(PINEAPPLE_ID).length < 1)
             if (Utils.clickObj(2699, "Walk through"))
-                Timer.abc2WaitCondition(() -> AFTER_MINE_CAVE.contains(Player.getPosition()), 9000, 13000);
+                Timer.slowWaitCondition(() -> AFTER_MINE_CAVE.contains(Player.getPosition()), 9000, 13000);
 
         if (AFTER_MINE_CAVE.contains(Player.getPosition()))
             PathingUtil.localNavigation(BARREL_AREA);
@@ -786,7 +790,7 @@ public class TouristTrap implements QuestTask {
 
     public void sendBarrel() {
         getBarrel();
-        if (BARREL_AREA.contains(Player.getPosition()) && Inventory.find(BARREL_ID).length > 0) {
+        if (Inventory.find(BARREL_ID).length > 0) {
             if (Utils.clickObj(2684, "Search")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes, of course.");
@@ -837,8 +841,10 @@ public class TouristTrap implements QuestTask {
         cQuesterV2.status = "Sending Ana down track";
         General.println("[Debug]: " + cQuesterV2.status);
         if (Utils.useItemOnObject(ANA_IN_BARREL, 2684))
-            Timer.waitCondition(() -> Objects.findNearest(20, 2684).length < 1, 25000, 30000);
+            Timer.waitCondition(() -> Game.isInInstance(), 25000, 30000);
 
+        if (Game.isInInstance())
+            Waiting.waitUntil(25000, ()-> !Game.isInInstance());
     }
 
     public void getAnaFromBarrel() {
@@ -916,7 +922,8 @@ public class TouristTrap implements QuestTask {
                 Timer.slowWaitCondition(() -> MINE_ENTRANCE.contains(Player.getPosition()), 8000, 12000);
         }
     }
-    public void getAnaFromWinch(){
+
+    public void getAnaFromWinch() {
         returnToSurface();
 
         if (MINE_ENTRANCE.contains(Player.getPosition())) {
@@ -1190,5 +1197,15 @@ public class TouristTrap implements QuestTask {
     public boolean checkRequirements() {
         return Skills.SKILLS.FLETCHING.getActualLevel() >= 10 &&
                 Skills.SKILLS.SMITHING.getActualLevel() >= 20;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

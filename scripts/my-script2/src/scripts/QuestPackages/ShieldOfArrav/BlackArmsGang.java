@@ -20,11 +20,14 @@ import scripts.QuestSteps.QuestStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class BlackArmsGang implements QuestTask, MuleListener {
     private static BlackArmsGang quest;
@@ -253,5 +256,15 @@ public class BlackArmsGang implements QuestTask, MuleListener {
     @Override
     public void onMuleLeave(String muleName) {
 
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

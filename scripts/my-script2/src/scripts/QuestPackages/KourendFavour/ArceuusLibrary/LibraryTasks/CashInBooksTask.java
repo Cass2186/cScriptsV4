@@ -13,8 +13,12 @@ import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Constants;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestSteps.QuestTask;
 
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Utils;
+
+import java.util.List;
 
 public class CashInBooksTask implements QuestTask {
     private static CashInBooksTask quest;
@@ -64,6 +68,14 @@ public class CashInBooksTask implements QuestTask {
         }
         return false;
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 
 }

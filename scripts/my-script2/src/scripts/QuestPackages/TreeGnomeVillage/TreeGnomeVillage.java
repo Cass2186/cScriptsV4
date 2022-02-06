@@ -701,4 +701,14 @@ public class TreeGnomeVillage implements QuestTask {
         return Skills.SKILLS.MAGIC.getActualLevel() > 12 &&
                 Skills.SKILLS.HITPOINTS.getActualLevel() >= 20;
     }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

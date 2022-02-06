@@ -16,15 +16,14 @@ import scripts.*;
 import scripts.QuestPackages.WitchsHouse.WitchsHouse;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WaterfallQuest implements QuestTask {
 
@@ -912,5 +911,15 @@ public class WaterfallQuest implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

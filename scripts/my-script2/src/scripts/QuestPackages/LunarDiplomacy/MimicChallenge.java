@@ -16,11 +16,14 @@ import scripts.PathingUtil;
 import scripts.QuestSteps.EmoteStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.util.List;
 import java.util.Optional;
 
 public class MimicChallenge implements QuestTask {
@@ -109,5 +112,14 @@ public class MimicChallenge implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

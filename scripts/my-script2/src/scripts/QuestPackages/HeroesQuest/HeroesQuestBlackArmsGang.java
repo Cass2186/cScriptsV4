@@ -22,6 +22,7 @@ import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class HeroesQuestBlackArmsGang implements QuestTask {
@@ -652,7 +653,15 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     public boolean checkRequirements() {
         return Skills.SKILLS.FISHING.getActualLevel() >= 53;
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }
 
 

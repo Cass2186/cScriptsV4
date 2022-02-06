@@ -10,14 +10,13 @@ import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.GertrudesCat.GertrudesCat;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class APorcineOfInterest implements QuestTask {
 
@@ -267,5 +266,14 @@ public class APorcineOfInterest implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 30;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

@@ -12,11 +12,14 @@ import scripts.*;
 import scripts.QuestSteps.*;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 
@@ -244,4 +247,14 @@ public class PheonixGang implements QuestTask, QuestInterface {
         return true;
     }
 
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

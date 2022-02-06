@@ -16,6 +16,8 @@ import scripts.Requirements.Util.LogicType;
 import scripts.Requirements.Util.Operation;
 import scripts.Tasks.Priority;
 
+import java.util.List;
+
 public class TheGiantDwarf implements QuestTask {
 
     //Items Required
@@ -434,5 +436,14 @@ public class TheGiantDwarf implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

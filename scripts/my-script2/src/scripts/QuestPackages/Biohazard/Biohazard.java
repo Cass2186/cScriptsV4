@@ -10,15 +10,19 @@ import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.api2007.types.RSVarBit;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class Biohazard implements QuestTask {
@@ -519,6 +523,16 @@ public class Biohazard implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return Quest.PLAGUE_CITY.getState().equals(Quest.State.COMPLETE);
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

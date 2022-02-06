@@ -14,14 +14,12 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.VarbitRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ErnestTheChicken implements QuestTask {
     private static ErnestTheChicken quest;
@@ -549,4 +547,15 @@ public class ErnestTheChicken implements QuestTask {
     public boolean checkRequirements() {
         return true;
     }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }
+

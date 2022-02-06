@@ -7,6 +7,8 @@ import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Library.Bookcase;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryUtils;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.List;
@@ -64,4 +66,13 @@ public class FindBookTask implements QuestTask {
                 && !State.get().getCurrentBooks().contains(State.get().getCurrentAssignment().get());
     }
 
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

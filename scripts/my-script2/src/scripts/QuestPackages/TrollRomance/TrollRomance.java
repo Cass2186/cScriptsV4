@@ -282,8 +282,12 @@ public class TrollRomance implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-
-
         return true;
+    }
+
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

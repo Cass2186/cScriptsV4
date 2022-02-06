@@ -24,6 +24,8 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.GroundItemStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.awt.*;
@@ -2799,5 +2801,14 @@ public class FremTrials implements QuestTask {
         return Skills.SKILLS.ATTACK.getActualLevel() >= 30 &&
                 Skills.SKILLS.STRENGTH.getActualLevel() >= 30 &&
                 Skills.SKILLS.MAGIC.getActualLevel() >= 13;
+    }
+    @Override
+    public java.util.List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public java.util.List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

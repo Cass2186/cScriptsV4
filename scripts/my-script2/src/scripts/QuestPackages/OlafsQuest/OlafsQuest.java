@@ -269,4 +269,9 @@ public class OlafsQuest implements QuestTask {
     public boolean checkRequirements() {
         return false;
     }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

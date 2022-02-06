@@ -11,6 +11,8 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.awt.*;
@@ -718,5 +720,15 @@ public class BoneVoyage implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public java.util.List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public java.util.List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

@@ -12,16 +12,14 @@ import scripts.QuestPackages.HauntedMine.HauntedMine;
 import scripts.QuestPackages.HauntedMine.HauntedMineConst;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.ItemOnTileRequirement;
-import scripts.Requirements.ObjectCondition;
+import scripts.Requirements.*;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.Operation;
-import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TarnRoute implements QuestTask {
 
@@ -387,5 +385,15 @@ public class TarnRoute implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

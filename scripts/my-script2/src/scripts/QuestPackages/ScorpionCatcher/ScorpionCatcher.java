@@ -329,4 +329,8 @@ public class ScorpionCatcher implements QuestTask {
         ArrayList<Requirement> reqs =  getGeneralRequirements();
         return reqs.stream().allMatch(Requirement::check);
     }
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

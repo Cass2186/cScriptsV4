@@ -16,6 +16,8 @@ import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.QuestPackages.GhostsAhoy.GhostsAhoy;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.awt.*;
@@ -933,5 +935,15 @@ public class RfdEvilDave implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public java.util.List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public java.util.List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

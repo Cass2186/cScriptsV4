@@ -17,6 +17,8 @@ import scripts.QuestPackages.JunglePotion.JunglePotion;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.TaskSet;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
@@ -1217,5 +1219,15 @@ public class FairyTalePt1 implements QuestTask {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

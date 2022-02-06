@@ -9,14 +9,13 @@ import scripts.GEManager.GEItem;
 import scripts.*;
 import scripts.QuestPackages.RfdGoblin.RfdGoblin;
 import scripts.QuestSteps.*;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.SkillRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TribalTotem implements QuestTask {
 
@@ -223,4 +222,14 @@ public class TribalTotem implements QuestTask {
         return false;
     }
 
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

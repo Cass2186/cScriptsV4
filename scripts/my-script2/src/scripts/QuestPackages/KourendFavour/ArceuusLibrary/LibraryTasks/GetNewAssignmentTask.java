@@ -7,7 +7,11 @@ import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Professor.Professor;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestSteps.QuestTask;
 
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+
+import java.util.List;
 
 public class GetNewAssignmentTask implements QuestTask {
 
@@ -54,5 +58,13 @@ public class GetNewAssignmentTask implements QuestTask {
     public boolean validate() {
         return !State.get().getCurrentAssignment().isPresent();
     }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

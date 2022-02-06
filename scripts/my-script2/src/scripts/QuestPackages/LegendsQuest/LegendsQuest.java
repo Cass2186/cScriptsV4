@@ -2075,4 +2075,14 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         }
 
     }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

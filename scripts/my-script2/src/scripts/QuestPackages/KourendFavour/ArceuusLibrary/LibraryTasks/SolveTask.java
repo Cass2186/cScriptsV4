@@ -12,9 +12,12 @@ import scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryUtils;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestSteps.QuestTask;
 
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class SolveTask implements QuestTask {
     private static SolveTask quest;
@@ -105,5 +108,15 @@ public class SolveTask implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

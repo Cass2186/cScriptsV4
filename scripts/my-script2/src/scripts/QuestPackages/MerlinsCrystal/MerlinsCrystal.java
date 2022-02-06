@@ -11,15 +11,14 @@ import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.TearsOfGuthix.TearsOfGuthix;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
+import scripts.Requirements.*;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.Priority;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class MerlinsCrystal implements QuestTask {
@@ -705,5 +704,15 @@ public class MerlinsCrystal implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

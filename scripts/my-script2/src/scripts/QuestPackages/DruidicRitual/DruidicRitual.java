@@ -10,11 +10,14 @@ import scripts.GEManager.GEItem;
 import scripts.QuestPackages.VarrockMuseum.VarrockMuseum;
 import scripts.QuestSteps.*;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class DruidicRitual implements QuestTask {
     private static DruidicRitual quest;
@@ -156,5 +159,14 @@ public class DruidicRitual implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

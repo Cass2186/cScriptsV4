@@ -14,10 +14,13 @@ import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class RfdSkratch implements QuestTask {
@@ -553,4 +556,13 @@ public class RfdSkratch implements QuestTask {
         return checkLevel();
     }
 
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

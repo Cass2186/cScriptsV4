@@ -6,6 +6,8 @@ import scripts.NpcID;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Utils;
@@ -165,5 +167,14 @@ public class ChanceChallenge implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

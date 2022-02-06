@@ -20,6 +20,8 @@ import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestPackages.DruidicRitual.DruidicRitual;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
@@ -2123,5 +2125,15 @@ public class MonkeyMadnessI implements QuestTask {
     @Override
     public String questName() {
         return "Monkey Madness I (" + Game.getSetting(365) + ")";
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

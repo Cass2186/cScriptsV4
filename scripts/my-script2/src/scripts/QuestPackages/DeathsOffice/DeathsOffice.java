@@ -5,7 +5,11 @@ import org.tribot.api2007.NPCs;
 import org.tribot.api2007.types.RSNPC;
 import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+
+import java.util.List;
 
 public class DeathsOffice implements QuestTask {
 
@@ -53,5 +57,14 @@ public class DeathsOffice implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

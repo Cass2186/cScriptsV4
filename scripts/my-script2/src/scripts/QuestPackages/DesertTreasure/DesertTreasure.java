@@ -544,7 +544,7 @@ public class DesertTreasure implements QuestTask {
 
 
 
-
+@Override
     public List<Requirement> getGeneralRequirements() {
         ArrayList<Requirement> req = new ArrayList<>();
        // req.add(new QuestRequirement(QuestHelperQuest.THE_DIG_SITE, QuestState.FINISHED));
@@ -585,5 +585,12 @@ public class DesertTreasure implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return false;
+    }
+
+
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

@@ -16,10 +16,13 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AnimalMagnetism implements QuestTask {
 
@@ -657,5 +660,15 @@ public class AnimalMagnetism implements QuestTask {
     @Override
     public boolean checkRequirements() {
         return Skills.SKILLS.SLAYER.getActualLevel() >= 18 && checkLevel();
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

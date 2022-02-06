@@ -13,10 +13,13 @@ import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class DepthsOfDespair implements QuestTask {
 
@@ -632,5 +635,15 @@ public class DepthsOfDespair implements QuestTask {
     public boolean checkRequirements() {
         return Skills.SKILLS.MAGIC.getActualLevel() >= 13 &&
                 Skills.SKILLS.AGILITY.getActualLevel() >= 18;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }

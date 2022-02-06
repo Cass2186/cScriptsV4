@@ -16,10 +16,13 @@ import scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryTasks.*;
 import scripts.QuestPackages.KourendFavour.MakeCompost;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.TaskSet;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 import scripts.Utils;
 import scripts.cQuesterV2;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -171,6 +174,16 @@ public class ArceuusLibrary implements QuestTask, InterfaceListener, InventoryLi
     @Override
     public void inventoryItemLost(String itemName, Long count) {
         State.setCurrentBooksFromInventory(Inventory.getAllList());
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 
 }

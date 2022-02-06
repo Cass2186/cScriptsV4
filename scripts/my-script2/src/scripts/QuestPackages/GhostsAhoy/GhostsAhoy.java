@@ -7,6 +7,7 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
@@ -21,18 +22,14 @@ import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.HolyGrail.HolyGrail;
 import scripts.QuestSteps.*;
-import scripts.Requirements.InventoryRequirement;
-import scripts.Requirements.ItemReq;
-import scripts.Requirements.SkillRequirement;
+import scripts.Requirements.*;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
+import scripts.Timer;
 
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class GhostsAhoy implements QuestTask {
     private static GhostsAhoy quest;
@@ -1238,5 +1235,13 @@ public class GhostsAhoy implements QuestTask {
         return message;
     }
 
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
 
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
+    }
 }

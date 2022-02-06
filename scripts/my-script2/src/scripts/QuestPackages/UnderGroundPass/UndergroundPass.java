@@ -22,6 +22,7 @@ import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class UndergroundPass implements QuestTask {
     private static UndergroundPass quest;
@@ -2184,5 +2185,15 @@ public class UndergroundPass implements QuestTask {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        return null;
+    }
+
+    @Override
+    public List<ItemRequirement> getBuyList() {
+        return null;
     }
 }
