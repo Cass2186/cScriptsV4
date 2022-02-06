@@ -225,7 +225,7 @@ public class MineOreMLM implements Task {
                 && Vars.get().useMLM
                 && Skills.getActualLevel(Skills.SKILLS.MINING) >= 30 &&
                 !Inventory.isFull()
-                && Utils.getVarBitValue(Varbits.SACK_NUMBER.value) <= 56;
+                && Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) <= 56;
     }
 
     @Override

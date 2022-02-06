@@ -129,6 +129,19 @@ public class Contact implements QuestTask {
 
     int HIGH_PRIEST_ID = 6192;
     int VARBIT = 3274;
+    RSArea AFTER_PUSH_WALL_FAILSAFE = new RSArea(
+            new RSTile[] {
+                    new RSTile(3293, 9242, 2),
+                    new RSTile(3293, 9244, 2),
+                    new RSTile(3284, 9244, 2),
+                    new RSTile(3284, 9236, 2),
+                    new RSTile(3291, 9234, 2),
+                    new RSTile(3295, 9234, 2),
+                    new RSTile(3294, 9236, 2),
+                    new RSTile(3293, 9238, 2),
+                    new RSTile(3287, 9240, 2)
+            }
+    );
     ArrayList<RSTile> path = new ArrayList<>(Arrays.asList(
             new RSTile(3318, 9273, 2),
             new RSTile(3318, 9265, 2),
@@ -205,7 +218,8 @@ public class Contact implements QuestTask {
         searchKaleef = new ObjectStep(ObjectID.KALEEFS_BODY, new RSTile(3239, 9244, 0), "Search");
         searchKaleef.setUseLocalNav(true);
 
-        readParchment = new ClickItemStep(parchment.getId(), "Read");
+        readParchment = new ClickItemStep(parchment.getId(), "Read",
+                new RSTile(3239, 9244, 0));
 
         talkToMaisa = new NPCStep(NpcID.MAISA, new RSTile(3218, 9246, 0));
         talkToMaisa.addDialogStep("Draynor Village");
@@ -485,13 +499,15 @@ public class Contact implements QuestTask {
             }
             if (AFTER_SLAYER_AREA.contains(Player.getPosition())) {
                 checkLightSource();
+                cQuesterV2.status = "After Slayer area";
+                General.println("[MoveToArea]: " +  cQuesterV2.status);
                 eatAndDrink();
                 RSTile afterCrushers = new RSTile(3285, 9242, 2);
                 if (PathingUtil.localNavigation(afterCrushers))
                     Timer.waitCondition(() -> Player.getPosition().distanceTo(afterCrushers) < 3, 8000, 12000);
 
             }
-            if (AFTER_CRUSHERS.contains(Player.getPosition())) {
+            if (AFTER_CRUSHERS.contains(Player.getPosition()) || AFTER_PUSH_WALL_FAILSAFE.contains(Player.getPosition())) {
                 checkLightSource();
                 eatAndDrink();
                 cQuesterV2.status = "Going to Ladder";
@@ -645,6 +661,10 @@ public class Contact implements QuestTask {
         } else if (Utils.getVarBitValue(VARBIT) == 20) {
             cQuesterV2.status = "Talking to high priest";
             talkToHighPriest2.execute();
+            if(NPCInteraction.isConversationWindowUp()){
+                NPCInteraction.handleConversation("Is there any way into Menaphos from below?");
+            }
+
         } else if (Utils.getVarBitValue(VARBIT) == 30) {
             cQuesterV2.status = "Talking to Jex";
             talkToJex.execute();
@@ -684,6 +704,8 @@ public class Contact implements QuestTask {
             returnToHighPriest.execute();
             cQuesterV2.taskList.remove(this);
         }
+        if (NPCInteraction.isConversationWindowUp())
+            NPCInteraction.handleConversation();
 
     }
 

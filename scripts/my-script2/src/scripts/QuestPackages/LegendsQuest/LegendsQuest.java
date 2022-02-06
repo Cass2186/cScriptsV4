@@ -12,6 +12,7 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
@@ -22,6 +23,7 @@ import scripts.Listeners.InterfaceObserver;
 import scripts.Listeners.InventoryObserver;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Statistics;
+import scripts.QuestPackages.MurderMystery.MurderMystery;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.Util.ConditionalStep;
@@ -32,10 +34,19 @@ import scripts.Timer;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
 public class LegendsQuest implements QuestTask, InterfaceListener {
+
+
+    private static LegendsQuest quest;
+
+    public static LegendsQuest get() {
+        return quest == null ? quest = new LegendsQuest() : quest;
+    }
+
 
     ItemReq axe = new ItemReq(ItemID.RUNE_AXE);
     ItemReq machete = new ItemReq(ItemID.MACHETE);
@@ -212,8 +223,9 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             papyrus, charcoal);
 
 
-    NPCStep useNotes = new NPCStep("Jungle Forester", new RSTile(2867, 2942, 0),
-            new String[]{"Yes, go ahead make a copy!"}, completeNotesHighlighted);
+    UseItemOnNpcStep useNotes = new UseItemOnNpcStep(ItemID.RADIMUS_NOTES_715, 3954,
+            new RSTile(2867, 2942, 0),
+            completeNotesHighlighted);
 
     // enterJungleWithRoarer =new DetailedQuestStep( "Re-enter the Khazari Jungle. You'll need to cut through some trees and bushes to enter.",completeNotes, bullRoarer, axe, machete, lockpick, pickaxe, soulRune, mindRune, earthRune, lawRune2, opal, jade, topaz, sapphire, emerald, ruby, diamond);
     RSArea guild1 = new RSArea(new RSTile(2726, 3350, 0), new RSTile(2731, 3382, 2));
@@ -533,9 +545,12 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         }
     }
 
-    Conditions talkedToUngadulu = new Conditions(true, LogicType.OR,
-            new WidgetTextRequirement(229, 1, "The Shaman throws himself down on the floor and starts convulsing."),
-            new WidgetTextRequirement(119, 3, true, "is acting weird and talking a lot of nonsense"));
+    WidgetTextRequirement ungaduluTextOne = new WidgetTextRequirement(229, 1,
+            "The Shaman throws himself down on the floor and starts convulsing.");
+
+    WidgetTextRequirement ungaduluTextTwo = new WidgetTextRequirement(119, 3, true,
+            "is acting weird and talking a lot of nonsense");
+    Conditions talkedToUngadulu = new Conditions(true, LogicType.OR, ungaduluTextOne, ungaduluTextTwo);
 
     Conditions hadSketch = new Conditions(true, LogicType.OR, sketch);
 
@@ -574,48 +589,32 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
     //   NpcCondition  irvigNearby = new NpcCondition(NpcID.IRVIG_SENAY);
     //  NpcCondition sanNearby = new NpcCondition(NpcID.SAN_TOJALON);
 
-    public Map<Integer, QuestStep> loadSteps() {
-        Map<Integer, QuestStep> steps = new HashMap<>();
-    /*    ConditionalStep talkWithGujuo = new ConditionalStep(enterJungleWithRoarer);
-        talkWithGujuo.addStep(gujuoNearby, talkToGujuo);
-        talkWithGujuo.addStep(inKharazi, spinBull());
-
-        steps.put(3, talkWithGujuo);
-        steps.put(4, talkWithGujuo);
-
-        ConditionalStep investigatingTheCave = new ConditionalStep(enterJungleWithRoarer);
-        investigatingTheCave.addStep(new Conditions(inKharazi, talkedToUngadulu, gujuoNearby), talkToGujuoAgain);
-        investigatingTheCave.addStep(new Conditions(inKharazi, talkedToUngadulu), spinBullAgain);
-        investigatingTheCave.addStep(new Conditions(inCaves, talkedToUngadulu), leaveCave);
-        investigatingTheCave.addStep(inCaves, investigateFireWall);
-        investigatingTheCave.addStep(inKharazi, enterMossyRock);
-
-        steps.put(5, investigatingTheCave);
-        steps.put(6, investigatingTheCave);
-        steps.put(7, investigatingTheCave);*/
-        return steps;
-    }
+    ObjectStep leaveCave = new ObjectStep(ObjectID.CAVE_ENTRANCE_2903,
+            new RSTile(2773, 9342, 0), "Walk through", !inCaves.check());
 
     public boolean spinBull() {
         RSItem[] bull = Inventory.find(bullRoarer.getId());
-        if (bull.length > 0 && bull[0].click("Swing")) {
+        if (NPCs.find("Gujuo").length == 0 &&
+                bull.length > 0 && bull[0].click("Swing")) {
             return Timer.waitCondition(() -> NPCs.find("Gujuo").length > 0, 5000);
         }
         return false;
     }
 
     public void blessBowl() {
-        if (Inventory.find(722).length == 0) {
+        if (Inventory.find(ItemID.BLESSED_GOLD_BOWL).length == 0) {
             spinBull();
             talkToGujuoWithBowl.execute();
-            Timer.waitCondition(() -> Inventory.find(722).length > 0, 10000);
+            if (Timer.waitCondition(() -> NPCInteraction.isConversationWindowUp(), 7000, 9000))
+                NPCInteraction.handleConversation();
+            Timer.waitCondition(() -> Inventory.find(ItemID.BLESSED_GOLD_BOWL).length > 0, 10000);
             if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation();
         }
 
     }
 
-    NPCStep talkToGujuo = new NPCStep("Gujuo", Player.getPosition(),
+    NPCStep talkToGujuo = new NPCStep("Gujuo", new RSTile(2784, 2936, 0),
             new String[]{"I was hoping to attract the attention of a native.",
                     "I want to develop friendly relations with your people.",
                     "Can you get your people together?",
@@ -623,10 +622,11 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                     "How do we make the totem pole?",
                     "I will release Ungadulu..."});
 
+    NPCStep talkToGujuoAgain = new NPCStep(NpcID.GUJUO, new RSTile(2784, 2936, 0),
+            new String[]{"I need some pure water to douse some magic flames.", "What kind of a vessel?"});
+
     /*   ObjectStep leaveCave = new ObjectStep(2903, new RSTile(2773, 9342, 0));
 
-       NPCStep talkToGujuoAgain = new NPCStep(NpcID.GUJUO,
-               new String[]{"I need some pure water to douse some magic flames.", "What kind of a vessel?"});
 
        ObjectStep enterMossyRockAgain = new ObjectStep(ObjectID.MOSSY_ROCK, new RSTile(2782, 2937, 0),
                new String[]{"Yes, I'll crawl through, I'm very athletic."});
@@ -735,12 +735,15 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
     ObjectStep searchMossyRockWithBravery = new ObjectStep(ObjectID.MOSSY_ROCK,
             new RSTile(2782, 2933, 0),
             "Search", NPCInteraction.isConversationWindowUp(), braveryPotion);
+    ObjectStep enterMossyRock = new ObjectStep(ObjectID.MOSSY_ROCK,
+            new RSTile(2782, 2937, 0),
+            "Search", NPCInteraction.isConversationWindowUp());
     ObjectStep enterMossyRockWithBowl = new ObjectStep(ObjectID.MOSSY_ROCK,
             new RSTile(2782, 2937, 0),
-            "Enter", NPCInteraction.isConversationWindowUp(), goldBowlFull);
+            "Search", NPCInteraction.isConversationWindowUp(), goldBowlFull);
     ObjectStep enterMossyRockWithBravery = new ObjectStep(ObjectID.MOSSY_ROCK,
             new RSTile(2782, 2937, 0),
-            "Enter", NPCInteraction.isConversationWindowUp(), braveryPotion);
+            "Search", NPCInteraction.isConversationWindowUp(), braveryPotion);
     UseItemOnObjectStep useBowlOnFireWall = new UseItemOnObjectStep(goldBowlFull.getId(), ObjectID.FIRE_WALL,
             new RSTile(2789, 9333, 0),
             "Use the golden bowl on the wall of fire.", goldBowlFull);
@@ -754,7 +757,6 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         if (!inFire.check()) {
             cQuesterV2.status = "Entering fire";
             useBowlOnFireWall.useItemOnObject();
-
         }
     }
 
@@ -842,6 +844,41 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         }
     }
 
+    InventoryRequirement gemInventory = new InventoryRequirement(new ArrayList<>(List.of(
+            new ItemReq(ItemID.MACHETE, 1),
+            new ItemReq(ItemID.RADIMUS_NOTES_715, 1),
+            new ItemReq(ItemID.RUNE_AXE, 1),
+            new ItemReq(ItemID.RUNE_PICKAXE, 1),
+            new ItemReq(ItemID.LOCKPICK, 2),
+            new ItemReq(ItemID.SAPPHIRE, 1),
+            new ItemReq(ItemID.RUBY, 1),
+            new ItemReq(ItemID.DIAMOND, 1),
+            new ItemReq(ItemID.RED_TOPAZ, 1),
+            new ItemReq(ItemID.JADE, 1),
+            new ItemReq(ItemID.OPAL, 1),
+            new ItemReq(ItemID.LAW_RUNE, 5),
+            new ItemReq(ItemID.SOUL_RUNE, 5),
+            new ItemReq(ItemID.MIND_RUNE, 5),
+            new ItemReq(ItemID.EARTH_RUNE, 5),
+            new ItemReq(ItemID.EMERALD, 1),
+            new ItemReq(ItemID.ARDOUGNE_TELEPORT, 5, 1),
+            new ItemReq(ItemID.STAMINA_POTION[0], 3, 1),
+            new ItemReq(ItemID.COINS_995, 3500, 100)
+    )));
+
+    BankTask gearTask = BankTask.builder()
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY)
+                    .item(ItemID.RUNE_PLATEBODY, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON)
+                    .item(21009, Amount.of(1))) //d sword
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HEAD)
+                    .item(1163, Amount.of(1))) //rune full helm
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS)
+                    .item(1079, Amount.of(1))) //rune legs
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.FEET)
+                    .item(4131, Amount.of(1))).build();
+
+
     BankTask bankTask = BankTask.builder()
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY)
                     .item(ItemID.RUNE_PLATEBODY, Amount.of(1)))
@@ -868,7 +905,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             .addInvItem(ItemID.COINS_995, Amount.of(10000))
             .addInvItem(ItemID.BLESSED_GOLD_BOWL, Amount.of(1))
             .addInvItem(ItemID.RADIMUS_NOTES_715, Amount.of(1))
-            .addInvItem(ItemID.ARDOUGNE_TELEPORT, Amount.range(5, 10))
+            .addInvItem(ItemID.ARDOUGNE_TELEPORT, Amount.fill(5))
             .addInvItem(ItemID.SHARK, Amount.fill(2))
             .build();
 
@@ -1171,6 +1208,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             "Put Protect from Melee on, and use the new totem on one of the corrupted totems.",
             yommiTotemHighlighted, combatGear);
 
+
     public void useTotemOnTotemStep() {
         if (yommiTotem.check()) {
             PathingUtil.walkToTile(new RSTile(2852, 2917, 0), 2, false);
@@ -1212,11 +1250,95 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         }
     }
 
+    QuestStep enterMossyRockAgain, pickUpBook, waitForBook;
+    ConditionalStep runePuzzle, gemPuzzle, blessBowl;
 
     RSArea WHOLE_CAVE_AREA = new RSArea(new RSTile(2751, 9344, 0), new RSTile(2815, 9280, 0));
     RSArea WHOLE_CAVE_AREA_2 = new RSArea(new RSTile(2435, 4669, 0), new RSTile(2367, 4735, 0));
 
+
+    public boolean makeGoldBowlStep() {
+        if (!new Conditions(goldBar2, sketch, hammer).check() && !goldBowl.check()) {
+            //get items
+            Log.debug("Need items for makeBowlStep");
+        } else if (!goldBowl.check()) {
+            Log.debug("Making Gold Bowl");
+            UseItemOnObjectStep makeBowl = new UseItemOnObjectStep(ItemID.GOLD_BAR, ObjectID.ANVIL,
+                    new RSTile(3187, 3426, 0),
+                    org.tribot.script.sdk.Inventory.contains(ItemID.GOLD_BOWL),
+                    goldBar2, sketch, hammer);
+
+            makeBowl.addDialogStep("Yes.");
+            makeBowl.execute();
+
+            if (NPCInteraction.isConversationWindowUp()) {
+                NPCInteraction.handleConversation("Yes.");
+            }
+        }
+        return goldBowl.check();
+    }
+
     public void setUpSteps() {
+
+        Map<Integer, QuestStep> steps = new HashMap<>();
+
+
+        runePuzzle = new ConditionalStep(enterMossyRockAgain);
+        runePuzzle.addStep(new Conditions(inCaveRoom4, addedLawRune), useLaw2);
+        runePuzzle.addStep(new Conditions(inCaveRoom4, addedEarthRune), useLaw);
+        runePuzzle.addStep(new Conditions(inCaveRoom4, addedMindRune), useEarth);
+        runePuzzle.addStep(new Conditions(inCaveRoom4, addedSoulRune), useMind);
+        runePuzzle.addStep(new Conditions(inCaveRoom4, searchedMarkedWall), useSoul);
+        runePuzzle.addStep(new Conditions(inCaveRoom4), searchMarkedWall);
+        runePuzzle.addStep(new Conditions(inCaveRoom3), enterGate2);
+        runePuzzle.addStep(new Conditions(inCaveRoom2), enterGate1);
+        runePuzzle.addStep(new Conditions(inCaveRoom1), enterBookcase);
+        runePuzzle.setLockingCondition(inCaveRoom5);
+        runePuzzle.setBlocker(true);
+
+    /*  gemPuzzle = new ConditionalStep(useSapphire);
+        gemPuzzle.addStep(new Conditions(bookNearby), pickUpBook);
+        gemPuzzle.addStep(new Conditions(bookAppearing), waitForBook);
+        gemPuzzle.addStep(new Conditions(sapphirePlaced, diamondPlaced, rubyPlaced, topazPlaced, jadePlaced, emeraldPlaced), useOpal);
+        gemPuzzle.addStep(new Conditions(sapphirePlaced, diamondPlaced, rubyPlaced, topazPlaced, jadePlaced), useEmerald);
+        gemPuzzle.addStep(new Conditions(sapphirePlaced, diamondPlaced, rubyPlaced, topazPlaced), useJade);
+        gemPuzzle.addStep(new Conditions(sapphirePlaced, diamondPlaced, rubyPlaced), useTopaz);
+        gemPuzzle.addStep(new Conditions(sapphirePlaced, diamondPlaced), useRuby);
+        gemPuzzle.addStep(new Conditions(sapphirePlaced), useDiamond);
+        gemPuzzle.setLockingCondition(bindingBook.alsoCheckBank(questBank));
+        gemPuzzle.setBlocker(true);
+
+        blessBowl = new ConditionalStep(makeBowl);
+        blessBowl.addStep(new Conditions(inKharazi, goldBowlBlessed.alsoCheckBank(questBank), reed), useReedOnPool);
+        blessBowl.addStep(new Conditions(inKharazi, goldBowlBlessed.alsoCheckBank(questBank)), useMacheteOnReeds);
+        blessBowl.addStep(new Conditions(inKharazi, goldBowl.alsoCheckBank(questBank), gujuoNearby), talkToGujuoWithBowl);
+        blessBowl.addStep(new Conditions(inKharazi, goldBowl.alsoCheckBank(questBank)), spinBullToBless);
+        blessBowl.addStep(goldBowl.alsoCheckBank(questBank), enterJungleWithBowl);
+
+        ConditionalStep solvingCaves = new ConditionalStep(enterJungleWithRoarer);
+        solvingCaves.addStep(new Conditions(inFire, nezNearby), fightNezikchenedInFire);
+        solvingCaves.addStep(new Conditions(inFire, bindingBook.alsoCheckBank(questBank)), useBindingBookOnUngadulu);
+        solvingCaves.addStep(new Conditions(inCaves, bindingBook.alsoCheckBank(questBank), goldBowlFull), useBowlOnFireWall);
+        solvingCaves.addStep(new Conditions(bindingBook.alsoCheckBank(questBank), goldBowlFull), enterMossyRockWithBowl);
+        solvingCaves.addStep(bindingBook.alsoCheckBank(questBank), blessBowl);
+        solvingCaves.addStep(inCaveRoom5, gemPuzzle);
+        solvingCaves.addStep(hadSketch, runePuzzle);
+        solvingCaves.addStep(new Conditions(inKharazi, gujuoNearby), talkToGujuoAgain);
+        solvingCaves.addStep(new Conditions(inKharazi), spinBullAgain);
+        solvingCaves.addStep(inCaves, leaveCave);
+
+        steps.put(8, solvingCaves);
+        // No step 9 encountered, but including as may occur for some players
+        steps.put(9, solvingCaves);
+        steps.put(10, solvingCaves);
+        steps.put(11, solvingCaves);
+
+        ConditionalStep talkingToUngadulu = new ConditionalStep(enterMossyRockAfterFight);
+        talkingToUngadulu.addStep(germinatedSeeds.alsoCheckBank(questBank), useBowlOnSeeds);
+        talkingToUngadulu.addStep(inFire, talkToUngadulu);
+        talkingToUngadulu.addStep(inCaves, enterFireAfterFight);
+
+        steps.put(12, talkingToUngadulu);*/
         searchMarkedWall.addDialogStep("Investigate the outline of the door.", "Yes, I'll go through!");
         searchMosttRockWithBowl.setHandleChat(true);
         searchMosttRockWithBowl.addDialogStep("Yes, I'll crawl through, I'm very athletic.");
@@ -1530,15 +1652,40 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
     }
 
     public void initialiseListeners() {
-        //InventoryObserver inventoryObserver = new InventoryObserver(() -> true);
-        //  inventoryObserver.addListener(this);
-        // inventoryObserver.start();
 
         InterfaceObserver interfaceObserver = new InterfaceObserver(() -> true);
         interfaceObserver.addListener(this);
+        interfaceObserver.addRSInterfaceChild(229, 1);
         interfaceObserver.addRSInterfaceChild(193, 2);
         interfaceObserver.addRSInterfaceChild(231, 5); // npc's text area
         interfaceObserver.start();
+    }
+
+
+    public Map<Integer, QuestStep> loadSteps() {
+        Map<Integer, QuestStep> steps = new HashMap<>();
+
+
+        ConditionalStep plantSeedAttempt = new ConditionalStep(useMacheteOnReedsAgain);
+        plantSeedAttempt.addStep(reed, useReedOnPool);
+        plantSeedAttempt.addStep(inCaves, leaveCaveWithSeed);
+
+        steps.put(13, plantSeedAttempt);
+
+
+        //steps.put(35, useTotemOnTotemAgain);
+
+        steps.put(40, returnToRadimus);
+        steps.put(45, returnToRadimus);
+
+        steps.put(50, talkToRadimusInGuild);
+        steps.put(55, talkToRadimusInGuild);
+        steps.put(60, talkToRadimusInGuild);
+        steps.put(65, talkToRadimusInGuild);
+
+        steps.put(70, talkToRadimusInGuildAgain);
+
+        return steps;
     }
 
     @Override
@@ -1553,255 +1700,305 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
 
     @Override
     public boolean validate() {
-        return GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) < 75;
+        return cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
     public void execute() {
-        cQuesterV2.gameSettingInt = LegendsUtils.LEGENDS_GAME_SETTING;
+        initialiseListeners();
         setUpSteps();
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 0) {
-            startQuest();
-        }
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 1) {
-            sketchJungle();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 2) {
-            cQuesterV2.status = "Using notes";
-            useNotes.execute();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 3) {
-            talkWithGujuo();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 4) {
-            talkWithGujuo();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 5) {
+        for (int i = 0; i < 100; i++) {
+            cQuesterV2.gameSettingInt = LegendsUtils.LEGENDS_GAME_SETTING;
 
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 6) {
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 0) {
+                startQuest();
+            }
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 1) {
+                sketchJungle();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 2) {
 
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 7) {
-
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 8) {
-            cQuesterV2.status = "Blessing bowl";
-            blessBowl();
-            fillBowl();
-
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10) {
-            if (!WHOLE_CAVE_AREA.contains(Player.getPosition()) && !WHOLE_CAVE_AREA_2.contains(Player.getPosition()))
-                LegendsUtils.enterForest();
-
-            fillBowl();
-
-            enterCave();
-
-            if ((!goldBowlBlessed.check() && !goldBowlFull.check() && !goldBowl.check()) || !bindingBook.check()) {
-                navigateDungeon();
-                if (inCaveRoom4.check()) {
-                    cQuesterV2.status = "Searching marked wall";
-                    if (JUST_AFTER_GATE_AREA.contains(Player.getPosition()) &&
-                            PathingUtil.localNavigation(new RSTile(2804, 9287, 0)))
-                        PathingUtil.movementIdle();
-
-                    jumpOverJaggedWall.setUseLocalNav(true);
-                    jumpOverJaggedWall.execute();
-
-                    searchMarkedWall.setUseLocalNav(true);
-                    searchMarkedWall.execute();
-                    useSoul.useItemOnObject();
-                    useMind.useItemOnObject();
-                    useEarth.useItemOnObject();
-                    useLaw.useItemOnObject();
-                    useLaw2.useItemOnObject();
+                if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition()) && !WHOLE_CAVE_AREA.contains(Player.getPosition())) {
+                    if (!gearTask.isSatisfied() || !gemInventory.check()) {
+                        cQuesterV2.status = "Banking";
+                        gearTask.execute();
+                        gemInventory.withdrawItems();
+                    }
                 }
-                if (inCaveRoom5.check() && !bindingBook.check()) {
-                    cQuesterV2.status = "Using Gems";
-                    useSapphire.useItemOnObject();
+                cQuesterV2.status = "Using notes";
+                useNotes.addDialogStep("Yes, go ahead make a copy!");
+                useNotes.execute();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 3) {
+                talkWithGujuo();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 4) {
+                talkWithGujuo();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) >= 5 &&
+                    GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) < 8) {
 
-                    useEmerald.useItemOnObject();
-                    useRuby.useItemOnObject();
-
-                    useDiamond.setTileRadius(1);
-                    useDiamond.useItemOnObject();
-
-                    useOpal.setTileRadius(1);
-                    useOpal.useItemOnObject();
-
-                    useJade.setTileRadius(1);
-                    useJade.useItemOnObject();
-
-                    useTopaz.setTileRadius(1);
-                    useTopaz.useItemOnObject();
-                    cQuesterV2.status = "Waiting for binding book to appear";
-                    Timer.waitCondition(() -> GroundItems.find(bindingBook.getId()).length > 0, 15000, 20000);
-                    Utils.clickGroundItem(bindingBook.getId());
-
+                if (new Conditions(inKharazi, talkedToUngadulu).check()) {
+                    spinBull();
+                    talkToGujuoAgain.execute();
+                } else if (new Conditions(inCaves, talkedToUngadulu).check()) {
+                    cQuesterV2.status = "Leaveing cave";
+                    Log.debug("Leaveing cave");
+                    leaveCave.execute();
+                } else if (!inCaves.check()) {
+                    cQuesterV2.status = "Entering Mossy Rock";
+                    Log.debug("Entering Mossy Rock");
+                    enterMossyRock.addDialogStep("Yes, I'll crawl through, I'm very athletic.");
+                    enterMossyRock.execute();
+                } else {
+                    Log.debug("Investigating fire");
+                    ObjectStep investigateFireWall = new ObjectStep(ObjectID.FIRE_WALL,
+                            new RSTile(2790, 9333, 0), "Investigate",
+                            NPCInteraction.isConversationWindowUp());
+                    investigateFireWall.addDialogStep("How can I extinguish the flames?",
+                            "Where do I get pure water from?");
+                    investigateFireWall.execute();
                 }
-            }
-            if (goldBowlFull.check() && bindingBook.check()) {
-                enterFire();
-                killDemon();
-            }
 
-        }
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 8) {
+                makeGoldBowlStep();
+                cQuesterV2.status = "Blessing bowl";
+                if (LegendsUtils.enterForest()) {
+                    Log.debug("Blessing bowl and filling bowl");
+                    blessBowl();
+                }
+                if (inKharazi.check())
+                    fillBowl();
 
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 12) {
-            // after killing demon in fire circle
-            if (!germinatedSeeds.check() && !yommiSeeds.check())
-                talkToUngaduluAfterFight();
-            addWaterToSeeds();
-        }
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 13) {
-            if (inFire.check() && Utils.clickObject("Fire Wall", "Touch", true)) {
-                Timer.waitCondition(() -> !inFire.check(), 4000, 6000);
-            }
-
-            plantSeeds();
-        }
-
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
-            if (spinBull())
-                talkToGujuoAfterSeeds.execute();
-        }
-
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 15) {
-            if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
-                bank(bankTask);
-                getArdrigal();
-                getSnakeWeed();
-                makePotion();
-                enterJungleAfterBravery();
-                enterCave();
-                navigateDungeon();
-                castSpellOnDoor();
-                climbDownWinch();
-            }
-        }
-        if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 16) {
-            walkDownPath();
-            killAll();
-            useLumpOnFurnace();
-
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 17) {
-            cQuesterV2.status = "Going to use heart on rock";
-            useHeartOnRock.setUseLocalNav(true);
-            useHeartOnRock.setHandleChat(true);
-            useHeartOnRock.useItemOnObject();
-            cQuesterV2.status = "Going to use heart on recess";
-            useHeartOnRecess.setHandleChat(true);
-            useHeartOnRecess.setUseLocalNav(true);
-            useHeartOnRecess.useItemOnObject();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 18) {
-            enterBoulderArea();
-            pushBoulder();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 19) {
-            pushBoulder();
-            cQuesterV2.status = "Talking to Echned";
-            talkToEchned.setUseLocalNav(true);
-            talkToEchned.addDialogStep("Who's asking?", "Yes, I need it for my quest.", "What can I do about that?",
-                    "I'll do what I must to get the water.", "Ok, I'll do it.");
-            talkToEchned.execute();
-
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 20) {
-            if (!WHOLE_CAVE_AREA.contains(Player.getPosition()) &&
-                    !WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
-                if (!LegendsUtils.WHOLE_FOREST_AREA.contains(Player.getPosition()))
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10) {
+                if (!WHOLE_CAVE_AREA.contains(Player.getPosition()) &&
+                        !WHOLE_CAVE_AREA_2.contains(Player.getPosition()))
                     LegendsUtils.enterForest();
 
+                fillBowl();
+
                 enterCave();
+
+                if ((!goldBowlBlessed.check() && !goldBowlFull.check() && !goldBowl.check()) || !bindingBook.check()) {
+                    navigateDungeon();
+                    if (inCaveRoom4.check()) {
+                        cQuesterV2.status = "Searching marked wall";
+                        if (JUST_AFTER_GATE_AREA.contains(Player.getPosition()) &&
+                                PathingUtil.localNavigation(new RSTile(2804, 9287, 0)))
+                            PathingUtil.movementIdle();
+
+                        jumpOverJaggedWall.setUseLocalNav(true);
+                        jumpOverJaggedWall.execute();
+
+                        searchMarkedWall.setUseLocalNav(true);
+                        searchMarkedWall.execute();
+                        if (inCaveRoom4.check()) {
+                            useSoul.useItemOnObject();
+                            useMind.useItemOnObject();
+                            useEarth.useItemOnObject();
+                            useLaw.useItemOnObject();
+                            useLaw2.useItemOnObject();
+                            if (NPCInteraction.isConversationWindowUp())
+                                NPCInteraction.handleConversation();
+                        }
+                        searchMarkedWall.setUseLocalNav(true);
+                        searchMarkedWall.execute();
+                        Timer.waitCondition(()-> inCaveRoom5.check(), 2500,4000);
+                    }
+                    if (inCaveRoom5.check() && !bindingBook.check()) {
+                        cQuesterV2.status = "Using Gems";
+                        useSapphire.useItemOnObject();
+
+                        useEmerald.useItemOnObject();
+                        useRuby.useItemOnObject();
+
+                        useDiamond.setTileRadius(1);
+                        useDiamond.useItemOnObject();
+
+                        useOpal.setTileRadius(1);
+                        useOpal.useItemOnObject();
+
+                        useJade.setTileRadius(1);
+                        useJade.useItemOnObject();
+
+                        useTopaz.setTileRadius(1);
+                        useTopaz.useItemOnObject();
+                        cQuesterV2.status = "Waiting for binding book to appear";
+                        Timer.waitCondition(() -> GroundItems.find(bindingBook.getId()).length > 0,
+                                20000, 25000);
+                        Utils.clickGroundItem(bindingBook.getId());
+
+                    }
+                }
+                if (goldBowlFull.check() && bindingBook.check()) {
+                    if (inCaveRoom5.check() && LegendsUtils.enterForest()){
+                        if (inKharazi.check()){
+                            enterMossyRockWithBowl.execute();
+                        }
+                    }
+                    enterFire();
+                    killDemon();
+                }
+
             }
-            if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
-                navigateDungeon();
+
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 12) {
+                // after killing demon in fire circle
+                if (!germinatedSeeds.check() && !yommiSeeds.check())
+                    talkToUngaduluAfterFight();
+                addWaterToSeeds();
             }
-            if (!ledge.check() && darkDagger.check()) {
-                leaveBoulderArea();
-                walkUpPath();
-                killViyeldi();
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 13) {
+                if (inFire.check() && Utils.clickObject("Fire Wall", "Touch", true)) {
+                    Timer.waitCondition(() -> !inFire.check(), 4000, 6000);
+                }
+
+                plantSeeds();
             }
-            if (!darkDagger.check() && glowingDagger.check()) {
+
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
+                if (spinBull())
+                    talkToGujuoAfterSeeds.execute();
+            }
+
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 15) {
+                if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
+                    bank(bankTask);
+                    getArdrigal();
+                    getSnakeWeed();
+                    makePotion();
+                    enterJungleAfterBravery();
+                    enterCave();
+                    navigateDungeon();
+                    castSpellOnDoor();
+                    climbDownWinch();
+                }
+            }
+            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 16) {
                 walkDownPath();
+                killAll();
+                useLumpOnFurnace();
+
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 17) {
+                cQuesterV2.status = "Going to use heart on rock";
+                useHeartOnRock.setUseLocalNav(true);
+                useHeartOnRock.setHandleChat(true);
+                useHeartOnRock.useItemOnObject();
+                cQuesterV2.status = "Going to use heart on recess";
+                useHeartOnRecess.setHandleChat(true);
+                useHeartOnRecess.setUseLocalNav(true);
+                useHeartOnRecess.useItemOnObject();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 18) {
                 enterBoulderArea();
-                if (!Combat.isUnderAttack())
-                    pushBoulder();
-                killDemonAtRocks();
-            }
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 22) {
-            pushBoulder();
-            useBowlOnSacredWater.setUseLocalNav(true);
-            useBowlOnSacredWater.useItemOnObject();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 25) {
-            //leave the dungeon and re-enter forest
-            if (!LegendsUtils.WHOLE_FOREST_AREA.contains(Player.getPosition()))
-                LegendsUtils.enterForest();
-            if (!goldBowlFull.check() && !germinatedSeeds.check()) {
-                cQuesterV2.status = "Using Machete on Reeds";
-                useMacheteOnReedsEnd.useItemOnObject();
-                cQuesterV2.status = "Using Reed on pool";
-                useReedOnPool.useItemOnObject();
-            }
-            if (goldBowlFull.check() && !germinatedSeeds.check()) {
-                cQuesterV2.status = "Germinating seeds";
-                useBowlOnSeeds.execute();
-                NPCInteraction.handleConversation();
-            }
-            if (goldBowlFull.check() && germinatedSeeds.check()) {
-                cQuesterV2.status = "Spinning Roarer";
-                //  spinBullAfterSeeds.execute();
-                //if(Timer.waitCondition(()-> NPCInteraction.isConversationWindowUp(), 4000,6000))
-                //    NPCInteraction.handleConversation();
-                cQuesterV2.status = "Planting Seeds";
-                plantSeedsStep.useItemOnObject();
+                pushBoulder();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 19) {
+                pushBoulder();
+                cQuesterV2.status = "Talking to Echned";
+                talkToEchned.setUseLocalNav(true);
+                talkToEchned.addDialogStep("Who's asking?", "Yes, I need it for my quest.", "What can I do about that?",
+                        "I'll do what I must to get the water.", "Ok, I'll do it.");
+                talkToEchned.execute();
 
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 20) {
+                if (!WHOLE_CAVE_AREA.contains(Player.getPosition()) &&
+                        !WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
+                    if (!LegendsUtils.WHOLE_FOREST_AREA.contains(Player.getPosition()))
+                        LegendsUtils.enterForest();
+
+                    enterCave();
+                }
+                if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
+                    navigateDungeon();
+                }
+                if (!ledge.check() && darkDagger.check()) {
+                    leaveBoulderArea();
+                    walkUpPath();
+                    killViyeldi();
+                }
+                if (!darkDagger.check() && glowingDagger.check()) {
+                    walkDownPath();
+                    enterBoulderArea();
+                    if (!Combat.isUnderAttack())
+                        pushBoulder();
+                    killDemonAtRocks();
+                }
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 22) {
+                pushBoulder();
+                useBowlOnSacredWater.setUseLocalNav(true);
+                useBowlOnSacredWater.useItemOnObject();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 25) {
+                //leave the dungeon and re-enter forest
+                if (!LegendsUtils.WHOLE_FOREST_AREA.contains(Player.getPosition()))
+                    LegendsUtils.enterForest();
+                if (!goldBowlFull.check() && !germinatedSeeds.check()) {
+                    cQuesterV2.status = "Using Machete on Reeds";
+                    useMacheteOnReedsEnd.useItemOnObject();
+                    cQuesterV2.status = "Using Reed on pool";
+                    useReedOnPool.useItemOnObject();
+                }
+                if (goldBowlFull.check() && !germinatedSeeds.check()) {
+                    cQuesterV2.status = "Germinating seeds";
+                    useBowlOnSeeds.execute();
+                    NPCInteraction.handleConversation();
+                }
+                if (goldBowlFull.check() && germinatedSeeds.check()) {
+                    cQuesterV2.status = "Spinning Roarer";
+                    //  spinBullAfterSeeds.execute();
+                    //if(Timer.waitCondition(()-> NPCInteraction.isConversationWindowUp(), 4000,6000))
+                    //    NPCInteraction.handleConversation();
+                    cQuesterV2.status = "Planting Seeds";
+                    plantSeedsStep.useItemOnObject();
+
+                }
+                useWaterOnTree.useItemOnObject();
+                if (NPCInteraction.isConversationWindowUp())
+                    NPCInteraction.handleConversation();
+                useAxe.useItemOnObject();
+                Timer.waitCondition(() -> Objects.find(20, ObjectID.FELLED_YOMMI_TREE).length > 0, 2500, 3500);
+                useAxeAgain.useItemOnObject();
+                craftTree.useItemOnObject();
+                pickUpTotem.execute();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 30) {
+                useTotemOnTotemStep();
+                if (NPCInteraction.isConversationWindowUp())
+                    NPCInteraction.handleConversation();
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 32) {
+                //fight
+                killGhostDudes();
+
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 35) {
+                // disable prayer, place totem & handle chat
+
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 40) {
+
+                // wait for Gujuo and handle chat
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 45) {
+                cQuesterV2.status = "Returning to radimus";
+                enterLegendsGuild();
+                returnToRadimus.setUseLocalNav(true);
+                returnToRadimus.execute();
+                // talk to Radimus Erkle in the little house in guild
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 50) {
+                cQuesterV2.status = "Returning to radimus in guild";
+                enterLegendsGuild();
+                talkToRadimusInGuild.setUseLocalNav(true);
+                Log.log(talkToRadimusInGuild.isUseLocalNav());
+                talkToRadimusInGuild.execute();
+                // talk to Radimus Erkle in guild
+                // claim reward 1
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 55) {
+                // claim reward 2
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 60) {
+                // claim reward 3
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 65) {
+                // claim reward 4
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 70) {
+                //finish dialogue
+            } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 75) {
+                // Done Quest, close window
             }
-            useWaterOnTree.useItemOnObject();
-            if (NPCInteraction.isConversationWindowUp())
-                NPCInteraction.handleConversation();
-            useAxe.useItemOnObject();
-            Timer.waitCondition(() -> Objects.find(20, ObjectID.FELLED_YOMMI_TREE).length > 0, 2500, 3500);
-            useAxeAgain.useItemOnObject();
-            craftTree.useItemOnObject();
-            pickUpTotem.execute();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 30) {
-            useTotemOnTotemStep();
-            if (NPCInteraction.isConversationWindowUp())
-                NPCInteraction.handleConversation();
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 32) {
-            //fight
-            killGhostDudes();
-
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 35) {
-            // disable prayer, place totem & handle chat
-
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 40) {
-
-            // wait for Gujuo and handle chat
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 45) {
-            cQuesterV2.status = "Returning to radimus";
-            enterLegendsGuild();
-            returnToRadimus.setUseLocalNav(true);
-            returnToRadimus.execute();
-            // talk to Radimus Erkle in the little house in guild
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 50) {
-            cQuesterV2.status = "Returning to radimus in guild";
-            enterLegendsGuild();
-            talkToRadimusInGuild.setUseLocalNav(true);
-            Log.log(talkToRadimusInGuild.isUseLocalNav());
-            talkToRadimusInGuild.execute();
-            // talk to Radimus Erkle in guild
-            // claim reward 1
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 55) {
-            // claim reward 2
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 60) {
-            // claim reward 3
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 65) {
-            // claim reward 4
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 70) {
-            //finish dialogue
-        } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 75) {
-            // Done Quest, close window
         }
-
     }
 
     @Override
     public String questName() {
-        return "Legend's Quest";
+        return "Legend's Quest (" + GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) + ")";
     }
 
     @Override
@@ -1812,15 +2009,24 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
     WidgetTextRequirement completeTextAppeared = new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT,
             "You have already completed this part of the map.");
 
-    Conditions completeEast = new Conditions(true, LogicType.OR,
-            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "Eastern Kharazi Jungle- *** Completed"),
+    WidgetTextRequirement middleWidgetText =
+            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT,
+                    "Middle Kharazi Jungle- *** Completed");
+
+    WidgetTextRequirement easternWidgetText =
+            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT,
+                    "Eastern Kharazi Jungle- *** Completed");
+
+    WidgetTextRequirement westWidgetText =
+            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT,
+                    "Western Kharazi Jungle- *** Completed");
+
+    Conditions completeEast = new Conditions(true, LogicType.OR, easternWidgetText,
             new Conditions(inEast, completeTextAppeared));
     Conditions completeMiddle = new Conditions(true, LogicType.OR,
-            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "Middle Kharazi Jungle- *** Completed"),
-            new Conditions(inMiddle, completeTextAppeared));
+            middleWidgetText, new Conditions(inMiddle, completeTextAppeared));
     Conditions completeWest = new Conditions(true, LogicType.OR,
-            new WidgetTextRequirement(WidgetInfo.DIALOG_SPRITE_TEXT, "Western Kharazi Jungle- *** Completed"),
-            new Conditions(inWest, completeTextAppeared));
+            westWidgetText, new Conditions(inWest, completeTextAppeared));
 
     @Override
     public void onAppear(RSInterfaceChild rsInterfaceChild) {
@@ -1828,45 +2034,30 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         if (message == null) {
             return;
         }
-
         if (completeTextAppeared.checkWidget()) {
-
-        }
-
-     /*   if (message.startsWith("You find:")) {
-            Matcher m = BOOKCASE_BOOK_EXTRACTOR.matcher(message);
-            Log.log("Book found");
-            System.out.println(message);
-            if (m.find()) {
-                getBookFromMatcher(m).ifPresent(book -> {
-                    State.get().getLastBookcaseTile().ifPresent(tile -> State.get().getLibrary().mark(tile, book));
-                    State.get().setLastBookcaseTile(null);
-                });
-
-            }
-            return;
-        }*/
-        if (completeTextAppeared.getText().stream().anyMatch(m ->
-                m.toLowerCase().contains(message.toLowerCase(Locale.ROOT)))) {
-            Log.log("[LegendsQuest]: CompleteTextAppeared");
+            Log.debug("[LegendsQuest]: completeTextAppeared  Complete");
             completeTextAppeared.setHasPassed(true);
         }
-        if (message.startsWith("Thanks, human") || message.startsWith("Thank you very much")) {
-            State.get().swapProfessors();
-            State.get().setCurrentAssignment(null);
-            Statistics.get().incrementBooksGained();
-            return;
+        if (westWidgetText.checkWidget()) {
+            Log.debug("[LegendsQuest]: West Map Widget Complete");
+            westWidgetText.setHasPassed(true);
+        }
+        if (easternWidgetText.checkWidget()) {
+            Log.debug("[LegendsQuest]: East Map Widget Complete");
+            easternWidgetText.setHasPassed(true);
+        }
+        if (middleWidgetText.checkWidget()) {
+            Log.debug("[LegendsQuest]: Middle Map Widget Complete");
+            middleWidgetText.setHasPassed(true);
+        }
+        if (ungaduluTextOne.checkWidget()) {
+            ungaduluTextOne.setHasPassed(true);
+            Log.debug("[LegendsQuest]: ungaduluTextOne Complete");
+        }
+        if (ungaduluTextTwo.checkWidget()) {
+            ungaduluTextTwo.setHasPassed(true);
+            Log.debug("[LegendsQuest]: ungaduluTextTwo Complete");
         }
 
-
-      /*  Matcher m = NPC_BOOK_EXTRACTOR.matcher(message);
-
-        if (m.find()) {
-            getBookFromMatcher(m).ifPresent(book -> {
-                Log.log(String.format("Next book: %s", book.getName()));
-                State.get().setCurrentAssignment(book);
-            });
-            return;
-        }*/
     }
 }

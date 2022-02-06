@@ -159,7 +159,7 @@ public class StallThieving implements Task {
     public void execute() {
         if (Skills.SKILLS.THIEVING.getActualLevel() < 25 && Skills.SKILLS.THIEVING.getActualLevel() >= 5) {
             stealBakersStall();
-        } else if (Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 150 && //15% favour
+        } else if (Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 150 && //15% favour
                 Skills.SKILLS.THIEVING.getActualLevel() >= 25 && Skills.SKILLS.THIEVING.getActualLevel() < 55) {
             stealFruitStall();
         }

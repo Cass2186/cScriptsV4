@@ -359,7 +359,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
             new RSTile(2930, 9692, 0),
             JAIL_CELL.contains(Player.getPosition()));
 
-    public void getDustyKey() {
+    public boolean getDustyKey() {
         if (!dustyKey.check()) {
             Autocast.enableAutocast(Autocast.FIRE_BOLT);
             cQuesterV2.status = "Getting Dusty Key";
@@ -395,6 +395,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
                     Timer.waitCondition(() -> !JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
             }
         }
+        return dustyKey.check() && !JAIL_CELL.contains(Player.getPosition());
 
     }
 

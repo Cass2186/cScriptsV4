@@ -39,7 +39,7 @@ public class CollectBars implements Task {
                 Keyboard.typeString(" ");
                 NPCInteraction.handleConversation();
             }
-            return Utils.getVarBitValue(Varbits.BAR_DISPENSER.value) > 1 && Inventory.getAll().length < 27;
+            return Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 && Inventory.getAll().length < 27;
         }
         return false;
     }
@@ -47,7 +47,7 @@ public class CollectBars implements Task {
     @Override
     public void execute() {
         setCamera();
-        General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.value));
+        General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()));
         if (Inventory.getAll().length > 25) {
             General.println("[Collect bars]: Inventory full failsafe");
             BankManager.open(true);

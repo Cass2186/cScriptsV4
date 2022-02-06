@@ -8,6 +8,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.cache.BankCache;
 import scripts.*;
 import scripts.API.Priority;
@@ -38,16 +39,15 @@ public class BlastFurnaceBank implements Task {
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SMITHING)) {
             return Inventory.find(Filters.Items.nameContains("ore")).length < 5
-                    && Utils.getVarBitValue(Varbits.BAR_DISPENSER.value) == 0
-
-                    || (Inventory.isFull()
-                    && Inventory.find(Filters.Items.nameContains("bar")).length > 5);
+                    && Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) == 0
+                    || (Inventory.isFull() && Inventory.find(Filters.Items.nameContains("bar")).length > 5);
         }
         return false;
     }
 
     @Override
     public void execute() {
+        Log.debug("");
         if (BfVars.get().useGoldSmith)
             bank(BfConst.GOLD_ORE);
         else
@@ -125,7 +125,7 @@ public class BlastFurnaceBank implements Task {
                     Banking.deposit(0, id);
                 }
 
-                if (Utils.getVarBitValue(Varbits.BLAST_FURNACE_COAL.value) < 26) {
+                if (Utils.getVarBitValue(Varbits.BLAST_FURNACE_COAL.getId()) < 26) {
                     BankManager.withdraw(0, true, BfConst.COAL);
                 } else
                     BankManager.withdraw(0, true, oreId);

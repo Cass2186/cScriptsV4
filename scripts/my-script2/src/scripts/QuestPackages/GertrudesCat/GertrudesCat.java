@@ -11,6 +11,8 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
@@ -22,6 +24,7 @@ import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class GertrudesCat implements QuestTask {
 
@@ -310,9 +313,11 @@ public class GertrudesCat implements QuestTask {
     public void pickupKitten() {
         cQuesterV2.status = "Picking up Cat";
         General.println("[Debug]: " + cQuesterV2.status);
-        if (NPCs.find("Kitten").length > 0) {
-            AccurateMouse.click(NPCs.find("Kitten")[0], "Pick-up");
-            Timer.abc2WaitCondition(() -> Inventory.find("Pet kitten").length > 0, 5000, 7000);
+        Optional<Npc> kitten = Query.npcs().nameContains("Kitten")
+                .isInteractingWithMe()
+                .sortedByDistance().findBestInteractable();
+        if (kitten.map(k -> k.interact("Pick-up")).orElse(false)) {
+            Timer.slowWaitCondition(() -> Inventory.find("Pet kitten").length > 0, 5000, 7000);
         }
     }
 

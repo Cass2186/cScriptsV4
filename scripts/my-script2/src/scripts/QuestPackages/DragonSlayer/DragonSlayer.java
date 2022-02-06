@@ -410,17 +410,32 @@ public class DragonSlayer implements QuestTask {
         return !Combat.isUnderAttack();
     }
 
-
+    RSArea BOTTOM_FLOOR_ROOM_AREA = new RSArea(
+            new RSTile[] {
+                    new RSTile(2926, 3248, 0),
+                    new RSTile(2926, 3255, 0),
+                    new RSTile(2930, 3255, 0),
+                    new RSTile(2930, 3258, 0),
+                    new RSTile(2923, 3258, 0),
+                    new RSTile(2923, 3257, 0),
+                    new RSTile(2921, 3255, 0),
+                    new RSTile(2921, 3253, 0),
+                    new RSTile(2923, 3251, 0),
+                    new RSTile(2923, 3248, 0)
+            }
+    );
     public void navigateMaze() {
         if (Inventory.find(MAP_PIECE_1).length < 1 && Inventory.find(MAZE_KEY).length > 0) {
             Utils.equipItem(ANTI_DRAGON_SHIELD);
-            if (!WHOLE_FIRST_FLOOR.contains(Player.getPosition()) && !WHOLE_BASEMENT.contains(Player.getPosition())
-                    && !WHOLE_SECOND_FLOOR.contains(Player.getPosition()) && !WHOLE_THIRD_FLOOR.contains(Player.getPosition())) {
+            if (!WHOLE_FIRST_FLOOR.contains(Player.getPosition()) &&
+                    !WHOLE_BASEMENT.contains(Player.getPosition())
+                    && !WHOLE_SECOND_FLOOR.contains(Player.getPosition()) &&
+                    !WHOLE_THIRD_FLOOR.contains(Player.getPosition())) {
                 cQuesterV2.status
                         = "Going to Melzar's maze";
-                General.println("[Debug]: " + cQuesterV2.status
-                );
-                PathingUtil.walkToArea(INSIDE_MAZE_DOOR);
+                General.println("[Debug]: " + cQuesterV2.status);
+                //middle of first floor
+                PathingUtil.walkToTile(  new RSTile(2933, 3249, 0));
             }
 
             if (MAIN_ROOM_FLOOR_1.contains(Player.getPosition()) && Inventory.find(RED_KEY).length < 1) {
@@ -448,25 +463,21 @@ public class DragonSlayer implements QuestTask {
                 }
             }
 
-            if (BOTTOM_AFTER_DOOR_AREA.contains(Player.getPosition())) {
+            if (BOTTOM_FLOOR_ROOM_AREA.contains(Player.getPosition())) {
                 if (Utils.clickObject(16683, "Climb-up", false)) {
-                    Timer.abc2WaitCondition(() -> WHOLE_SECOND_FLOOR.contains(Player.getPosition()), 12000, 16000);
+                    Timer.waitCondition(() -> WHOLE_SECOND_FLOOR.contains(Player.getPosition()), 12000, 16000);
                 }
             }
 
             if (NW_ROOM_FLOOR_1.contains(Player.getPosition())) {
-                cQuesterV2.status
-                        = "Going upstairs";
-                General.println("[Debug]: " + cQuesterV2.status
-                );
+                cQuesterV2.status = "Going upstairs";
+                General.println("[Debug]: " + cQuesterV2.status);
                 if (Utils.clickObject(16683, "Climb-up", false))
                     Timer.abc2WaitCondition(() -> WHOLE_SECOND_FLOOR.contains(Player.getPosition()), 12000, 16000);
 
             } else if (GHOST_ROOM.contains(Player.getPosition()) && Inventory.find(ORANGE_KEY).length < 1) {
-                cQuesterV2.status
-                        = "Getting Orange Key";
-                General.println("[Debug]: " + cQuesterV2.status
-                );
+                cQuesterV2.status = "Getting Orange Key";
+                General.println("[Debug]: " + cQuesterV2.status);
                 RSNPC[] targ = NPCs.findNearest(3975);
                 if (targ.length > 0) {
 
@@ -480,10 +491,8 @@ public class DragonSlayer implements QuestTask {
                 }
 
             } else if (GHOST_ROOM.contains(Player.getPosition()) && Inventory.find(ORANGE_KEY).length > 0) {
-                cQuesterV2.status
-                        = "Going to third floor";
-                General.println("[Debug]: " + cQuesterV2.status
-                );
+                cQuesterV2.status = "Going to third floor";
+                General.println("[Debug]: " + cQuesterV2.status);
                 if (PathingUtil.localNavigation(new RSTile(2930, 3253, 1)))
                     PathingUtil.movementIdle();
 
@@ -501,10 +510,8 @@ public class DragonSlayer implements QuestTask {
             }
 
             if (WHOLE_THIRD_FLOOR.contains(Player.getPosition()) && Inventory.find(YELLOW_KEY).length < 1) {
-                cQuesterV2.status
-                        = "Getting Yellow Key";
-                General.println("[Debug]: " + cQuesterV2.status
-                );
+                cQuesterV2.status = "Getting Yellow Key";
+                General.println("[Debug]: " + cQuesterV2.status);
                 RSNPC[] targ = NPCs.findNearest(3972);
                 if (targ.length > 0 && CombatUtil.clickTarget(targ[0])) {
                     Timer.abc2WaitCondition(() -> Combat.getHPRatio() < General.random(40, 65)
@@ -559,8 +566,7 @@ public class DragonSlayer implements QuestTask {
                 }
 
             } else if (ZOMBIE_ROOM.contains(Player.getPosition()) && Inventory.find(BLUE_KEY).length < 1) {
-                cQuesterV2.status
-                        = "Getting Blue Key";
+                cQuesterV2.status = "Getting Blue Key";
                 RSNPC[] targ = NPCs.findNearest("Zombie");
                 if (Combat.isUnderAttack())
                     waitUntilOutOfCombat(BLUE_KEY);

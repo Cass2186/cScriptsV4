@@ -13,7 +13,9 @@ import org.tribot.api2007.Skills;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Login;
 import scripts.NmzData.Const;
 import scripts.NmzData.Vars;
 import scripts.Tasks.*;
@@ -85,12 +87,15 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
             General.sleep(50, 150);
             if (!Game.isInInstance())
                 break;
+            if (!Login.isLoggedIn())
+                break;
             Task task = tasks.getValidTask();
             if (task != null) {
                 status = task.toString();
                 task.execute();
+
             }
-            Log.log("[Debug]: Vars.get().rockcakeAt " + Vars.get().eatRockCakeAt);
+            Log.debug("[Debug]: Vars.get().rockcakeAt " + Vars.get().eatRockCakeAt);
 
         }
 

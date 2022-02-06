@@ -73,6 +73,7 @@ import scripts.QuestPackages.OneSmallFavour.OneSmallFavour;
 
 import scripts.QuestPackages.PlagueCity.PlagueCity;
 import scripts.QuestPackages.PriestInPeril.PriestInPeril;
+import scripts.QuestPackages.PrinceAliRescue.PrinceAliRescue;
 import scripts.QuestPackages.RestlessGhost.RestlessGhost;
 import scripts.QuestPackages.RfdCook.RfdCook;
 import scripts.QuestPackages.RfdEvilDave.RfdEvilDave;
@@ -234,7 +235,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     //  Vars.get().questHashMap.put(new Contact().getQuest(), taskList);
                 } else if (arg.toLowerCase().contains("legends")) {
                     General.println("[Args]: Added Legends quest");
-                    // taskList.add(new LegendsQuest());
+                     taskList.add( LegendsQuest.get());
                 } else if (arg.toLowerCase().contains("dreammentor")) {
                     General.println("[Args]: Added Dream Mentor");
                     taskList.add(new DreamMentor());
@@ -547,6 +548,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     General.println("[Args]: Added  RFD Guide");
                     taskList.add(RfdLumbridgeGuide.get());
                 }
+                else if (arg.toLowerCase().contains("princeali")) {
+                    General.println("[Args]: Added Prince ali rescue");
+                    taskList.add(PrinceAliRescue.get());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 General.println("[Error]: Args are incorrect", Color.RED);
@@ -581,7 +586,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     "Viewport scale: " + Game.getViewportScale()
             ));
         }
-        if (taskList.get(0).equals(FamilyCrest.get())){
+        if (taskList.size() > 0  &&taskList.get(0).equals(FamilyCrest.get())){
             myString.add("northRoomLever " + FamilyCrest.northRoomLever);
             myString.add("northWallLever " + FamilyCrest.northWallLever);
             myString.add("southRoomLever " + FamilyCrest.southRoomLever);

@@ -297,6 +297,7 @@ public class BlackKnightsFortress implements QuestTask {
 
     @Override
     public void execute() {
+        Waiting.waitNormal(150,25);
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS.getId());
         if (gameSetting == 4) {
             Utils.closeQuestCompletionWindow();

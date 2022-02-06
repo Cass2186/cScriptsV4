@@ -22,7 +22,7 @@ public class Restock implements Task {
     public void buyItems() {
         int herbNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             herbNum = 6;
 
         ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(

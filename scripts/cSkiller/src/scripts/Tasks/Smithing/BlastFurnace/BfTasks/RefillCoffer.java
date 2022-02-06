@@ -35,13 +35,13 @@ public class RefillCoffer implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.SMITHING) &&
-                Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.value) < refillAt;
+                Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.getId()) < refillAt;
     }
 
     @Override
     public void execute() {
-        General.println("Coffer varbit:" + Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.value));
-
+        General.println("Coffer varbit:" + Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.getId()));
+        General.println("Coffer refill at:" +refillAt);
         if (Utils.clickObject("Coffer", "Use", false)){
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Deposit coins.");

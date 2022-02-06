@@ -81,7 +81,7 @@ public class Move implements Task {
         FarmVars.get().patchesLeftToVisit.add(FarmConst.morytaniaPatchObj);
 
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             FarmVars.get().patchesLeftToVisit.add(FarmConst.guildPatchObj);
     }
 
@@ -93,7 +93,7 @@ public class Move implements Task {
         FarmVars.get().patchesLeftToVisit.add(Patches.VARROCK_TREE_PATCH);
         FarmVars.get().patchesLeftToVisit.add(Patches.STRONGHOLD_TREE_PATCH);
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             FarmVars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_TREE_PATCH);
 
         General.println("[Move]: Populating tree patches - Number: " + FarmVars.get().patchesLeftToVisit.size());

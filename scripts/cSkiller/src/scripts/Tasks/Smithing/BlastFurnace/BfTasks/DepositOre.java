@@ -64,13 +64,13 @@ public class DepositOre implements Task {
         int chance = General.random(0, 100);
         if (chance < 38) {
             if (PathingUtil.clickScreenWalk(BfConst.BAR_COLLECTION_TILE_LEFT_SIDE)) {
-                General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.value) + " == value");
-                Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.value) > 1 || Interfaces.isInterfaceSubstantiated(233, 2), 3000, 6000);
+                General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
+                Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 || Interfaces.isInterfaceSubstantiated(233, 2), 3000, 6000);
 
             }
         } else if (PathingUtil.clickScreenWalk(BfConst.BAR_COLLECTION_TILE)) {
-            General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.value) + " == value");
-            Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.value) > 1 ||
+            General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
+            Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 ||
                     Interfaces.isInterfaceSubstantiated(233, 2), 3000, 6000);
         }
 

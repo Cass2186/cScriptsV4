@@ -58,10 +58,10 @@ public class CollectOre implements Task {
             PathingUtil.movementIdle();
         }
         General.println("[Debug]: Collecting ore");
-        int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.value);
+        int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.getId());
         if (Utils.clickObject("Sack", "Search", true)) {
             Vars.get().oreDeposits--;
-            Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.value) != ore, 6000, 9000);
+            Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) != ore, 6000, 9000);
         }
 
     }
@@ -83,7 +83,7 @@ public class CollectOre implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MINING)
                 && Vars.get().useMLM
-                && (Utils.getVarBitValue(Varbits.SACK_NUMBER.value) > 56 ||
+                && (Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) > 56 ||
                         Inventory.find(Filters.Items.nameContains("ore")).length > 1 ||
                         Vars.get().oreDeposits == 3);
     }
@@ -95,7 +95,7 @@ public class CollectOre implements Task {
         for (int i = 0; i < 3; i++) {
             collectOre();
             bankOre();
-            if (Utils.getVarBitValue(Varbits.SACK_NUMBER.value) == 0)
+            if (Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) == 0)
                 break;
         }
         bankOre(); // failsafe

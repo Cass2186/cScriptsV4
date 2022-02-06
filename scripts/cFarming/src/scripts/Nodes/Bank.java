@@ -57,7 +57,7 @@ public class Bank implements Task {
     private void inventorySetUp(int herbId) {
         int herbNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             herbNum = 6;
             General.println("[Bank]: We can use the farming guild, getting an extra seed");
         }
@@ -103,7 +103,7 @@ public class Bank implements Task {
     private void allotmentInventorySetUp(int herbId) {
         int herbNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 45
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             herbNum = 6;
             General.println("[Bank]: We can use the farming guild, getting an extra seed");
         }
@@ -151,7 +151,7 @@ public class Bank implements Task {
         }
         int treeNum = 4;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 85
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             treeNum = 4;
             General.println("[Bank]: We can use the farming guild, getting an extra fruit sappling");
             BankManager.withdrawArray(Const.SKILLS_NECKLACE, 1);
@@ -184,7 +184,7 @@ public class Bank implements Task {
         }
         int treeNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600) {
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600) {
             treeNum = 6;
             General.println("[Bank]: We can use the farming guild, getting an extra seed");
             BankManager.withdrawArray(Const.SKILLS_NECKLACE, 1);

@@ -166,7 +166,7 @@ public class LootItems implements Task {
                     }
 
                     if (!loot.isClickable())
-                        DaxCamera.focus(loot);
+                        loot.adjustCameraTo();
 
                     if (DynamicClicking.clickRSGroundItem(loot, "Take " + name)) {
                         Timer.slowWaitCondition(() -> loot.getPosition().equals(Player.getPosition()), 5000, 7000);

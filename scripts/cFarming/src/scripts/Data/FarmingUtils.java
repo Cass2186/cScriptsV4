@@ -77,7 +77,7 @@ public class FarmingUtils {
         Vars.get().patchesLeftToVisit.add(Patches.CATHERBY_FRUIT_TREE_PATCH);
 
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 85
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             Vars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_FRUIT_TREE_PATCH);
     }
 
@@ -102,7 +102,7 @@ public class FarmingUtils {
         Vars.get().patchesLeftToVisit.add(Patches.MORYTANIA_HERB_PATCH);
 
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             Vars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_HERB_PATCH);
     }
 
@@ -113,7 +113,7 @@ public class FarmingUtils {
         Vars.get().patchesLeftToVisit.add(Patches.VARROCK_TREE_PATCH);
         Vars.get().patchesLeftToVisit.add(Patches.STRONGHOLD_TREE_PATCH);
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
-                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.value) > 600)
+                && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             Vars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_TREE_PATCH);
 
         General.println("[Move]: Populating tree patches - Number: " + Vars.get().patchesLeftToVisit.size());

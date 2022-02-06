@@ -94,11 +94,11 @@ public class DepositPayDirt implements Task {
             Timer.waitCondition(() -> MLMUtils.MLM_DEPOSIT_BOX_TILE.isClickable(), 6000, 9000);
             if (Utils.clickObject("Hopper", "Deposit", true)) {
                 Vars.get().oreDeposits++;
-                int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.value);
+                int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.getId());
                 General.println("[Debug]: Depositing ore (A)");
                 Timer.waitCondition(() -> !Inventory.isFull(), 6000, 9000);
                 if (ore >= 56) {
-                    Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.value) != ore,
+                    Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) != ore,
                             7000, 9000);
                 }
                 return;
@@ -107,11 +107,11 @@ public class DepositPayDirt implements Task {
         if (MLMUtils.MLM_DEPOSIT_BOX_TILE.distanceTo(Player.getPosition()) < 5) {
             if (Utils.clickObject("Hopper", "Deposit", true)) {
                 Vars.get().oreDeposits++;
-                int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.value);
+                int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.getId());
                 General.println("[Debug]: Depositing ore (B)");
-                if (Utils.getVarBitValue(Varbits.SACK_NUMBER.value) >= 55) {
+                if (Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) >= 55) {
                     PathingUtil.localNavigation(SACK_TILE);
-                    Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.value) > ore, 6000, 9000);
+                    Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) > ore, 6000, 9000);
                 }
             }
         }
@@ -132,7 +132,7 @@ public class DepositPayDirt implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MINING) &&
                 Skills.getActualLevel(Skills.SKILLS.MINING) >= 30 &&
-                Utils.getVarBitValue(Varbits.SACK_NUMBER.value) <= 56
+                Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) <= 56
                 && Vars.get().useMLM
                 && Inventory.isFull();
     }

@@ -8,6 +8,7 @@ import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Prayer;
 import scripts.BankManager;
 import scripts.Data.Areas;
 import scripts.Data.Vars;
@@ -40,6 +41,7 @@ public class Bank implements Task {
 
 
     public void undeadDruidBank() {
+        Prayer.disableAll();
         BankManager.open(true);
         BankManager.depositAll(true);
         BankManager.withdrawArray(ItemID.SKILLS_NECKLACE, 1);

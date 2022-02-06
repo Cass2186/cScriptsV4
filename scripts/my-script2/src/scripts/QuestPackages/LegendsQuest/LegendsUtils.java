@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSTile;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.*;
+import scripts.Requirements.AreaRequirement;
 
 public class LegendsUtils {
 
@@ -17,6 +18,11 @@ public class LegendsUtils {
     public static String IRVIG = "Irvig Senay";
     public static String RANDALPH = "";
 
+    public static RSArea  kharazi1 = new RSArea(new RSTile(2941, 2875, 0), new RSTile(2985, 2948, 0));
+    public static RSArea kharazi2 = new RSArea(new RSTile(2753, 2873, 0), new RSTile(2940, 2938, 0));
+    public static  RSArea kharazi3 = new RSArea(new RSTile(2801, 2939, 0), new RSTile(2814, 2939, 0));
+    public static  RSArea kharazi4 = new RSArea(new RSTile(2757, 2939, 0), new RSTile(2784, 2939, 0));
+    public static AreaRequirement inKharazi = new AreaRequirement(kharazi1, kharazi2, kharazi3, kharazi4);
 
     static RSTile FOREST_BUSH_TILE_PRE = new RSTile(2797, 2943, 0);
     static RSTile FOREST_BUSH_TILE_ONE = new RSTile(2797, 2942, 0);
@@ -26,7 +32,7 @@ public class LegendsUtils {
     static RSTile FOREST_BUSH_TILE_THREE = new RSTile(2799, 2940, 0);
     static RSTile FOREST_PLAYER_TILE_THREE = new RSTile(2799, 2939, 0);
     static RSTile FOREST_BUSH_TILE_FOUR = new RSTile(2799, 2938, 0);
-    static RSTile FOREST_BUSH_TILE_FINISHED = new RSTile(2795, 2939, 0);
+    static RSTile FOREST_BUSH_TILE_FINISHED = new RSTile(2795, 2935, 0);
     static RSArea WHOLE_FOREST_AREA = new RSArea(
             new RSTile[]{
                     new RSTile(2759, 2937, 0),
@@ -52,7 +58,7 @@ public class LegendsUtils {
 
     public static boolean enterForest() {
         //check if in forest and has machete
-        if (!WHOLE_FOREST_AREA.contains(Player.getPosition())) {
+        if (!WHOLE_FOREST_AREA.contains(Player.getPosition()) && !inKharazi.check()) {
             cQuesterV2.status = "Going to Forest";
             General.println("[Debug]: Going to Forest");
             // prevents teleporting when we are navigating bushes if it loops
@@ -62,16 +68,18 @@ public class LegendsUtils {
             cutBush(FOREST_PLAYER_TILE_ONE, FOREST_BUSH_TILE_TWO);
             cutBush(FOREST_PLAYER_TILE_TWO, FOREST_BUSH_TILE_THREE);
             cutBush(FOREST_PLAYER_TILE_THREE, FOREST_BUSH_TILE_FOUR);
+            FOREST_BUSH_TILE_FINISHED.click("Walk here");
+            PathingUtil.movementIdle();
         }
         Inventory.drop(ItemID.LOG_IDS[0]);
-        return WHOLE_FOREST_AREA.contains(Player.getPosition());
+        return WHOLE_FOREST_AREA.contains(Player.getPosition()) || !inKharazi.check();
     }
 
 
     private static boolean cutBush(RSTile playerTile, RSTile bushTile) {
         if (!playerTile.equals(Player.getPosition()) && playerTile.distanceTo(Player.getPosition()) <3) {
-            PathingUtil.clickScreenWalk(playerTile);
-            General.sleep(800, 1250);
+            if(PathingUtil.clickScreenWalk(playerTile))
+                PathingUtil.movementIdle();
         }
         if (playerTile.equals(Player.getPosition())) {
             General.println("[Debug]: Cutting bush");
