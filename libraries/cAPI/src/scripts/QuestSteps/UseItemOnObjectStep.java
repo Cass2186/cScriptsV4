@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-public class UseItemOnObjectStep implements QuestStep{
+public class UseItemOnObjectStep extends QuestStep{
 
     RSTile tile;
     int ItemID;

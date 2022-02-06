@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
-public class ConditionalStep implements QuestStep {
+public class ConditionalStep extends QuestStep {
 
     protected boolean started = false;
 
@@ -58,8 +58,9 @@ public class ConditionalStep implements QuestStep {
     }
 
 
-    public Optional<QuestStep> getActiveStep() {
-        return Optional.ofNullable(currentStep);
+    @Override
+    public QuestStep getActiveStep() {
+        return currentStep;
     }
 
     protected void updateSteps() {
@@ -72,7 +73,7 @@ public class ConditionalStep implements QuestStep {
             }
         }
 
-       // if (!steps.get(null).isLocked())
+        // if (!steps.get(null).isLocked())
         startUpStep(steps.get(null));
 
     }
@@ -97,15 +98,9 @@ public class ConditionalStep implements QuestStep {
     }
 
 
-
-
-    public void setLockedManually(boolean isLocked)
-    {
+    public void setLockedManually(boolean isLocked) {
         locked = isLocked;
     }
-
-
-
 
 
     @Override
@@ -117,7 +112,7 @@ public class ConditionalStep implements QuestStep {
             return;
         }
 
-        this.getActiveStep().ifPresent(QuestStep::execute);
+        this.getActiveStep().execute();
     }
 
     @Override

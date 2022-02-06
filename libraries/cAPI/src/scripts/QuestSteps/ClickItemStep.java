@@ -12,7 +12,7 @@ import scripts.Requirements.Requirement;
 
 import java.util.*;
 
-public class ClickItemStep implements QuestStep {
+public class ClickItemStep extends QuestStep {
 
     private int ItemID;
     private String itemName;

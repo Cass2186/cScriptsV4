@@ -29,7 +29,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ObjectStep implements QuestStep {
+public class ObjectStep extends QuestStep {
 
 
     private RSTile tile;

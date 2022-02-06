@@ -13,4 +13,5 @@ public interface QuestTask {
     String questName();
 
     boolean checkRequirements();
+   // List<Requirement> getGeneralRequirements()
 }

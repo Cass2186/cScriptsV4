@@ -12,7 +12,7 @@ import scripts.Timer;
 
 import java.util.Collection;
 
-public class EmoteStep implements QuestStep {
+public class EmoteStep extends QuestStep {
 
     private String emoteAction;
     private RSTile tile;

@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-public class UseItemOnNpcStep implements QuestStep {
+public class UseItemOnNpcStep extends QuestStep {
 
    private RSTile tile;
     private   int ItemID;

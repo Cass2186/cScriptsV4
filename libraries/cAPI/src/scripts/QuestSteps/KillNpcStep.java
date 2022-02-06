@@ -14,7 +14,7 @@ import scripts.Timer;
 
 import java.util.*;
 
-public class KillNpcStep implements QuestStep {
+public class KillNpcStep extends QuestStep {
 
     private int npcID;
     private RSArea area;

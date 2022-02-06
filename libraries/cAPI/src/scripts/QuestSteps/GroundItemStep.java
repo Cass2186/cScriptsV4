@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class GroundItemStep implements QuestStep {
+public class GroundItemStep extends QuestStep {
 
     private int itemID = -1;
     private String itemName;

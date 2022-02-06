@@ -23,7 +23,7 @@ import scripts.Timer;
 
 import java.util.*;
 
-public class NPCStep extends DetailedQuestStep implements QuestStep {
+public class NPCStep extends DetailedQuestStep  {
 
     @Getter
     private int npcID;

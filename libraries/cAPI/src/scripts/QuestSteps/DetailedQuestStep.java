@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class DetailedQuestStep implements QuestStep {
+public class DetailedQuestStep extends QuestStep {
 
     @Getter
     protected DialogChoiceSteps choices = new DialogChoiceSteps();
@@ -31,6 +31,15 @@ public class DetailedQuestStep implements QuestStep {
     private final List<WorldTile> markedTiles = new ArrayList<>();
 
     protected Multimap<WorldTile, Integer> tileHighlights = ArrayListMultimap.create();
+
+
+    public DetailedQuestStep() {
+
+    }
+
+    public DetailedQuestStep(String text) {
+        super(text);
+    }
 
 
     public void addRequirement(Requirement requirement)
