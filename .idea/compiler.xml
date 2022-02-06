@@ -28,6 +28,7 @@
         <module name="myScripts.libraries.cAPI.main" />
         <module name="myScripts.scripts.cCombat.main" />
         <module name="myScripts.scripts.cVorkath.main" />
+        <module name="myScripts.scripts.cAutoClicker.main" />
         <module name="myScripts.scripts.cZulrah.test" />
         <module name="myScripts.scripts.cTutorialIsland.test" />
         <module name="myScripts.scripts.cNMZ.main" />
@@ -42,6 +43,7 @@
         <module name="myScripts.scripts.cSkiller.main" />
         <module name="myScripts.scripts.cVorkath.test" />
         <module name="myScripts.test" />
+        <module name="myScripts.scripts.cAutoClicker.test" />
         <module name="myScripts.scripts.my-script2.test" />
       </profile>
     </annotationProcessing>
