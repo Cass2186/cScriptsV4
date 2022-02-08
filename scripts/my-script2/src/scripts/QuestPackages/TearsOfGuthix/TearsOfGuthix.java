@@ -17,6 +17,7 @@ import scripts.Requirements.*;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Tasks.Priority;
+import scripts.Timer;
 
 import java.util.*;
 
@@ -44,7 +45,7 @@ public class TearsOfGuthix implements QuestTask {
     RSArea rocks = new RSArea(new RSTile(3209, 9486, 2), new RSTile(3238, 9508, 2));
 
     AreaRequirement inSwamp = new AreaRequirement(swamp);
-    AreaRequirement upperTearsCave = new AreaRequirement(TEARS_UPPER_AREA);
+    AreaRequirement inUpperTearsCave = new AreaRequirement(TEARS_UPPER_AREA);
     AreaRequirement inTearsCave = new AreaRequirement(TEARS_CAVE, TEARS_UPPER_AREA, junaRoom);
     AreaRequirement inJunaRoom = new AreaRequirement(junaRoom);
     AreaRequirement atRocks = new AreaRequirement(rocks);
@@ -69,7 +70,8 @@ public class TearsOfGuthix implements QuestTask {
         goGetRock.addStep(new Conditions(stoneBowl, inJunaRoom), talkToJunaToFinish);
         goGetRock.addStep(rockHighlighted, useChiselOnRock);
         goGetRock.addStep(atRocks, mineRock);
-        goGetRock.addStep(inJunaRoom, useLanternOnLightCreature);
+        goGetRock.addStep(inUpperTearsCave, useLanternOnLightCreature);
+        goGetRock.addStep(inJunaRoom, climbUpRocks);
         steps.put(1, goGetRock);
 
         return steps;
@@ -112,12 +114,12 @@ public class TearsOfGuthix implements QuestTask {
     private RSArea WALK_TO_STEPPING_STONE = new RSArea(new RSTile(3220, 9556, 0), new RSTile(3222, 9558, 0)),
             ENTRANCE_TO_TEARS_CAVE = new RSArea(new RSTile(3219, 9552, 0), new RSTile(3236, 9542, 0));
 
-    ObjectStep jumpAcrossStone = new ObjectStep(ObjectID.STEPPING_STONE_5949, new RSTile(3221, 9557,0),
+    ObjectStep jumpAcrossStone = new ObjectStep(ObjectID.STEPPING_STONE_5949, new RSTile(3221, 9557, 0),
             "Jump-Across", ENTRANCE_TO_TEARS_CAVE.contains(Player.getPosition()));
     RSArea wholeCaveArea = new RSArea(new RSTile(3204, 9536, 2), new RSTile(3266, 9485, 2));
-    ObjectStep climbRocks = new ObjectStep(6673, new RSTile(3238, 9525,2),
+    ObjectStep climbRocks = new ObjectStep(6673, new RSTile(3238, 9525, 2),
             "Climb");
-    ObjectStep climbUpRocks = new ObjectStep(6673, new RSTile(3238, 9525,2),
+    ObjectStep climbUpRocks = new ObjectStep(6673, new RSTile(3241, 9525, 2),
             "Climb");
 
     public void goToJunaRoom() {
@@ -143,18 +145,16 @@ public class TearsOfGuthix implements QuestTask {
             }
             enterJunaRoom.execute();
         }
-        if (TEARS_UPPER_AREA.contains(Player.getPosition())){
+        if (TEARS_UPPER_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Climbing rocks";
             climbRocks.execute();
         }
-     //   if (inJunaRoom.check() && inTearsCave.check()) {
-     //       cQuesterV2.status = "Talking to Juna";
-     //       talkToJuna.execute();
-     //   }
+        //   if (inJunaRoom.check() && inTearsCave.check()) {
+        //       cQuesterV2.status = "Talking to Juna";
+        //       talkToJuna.execute();
+        //   }
 
     }
-
-
 
 
     private void setupItemRequirements() {
@@ -223,25 +223,42 @@ public class TearsOfGuthix implements QuestTask {
     public void execute() {
         setupItemRequirements();
         setupSteps();
+        int varbit = QuestVarbits.QUEST_TEARS_OF_GUTHIX.getId();
+        if (!checkRequirements() || Utils.getVarBitValue(varbit) == 2) {
+            Utils.closeQuestCompletionWindow();
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
+        if (Utils.getVarBitValue(QuestVarbits.QUEST_TEARS_OF_GUTHIX.getId()) == 0 &&
+                !initialItemReqs.check()) {
+            buyStep.buyItems();
+            initialItemReqs.withdrawItems();
+        } else if (Utils.getVarBitValue(varbit) == 0) {
+            goToJunaRoom();
+        } else if (Utils.getVarBitValue(varbit) == 1) {
+            if (stoneBowl.check() && inUpperTearsCave.check()) {
+                cQuesterV2.status = "Climbing down rocks";
+                climbRocks.execute();
+            } else if (stoneBowl.check() && atRocks.check()) {
+                cQuesterV2.status = "Using light on creature (returning)";
+                useLanternOnLightCreature.execute();
+                Timer.waitCondition(() -> inUpperTearsCave.check(), 60000);
+            } else if (new Conditions(stoneBowl).check()) {
+                cQuesterV2.status = "Finishing quest";
+                talkToJunaToFinish.execute();
+            } else if (inUpperTearsCave.check() && !stoneBowl.check()) {
+                cQuesterV2.status = "Using light on creature";
+                useLanternOnLightCreature.execute();
+                Timer.waitCondition(() -> atRocks.check(), 60000);
+            } else if (rockHighlighted.check()) {
+                cQuesterV2.status = "Chiseling Rock";
+                useChiselOnRock.execute();
+            } else if (atRocks.check() && !stoneBowl.check()) {
+                cQuesterV2.status = "Mining Rock";
+                mineRock.execute();
+            }
+        }
 
-        if (!checkRequirements()) {
-            cQuesterV2.taskList.remove(this);
-            return;
-        }
-        if (Utils.getVarBitValue(QuestVarbits.QUEST_TEARS_OF_GUTHIX.getId()) == 0 && !initialItemReqs.check()) {
-            //    buyStep.buyItems();
-            //    initialItemReqs.withdrawItems();
-        }
-        if (GameState.getSetting(QuestVarbits.QUEST_TEARS_OF_GUTHIX.getId()) == 90) {
-            cQuesterV2.taskList.remove(this);
-            return;
-        }
-        goToJunaRoom();
-        setupSteps();
-        Map<Integer, QuestStep> steps = loadSteps();
-        Optional<QuestStep> step =
-                Optional.ofNullable(steps.get(Utils.getVarBitValue(QuestVarbits.QUEST_TEARS_OF_GUTHIX.getId())));
-        step.ifPresent(QuestStep::execute);
         if (NPCInteraction.isConversationWindowUp())
             NPCInteraction.handleConversation();
 
