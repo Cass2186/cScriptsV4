@@ -7,6 +7,8 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.MyPlayer;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.FightArena.FightArena;
@@ -37,7 +39,6 @@ public class TreeGnomeVillage implements QuestTask {
 
     Requirement completeFirstTracker, completeSecondTracker, completeThirdTracker, handedInOrbs,
             notCompleteFirstTracker, notCompleteSecondTracker, notCompleteThirdTracker, orbsOfProtectionNearby, givenWood;
-
 
 
     //Zones
@@ -243,13 +244,13 @@ public class TreeGnomeVillage implements QuestTask {
             Arrays.asList(
                     new GEItem(ItemID.MIND_RUNE, 300, 20),
                     new GEItem(ItemID.FIRE_RUNE, 900, 20),
-                    new GEItem(ItemID.STAFF_OF_AIR, 1, 20 ),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 20),
                     new GEItem(ItemID.LOBSTER, 20, 50),
                     new GEItem(ItemID.CAMELOT_TELEPORT, 5, 50),
                     new GEItem(ItemID.BLUE_WIZARD_HAT, 1, 500),
                     new GEItem(ItemID.MONKS_ROBE_BOTTOM, 1, 500),
                     new GEItem(ItemID.MONKS_ROBE_TOP, 1, 500),
-                    new GEItem(ItemID.LOGS,65, 50),
+                    new GEItem(ItemID.LOGS, 65, 50),
 
                     new GEItem(ItemID.RING_OF_DUELING[0], 2, 40),
                     new GEItem(ItemID.STAMINA_POTION[0], 4, 40),
@@ -259,8 +260,10 @@ public class TreeGnomeVillage implements QuestTask {
 
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+
     public void buyItems() {
-        cQuesterV2.status = "Buying Items";;
+        cQuesterV2.status = "Buying Items";
+        ;
         buyStep.buyItems();
     }
 
@@ -536,19 +539,43 @@ public class TreeGnomeVillage implements QuestTask {
         }
         if (Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
 
-            if (khazardWarlord.length > 0 && !Combat.isUnderAttack() && !SAFE_AREA_WARLORD.contains(Player.getPosition())) {
+            if (khazardWarlord.length > 0 && !Combat.isUnderAttack() &&
+                    !khazardWarlord[0].isInCombat() &&
+                    !SAFE_AREA_WARLORD.contains(Player.getPosition())) {
                 cQuesterV2.status = "Talking to Warlord.";
                 if (!khazardWarlord[0].isClickable())
                     khazardWarlord[0].adjustCameraTo();
 
+                if (Options.isRunEnabled())
+                    Options.setRunEnabled(false);
+
                 if (NpcChat.talkToNPC("Khazard warlord")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
+                    Timer.waitCondition(MyPlayer::isHealthBarVisible, 3000, 4000);
+                }
+                if (MyPlayer.isHealthBarVisible()) {
+                    cQuesterV2.status = "Luring Warlord.";
+                    //lure to a tile near the wall to get him stuck
+                    if (PathingUtil.blindWalkToTile(new RSTile(2445, 3304, 0)))
+                        PathingUtil.movementIdle();
+                    //eat if needed (will take a hit or two)
+                    if (Combat.getHPRatio() < General.random(31, 61))
+                        EatUtil.eatFood();
+
+                    //walk to safetile by trees, then attack
+                    if (Walking.blindWalkTo(SAFE_TILE) &&
+                            Timer.waitCondition(() ->
+                                            SAFE_AREA_WARLORD.contains(Player.getPosition()), 6000, 8000)) {
+                        if (Utils.clickNPC(7622, "Attack"))
+                            Utils.idle(1200, 3600);
+                    }
+
                 }
             }
             khazardWarlord = NPCs.find(7622);
             while (khazardWarlord.length > 0) {
-                General.sleep(75);
+                General.sleep(25);
                 if (!SAFE_AREA_WARLORD.contains(Player.getPosition())) {
                     cQuesterV2.status = "Going to SafeTile.";
                     if (Walking.blindWalkTo(SAFE_TILE)) {
@@ -556,7 +583,8 @@ public class TreeGnomeVillage implements QuestTask {
                         Utils.shortSleep();
                     }
                 }
-                if (SAFE_AREA_WARLORD.contains(Player.getPosition()) && !khazardWarlord[0].isInCombat()) {
+                if (SAFE_AREA_WARLORD.contains(Player.getPosition()) &&
+                        !khazardWarlord[0].isInCombat()) {
                     cQuesterV2.status = "Attacking.";
                     if (!khazardWarlord[0].isClickable()) {
                         PathingUtil.walkToTile(khazardWarlord[0].getPosition(), 4, false);
@@ -564,11 +592,12 @@ public class TreeGnomeVillage implements QuestTask {
                             NPCInteraction.handleConversation();
                     }
 
+                    //sleep after attack as to not spam click if splashing
                     if (Utils.clickNPC(7622, "Attack"))
-                        Utils.idle(800, 2400);
+                        Utils.idle(1200, 3600);
 
                 }
-                if (Combat.getHPRatio() < General.random(31, 61) && Inventory.find(379).length > 0) {
+                if (Combat.getHPRatio() < General.random(31, 61)) {
                     cQuesterV2.status = "Eating...";
                     EatUtil.eatFood();
                 }
@@ -577,6 +606,7 @@ public class TreeGnomeVillage implements QuestTask {
                     Utils.shortSleep();
                     break;
                 }
+                khazardWarlord = NPCs.find(7622);
             }
             orb2Ground = GroundItems.find(orb2);
 
