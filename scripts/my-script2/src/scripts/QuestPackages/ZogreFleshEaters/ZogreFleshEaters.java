@@ -73,6 +73,16 @@ public class ZogreFleshEaters implements QuestTask {
     RSArea YANILE_BAR = new RSArea(new RSTile(2549, 3081, 0), new RSTile(2555, 3078, 0));
     RSArea OUTSIDE_WIZARDS_GUILD = new RSArea(new RSTile(2597, 3089, 0), new RSTile(2600, 3086, 0));
     RSArea SITHIK_ROOM = new RSArea(new RSTile(2592, 3103, 1), new RSTile(2590, 3104, 1));
+    private RSArea HUGE_START_AREA = new RSArea(
+            new RSTile[] {
+                    new RSTile(2451, 3052, 0),
+                    new RSTile(2451, 3046, 0),
+                    new RSTile(2440, 3038, 0),
+                    new RSTile(2427, 3050, 0),
+                    new RSTile(2429, 3066, 0),
+                    new RSTile(2453, 3068, 0)
+            }
+    );
 
     String Zavistic_Rarve_CHAT_1 = "I'm here about the sicks...err Zogres";
     String Sithik_Ints_CHAT_1 = "Do you mind if I look around?";
@@ -139,13 +149,13 @@ public class ZogreFleshEaters implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw(1, true, SUPER_RESTORE[0]);
-        BankManager.withdraw(12, true, ItemID.MONKFISH);
+        BankManager.withdraw(10, true, ItemID.MONKFISH);
         BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
         //  BankManager.withdraw(250, true, Const.get().CHAOS_RUNE);
         //  BankManager.withdraw(600, true, Const.get().EARTH_RUNE);
         //  BankManager.withdraw(1, true, Const.get().STAFF_OF_AIR);
-        BankManager.withdraw(1, true, RELICYMS_BALM_4);
+        BankManager.withdraw(2, true, RELICYMS_BALM_4);
         if (Skills.SKILLS.RANGED.getActualLevel() >= 70) {
             BankManager.withdraw(1, true, BLACK_VAMBS);
             BankManager.withdraw(1, true, BLACK_BODY);
@@ -211,14 +221,17 @@ public class ZogreFleshEaters implements QuestTask {
     }
 
     private void climbBaracade() {
-        PathingUtil.localNavigation(BEFORE_DESCENT.getRandomTile()); //if this works, dont need rest of this method
-        Utils.modSleep();
-        if (GUARD_BEFORE_GATE.contains(Player.getPosition())) {
+        if (HUGE_START_AREA.contains(Player.getPosition())){
+            PathingUtil.walkToArea(GUARD_BEFORE_GATE);
+        }
+         if (GUARD_BEFORE_GATE.contains(Player.getPosition())) {
             cQuesterV2.status = "Climbing over gate";
             if (Utils.clickObj(CRUSHED_BARACADE, "Climb-over"))
                 Timer.waitCondition(() -> AFTER_GATE.contains(Player.getPosition()), 5000, 12000);
         }
     }
+
+
 
     private void goDownStairs() {
         climbBaracade();
@@ -281,6 +294,7 @@ public class ZogreFleshEaters implements QuestTask {
             if (AccurateMouse.click(ruinedBackpack[0], "Take"))
                 Timer.waitCondition(() -> Inventory.find(RUINED_BACKPACK).length > 0, 6000, 9000);
         }
+        Inventory.drop(ItemID.ROTTEN_FOOD);
     }
 
     private void openBackPack() {
@@ -294,6 +308,7 @@ public class ZogreFleshEaters implements QuestTask {
                         Utils.microSleep();
 
             } else if (backpack[0].click("Open")) {
+                NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
                 Timer.waitCondition(() -> Inventory.find(KNIFE).length > 0, 4000, 6000);
             }
@@ -342,7 +357,7 @@ public class ZogreFleshEaters implements QuestTask {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation(Zavistic_Rarve_CHAT_1);
             NPCInteraction.handleConversation(); // doesn't seem to recognize one of the chat interfaces
-            // Keyboard.sendType();
+            Keyboard.typeString(" ");
             NPCInteraction.handleConversation(Zavistic_Rarve_CHAT_1);
             NPCInteraction.handleConversation();
         }
