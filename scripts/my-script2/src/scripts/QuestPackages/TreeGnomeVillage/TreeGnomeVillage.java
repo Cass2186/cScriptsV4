@@ -38,15 +38,7 @@ public class TreeGnomeVillage implements QuestTask {
     Requirement completeFirstTracker, completeSecondTracker, completeThirdTracker, handedInOrbs,
             notCompleteFirstTracker, notCompleteSecondTracker, notCompleteThirdTracker, orbsOfProtectionNearby, givenWood;
 
-    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
-            Arrays.asList(
-                    new GEItem(ItemID.GAMES_NECKLACE[0], 2, 0),
-                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 0)
-            )
-    );
 
-
-    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     //Zones
     RSArea upstairsTower, zoneVillage;
@@ -246,30 +238,30 @@ public class TreeGnomeVillage implements QuestTask {
 
     public RSGroundItem[] orb2Ground = GroundItems.find(orb2);
 
+
+    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.MIND_RUNE, 300, 20),
+                    new GEItem(ItemID.FIRE_RUNE, 900, 20),
+                    new GEItem(ItemID.STAFF_OF_AIR, 1, 20 ),
+                    new GEItem(ItemID.LOBSTER, 20, 50),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 50),
+                    new GEItem(ItemID.BLUE_WIZARD_HAT, 1, 500),
+                    new GEItem(ItemID.MONKS_ROBE_BOTTOM, 1, 500),
+                    new GEItem(ItemID.MONKS_ROBE_TOP, 1, 500),
+                    new GEItem(ItemID.LOGS,65, 50),
+
+                    new GEItem(ItemID.RING_OF_DUELING[0], 2, 40),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 40),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20)
+            )
+    );
+
+
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
     public void buyItems() {
         cQuesterV2.status = "Buying Items";;
-        BankManager.open(true);
-        BankManager.areItemsLoaded();
-        BankManager.getAllList();
-        BankManager.withdraw(0, true, 995);
-        BankManager.close(true);
-        /*GEManager.buyItem(logs, 300, 6);
-        GEManager.buyItem(ItemID.MIND_RUNE, 200, 300);
-        GEManager.buyItem(ItemID.FIRE_RUNE, 300, 900);
-        GEManager.buyItem(ItemID.STAFF_OF_AIR, 100, 1);
-        GEManager.buyItem(ItemID.LOBSTER, 50, 25);
-        GEManager.buyItem(ItemID.CAMELOT_TELEPORT, 70, 5);
-        GEManager.buyItem(
-                Utils.STAMINA_POTION[0], 15, 3);
-        GEManager.buyItem(
-                Utils.RING_OF_DUELING[0], 35, 3);
-        GEManager.buyItem(
-                Utils.BLUE_WIZ_HAT, 500, 1);
-        GEManager.buyItem(
-                ItemID.MONKS_ROBE_TOP, 300, 1);
-        GEManager.buyItem(ItemID.MONKS_ROBE_BOTTOM, 600, 1);
-        GEManager.collectItems();
-        GEManager.closeGE();*/
+        buyStep.buyItems();
     }
 
     public void getItems() {
