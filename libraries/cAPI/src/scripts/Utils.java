@@ -50,6 +50,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Modified/added to from original author (@Elon)
@@ -60,6 +61,15 @@ public class Utils {
     private static List<Integer> abc2waitTimes = new ArrayList<>();
     public static double FACTOR = 0.5;
     private static final String[] NAMES_TO_REMOVE = {"Divine", "Super", "super"};
+
+    public static Object[] reverseItemArray(int[] arr) {
+
+        List<Integer> list = Arrays.stream(arr)
+                .boxed()
+                .collect(Collectors.toList());
+        Collections.reverse(list);
+        return list.stream().toArray();
+    }
 
     public static RSArea getObjectRSArea(RSObject object) {
 

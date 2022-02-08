@@ -186,27 +186,6 @@ public abstract class QuestStep {
         // widgetChoices.checkChoices(client);
     }
 
-    public void addDialogStep(String choice) {
-        choices.addChoice(new DialogChoiceStep(choice));
-    }
-
-    public void addDialogStepWithExclusion(String choice, String exclusionString) {
-        choices.addDialogChoiceWithExclusion(new DialogChoiceStep(choice), exclusionString);
-    }
-
-    public void addDialogStepWithExclusions(String choice, String... exclusionString) {
-        choices.addDialogChoiceWithExclusions(new DialogChoiceStep(choice), exclusionString);
-    }
-
-    public void addDialogStep(int id, String choice) {
-        choices.addChoice(new DialogChoiceStep(id, choice));
-    }
-
-    public void addDialogSteps(String... newChoices) {
-        for (String choice : newChoices) {
-            choices.addChoice(new DialogChoiceStep(choice));
-        }
-    }
 
     public void addDialogChange(String choice, String newText) {
         //   choices.addChoice(new DialogChoiceChange( choice, newText));

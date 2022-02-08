@@ -214,6 +214,7 @@ public class NPCStep extends DetailedQuestStep  {
         if (listChatOptions == null) {
             listChatOptions = new ArrayList<>();
         }
+       // Log.debug("Adding dialog " + dialog);
         Collections.addAll(listChatOptions, dialog);
     }
 
@@ -282,9 +283,10 @@ public class NPCStep extends DetailedQuestStep  {
 
             // handle dialog if up
             if (NPCInteraction.isConversationWindowUp()) {
-                if (listChatOptions != null && listChatOptions.size() > 0)
+                if (listChatOptions != null && listChatOptions.size() > 0) {
+                    Log.debug("Handling chat");
                     NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
-                else
+                }else
                     NPCInteraction.handleConversation();
             }
             if (this.prayer.isPresent()) {
@@ -317,8 +319,12 @@ public class NPCStep extends DetailedQuestStep  {
                 NpcChat.talkToNPC(this.npcID, this.interactionString)) {
             Log.log("Waiting for conversation window");
             NPCInteraction.waitForConversationWindow();
-            if (listChatOptions != null && listChatOptions.size() > 0 && NPCInteraction.isConversationWindowUp())
+            if (listChatOptions != null && listChatOptions.size() > 0 &&
+                    NPCInteraction.isConversationWindowUp()) {
+                Log.debug("Handling chat");
                 NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
+
+            }
 
             if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation();
