@@ -24,6 +24,8 @@ import java.util.Optional;
 
 public class AttackNpc implements Task {
 
+    int SCARAB_PRE_ATTACK_ANIMATION = 430;
+
     public static void setPrayer(boolean on) {
         if (on && Prayer.getPrayerPoints() > 0) {
             if (Vars.get().shouldPrayMelee)
@@ -163,6 +165,7 @@ public class AttackNpc implements Task {
     }
 
 
+
     public void killUndeadDruids() {
 
         if (!Combat.isAutoRetaliateOn())
@@ -210,8 +213,8 @@ public class AttackNpc implements Task {
                 EatUtil.eatFood();
             }
 
-            return !Combat.isUnderAttack() || !EatUtil.hasFood() ||
-                    (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 7);
+            return !Combat.isUnderAttack() || !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
+                    (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
         });
     }
 

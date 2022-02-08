@@ -337,9 +337,11 @@ public class WaterfallQuest implements QuestTask {
         if (Player.getPosition().getPlane() == 0) {
             cQuesterV2.status = "Going upstairs, hadley";
             goUpstairsHadley.execute();
-        } else if (!book.check()) {
+        }
+        if (!book.check()) {
             cQuesterV2.status = "Searching bookcase";
             searchBookcase.execute();
+            readBook.execute();
         } else {
             readBook.execute();
         }

@@ -89,13 +89,17 @@ public class ResetAggro implements Task {
 
     @Override
     public boolean validate() {
+        if (!org.tribot.script.sdk.Login.isLoggedIn()){
+            Login.login();
+            Utils.shortSleep();
+        }
         return //Login.getLoginState().equals(Login.STATE.INGAME) &&
                 (Vars.get().shouldResetAggro || Fight.checkAggro());
     }
 
     @Override
     public void execute() {
-        if (!Login.getLoginState().equals(Login.STATE.INGAME)){
+        if (!org.tribot.script.sdk.Login.isLoggedIn()){
             Login.login();
             Utils.shortSleep();
         }

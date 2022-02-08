@@ -80,7 +80,7 @@ public class MagicBank implements Task {
             teleItems();
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 55) {
             teleBank(-1);// teleItems();
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75) {
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 99) {
             alchBank(Vars.get().alchItem.getId());
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) {
             myEnchBank2(diamondBraceletTAsk);

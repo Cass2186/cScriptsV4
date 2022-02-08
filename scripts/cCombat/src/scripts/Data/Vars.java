@@ -37,6 +37,7 @@ public class Vars {
     public ArrayList<String> potionNames = new ArrayList<>();
 
     public HashMap<Integer, Integer> restockList = new HashMap<>();
+    public boolean killingScarabs = false;
     public boolean killingUndeadDruids = true;
 
     public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
@@ -85,7 +86,7 @@ public class Vars {
 
     public int restockNumber = 6;
 
-    public int minLootValue = 1000;
+    public int minLootValue = 700;
     public int kills = 0;
 
     public int afkLengthMin = 30000;

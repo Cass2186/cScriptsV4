@@ -82,7 +82,7 @@ public class FamilyCrest implements QuestTask {
     Requirement inDwarvenMines, inHobgoblinDungeon, northWallUp, southRoomUp, northRoomUp, northWallDown, southRoomDown, northRoomDown,
             inJollyBoar, inEdgevilleDungeon, crest3Nearby;
 
-    QuestStep talkToDimintheis, talkToCaleb, talkToCalebWithFish, talkToCalebOnceMore, talkToGemTrader, talkToMan, enterDwarvenMine, talkToBoot,
+    QuestStep  talkToCaleb, talkToCalebWithFish, talkToCalebOnceMore, talkToGemTrader, talkToMan, enterDwarvenMine, talkToBoot,
             enterWitchavenDungeon, pullNorthLever, pullSouthRoomLever, pullNorthLeverAgain, pullNorthRoomLever, pullNorthLever3, pullSouthRoomLever2,
             smeltGold, makeRing, makeNecklace, returnToMan, goUpToJohnathon, talkToJohnathon,
             killChronizon, pickUpCrest3, repairCrest, returnCrest;
@@ -163,6 +163,7 @@ public class FamilyCrest implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         BankManager.open(true);
         BankManager.depositAll(true);
+        BankManager.depositEquipment();
         BankManager.checkEquippedGlory();
         BankManager.withdraw(3, true,
                 ItemID.VARROCK_TELEPORT);
@@ -190,6 +191,7 @@ public class FamilyCrest implements QuestTask {
 
 
     public Map<Integer, QuestStep> loadSteps() {
+
         setupItemReqs();
         setupConditions();
         setupSteps();
@@ -222,6 +224,7 @@ public class FamilyCrest implements QuestTask {
     }
 
     public void setupItemReqs() {
+
         // Recommended
         varrockTele = new ItemReq("Varrock Teleports", ItemID.VARROCK_TELEPORT, 2);
         faladorTele = new ItemReq("Falador Teleport", ItemID.FALADOR_TELEPORT);
@@ -334,9 +337,9 @@ public class FamilyCrest implements QuestTask {
         crest3Nearby = new ItemOnTileRequirement(crestPiece3);
     }
 
-
+    NPCStep talkToDimintheis = new NPCStep("Dimintheis", new RSTile(3280, 3402, 0));
     public void setupSteps() {
-        talkToDimintheis = new NPCStep("Dimintheis", new RSTile(3280, 3402, 0));
+        Log.debug("Setting up ");
         talkToDimintheis.addDialogStep("Why would a nobleman live in a dump like this?");
         talkToDimintheis.addDialogStep("So where is this crest?");
         talkToDimintheis.addDialogStep("Ok, I will help you.");
@@ -593,7 +596,7 @@ public class FamilyCrest implements QuestTask {
                 }
             }
         }
-    }
+       }
 
     int eatAt = General.random(40, 60);
 
@@ -847,9 +850,11 @@ public class FamilyCrest implements QuestTask {
     public void execute() {
         if (!checkRequirements())
             cQuesterV2.taskList.remove(this);
+        setupSteps();
+
         if (Game.getSetting(148) == 0) {
-            buyItems();
-            getInitialItems();
+         //   buyItems();
+          //  getInitialItems();
             // startQuest();
         }
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_FAMILY_CREST.getId());

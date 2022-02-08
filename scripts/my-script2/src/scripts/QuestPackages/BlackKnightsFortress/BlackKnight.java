@@ -1,18 +1,24 @@
 package scripts.QuestPackages.BlackKnightsFortress;
 
+import dax.walker_engine.WalkerEngine;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.Game;
+import org.tribot.api2007.Objects;
+import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.QuestPackages.Biohazard.Biohazard;
 import scripts.QuestSteps.*;
-import scripts.Requirements.*;
+import scripts.Requirements.AreaRequirement;
+import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.Requirement;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
@@ -21,11 +27,12 @@ import scripts.Timer;
 
 import java.util.*;
 
-public class BlackKnightsFortress implements QuestTask {
-    private static BlackKnightsFortress quest;
+public class BlackKnight  implements QuestTask {
 
-    public static BlackKnightsFortress get() {
-        return quest == null ? quest = new BlackKnightsFortress() : quest;
+    private static BlackKnight quest;
+
+    public static BlackKnight get() {
+        return quest == null ? quest = new BlackKnight() : quest;
     }
 
     RSArea whiteKnightsCastleF1 = new RSArea(new RSTile(2954, 3353, 1), new RSTile(2998, 3327, 1));
@@ -59,7 +66,15 @@ public class BlackKnightsFortress implements QuestTask {
     RSArea centralArea1Floor1 = new RSArea(new RSTile(3015, 3514, 1), new RSTile(3024, 3516, 1));
     RSArea centralArea2Floor1 = new RSArea(new RSTile(3019, 3517, 1), new RSTile(3021, 3518, 1));
     RSArea centralArea3Floor1 = new RSArea(new RSTile(3022, 3513, 1), new RSTile(3024, 3513, 1));
-
+    RSTile[] path = {
+            new RSTile(3023, 3514, 1),
+            new RSTile(3022, 3514, 1),
+            new RSTile(3021, 3514, 1),
+            new RSTile(3020, 3515, 1),
+            new RSTile(3019, 3515, 1),
+            new RSTile(3018, 3515, 1),
+            new RSTile(3017, 3515, 1)
+    };
     RSArea northPathToCabbageHole1 = new RSArea(new RSTile(3022, 3517, 1), new RSTile(3030, 3518, 1));
     RSArea northPathToCabbageHole2 = new RSArea(new RSTile(3030, 3510, 1), new RSTile(3030, 3516, 1));
     RSArea northPathToCabbageHole3 = new RSArea(new RSTile(3029, 3516, 1), new RSTile(3029, 3516, 1));
@@ -84,6 +99,7 @@ public class BlackKnightsFortress implements QuestTask {
     AreaRequirement inSecretRoomGroundFloor = new AreaRequirement(secretRoomFloor0);
     AreaRequirement inSecretRoomFirstFloor = new AreaRequirement(secretRoomFloor1);
     AreaRequirement inSecretRoomSecondFloor = new AreaRequirement(secretRoomFloor2);
+    AreaRequirement inCentralArea2Floor1 = new AreaRequirement(centralArea2Floor1);
     AreaRequirement inMainEntrance = new AreaRequirement(mainEntrance1, mainEntrance2, mainEntrance3, mainEntrance4);
     AreaRequirement inCentralAreaFloor1 = new AreaRequirement(centralArea1Floor1, centralArea2Floor1, centralArea3Floor1);
     AreaRequirement inWestRoomFloor1 = new AreaRequirement(westFloor1);
@@ -100,10 +116,10 @@ public class BlackKnightsFortress implements QuestTask {
 
 
     /* Path to grill */
-    ObjectStep enterFortress = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
+   ObjectStep enterFortress = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
             "Open",
             ironChainbody, bronzeMed, cabbage);
-    ObjectStep pushWall = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0),
+    ObjectStep pushWall = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3516, 0),
             "Push");
     ObjectStep climbUpLadder1 = new ObjectStep(ObjectID.LADDER_17148, new RSTile(3015, 3519, 0),
             "Climb-up");
@@ -117,11 +133,14 @@ public class BlackKnightsFortress implements QuestTask {
             "Climb-down");
     ObjectStep climbDownLadder6 = new ObjectStep(ObjectID.LADDER_17149, new RSTile(3021, 3510, 1),
             "Climb-down");
-    ObjectStep listenAtGrill = new ObjectStep(ObjectID.GRILL, new RSTile(3025, 3507, 0),
+    ObjectStep listenAtGrill = new ObjectStep(ObjectID.GRILL, new RSTile(3026, 3507, 0),
             "Listen-at");
 
+    ObjectStep openDoor = new ObjectStep(ObjectID.DOOR_14749, new RSTile(3026, 3507, 0),
+            "Open", Objects.findNearest(3,ObjectID.DOOR_14749 ).length == 0);
+
     /* Path to cabbage hole */
-    ObjectStep climbUpLadder6 = new ObjectStep(ObjectID.LADDER_17148, new RSTile(3021, 3510, 0),
+  ObjectStep climbUpLadder6 = new ObjectStep(ObjectID.LADDER_17148, new RSTile(3021, 3510, 0),
             "Climb-up", cabbage);
     ObjectStep climbUpLadder5 = new ObjectStep(ObjectID.LADDER_17148, new RSTile(3025, 3513, 1),
             "Climb-up", cabbage);
@@ -134,20 +153,14 @@ public class BlackKnightsFortress implements QuestTask {
     ObjectStep climbDownLadder1 = new ObjectStep(ObjectID.LADDER_17149, new RSTile(3015, 3519, 1),
             "Climb-down", cabbage);
     ObjectStep openDoorToRoom = new ObjectStep(2338, new RSTile(3020, 3515, 0), "Open");
-    ObjectStep goUpLadderToCabbageZone = new ObjectStep(ObjectID.LADDER_17159, new RSTile(3022, 3518, 0),
+    ObjectStep goUpLadderToCabbageZone = new ObjectStep(ObjectID.LADDER_17159,
+            new RSTile(3022, 3517, 0),
             "Climb-up", cabbage);
 
     ObjectStep pushWall2 = new ObjectStep(ObjectID.WALL_2341, new RSTile(3030, 3510, 1),
             "Push", cabbage);
-    UseItemOnObjectStep useCabbageOnHole = new UseItemOnObjectStep(cabbage.getId(), 2336, new RSTile(3031, 3507, 1),
-
-            Timer.waitCondition(()-> {
-                if (NPCInteraction.isConversationWindowUp())
-                    NPCInteraction.handleConversation();
-                Waiting.waitNormal(250, 25);
-                return Game.getSetting(QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS.getId()) ==3;
-            }, 50000),
-            cabbage);
+    UseItemOnObjectStep useCabbageOnHole = new UseItemOnObjectStep(ItemID.CABBAGE, 2336,
+            new RSTile(3031, 3507, 1));
     ObjectStep exitEastTurret = new ObjectStep(17155, new RSTile(3029, 3507, 3),
             "Climb-down");
     ObjectStep exitBasement = new ObjectStep(25844, new RSTile(1867, 4244, 0),
@@ -175,6 +188,7 @@ public class BlackKnightsFortress implements QuestTask {
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
+
 
 
     public void buyItems() {
@@ -221,15 +235,13 @@ public class BlackKnightsFortress implements QuestTask {
         Utils.equipItem(ItemID.BRONZE_MED_HELM);
         Utils.equipItem(ItemID.IRON_CHAINBODY);
     }
-
-
     public Map<Integer, QuestStep> loadSteps() {
         speakToAmik.addDialogStep("I seek a quest!");
         speakToAmik.addDialogStep("I laugh in the face of danger!");
         speakToAmik.addDialogStep("Ok, I'll do my best.");
-        openDoorToRoom.setHandleChat(true);
+       openDoorToRoom.setHandleChat(true);
         openDoorToRoom.setChat(List.of("I don't care. I'm going in anyway."));
-        listenAtGrill.setHandleChat(true);
+       listenAtGrill.setHandleChat(true);
         Map<Integer, QuestStep> steps = new HashMap<>();
 
 
@@ -246,7 +258,7 @@ public class BlackKnightsFortress implements QuestTask {
         infiltrateTheFortress.addStep(inSecretRoomGroundFloor, climbUpLadder1);
         infiltrateTheFortress.addStep(new Conditions(false, LogicType.OR, inMainEntrance,
                 inEastRoomFloor0), pushWall);
-        infiltrateTheFortress.addStep(inWestRoomFloor1, exitWestRoomFirstFloor);
+       infiltrateTheFortress.addStep(inWestRoomFloor1, exitWestRoomFirstFloor);
         infiltrateTheFortress.addStep(inBasement, exitBasement);
         infiltrateTheFortress.addStep(onTopOfFortress, exitTopOfFortress);
         infiltrateTheFortress.addStep(inEastTurret, exitEastTurret);
@@ -259,12 +271,14 @@ public class BlackKnightsFortress implements QuestTask {
         steps.put(1, infiltrateTheFortress);
 
         ConditionalStep sabotageThePotion = new ConditionalStep(enterFortress);
-        sabotageThePotion.addStep(new Conditions(false, LogicType.OR, inSecretRoomGroundFloor, inMainEntrance, inEastRoomFloor0), goUpLadderToCabbageZone);
+        sabotageThePotion.addStep(new Conditions(false, LogicType.OR,
+                inSecretRoomGroundFloor, inMainEntrance, inEastRoomFloor0), goUpLadderToCabbageZone);
         sabotageThePotion.addStep(inCabbageHoleRoom, useCabbageOnHole);
         sabotageThePotion.addStep(inPathToCabbageRoom, pushWall2);
         sabotageThePotion.addStep(inSecretRoomFirstFloor, climbDownLadder1);
         sabotageThePotion.addStep(inSecretRoomSecondFloor, climbDownLadder2);
-        sabotageThePotion.addStep(inCentralAreaFloor1, climbUpLadder3);
+      //  sabotageThePotion.addStep(inCentralArea2Floor1, openDoor );
+        sabotageThePotion.addStep(inCentralAreaFloor1,  climbUpLadder3);
         sabotageThePotion.addStep(inEastRoomFloor2, climbDownLadder4);
         sabotageThePotion.addStep(inEastRoomFloor1, climbUpLadder5);
         sabotageThePotion.addStep(inListeningRoom, climbUpLadder6);
@@ -295,10 +309,9 @@ public class BlackKnightsFortress implements QuestTask {
 
     @Override
     public void execute() {
-        Waiting.waitNormal(150,25);
-        Log.debug("BKF Execute");
-        /*Waiting.waitNormal(150,25);
-        int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS.getId());
+        Log.debug("BKF");
+        Waiting.waitNormal(500,10);
+        int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS.getId());
         if (gameSetting == 4) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
@@ -308,18 +321,28 @@ public class BlackKnightsFortress implements QuestTask {
             buyItems();
             getItems();
         }
+        if (centralArea1Floor1.contains(Player.getPosition()) ||
+                centralArea3Floor1.contains(Player.getPosition()) || centralArea2Floor1.contains(Player.getPosition())){
+            Log.debug("Walking path");
+            WalkerEngine.getInstance().walkPath(Arrays.asList(path));
+        }
+        if (inCabbageHoleRoom.check()) {
+            Log.debug("In cabbage room");
+            useCabbageOnHole.execute();
+        }
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
         step.ifPresent(QuestStep::execute);
         if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation("I don't care. I'm going in anyway.");
         else
-            Waiting.waitNormal(150,25);*/
+            Waiting.waitNormal(150,25);
     }
 
     @Override
     public String questName() {
-        return "Black Knight's Fortress (" + Game.getSetting(QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS.getId()) + ")";
+        int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_BLACK_KNIGHTS_FORTRESS.getId());
+        return "BKF (" + gameSetting + ")";
     }
 
     @Override

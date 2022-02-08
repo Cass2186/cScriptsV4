@@ -39,6 +39,22 @@ public class Bank implements Task {
         BankManager.close(true);
     }
 
+    public void scarabsBank() {
+        Prayer.disableAll();
+        // TODO go to bank
+        //Navigate to bank
+        BankManager.open(true);
+        BankManager.depositAll(true);
+        BankManager.withdraw(150, true, ItemID.NATURE_RUNE);
+        BankManager.withdraw(750, true, ItemID.FIRE_RUNE);
+        BankManager.withdrawArray(ItemID.PRAYER_POTION, 4);
+        BankManager.withdrawArray(ItemID.RANGING_POTION, 3);
+        BankManager.withdrawArray(ItemID.ANTIDOTE_PLUS_PLUS, 1);
+        BankManager.withdraw(8, true, ItemID.SHARK);
+        BankManager.withdraw(1, true, ItemID.LIT_CANDLE);
+        BankManager.withdraw(1, true, ItemID.TINDERBOX);
+        BankManager.close(true);
+    }
 
     public void undeadDruidBank() {
         Prayer.disableAll();
@@ -49,6 +65,7 @@ public class Bank implements Task {
         BankManager.withdrawArray(ItemID.RANGING_POTION, 3);
         BankManager.withdraw(6, true, ItemID.SHARK);
         BankManager.withdraw(1, true, ItemID.KNIFE);
+        BankManager.withdraw(5, true, ItemID.VARROCK_TELEPORT);
         BankManager.close(true);
     }
 

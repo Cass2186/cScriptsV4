@@ -87,23 +87,31 @@ public class LootItems implements Task {
         return false;
     }
 
-    public Optional<GroundItem> getLootItem() {
+    public static Optional<GroundItem> getLootItem() {
         List<GroundItem> groundItemList = Query.groundItems()
                 .inArea(Utils.getAreaFromRSArea(Areas.UNDEAD_DRUID_AREA))
                 .nameNotContains("Burnt bones", "Ashes")
                 .toList();
 
         for (GroundItem g : groundItemList) {
+           // if (GrandExchange.getPrice(g.getId()) > 150)
+              //  Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
             if (GrandExchange.getPrice(g.getId()) > Vars.get().minLootValue) {
+                Log.debug("[Loot] Item is " + g.getName());
                 return Optional.of(g);
             } else if (g.getDefinition().isStackable() || g.getDefinition().isNoted()) {
                 int individualPrice = GrandExchange.getPrice(g.getId());
+                if (g.getDefinition().isNoted()) {
+                    individualPrice = GrandExchange.getPrice((g.getId() - 1));
+                }
                 int amount = g.getStack();
                 int value = individualPrice * amount;
                 if (value > Vars.get().minLootValue) {
                     Log.debug("[Loot] Item is " + g.getName());
                     return Optional.of(g);
                 }
+            } else if (g.getId() == 995 && g.getStack() > 500){
+                return Optional.of(g);
             }
         }
         return Optional.empty();
@@ -130,7 +138,7 @@ public class LootItems implements Task {
 
         if (loot.get().interact("Take")) {
             Timer.slowWaitCondition(() ->
-                    loot.get().getTile().equals(MyPlayer.getPosition()),
+                            loot.get().getTile().equals(MyPlayer.getPosition()),
                     5000, 7000);
             General.println("[Debug]: Done looting");
             Vars.get().lootValue = Vars.get().lootValue + value;
@@ -161,7 +169,7 @@ public class LootItems implements Task {
     @Override
     public boolean validate() {
         return getLootItem().isPresent()
-                && Vars.get().fightArea.contains(Player.getPosition());
+                && Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition());
     }
 
     @Override

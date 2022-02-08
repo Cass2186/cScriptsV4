@@ -7,7 +7,17 @@ import scripts.Requirements.AreaRequirement;
 public class Areas {
 
     public static  RSArea UNDEAD_DRUID_AREA = new RSArea(new RSTile(1805, 9932, 0), new RSTile(1795, 9953, 0));
-
+    public static   RSArea LARGE_SCARAB_FIGHT_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(3295, 9262, 2),
+                    new RSTile(3305, 9262, 2),
+                    new RSTile(3306, 9257, 2),
+                    new RSTile(3308, 9252, 2),
+                    new RSTile(3308, 9250, 2),
+                    new RSTile(3293, 9252, 2),
+                    new RSTile(3295, 9256, 2)
+            }
+    );
     /**
      * just before shed to zanaris
      */

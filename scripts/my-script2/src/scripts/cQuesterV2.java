@@ -21,6 +21,7 @@ import scripts.QuestPackages.AscentOfArceuus.AscentOfArceuus;
 import scripts.QuestPackages.Barcrawl.BarCrawl;
 import scripts.QuestPackages.BigChompyBirdHunting.BigChompyBirdHunting;
 import scripts.QuestPackages.Biohazard.Biohazard;
+import scripts.QuestPackages.BlackKnightsFortress.BlackKnight;
 import scripts.QuestPackages.BlackKnightsFortress.BlackKnightsFortress;
 import scripts.QuestPackages.BoneVoyage.BoneVoyage;
 import scripts.QuestPackages.ClientOfKourend.ClientOfKourend;
@@ -85,6 +86,7 @@ import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
 import scripts.QuestPackages.SeaSlug.SeaSlug;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
+import scripts.QuestPackages.TearsOfGuthix.TearsOfGuthix;
 import scripts.QuestPackages.TempleOfIkov.TempleOfIkov;
 import scripts.QuestPackages.TheFeud.TheFeud;
 import scripts.QuestPackages.TheGolem.TheGolem;
@@ -506,9 +508,6 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 else if (arg.toLowerCase().contains("plaguecity")) {
                     General.println("[Args]: Added Plague City");
                     taskList.add(PlagueCity.get());
-                }   else if (arg.toLowerCase().contains("blackknight")) {
-                    General.println("[Args]: Added Black Knights fortress");
-                    taskList.add(BlackKnightsFortress.get());
                 }
 
                 else if (arg.toLowerCase().contains("mtd")) {
@@ -551,6 +550,14 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 else if (arg.toLowerCase().contains("princeali")) {
                     General.println("[Args]: Added Prince ali rescue");
                     taskList.add(PrinceAliRescue.get());
+                }
+                else if (arg.toLowerCase().contains("blackknight")) {
+                    General.println("[Args]: Added BKF");
+                    taskList.add(BlackKnight.get());
+                }
+                else if (arg.toLowerCase().contains("tearsofguthix")) {
+                    General.println("[Args]: Added tears ");
+                    taskList.add(TearsOfGuthix.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

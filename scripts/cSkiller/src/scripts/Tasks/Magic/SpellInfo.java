@@ -39,7 +39,7 @@ public enum SpellInfo {
 
     HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemID.NATURE_RUNE,
             Utils.getNotedItemID(Vars.get().alchItem.getId())),
-            ItemID.STAFF_OF_FIRE, 55,75),
+            ItemID.STAFF_OF_FIRE, 55,99),
 
     DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemID.COSMIC_RUNE,
             ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());

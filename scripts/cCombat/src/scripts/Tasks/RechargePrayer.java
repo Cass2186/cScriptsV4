@@ -1,6 +1,7 @@
 package scripts.Tasks;
 
 import javafx.print.PageLayout;
+import org.apache.commons.lang3.ArrayUtils;
 import org.tribot.api.General;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
@@ -22,6 +23,7 @@ public class RechargePrayer implements Task {
         if (Skill.RANGED.getCurrentLevel() <= (maxLevel - General.random(4,6)) ||
                 Skill.RANGED.getCurrentLevel() == Skill.RANGED.getActualLevel()){
             Utils.drinkPotion(ItemID.RANGING_POTION);
+
         }
 
         if (Utils.clickObj("Altar", "Pray-at")) {

@@ -21,6 +21,7 @@ import org.tribot.script.interfaces.Ending;
 import org.tribot.script.interfaces.Painting;
 import org.tribot.script.interfaces.Starting;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.GroundItem;
 import scripts.API.AntiPKThread;
 import scripts.Data.Vars;
 import scripts.Tasks.*;
@@ -178,9 +179,9 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 "Loot Value: " +Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
                         Utils.addCommaToNum(Math.round(Vars.get().lootValue/timeRanMin))
         ));
-        RSGroundItem item = getLootItem();
-        if (item != null){
-            Polygon p = Projection.getTileBoundsPoly(item.getPosition(), 0);
+        Optional<GroundItem> item = LootItems.getLootItem();
+        if (item.isPresent()){
+            Polygon p = Projection.getTileBoundsPoly(item.get().getLegacyRSGroundItem().getPosition(), 0);
             g.drawPolygon(p);
         }
         HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
@@ -229,6 +230,6 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
     @Override
     public void onEnd() {
-        Log.log("Profit: " + Vars.get().profit);
+        Log.log("Loot: " + Vars.get().lootValue);
     }
 }

@@ -170,10 +170,12 @@ public class PlagueCity implements QuestTask {
 
 
     public void getPicture() {
-        GroundItemStep grabPictureOfElena = new GroundItemStep(ItemID.PICTURE, new RSTile(2576, 3334, 0));
+        GroundItemStep grabPictureOfElena = new GroundItemStep(ItemID.PICTURE,
+                new RSTile(2576, 3334, 0));
         if (Inventory.find(ItemID.PICTURE).length < 1) {
             cQuesterV2.status = "Getting picture";
             General.println("[Debug]: " + cQuesterV2.status);
+            PathingUtil.walkToTile(new RSTile(2576, 3334, 0));
             grabPictureOfElena.execute();
         }
     }
