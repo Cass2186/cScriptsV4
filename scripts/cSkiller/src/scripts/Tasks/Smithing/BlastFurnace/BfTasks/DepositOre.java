@@ -7,6 +7,7 @@ import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Bank;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -88,10 +89,13 @@ public class DepositOre implements Task {
     public int shouldHover = General.random(0, 100);
 
     public boolean clickConveyor() {
+        if (Bank.isOpen())
+            BankManager.close(true);
+
         if (Utils.clickObject(9100, "Put-ore-on", false)) {
 
             if (Player.getPosition().equals(BfConst.ORE_DEPOSIT_TILE)) // was prev !Player.getPosition...
-                Timer.waitCondition(Player::isMoving, 500, 900);
+                Timer.waitCondition(Player::isMoving, 700, 1200);
 
             if (shouldHover < 3 && Player.isMoving()) {
                 General.println("[Antiban]: Hovering XP", Color.RED);

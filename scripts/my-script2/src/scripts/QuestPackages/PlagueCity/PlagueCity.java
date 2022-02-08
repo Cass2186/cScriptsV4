@@ -7,6 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.GroundItem;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
@@ -198,26 +199,20 @@ public class PlagueCity implements QuestTask {
             PathingUtil.movementIdle();
         invWater = Inventory.find(ItemID.BUCKET_OF_WATER);
         RSObject[] mudPatch = Objects.findNearest(10, "Mud patch");
-        if (invWater.length > 3) {
-            AccurateMouse.click(invWater[0], "Use");
-            AccurateMouse.click(mudPatch[0], "Use");
-            General.sleep(500, 1000);
-            AccurateMouse.click(invWater[1], "Use");
-            AccurateMouse.click(mudPatch[0], "Use");
-            General.sleep(General.random(500, 1000));
-            AccurateMouse.click(invWater[2], "Use");
-            AccurateMouse.click(mudPatch[0], "Use");
-            General.sleep(General.random(500, 1000));
-            AccurateMouse.click(invWater[3], "Use");
-            AccurateMouse.click(mudPatch[0], "Use");
-            NPCInteraction.handleConversation();
+        if (mudPatch.length > 0) {
+            for (RSItem i : invWater) {
+                if (Utils.useItemOnObject(ItemID.BUCKET_OF_WATER, mudPatch[0].getID())) ;
+                     Waiting.waitNormal(900, 100);
+            }
         }
+        if (NPCInteraction.isConversationWindowUp())
+            NPCInteraction.handleConversation();
     }
 
     public void step6() {
         cQuesterV2.status = "Digging";
         RSItem[] invItem1 = Inventory.find(ItemID.SPADE);
-        if (AccurateMouse.click(invItem1[0], "Dig")) {
+        if (invItem1.length > 0 && invItem1[0].click("Dig")) {
             General.sleep(2000, 4000);
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
@@ -534,7 +529,9 @@ public class PlagueCity implements QuestTask {
             getPicture();
             step4();
         }
-        if (Game.getSetting(165) == 3 || Game.getSetting(165) == 4 || Game.getSetting(165) == 5 || Game.getSetting(165) == 6) {
+        if (Game.getSetting(165) == 3 ||
+                Game.getSetting(165) == 4 || Game.getSetting(165) == 5
+                || Game.getSetting(165) == 6) {
             step5();
         }
         if (Game.getSetting(165) == 7) {
