@@ -47,7 +47,7 @@ public class BlastFurnaceBank implements Task {
 
     @Override
     public void execute() {
-        Log.debug("");
+        Log.debug("Banking: BlastFurnace");
         if (BfVars.get().useGoldSmith)
             bank(BfConst.GOLD_ORE);
         else
@@ -57,7 +57,7 @@ public class BlastFurnaceBank implements Task {
 
     @Override
     public String taskName() {
-        return "Smithing - BF";
+        return "Smithing";
     }
 
     public static void coalBagMessaageHandler(String message) {

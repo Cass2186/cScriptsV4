@@ -11,6 +11,7 @@ import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfConst;
+import scripts.Tasks.Smithing.BlastFurnace.BfData.BfVars;
 import scripts.Timer;
 import scripts.Utils;
 import scripts.rsitem_services.GrandExchange;
@@ -33,8 +34,8 @@ public class Stamina implements Task {
         return Vars.get().currentTask != null
                 && Vars.get().currentTask.equals(SkillTasks.SMITHING)
                 && (Inventory.getCount(BfConst.STAMINA_POTION) > 0
-                && Game.getRunEnergy() < General.random(80,90)
-                && (Utils.getVarBitValue(25) == 0 || Game.getRunEnergy() <= General.random(25, 45)));
+                && Game.getRunEnergy() < General.random(80,90) &&
+                (Utils.getVarBitValue(25) == 0 || Game.getRunEnergy() <= General.random(25, 45)));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class Stamina implements Task {
             if (stam[0].click())
                 Timer.waitCondition(() -> Player.getAnimation() == 829, 3000);
             General.println("[Stamina]: Stamina dose costs ~" + loss);
-        //    ExampleScriptMain.stamCost = ExampleScriptMain.stamCost + loss;
+          BfVars.get().totalStaminaCost = BfVars.get().totalStaminaCost + loss;
         }
     }
 

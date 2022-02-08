@@ -17,8 +17,9 @@ public class BfVars {
         vars = new BfVars();
     }
 
-    public boolean scriptStatus = true;
-
+    public int  profit = 0;
+    public int  staminaDoseCost = 0;
+    public int totalStaminaCost = 0;
     /**
      * Strings
      */
