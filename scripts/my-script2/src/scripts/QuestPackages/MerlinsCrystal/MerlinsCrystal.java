@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.types.World;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -43,18 +44,12 @@ public class MerlinsCrystal implements QuestTask {
     //Items Recommended
     ItemReq varrockTeleport, camelotTeleport, twoFaladorTeleports;
 
-    AreaRequirement inFaye, inFayeGround, inFaye1, inFaye2, inCamelot1, inCamelot2, morganNearby, clearedHive,
-            hasAnyBlackCandle, beggarNearby, talkedToLady, hasReadSpell, inCamelot, inStar, thrantaxNearby, inCamelotTower1, inCamelotTower2;
-
     QuestStep startQuest, talkToGawain, goUpstairsInCamelot, talkToLancelot, goBackDownStairsCamelot, hideInArheinCrate, goToFirstFloor, goToSecondFloor,
             attackMordred, talkToMorgan, goToCatherbyAfterFortress, optionalGetRepellent, optionalGetBucket, optionalUseRepellent, talkToCandleMaker, talkToLadyOfLake,
             enterSarimShopAndTalk, talkToBeggar, goReadMagicWords, returnToCamelot, returnToCamelotLit, goStandInStar, lightCandle, dropBatBones, sayWords,
             goUpLadder1Camelot, goUpLadder2Camelot, smashCrystal, goDownLadder1Camelot, goDownLadder2Camelot, finishQuest;
 
     //  ConditionalStep getBlackCandle, getExcalibur;
-
-    //RSAreas
-    RSArea fayeGround, faye1, faye2, camelotGround1, camelotGround2, camelotGround3, camelot1, camelot2, star, camelotTower1, camelotTower2;
 
  /*   @Override
     public Map<Integer, QuestStep> loadSteps()
@@ -123,56 +118,55 @@ public class MerlinsCrystal implements QuestTask {
         return steps;
     }*/
 
-    ItemReq  bread = new ItemReq("Bread", ItemID.BREAD);
-    ItemReq  tinderbox = new ItemReq("Tinderbox", ItemID.TINDERBOX);
-    ItemReq   bucketOfWaxOptional = new ItemReq("Bucket of wax (obtainable during quest)", ItemID.BUCKET_OF_WAX);
-    ItemReq  bucketOfWax = new ItemReq("Bucket of wax", ItemID.BUCKET_OF_WAX);
-    ItemReq  batBones = new ItemReq("Bat bones", ItemID.BAT_BONES);
-    ItemReq  batBonesOptional = new ItemReq("Bat bones (obtainable during quest)", ItemID.BAT_BONES);
-  //  ItemReq   varrockTeleport = new ItemReq(ItemID.VARROCK_TELEPORT);
+    ItemReq bread = new ItemReq("Bread", ItemID.BREAD);
+    ItemReq tinderbox = new ItemReq("Tinderbox", ItemID.TINDERBOX);
+    ItemReq bucketOfWaxOptional = new ItemReq("Bucket of wax (obtainable during quest)", ItemID.BUCKET_OF_WAX);
+    ItemReq bucketOfWax = new ItemReq("Bucket of wax", ItemID.BUCKET_OF_WAX);
+    ItemReq batBones = new ItemReq("Bat bones", ItemID.BAT_BONES);
+    ItemReq batBonesOptional = new ItemReq("Bat bones (obtainable during quest)", ItemID.BAT_BONES);
+    //  ItemReq   varrockTeleport = new ItemReq(ItemID.VARROCK_TELEPORT);
     //ItemReq   camelotTeleport = new ItemReq(ItemID.CAMELOT_TELEPORT);
-  //  ItemReq   twoFaladorTeleports = new ItemReq(ItemID.FALADOR_TELEPORT, 2);
-        //  combatGear = new ItemReq("Combat gear + food for Sir Mordred (level 39)", -1, -1);
-        //  combatGear.setDisplayItemID(BankSlotIcons.getCombatGear());
-        ItemReq  blackCandle = new ItemReq("Black candle", ItemID.BLACK_CANDLE);
-    ItemReq  litBlackCandle = new ItemReq("Lit black candle", ItemID.LIT_BLACK_CANDLE);
-    ItemReq  excalibur = new ItemReq("Excalibur", ItemID.EXCALIBUR);
-    ItemReq   equippedExcalibur = new ItemReq(ItemID.EXCALIBUR, 1, true, true);
+    //  ItemReq   twoFaladorTeleports = new ItemReq(ItemID.FALADOR_TELEPORT, 2);
+    //  combatGear = new ItemReq("Combat gear + food for Sir Mordred (level 39)", -1, -1);
+    //  combatGear.setDisplayItemID(BankSlotIcons.getCombatGear());
+    ItemReq blackCandle = new ItemReq("Black candle", ItemID.BLACK_CANDLE);
+    ItemReq litBlackCandle = new ItemReq("Lit black candle", ItemID.LIT_BLACK_CANDLE);
+    ItemReq excalibur = new ItemReq("Excalibur", ItemID.EXCALIBUR);
+    ItemReq equippedExcalibur = new ItemReq(ItemID.EXCALIBUR, 1, true, true);
 
 
-    public void loadRSAreas() {
-        fayeGround = new RSArea(new RSTile(2764, 3395, 0), new RSTile(2781, 3410, 0));
-        faye1 = new RSArea(new RSTile(2764, 3395, 1), new RSTile(2781, 3410, 1));
-        faye2 = new RSArea(new RSTile(2764, 3395, 2), new RSTile(2781, 3410, 2));
-        camelot1 = new RSArea(new RSTile(2744, 3483, 1), new RSTile(2769, 3517, 1));
-        camelot2 = new RSArea(new RSTile(2744, 3483, 2), new RSTile(2769, 3517, 2));
-        camelotGround1 = new RSArea(new RSTile(2744, 3483, 0), new RSTile(2774, 3517, 0));
-        camelotGround2 = new RSArea(new RSTile(2775, 3511, 0), new RSTile(2783, 3517, 0));
-        camelotGround3 = new RSArea(new RSTile(2774, 3505, 0), new RSTile(2776, 3511, 0));
-        star = new RSArea(new RSTile(2780, 3515, 0), new RSTile(2780, 3515, 0));
-        camelotTower1 = new RSArea(new RSTile(2765, 3490, 1), new RSTile(2770, 3495, 1));
-        camelotTower2 = new RSArea(new RSTile(2765, 3490, 2), new RSTile(2770, 3494, 2));
-    }
 
-    public void setupConditions() {
-        inFaye = new AreaRequirement(faye1, fayeGround, faye2);
-        inFayeGround = new AreaRequirement(fayeGround);
-        inFaye1 = new AreaRequirement(faye1);
-        inFaye2 = new AreaRequirement(faye2);
-        inCamelot = new AreaRequirement(camelotGround1, camelotGround2, camelotGround3);
-        inCamelot1 = new AreaRequirement(camelot1);
-        inCamelot2 = new AreaRequirement(camelot2);
+    RSArea fayeGround = new RSArea(new RSTile(2764, 3395, 0), new RSTile(2781, 3410, 0));
+    RSArea  faye1 = new RSArea(new RSTile(2764, 3395, 1), new RSTile(2781, 3410, 1));
+    RSArea  faye2 = new RSArea(new RSTile(2764, 3395, 2), new RSTile(2781, 3410, 2));
+    RSArea    camelot1 = new RSArea(new RSTile(2744, 3483, 1), new RSTile(2769, 3517, 1));
+    RSArea    camelot2 = new RSArea(new RSTile(2744, 3483, 2), new RSTile(2769, 3517, 2));
+    RSArea    camelotGround1 = new RSArea(new RSTile(2744, 3483, 0), new RSTile(2774, 3517, 0));
+    RSArea    camelotGround2 = new RSArea(new RSTile(2775, 3511, 0), new RSTile(2783, 3517, 0));
+    RSArea    camelotGround3 = new RSArea(new RSTile(2774, 3505, 0), new RSTile(2776, 3511, 0));
+    RSArea    star = new RSArea(new RSTile(2780, 3515, 0), new RSTile(2780, 3515, 0));
+    RSArea    camelotTower1 = new RSArea(new RSTile(2765, 3490, 1), new RSTile(2770, 3495, 1));
+    RSArea    camelotTower2 = new RSArea(new RSTile(2765, 3490, 2), new RSTile(2770, 3494, 2));
+
+
+        AreaRequirement    inFaye = new AreaRequirement(faye1, fayeGround, faye2);
+        AreaRequirement    inFayeGround = new AreaRequirement(fayeGround);
+        AreaRequirement    inFaye1 = new AreaRequirement(faye1);
+        AreaRequirement    inFaye2 = new AreaRequirement(faye2);
+        AreaRequirement    inCamelot = new AreaRequirement(camelotGround1, camelotGround2, camelotGround3);
+        AreaRequirement    inCamelot1 = new AreaRequirement(camelot1);
+        AreaRequirement    inCamelot2 = new AreaRequirement(camelot2);
         //  morganNearby = new NpcCondition(NpcID.MORGAN_LE_FAYE);
         // clearedHive = new ObjectCondition(ObjectID.BEEHIVE_305);
         // hasAnyBlackCandle = new Conditions(LogicType.OR, blackCandle, litBlackCandle);
         // beggarNearby = new NpcCondition(NpcID.BEGGAR);
         // talkedToLady = new WidgetTextRequirement(217, 5, "Ok. That seems easy enough.");
         // hasReadSpell = new Conditions(true, LogicType.AND, new WidgetTextRequirement(229, 1, "You find a small inscription"));
-        inStar = new AreaRequirement(star);
+        AreaRequirement    inStar = new AreaRequirement(star);
         // thrantaxNearby = new NpcCondition(NpcID.THRANTAX_THE_MIGHTY);
-        inCamelotTower1 = new AreaRequirement(camelotTower1);
-        inCamelotTower2 = new AreaRequirement(camelotTower2);
-    }
+        AreaRequirement   inCamelotTower1 = new AreaRequirement(camelotTower1);
+        AreaRequirement    inCamelotTower2 = new AreaRequirement(camelotTower2);
+
 
     public void setupSteps() {
         startQuest = new NPCStep(NpcID.KING_ARTHUR, new RSTile(2763, 3513, 0), "Talk to King Arthur in Camelot Castle to start.");
@@ -316,6 +310,7 @@ public class MerlinsCrystal implements QuestTask {
 
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
         buyStep.buyItems();
@@ -334,30 +329,50 @@ public class MerlinsCrystal implements QuestTask {
             ))
     );
 
-    public void getItems() {
-        cQuesterV2.status = "Getting Items";
-        General.println("[Debug]: " + cQuesterV2.status);
-        BankManager.open(true);
-        BankManager.depositAll(true);
-        BankManager.withdraw(7, true, ItemID.CAMELOT_TELEPORT);
-        BankManager.withdraw(1, true, ItemID.TINDERBOX);
-        BankManager.withdraw(5, true, ItemID.FALADOR_TELEPORT);
-        BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[2]);
-        BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
-        BankManager.withdraw(1, true, ItemID.BUCKET_OF_WAX);
-        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
-        BankManager.withdraw(1, true, ItemID.BAT_BONES);
-        BankManager.withdraw(1, true, ItemID.BREAD);
+    InventoryRequirement initialInv = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 7, 1),
+                    new ItemReq(ItemID.TINDERBOX, 1, 1),
+                    new ItemReq(ItemID.FALADOR_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.BUCKET_OF_WAX, 1, 1),
+                    new ItemReq(ItemID.BAT_BONES, 1),
+                    new ItemReq(ItemID.BREAD, 1),
+                    new ItemReq(ItemID.LOBSTER, 13, 1),
+                    new ItemReq(ItemID.MIND_RUNE, 300, 50),
+                    new ItemReq(ItemID.FIRE_RUNE, 800, 100),
+                    new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true)
+            ))
+    );
 
-        BankManager.withdraw(2, true, ItemID.BLACK_CANDLE);
-        BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
-        Utils.equipItem(ItemID.STAFF_OF_AIR);
-        BankManager.withdraw(300, true, ItemID.MIND_RUNE);
-        BankManager.withdraw(800, true, ItemID.FIRE_RUNE);
-        BankManager.withdraw(13, true, ItemID.LOBSTER);
-        BankManager.withdraw(2, true, ItemID.VARROCK_TELEPORT);
-        BankManager.withdraw(1, true, ItemID.EXCALIBUR);
-        BankManager.close(true);
+
+    public void getItems() {
+        if (!initialInv.check()) {
+            cQuesterV2.status = "Getting Items";
+            General.println("[Debug]: " + cQuesterV2.status);
+            BankManager.open(true);
+            BankManager.depositAll(true);
+            BankManager.withdraw(7, true, ItemID.CAMELOT_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.TINDERBOX);
+            BankManager.withdraw(5, true, ItemID.FALADOR_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[2]);
+            BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
+            BankManager.withdraw(1, true, ItemID.BUCKET_OF_WAX);
+            BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+            BankManager.withdraw(1, true, ItemID.BAT_BONES);
+            BankManager.withdraw(1, true, ItemID.BREAD);
+
+            BankManager.withdraw(2, true, ItemID.BLACK_CANDLE);
+            BankManager.withdraw(1, true, ItemID.STAFF_OF_AIR);
+            Utils.equipItem(ItemID.STAFF_OF_AIR);
+            BankManager.withdraw(300, true, ItemID.MIND_RUNE);
+            BankManager.withdraw(800, true, ItemID.FIRE_RUNE);
+            BankManager.withdraw(13, true, ItemID.LOBSTER);
+            BankManager.withdraw(2, true, ItemID.VARROCK_TELEPORT);
+            BankManager.withdraw(1, true, ItemID.EXCALIBUR);
+            BankManager.close(true);
+        }
     }
 
     public void goToKingArthur() {
@@ -366,11 +381,13 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void startQuest() {
-        goToKingArthur();
-        if (NpcChat.talkToNPC("King Arthur")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("I want to become a knight of the round table!");
-            NPCInteraction.handleConversation();
+        if (initialInv.check()) {
+            goToKingArthur();
+            if (NpcChat.talkToNPC("King Arthur")) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation("I want to become a knight of the round table!");
+                NPCInteraction.handleConversation();
+            }
         }
     }
 
@@ -426,7 +443,8 @@ public class MerlinsCrystal implements QuestTask {
 
 
     public void navigateFirstFloor() {
-        if (cratedropoff.contains(Player.getPosition())) {
+        if (!inFayeGround.check() &&
+                cratedropoff.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to Mordred";
             door = Objects.findNearest(15, "Large door");
             if (door.length > 0) {
@@ -434,16 +452,18 @@ public class MerlinsCrystal implements QuestTask {
                     General.sleep(General.random(2000, 3000));
 
                 Utils.blindWalkToTile(new RSTile(2770, 3404, 0));
-                    PathingUtil.movementIdle();
-
-                checkEat();
-
-                if (Utils.clickObj("Staircase", "Climb-up"))
-                    Timer.slowWaitCondition(() -> KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 1000, 13000);
+                PathingUtil.movementIdle();
 
                 checkEat();
             }
         }
+        if (inFayeGround.check()) {
+            if (Utils.clickObj("Staircase", "Climb-up"))
+                Timer.slowWaitCondition(() -> KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 1000, 13000);
+
+            checkEat();
+        }
+
     }
 
     public boolean checkEat() {
@@ -455,17 +475,17 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void navigateSecondFloor() {
-        if (KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition())) {
-            Utils.blindWalkToTile(SECOND_FLOOR_STAIRS_UP.getRandomTile());
+        if (inFaye1.check()) {
+            Log.debug("In second floor");
+            Utils.blindWalkToTile(new RSTile(2770, 3396, 0));
             checkEat();
-            if (SECOND_FLOOR_STAIRS_UP.contains(Player.getPosition())) {
-                if (Utils.clickObj("Staircase", "Climb-up")) {
-                    Timer.waitCondition(() -> !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 7000, 15000);
-                    checkEat();
-                    if (Combat.isUnderAttack() && !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()))
-                        Timer.abc2WaitCondition(() -> !Combat.isUnderAttack(), 6000, 9000);
-                }
+            if (Utils.clickObj(15645, "Climb-up")) {
+                Timer.waitCondition(() -> !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 7000, 15000);
+                checkEat();
+                if (Combat.isUnderAttack() && !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()))
+                    Timer.abc2WaitCondition(() -> !Combat.isUnderAttack(), 6000, 9000);
             }
+
         }
     }
 
@@ -589,7 +609,7 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void summon() {
-        RSItem[]  invItem1 = Inventory.find(ItemID.EXCALIBUR);
+        RSItem[] invItem1 = Inventory.find(ItemID.EXCALIBUR);
         RSItem[] invBatBones = Inventory.find(batBones.getId());
         checkItems(batBones.getId());
         if (Inventory.find(excalibur.getId()).length > 0 && Inventory.find(batBones.getId()).length > 0 &&
@@ -652,12 +672,11 @@ public class MerlinsCrystal implements QuestTask {
 
     @Override
     public void execute() {
-        setupConditions();
         if (Game.getSetting(14) == 0) {
             buyItems();
             getItems();
             startQuest();
-        } else if (Inventory.getAll().length ==0){
+        } else if (Inventory.getAll().length == 0) {
             buyItems();
             getItems();
             return;
