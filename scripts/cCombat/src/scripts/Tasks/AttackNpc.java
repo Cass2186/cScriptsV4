@@ -1,30 +1,27 @@
 package scripts.Tasks;
 
 import org.tribot.api.General;
-import org.tribot.api.Timing;
-import org.tribot.api.input.Mouse;
-import org.tribot.api2007.*;
+import org.tribot.api2007.NPCs;
+import org.tribot.api2007.PathFinding;
+import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSCharacter;
-import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
-import scripts.*;
 import scripts.API.AntiPKThread;
+import scripts.*;
 import scripts.Data.Areas;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
-
-import javax.swing.text.html.Option;
+//
 import java.util.Optional;
 
 public class AttackNpc implements Task {
 
-    int SCARAB_PRE_ATTACK_ANIMATION = 430;
+    private static int SCARAB_PRE_ATTACK_ANIMATION = 430;
 
     public static void setPrayer(boolean on) {
         if (on && Prayer.getPrayerPoints() > 0) {
@@ -35,20 +32,24 @@ public class AttackNpc implements Task {
                 PrayerUtil.setPrayer(PrayerType.MAGIC);
 
         } else if (!on) {
-            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MELEE))
-                Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
+            if (Prayer.isAllEnabled(org.tribot.script.
+                    sdk.Prayer.PROTECT_FROM_MELEE))
+                Prayer.disableAll(Prayer.PROTECT_FROM_MELEE);
 
-            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MAGIC))
-                Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MAGIC);
+            if (Prayer.isAllEnabled(org.tribot.script.
+                    sdk.Prayer.PROTECT_FROM_MAGIC))
+                Prayer.disableAll(Prayer.PROTECT_FROM_MAGIC);
 
-            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MISSILES))
-                Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MISSILES);
+            if (Prayer.isAllEnabled(org.tribot.script.
+                    sdk.Prayer.PROTECT_FROM_MISSILES))
+                Prayer.disableAll(Prayer.PROTECT_FROM_MISSILES);
+
         }
     }
 
     public Optional<RSNPC> setCurrentTarget(String[] monsterStrings) {
-        if (Combat.isUnderAttack()) {
-            RSCharacter target = Combat.getTargetEntity();
+        if (MyPlayer.isHealthBarVisible()) {
+            RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
 
             if (target != null && target.getHealthPercent() == 0) {
                 RSNPC[] potentialTargets = NPCs.findNearest(monsterStrings);
@@ -57,7 +58,7 @@ public class AttackNpc implements Task {
                     return Optional.ofNullable(potentialTargets[1]);
                 }
             } else {
-                Optional<String> name = Optional.ofNullable(Combat.getTargetEntity())
+                Optional<String> name = Optional.ofNullable(org.tribot.api2007.Combat.getTargetEntity())
                         .map(RSCharacter::getName);
 
                 if (name.isPresent()) {
@@ -114,15 +115,15 @@ public class AttackNpc implements Task {
             Combat.setAutoRetaliate(true);
 
 
-        RSCharacter target = Combat.getTargetEntity();
+        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
         Optional<RSNPC> targ = setCurrentTarget(Vars.get().targets);
 
         if (!AntiPKThread.isWorldVisible(AntiPKThread.nextWorld)) {
             AntiPKThread.scrollToWorldNoClick(AntiPKThread.nextWorld);
         }
         if (targ.isPresent()) {
-            org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                    org.tribot.script.sdk.Prayer.EAGLE_EYE);
+            Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC,
+                    Prayer.EAGLE_EYE);
 
             if (CombatUtil.clickTarget(targ.get())) {
                 Vars.get().status = "Attacking Target";
@@ -164,22 +165,68 @@ public class AttackNpc implements Task {
         return Optional.empty();
     }
 
+    public boolean activateQuickPrayers(Prayer... prayers) {
+        if (!Prayer.isQuickPrayersSelected(prayers))
+            Prayer.selectQuickPrayers(prayers);
 
+        if (Prayer.getPrayerPoints() == 0)
+            Utils.drinkPotion(ItemID.PRAYER_POTION);
+
+        return Prayer.enableQuickPrayer();
+    }
+
+    public static boolean shouldFlickPrayerOn() {
+        return Query.npcs()
+                .isAnimation(SCARAB_PRE_ATTACK_ANIMATION)
+                .inArea(Utils.getAreaFromRSArea(Areas.LARGE_SCARAB_FIGHT_AREA))
+                .isAny();
+    }
+
+    public void killScarabMages() {
+
+        if (!activateQuickPrayers(Prayer.PROTECT_FROM_MAGIC, Prayer.HAWK_EYE))
+            return; // failed to activate for some reason
+
+        //toggle autoretalite if needed
+        if (!Combat.isAutoRetaliateOn())
+            Combat.setAutoRetaliate(true);
+
+        Optional<Npc> attackingMe = getNpcToAttack();
+
+        if (attackingMe.isPresent()) {
+            if (!attackingMe.get().isHealthBarVisible() && attackingMe.get().getHealthBarPercent() != 0 &&
+                    attackingMe.map(t -> t.interact("Attack")).orElse(false)) {
+                Vars.get().status = "Attacking Target";
+                Vars.get().currentTime = System.currentTimeMillis();
+                Waiting.waitUntil(3500, () -> attackingMe.get().isHealthBarVisible());
+            } else {
+
+            }
+            if (Vars.get().drinkPotions)
+                Utils.drinkPotion(Vars.get().potionNames);
+
+            if (waitUntilOutOfCombat())
+                Utils.idleNormalAction();
+
+        } else
+            //  General.println("Cannot find target");
+            Waiting.waitUniform(200, 400);
+    }
 
     public void killUndeadDruids() {
 
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
-        org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                org.tribot.script.sdk.Prayer.EAGLE_EYE);
+        Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC,
+                Prayer.EAGLE_EYE);
 
         Optional<Npc> attackingMe = getNpcToAttack();
 
         if (attackingMe.isPresent()) {
 
-            org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                    org.tribot.script.sdk.Prayer.EAGLE_EYE);
+            Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC,
+                    Prayer.EAGLE_EYE);
 
             if (!attackingMe.get().isHealthBarVisible() && attackingMe.get().getHealthBarPercent() != 0 &&
                     attackingMe.map(t -> t.interact("Attack")).orElse(false)) {
@@ -202,18 +249,23 @@ public class AttackNpc implements Task {
 
 
     public static boolean waitUntilOutOfCombat() {
-        int eatAtHP = AntiBan.getEatAt() + General.random(3, 12);//true if praying
+        int eatAtHP = AntiBan.getEatAt() + General.random(3, 12);
 
         return Waiting.waitUntil(General.random(20000, 40000), () -> {
-            Waiting.waitUniform(100, 300);
+            Waiting.waitUniform(75, 225);
 
             AntiBan.timedActions();
+            if (Vars.get().killingScarabs && shouldFlickPrayerOn()) {
+                Prayer.enableQuickPrayer();
+            } else if (Vars.get().killingScarabs && !shouldFlickPrayerOn()) {
+                Prayer.disableQuickPrayer();
+            }
 
             if (EatUtil.hpPercent() <= (eatAtHP)) {
                 EatUtil.eatFood();
             }
 
-            return !Combat.isUnderAttack() || !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
+            return !MyPlayer.isHealthBarVisible() || !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
                     (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
         });
     }
@@ -238,12 +290,12 @@ public class AttackNpc implements Task {
         if (Vars.get().drinkPotions)
             Utils.drinkPotion(Vars.get().potionNames);
 
-        RSCharacter target = Combat.getTargetEntity();
-        if (!Combat.isUnderAttack() && CombatUtil.clickTarget(targ.get())) {
+        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
+        if (!MyPlayer.isHealthBarVisible() && CombatUtil.clickTarget(targ.get())) {
             Vars.get().status = "Attacking Target";
             Vars.get().currentTime = System.currentTimeMillis();
-            Timer.waitCondition(Combat::isUnderAttack, 2500, 4000);
-        } else if (Combat.isUnderAttack() || target != null) {
+            Timer.waitCondition(org.tribot.api2007.Combat::isUnderAttack, 2500, 4000);
+        } else if (MyPlayer.isHealthBarVisible() || target != null) {
             Vars.get().status = "Fighting Target";
             Vars.get().currentTime = System.currentTimeMillis();
         }
@@ -257,10 +309,10 @@ public class AttackNpc implements Task {
             Waiting.waitNormal(750, 150);
 
         }
-        int p = org.tribot.script.sdk.Prayer.getPrayerPoints();
+        int p = Prayer.getPrayerPoints();
         Log.log("Recharging prayer");
         if (p < 15 && Utils.clickObj("Altar", "Pray-at")) {
-            Timer.waitCondition(() -> org.tribot.script.sdk.Prayer.getPrayerPoints() > p, 7000, 9000);
+            Timer.waitCondition(() -> Prayer.getPrayerPoints() > p, 7000, 9000);
         }
     }
 
@@ -296,11 +348,21 @@ public class AttackNpc implements Task {
 
     @Override
     public boolean validate() {
-        return Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition());//MoveToArea.RUNE_DRAGON_AREA.contains(Player.getPosition());
+        if (Vars.get().killingScarabs) {
+            return Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition());
+        }
+        return Vars.get().killingUndeadDruids ?
+                Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()) :
+                Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition());//MoveToArea.RUNE_DRAGON_AREA.contains(Player.getPosition());
     }
 
     @Override
     public void execute() {
-        killUndeadDruids();
+        if (Vars.get().killingScarabs) {
+            killScarabMages();
+        } else if (Vars.get().killingUndeadDruids)
+            killUndeadDruids();
+        else
+            Log.error("No execute() found for AttackNpc Class");
     }
 }

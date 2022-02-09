@@ -879,7 +879,7 @@ public class TouristTrap implements QuestTask {
         if (!WINCH_AREA.contains(Player.getPosition()) && Inventory.find(ANA_IN_BARREL).length > 0) {
             cQuesterV2.status = "Going to Winch";
             General.println("[Debug]: " + cQuesterV2.status);
-            PathingUtil.localNavigation(WINCH_AREA);
+            PathingUtil.localNavigation(new RSTile(3292, 9422,0));
         }
         if (WINCH_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Putting Ana on winch";
@@ -889,7 +889,6 @@ public class TouristTrap implements QuestTask {
                 NPCInteraction.handleConversation("Yes please.");
                 NPCInteraction.handleConversation("I said you were very gregarious!");
                 NPCInteraction.handleConversation();
-                Utils.modSleep();
             }
         }
     }

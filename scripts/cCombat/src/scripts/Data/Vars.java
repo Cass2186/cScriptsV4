@@ -29,7 +29,8 @@ public class Vars {
     /**
      * Strings
      */
-    public String[] targets = {"Undead Druid"};
+    public String[] targets = this.killingScarabs ?
+            new String[]{"Scarab Mage"} : new String[]{"Undead Druid"};
 
     public String status = "Initializing...";
 
@@ -71,7 +72,7 @@ public class Vars {
      */
     public int playerCount, npcItemID, remainingKills;
 
-    public int eatAtHP = Combat.getMaxHP() - General.random(22,40);
+    public int eatAtHP = Combat.getMaxHP() - General.random(22, 40);
     public int drinkPrayerAt = General.random(5, 25);
 
     public int lootValue = 0;
