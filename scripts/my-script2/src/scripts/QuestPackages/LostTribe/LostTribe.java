@@ -51,7 +51,7 @@ public class LostTribe implements QuestTask {
     int SIGMUND = 6288;
     int DUKE_HORACIO = 815;
     int COOK = 4626;
-    int BOB = 2812;
+    int BOB = 10619;
     int FATHER_AERECK = 921;
     int RELDO = 6203;
     int MISTAG = 5324;
@@ -180,7 +180,7 @@ public class LostTribe implements QuestTask {
         if (RSVarBit.get(532).getValue() == 1) {
             cQuesterV2.status = "Talking to Bob";
             PathingUtil.walkToArea(BOB_AREA);
-            if(NpcChat.talkToNPC(BOB)) {
+            if(NpcChat.talkToNPC("Bob")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Do you know what happened in the castle cellar?");
                 NPCInteraction.handleConversation();

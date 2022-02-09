@@ -139,20 +139,21 @@ public class ElementalWorkshop implements QuestTask {
         }
     }
 
-    public void getKey() {
+    public boolean getKey() {
         if (Inventory.find(BATTERED_BOOK).length > 0) {
             cQuesterV2.status = "Getting key";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Utils.useItemOnItem(KNIFE, BATTERED_BOOK))
-                Timer.waitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
+               return Timer.waitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
 
         }
+        return  Inventory.find(BATTERED_KEY).length > 0;
     }
 
     public void enterUnderground() {
         cQuesterV2.status = "Going underground";
         PathingUtil.walkToArea(WALL_AREA);
-        if (!BEHIND_WALL.contains(Player.getPosition()) &&
+        if (getKey() && !BEHIND_WALL.contains(Player.getPosition()) &&
                 Utils.clickObj(26114, "Open"))
             Timer.slowWaitCondition(() -> BEHIND_WALL.contains(Player.getPosition()), 7000, 8500);
     }

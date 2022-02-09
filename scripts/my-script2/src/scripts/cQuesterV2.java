@@ -29,6 +29,7 @@ import scripts.QuestPackages.Contact.Contact;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
 import scripts.QuestPackages.CreatureOfFenkenstrain.CreatureOfFenkenstrain;
 import scripts.QuestPackages.DeathPlateau.DeathPlateau;
+import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestPackages.DemonSlayer.DemonSlayer;
 import scripts.QuestPackages.DepthsofDespair.DepthsOfDespair;
 import scripts.QuestPackages.DoricsQuest.DoricsQuest;
@@ -559,6 +560,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     General.println("[Args]: Added tears ");
                     taskList.add(TearsOfGuthix.get());
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 General.println("[Error]: Args are incorrect", Color.RED);
@@ -614,6 +616,9 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         Utils.handleRecoilMessage(message);
         if (message.contains("You haven't got enough.")) {
             cQuesterV2.isRunning.set(false);
+        }
+        if (message.contains("you are dead")){
+            taskList.add(DeathsOffice.get());
         }
         // QuestHelper.autocastAndGrandExchangeFailSafe(message);
         // Utils.handleBlockedFireMessage(message);
