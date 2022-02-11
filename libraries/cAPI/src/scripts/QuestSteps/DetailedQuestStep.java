@@ -37,6 +37,7 @@ public class DetailedQuestStep extends QuestStep {
 
     }
 
+
     public DetailedQuestStep(String text) {
         super(text);
     }
