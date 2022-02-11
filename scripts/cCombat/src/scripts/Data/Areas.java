@@ -6,7 +6,7 @@ import scripts.Requirements.AreaRequirement;
 
 public class Areas {
 
-    public static  RSArea UNDEAD_DRUID_AREA = new RSArea(new RSTile(1805, 9932, 0), new RSTile(1795, 9953, 0));
+   // public static  RSArea UNDEAD_DRUID_AREA = new RSArea(new RSTile(1805, 9932, 0), new RSTile(1795, 9953, 0));
     public static   RSArea LARGE_SCARAB_FIGHT_AREA = new RSArea(
             new RSTile[]{
                     new RSTile(3295, 9262, 2),
@@ -16,6 +16,21 @@ public class Areas {
                     new RSTile(3308, 9250, 2),
                     new RSTile(3293, 9252, 2),
                     new RSTile(3295, 9256, 2)
+            }
+    );
+    public static  RSArea UNDEAD_DRUID_AREA  = new RSArea(
+            new RSTile[] {
+                    new RSTile(1804, 9954, 0),
+                    new RSTile(1795, 9954, 0),
+                    new RSTile(1795, 9948, 0),
+                    new RSTile(1799, 9948, 0),
+                    new RSTile(1799, 9944, 0),
+                    new RSTile(1796, 9944, 0),
+                    new RSTile(1796, 9934, 0),
+                    new RSTile(1806, 9934, 0),
+                    new RSTile(1806, 9944, 0),
+                    new RSTile(1804, 9944, 0),
+                    new RSTile(1804, 9948, 0)
             }
     );
     /**

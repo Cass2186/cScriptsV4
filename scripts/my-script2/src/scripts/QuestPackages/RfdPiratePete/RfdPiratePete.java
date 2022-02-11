@@ -5,6 +5,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.GameState;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.GoblinDiplomacy.GoblinDiplomacy;
@@ -255,14 +256,12 @@ public class RfdPiratePete implements QuestTask {
                     Timer.waitCondition(() -> kelpObj[0].isClickable(), 10000, 15000);
                     kelpObj[0].adjustCameraTo();
                 }
-                if (AccurateMouse.click(kelpObj[0], "Pick")) {
-                    PathingUtil.movementIdle();
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 10000, 15000);
-                    General.sleep(General.random(300, 1200));
-                }
-                if (AccurateMouse.click(kelpObj[0], "Pick")) {
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 10000, 15000);
-                    General.sleep(General.random(300, 1200));
+                for (int i =0; i < 3; i++) {
+                    if (AccurateMouse.click(kelpObj[0], "Pick")) {
+                        PathingUtil.movementIdle();
+                        Timer.waitCondition(() -> Player.getAnimation() != -1, 10000, 15000);
+                        General.sleep(300, 1200);
+                    }
                 }
             }
         }
@@ -277,6 +276,7 @@ public class RfdPiratePete implements QuestTask {
 
             Utils.idle(750, 2500);
             if (NpcChat.talkToNPC("Nung")) {
+                General.sleep(2000, 3000);
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
                 NPCInteraction.handleConversation();
@@ -295,9 +295,9 @@ public class RfdPiratePete implements QuestTask {
             Walking.blindWalkTo(rockArea.getRandomTile());
             Timer.waitCondition(() -> rockArea.contains(Player.getPosition()), 10000, 15000);
 
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 6; i++) {
                 Utils.clickGroundItem(7533);
-                Utils.idle(6500, 8000);
+                Utils.idle(3500, 5000);
                 if (hasRocks)
                     break;
             }
@@ -601,49 +601,49 @@ public class RfdPiratePete implements QuestTask {
     public void execute() {
         int varbit = QuestVarbits.QUEST_RECIPE_FOR_DISASTER_PIRATE_PETE.getId();
         // old game settingsi 683
-        if (Utils.getVarBitValue(varbit) == 0) {
+        if (GameState.getSetting(683) == 0) {
             buyItems();
             getItems();
             goToStart();
             inspectPirate();
         }
-        if (Utils.getVarBitValue(varbit) == 10) {
+        if (GameState.getSetting(683) == 10) {
             talkToCook();
         }
-        if (Utils.getVarBitValue(varbit) == 20 || (Utils.getVarBitValue(varbit) == 30)) {
+        if (GameState.getSetting(683) == 20 || (GameState.getSetting(683) == 30)) {
             goToPort();
         }
-        if (Utils.getVarBitValue(varbit) == 40) {
+        if (GameState.getSetting(683) == 40) {
             equipSwimGear();
             goDiving();
             getKelp();
             talkToNung();
         }
-        if (Utils.getVarBitValue(varbit) == 50) {
+        if (GameState.getSetting(683) == 50) {
             getRocks();
             killMudSkippers();
             returnToNung();
         }
-        if (Utils.getVarBitValue(varbit) == 60) {
+        if (GameState.getSetting(683) == 60) {
             returnToNung();
         }
-        if (Utils.getVarBitValue(varbit) == 70) {
+        if (GameState.getSetting(683) == 70) {
             giveNungItems();
         }
-        if (Utils.getVarBitValue(varbit) == 80) {
+        if (GameState.getSetting(683) == 80) {
             enterPen();
             getCrabMeat();
         }
-        if (Utils.getVarBitValue(varbit) == 90) {
+        if (GameState.getSetting(683) == 90) {
             getCrabMeat();
             leaveUnderWater();
             makeCake();
         }
-        if (Utils.getVarBitValue(varbit) == 100) {
+        if (GameState.getSetting(683) == 100) {
             cookCake();
             finishQuest();
         }
-        if (Utils.getVarBitValue(varbit) == 110) {
+        if (GameState.getSetting(683) == 110) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
         }

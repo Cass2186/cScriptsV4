@@ -16,10 +16,7 @@ import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
-import org.tribot.script.interfaces.Arguments;
-import org.tribot.script.interfaces.Ending;
-import org.tribot.script.interfaces.Painting;
-import org.tribot.script.interfaces.Starting;
+import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.types.GroundItem;
 import scripts.API.AntiPKThread;
@@ -35,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @ScriptManifest(name = "cCombat v1.5", authors = {"Cass2186"}, category = "Testing")
 
-public class cCombat extends Script implements Painting, Starting, Ending, Arguments {
+public class cCombat extends Script implements Painting, Starting, Ending, Arguments, MessageListening07 {
 
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
@@ -231,5 +228,15 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
     @Override
     public void onEnd() {
         Log.log("Loot: " + Vars.get().lootValue);
+    }
+
+
+    @Override
+    public void serverMessageReceived(String message) {
+        if (message.contains("dead") || message.contains("died")){
+            Log.error("Died, ending script");
+            isRunning.set(false);
+            throw new NullPointerException();
+        }
     }
 }

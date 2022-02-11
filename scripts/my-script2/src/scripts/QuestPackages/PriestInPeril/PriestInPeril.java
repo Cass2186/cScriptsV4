@@ -56,7 +56,7 @@ public class PriestInPeril implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(ItemID.PURE_ESSENCE, 50, 30),
-                    new GEItem(ItemID.EMPTY_BUCKET, 1, 500),
+                    new GEItem(ItemID.BUCKET, 1, 500),
                     new GEItem(ItemID.ADAMANT_SCIMITAR, 1, 100),
                     new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
                     new GEItem(ItemID.LOBSTER, 15, 30),
@@ -70,7 +70,7 @@ public class PriestInPeril implements QuestTask {
                     new ItemReq(ItemID.LOBSTER, 15, 2),
                     new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, 1, true, true),
                     new ItemReq(ItemID.VARROCK_TELEPORT, 5, 1),
-                    new ItemReq(ItemID.EMPTY_BUCKET, 1, 1),
+                    new ItemReq(ItemID.BUCKET, 1, 1),
                     new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
                     new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)

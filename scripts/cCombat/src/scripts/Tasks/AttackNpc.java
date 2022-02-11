@@ -240,7 +240,7 @@ public class AttackNpc implements Task {
                     attackingMe.map(t -> t.interact("Attack")).orElse(false)) {
                 Vars.get().status = "Attacking Target";
                 Vars.get().currentTime = System.currentTimeMillis();
-                Waiting.waitUntil(3500, () -> attackingMe.get().isHealthBarVisible());
+                Waiting.waitUntil(3500, MyPlayer::isHealthBarVisible);
             } else {
 
             }

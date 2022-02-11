@@ -26,7 +26,7 @@ public class RechargePrayer implements Task {
 
         }
 
-        if (Utils.clickObj("Altar", "Pray-at")) {
+        if (Utils.clickObj(34900, "Pray-at")) {
             return Timer.waitCondition(() -> Prayer.getPrayerPoints() > p, 7000, 9000);
         }
         return false;
