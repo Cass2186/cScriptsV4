@@ -74,9 +74,9 @@ public class DwarfCannon implements QuestTask {
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemID.LOBSTER, 10, 2),
+                    new ItemReq(ItemID.LOBSTER, 10, 1),
                     new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 1),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
                     new ItemReq(ItemID.FALADOR_TELEPORT, 5, 1),
                     new ItemReq(ItemID.HAMMER, 1, 1),
                     new ItemReq(ItemID.SKILLS_NECKLACE[2], 2, 1),
@@ -93,11 +93,8 @@ public class DwarfCannon implements QuestTask {
     }
 
     public void getQuestItems() {
-        cQuesterV2.status = "Banking";
-        if (Inventory.find(
-                ItemID.HAMMER).length < 1 || Inventory.find(
-                ItemID.CAMELOT_TELEPORT).length < 1 || Inventory.find(
-                ItemID.FALADOR_TELEPORT).length < 1) {
+        if (!initialItemReqs.check()) {
+            cQuesterV2.status = "Banking";
             BankManager.open(true);
             BankManager.depositAll(true);
             BankManager.withdraw(1, true, ItemID.HAMMER);
@@ -111,13 +108,15 @@ public class DwarfCannon implements QuestTask {
     }
 
     public void goToStart() {
-        cQuesterV2.status = "Starting";
-        General.println("[Debug]: " + cQuesterV2.status);
-        PathingUtil.walkToArea(START_AREA, false);
-        if (NpcChat.talkToNPC("Captain Lawgof")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Sure, I'd be honoured to join.", "Yes.");
-            NPCInteraction.handleConversation();
+        if (initialItemReqs.check()) {
+            cQuesterV2.status = "Starting";
+            General.println("[Debug]: " + cQuesterV2.status);
+            PathingUtil.walkToArea(START_AREA, false);
+            if (NpcChat.talkToNPC("Captain Lawgof")) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation("Sure, I'd be honoured to join.", "Yes.");
+                NPCInteraction.handleConversation();
+            }
         }
     }
 
@@ -134,58 +133,66 @@ public class DwarfCannon implements QuestTask {
         }
     }
 
+    public int getRailingStack() {
+        RSItem[] i = Inventory.find(ItemID.RAILING);
+        return i.length > 0 ? i[0].getStack() : 0;
+    }
+
     public void fixRailings() {
         cQuesterV2.status = "Fixing Railings";
         General.println("[Debug]: " + cQuesterV2.status);
-        RSItem[] i = Inventory.find(14);
-        if (i.length > 0) {
-            if (i[0].getStack() == 6) {
+
+        int stack = getRailingStack();
+        switch (stack) {
+            case (6):
                 PathingUtil.walkToTile(new RSTile(2577, 3457), 1, false);
                 inspectRailing(15595);
-            } else if (i[0].getStack() == 5) {
+                break;
+            case (5):
                 PathingUtil.walkToTile(new RSTile(2573, 3457), 1, false);
                 inspectRailing(15594);
 
-            } else if (i[0].getStack() == 4) {
+            case (4):
                 PathingUtil.walkToTile(new RSTile(2563, 3457), 1, false);
                 inspectRailing(15593);
-            } else if (i[0].getStack() == 3) {
+            case (3):
                 PathingUtil.walkToTile(new RSTile(2559, 3458), 1, false);
                 inspectRailing(15592);
-            } else if (i[0].getStack() == 2) {
+            case (2):
                 PathingUtil.walkToTile(new RSTile(2557, 3468), 1, false);
                 inspectRailing(15591);
-            } else if (i[0].getStack() == 1) {
+            case (1):
                 PathingUtil.walkToTile(new RSTile(2555, 3479), 1, false);
                 inspectRailing(15590);
-            }
+
         }
     }
 
 
     public void inspectRailing(int railingId) {
         railings = Objects.findNearest(15, railingId);
-        RSItem[] invRailings = Inventory.find(RAILING_ID);
+        int railingStack = getRailingStack();
 
         checkEat();
 
-        if (railings.length > 0 && invRailings.length > 0) {
+        if (railings.length > 0 && railingStack > 0) {
             if (!railings[0].isClickable())
                 DaxCamera.focus(railings[0]);
 
             if (railings[0].click("Inspect")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> Player.getAnimation() != -1, 5000);
-                Timer.waitCondition(() -> Inventory.find(14).length == 0 || Inventory.find(14)[0].getStack() < invRailings[0].getStack() || Player.getAnimation() == -1, 8000, 12000);
+                if (Timer.waitCondition(() -> Player.getAnimation() != -1, 5000))
+                    Timer.waitCondition(() -> Inventory.find(14).length == 0 ||
+                            getRailingStack() < railingStack || Player.getAnimation() == -1, 8000, 12000);
                 Utils.shortSleep();
 
             }
         }
     }
 
-    public void getStep2() {
-        if (Inventory.find(14).length == 0) {
+    public void goToCaptain() {
+        if (getRailingStack() == 0) {
             cQuesterV2.status = "Going to Captain";
             General.println("[Debug]: " + cQuesterV2.status);
             PathingUtil.walkToArea(START_AREA, false);
@@ -360,7 +367,7 @@ public class DwarfCannon implements QuestTask {
     }
 
 
-    public void talkToCaptain9() {
+    public void finishQuest() {
         cQuesterV2.status = "Finishing Quest";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(START_AREA, false);
@@ -397,7 +404,7 @@ public class DwarfCannon implements QuestTask {
             goToStart();
         } else if (Game.getSetting(GAME_SETTING) == 1) {
             fixRailings();
-            getStep2();
+            goToCaptain();
         } else if (Game.getSetting(GAME_SETTING) == 2) {
             dwarfRemains();
         } else if (Game.getSetting(GAME_SETTING) == 3) {
@@ -415,7 +422,7 @@ public class DwarfCannon implements QuestTask {
         } else if (Game.getSetting(GAME_SETTING) == 9) {
             goToDwarfBase();
         } else if (Game.getSetting(GAME_SETTING) == 10) {
-            talkToCaptain9();
+            finishQuest();
         } else if (Game.getSetting(GAME_SETTING) == 11) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(DwarfCannon.get());
