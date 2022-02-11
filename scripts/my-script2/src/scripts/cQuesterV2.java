@@ -38,6 +38,7 @@ import scripts.QuestPackages.DreamMentor.DreamMentor;
 import scripts.QuestPackages.DruidicRitual.DruidicRitual;
 import scripts.QuestPackages.DwarfCannon.DwarfCannon;
 import scripts.QuestPackages.ElementalWorkshopI.ElementalWorkshop;
+import scripts.QuestPackages.EnakhrasLament.EnakhrasLament;
 import scripts.QuestPackages.EnterTheAbyss.EnterTheAbyss;
 import scripts.QuestPackages.ErnestTheChicken.ErnestTheChicken;
 import scripts.QuestPackages.FairyTalePt1.FairyTalePt1;
@@ -564,6 +565,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 else if (arg.toLowerCase().contains("rfdpirate")) {
                     General.println("[Args]: Added RFD Pirate pete ");
                     taskList.add(RfdPiratePete.get());
+                }
+                else if (arg.toLowerCase().contains("lament")) {
+                    General.println("[Args]: Added Enakrah's lament  ");
+                    taskList.add(EnakhrasLament.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

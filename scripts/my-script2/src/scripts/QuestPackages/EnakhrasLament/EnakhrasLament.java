@@ -1,10 +1,12 @@
 package scripts.QuestPackages.EnakhrasLament;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.types.LocalTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ElementalWorkshopI.ElementalWorkshop;
@@ -104,8 +106,8 @@ public class EnakhrasLament implements QuestTask {
         puzzles.addStep(new Conditions(fedBread, inPuzzleFloor, meltedFountain, cleanedFurnace, litLog, litOak), useWillowLog);
         puzzles.addStep(new Conditions(fedBread, inPuzzleFloor, meltedFountain, cleanedFurnace, litLog), useOakLog);
         puzzles.addStep(new Conditions(fedBread, inPuzzleFloor, meltedFountain, cleanedFurnace), useLog);
-        puzzles.addStep(new Conditions(fedBread, inPuzzleFloor, meltedFountain), castAirSpell);
-        puzzles.addStep(new Conditions(fedBread, inPuzzleFloor), castFireSpell);
+        puzzles.addStep(new Conditions(fedBread, inPuzzleFloor, meltedFountain), castAirSpellStep());
+        puzzles.addStep(new Conditions(fedBread, inPuzzleFloor), castFireSpellStep());
         puzzles.addStep(inPuzzleFloor, useBread);
         puzzles.addStep(inTempleGroundFloor, goUpToPuzzles);
         puzzles.addStep(inTempleEntranceRoom, enterTempleDownLadder);
@@ -147,7 +149,7 @@ public class EnakhrasLament implements QuestTask {
     }
 
     public void setupItemRequirements() {
-        pickaxe = new ItemRequirement("Any pickaxe", ItemCollections.getPickaxes());
+        pickaxe = new ItemRequirement(ItemID.ADAMANT_PICKAXE);
         chiselHighlighted = new ItemRequirement("Chisel", ItemID.CHISEL);
 
         sandstone52 = new ItemRequirement("52 kg of sandstone", -1, -1);
@@ -284,18 +286,59 @@ public class EnakhrasLament implements QuestTask {
 
     public QuestStep craftHeadStep() {
         craftHead = new MakeItemStep(ItemID.STONE_HEAD);
-        if (Utils.useItemOnItem(ItemID.CHISEL, ItemID.GRANITE_5KG)) {
-            Timer.waitCondition(MakeScreen::isOpen, 2500, 3500);
-        }
-        if (MakeScreen.isOpen()) {
-            craftHead.execute();
+        if (new Conditions(granite2, canChooseHead).check()) {
+            if (Utils.useItemOnItem(ItemID.CHISEL, ItemID.GRANITE_5KG)) {
+                Timer.waitCondition(NPCInteraction::isConversationWindowUp, 2500, 3500);
+                NPCInteraction.handleConversation("The head of Lazim, the sculptor");
+            }
+            if (MakeScreen.isOpen()) {
+                craftHead.execute();
+            }
         }
         return craftHead;
     }
 
+    public QuestStep castFireSpellStep() {
+        if(new Conditions(fedBread, inPuzzleFloor).check()) {
+            LocalTile tile = new LocalTile(3092, 9308, 1);
+            NPCStep castFireSpell = new NPCStep(NpcID.CRUST_OF_ICE
+                    , new RSTile(3092, 9308, 1),
+                    //  "Cast a fire spell on the frozen fountain.",
+                    fireSpellRunes);
+            if (tile.distanceTo(MyPlayer.getPosition()) > 10) {
+                if (!PathingUtil.localNav(Utils.getWalkableTile(tile).get())) {
+                    Log.debug("Failed to get tile");
+                } else
+                    Log.debug("Walking to  tile");
+            }
+            Magic.selectSpell("Fire Blast");
+            castFireSpell.setInteractionString("Cast ");
+        }
+        return castFireSpell;
+    }
+
+    public QuestStep castAirSpellStep() {
+        if(new Conditions(fedBread, inPuzzleFloor, meltedFountain).check()) {
+            LocalTile tile = new LocalTile(3116, 9323, 1);
+            NPCStep castAirSpell = new NPCStep(NpcID.FURNACE_GRATE,
+                    new RSTile(3116, 9323, 1),
+                    //   "Cast an air spell on the furnace.",
+                    airSpellRunes);
+            if (tile.distanceTo(MyPlayer.getPosition()) > 10) {
+                if (!PathingUtil.localNav(Utils.getWalkableTile(tile).get())) {
+                    Log.debug("Failed to get tile");
+                } else
+                    Log.debug("Walking to  tile");
+            }
+            Magic.selectSpell("Air Blast");
+            castAirSpell.setInteractionString("Cast ");
+        }
+        return castAirSpell;
+    }
+
     public void setupSteps() {
         talkToLazim = new NPCStep(NpcID.LAZIM, new RSTile(3190, 2925, 0), pickaxe);
-        talkToLazim.addDialogStep("Of course!");
+        talkToLazim.addDialogStep("Of course!", "Yes.");
         bringLazim32Sandstone = new NPCStep(NpcID.LAZIM, new RSTile(3190, 2925, 0), "Get 32kg of sandstone and give it to Lazim. This can be done in batches, and you can mine some nearby.");
         bringLazim32Sandstone.addDialogStep("Okay, I'll get on with it.");
         bringLazim32Sandstone.addDialogStep("Yes, I have more stone.");
@@ -324,31 +367,38 @@ public class EnakhrasLament implements QuestTask {
         useChiselOn20Sandstone = new UseItemOnItemStep(ItemID.CHISEL, ItemID.SANDSTONE_20KG,
                 !Inventory.contains(ItemID.SANDSTONE_20KG),
                 chiselHighlighted, sandstone20);
-        placeBody = new ObjectStep(NullObjectID.NULL_10952, new RSTile(3190, 2926, 0), "Place the body on the sandstone base.", body);
-        talkToLazimToChooseHead = new NPCStep(NpcID.LAZIM, new RSTile(3190, 2925, 0), "Talk to Lazim and choose the head you'd like the statue to have.");
+        placeBody = new UseItemOnObjectStep(ItemID.SANDSTONE_BODY, NullObjectID.NULL_10952,
+                new RSTile(3190, 2926, 0),
+                "Place the body on the sandstone base.", body);
+        talkToLazimToChooseHead = new NPCStep(NpcID.LAZIM, new RSTile(3190, 2925, 0),
+                "Talk to Lazim and choose the head you'd like the statue to have.");
+        talkToLazimToChooseHead.addDialogStep("I think it should have your head!");
         getGranite = new NPCStep(NpcID.LAZIM,
                 new RSTile(3190, 2925, 0), granite2);
 
         // TODO: Change head highlight text based on choice
 
 
-        chiselStatue = new ObjectStep(NullObjectID.NULL_10952, new RSTile(3190, 2926, 0), "Use a chisel on the headless statue.", chiselHighlighted);
+        chiselStatue = new UseItemOnObjectStep(ItemID.CHISEL, NullObjectID.NULL_10952,
+                new RSTile(3190, 2926, 0),
+                "Use a chisel on the headless statue.", chiselHighlighted);
 
         giveLazimHead = new NPCStep(NpcID.LAZIM,
-                new RSTile(3190, 2925, 0),  head);
+                new RSTile(3190, 2925, 0), head);
 
         enterTemple = new ObjectStep(NullObjectID.NULL_11046, new RSTile(3194, 2925, 0), "Enter the temple south of the Bandit's Camp.");
         enterTempleDownLadder = new ObjectStep(ObjectID.LADDER_11042, new RSTile(3127, 9329, 1), "Enter the temple south of the Bandit's Camp.");
-        talkToLazimInTemple = new NPCStep(NpcID.LAZIM, new RSTile(3127, 9324, 0), "Talk to Lazim in the temple.");
+        talkToLazimInTemple = new NPCStep(NpcID.LAZIM_6151, new RSTile(3127, 9324, 0),
+                "Talk to Lazim in the temple.");
 
         cutOffLimb = new ObjectStep(NullObjectID.NULL_10970, new RSTile(3130, 9326, 0), "Use a chisel on the fallen statue to get all its limbs.", chiselHighlighted);
         cutOffLimb.addDialogStep("Remove the statue's left arm", "Remove the statue's right arm", "Remove the statue's left leg", "Remove the statue's right leg");
 
-        takeM = new ObjectStep(ObjectID.PEDESTAL_11061, new RSTile(3128, 9319, 0), "Take the M sigil from the pedestal in the room.");
-        takeZ = new ObjectStep(ObjectID.PEDESTAL_11060, new RSTile(3097, 9336, 0), "Take the Z sigil from the pedestal in the north room.");
-        takeK = new ObjectStep(ObjectID.PEDESTAL_11063, new RSTile(3080, 9305, 0), "Take the K sigil from the pedestal in the west room.");
-        takeR = new ObjectStep(ObjectID.PEDESTAL_11062, new RSTile(3111, 9288, 0), "Take the R sigil from the pedestal in the south room.");
-        talkToLazimForHead = new NPCStep(NpcID.LAZIM, new RSTile(3127, 9324, 0), "Talk to Lazim in the temple for the stone head.");
+        takeM = new ObjectStep(ObjectID.PEDESTAL_11061, new RSTile(3128, 9319, 0), "Take-sigil");
+        takeZ = new ObjectStep(ObjectID.PEDESTAL_11060, new RSTile(3097, 9336, 0), "Take-sigil");
+        takeK = new ObjectStep(ObjectID.PEDESTAL_11063, new RSTile(3080, 9305, 0), "Take-sigil");
+        takeR = new ObjectStep(ObjectID.PEDESTAL_11062, new RSTile(3111, 9288, 0), "Take-sigil");
+        talkToLazimForHead = new NPCStep(NpcID.LAZIM_6151, new RSTile(3127, 9324, 0), "Talk to Lazim in the temple for the stone head.");
         talkToLazimForHead.addDialogStep("Do you know where the statue's head is?");
 
         enterDoor1 = new ObjectStep(ObjectID.DOOR_11066, new RSTile(3126, 9337, 0), "Enter the right arm door.", rightArm);
@@ -370,16 +420,16 @@ public class EnakhrasLament implements QuestTask {
                 granite, chiselHighlighted);
         useStoneHeadOnPedestal = new ObjectStep(NullObjectID.NULL_10987, new RSTile(3104, 9312, 1), "Use the camel stone head on the pedestal.", camelHead);
 
-        useBread = new NPCStep(NpcID.PENTYN, new RSTile(3091, 9324, 1),
-             ///   "Use bread or cake on Pentyn.",
+        useBread = new UseItemOnNpcStep(ItemID.BREAD, NpcID.PENTYN, new RSTile(3091, 9324, 1),
+                ///   "Use bread or cake on Pentyn.",
                 breadOrCake);
         castFireSpell = new NPCStep(NpcID.CRUST_OF_ICE
                 , new RSTile(3092, 9308, 1),
-              //  "Cast a fire spell on the frozen fountain.",
+                //  "Cast a fire spell on the frozen fountain.",
                 fireSpellRunes);
         castAirSpell = new NPCStep(NpcID.FURNACE_GRATE,
                 new RSTile(3116, 9323, 1),
-             //   "Cast an air spell on the furnace.",
+                //   "Cast an air spell on the furnace.",
                 airSpellRunes);
         useMapleLog = new ObjectStep(NullObjectID.NULL_11014, new RSTile(3114, 9309, 1), "Use a maple log on the north west brazier.", mapleLog);
         useOakLog = new ObjectStep(NullObjectID.NULL_11012, new RSTile(3116, 9306, 1), "Use an oak log on the south brazier.", oakLog);
@@ -394,7 +444,7 @@ public class EnakhrasLament implements QuestTask {
 
         castCrumbleUndead = new NPCStep(NpcID.BONEGUARD,
                 new RSTile(3104, 9307, 2),
-            //    "Cast crumble undead on the Boneguard.",
+                //    "Cast crumble undead on the Boneguard.",
                 earth2, airRuneOrStaff, chaos);
 
         goDownToFinalRoom = new ObjectStep(ObjectID.STONE_LADDER_11044, new RSTile(3105, 9300, 2), "Climb down the stone ladder past the Boneguard.");
@@ -403,7 +453,8 @@ public class EnakhrasLament implements QuestTask {
                 new RSTile(3105, 9297, 1),
                 //"Put on Protect from Melee, then talk to the Boneguard.",
                 protectFromMelee);
-        repairWall = new ObjectStep(NullObjectID.NULL_11027, new RSTile(3107, 9291, 1), "Take sandstone from the nearby rubble, and use it to repair the south wall. For each piece added, use a chisel on the wall.", sandstone5);
+        repairWall = new ObjectStep(NullObjectID.NULL_11027, new RSTile(3107, 9291, 1),
+                "Take sandstone from the nearby rubble, and use it to repair the south wall. For each piece added, use a chisel on the wall.", sandstone5);
         repairWall.addDialogStep("Of course I'll help you out.");
 
         useChiselOnWall = new UseItemOnObjectStep(ItemID.CHISEL, NullObjectID.NULL_11027,
@@ -426,11 +477,13 @@ public class EnakhrasLament implements QuestTask {
                     new GEItem(ItemID.ADAMANT_PICKAXE, 1, 500),
                     new GEItem(ItemID.SOFT_CLAY, 1, 50),
                     new GEItem(ItemID.COAL, 1, 50),
-                   // new GEItem(ItemID.SANDSTONE, 1, 50), //TODO Check tradeable?
-                    new GEItem(ItemID.LAW_RUNE, 10, 50),
-                    new GEItem(ItemID.FIRE_RUNE, 100, 25),
+                    new GEItem(ItemID.SANDSTONE_2KG, 1, 200),
+                    new GEItem(ItemID.SANDSTONE_10KG, 5, 200),
+                    new GEItem(ItemID.DEATH_RUNE, 100, 50),
+                    new GEItem(ItemID.EARTH_RUNE, 1000, 25),
                     new GEItem(ItemID.CHAOS_RUNE, 100, 25),
-                    new GEItem(ItemID.STAFF_OF_AIR, 1, 250),
+                    new GEItem(ItemID.AIR_RUNE, 1000, 25),
+                    new GEItem(ItemID.FIRE_RUNE, 1000, 25),
                     new GEItem(ItemID.GRANITE_5KG, 2, 500),
                     new GEItem(ItemID.WATERSKIN4, 5, 100),
                     new GEItem(ItemID.DESERT_ROBE, 1, 500),
@@ -444,11 +497,33 @@ public class EnakhrasLament implements QuestTask {
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                   // new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 4, 1),
-                 //   new ItemReq(ItemID.VARROCK_TELEPORT, 4, 1),
-                 //   new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
+                    new ItemReq(ItemID.DESERT_ROBE, 1, 1, true, true),
+                    new ItemReq(ItemID.DESERT_ROBES, 1, 1, true, true),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.WATERSKIN4, 2, 0),
+                    new ItemReq(ItemID.GRANITE_5KG, 2),
+                    new ItemReq(ItemID.ADAMANT_PICKAXE, 1),
+                    new ItemReq(ItemID.CHISEL, 1),
+                    new ItemReq(ItemID.BREAD, 1),
+                    new ItemReq(ItemID.LOGS, 1),
+                    new ItemReq(ItemID.OAK_LOGS, 1),
+                    new ItemReq(ItemID.WILLOW_LOGS, 1),
+                    new ItemReq(ItemID.MAPLE_LOGS, 1),
+                    new ItemReq(ItemID.COAL, 1),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true, true),
+                    new ItemReq(ItemID.SHANTAY_PASS, 5),
+                    new ItemReq(ItemID.EARTH_RUNE, 100),
+                    new ItemReq(ItemID.DEATH_RUNE, 100),
+                    new ItemReq(ItemID.CHAOS_RUNE, 50),
+                    new ItemReq(ItemID.COINS_995, 10000, 1000),
+                    new ItemReq(ItemID.STAFF_OF_AIR, 1, 1, true, true),
+                    new ItemReq(ItemID.FIRE_RUNE, 1000),
+                    new ItemReq(ItemID.CANDLE, 1),
+                    new ItemReq(ItemID.TINDERBOX, 1),
+                    new ItemReq(ItemID.SANDSTONE_2KG, 1),
+                    new ItemReq(ItemID.SANDSTONE_10KG, 5),
+                    new ItemReq(ItemID.TINDERBOX, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0)
             )
     ));
 
@@ -517,12 +592,12 @@ public class EnakhrasLament implements QuestTask {
 
 
         int varbit = QuestVarbits.QUEST_ENAKHRAS_LAMENT.getId();
-        Log.debug("Enakhra's Lament Varbit is " + varbit);
+        Log.debug("Enakhra's Lament Varbit is " + Utils.getVarBitValue(varbit));
 
         // buy initial items on quest start
         if (Utils.getVarBitValue(varbit) == 0) {
             cQuesterV2.status = "Buying items";
-            buyStep.buyItems();
+            // buyStep.buyItems();
         }
 
         // done quest //TODO check number here
