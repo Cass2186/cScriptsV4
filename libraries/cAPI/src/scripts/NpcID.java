@@ -11,7 +11,8 @@ public class NpcID {
     public static final int MONK_OF_ENTRANA_1169 = 1169;
     public static final int MONK_OF_ENTRANA_1170 = 1170;
     public static final int MONK_1171 = 1171;
-    public static final int LAZIM = 3580;
+    public static final int LAZIM = 6150; //modified
+    public static final int LAZIM_6151 = 6151; //modified
     public static final int ENAKHRA_3581 = 3581;
     public static final int AKTHANAKOS_3582 = 3582;
     public static final int KNIGHT = 3583;
