@@ -78,7 +78,8 @@ public class DruidicRitual implements QuestTask {
     RSArea dungeon = new RSArea(new RSTile(2816, 9668, 0), new RSTile(2973, 9855, 0));
 
 
-    NPCStep talkToKaqemeex = new NPCStep("Kaqemeex", new RSTile(2925, 3486, 0), rawBear, rawBeef, rawChicken, rawRat);
+    NPCStep talkToKaqemeex = new NPCStep("Kaqemeex", new RSTile(2925, 3486, 0),
+            new String[]{"Yes."}, rawBear, rawBeef, rawChicken, rawRat);
     //   NPCStep goUpToSanfew = new ObjectStep(16671, new RSTile(2899, 3429, 0), "Talk to Sanfew upstairs in the Taverley herblore store.");
     NPCStep talkToSanfew = new NPCStep("Sanfew", new RSTile(2899, 3429, 1));
 

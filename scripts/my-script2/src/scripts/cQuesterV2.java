@@ -82,6 +82,7 @@ import scripts.QuestPackages.RfdEvilDave.RfdEvilDave;
 import scripts.QuestPackages.RfdGoblin.RfdGoblin;
 import scripts.QuestPackages.RfdLumbridgeGuide.RfdLumbridgeGuide;
 import scripts.QuestPackages.RfdMonkey.RfdMonkey;
+import scripts.QuestPackages.RfdPiratePete.RfdPiratePete;
 import scripts.QuestPackages.RfdSkratch.RfdSkratch;
 import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
@@ -560,7 +561,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     General.println("[Args]: Added tears ");
                     taskList.add(TearsOfGuthix.get());
                 }
-
+                else if (arg.toLowerCase().contains("rfdpirate")) {
+                    General.println("[Args]: Added RFD Pirate pete ");
+                    taskList.add(RfdPiratePete.get());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 General.println("[Error]: Args are incorrect", Color.RED);

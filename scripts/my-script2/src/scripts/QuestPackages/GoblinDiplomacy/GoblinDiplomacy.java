@@ -175,14 +175,14 @@ public class GoblinDiplomacy implements QuestTask {
         NPCInteraction.waitForConversationWindow();
         if (NPCInteraction.isConversationWindowUp())
             NPCInteraction.handleConversation("Do you want me to pick an armour colour for you?",
-                    "No, he doesn't look fat", "What about a different colour?");
+                    "No, he doesn't look fat", "What about a different colour?", "Yes.");
 
         if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation("What about a different colour?");
+            NPCInteraction.handleConversation("What about a different colour?", "Yes.");
 
         NPCInteraction.waitForConversationWindow();
         if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation( "Yes.");
     }
 
     public boolean inCutScene() {
@@ -201,26 +201,26 @@ public class GoblinDiplomacy implements QuestTask {
 
     @Override
     public void execute() {
-        if (Game.getSetting(62) == 0) {
+        if (Utils.getVarBitValue(QuestVarbits.QUEST_GOBLIN_DIPLOMACY.getId()) == 0) {
             buyItems();
             getItems();
             goToGoblins();
             startGoblin();
         }
-        if (Game.getSetting(62) == 3) {
+        if (Utils.getVarBitValue(QuestVarbits.QUEST_GOBLIN_DIPLOMACY.getId()) == 3) {
             makeOrangeArmour();
             giveOrangeArmour();
 
         }
-        if (Game.getSetting(62) == 4) {
+        if (Utils.getVarBitValue(QuestVarbits.QUEST_GOBLIN_DIPLOMACY.getId()) == 4) {
             makeBlueArmour();
             giveBlueArmour();
         }
-        if (Game.getSetting(62) == 5) {
+        if (Utils.getVarBitValue(QuestVarbits.QUEST_GOBLIN_DIPLOMACY.getId()) ==5) {
             giveBrownArmour();
             Utils.closeQuestCompletionWindow();
         }
-        if (Game.getSetting(62) == 6) {
+        if (Utils.getVarBitValue(QuestVarbits.QUEST_GOBLIN_DIPLOMACY.getId()) == 6) {
             Utils.closeQuestCompletionWindow();
             General.sleep(General.random(300, 800));
             Utils.closeQuestCompletionWindow();
@@ -242,7 +242,7 @@ public class GoblinDiplomacy implements QuestTask {
 
     @Override
     public String questName() {
-        return "Goblin Diplomacy";
+        return "Goblin Diplomacy (" + Utils.getVarBitValue(QuestVarbits.QUEST_GOBLIN_DIPLOMACY.getId()) + ")";
     }
 
     @Override

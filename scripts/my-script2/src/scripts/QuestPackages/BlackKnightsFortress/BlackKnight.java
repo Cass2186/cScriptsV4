@@ -238,7 +238,7 @@ public class BlackKnight  implements QuestTask {
     public Map<Integer, QuestStep> loadSteps() {
         speakToAmik.addDialogStep("I seek a quest!");
         speakToAmik.addDialogStep("I laugh in the face of danger!");
-        speakToAmik.addDialogStep("Ok, I'll do my best.");
+        speakToAmik.addDialogStep("Ok, I'll do my best.", "Yes.");
        openDoorToRoom.setHandleChat(true);
         openDoorToRoom.setChat(List.of("I don't care. I'm going in anyway."));
        listenAtGrill.setHandleChat(true);

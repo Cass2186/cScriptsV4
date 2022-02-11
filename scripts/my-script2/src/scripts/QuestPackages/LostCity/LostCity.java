@@ -105,7 +105,7 @@ public class LostCity implements QuestTask {
             NPCInteraction.handleConversation("What are you camped out here for?");
             NPCInteraction.handleConversation("Who's Zanaris?");
             NPCInteraction.handleConversation("If it's hidden how are you planning to find it?");
-            NPCInteraction.handleConversation("Looks like you don't know either.");
+            NPCInteraction.handleConversation("Looks like you don't know either.","Yes.");
             NPCInteraction.handleConversation();
         }
     }

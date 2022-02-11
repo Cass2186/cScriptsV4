@@ -116,7 +116,7 @@ public class DwarfCannon implements QuestTask {
         PathingUtil.walkToArea(START_AREA, false);
         if (NpcChat.talkToNPC("Captain Lawgof")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Sure, I'd be honoured to join.");
+            NPCInteraction.handleConversation("Sure, I'd be honoured to join.", "Yes.");
             NPCInteraction.handleConversation();
         }
     }

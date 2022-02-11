@@ -90,14 +90,14 @@ public class LootItems implements Task {
     public static Optional<GroundItem> getLootItem() {
         List<GroundItem> groundItemList = Query.groundItems()
                 .inArea(Utils.getAreaFromRSArea(Areas.UNDEAD_DRUID_AREA))
-                .nameNotContains("Burnt bones", "Ashes")
+                .nameNotContains("Burnt bones", "Ashes", "ashes")
                 .toList();
 
         for (GroundItem g : groundItemList) {
            // if (GrandExchange.getPrice(g.getId()) > 150)
               //  Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
             if (GrandExchange.getPrice(g.getId()) > Vars.get().minLootValue) {
-                Log.debug("[Loot] Item is " + g.getName());
+              //  Log.debug("[Loot] Item is " + g.getName());
                 return Optional.of(g);
             } else if (g.getDefinition().isStackable() || g.getDefinition().isNoted()) {
                 int individualPrice = GrandExchange.getPrice(g.getId());

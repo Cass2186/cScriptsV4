@@ -201,7 +201,7 @@ public class Contact implements QuestTask {
 
     public void setupSteps() {
         talkToHighPriest = new NPCStep(6192, new RSTile(3281, 2772, 0));
-        talkToHighPriest.addDialogStep("Sounds like a quest for me; I can't turn that down!");
+        talkToHighPriest.addDialogStep("Sounds like a quest for me; I can't turn that down!", "Yes.");
         talkToHighPriest2 = new NPCStep(6192, new RSTile(3281, 2772, 0));
         talkToHighPriest2.addDialogStep("Is there any way into Menaphos from below?");
         talkToJex = new NPCStep(NpcID.JEX, new RSTile(3312, 2799, 0));

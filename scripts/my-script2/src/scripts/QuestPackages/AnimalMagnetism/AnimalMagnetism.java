@@ -161,7 +161,7 @@ public class AnimalMagnetism implements QuestTask {
         if (NpcChat.talkToNPC("Ava")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("I would be happy to make your home a better place.");
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation("Yes.");
             NPCInteraction.handleConversation();
         }
     }

@@ -39,7 +39,7 @@ public class ImpCatcher implements QuestTask {
 
 
     NPCStep doQuest = new NPCStep("Wizard Mizgog", new RSTile(3103, 3163, 2),
-            new String[]{"Give me a quest please."},
+            new String[]{"Give me a quest please.","Yes."},
             blackBead, whiteBead, redBead, yellowBead);
 
 

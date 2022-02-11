@@ -92,7 +92,7 @@ public class EnterTheAbyss implements QuestTask {
             PathingUtil.walkToArea(START_AREA);
             if (NpcChat.talkToNPC("Mage of Zamorak")) {
                 NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NPCInteraction.handleConversation("Yes.");
             }
         }
     }

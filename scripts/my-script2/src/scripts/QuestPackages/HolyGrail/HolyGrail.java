@@ -240,7 +240,7 @@ public class HolyGrail implements QuestTask {
         RSTile kingArthurRSTile = new RSTile(2763, 3513, 0);
         talkToKingArthur1 = new NPCStep(NpcID.KING_ARTHUR, kingArthurRSTile, "Talk to King Arthur in Camelot Castle to start.");
         talkToKingArthur1.addDialogStep("Tell me of this quest.");
-        talkToKingArthur1.addDialogStep("I'd enjoy trying that.");
+        talkToKingArthur1.addDialogStep("I'd enjoy trying that.", "Yes.");
         goUpStairsCamelot = new ObjectStep(26106, new RSTile(2751, 3511, 0),
                 "Climb-up", Player.getPosition().getPlane() == 1);
         //   openMerlinDoor = new ObjectStep(24, "Open the door to go to Merlin's room.");

@@ -140,17 +140,17 @@ public class GrandTree implements QuestTask {
         if (kingArea.contains(Player.getPosition())) {
             NpcChat.talkToNPC("King Narnode Shareen");
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation(KING_CHAT1);
+            NPCInteraction.handleConversation(KING_CHAT1, "Yes.");
             NPCInteraction.handleConversation();
             General.sleep(2000, 3000);
             NPCInteraction.waitForConversationWindow();
           //  NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation(KING_CHAT2);
+            NPCInteraction.handleConversation(KING_CHAT2, "Yes.");
             NPCInteraction.handleConversation();
          //   NPCInteraction.handleConversation();
             General.sleep(2000, 3000);
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation("Yes.");
             General.sleep(4000, 6000);
         }
     }

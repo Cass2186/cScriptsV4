@@ -239,7 +239,7 @@ public class MurderMystery implements QuestTask {
     public void setupSteps() {
         NPCStep talkToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0),
                 "Talk to the Guard in the Sinclair Manor north of Camelot.");
-        talkToGuard.addDialogStep("Sure, I'll help.");
+        talkToGuard.addDialogStep("Sure, I'll help.", "Yes.");
 
         GroundItemStep pickUpPungentPot = new GroundItemStep(pungentPot.getId(), new RSTile(2747, 3579, 0));
         GroundItemStep pickUpDagger = new GroundItemStep(criminalsDaggerAny.getId(), new RSTile(2746, 3578, 0));

@@ -152,7 +152,8 @@ public class TrollRomance implements QuestTask {
      //   goUpToUg.setWorldMapPoint(new RSTile(2853, 10106, 1));
 
         talkToUg = new NPCStep( NpcID.UG, new RSTile(2827, 10064, 1), "Talk to Ug in the south west room of the Troll Stronghold's first floor.");
-        talkToUg.addDialogStep("Awww, you poor troll. What seems to be the problem?", "Don't worry now, I'll see what I can do.");
+        talkToUg.addDialogStep("Awww, you poor troll. What seems to be the problem?",
+                "Don't worry now, I'll see what I can do.", "Yes.");
       //  talkToUg.setWorldMapPoint(new RSTile(2891, 10097, 0));
       //  talkToUg.addSubSteps(enterStronghold, goDownToUg, goUpToUg);
 

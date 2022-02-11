@@ -105,7 +105,8 @@ public class TouristTrap implements QuestTask {
             "When did she go into the desert?",
             "I'll look for your daughter.",
             "Okay Irena, calm down. I'll get your daughter back for you.",
-            "Yes, I'll go on this quest!"
+            "Yes, I'll go on this quest!",
+            "Yes."
     };
 
     String[] GUARD_ARRAY = {

@@ -85,7 +85,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     NPCStep talkToAchietties = new NPCStep("Achietties", new RSTile(2904, 3511, 0),
             new String[]{
                     "I'm a hero, may I apply to join?",
-                    "I'll start looking for all those things then."
+                    "I'll start looking for all those things then.","Yes."
             });
     NPCStep talkToGerrant = new NPCStep(2891, new RSTile(3013, 3224, 0),
             new String[]{"I want to find out how to catch a lava eel."});

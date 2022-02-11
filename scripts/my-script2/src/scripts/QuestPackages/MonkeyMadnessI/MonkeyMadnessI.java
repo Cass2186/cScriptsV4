@@ -265,8 +265,7 @@ public class MonkeyMadnessI implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         if (NpcChat.talkToNPC("King Narnode Shareen")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation("Yes");
+            NPCInteraction.handleConversation("Yes", "Yes.");
             NPCInteraction.handleConversation();
             General.sleep(General.random(1000, 2000));
             //closes unique interface that opens for each chapter of the quest

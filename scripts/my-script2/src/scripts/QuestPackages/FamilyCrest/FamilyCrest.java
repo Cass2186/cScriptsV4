@@ -342,7 +342,7 @@ public class FamilyCrest implements QuestTask {
         Log.debug("Setting up ");
         talkToDimintheis.addDialogStep("Why would a nobleman live in a dump like this?");
         talkToDimintheis.addDialogStep("So where is this crest?");
-        talkToDimintheis.addDialogStep("Ok, I will help you.");
+        talkToDimintheis.addDialogStep("Ok, I will help you.", "Yes.");
 
         talkToCaleb = new NPCStep("Caleb", new RSTile(2819, 3452, 0));
         talkToCaleb.addDialogStep("Are you Caleb Fitzharmon?");

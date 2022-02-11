@@ -236,7 +236,7 @@ public class ErnestTheChicken implements QuestTask {
             NpcChat.talkToNPC("Veronica");
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation("Aha, sounds like a quest. I'll help.");
+            NPCInteraction.handleConversation("Aha, sounds like a quest. I'll help.", "Yes.");
             NPCInteraction.handleConversation();
         }
     }

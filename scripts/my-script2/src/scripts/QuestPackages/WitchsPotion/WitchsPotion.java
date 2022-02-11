@@ -55,7 +55,7 @@ public class WitchsPotion implements QuestTask {
 
     NPCStep talkToWitch = new NPCStep("Hetty", new RSTile(2968, 3205, 0),
             new String[]{"I am in search of a quest.",
-                    "Yes, help me become one with my darker side."},
+                    "Yes, help me become one with my darker side." ,"Yes."},
             onion, eyeOfNewt, cookedMeat);
 
     NPCStep returnToWitch = new NPCStep("Hetty", new RSTile(2968, 3205, 0),

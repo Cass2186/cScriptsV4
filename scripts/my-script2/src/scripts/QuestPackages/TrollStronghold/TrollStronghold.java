@@ -131,7 +131,7 @@ public class TrollStronghold implements QuestTask {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("How goes your Fight with the trolls?");
             NPCInteraction.handleConversation("Is there anything I can do to help?");
-            NPCInteraction.handleConversation("I'll get Godric back!");
+            NPCInteraction.handleConversation("I'll get Godric back!", "Yes.");
             NPCInteraction.handleConversation();
         }
     }

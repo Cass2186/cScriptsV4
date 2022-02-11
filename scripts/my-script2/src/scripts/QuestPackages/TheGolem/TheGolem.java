@@ -185,7 +185,7 @@ public class TheGolem implements QuestTask {
             if (NpcChat.talkToNPC("Broken clay golem")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes.");
-                NPCInteraction.handleConversation("Shall I try to repair you?");
+                NPCInteraction.handleConversation("Shall I try to repair you?", "Yes.");
                 NPCInteraction.handleConversation();
             }
 

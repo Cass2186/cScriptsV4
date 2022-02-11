@@ -93,7 +93,7 @@ public class JunglePotion implements QuestTask {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("It's a nice village, where is everyone?");
             NPCInteraction.handleConversation("Me? How can I help?");
-            NPCInteraction.handleConversation("It sounds like just the challenge for me.");
+            NPCInteraction.handleConversation("It sounds like just the challenge for me.", "Yes.");
             NPCInteraction.handleConversation();
         }
     }

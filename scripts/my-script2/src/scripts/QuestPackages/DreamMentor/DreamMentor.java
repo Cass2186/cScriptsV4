@@ -64,7 +64,7 @@ public class DreamMentor implements QuestTask {
             new RSTile(2335, 10345, 2), Game.isInInstance());
 
     NPCStep talkToCyrisus = new NPCStep("Fallen Man", Player.getPosition(),
-            new String[]{"Yes"});
+            new String[]{"Yes","Yes."});
 
     // give food
     NPCStep feed4Food = new NPCStep("Fallen Man", Player.getPosition());

@@ -88,7 +88,8 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
             "With what?",
             "But how can I help?",
             "Okay, I'll help!",
-            "I'll see what I can do"
+            "I'll see what I can do",
+            "Yes."
     };
 
 

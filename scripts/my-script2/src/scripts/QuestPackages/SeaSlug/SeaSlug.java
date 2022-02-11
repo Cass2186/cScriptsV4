@@ -46,7 +46,7 @@ public class SeaSlug implements QuestTask {
     int KENT = 5074;
     int BAILEY = 5066;
 
-    String[] startDialogue = {"Yes.", "I suppose so, how do I get there?"};
+    String[] startDialogue = {"Yes.", "I suppose so, how do I get there?", "Yes."};
 
     RSArea START_AREA = new RSArea(new RSTile(2714, 3299, 0), new RSTile(2724, 3306, 0));
     RSArea WHOLE_FISHING_PLATFORM = new RSArea(new RSTile(2795, 3270, 0), new RSTile(2760, 3293, 0));

@@ -193,7 +193,8 @@ public class ZogreFleshEaters implements QuestTask {
             "What do you mean sickies?",
             "Can I help in any way?",
             "Ok, I'll check things out then and report back.",
-            "Yes, I'm really sure!"
+            "Yes, I'm really sure!",
+            "Yes."
     };
 
     private void startQuest() {

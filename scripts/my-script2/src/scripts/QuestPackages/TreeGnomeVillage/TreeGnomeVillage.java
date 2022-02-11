@@ -322,7 +322,7 @@ public class TreeGnomeVillage implements QuestTask {
         PathingUtil.walkToTile(commanderTile);
         if (NpcChat.talkToNPC("Commander Montai")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("I'll try my best.");
+            NPCInteraction.handleConversation("I'll try my best.", "Yes.");
             NPCInteraction.handleConversation();
             Utils.shortSleep();
         }

@@ -303,7 +303,7 @@ public class EadgarsRuse implements QuestTask {
         talkToSanfew = new NPCStep(NpcID.SANFEW, new RSTile(2899, 3429, 1), "Talk to Sanfew upstairs in the Taverley herblore store.");
         talkToSanfew.addDialogStep("Ask general questions.");
         talkToSanfew.addDialogStep("Have you any more work for me, to help reclaim the circle?");
-        talkToSanfew.addDialogStep("I'll do it.");
+        talkToSanfew.addDialogStep("I'll do it.", "Yes.");
         //   talkToSanfew.addSubSteps(goUpToSanfew);
 
         //TODO Fix

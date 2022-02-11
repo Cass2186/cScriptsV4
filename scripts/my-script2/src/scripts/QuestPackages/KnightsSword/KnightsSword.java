@@ -106,7 +106,7 @@ public class KnightsSword implements QuestTask {
                 NPCInteraction.handleConversation("Talk about other things.", "And how is life as a squire?");
                 NPCInteraction.handleConversation("I can make a new sword if you like...");
                 NPCInteraction.handleConversation("So would these dwarves make another one?");
-                NPCInteraction.handleConversation("Ok, I'll give it a go.");
+                NPCInteraction.handleConversation("Ok, I'll give it a go." ,"Yes.");
                 NPCInteraction.handleConversation();
             }
         }

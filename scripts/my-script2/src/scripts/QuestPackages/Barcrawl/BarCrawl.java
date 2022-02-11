@@ -98,7 +98,7 @@ public class BarCrawl implements QuestTask {
 
     NPCStep talkToGuard = new NPCStep(5227, new RSTile(2544, 3568, 0),
             new String[]{"I want to come through this gate.",
-                    "Looks can be deceiving, I am in fact a barbarian."});
+                    "Looks can be deceiving, I am in fact a barbarian.", "Yes."});
 
 
     NPCStep talkToBlueMoon = new NPCStep(1312, new RSTile(3226, 3399, 0),

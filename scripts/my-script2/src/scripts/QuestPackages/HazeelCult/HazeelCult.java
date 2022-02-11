@@ -103,8 +103,7 @@ public class HazeelCult implements QuestTask {
                 if (NpcChat.talkToNPC("Ceril Carnillean")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation("What's wrong?");
-                    NPCInteraction.handleConversation("Yes, of course, I'd be happy to help.");
-                    NPCInteraction.handleConversation();
+                    NPCInteraction.handleConversation("Yes, of course, I'd be happy to help.","Yes.");
                     NPCInteraction.handleConversation();
                 }
             }

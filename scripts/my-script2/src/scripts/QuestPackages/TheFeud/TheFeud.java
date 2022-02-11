@@ -153,7 +153,7 @@ public class TheFeud implements QuestTask {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("If you are, then why are you still selling goods from a stall?");
                 NPCInteraction.handleConversation("I'd like to help you but.....");
-                NPCInteraction.handleConversation("I'll find you your help.");
+                NPCInteraction.handleConversation("I'll find you your help.", "Yes.");
                 NPCInteraction.handleConversation();
                 Timer.waitCondition(() -> Interfaces.get(300, 16, 9) != null, 7000, 9000);
             }

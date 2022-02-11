@@ -170,7 +170,7 @@ public class MerlinsCrystal implements QuestTask {
 
     public void setupSteps() {
         startQuest = new NPCStep(NpcID.KING_ARTHUR, new RSTile(2763, 3513, 0), "Talk to King Arthur in Camelot Castle to start.");
-        startQuest.addDialogStep("I want to become a knight of the round table!");
+        startQuest.addDialogStep("I want to become a knight of the round table!", "Yes.");
          /*   talkToGawain = new NPCStep(NpcID.SIR_GAWAIN, new RSTile(2758, 3504, 0), "Talk to Sir Gawain about how Merlin got trapped.");
         talkToGawain.addDialogStep("Do you know how Merlin got trapped?");
 

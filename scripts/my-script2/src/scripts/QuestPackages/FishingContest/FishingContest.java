@@ -103,7 +103,7 @@ public class FishingContest implements QuestTask {
                 NPCInteraction.handleConversation("Why not?");
                 NPCInteraction.handleConversation("If you were my friend I wouldn't mind it.");
                 NPCInteraction.handleConversation("Well, let's be friends!");
-                NPCInteraction.handleConversation("And how am I meant to do that?");
+                NPCInteraction.handleConversation("And how am I meant to do that?", "Yes.");
                 NPCInteraction.handleConversation();
             }
         }

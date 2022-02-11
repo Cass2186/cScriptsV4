@@ -202,7 +202,7 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
 
     public void setupSteps() {
         talkToHassan = new NPCStep(NpcID.HASSAN, new RSTile(3298, 3163, 0), "Talk to Hassan in the Al Kharid Palace.");
-        talkToHassan.addDialogStep("Can I help you? You must need some help here in the desert.");
+        talkToHassan.addDialogStep("Can I help you? You must need some help here in the desert.","Yes.");
         talkToOsman = new NPCStep(6165, new RSTile(3286, 3180, 0), "Talk to Osman north of the Al Kharid Palace.");
         talkToOsman.addDialogStep("What is the first thing I must do?");
 

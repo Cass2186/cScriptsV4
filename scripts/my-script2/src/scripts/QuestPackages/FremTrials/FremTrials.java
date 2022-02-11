@@ -284,7 +284,7 @@ public class FremTrials implements QuestTask {
 
     NPCStep startWithBrundtStep = new NPCStep("Brundt the Chieftain", START_AREA,
             new String[]{"Ask about anything else.", "Do you have any quests?",
-                    "Yes, I am interested.", "I want to become a Fremennik!"});
+                    "Yes, I am interested.", "I want to become a Fremennik!", "Yes."});
 
     public void startQuest() {
         if (!BankManager.checkInventoryItems(ItemID.CAMELOT_TELEPORT, ItemID.MIND_RUNE, ItemID.AIR_RUNE, tinderbox)) {

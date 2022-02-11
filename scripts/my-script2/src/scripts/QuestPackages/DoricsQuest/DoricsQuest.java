@@ -48,7 +48,7 @@ public class DoricsQuest implements QuestTask {
 
     NPCStep talkToDoric = new NPCStep("Doric", new RSTile(2951, 3451, 0),
             new String[]{"I wanted to use your anvils.",
-                    "Yes, I will get you the materials."}  , clay, copper, iron);
+                    "Yes, I will get you the materials.", "Yes."}  , clay, copper, iron);
 
     InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(

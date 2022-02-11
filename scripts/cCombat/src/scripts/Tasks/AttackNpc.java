@@ -17,6 +17,7 @@ import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 //
+import java.util.List;
 import java.util.Optional;
 
 public class AttackNpc implements Task {
@@ -151,16 +152,23 @@ public class AttackNpc implements Task {
         Optional<Npc> bestIntractable = Query.npcs()
                 .nameContains(Vars.get().targets)
                 .isNotBeingInteractedWith()
+                .isNotInteractingWithCharacter()
                 .isHealthBarNotVisible()
                 .findBestInteractable();
+               // .toList();
 
         Optional<Npc> attackingMe = Query.npcs()
                 .nameContains(Vars.get().targets)
                 .isInteractingWithMe()
                 .findBestInteractable();
 
-        if (attackingMe.isPresent() && attackingMe.get().getHealthBarPercent() != 0) return attackingMe;
-        else if (bestIntractable.isPresent()) return bestIntractable;
+        if (attackingMe.isPresent() && attackingMe.get().isHealthBarVisible() &&
+                attackingMe.get().getHealthBarPercent() != 0) return attackingMe;
+
+        else if (bestIntractable.isPresent()) {
+                Log.debug("Returning best Interactable NPC");
+                return bestIntractable;
+        }
 
         return Optional.empty();
     }
@@ -264,8 +272,13 @@ public class AttackNpc implements Task {
             if (EatUtil.hpPercent() <= (eatAtHP)) {
                 EatUtil.eatFood();
             }
+            Optional<Npc> attackingMe = Query.npcs()
+                    .nameContains(Vars.get().targets)
+                    .isInteractingWithMe()
+                    .findBestInteractable();
 
-            return !MyPlayer.isHealthBarVisible() || !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
+            return !MyPlayer.isHealthBarVisible() || attackingMe.isEmpty() ||
+                    !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
                     (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
         });
     }

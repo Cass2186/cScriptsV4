@@ -178,7 +178,7 @@ public class RfdCook implements QuestTask {
                 NPCInteraction.handleConversation("Do you have any other quests for me?");
                 NPCInteraction.handleConversation("I don't really care to be honest.");
                 NPCInteraction.handleConversation("What seems to be the problem?");
-                NPCInteraction.handleConversation("YES");
+                NPCInteraction.handleConversation("YES", "Yes.");
                 NPCInteraction.handleConversation();
             }
         }

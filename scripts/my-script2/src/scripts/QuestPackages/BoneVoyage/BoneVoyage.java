@@ -395,7 +395,7 @@ public class BoneVoyage implements QuestTask {
         if (NpcChat.talkToNPC(5214)) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Have you any interesting news?");
-            NPCInteraction.handleConversation("Sign me up!");
+            NPCInteraction.handleConversation("Sign me up!", "Yes.");
             NPCInteraction.handleConversation();
         }
     }

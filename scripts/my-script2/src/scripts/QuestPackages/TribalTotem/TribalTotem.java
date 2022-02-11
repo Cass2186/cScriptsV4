@@ -40,7 +40,7 @@ public class TribalTotem implements QuestTask {
 
 
     NPCStep talkToKangaiMau = new NPCStep(NpcID.KANGAI_MAU, new RSTile(2794, 3182, 0),
-            new String[]{"I'm in search of adventure!", "Ok, I will get it back."});
+            new String[]{"I'm in search of adventure!", "Ok, I will get it back.","Yes."});
 
     ObjectStep investigateCrate = new ObjectStep(2707, new RSTile(2650, 3273, 0), "Investigate",
             NPCInteraction.isConversationWindowUp());

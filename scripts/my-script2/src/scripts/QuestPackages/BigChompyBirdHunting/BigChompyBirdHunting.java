@@ -148,7 +148,7 @@ public class BigChompyBirdHunting implements QuestTask {
         PathingUtil.walkToArea(START_AREA);
         if (NpcChat.talkToNPC("Rantz")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Ok, I'll make you some 'stabbers'.");
+            NPCInteraction.handleConversation("Ok, I'll make you some 'stabbers'.","Yes.");
             NPCInteraction.handleConversation();
         }
     }

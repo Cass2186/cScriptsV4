@@ -6,10 +6,15 @@ import org.tribot.api.General;
 import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
+import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GroundItem;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -19,8 +24,12 @@ import scripts.PathingUtil;
 import scripts.Tasks.Slayer.SlayerConst.Assign;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Timer;
+import scripts.Utils;
 import scripts.rsitem_services.GrandExchange;
 import scripts.rsitem_services.runelite.RuneLitePriceService;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Loot implements Task {
     public static int MINIMUM_LOOT_PRICE = 1000;
@@ -51,7 +60,7 @@ public class Loot implements Task {
         return itemDef.isTradeableOnGrandExchange();
     }
 
-    public RSGroundItem getLootItem() {
+    public RSGroundItem getLootItemOld() {
 
         RSGroundItem[] groundItems = GroundItems.getAll();
 
@@ -110,7 +119,7 @@ public class Loot implements Task {
     }
 
     public void getLoot() {
-        RSGroundItem loot = getLootItem();
+        RSGroundItem loot = getLootItemOld();
         if (loot != null) {
             int inv = Inventory.getAll().length;
 
@@ -123,7 +132,7 @@ public class Loot implements Task {
 
                 General.println("[Loot]: Looting " + name);
 
-                if (Inventory.isFull() && !itemIsStackableAndInInventory(loot))
+                if (Inventory.isFull()) //&& !itemIsStackableAndInInventory(loot))
                     eatForSpace();
 
                 if (loot.getPosition().distanceTo(Player.getPosition()) > 8 && !loot.isClickable()) {
@@ -144,15 +153,72 @@ public class Loot implements Task {
         }
     }
 
+    public static Optional<GroundItem> getLootItem() {
+        List<GroundItem> groundItemList = Query.groundItems()
+                .inArea(Utils.getAreaFromRSArea(SlayerVars.get().fightArea))
+                .nameNotContains("Burnt bones", "Ashes", "ashes")
+                .toList();
 
-    private boolean itemIsStackableAndInInventory(RSGroundItem item) {
-        RSItem[] inventory = Inventory.find(item.getID());
-        if (inventory.length > 0) {
-            RSItemDefinition def = inventory[0].getDefinition();
-            return def != null && def.isStackable();
+        for (GroundItem g : groundItemList) {
+            // if (GrandExchange.getPrice(g.getId()) > 150)
+            //  Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
+            if (GrandExchange.getPrice(g.getId()) > SlayerVars.get().minLootValue) {
+                Log.debug("[Loot] Item is " + g.getName());
+                return Optional.of(g);
+            } else if (g.getDefinition().isStackable() || g.getDefinition().isNoted()) {
+                int individualPrice = GrandExchange.getPrice(g.getId());
+                if (g.getDefinition().isNoted()) {
+                    individualPrice = GrandExchange.getPrice((g.getId() - 1));
+                }
+                int amount = g.getStack();
+                int value = individualPrice * amount;
+                if (value > SlayerVars.get().minLootValue) {
+                    Log.debug("[Loot] Item is " + g.getName());
+                    return Optional.of(g);
+                }
+            } else if (g.getId() == 995 && g.getStack() > 500){
+                return Optional.of(g);
+            }
+        }
+        return Optional.empty();
+    }
 
+    public boolean pickupLootItem() {
+        RSGroundItem[] groundItems = GroundItems.getAll();
+        Optional<GroundItem> loot = getLootItem();
+        if (loot.isEmpty()) return false;
+
+        int inv = Inventory.getAll().length;
+
+        int id = loot.get().getId();
+        if (loot.get().getDefinition().isNoted()) {
+            id = id - 1;
+        }
+
+        int value = GrandExchange.getPrice(id);
+
+        General.println("[Debug]: Looting " + loot.get().getName());
+
+        if (Inventory.isFull() && !itemIsStackableAndInInventory(loot.get()))
+            eatForSpace();
+
+        if (loot.get().interact("Take")) {
+            Timer.slowWaitCondition(() ->
+                            loot.get().getTile().equals(MyPlayer.getPosition()),
+                    5000, 7000);
+            General.println("[Debug]: Done looting");
+            SlayerVars.get().lootValue = SlayerVars.get().lootValue + value;
+            Waiting.waitNormal(300, 45);
+            return true;
         }
         return false;
+    }
+
+
+    private boolean itemIsStackableAndInInventory(GroundItem item) {
+        RSItem[] inventory = Inventory.find(item.getId());
+        return inventory.length > 0 &&
+                item.getDefinition().isStackable();
     }
 
     @Override
@@ -178,7 +244,7 @@ public class Loot implements Task {
             SlayerVars.get().minLootValue = 1500;
         }
         // for (int i = 0; i < 3; i++)
-        getLoot();
+        pickupLootItem();
 
 
     }
@@ -189,7 +255,7 @@ public class Loot implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.SLAYER) &&
                 SlayerVars.get().fightArea != null &&
-                SlayerVars.get().fightArea.contains(Player.getPosition()) && getLootItem() != null;//&& shouldLoot();
+                SlayerVars.get().fightArea.contains(Player.getPosition()) && getLootItem().isPresent();//&& shouldLoot();
     }
 
 

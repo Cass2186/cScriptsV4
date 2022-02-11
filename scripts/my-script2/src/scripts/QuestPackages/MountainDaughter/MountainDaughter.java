@@ -208,7 +208,7 @@ public class MountainDaughter implements QuestTask {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Why is everyone so hostile?");
                 NPCInteraction.handleConversation("So what are you doing up here?");
-                NPCInteraction.handleConversation("I will search for her!");
+                NPCInteraction.handleConversation("I will search for her!", "Yes.");
                 NPCInteraction.handleConversation();
                 Utils.modSleep();
             }

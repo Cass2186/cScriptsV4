@@ -74,6 +74,7 @@ public class Icthlarinslittlehelper implements QuestTask {
 
 
     NPCStep talkToWanderer = new NPCStep(6187, new RSTile(3316, 2849, 0),
+
             tinderbox);
     NPCStep talkToWandererAgain = new NPCStep(6187, new RSTile(3316, 2849, 0),
             waterskin4, tinderbox);
@@ -505,7 +506,7 @@ public class Icthlarinslittlehelper implements QuestTask {
     public void execute() {
         setupSteps();
         talkToWanderer.addDialogStep("Why? What's your problem with it?");
-        talkToWanderer.addDialogStep("Ok I'll get your supplies.");
+        talkToWanderer.addDialogStep("Ok I'll get your supplies.", "Yes.");
         talkToWandererAgain.addDialogStep("Yes. I have them all here.");
         jar.addAlternateItemID(ItemID.CANOPIC_JAR_4679, ItemID.CANOPIC_JAR_4680, ItemID.CANOPIC_JAR_4681);
         returnToHighPriest.addDialogStep("Sure, no problem.");

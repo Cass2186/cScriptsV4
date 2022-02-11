@@ -215,7 +215,7 @@ public class FairyTalePt1 implements QuestTask {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Ask about the quest.");
             NPCInteraction.handleConversation("Anything I can help with?");
-            NPCInteraction.handleConversation("Now that I think about it, you're right!");
+            NPCInteraction.handleConversation("Now that I think about it, you're right!", "Yes.");
             NPCInteraction.handleConversation();
         }
     }
@@ -1009,7 +1009,7 @@ public class FairyTalePt1 implements QuestTask {
         if (NpcChat.talkToNPC(MARTIN)) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Ask about the quest.", string);
-            NPCInteraction.handleConversation(string);
+            NPCInteraction.handleConversation(string, "Yes.");
             NPCInteraction.handleConversation();
         }
     }
