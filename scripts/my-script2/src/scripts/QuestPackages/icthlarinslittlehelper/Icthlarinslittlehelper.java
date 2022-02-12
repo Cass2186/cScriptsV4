@@ -4,11 +4,10 @@ import com.trilezstudios.updater.hooks.NPC;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Skill;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
 import scripts.*;
@@ -384,6 +383,42 @@ public class Icthlarinslittlehelper implements QuestTask {
         }
     }
 
+    public void handleRitual(){
+        int varbit = QuestVarbits.QUEST_ICTHLARINS_LITTLE_HELPER.getId();
+        for (int i =0 ; i <30; i++) {
+            if (Utils.getVarBitValue(varbit ) != 21)
+                break;
+
+            cQuesterV2.status = "Handling Ritual";
+            if (!MyPlayer.isHealthBarVisible()) {
+                cQuesterV2.status = "Handling Ritual - waiting for Converation window";
+                NPCInteraction.waitForConversationWindow();
+            } else {
+                cQuesterV2.status = "Handling Ritual - Combat";
+                CombatUtil.waitUntilOutOfCombat(50);
+                continue;
+            }
+            if (NPCInteraction.isConversationWindowUp()) {
+                cQuesterV2.status = "Handling Ritual - chat";
+                NPCInteraction.handleConversation();
+                Waiting.waitNormal(1200,150);
+                continue;
+            }
+            //varbit == 21
+            ConditionalStep goToRitual = new ConditionalStep(enterRock);
+            goToRitual.addStep(new Conditions(inEastRoom, posessedPriestNearby), killPriest);
+            goToRitual.addStep(inEastRoom, talkToHighPriestInPyramid);
+            goToRitual.addStep(inNorthPyramid, enterEastRoomAgain);
+            goToRitual.addStep(inPyramid, jumpPitWithSymbol);
+            goToRitual.addStep(inSoph, openPyramidDoorWithSymbol);
+
+            goToRitual.execute();
+            Waiting.waitNormal(500,15);
+        }
+
+
+    }
+
     public Map<Integer, QuestStep> loadSteps() {
 
         Map<Integer, QuestStep> steps = new HashMap<>();
@@ -454,7 +489,8 @@ public class Icthlarinslittlehelper implements QuestTask {
         steps.put(23, goToRitual);
         steps.put(24, goToRitual);
 
-        ConditionalStep finishTheQuest = new ConditionalStep(enterRock);
+        // first conditionalStep used to be enterRock but was causing teleports
+        ConditionalStep finishTheQuest = new ConditionalStep(talkToHighPriestToFinish);
         finishTheQuest.addStep(new Conditions(inPyramid, inEastRoom), leaveEastRoom);
         finishTheQuest.addStep(new Conditions(inPyramid, inNorthPyramid), jumpPit);
         finishTheQuest.addStep(inPyramid, leavePyramidToFinish);
@@ -633,19 +669,26 @@ public class Icthlarinslittlehelper implements QuestTask {
             } else if (inSoph.check()) {
                 cQuesterV2.status = "Talking to high priest";
                 returnToHighPriest.execute();
+            } else {
+                cQuesterV2.status = "Talking to high priest";
+                returnToHighPriest.execute();
             }
-        } //else if (Utils.getVarBitValue(varbit) == 15) {
-
-        // }
+        } else if (Utils.getVarBitValue(varbit) == 21) {
+            handleRitual();
+         }
         else {
             Map<Integer, QuestStep> steps = loadSteps();
             Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
             cQuesterV2.status = step.map(s -> s.toString()).orElse("Unknown Step");
             step.ifPresent(QuestStep::execute);
         }
+        // need this for symbol step
+        Waiting.waitNormal(1250,100);
         if (NPCInteraction.isConversationWindowUp()){
             NPCInteraction.handleConversation();
         }
+        if (Utils.inCutScene())
+            Utils.cutScene();
 
         ConditionalStep prepareItems = new ConditionalStep(enterRockWithItems);
         prepareItems.addStep(new Conditions(inSoph, givenEmbalmerAllItems, givenCarpenterLogs), talkToCarpenterOnceMore);
