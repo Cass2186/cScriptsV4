@@ -5,10 +5,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.Listeners.InterfaceListener;
@@ -68,18 +65,30 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
                     new GEItem(ItemID.BEER, 3, 500),
                     new GEItem(ItemID.ROPE, 2, 500),
                     new GEItem(ItemID.AMULET_OF_GLORY4, 2, 30),
-                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 4, 1),
-                    new ItemReq(ItemID.VARROCK_TELEPORT, 4, 1),
-                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.YELLOW_DYE, 1),
+                    new ItemReq(ItemID.BALL_OF_WOOL, 3),
+                    new ItemReq(ItemID.SOFT_CLAY, 1),
+                    new ItemReq(ItemID.REDBERRIES, 1),
+                    new ItemReq(ItemID.ASHES, 1),
+                    new ItemReq(ItemID.BUCKET_OF_WATER, 1),
+                    new ItemReq(ItemID.POT_OF_FLOUR, 1),
+                    new ItemReq(ItemID.BRONZE_BAR, 1),
+                    new ItemReq(ItemID.PINK_SKIRT, 1),
+                    new ItemReq(ItemID.BEER, 3),
+                    new ItemReq(ItemID.ROPE, 2,1),
+
+
+                    new ItemReq(ItemID.AMULET_OF_GLORY4, 2, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
+
             )
     ));
 
@@ -202,7 +211,7 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
 
     public void setupSteps() {
         talkToHassan = new NPCStep(NpcID.HASSAN, new RSTile(3298, 3163, 0), "Talk to Hassan in the Al Kharid Palace.");
-        talkToHassan.addDialogStep("Can I help you? You must need some help here in the desert.","Yes.");
+        talkToHassan.addDialogStep("Is there anything I can help you with?","Yes.");
         talkToOsman = new NPCStep(6165, new RSTile(3286, 3180, 0), "Talk to Osman north of the Al Kharid Palace.");
         talkToOsman.addDialogStep("What is the first thing I must do?");
 
@@ -271,7 +280,7 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
         return reqs;
     }
 
-
+    int gameSetting = 0;
     @Override
     public Priority priority() {
         return Priority.LOW;
@@ -289,16 +298,18 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
 
         for (int i = 0; i < 100; i++) {
 
-            int gameSetting = QuestVarPlayer.QUEST_PRINCE_ALI_RESCUE.getId();
-            Log.debug("Prince Ali Rescue Game setting is " + gameSetting);
+            gameSetting = QuestVarPlayer.QUEST_PRINCE_ALI_RESCUE.getId();
+            Log.debug("Prince Ali Rescue Game setting is " + GameState.getSetting(gameSetting));
 
             // buy initial items on quest start
-            if (GameState.getSetting(gameSetting) == 0) {
+            if (GameState.getSetting(gameSetting) == 0 && !initialItemReqs.check()) {
                 buyStep.buyItems();
+                initialItemReqs.withdrawItems();
             }
 
             // done quest
-            if (GameState.getSetting(gameSetting) == 100) {
+            if (GameState.getSetting(gameSetting) == 110) {
+                Log.debug("Prince Ali Rescue is complete");
                 cQuesterV2.taskList.remove(this);
                 break;
             }
@@ -315,18 +326,21 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
             step.ifPresent(QuestStep::execute);
 
             // handle any chats that are failed to be handled by the QuestStep (failsafe)
-            if (NPCInteraction.isConversationWindowUp()) {
-                Keyboard.typeString(" "); //for aggie step
-                NPCInteraction.handleConversation();
+            if (ChatScreen.isOpen()) {
+                Log.debug("Handling chat screen -test");
+                ChatScreen.handle();
+               // NPCInteraction.handleConversation();
             }
+
             //slow down looping if it gets stuck
             Waiting.waitNormal(200, 20);
         }
     }
 
     @Override
-    public String questName() {
-        return "Prince Ali Rescue";
+    public String questName()
+    {
+        return "Prince Ali Rescue (" + GameState.getSetting(gameSetting) + ")";
     }
 
     @Override

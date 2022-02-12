@@ -235,9 +235,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     taskList.add(DeathPlateau.get());
                     //   Vars.get().questHashMap.put(new DeathPlateau().getQuest(), taskList);
                 } else if (arg.toLowerCase().contains("contact")) {
-                    General.println("[Args]: Added Contact!");
+                    General.println("[Args]: Added Contact! (and sub quests)");
+                    taskList.add(PrinceAliRescue.get());
+                    taskList.add(Icthlarinslittlehelper.get());
                     taskList.add(Contact.get());
-                    //  Vars.get().questHashMap.put(new Contact().getQuest(), taskList);
                 } else if (arg.toLowerCase().contains("legends")) {
                     General.println("[Args]: Added Legends quest");
                      taskList.add( LegendsQuest.get());

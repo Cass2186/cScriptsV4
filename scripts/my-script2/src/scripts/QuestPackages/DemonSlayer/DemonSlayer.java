@@ -5,6 +5,8 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
@@ -184,14 +186,14 @@ public class DemonSlayer implements QuestTask {
 
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
-        General.println("[Debug]: " + cQuesterV2.status);
+        Log.debug("[Debug]: " + cQuesterV2.status);
         BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
         buyStep.buyItems();
     }
 
     public void getItems() {
         cQuesterV2.status = "Getting items";
-        General.println("[Debug]: " + cQuesterV2.status);
+        Log.debug("[Debug]: " + cQuesterV2.status);
         BankManager.open(true);
         Banking.depositAll();
         BankManager.checkEquippedGlory();
@@ -208,7 +210,7 @@ public class DemonSlayer implements QuestTask {
     public void getItems2() {
         if (Inventory.find(key2).length < 1) {
             cQuesterV2.status = "Getting bones";
-            General.println("[Debug]: " + cQuesterV2.status);
+            Log.debug("[Debug]: " + cQuesterV2.status);
             BankManager.open(true);
             BankManager.checkEquippedGlory();
             Banking.depositAll();
@@ -257,7 +259,7 @@ public class DemonSlayer implements QuestTask {
 
     public void talkToPrysinFirst() {
         cQuesterV2.status = "Talking to Sir Prysin";
-        General.println("[Debug]: " + cQuesterV2.status);
+        Log.debug("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(sirPrysinArea);
         RSNPC[] prysin = NPCs.findNearest("Sir Prysin");
         if (prysin.length > 0) {
@@ -285,7 +287,7 @@ public class DemonSlayer implements QuestTask {
     public void step3() {
         if (Inventory.find(key1).length < 1) {
             cQuesterV2.status = "Talking to Captain Rovin";
-            General.println("[Debug]: " + cQuesterV2.status);
+            Log.debug("[Debug]: " + cQuesterV2.status);
             PathingUtil.walkToArea(captainRovinArea);
             if (NpcChat.talkToNPC("Captain Rovin")) {
                 NPCInteraction.waitForConversationWindow();
@@ -298,7 +300,7 @@ public class DemonSlayer implements QuestTask {
     public void step4() {
         if (Inventory.find(key2).length < 1) {
             cQuesterV2.status = "Banking for bones";
-            General.println("[Debug]: " + cQuesterV2.status);
+            Log.debug("[Debug]: " + cQuesterV2.status);
             BankManager.open(true);
             BankManager.depositAll(true);
             BankManager.checkEquippedGlory();
@@ -319,7 +321,7 @@ public class DemonSlayer implements QuestTask {
                 step4();
             }
             cQuesterV2.status = "Talking to Wizard";
-            General.println("[Debug]: " + cQuesterV2.status);
+            Log.debug("[Debug]: " + cQuesterV2.status);
             PathingUtil.walkToArea(wizardTower2ndFloor);
 
             if (NpcChat.talkToNPC("Traiborn")) {
@@ -464,7 +466,7 @@ public class DemonSlayer implements QuestTask {
                 }
             }
             if (delrith.length > 0 && !Combat.isUnderAttack()) {
-                General.println("[Debug]: Attacking Demon");
+                Log.debug("[Debug]: Attacking Demon");
                 if (AccurateMouse.click(delrith[0], "Attack")) {
                     Timer.waitCondition(Combat::isUnderAttack, 5000, 7000);
                     General.sleep(General.random(300, 2000));
@@ -477,7 +479,7 @@ public class DemonSlayer implements QuestTask {
                 int i = 0;
                 for (String s : codeList) {
                     i++;
-                    General.println("[Debug]: Handling code (" + i + "): " + s);
+                    Log.debug("[Debug]: Handling code (" + i + "): " + s);
                     NPCInteraction.handleConversation(s);
                     // wait forchat interface with options to be null
                     Timer.waitCondition(() -> Interfaces.get(219, 1) == null, 1500, 2500);
@@ -493,12 +495,12 @@ public class DemonSlayer implements QuestTask {
     @Override
     public void execute() {
 
-        General.println("Game Setting: " + Game.getSetting(222));
-        General.println("2561:  " + Utils.getVarBitValue(2561));
-        General.println("2562:  " + Utils.getVarBitValue(2562));
-        General.println("2563:  " + Utils.getVarBitValue(2563));
-        General.println("2564:  " + Utils.getVarBitValue(2564));
-        General.println("2568:  " + Utils.getVarBitValue(2568));
+        Log.debug("Game Setting: " + Game.getSetting(222));
+        Log.debug("2561:  " + Utils.getVarBitValue(2561));
+        Log.debug("2562:  " + Utils.getVarBitValue(2562));
+        Log.debug("2563:  " + Utils.getVarBitValue(2563));
+        Log.debug("2564:  " + Utils.getVarBitValue(2564));
+        Log.debug("2568:  " + Utils.getVarBitValue(2568));
         if (Game.getSetting(222) == stage0) {
             buyItems();
             getItems();
@@ -523,8 +525,8 @@ public class DemonSlayer implements QuestTask {
             Utils.modSleep();
         }
         if (RSVarBit.get(2568).getValue() == 1) {
-            General.println("Game Setting: " + Game.getSetting(222));
-            General.println("stage setting thinks it's: " + stage3);
+            Log.debug("Game Setting: " + Game.getSetting(222));
+            Log.debug("stage setting thinks it's: " + stage3);
             step8(); // getting last key; causes 2568 toc change from 1 to 2
 
         }
@@ -542,8 +544,8 @@ public class DemonSlayer implements QuestTask {
             killDemon();
         }
         if (RSVarBit.get(2569).getValue() == 0 && RSVarBit.get(2569).getValue() == 1) {
-            General.println("Game Setting: " + Game.getSetting(222));
-            General.println("stage setting thinks it's: " + stage6 + " or " + stage7);
+            Log.debug("Game Setting: " + Game.getSetting(222));
+            Log.debug("stage setting thinks it's: " + stage6 + " or " + stage7);
             if (code == null)
                 getIncantation();
 
@@ -555,12 +557,12 @@ public class DemonSlayer implements QuestTask {
                 NPCInteraction.handleConversation(code5);
                 Utils.shortSleep();
             }
-            General.println("Game Setting: " + Game.getSetting(222));
+            Log.debug("Game Setting: " + Game.getSetting(222));
             NPCInteraction.handleConversation();
         }
         if (Game.getSetting(222) == stage9 || Game.getSetting(222) == 22090083
-                || RSVarBit.get(2561).getValue() == 3) {
-            General.println("Game Setting: " + Game.getSetting(222));
+                || RSVarBit.get(2561).getValue() == 3 || Quest.DEMON_SLAYER.getState().equals(Quest.State.COMPLETE)) {
+            Log.debug("Game Setting: " + Game.getSetting(222));
             cQuesterV2.taskList.remove(this);
         }
 
