@@ -12,10 +12,7 @@ import org.tribot.api2007.Walking;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Prayer;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.Requirements.Requirement;
@@ -285,9 +282,10 @@ public class NPCStep extends DetailedQuestStep  {
             if (NPCInteraction.isConversationWindowUp()) {
                 if (listChatOptions != null && listChatOptions.size() > 0) {
                     Log.debug("Handling chat");
-                    NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
+                    ChatScreen.handle(listChatOptions.toArray(String[]::new));
                 }else
-                    NPCInteraction.handleConversation();
+                    ChatScreen.handle();
+                    //NPCInteraction.handleConversation();
             }
             if (this.prayer.isPresent()) {
                 if (Prayer.getPrayerPoints() < 15) {
@@ -322,12 +320,12 @@ public class NPCStep extends DetailedQuestStep  {
             if (listChatOptions != null && listChatOptions.size() > 0 &&
                     NPCInteraction.isConversationWindowUp()) {
                 Log.debug("Handling chat");
-                NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
+                ChatScreen.handle(listChatOptions.toArray(String[]::new));
 
             }
 
             if (NPCInteraction.isConversationWindowUp())
-                NPCInteraction.handleConversation();
+                ChatScreen.handle();
         }
 
         Log.log("[NPCStep]: Execution finished");
