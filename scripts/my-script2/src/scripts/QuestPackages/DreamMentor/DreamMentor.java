@@ -38,6 +38,7 @@ public class DreamMentor implements QuestTask {
     public static DreamMentor get() {
         return quest == null ? quest = new DreamMentor() : quest;
     }
+
     String message;
 
     public static final int BIRDSEYE_JACK = 6126;
@@ -64,7 +65,7 @@ public class DreamMentor implements QuestTask {
             new RSTile(2335, 10345, 2), Game.isInInstance());
 
     NPCStep talkToCyrisus = new NPCStep("Fallen Man", Player.getPosition(),
-            new String[]{"Yes","Yes."});
+            new String[]{"Yes", "Yes."});
 
     // give food
     NPCStep feed4Food = new NPCStep("Fallen Man", Player.getPosition());
@@ -174,7 +175,10 @@ public class DreamMentor implements QuestTask {
                     new GEItem(ItemID.BLACK_DHIDE_VAMBRACES, 1, 25),
                     new GEItem(12504, 1, 25), //bandos coif
                     new GEItem(ItemID.RUNE_CROSSBOW, 1, 25),
-                    new GEItem(ItemID.RUNITE_BOLTS, 500, 25)
+                    new GEItem(ItemID.RUNITE_BOLTS, 500, 25),
+                    new GEItem(ItemID.RING_OF_RECOIL, 1, 40),
+                    new GEItem(ItemID.RANGING_POTION4, 1, 40),
+                    new GEItem(ItemID.COOKED_KARAMBWAN, 25, 40)
 
             )
     );
@@ -226,7 +230,8 @@ public class DreamMentor implements QuestTask {
                     Arrays.asList(
                             new ItemReq(ItemID.TINDERBOX, 1),
                             new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
-                            //  tridentReq,
+
+                            new ItemReq(ItemID.RING_OF_RECOIL, 1, 0, true, true),
                             new ItemReq(ItemID.BLACK_DHIDE_VAMBRACES, 1, true, true),
                             new ItemReq(ItemID.BLACK_DHIDE_BODY, 1, true, true),
                             new ItemReq(ItemID.BLACK_DHIDE_CHAPS, 1, true, true),
@@ -236,6 +241,7 @@ public class DreamMentor implements QuestTask {
                             new ItemReq(ItemID.SNAKESKIN_BOOTS, 1, true, true),
                             new ItemReq(ItemID.DREAM_POTION, 1, 0),
                             new ItemReq(ItemID.LUNAR_ISLE_TELEPORT, 1, 0),
+                            new ItemReq(ItemID.COOKED_KARAMBWAN, 7, 0),
                             new ItemReq(ItemID.SHARK, 0, 1)
 
                     )));
@@ -260,10 +266,14 @@ public class DreamMentor implements QuestTask {
                     .item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.CAPE)
                     .item(ItemID.AVAS_ACCUMULATOR, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
+                    .item(ItemID.RING_OF_RECOIL, Amount.of(1)))
             .addInvItem(ItemID.SEAL_OF_PASSAGE, Amount.of(1))
             .addInvItem(ItemID.TINDERBOX, Amount.of(1))
             .addInvItem(ItemID.DREAM_POTION, Amount.of(1))
             .addInvItem(ItemID.LUNAR_ISLE_TELEPORT, Amount.of(1))
+            .addInvItem(ItemID.RANGING_POTION4, Amount.of(1))
+            .addInvItem(ItemID.COOKED_KARAMBWAN, Amount.of(6))
             .addInvItem(ItemID.SHARK, Amount.fill(6))
             .build();
 
@@ -380,7 +390,7 @@ public class DreamMentor implements QuestTask {
             General.println("[Debug]: Sleeping  until in instance");
             Timer.waitCondition(Game::isInInstance, 10000, 12000);
             General.println("[Debug]: Sleeping 4-5s");
-            General.sleep(5000, 6000);
+            General.sleep(6000, 7000);
         }
     }
 
@@ -391,8 +401,8 @@ public class DreamMentor implements QuestTask {
         }
         if (Game.isInInstance()) {
             scripts.cQuesterV2.status = "Talking to fallen man";
-            Log.log("[Debug]: " + scripts.cQuesterV2.status);
-            talkToCyrisus.setRadius(10);
+            Log.debug("[Debug]: " + scripts.cQuesterV2.status);
+            talkToCyrisus.setRadius(20);
             talkToCyrisus.setUseLocalNav(true);
             talkToCyrisus.execute();
             General.sleep(3000, 4000);
@@ -511,19 +521,25 @@ public class DreamMentor implements QuestTask {
 
     public void eat() {
         if (needsToEat()) {
-            Predicate<RSItem> food = Filters.Items.actionsEquals("Eat");
-            RSItem[] item = Inventory.find(food);
-            int num = item.length;
+            RSItem[] shark = Inventory.find(ItemID.SHARK);
+            RSItem[] kara = Inventory.find(ItemID.COOKED_KARAMBWAN);
+            int num = shark.length;
             int b = 0;
-            for (int i = 0; i < 5; i++) {
-                General.println("[Debug]: Eat loop");
-                General.sleep(10, 40);
-                if (eatFood()) {
-                    b++;
-                    General.sleep(100, 220);
+            if (shark.length > 0 && kara.length > 0 && shark[0].click("Eat")) {
+                Waiting.waitNormal(220, 30);
+                if (kara[0].click("Eat"))
+                    Waiting.waitNormal(220, 30); //reengage
+            } else {
+                for (int i = 0; i < 5; i++) {
+                    General.println("[Debug]: Eat loop");
+                    General.sleep(10, 40);
+                    if (eatFood()) {
+                        b++;
+                        General.sleep(250, 420);
+                    }
+                    if (Inventory.find(ItemID.SHARK).length <= num - 2 || b == 2)
+                        break;
                 }
-                if (Inventory.find(food).length <= num - 2 || b == 2)
-                    break;
             }
             eatAt = General.random(28, 44);
             General.println("[Debug]: Next eating at: " + eatAt);
@@ -604,16 +620,16 @@ public class DreamMentor implements QuestTask {
                 RSObject[] book = Objects.findNearest(30, "Our lives");
                 if (book.length > 0) {
                     eat();
-                    if (npcTwo.length > 0 && npcTwo[0].getHealthPercent() == 0){
+                    if (npcTwo.length > 0 && npcTwo[0].getHealthPercent() == 0) {
                         General.println("[Debug]: NPC 2 is dead, walking out from safe spot momentarily");
                         RSTile walkOutTile = book[0].getPosition().translate(0, 3);
                         if (!walkOutTile.isClickable())
                             DaxCamera.focus(walkOutTile);
 
                         if (DynamicClicking.clickRSTile(walkOutTile, "Walk here")) {
-                            Waiting.waitNormal(700,50);
+                            Waiting.waitNormal(700, 50);
                         }
-                        Timer.waitCondition(()-> NPCs.find( 3475).length > 0 , 3500,4500);
+                        Timer.waitCondition(() -> NPCs.find(3475).length > 0, 3500, 4500);
                     }
 
                     RSTile safeTile = book[0].getPosition().translate(-1, 1);
@@ -623,7 +639,7 @@ public class DreamMentor implements QuestTask {
                             Walking.blindWalkTo(safeTile);
                             DaxCamera.focus(safeTile);
                         }
-                        if (AccurateMouse.walkScreenTile(safeTile)) {
+                        if (DynamicClicking.clickRSTile(safeTile, "Walk here")) {
                             PathingUtil.movementIdle();
                         }
                     }
@@ -909,6 +925,7 @@ public class DreamMentor implements QuestTask {
     public String toString() {
         return message;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
