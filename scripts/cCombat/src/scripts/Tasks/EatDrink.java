@@ -22,7 +22,8 @@ public class EatDrink implements Task {
 
 
     public boolean drinkPotion(int[] potionArray) {
-        RSItem[] potion = Inventory.find(potionArray);
+        int[] rev = Utils.reverseIntArray(potionArray);
+        RSItem[] potion = Inventory.find(rev);
         return potion.length > 0 && potion[0].click("Drink");
     }
 

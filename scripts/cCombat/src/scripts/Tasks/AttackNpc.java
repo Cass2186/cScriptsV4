@@ -281,13 +281,13 @@ public class AttackNpc implements Task {
             if (EatUtil.hpPercent() <= (eatAtHP)) {
                 EatUtil.eatFood();
             }
-            Optional<Npc> attackingMe = Query.npcs()
+            List<Npc> attackingMe = Query.npcs()
                     .nameContains(Vars.get().targets)
                     .isInteractingWithMe()
-                    .findBestInteractable();
+                    .toList();
 
             return //!MyPlayer.isHealthBarVisible() ||
-                    attackingMe.isEmpty() ||
+                    attackingMe.size() == 0 ||
                     !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
                     (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
         });

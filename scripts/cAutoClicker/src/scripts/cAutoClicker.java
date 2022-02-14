@@ -14,12 +14,10 @@ import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
+import org.tribot.script.interfaces.Ending;
 import org.tribot.script.interfaces.Painting;
 import org.tribot.script.interfaces.Starting;
-import org.tribot.script.sdk.GameTab;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Login;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import scripts.Data.Vars;
 import scripts.Tasks.Task;
 import scripts.Tasks.TaskSet;
@@ -30,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ScriptManifest(name = "cAutoClicker", authors = {"Cass2186"}, category = "Magic")
-public class cAutoClicker extends Script implements Painting, Starting {
+public class cAutoClicker extends Script implements Painting, Starting, Ending {
 
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
@@ -121,5 +119,10 @@ public class cAutoClicker extends Script implements Painting, Starting {
         AntiBan.create();
         Vars.get().startTime = Timing.currentTimeMillis();
         Vars.get().currentTime = Timing.currentTimeMillis();
+    }
+
+    @Override
+    public void onEnd() {
+        Log.debug("[Ending]: Magic XP Gained: " + Utils.addCommaToNum(Skills.getXP(Skills.SKILLS.MAGIC) - startMagicXp));
     }
 }

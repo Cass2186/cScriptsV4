@@ -227,7 +227,19 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
     @Override
     public void onEnd() {
-        Log.log("Loot: " + Vars.get().lootValue);
+        General.println("[Ending]: Runtime: " + Timing.msToString(this.getRunningTime()), Color.RED);
+        HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
+        if (Vars.get().skillStartXpMap == null)
+            populateInitialMap();
+
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
+            int startXp = Vars.get().skillStartXpMap.get(s);
+            if (s.getXP() > startXp) {
+                Log.debug("[Ending]: Gained " + (s.getXP() - startXp) + " " + s + " exp");
+            }
+        }
+        Log.debug("[Ending]: XP Gained: " + Vars.get().lootValue);
+        Log.debug("[Ending]: Loot Value: " + Utils.addCommaToNum(Vars.get().lootValue));
     }
 
 
