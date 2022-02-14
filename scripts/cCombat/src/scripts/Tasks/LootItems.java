@@ -89,13 +89,12 @@ public class LootItems implements Task {
 
     public static Optional<GroundItem> getLootItem() {
         List<GroundItem> groundItemList = Query.groundItems()
-                .inArea(Utils.getAreaFromRSArea(Areas.UNDEAD_DRUID_AREA))
+                .inArea(Areas.UNDEAD_DRUID_AREA_SDK)
                 .nameNotContains("Burnt bones", "Ashes", "ashes")
                 .toList();
+           // Log.debug("grounditemlist.size(): " + groundItemList.size());
 
         for (GroundItem g : groundItemList) {
-            if (g.getDefinition().isNoted())
-                Log.debug("Object is noted with ID " + g.getId() + " stack: " + g.getStack());
         //    if (GrandExchange.getPrice(g.getId()) > 150)
                // Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
             if (GrandExchange.getPrice(g.getId()) > Vars.get().minLootValue) {
@@ -105,7 +104,7 @@ public class LootItems implements Task {
                 int individualPrice = GrandExchange.getPrice(g.getId());
                 if (g.getDefinition().isNoted()) {
                     individualPrice = GrandExchange.getPrice((g.getId() - 1));
-                    Log.debug("Getting Noted id price of " + individualPrice);
+                   // Log.debug("Getting Noted id price of " + individualPrice);
                 }
                 int amount = g.getStack();
                 int value = individualPrice * amount;

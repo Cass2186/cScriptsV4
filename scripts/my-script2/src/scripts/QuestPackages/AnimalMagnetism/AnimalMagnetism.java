@@ -95,7 +95,7 @@ public class AnimalMagnetism implements QuestTask {
                     new GEItem(ItemID.MITHRIL_AXE, 1, 300),
                     new GEItem(ItemID.IRON_BAR, 5, 300),
                     new GEItem(ItemID.DRAGON_BONES, 5, 300),
-                    new GEItem(ItemID.EMPTY_BUCKET, 5, 300),
+                    new GEItem(ItemID.BUCKET, 5, 300),
                     new GEItem(ItemID.HAMMER, 1, 600),
                     new GEItem(HARD_LEATHER, 1, 300),
                     new GEItem(HOLY_SYMBOL, 1, 350),

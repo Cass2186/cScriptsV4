@@ -11,11 +11,9 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.*;
@@ -55,6 +53,7 @@ public class HauntedMine implements QuestTask {
             )
     ));
 
+    WorldTile clickWalkTileNorthEast = new WorldTile(2738, 4529, 0);
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
 
@@ -209,6 +208,41 @@ public class HauntedMine implements QuestTask {
     ObjectStep goDownFromLevel3NorthEast = new ObjectStep(4967, new RSTile(2732, 4528, 0),
             "Climb-down");
 
+    RSArea AFTER_MINE_CART_LEVEL_3_EAST = new RSArea(
+            new RSTile[]{
+                    new RSTile(2737, 4530, 0),
+                    new RSTile(2738, 4530, 0),
+                    new RSTile(2738, 4525, 0),
+                    new RSTile(2734, 4525, 0),
+                    new RSTile(2730, 4528, 0),
+                    new RSTile(2730, 4531, 0),
+                    new RSTile(2734, 4531, 0)
+            }
+    );
+
+    public ObjectStep goDownFrom3NE() {
+        if (new Conditions(glowingFungus, inLevel3North, hasKeyOrOpenedValve).check()) {
+            WorldTile preWalkTile = new WorldTile(2738, 4532, 0);
+            if (!AFTER_MINE_CART_LEVEL_3_EAST.contains(Player.getPosition())) {
+                Log.debug("Walking to pre-walk tile");
+                if (PathingUtil.localNav(preWalkTile))
+                    PathingUtil.movementIdle();
+                for (int i = 0; i < 5; i++) {
+                    if (clickWalkTileNorthEast.interact("Walk here")) {
+                        PathingUtil.movementIdle();
+                    }
+                    if (clickWalkTileNorthEast.equals(MyPlayer.getPosition()))
+                        break;
+                    else
+                        Waiting.waitNormal(750, 100);
+                }
+            }
+        }
+        ObjectStep godown = new ObjectStep(4967, new RSTile(2732, 4528, 0),
+                "Climb-down");
+        return godown;
+    }
+
     ObjectStep goDownToFungusRoom = new ObjectStep(967, new RSTile(2725, 4487, 0), "Go down the ladder to the south, making sure to avoid the moving mine cart.");
 
     ObjectStep readPanel = new ObjectStep(ObjectID.POINTS_SETTINGS, new RSTile(2770, 4521, 0),
@@ -239,7 +273,7 @@ public class HauntedMine implements QuestTask {
             "Pull", !leverEWrong.check());
 
     ObjectStep pullLeverF = new ObjectStep(4955, new RSTile(2785, 4532, 0),
-            "Pull",!leverFWrong.check());
+            "Pull", !leverFWrong.check());
     ObjectStep pullLeverG = new ObjectStep(4956, new RSTile(2769, 4532, 0),
             "Pull", !leverGWrong.check());
     ObjectStep pullLeverH = new ObjectStep(4957, new RSTile(2770, 4532, 0),
@@ -343,7 +377,7 @@ public class HauntedMine implements QuestTask {
             if (mineCartSouthTriggerArea.contains(mineCart[0].getPosition())
                     && mineCartLevel3SouthHideTileReverse.equals(Player.getPosition())) {
                 Log.log("[Debug]: Cart is in trigger area");
-               // goDownToFungusRoom.execute();
+                // goDownToFungusRoom.execute();
                 Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 5500);
             } else if (mineCartLevel3SouthHideTile.equals(Player.getPosition())) {
                 Log.log("[Debug]: Waiting on cart to move to trigger area");
@@ -447,7 +481,7 @@ public class HauntedMine implements QuestTask {
         } else if (new Conditions(glowingFungus, inLevel3North, hasKeyOrOpenedValve).check()) {
             Log.log("[Debug]: goDownFromLevel3NorthEast");
             //TODO add click on the tile to avoid the cart
-            goDownFromLevel3NorthEast.execute();
+            goDownFrom3NE().execute();
         } else if (new Conditions(glowingFungus, inLevel2North, hasKeyOrOpenedValve).check()) {
             Log.log("[Debug]: goDownLevel2North");
             goDownLevel2North.execute();
@@ -537,7 +571,7 @@ public class HauntedMine implements QuestTask {
         exploreMine.addStep(new Conditions(glowingFungus, inLiftRoom, zealotsKey, chisel), useKeyOnValve);
         exploreMine.addStep(new Conditions(glowingFungus, inLiftRoom, hasKeyOrOpenedValve), pickUpChisel);
         exploreMine.addStep(new Conditions(glowingFungus, inCollectRoom, hasKeyOrOpenedValve), goUpFromCollectRoom);
-        exploreMine.addStep(new Conditions(glowingFungus, inLevel3North, hasKeyOrOpenedValve), goDownFromLevel3NorthEast);
+        exploreMine.addStep(new Conditions(glowingFungus, inLevel3North, hasKeyOrOpenedValve), goDownFrom3NE());
         exploreMine.addStep(new Conditions(glowingFungus, inLevel2North, hasKeyOrOpenedValve), goDownLevel2North);
         exploreMine.addStep(new Conditions(glowingFungus, inLevel1North, hasKeyOrOpenedValve), goDownLevel1North);
         exploreMine.execute();
@@ -588,12 +622,12 @@ public class HauntedMine implements QuestTask {
             cQuesterV2.taskList.remove(this);
             return;
         }
-        if (gameSetting ==0)
+        if (gameSetting == 0)
             talkToZealot.execute();
         Log.log("[Debug]: Haunted mine gameSetting is " + gameSetting);
         Map<Integer, QuestStep> steps = setconditions();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
-       //step.ifPresent(QuestStep::execute);
+        //step.ifPresent(QuestStep::execute);
         navigateMine();
         exploreMineStep();
         Waiting.waitNormal(500, 20);
