@@ -490,13 +490,15 @@ public class EnakhrasLament implements QuestTask {
 
         goDownToFinalRoom = new ObjectStep(ObjectID.STONE_LADDER_11044, new RSTile(3105, 9300, 2),
                 "Climb-down");
-
+            //TODO add method for this
         protectThenTalk = new NPCStep(NpcID.BONEGUARD_3577,
                 new RSTile(3105, 9297, 1),
                 //"Put on Protect from Melee, then talk to the Boneguard.",
                 protectFromMelee);
-        repairWall = new ObjectStep(NullObjectID.NULL_11027, new RSTile(3107, 9291, 1),
-                "Take sandstone from the nearby rubble, and use it to repair the south wall. For each piece added, use a chisel on the wall.", sandstone5);
+        repairWall = new ObjectStep(11040, new RSTile(3107, 9291, 1),
+                "Take-rock",
+                //For each piece added, use a chisel on the wall.",
+                 sandstone5);
         repairWall.addDialogStep("Of course I'll help you out.");
 
         useChiselOnWall = new UseItemOnObjectStep(ItemID.CHISEL, NullObjectID.NULL_11027,
@@ -643,7 +645,7 @@ public class EnakhrasLament implements QuestTask {
         }
 
         // done quest //TODO check number here
-        if (Utils.getVarBitValue(varbit) == 100) {
+        if (Utils.getVarBitValue(varbit) == 70) {
             cQuesterV2.taskList.remove(this);
             return;
         }

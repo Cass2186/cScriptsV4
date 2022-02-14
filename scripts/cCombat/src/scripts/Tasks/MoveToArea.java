@@ -383,12 +383,15 @@ public class MoveToArea implements Task {
         if (Vars.get().killingScarabs){
             goToScarabMages();
             return;
-        }
+        } else if (Vars.get().killingUndeadDruids) {
 
-        PathingUtil.walkToTile(new RSTile(1807, 9925, 0));
-        org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                Prayer.HAWK_EYE);
-        PathingUtil.walkToArea(Areas.UNDEAD_DRUID_AREA);
+            PathingUtil.walkToTile(new RSTile(1807, 9925, 0));
+            org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
+                    Prayer.EAGLE_EYE);
+            PathingUtil.walkToArea(Areas.UNDEAD_DRUID_AREA);
+        } else {
+            Log.error("Failed to get area to move to, check vars");
+        }
         //goToRuneDragons();
         //navigateWaterBirthDungeon();
        /* if (Vars.get().safeTile.isClickable()) {

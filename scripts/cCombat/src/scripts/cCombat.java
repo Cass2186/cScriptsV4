@@ -87,7 +87,11 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                         Vars.get().targets = new String[]{s[1]};
                     }
                 }
-
+                if (arg.toLowerCase().contains("scarab")) {
+                    Log.debug("Killing Scarab mages");
+                    Vars.get().killingScarabs = true;
+                    Vars.get().killingUndeadDruids = false;
+                }
 
 
             } catch (Exception e) {

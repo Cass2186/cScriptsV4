@@ -64,25 +64,25 @@ public class DreamMentor implements QuestTask {
     ObjectStep enterCyrisusCave = new ObjectStep(11399, "Crawl-Through",
             new RSTile(2335, 10345, 2), Game.isInInstance());
 
-    NPCStep talkToCyrisus = new NPCStep("Fallen Man", Player.getPosition(),
+    NPCStep talkToCyrisus = new NPCStep("Fallen Man",
             new String[]{"Yes", "Yes."});
 
     // give food
-    NPCStep feed4Food = new NPCStep("Fallen Man", Player.getPosition());
+    NPCStep feed4Food = new NPCStep("Fallen Man");
 
-    NPCStep talkToCyrisus2 = new NPCStep("Fallen Man", Player.getPosition());
+    NPCStep talkToCyrisus2 = new NPCStep("Fallen Man");
 
     // give food
-    NPCStep feed4Food2 = new NPCStep("Fallen Man", Player.getPosition());
+    NPCStep feed4Food2 = new NPCStep("Fallen Man");
 
     // 3622 = spirit
-    NPCStep talkToCyrisus3 = new NPCStep(3466, Player.getPosition());
+    NPCStep talkToCyrisus3 = new NPCStep(3466);
 
     //  addAlternateNpcs(NpcID.CYRISUS_3467);
 
 
     NPCStep feed6Food = new NPCStep(3467, new RSTile(2346, 10360, 2));
-    NPCStep talkToCyrisus4 = new NPCStep(3467, Player.getPosition());
+    NPCStep talkToCyrisus4 = new NPCStep(3467);
 
     // addAlternateNpcs(NpcID.CYRISUS_3468);
 
@@ -92,11 +92,11 @@ public class DreamMentor implements QuestTask {
             new String[]{"Cyrisus in the mine"});
 
 
-    NPCStep giveCyrisusGear = new NPCStep(3468, Player.getPosition(),
+    NPCStep giveCyrisusGear = new NPCStep(3468,
             new String[]{"Talk about the Armament"});
 
 
-    NPCStep supportCyrisusToRecovery = new NPCStep("Cyrisus", Player.getPosition(),
+    NPCStep supportCyrisusToRecovery = new NPCStep("Cyrisus",
             new String[]{
                     "You're looking better now.", "Well, you look and sound more lively.",
                     "Are you looking forward to getting out?", "That's the spirit!",
@@ -114,7 +114,7 @@ public class DreamMentor implements QuestTask {
                     "Tell me a bit about yourself.", "Fishing!"
             });
 
-    NPCStep talkAfterHelping = new NPCStep("Cyrisus", Player.getPosition());
+    NPCStep talkAfterHelping = new NPCStep("Cyrisus");
 
     NPCStep talkToOneiromancer = new NPCStep(ONEIROMANCER,
             new RSTile(2151, 3867, 0), new String[]{"Cyrisus."});

@@ -30,7 +30,7 @@ public class Vars {
      * Strings
      */
     public String[] targets = this.killingScarabs ?
-            new String[]{"Scarab Mage"} : new String[]{"Undead Druid"};
+            new String[]{"Scarab mage"} : new String[]{"Undead Druid"};
 
     public String status = "Initializing...";
 

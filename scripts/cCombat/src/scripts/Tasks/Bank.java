@@ -44,14 +44,16 @@ public class Bank implements Task {
         // TODO go to bank
         //Navigate to bank
         BankManager.open(true);
+        BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
-        BankManager.withdraw(150, true, ItemID.NATURE_RUNE);
-        BankManager.withdraw(750, true, ItemID.FIRE_RUNE);
-        BankManager.withdrawArray(ItemID.PRAYER_POTION, 4);
+        BankManager.withdraw(200, true, ItemID.NATURE_RUNE);
+        BankManager.withdraw(1000, true, ItemID.FIRE_RUNE);
+        BankManager.withdrawArray(ItemID.PRAYER_POTION, 5);
         BankManager.withdrawArray(ItemID.RANGING_POTION, 3);
         BankManager.withdrawArray(ItemID.ANTIDOTE_PLUS_PLUS, 1);
-        BankManager.withdraw(8, true, ItemID.SHARK);
+        BankManager.withdraw(10, true, ItemID.SHARK);
         BankManager.withdraw(1, true, ItemID.LIT_CANDLE);
+        BankManager.withdraw(1000, true, ItemID.COINS_995);
         BankManager.withdraw(1, true, ItemID.TINDERBOX);
         BankManager.close(true);
     }
