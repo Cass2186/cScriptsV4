@@ -1803,6 +1803,20 @@ public class Utils {
         return false;
     }
 
+    public static int[] reverseIntArray(int[] a){
+        int[] b = new int[a.length];
+        int j = a.length;
+        for (int i = 0; i < a.length; i++) {
+            b[j - 1] = a[i];
+            j = j - 1;
+        }
+        return b;
+    }
+
+
+    public static Optional<Npc> getClosestInteractingNpc(){
+        return Query.npcs().isInteractingWithMe().findClosestByPathDistance();
+    }
 
     public static boolean useItemOnNPC(String itemName, String NPCName) {
         RSItem[] invItem = Inventory.find(itemName);
