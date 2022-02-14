@@ -221,7 +221,10 @@ public class ObjectStep extends QuestStep {
                 } else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
                         PathingUtil.walkToTile(this.tile, tileRadius, false))
                     PathingUtil.movementIdle();
-
+                else if (walkable.isPresent() && PathingUtil.localNav(walkable.get())){
+                    Log.debug("[ObjectStep]: Navigating to object area - local walkable tile");
+                    PathingUtil.movementIdle();
+                }
                 else if (PathingUtil.localNavigation(this.tile)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local");
                     PathingUtil.movementIdle();

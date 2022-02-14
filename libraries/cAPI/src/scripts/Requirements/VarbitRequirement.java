@@ -1,6 +1,7 @@
 package scripts.Requirements;
 
 import org.tribot.api2007.Game;
+import org.tribot.script.sdk.Log;
 import scripts.Requirements.Util.Operation;
 import scripts.Utils;
 
@@ -69,8 +70,11 @@ public class VarbitRequirement implements Requirement {
         if (bitPosition >= 0) {
             return bitIsSet == BigInteger.valueOf(Utils.getVarBitValue(varbitID)).testBit(bitPosition);
         }
-        if (this.operation == null)
+        if (this.operation == null) {
+            if ( Utils.getVarBitValue(this.varbitID) == this.requiredValue)
+                Log.debug("[VarbitReq]: Varbit req is true for varbit " + this.varbitID);
             return Utils.getVarBitValue(this.varbitID) == this.requiredValue;
+        }
 
         return operation.check(Utils.getVarBitValue(this.varbitID), this.requiredValue);
     }

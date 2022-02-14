@@ -236,7 +236,7 @@ public class NPCStep extends DetailedQuestStep  {
 
     @Override
     public void execute() {
-        if (requirements.stream().anyMatch(r -> !r.check())) {
+        if (requirements != null && requirements.stream().anyMatch(r -> !r.check())) {
             General.println("[NPCStep]: We failed a requirement to execute this NPCStep");
             return;
         }

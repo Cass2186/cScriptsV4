@@ -3,6 +3,7 @@ package scripts;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.tribot.Constants;
 import org.tribot.api.Clicking;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
@@ -119,6 +120,16 @@ public class Utils {
     }
 
 
+
+    public static int random(int min, int max) {
+
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
 
 
     public static int getQuestPoints() {
