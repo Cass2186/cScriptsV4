@@ -33,7 +33,7 @@ public class NpcID {
     public static final int FURNACE_GRATE = 6146;
     public static final int ENAKHRA = 3575;
     public static final int ENAKHRA_3576 = 3576;
-    public static final int BONEGUARD_3577 = 3577;
+    public static final int BONEGUARD_3577 = 6148;//ruelite is wrong
     public static final int AKTHANAKOS = 3578;
     public static final int AKTHANAKOS_3579 = 3579;
     public static final int GRAIL_MAIDEN = 4056;
