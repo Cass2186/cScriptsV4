@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
 
 public class UseItemOnNpcStep extends QuestStep {
 
@@ -35,11 +36,15 @@ public class UseItemOnNpcStep extends QuestStep {
     @Getter
     @Setter
     private boolean useLocalNav = false;
-    String chat;
+
     int tileRadius = 2;
 
     @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private List<String> chat = new ArrayList<>();
 
 
     public UseItemOnNpcStep(int ItemID, int npcId, RSTile tile) {
@@ -154,6 +159,7 @@ public class UseItemOnNpcStep extends QuestStep {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes");
+                NPCInteraction.handleConversation(chat.toArray(String[]::new));
             }
              Timer.waitCondition(() -> waitCond, 5000, 8000);
         } else if (Utils.useItemOnObject(this.ItemID, this.objectName)) {
@@ -161,6 +167,7 @@ public class UseItemOnNpcStep extends QuestStep {
                 General.println("[Debug]: Waiting for chat to handle");
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Yes");
+                NPCInteraction.handleConversation(chat.toArray(String[]::new));
             }
              Timer.waitCondition(() -> waitCond, 5000, 8000);
         }
@@ -169,7 +176,8 @@ public class UseItemOnNpcStep extends QuestStep {
 
     @Override
     public void addDialogStep(String... dialog) {
-
+        this.handleChat = true;
+        this.chat.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
     }
 
     @Override

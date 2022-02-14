@@ -29,8 +29,8 @@ public class NpcID {
     public static final int BONEGUARD = 3570;
     public static final int PILE_OF_BONES = 3571;
     public static final int DESERT_SPIRIT = 3572;
-    public static final int CRUST_OF_ICE = 3573;
-    public static final int FURNACE_GRATE = 3574;
+    public static final int CRUST_OF_ICE = 6145;
+    public static final int FURNACE_GRATE = 6146;
     public static final int ENAKHRA = 3575;
     public static final int ENAKHRA_3576 = 3576;
     public static final int BONEGUARD_3577 = 3577;

@@ -1,5 +1,6 @@
 package scripts.QuestPackages.EnakhrasLament;
 
+import com.allatori.annotations.DoNotRename;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
@@ -37,12 +38,14 @@ public class EnakhrasLament implements QuestTask {
     // SpellbookRequirement onNormals;
     UseItemOnObjectStep placeBase, useChiselOnWall;
     UseItemOnItemStep useChiselOn32Sandstone, useChiselOn20Sandstone, useChiselOnGranite;
+    @DoNotRename
     Requirement hasPlacedBase, hasTalkedToLazimAfterBase, hasPlacedBody, chiseledStatue, canChooseHead, inTempleEntranceRoom,
             inTempleGroundFloor, startedTemple, gottenLimbs, openedDoor1, openedDoor2, openedDoor3, openedDoor4, mPlaced, kPlaced,
             rPlaced, zPlaced, goneUpstairs, hasGottenRightArm, hasGottenRightLeg, inCentreRoom, inPuzzleFloor,
             fedBread, meltedFountain, cleanedFurnace, litBraziers, litLog, litOak, litWillow, litMaple, litCandle, litCoal, inNorthPuzzleRoom,
             inTopRoom, inLastRoom, wallNeedsChisel, finishedWall, protectFromMelee;
 
+    @DoNotRename
     QuestStep talkToLazim, bringLazim32Sandstone, bringLazim20Sandstone,
             placeBody, talkToLazimToChooseHead, getGranite, craftHead, talkToLazimAboutBody,
             chiselStatue, giveLazimHead, talkToLazimInTemple, enterTemple, enterTempleDownLadder, cutOffLimb, takeM,
@@ -299,12 +302,15 @@ public class EnakhrasLament implements QuestTask {
     }
 
     public QuestStep castFireSpellStep() {
-        if(new Conditions(fedBread, inPuzzleFloor).check()) {
+        NPCStep castFireSpell = new NPCStep(NpcID.CRUST_OF_ICE
+                , new RSTile(3092, 9308, 1),
+                //  "Cast a fire spell on the frozen fountain.",
+                fireSpellRunes);
+        if (new Conditions(fedBread, inPuzzleFloor).check() && !meltedFountain.check()) {
+            cQuesterV2.status = "fire step";
+            Log.debug("Fire step");
             LocalTile tile = new LocalTile(3092, 9308, 1);
-            NPCStep castFireSpell = new NPCStep(NpcID.CRUST_OF_ICE
-                    , new RSTile(3092, 9308, 1),
-                    //  "Cast a fire spell on the frozen fountain.",
-                    fireSpellRunes);
+
             if (tile.distanceTo(MyPlayer.getPosition()) > 10) {
                 if (!PathingUtil.localNav(Utils.getWalkableTile(tile).get())) {
                     Log.debug("Failed to get tile");
@@ -313,17 +319,23 @@ public class EnakhrasLament implements QuestTask {
             }
             Magic.selectSpell("Fire Blast");
             castFireSpell.setInteractionString("Cast ");
+            Log.debug("Executing Fire step");
+            if (Utils.clickNPC(NpcID.CRUST_OF_ICE, "Cast")) {
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 2000, 3500);
+            }
         }
         return castFireSpell;
     }
 
     public QuestStep castAirSpellStep() {
-        if(new Conditions(fedBread, inPuzzleFloor, meltedFountain).check()) {
+        NPCStep castAirSpell = new NPCStep(NpcID.FURNACE_GRATE,
+                new RSTile(3116, 9323, 1),
+                //   "Cast an air spell on the furnace.",
+                airSpellRunes);
+        if (new Conditions(fedBread, inPuzzleFloor, meltedFountain).check() && !cleanedFurnace.check()) {
+            cQuesterV2.status = "Air step";
+            Log.debug("Air step");
             LocalTile tile = new LocalTile(3116, 9323, 1);
-            NPCStep castAirSpell = new NPCStep(NpcID.FURNACE_GRATE,
-                    new RSTile(3116, 9323, 1),
-                    //   "Cast an air spell on the furnace.",
-                    airSpellRunes);
             if (tile.distanceTo(MyPlayer.getPosition()) > 10) {
                 if (!PathingUtil.localNav(Utils.getWalkableTile(tile).get())) {
                     Log.debug("Failed to get tile");
@@ -332,6 +344,10 @@ public class EnakhrasLament implements QuestTask {
             }
             Magic.selectSpell("Air Blast");
             castAirSpell.setInteractionString("Cast ");
+            castAirSpell.execute();
+            if (Utils.clickNPC(NpcID.CRUST_OF_ICE, "Cast")) {
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 2000, 3500);
+            }
         }
         return castAirSpell;
     }
@@ -386,39 +402,55 @@ public class EnakhrasLament implements QuestTask {
         giveLazimHead = new NPCStep(NpcID.LAZIM,
                 new RSTile(3190, 2925, 0), head);
 
-        enterTemple = new ObjectStep(NullObjectID.NULL_11046, new RSTile(3194, 2925, 0), "Enter the temple south of the Bandit's Camp.");
-        enterTempleDownLadder = new ObjectStep(ObjectID.LADDER_11042, new RSTile(3127, 9329, 1), "Enter the temple south of the Bandit's Camp.");
+        enterTemple = new ObjectStep(NullObjectID.NULL_11046, new RSTile(3194, 2925, 0),
+                "Climb-down");
+        enterTempleDownLadder = new ObjectStep(ObjectID.LADDER_11042, new RSTile(3127, 9329, 1),
+                "Climb-down");
         talkToLazimInTemple = new NPCStep(NpcID.LAZIM_6151, new RSTile(3127, 9324, 0),
                 "Talk to Lazim in the temple.");
 
-        cutOffLimb = new ObjectStep(NullObjectID.NULL_10970, new RSTile(3130, 9326, 0), "Use a chisel on the fallen statue to get all its limbs.", chiselHighlighted);
-        cutOffLimb.addDialogStep("Remove the statue's left arm", "Remove the statue's right arm", "Remove the statue's left leg", "Remove the statue's right leg");
+        cutOffLimb = new UseItemOnObjectStep(ItemID.CHISEL, NullObjectID.NULL_10970, new RSTile(3130, 9326, 0),
+                "Use a chisel on the fallen statue to get all its limbs.", chiselHighlighted);
+        cutOffLimb.addDialogStep("Remove the statue's left arm", "Remove the statue's right arm",
+                "Remove the statue's left leg", "Remove the statue's right leg");
 
-        takeM = new ObjectStep(ObjectID.PEDESTAL_11061, new RSTile(3128, 9319, 0), "Take-sigil");
+        takeM = new ObjectStep(ObjectID.PEDESTAL_11061, new RSTile(3128, 9319, 0),
+                "Take-sigil");
         takeZ = new ObjectStep(ObjectID.PEDESTAL_11060, new RSTile(3097, 9336, 0), "Take-sigil");
         takeK = new ObjectStep(ObjectID.PEDESTAL_11063, new RSTile(3080, 9305, 0), "Take-sigil");
         takeR = new ObjectStep(ObjectID.PEDESTAL_11062, new RSTile(3111, 9288, 0), "Take-sigil");
         talkToLazimForHead = new NPCStep(NpcID.LAZIM_6151, new RSTile(3127, 9324, 0), "Talk to Lazim in the temple for the stone head.");
         talkToLazimForHead.addDialogStep("Do you know where the statue's head is?");
 
-        enterDoor1 = new ObjectStep(ObjectID.DOOR_11066, new RSTile(3126, 9337, 0), "Enter the right arm door.", rightArm);
-        enterDoor2 = new ObjectStep(ObjectID.DOOR_11068, new RSTile(3079, 9334, 0), "Enter the left leg door.", leftLeg);
-        enterDoor3 = new ObjectStep(ObjectID.DOOR_11064, new RSTile(3082, 9287, 0), "Enter the left arm door.", leftArm);
-        enterDoor4 = new ObjectStep(ObjectID.DOOR_11070, new RSTile(3129, 9290, 0), "Enter the right leg door.", rightLeg);
+        enterDoor1 = new ObjectStep(ObjectID.DOOR_11066, new RSTile(3126, 9337, 0),
+                "Open", rightArm);
+        enterDoor2 = new ObjectStep(ObjectID.DOOR_11068, new RSTile(3079, 9334, 0),
+                "Open", leftLeg);
+        enterDoor3 = new ObjectStep(ObjectID.DOOR_11064, new RSTile(3082, 9287, 0),
+                "Open", leftArm);
+        enterDoor4 = new ObjectStep(ObjectID.DOOR_11070, new RSTile(3129, 9290, 0),
+                "Open", rightLeg);
 
-        enterKDoor = new ObjectStep(ObjectID.DOOR_11057, new RSTile(3111, 9312, 0), "Enter the door with a K.", kSigil);
-        enterRDoor = new ObjectStep(ObjectID.DOOR_11055, new RSTile(3104, 9319, 0), "Enter the door with an R.", rSigil);
-        enterMDoor = new ObjectStep(ObjectID.DOOR_11053, new RSTile(3097, 9312, 0), "Enter the door with an M.", mSigil);
-        enterZDoor = new ObjectStep(ObjectID.DOOR_11051, new RSTile(3104, 9305, 0), "Enter the door with a Z.", zSigil);
+        enterKDoor = new ObjectStep(ObjectID.DOOR_11057, new RSTile(3111, 9312, 0),
+                "Open", kSigil);
+        enterRDoor = new ObjectStep(ObjectID.DOOR_11055, new RSTile(3104, 9319, 0),
+                "Open", rSigil);
+        enterMDoor = new ObjectStep(ObjectID.DOOR_11053, new RSTile(3097, 9312, 0),
+                "Open", mSigil);
+        enterZDoor = new ObjectStep(ObjectID.DOOR_11051, new RSTile(3104, 9305, 0),
+                "Open", zSigil);
 
-        goUpToPuzzles = new ObjectStep(ObjectID.LADDER_11041, new RSTile(3104, 9309, 0), "Open the central room's doors using the metal letters. Go up the ladder in the central room.");
+        goUpToPuzzles = new ObjectStep(ObjectID.LADDER_11041, new RSTile(3104, 9310, 0),
+                "Climb-up");
 
-        useSoftClayOnPedestal = new ObjectStep(NullObjectID.NULL_10987, new RSTile(3104, 9312, 1),
+        useSoftClayOnPedestal = new UseItemOnObjectStep(ItemID.SOFT_CLAY, NullObjectID.NULL_10987, new RSTile(3104, 9312, 1),
                 "Use soft clay on the pedestal.", softClay);
         useChiselOnGranite = new UseItemOnItemStep(ItemID.CHISEL, ItemID.GRANITE_5KG,
                 !Inventory.contains(ItemID.GRANITE_5KG),
                 granite, chiselHighlighted);
-        useStoneHeadOnPedestal = new ObjectStep(NullObjectID.NULL_10987, new RSTile(3104, 9312, 1), "Use the camel stone head on the pedestal.", camelHead);
+        useStoneHeadOnPedestal = new UseItemOnObjectStep(ItemID.STONE_HEAD_7002, NullObjectID.NULL_10987,
+                new RSTile(3104, 9312, 1),
+                "Use the camel stone head on the pedestal.", camelHead);
 
         useBread = new UseItemOnNpcStep(ItemID.BREAD, NpcID.PENTYN, new RSTile(3091, 9324, 1),
                 ///   "Use bread or cake on Pentyn.",
@@ -431,15 +463,24 @@ public class EnakhrasLament implements QuestTask {
                 new RSTile(3116, 9323, 1),
                 //   "Cast an air spell on the furnace.",
                 airSpellRunes);
-        useMapleLog = new ObjectStep(NullObjectID.NULL_11014, new RSTile(3114, 9309, 1), "Use a maple log on the north west brazier.", mapleLog);
-        useOakLog = new ObjectStep(NullObjectID.NULL_11012, new RSTile(3116, 9306, 1), "Use an oak log on the south brazier.", oakLog);
-        useLog = new ObjectStep(NullObjectID.NULL_11011, new RSTile(3114, 9306, 1), "Use a normal log on the south east brazier.", log);
-        useWillowLog = new ObjectStep(NullObjectID.NULL_11013, new RSTile(3118, 9306, 1), "Use a willow log on the south west brazier.", willowLog);
-        useCoal = new ObjectStep(NullObjectID.NULL_11016, new RSTile(3118, 9309, 1), "Use coal on the north east brazier.", coal);
-        useCandle = new ObjectStep(NullObjectID.NULL_11015, new RSTile(3116, 9309, 1), "Use a candle on the north brazier.", candle);
+        useMapleLog = new UseItemOnObjectStep(ItemID.MAPLE_LOGS, NullObjectID.NULL_11014, new RSTile(3114, 9308, 1),
+                "Use a maple log on the north west brazier.", mapleLog);
+        useOakLog = new UseItemOnObjectStep(ItemID.OAK_LOGS, NullObjectID.NULL_11012, new RSTile(3116, 9307, 1),
+                "Use an oak log on the south brazier.", oakLog);
+        useLog = new UseItemOnObjectStep(ItemID.LOGS, NullObjectID.NULL_11011, new RSTile(3114, 9307, 1),
+                "Use a normal log on the south east brazier.", log);
+        useWillowLog = new UseItemOnObjectStep(ItemID.WILLOW_LOGS, NullObjectID.NULL_11013, new RSTile(3118,
+                9307, 1),
+                "Use a willow log on the south west brazier.", willowLog);
+        useCoal = new UseItemOnObjectStep(ItemID.COAL, NullObjectID.NULL_11016, new RSTile(3118, 9308, 1),
+                "Use coal on the north east brazier.", coal);
+        useCandle = new UseItemOnObjectStep(ItemID.CANDLE, NullObjectID.NULL_11015, new RSTile(3116, 9308, 1),
+                "Use a candle on the north brazier.", candle);
 
-        passBarrier = new ObjectStep(ObjectID.MAGIC_BARRIER, new RSTile(3104, 9319, 1), "Pass through the magic barrier and go up the ladder.");
-        goUpFromPuzzleRoom = new ObjectStep(ObjectID.LADDER_11041, new RSTile(3104, 9332, 1), "Go up the ladder.");
+        passBarrier = new ObjectStep(ObjectID.MAGIC_BARRIER, new RSTile(3104, 9318, 1),
+                "Pass-through");
+        goUpFromPuzzleRoom = new ObjectStep(ObjectID.LADDER_11041, new RSTile(3104, 9332, 1),
+                "Climb-up");
         passBarrier.addSubSteps(goUpFromPuzzleRoom);
 
         castCrumbleUndead = new NPCStep(NpcID.BONEGUARD,
@@ -447,7 +488,8 @@ public class EnakhrasLament implements QuestTask {
                 //    "Cast crumble undead on the Boneguard.",
                 earth2, airRuneOrStaff, chaos);
 
-        goDownToFinalRoom = new ObjectStep(ObjectID.STONE_LADDER_11044, new RSTile(3105, 9300, 2), "Climb down the stone ladder past the Boneguard.");
+        goDownToFinalRoom = new ObjectStep(ObjectID.STONE_LADDER_11044, new RSTile(3105, 9300, 2),
+                "Climb-down");
 
         protectThenTalk = new NPCStep(NpcID.BONEGUARD_3577,
                 new RSTile(3105, 9297, 1),
@@ -590,7 +632,7 @@ public class EnakhrasLament implements QuestTask {
     @Override
     public void execute() {
 
-
+        Log.debug("Cleaned furnace varbit: " +Utils.getVarBitValue(1578));
         int varbit = QuestVarbits.QUEST_ENAKHRAS_LAMENT.getId();
         Log.debug("Enakhra's Lament Varbit is " + Utils.getVarBitValue(varbit));
 
@@ -608,6 +650,9 @@ public class EnakhrasLament implements QuestTask {
 
         //load questSteps into a map
         Map<Integer, QuestStep> steps = loadSteps();
+
+            Log.debug("Cleaned furnace? " +cleanedFurnace.check());
+
         //get the step based on the game setting key in the map
         Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
 
@@ -622,6 +667,8 @@ public class EnakhrasLament implements QuestTask {
             Keyboard.typeString(" "); //for aggie step
             NPCInteraction.handleConversation();
         }
+        if (Utils.inCutScene())
+            Utils.cutScene();
         //slow down looping if it gets stuck
         Waiting.waitNormal(200, 20);
 

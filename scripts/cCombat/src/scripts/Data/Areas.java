@@ -2,6 +2,8 @@ package scripts.Data;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.Requirements.AreaRequirement;
 
 public class Areas {
@@ -33,6 +35,21 @@ public class Areas {
                     new RSTile(1804, 9948, 0)
             }
     );
+ public static Area UNDEAD_DRUID_AREA_SDK  = Area.fromPolygon(
+         new WorldTile[] {
+                 new WorldTile(1804, 9954, 0),
+                 new WorldTile(1795, 9954, 0),
+                 new WorldTile(1795, 9948, 0),
+                 new WorldTile(1799, 9948, 0),
+                 new WorldTile(1799, 9944, 0),
+                 new WorldTile(1796, 9944, 0),
+                 new WorldTile(1796, 9934, 0),
+                 new WorldTile(1806, 9934, 0),
+                 new WorldTile(1806, 9944, 0),
+                 new WorldTile(1804, 9944, 0),
+                 new WorldTile(1804, 9948, 0)
+         }
+ );
     /**
      * just before shed to zanaris
      */

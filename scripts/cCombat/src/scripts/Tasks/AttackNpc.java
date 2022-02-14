@@ -19,6 +19,7 @@ import scripts.EntitySelector.finders.prefabs.NpcEntity;
 //
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class AttackNpc implements Task {
 
@@ -155,7 +156,7 @@ public class AttackNpc implements Task {
                 .isNotInteractingWithCharacter()
                 .isHealthBarNotVisible()
                 .findBestInteractable();
-               // .toList();
+        // .toList();
 
         Optional<Npc> attackingMe = Query.npcs()
                 .nameContains(Vars.get().targets)
@@ -166,8 +167,8 @@ public class AttackNpc implements Task {
                 attackingMe.get().getHealthBarPercent() != 0) return attackingMe;
 
         else if (bestIntractable.isPresent()) {
-                Log.debug("Returning best Interactable NPC");
-                return bestIntractable;
+            Log.debug("Returning best Interactable NPC");
+            return bestIntractable;
         }
 
         return Optional.empty();
@@ -221,6 +222,7 @@ public class AttackNpc implements Task {
             Waiting.waitUniform(200, 400);
     }
 
+
     public void killUndeadDruids() {
 
         if (!Combat.isAutoRetaliateOn())
@@ -240,15 +242,22 @@ public class AttackNpc implements Task {
                     attackingMe.map(t -> t.interact("Attack")).orElse(false)) {
                 Vars.get().status = "Attacking Target";
                 Vars.get().currentTime = System.currentTimeMillis();
-                Waiting.waitUntil(3500, MyPlayer::isHealthBarVisible);
+                Waiting.waitUntil(4500, () -> attackingMe.get().isHealthBarVisible());
             } else {
 
             }
+            General.random(0,0);
             if (Vars.get().drinkPotions)
                 Utils.drinkPotion(Vars.get().potionNames);
 
-            if (waitUntilOutOfCombat())
-                Utils.idleNormalAction();
+            if (waitUntilOutOfCombat()) {
+                int num = Utils.random(0, 100);
+                if (num < 22) {
+                    Utils.idleAfkAction();
+                } else
+                    Utils.idleNormalAction();
+            }
+
 
         } else
             //  General.println("Cannot find target");
@@ -259,8 +268,8 @@ public class AttackNpc implements Task {
     public static boolean waitUntilOutOfCombat() {
         int eatAtHP = AntiBan.getEatAt() + General.random(3, 12);
 
-        return Waiting.waitUntil(General.random(20000, 40000), () -> {
-            Waiting.waitUniform(75, 225);
+        return Waiting.waitUntil(General.random(40000, 60000), () -> {
+            Waiting.waitUniform(150, 450);
 
             AntiBan.timedActions();
             if (Vars.get().killingScarabs && shouldFlickPrayerOn()) {
@@ -277,7 +286,8 @@ public class AttackNpc implements Task {
                     .isInteractingWithMe()
                     .findBestInteractable();
 
-            return !MyPlayer.isHealthBarVisible() || attackingMe.isEmpty() ||
+            return //!MyPlayer.isHealthBarVisible() ||
+                    attackingMe.isEmpty() ||
                     !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
                     (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
         });
