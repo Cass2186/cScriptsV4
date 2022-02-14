@@ -24,6 +24,7 @@ import scripts.Requirements.Requirement;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -316,6 +317,8 @@ public class ObjectStep extends QuestStep {
     }
     @Override
     public String toString(){
+
+
         return "";
     }
 }

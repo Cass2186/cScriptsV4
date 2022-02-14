@@ -149,6 +149,27 @@ public class NPCStep extends DetailedQuestStep  {
 
     }
 
+    public NPCStep(String name, String[] chatText) {
+        this.npcName = name;
+        this.listChatOptions = Arrays.asList(chatText);
+
+    }
+
+    public NPCStep(int id, String[] chatText) {
+        this.npcID = id;
+        this.listChatOptions = Arrays.asList(chatText);
+
+    }
+    public NPCStep(int id) {
+        this.npcID = id;
+
+    }
+
+    public NPCStep(String name) {
+        this.npcName = name;
+
+    }
+
     public NPCStep(String name, RSArea npcArea, String[] chatText, Requirement... requirements) {
         this.npcName = name;
         this.area = npcArea;
