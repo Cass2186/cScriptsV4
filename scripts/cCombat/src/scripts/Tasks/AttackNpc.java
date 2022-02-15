@@ -259,9 +259,12 @@ public class AttackNpc implements Task {
             }
 
 
-        } else
-            //  General.println("Cannot find target");
-            Waiting.waitUniform(200, 400);
+        } else {
+            General.println("Waiting for target");
+            Prayer.disableQuickPrayer();
+            Timer.waitCondition(() -> attackingMe.isPresent(), 10000,15000);
+            Utils.idleNormalAction();
+        }
     }
 
 
@@ -270,13 +273,15 @@ public class AttackNpc implements Task {
 
         return Waiting.waitUntil(General.random(40000, 60000), () -> {
             Waiting.waitUniform(150, 450);
+            if (Vars.get().killingScarabs)
+                Prayer.enableQuickPrayer();
 
             AntiBan.timedActions();
-            if (Vars.get().killingScarabs && shouldFlickPrayerOn()) {
+           /* if (Vars.get().killingScarabs && shouldFlickPrayerOn()) {
                 Prayer.enableQuickPrayer();
             } else if (Vars.get().killingScarabs && !shouldFlickPrayerOn()) {
                 Prayer.disableQuickPrayer();
-            }
+            } */
 
             if (EatUtil.hpPercent() <= (eatAtHP)) {
                 EatUtil.eatFood();

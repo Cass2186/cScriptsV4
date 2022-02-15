@@ -290,6 +290,7 @@ public class MoveToArea implements Task {
                     !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition())) {
                 Log.debug("Going to Underground bank");
                 goDownToBank.execute();
+                Timer.waitCondition(()->WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()), 4500,5000);
             }
             if (inBank.check()) {
                 General.println("[Debug]: Climbing down ladder");
