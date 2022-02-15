@@ -110,6 +110,13 @@ public class MagicBank implements Task {
             .addInvItem(ItemID.DIAMOND_BRACELET, Amount.fill(1))
             .build();
 
+    List<ItemReq> teleAlchItems = new ArrayList<>(
+            Arrays.asList(
+                    //new ItemReq(ItemID.STAFF_OF_AIR, 1, 0, true, true),
+                    new ItemReq(ItemID.LAW_RUNE, 0, 1),
+                    new ItemReq(ItemID.FIRE_RUNE, 0, 1)
+            ));
+
 
     List<ItemReq> saphList = new ArrayList<>(
             Arrays.asList(

@@ -18,6 +18,7 @@ import scripts.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -39,7 +40,15 @@ public enum SpellInfo {
 
     HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemID.NATURE_RUNE,
             Utils.getNotedItemID(Vars.get().alchItem.getId())),
-            ItemID.STAFF_OF_FIRE, 55,99),
+            ItemID.STAFF_OF_FIRE, 55, 99),
+
+
+    TELE_ALCH("High Level Alchemy", SPELL_TYPE.ALCH, 65,
+            new HashMap<>() {{
+                put(ItemID.FIRE_RUNE, 5);
+                put(ItemID.LAW_RUNE, 1);
+            }},
+            ItemID.STAFF_OF_AIR, 55, 99),
 
     DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemID.COSMIC_RUNE,
             ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());
@@ -63,6 +72,18 @@ public enum SpellInfo {
         this.spellString = spellString;
         this.xpPer = expGained;
         this.runes = runeIds;
+        this.spellType = spellType;
+        this.staffId = staffId;
+        this.maxLevel = maxLevel;
+        this.minLevel = minLevel;
+
+    }
+
+    SpellInfo(String spellString, SPELL_TYPE spellType, double expGained,
+              HashMap<Integer, Integer> runeMap, int staffId, int minLevel, int maxLevel) {
+        this.spellString = spellString;
+        this.xpPer = expGained;
+        this.runeMap = runeMap;
         this.spellType = spellType;
         this.staffId = staffId;
         this.maxLevel = maxLevel;
@@ -102,6 +123,9 @@ public enum SpellInfo {
     @Getter
     private int staffId;
 
+    @Getter
+    private HashMap<Integer, Integer> runeMap;
+
     private SPELL_TYPE spellType;
     private int minLevel;
     private int maxLevel;
@@ -111,6 +135,11 @@ public enum SpellInfo {
         TELEPORT,
         ALCH
     }
+
+    private HashMap<Integer, Integer> teleAlchRuneMapList = new HashMap<>() {{
+        put(ItemID.FIRE_RUNE, 5);
+        put(ItemID.LAW_RUNE, 1);
+    }};
 
     private static Skills.SKILLS skill = Skills.SKILLS.MAGIC;
 
@@ -133,7 +162,6 @@ public enum SpellInfo {
             // Log.log("b = " + b + " for " + i.toString() + " max: " + i.maxLevel);
             if (Skills.getActualLevel(skill) >= i.minLevel &&
                     Skills.getActualLevel(skill) < i.maxLevel) {
-                // Log.log("[Debug]: Returning spell " + i.toString());
                 return Optional.of(i);
             }
         }
@@ -155,9 +183,19 @@ public enum SpellInfo {
         List<ItemReq> i = new ArrayList<>();
         if (getCurrentSpell().isPresent()) {
             Log.log(getCurrentSpell().get().toString());
+
             if (getCurrentSpell().get().getItemId() != 0)
                 getCurrentSpell().ifPresent(h -> i.add(new ItemReq(h.getItemId(), h.determineResourcesToNextItem())));
+
             getCurrentSpell().ifPresent(h -> i.add(new ItemReq(h.getStaffId(), 1, true)));
+
+            if (getCurrentSpell().get().runeMap != null){
+                for (Integer integ : getCurrentSpell().get().runeMap.keySet()){
+                    getCurrentSpell().ifPresent(h -> i.add(new ItemReq(integ ,
+                            (h.determineResourcesToNextItem() * getCurrentSpell().get().runeMap.get(integ) ))));
+                }
+            }
+
             List<Integer> runes = getCurrentSpell().get().getRunes();
             for (Integer r : runes) {
                 getCurrentSpell().ifPresent(h -> i.add(new ItemReq(r, h.determineResourcesToNextItem())));
@@ -207,7 +245,7 @@ public enum SpellInfo {
             bnk = BankTask.builder()
                     .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(this.staffId, Amount.of(1)))
                     .addInvItem(ItemID.NATURE_RUNE, Amount.fill(1))
-                    .addInvItem(this.ItemId+1, Amount.fill(1))
+                    .addInvItem(this.ItemId + 1, Amount.fill(1))
                     .build();
         }
 
