@@ -118,6 +118,13 @@ public class ItemReq implements Requirement {
         this.isStackable = isItemStackable();
     }
 
+    public ItemReq(List<Integer> itemCollection) {
+        this.id = itemCollection.get(0);
+        addAlternateItemID(itemCollection);
+        this.amount = 1;
+        this.minAmount = 1;
+
+    }
 
     public ItemReq(int ItemID, int amount, int minAmount) {
         this(ItemID, amount);

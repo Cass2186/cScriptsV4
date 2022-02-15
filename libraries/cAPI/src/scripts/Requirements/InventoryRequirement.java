@@ -28,7 +28,6 @@ public class InventoryRequirement implements Requirement {
     }
 
 
-
     public ArrayList<ItemReq> getMissingInventoryItemsList() {
         ArrayList<ItemReq> missing = new ArrayList<>();
         for (ItemReq item : this.invList) {
@@ -80,9 +79,19 @@ public class InventoryRequirement implements Requirement {
             missing = getMissingBankItemsList(); // adds everything that might have been in the inv to begin with
         }
         for (ItemReq i : missing) {
+            BankCache.update();
             // General.println("[Debug]: Withdrawing item #: " + i);
             BankManager.open(true);
-            BankManager.withdraw(i.getAmount(), true, i.getId());
+            if (BankCache.getStack(i.getId()) >= i.getAmount()) {
+                BankManager.withdraw(i.getAmount(), true, i.getId());
+            } else if (i.getAlternateItemIDs().size() > 0) {
+                Log.debug("[InventoryRequirement]: Getting alternate Item");
+                for (int it : i.getAlternateItemIDs()) {
+                    if (BankCache.getStack(it) >= i.getAmount()) {
+                        BankManager.withdraw(i.getAmount(), true, it);
+                    }
+                }
+            }
             if (i.isShouldEquip()) {
                 RSItem[] item = Inventory.find(i.getId());
                 if (item.length > 0)
@@ -93,6 +102,7 @@ public class InventoryRequirement implements Requirement {
         BankManager.close(true);
 
     }
+
     public void withdrawItemsNew() {
         ArrayList<ItemReq> missing = getMissingInventoryItemsList();
         if (missing.size() > 0) {
@@ -160,7 +170,6 @@ public class InventoryRequirement implements Requirement {
     }
 
 
-
     public void addEquipmentItem(Equipment.Slot slot, int id) {
         Optional<EquipmentItem> item = slot.getItem();
         if (item.isPresent()) {
@@ -169,7 +178,7 @@ public class InventoryRequirement implements Requirement {
                 return;
             }
         } else {
-            invList.add(new ItemReq(id, 1 ,true, true));
+            invList.add(new ItemReq(id, 1, true, true));
         }
     }
 
@@ -180,16 +189,14 @@ public class InventoryRequirement implements Requirement {
             if (item.get().getId() == id && item.get().getStack() >= minAmount) {
                 return;
             } else if (item.get().getId() == id && item.get().getStack() < minAmount) { //correct item, not enough
-                invList.add(new ItemReq(id, minAmount -item.get().getStack(),true, true));
+                invList.add(new ItemReq(id, minAmount - item.get().getStack(), true, true));
             } else if (item.get().getId() != id) {
 
             }
         } else {
-            invList.add(new ItemReq(id, minAmount,true, true));
+            invList.add(new ItemReq(id, minAmount, true, true));
         }
     }
-
-
 
 
     @Override
