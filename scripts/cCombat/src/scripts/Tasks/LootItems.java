@@ -88,12 +88,20 @@ public class LootItems implements Task {
     }
 
     public static Optional<GroundItem> getLootItem() {
+
         List<GroundItem> groundItemList = Query.groundItems()
                 .inArea(Areas.UNDEAD_DRUID_AREA_SDK)
                 .nameNotContains("Burnt bones", "Ashes", "ashes")
                 .toList();
            // Log.debug("grounditemlist.size(): " + groundItemList.size());
 
+        if (Vars.get().killingScarabs)
+            groundItemList = Query.groundItems()
+                    .inArea(Areas.scarabFightAreaSdk)
+                    .nameNotContains("Burnt bones", "Ashes", "ashes")
+                    .toList();
+        
+        // Log.debug("grounditemlist.size(): " + groundItemList.size());
         for (GroundItem g : groundItemList) {
         //    if (GrandExchange.getPrice(g.getId()) > 150)
                // Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
