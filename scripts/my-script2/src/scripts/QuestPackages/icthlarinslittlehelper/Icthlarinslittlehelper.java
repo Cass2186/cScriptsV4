@@ -136,8 +136,7 @@ public class Icthlarinslittlehelper implements QuestTask {
     ObjectStep openPyramidDoorWithSymbol = new ObjectStep(6614, new RSTile(3295, 2779, 0),
             "Open", holySymbol);
 
-    ObjectStep jumpPitWithSymbol = new ObjectStep(ObjectID.PIT, new RSTile(3292, 9194, 0),
-            "Jump-Across", holySymbol);
+
 
     ObjectStep enterEastRoom = new ObjectStep(6643, new RSTile(3306, 9199, 0),
             "Open");
@@ -223,7 +222,8 @@ public class Icthlarinslittlehelper implements QuestTask {
 
     ObjectStep pickUpAnyJar = new ObjectStep(6638, new RSTile(3286, 9194, 0), "Take");
     ObjectStep pickUpAnyJarAgain = new ObjectStep(6638, new RSTile(3286, 9194, 0), "Take");
-
+    ObjectStep jumpPitWithSymbol = new ObjectStep(ObjectID.PIT, new RSTile(3292, 9194, 0),
+            "Jump-Across", inNorthPyramid.check(), holySymbol);
     public void pickUpAnyJarStep() {
         int[] jars = {6638, 6636, 6634, 6640};
         for (int i : jars) {
@@ -254,6 +254,10 @@ public class Icthlarinslittlehelper implements QuestTask {
                     new GEItem(ItemID.RUNE_SCIMITAR, 1, 50),
                     new GEItem(ItemID.BAG_OF_SALT, 1, 500),
                     new GEItem(ItemID.RUNE_FULL_HELM, 1, 20),
+                    new GEItem(ItemID.RUNE_CHAINBODY, 1, 20),
+                    new GEItem(ItemID.RUNE_KITESHIELD, 1, 20),
+                    new GEItem(ItemID.RUNE_PLATELEGS, 1, 20),
+
                     //combat gear
                     new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 2, 30),
                     new GEItem(ItemID.STAMINA_POTION[0], 5, 15),
@@ -263,6 +267,7 @@ public class Icthlarinslittlehelper implements QuestTask {
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
+                    new ItemReq(ItemCollections.getCats()),
                     new ItemReq(ItemID.COINS, 2500, 500),
                     new ItemReq(ItemID.STAMINA_POTION[0], 5, 0),
                     new ItemReq(ItemID.WATERSKIN[0], 3, 1),
@@ -272,8 +277,15 @@ public class Icthlarinslittlehelper implements QuestTask {
                     new ItemReq(ItemID.ANTIDOTE4, 2, 0),
                     new ItemReq(ItemID.WILLOW_LOGS, 1),
                     new ItemReq(ItemID.BAG_OF_SALT, 1),
+                    new ItemReq(ItemID.RUNE_SCIMITAR, 1, true, true),
+                    new ItemReq(ItemID.RUNE_FULL_HELM, 1, true, true),
+                    new ItemReq(ItemID.RUNE_CHAINBODY, 1, true, true),
+                    new ItemReq(ItemID.RUNE_PLATELEGS, 1, true, true),
+                    new ItemReq(ItemID.RUNE_KITESHIELD, 1, true, true),
+
                     new ItemReq(ItemID.SUMMER_PIE, 3, 1),
                     new ItemReq(ItemID.SHARK, 4, 1),
+                    new ItemReq(ItemID.TINDERBOX, 1, 1),
                     //combat gear
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
@@ -356,9 +368,16 @@ public class Icthlarinslittlehelper implements QuestTask {
         if (inPyramid.check()) {
             cQuesterV2.status = "Jumping Pit";
             jumpPit.setUseLocalNav(true);
+            if(PathingUtil.localNavigation(new RSTile(3292, 9193, 0)))
+                PathingUtil.movementIdle();
+            if (MyPlayer.getRunEnergy() < 60){
+                Log.debug("Drnking stamina potion for run energy");
+                Utils.clickInventoryItem(ItemID.SUMMER_PIE);
+                Utils.drinkPotion(ItemID.STAMINA_POTION);
+            }
             jumpPit.execute();
-            if (Timer.waitCondition(() -> Player.getAnimation() != -1, 2500))
-                Timer.waitCondition(() -> Player.getAnimation() == -1, 5500);
+            if (Timer.waitCondition(() -> Player.getAnimation() != -1, 3500))
+                Timer.waitCondition(() -> Player.getAnimation() == -1, 6500);
         }
         return inNorthPyramid.check();
     }
@@ -568,9 +587,18 @@ public class Icthlarinslittlehelper implements QuestTask {
             cQuesterV2.taskList.remove(this);
             return;
         }
+
         if (Utils.getVarBitValue(varbit) == 0) {
-            cQuesterV2.status = "Talking to Wanderer";
-            talkToWanderer.execute();
+            if (!initialItemReqs.check()) {
+                buyStep.buyItems();
+                initialItemReqs.withdrawItems();
+            } else {
+                cQuesterV2.status = "Talking to Wanderer";
+                talkToWanderer.execute();
+                //needed for whne you pick up your cat
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation("Yes.");
+            }
         } else if (Utils.getVarBitValue(varbit) == 1) {
             cQuesterV2.status = "Talking to Wanderer again";
             talkToWandererAgain.execute();
@@ -581,6 +609,11 @@ public class Icthlarinslittlehelper implements QuestTask {
 
         } else if (Utils.getVarBitValue(varbit) == 3 ||
                 Utils.getVarBitValue(varbit) == 4) {
+            if (!inSoph.check() && !inPyramid.check()) {
+                Log.debug("Entering rock");
+                enterRock.execute();
+            }
+
             firstMemory();
 
         } else if (Utils.getVarBitValue(varbit) == 5) {
@@ -673,7 +706,17 @@ public class Icthlarinslittlehelper implements QuestTask {
                 cQuesterV2.status = "Talking to high priest";
                 returnToHighPriest.execute();
             }
-        } else if (Utils.getVarBitValue(varbit) == 21) {
+        } else if (Utils.getVarBitValue(varbit) == 17) {
+            ConditionalStep placeSymbol = new ConditionalStep(enterRock);
+            placeSymbol.addStep(inEastRoom, useSymbolOnSarcopagus);
+            placeSymbol.addStep(inPyramid, enterEastRoom);
+
+            placeSymbol.execute();
+            if (NPCInteraction.waitForConversationWindow())
+                NPCInteraction.handleConversation();
+
+        } else if (Utils.getVarBitValue(varbit) == 20 || Utils.getVarBitValue(varbit) == 21
+                || Utils.getVarBitValue(varbit) == 22) {
             handleRitual();
          }
         else {
@@ -685,7 +728,7 @@ public class Icthlarinslittlehelper implements QuestTask {
         // need this for symbol step
         Waiting.waitNormal(1250,100);
         if (NPCInteraction.isConversationWindowUp()){
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation("Yes.");
         }
         if (Utils.inCutScene())
             Utils.cutScene();

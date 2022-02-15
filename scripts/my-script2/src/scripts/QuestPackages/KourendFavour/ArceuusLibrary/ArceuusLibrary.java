@@ -55,7 +55,7 @@ public class ArceuusLibrary implements QuestTask, InterfaceListener, InventoryLi
         InterfaceObserver interfaceObserver = new InterfaceObserver(() -> true);
         interfaceObserver.addListener(this);
         interfaceObserver.addRSInterfaceChild(193, 2);
-        interfaceObserver.addRSInterfaceChild(231, 5);
+        interfaceObserver.addRSInterfaceChild(231, 6);
         interfaceObserver.start();
     }
 

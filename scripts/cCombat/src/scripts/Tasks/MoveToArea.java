@@ -286,9 +286,11 @@ public class MoveToArea implements Task {
     public void goToScarabMages(){
             checkLightSource();
 
-            if (!inBank.check() && !inDungeon.check() && !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()))
+            if (!inBank.check() && !inDungeon.check() &&
+                    !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition())) {
+                Log.debug("Going to Underground bank");
                 goDownToBank.execute();
-
+            }
             if (inBank.check()) {
                 General.println("[Debug]: Climbing down ladder");
                 goDownToDungeon.execute();
@@ -379,12 +381,12 @@ public class MoveToArea implements Task {
 
     @Override
     public void execute() {
-        Log.debug("[Debug]: Move to area");
         if (Vars.get().killingScarabs){
+            Log.debug("[Debug]: Move to scarb area");
             goToScarabMages();
             return;
         } else if (Vars.get().killingUndeadDruids) {
-
+            Log.debug("[Debug]: Move to undead druid area");
             PathingUtil.walkToTile(new RSTile(1807, 9925, 0));
             org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
                     Prayer.EAGLE_EYE);
