@@ -181,7 +181,7 @@ public class LootItems implements Task {
         return getLootItem().isPresent()
                 && (Vars.get().killingScarabs && Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition())
                 || (Vars.get().killingUndeadDruids) && Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()));
-    
+
     }
 
     @Override
