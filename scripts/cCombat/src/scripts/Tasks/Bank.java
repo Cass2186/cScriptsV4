@@ -92,7 +92,9 @@ public class Bank implements Task {
         }
         if (Vars.get().killingUndeadDruids) {
             undeadDruidBank();
-        } else {
+        }  else if (Vars.get().killingScarabs)
+            scarabsBank();
+        else {
             bank();
         }
     }

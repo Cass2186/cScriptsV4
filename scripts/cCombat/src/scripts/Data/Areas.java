@@ -35,6 +35,22 @@ public class Areas {
                     new RSTile(1804, 9948, 0)
             }
     );
+
+   public static Area scarabFightAreaSdk = Area.fromPolygon(
+           new WorldTile[] {
+                   new WorldTile(3302, 9250, 2),
+                   new WorldTile(3294, 9250, 2),
+                   new WorldTile(3294, 9252, 2),
+                   new WorldTile(3296, 9253, 2),
+                   new WorldTile(3296, 9257, 2),
+                   new WorldTile(3298, 9257, 2),
+                   new WorldTile(3299, 9262, 2),
+                   new WorldTile(3301, 9262, 2),
+                   new WorldTile(3302, 9257, 2),
+                   new WorldTile(3306, 9257, 2),
+                   new WorldTile(3306, 9251, 2)
+           }
+   );
  public static Area UNDEAD_DRUID_AREA_SDK  = Area.fromPolygon(
          new WorldTile[] {
                  new WorldTile(1804, 9954, 0),

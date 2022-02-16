@@ -33,11 +33,15 @@ public class EatDrink implements Task {
     }
 
     public void eatDrink() {
-        org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
-                org.tribot.script.sdk.Prayer.EAGLE_EYE);
-        if (!Vars.get().killingUndeadDruids && !Vars.get().killingScarabs &&
-                !Vars.get().antifireTimer.isRunning()) {
-            RSItem[] superAnti = Inventory.find(22209, 22212, 22215, 22218);
+            if (Vars.get().killingScarabs)
+                org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
+                        org.tribot.script.sdk.Prayer.HAWK_EYE);
+            else
+                org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
+                        org.tribot.script.sdk.Prayer.EAGLE_EYE);
+            if (!Vars.get().killingUndeadDruids && !Vars.get().killingScarabs &&
+                    !Vars.get().antifireTimer.isRunning()) {
+                RSItem[] superAnti = Inventory.find(22209, 22212, 22215, 22218);
 
             if (superAnti.length == 0 && breakTeleTab()) return;
 

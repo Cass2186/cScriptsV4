@@ -10,6 +10,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
@@ -86,7 +87,7 @@ public class MoveToArea implements Task {
         } else if (Areas.wbDungeon4Pt5.check()) {
             Log.log("[Debug]: In WB 4 pt 5");
 
-            if (PathingUtil.localNavigation( new RSTile(1865, 4386, 2)))
+            if (PathingUtil.localNavigation(new RSTile(1865, 4386, 2)))
                 PathingUtil.movementIdle();
             if (Utils.clickObj("Ladder", "Climb-down"))
                 Timer.waitCondition(() -> Areas.wbDungeon3Pt4.check(), 4500, 6000);
@@ -134,7 +135,7 @@ public class MoveToArea implements Task {
 
         } else if (Areas.wbDungeon3Pt1.check()) {
             Log.log("[Debug]: In WB 3 pt 1");
-            if (PathingUtil.localNavigation( new RSTile(1800, 4389, 1)))
+            if (PathingUtil.localNavigation(new RSTile(1800, 4389, 1)))
                 PathingUtil.movementIdle();
             if (Utils.clickObj("Ladder", "Climb-down"))
                 Timer.waitCondition(() -> Areas.wbDungeon4Pt1.check(), 4500, 6000);
@@ -194,8 +195,7 @@ public class MoveToArea implements Task {
             //first part of dungeon is dax mapped
         }
     }
-
-    RSArea bank = new RSArea(new RSTile(2772, 5129, 0), new RSTile(2758, 5145, 0));
+    RSArea bank = new RSArea(new RSTile(2792, 5175, 0), new RSTile(2809, 5157, 0));
     RSArea dungeon = new RSArea(new RSTile(3263, 9200, 2), new RSTile(3327, 9280, 2));
     RSArea chasm = new RSArea(new RSTile(3216, 9217, 0), new RSTile(3265, 9277, 0));
 
@@ -287,10 +287,13 @@ public class MoveToArea implements Task {
             checkLightSource();
 
             if (!inBank.check() && !inDungeon.check() &&
-                    !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition())) {
+                    !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()) &&
+                    MyPlayer.getPosition().getPlane() == 0) {
                 Log.debug("Going to Underground bank");
+                if (MyPlayer.getPosition().getPlane() == 2) return;
                 goDownToBank.execute();
-                Timer.waitCondition(()->WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()), 4500,5000);
+                Timer.waitCondition(()-> WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()),
+                        4500,5000);
             }
             if (inBank.check()) {
                 General.println("[Debug]: Climbing down ladder");
@@ -304,6 +307,7 @@ public class MoveToArea implements Task {
                     NPCInteraction.handleConversation();
                     General.sleep(2000, 3000);
                 }
+                Timer.waitCondition(() -> inDungeon.check(), 3500, 5000);
             }
             checkLightSource();
 

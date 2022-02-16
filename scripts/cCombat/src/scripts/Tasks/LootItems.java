@@ -100,7 +100,7 @@ public class LootItems implements Task {
                     .inArea(Areas.scarabFightAreaSdk)
                     .nameNotContains("Burnt bones", "Ashes", "ashes")
                     .toList();
-        
+
         // Log.debug("grounditemlist.size(): " + groundItemList.size());
         for (GroundItem g : groundItemList) {
         //    if (GrandExchange.getPrice(g.getId()) > 150)
@@ -179,7 +179,9 @@ public class LootItems implements Task {
     @Override
     public boolean validate() {
         return getLootItem().isPresent()
-                && Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition());
+                && (Vars.get().killingScarabs && Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition())
+                || (Vars.get().killingUndeadDruids) && Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()));
+    
     }
 
     @Override

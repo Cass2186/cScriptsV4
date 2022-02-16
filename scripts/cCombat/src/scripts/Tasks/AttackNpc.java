@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.*;
 
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.Npc;
 import scripts.API.AntiPKThread;
 import scripts.*;
@@ -23,7 +24,8 @@ import java.util.Random;
 
 public class AttackNpc implements Task {
 
-    private static int SCARAB_PRE_ATTACK_ANIMATION = 430;
+    private static int SCARAB_PRE_ATTACK_ANIMATION = 5443;
+
 
     public static void setPrayer(boolean on) {
         if (on && Prayer.getPrayerPoints() > 0) {
@@ -149,19 +151,21 @@ public class AttackNpc implements Task {
 
     }
 
-    public Optional<Npc> getNpcToAttack() {
+    public Optional<Npc> getNpcToAttack(Area area) {
         Optional<Npc> bestIntractable = Query.npcs()
                 .nameContains(Vars.get().targets)
+                .inArea(area)
                 .isNotBeingInteractedWith()
                 .isNotInteractingWithCharacter()
                 .isHealthBarNotVisible()
                 .findBestInteractable();
-        // .toList();
 
         Optional<Npc> attackingMe = Query.npcs()
                 .nameContains(Vars.get().targets)
+                .inArea(area)
                 .isInteractingWithMe()
                 .findBestInteractable();
+
 
         if (attackingMe.isPresent() && attackingMe.get().isHealthBarVisible() &&
                 attackingMe.get().getHealthBarPercent() != 0) return attackingMe;
@@ -196,11 +200,15 @@ public class AttackNpc implements Task {
         if (!activateQuickPrayers(Prayer.PROTECT_FROM_MAGIC, Prayer.HAWK_EYE))
             return; // failed to activate for some reason
 
+        if (Inventory.contains(ItemID.CANDLE) &&
+                Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.CANDLE))
+            Utils.idleNormalAction();
+
         //toggle autoretalite if needed
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
-        Optional<Npc> attackingMe = getNpcToAttack();
+        Optional<Npc> attackingMe = getNpcToAttack(Areas.scarabFightAreaSdk);
 
         if (attackingMe.isPresent()) {
             if (!attackingMe.get().isHealthBarVisible() && attackingMe.get().getHealthBarPercent() != 0 &&
@@ -231,7 +239,7 @@ public class AttackNpc implements Task {
         Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC,
                 Prayer.EAGLE_EYE);
 
-        Optional<Npc> attackingMe = getNpcToAttack();
+        Optional<Npc> attackingMe = getNpcToAttack(Areas.UNDEAD_DRUID_AREA_SDK);
 
         if (attackingMe.isPresent()) {
 
@@ -246,7 +254,7 @@ public class AttackNpc implements Task {
             } else {
 
             }
-            General.random(0,0);
+            General.random(0, 0);
             if (Vars.get().drinkPotions)
                 Utils.drinkPotion(Vars.get().potionNames);
 
@@ -262,7 +270,7 @@ public class AttackNpc implements Task {
         } else {
             General.println("Waiting for target");
             Prayer.disableQuickPrayer();
-            Timer.waitCondition(() -> attackingMe.isPresent(), 10000,15000);
+            Timer.waitCondition(() -> attackingMe.isPresent(), 10000, 15000);
             Utils.idleNormalAction();
         }
     }
@@ -292,9 +300,9 @@ public class AttackNpc implements Task {
                     .toList();
 
             return //!MyPlayer.isHealthBarVisible() ||
-                    attackingMe.size() == 0 ||
-                    !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
-                    (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
+                    attackingMe.size() == 0 ||   Inventory.contains(ItemID.CANDLE) ||
+                            !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
+                            (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
         });
     }
 
