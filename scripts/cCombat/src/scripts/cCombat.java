@@ -91,6 +91,9 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                     Log.debug("Killing Scarab mages");
                     Vars.get().killingScarabs = true;
                     Vars.get().killingUndeadDruids = false;
+                } else {
+                    Log.debug("New Target = Undead Druid");
+                    Vars.get().targets = new String[]{"Undead Druid"};
                 }
 
 
@@ -100,49 +103,6 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
             }
         }
     }
-
-    public RSGroundItem getLootItem() {
-
-        RSGroundItem[] groundItems = GroundItems.getAll();
-
-        if (groundItems.length > 0) {
-            for (int i = 0; i < groundItems.length; i++) {
-                RSItemDefinition def = groundItems[i].getDefinition();
-                int id = groundItems[i].getID();
-
-                if (def == null)
-                    return null;
-
-                if (def.isNoted())
-                    id = def.getID() - 1;
-
-
-                if (GrandExchange.getPrice(id) > Vars.get().minLootValue) {
-
-
-                    if (!def.getName().contains("Burnt bones")
-                            && !def.getName().contains("ashes")) {
-                        return groundItems[i];
-
-                    }
-                } else if (def.isStackable() || def.isNoted()) {
-
-                    int individualPrice = GrandExchange.getPrice(id);
-                    int amount = groundItems[i].getStack();
-                    int value = individualPrice * amount;
-
-                    if (value > Vars.get().minLootValue) {
-
-                        if (groundItems[i].isClickable())
-                            return groundItems[i];
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
 
     public static void populateInitialMap() {
         Log.log("[Debug]: Populating intial skills xp HashMap");

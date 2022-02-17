@@ -184,7 +184,7 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
         InterfaceObserver interfaceObserver = new InterfaceObserver(() -> true);
         interfaceObserver.addListener(this);
         interfaceObserver.addRSInterfaceChild(119, 3);
-        interfaceObserver.addRSInterfaceChild(231, 5);
+        interfaceObserver.addRSInterfaceChild(231, 6);
         interfaceObserver.addRSInterfaceChild(WidgetInfo.DIALOG_NPC_TEXT.getId(),
                 WidgetInfo.DIALOG_NPC_TEXT.getChildId());
         interfaceObserver.start();
