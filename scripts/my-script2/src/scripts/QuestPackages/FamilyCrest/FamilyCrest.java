@@ -772,7 +772,7 @@ public class FamilyCrest implements QuestTask {
     public boolean leaveNorthRoom() {
         if (NORTH_ROOM.contains(Player.getPosition())) {
             if (Utils.clickObj(2431, "Open")) {//  entering north room
-                Timer.waitCondition(() -> NORTH_ROOM.contains(Player.getPosition()), 10000, 12000);
+                Timer.waitCondition(() -> !NORTH_ROOM.contains(Player.getPosition()), 10000, 12000);
             }
         }
         return !NORTH_ROOM.contains(Player.getPosition());
@@ -848,17 +848,19 @@ public class FamilyCrest implements QuestTask {
 
     @Override
     public void execute() {
-        if (!checkRequirements())
+        if (!checkRequirements()) {
             cQuesterV2.taskList.remove(this);
+            return;
+        }
         setupSteps();
 
         if (Game.getSetting(148) == 0) {
-         //   buyItems();
-          //  getInitialItems();
-            // startQuest();
+         buyItems();
+           getInitialItems();
+
         }
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_FAMILY_CREST.getId());
-        Log.log("[Debug]: Family Crest gameSetting is " + gameSetting);
+        Log.debug("Family Crest gameSetting is " + gameSetting);
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
         step.ifPresent(QuestStep::execute);

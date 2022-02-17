@@ -169,9 +169,11 @@ public class DreamMentor implements QuestTask {
                     new GEItem(ItemID.SHARK, 40, 25),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 25),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemID.BLACK_DHIDE_SHIELD, 1, 50),
-                    new GEItem(ItemID.BLACK_DHIDE_BODY, 1, 25),
-                    new GEItem(ItemID.BLACK_DHIDE_CHAPS, 1, 25),
+                    //TODO change combat gear to melee + trident
+                    new GEItem(ItemID.DRAGON_PLATELEGS, 1, 15),
+                    new GEItem(ItemID.OCCULT_NECKLACE, 1, 15),
+                    new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
+
                     new GEItem(ItemID.BLACK_DHIDE_VAMBRACES, 1, 25),
                     new GEItem(12504, 1, 25), //bandos coif
                     new GEItem(ItemID.RUNE_CROSSBOW, 1, 25),

@@ -12,7 +12,9 @@ import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -575,6 +577,57 @@ public class HauntedMine implements QuestTask {
         exploreMine.addStep(new Conditions(glowingFungus, inLevel2North, hasKeyOrOpenedValve), goDownLevel2North);
         exploreMine.addStep(new Conditions(glowingFungus, inLevel1North, hasKeyOrOpenedValve), goDownLevel1North);
         exploreMine.execute();
+    }
+
+    private WorldTile southBossTile = new WorldTile(2787, 4443, 0);
+    private WorldTile southStandTile = new WorldTile(2786, 4445, 0);
+    private WorldTile westBossTile = new WorldTile(2781, 4460, 0);
+    private WorldTile westStandTile = new WorldTile(2779, 4458, 0);
+    private WorldTile eastBossTile = new WorldTile(2797, 4461, 0);
+    private WorldTile eastStandTile = new WorldTile(2797, 4459, 0);
+
+    public void handleBossTile(WorldTile tile){
+        if (PathingUtil.localNav(tile))
+            Timer.waitCondition(() ->
+                    tile.distanceTo(MyPlayer.getPosition()) < 5, 3500, 4500);
+
+        if (tile.interact("Walk here")) {
+            Waiting.waitNormal(500, 95);
+        }
+    }
+
+    private void bossFight() {
+        Optional<Npc> boss = Query.npcs()
+                .nameContains("Treus Dayth")
+                .findClosest();
+        if (boss.isEmpty()) {
+            //pickup key attempt
+        } else {
+            if (boss.get().isMoving()) {
+                Log.debug("Boss is on the move");
+                // wait till not
+                //eat/drink if needed
+            } else { //boss not moving
+                WorldTile tile = boss.get().getTile();
+                if (tile.equals(southBossTile)) {
+                    Log.debug("Boss is on south tile");
+                    handleBossTile(southStandTile);
+
+                } else if (tile.equals(westBossTile)) {
+                    Log.debug("Boss is on west tile");
+                    handleBossTile(westStandTile);
+                } else if (tile.equals(eastBossTile)) {
+                    Log.debug("Boss is on east tile");
+                    handleBossTile(eastStandTile);
+                } else {
+                    // add support for northen tiles
+                }
+                if (boss.map(b -> b.interact("Attack")).orElse(false)) {
+                    Timer.waitCondition(() -> boss.get().isMoving() ||
+                            MyPlayer.getCurrentHealthPercent() < 35, 12500, 15000);
+                }
+            }
+        }
     }
 
     public Map<Integer, QuestStep> setconditions() {

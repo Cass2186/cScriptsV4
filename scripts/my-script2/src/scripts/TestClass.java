@@ -19,6 +19,7 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -454,6 +455,30 @@ public class TestClass implements QuestTask {
         }
     }
 
+    int stunnedAnimation = 424;
+
+    public boolean clickFarmer() {
+        if (MyPlayer.getCurrentHealthPercent() < General.random(30, 40)) {
+            EatUtil.eatFood();
+        }
+        Optional<Npc> master = Query.npcs().nameContains("Master Farmer").findBestInteractable();
+        return master.map(f -> f.interact("Pickpocket")).orElse(false);
+    }
+
+    public void pickpocket() {
+        if (Inventory.isFull()) {
+            Inventory.drop(ItemID.SWEETCORN_SEED, 5098, 5282,
+                    5103, 5324, 5280, 5307, 5102, 5306, 5096, 5308, 5318, 5310, 5099, 5319, 5100, 5291
+            ,5309);
+
+        } else if (clickFarmer()) {
+            Timer.waitCondition(() -> Player.getAnimation() != -1, 3500, 5000);
+            if (Player.getAnimation() == stunnedAnimation){
+                Waiting.waitNormal(2800,150);
+            }
+        }
+    }
+
     public void checkInteraction() {
         if (!interactTimer.isRunning()) {
             cQuesterV2.status = "Interacting with Cat";
@@ -476,7 +501,9 @@ public class TestClass implements QuestTask {
     @Override
     public void execute() {
         //getGoutWeed();
-        autoClick();
+       // autoClick();
+        pickpocket();
+        Waiting.waitNormal(60,10);
     }
 
     @Override

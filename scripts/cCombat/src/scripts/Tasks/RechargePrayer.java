@@ -46,6 +46,7 @@ public class RechargePrayer implements Task {
 
     @Override
     public void execute() {
+        Log.debug("Praying at altar");
         prayAtAltar();
     }
 }

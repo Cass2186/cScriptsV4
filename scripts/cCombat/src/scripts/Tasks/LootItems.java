@@ -117,7 +117,7 @@ public class LootItems implements Task {
                 int amount = g.getStack();
                 int value = individualPrice * amount;
                 if (value > Vars.get().minLootValue) {
-                    Log.debug("[Loot] Item is " + g.getName());
+                   // Log.debug("[Loot] Item is " + g.getName());
                     return Optional.of(g);
                 }
             } else if (g.getId() == 995 && g.getStack() > 500) {

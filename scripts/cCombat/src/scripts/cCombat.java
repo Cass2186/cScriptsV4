@@ -94,6 +94,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 } else {
                     Log.debug("New Target = Undead Druid");
                     Vars.get().targets = new String[]{"Undead Druid"};
+                    Vars.get().minLootValue = 650;
                 }
 
 

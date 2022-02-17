@@ -268,9 +268,7 @@ public class AttackNpc implements Task {
 
 
         } else {
-            General.println("Waiting for target");
-            Prayer.disableQuickPrayer();
-            Timer.waitCondition(() -> attackingMe.isPresent(), 10000, 15000);
+            Timer.waitCondition(() -> getNpcToAttack(Areas.UNDEAD_DRUID_AREA_SDK).isPresent(), 10000, 15000);
             Utils.idleNormalAction();
         }
     }
