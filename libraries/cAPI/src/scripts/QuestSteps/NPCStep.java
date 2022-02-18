@@ -19,6 +19,7 @@ import scripts.Requirements.Requirement;
 import scripts.Timer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NPCStep extends DetailedQuestStep  {
 
@@ -26,7 +27,7 @@ public class NPCStep extends DetailedQuestStep  {
     private int npcID;
     private RSArea area;
     public RSTile npcTile;
-    private List<String> listChatOptions;
+    private List<String> listChatOptions = new ArrayList<>();
     private String npcName;
     private RSNPC rsnpc;
     @Setter
@@ -233,7 +234,8 @@ public class NPCStep extends DetailedQuestStep  {
             listChatOptions = new ArrayList<>();
         }
        // Log.debug("Adding dialog " + dialog);
-        Collections.addAll(listChatOptions, dialog);
+        listChatOptions.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
+      //  Collections.addAll(listChatOptions, dialog);
     }
 
 
