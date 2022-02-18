@@ -303,6 +303,7 @@ public class NPCStep extends DetailedQuestStep  {
             if (NPCInteraction.isConversationWindowUp()) {
                 if (listChatOptions != null && listChatOptions.size() > 0) {
                     Log.debug("Handling chat");
+                    NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
                     ChatScreen.handle(listChatOptions.toArray(String[]::new));
                 }else
                     ChatScreen.handle();
@@ -341,6 +342,7 @@ public class NPCStep extends DetailedQuestStep  {
             if (listChatOptions != null && listChatOptions.size() > 0 &&
                     NPCInteraction.isConversationWindowUp()) {
                 Log.debug("Handling chat");
+                NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
                 ChatScreen.handle(listChatOptions.toArray(String[]::new));
 
             }
