@@ -79,7 +79,7 @@ public class DruidicRitual implements QuestTask {
 
 
     NPCStep talkToKaqemeex = new NPCStep("Kaqemeex", new RSTile(2925, 3486, 0),
-            new String[]{"Yes."}, rawBear, rawBeef, rawChicken, rawRat);
+            new String[]{"I'm in search of a quest.", "Okay, I will try and help.","Yes."}, rawBear, rawBeef, rawChicken, rawRat);
     //   NPCStep goUpToSanfew = new ObjectStep(16671, new RSTile(2899, 3429, 0), "Talk to Sanfew upstairs in the Taverley herblore store.");
     NPCStep talkToSanfew = new NPCStep("Sanfew", new RSTile(2899, 3429, 1));
 
@@ -106,8 +106,7 @@ public class DruidicRitual implements QuestTask {
     NPCStep talkToKaqemeexToFinish = new NPCStep("Kaqemeex", new RSTile(2925, 3486, 0));
 
     public void setUpSteps() {
-        talkToKaqemeex.addDialogStep("I'm in search of a quest.", "Okay, I will try and help.");
-        talkToSanfew.addDialogStep("I've been sent to help purify the Varrock stone circle.","Ok, I'll do that then." );
+  talkToSanfew.addDialogStep("I've been sent to help purify the Varrock stone circle.","Ok, I'll do that then." );
         enterDungeon.addDialogStep("Ok, I'll do that then.");
     }
 

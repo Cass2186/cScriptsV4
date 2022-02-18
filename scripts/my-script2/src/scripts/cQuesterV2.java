@@ -403,17 +403,23 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 } else if (arg.toLowerCase().contains("fairytale")) {
                     General.println("[Args]: Added Fairy Tale line");
                     taskList.add(PriestInPeril.get());
+                    taskList.add(DruidicRitual.get());
+                    taskList.add(RestlessGhost.get());
+                    taskList.add(JunglePotion.get());
+                    taskList.add(NatureSpirit.get());
+                    taskList.add(LostCity.get());
                     taskList.add(FairyTalePt1.get());
                 } else if (arg.toLowerCase().contains("shadowofthestorm")) {
                     General.println("[Args]: Added Shadow of the Storm");
-                    // taskList.add(TheGolem.get());
+                    taskList.add(TheGolem.get());
                     taskList.add(ShadowOfTheStorm.get());
                 } else if (arg.toLowerCase().contains("rfdmonkey")) {
                     General.println("[Args]: Added RFD Monkey");
-                    // taskList.add(TheGolem.get());
+
                     taskList.add(RfdMonkey.get());
                 } else if (arg.toLowerCase().contains("junglepotion")) {
                     General.println("[Args]: Added Jungle Potion");
+                    taskList.add(DruidicRitual.get());
                     taskList.add(JunglePotion.get());
                 } else if (arg.toLowerCase().contains("dwarfcannon")) {
                     General.println("[Args]: Added Dwarf cannon");

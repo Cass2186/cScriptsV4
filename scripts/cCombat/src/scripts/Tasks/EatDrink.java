@@ -6,6 +6,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Prayer;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
@@ -39,6 +40,7 @@ public class EatDrink implements Task {
             else
                 org.tribot.script.sdk.Prayer.enableAll(org.tribot.script.sdk.Prayer.PROTECT_FROM_MAGIC,
                         org.tribot.script.sdk.Prayer.EAGLE_EYE);
+
             if (!Vars.get().killingUndeadDruids && !Vars.get().killingScarabs &&
                     !Vars.get().antifireTimer.isRunning()) {
                 RSItem[] superAnti = Inventory.find(22209, 22212, 22215, 22218);
@@ -53,12 +55,14 @@ public class EatDrink implements Task {
 
         if (Combat.getHP() <= Vars.get().eatAtHP) {
             EatUtil.eatFood(true);
+
         } else if (Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt) {
             RSItem[] prayer = Inventory.find(ItemID.PRAYER_POTION);
             if (prayer.length == 0 && breakTeleTab()) return;
-
+            Log.debug("Drinking prayer potion");
+            int p = Prayer.getPrayerPoints();
             if (drinkPotion(ItemID.PRAYER_POTION)) {
-                Waiting.waitNormal(120, 30);
+                Timer.waitCondition(()-> Prayer.getPrayerPoints() > p, 1500,2250);
                 Vars.get().drinkPrayerAt = General.random(5, 25);
             }
             if (Vars.get().killingUndeadDruids) {
@@ -71,9 +75,12 @@ public class EatDrink implements Task {
         if (Skill.RANGED.getCurrentLevel() <= (maxLevel - General.random(4, 6)) ||
                 Skill.RANGED.getCurrentLevel() == Skill.RANGED.getActualLevel()) {
             int[] potion = ItemID.RANGING_POTION;
-            Utils.drinkPotion(ItemID.RANGING_POTION);
+            if(Utils.drinkPotion(ItemID.RANGING_POTION))
+                Waiting.waitNormal(400, 30);
 
         }
+        Waiting.waitNormal(200, 20);
+        Inventory.drop(ItemID.VIAL, ItemID.STEEL_ARROW);
     }
 
 
@@ -89,10 +96,10 @@ public class EatDrink implements Task {
 
     @Override
     public boolean validate() {
-        return (Combat.getHP() <= Vars.get().eatAtHP) || MyPlayer.isPoisoned();// ||
+        return (Combat.getHP() <= Vars.get().eatAtHP) || MyPlayer.isPoisoned() ||
         //!Vars.get().antifireTimer.isRunning() ||
-        //     (Skills.SKILLS.PRAYER.getActualLevel() >= 43 &&
-        //          Prayer.getPrayerPoints() < Vars.get().drinkPrayerAt));
+            (Skills.SKILLS.PRAYER.getActualLevel() >= 43 && Vars.get().killingScarabs &&
+                    Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt);
     }
 
     @Override

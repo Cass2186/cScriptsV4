@@ -261,7 +261,7 @@ public class MoveToArea implements Task {
     ObjectStep goDownToBank = new ObjectStep(20275, new RSTile(3309, 2798, 0),
                 "Climb-down", lightSource);
 
-    ObjectStep goDownToDungeon = new ObjectStep(20340, new RSTile(2766, 5129, 0),
+    ObjectStep goDownToDungeon = new ObjectStep(20278, new RSTile(2766, 5129, 0),
                 "Climb-down", lightSource);
 
     public void checkLightSource() {
@@ -378,7 +378,8 @@ public class MoveToArea implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().killingScarabs)
-            return !Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition());
+            return !Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition()) &&
+                    !Areas.scarabFightAreaSdk.contains(MyPlayer.getPosition());
         return
                 !Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition());//!Areas.dkArea.check();//!Vars.get().safeTile.equals(Player.getPosition());
 

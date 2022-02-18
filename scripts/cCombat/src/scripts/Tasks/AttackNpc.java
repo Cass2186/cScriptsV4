@@ -225,9 +225,19 @@ public class AttackNpc implements Task {
             if (waitUntilOutOfCombat())
                 Utils.idleNormalAction();
 
-        } else
-            //  General.println("Cannot find target");
-            Waiting.waitUniform(200, 400);
+        } else {
+            Log.debug("Waiting");
+            if (!MyPlayer.isHealthBarVisible())
+                Prayer.disableQuickPrayer();
+            else {
+                Waiting.waitUntil(2500,  ()->
+                        getNpcToAttack(Areas.scarabFightAreaSdk).isPresent() ||
+                                !MyPlayer.isHealthBarVisible());
+            }
+            Timer.waitCondition(() -> getNpcToAttack(Areas.scarabFightAreaSdk).isPresent() ||
+                    MyPlayer.isHealthBarVisible() || LootItems.getLootItem().isPresent(), 10000, 15000);
+            Utils.idleNormalAction();
+        }
     }
 
 
@@ -298,9 +308,9 @@ public class AttackNpc implements Task {
                     .toList();
 
             return //!MyPlayer.isHealthBarVisible() ||
-                    attackingMe.size() == 0 ||   Inventory.contains(ItemID.CANDLE) ||
+                    attackingMe.size() == 0 || Inventory.contains(ItemID.CANDLE) ||
                             !EatUtil.hasFood() || LootItems.getLootItem().isPresent() ||
-                            (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 10);
+                            (CombatUtil.isPraying() && Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt);
         });
     }
 

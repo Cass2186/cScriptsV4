@@ -1,34 +1,40 @@
 package scripts;
 
+import com.google.errorprone.annotations.Var;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
-import javafx.util.Pair;
-import lombok.val;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api.input.Mouse;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.Interfaces;
-import org.tribot.api2007.Player;
-import org.tribot.api2007.Skills;
+import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.GameTab;
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Login;
+import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.interfaces.Item;
 import org.tribot.script.sdk.interfaces.Stackable;
 import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.tasks.BankTask;
-import org.tribot.script.sdk.tasks.EquipmentReq;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
-import scripts.QuestPackages.CooksAssistant.CooksAssistant;
+import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
+import scripts.Requirements.VarplayerRequirement;
 import scripts.Tasks.Priority;
+import scripts.rsitem_services.GrandExchange;
 
 import java.awt.*;
 import java.util.*;
@@ -469,12 +475,12 @@ public class TestClass implements QuestTask {
         if (Inventory.isFull()) {
             Inventory.drop(ItemID.SWEETCORN_SEED, 5098, 5282,
                     5103, 5324, 5280, 5307, 5102, 5306, 5096, 5308, 5318, 5310, 5099, 5319, 5100, 5291
-            ,5309);
+                    , 5309);
 
         } else if (clickFarmer()) {
             Timer.waitCondition(() -> Player.getAnimation() != -1, 3500, 5000);
-            if (Player.getAnimation() == stunnedAnimation){
-                Waiting.waitNormal(2800,150);
+            if (Player.getAnimation() == stunnedAnimation) {
+                Waiting.waitNormal(2800, 150);
             }
         }
     }
@@ -486,6 +492,209 @@ public class TestClass implements QuestTask {
             interactWithCat();
         }
     }
+
+    /**
+     * @return
+     */
+
+    int STUDYING_ANIMATION = 9491;
+    int ANIMATION_ID = 4068;
+    int PARENT_INTERFACE_ID = 79;
+    int NOTED_SOFT_CLAY = 1762;
+    int SOFT_CLAY = 1761;
+
+
+    int ADVERTISEMENT_ID = 29091;
+    RSTile OUTSIDE_RIMMINGTON_PORTAL = new RSTile(2953, 3219, 0);
+    ObjectStep clickAdvertisementStep = new ObjectStep(ADVERTISEMENT_ID,
+            "View", OUTSIDE_RIMMINGTON_PORTAL,
+            Interfaces.isInterfaceSubstantiated(52));
+
+    public boolean clickAdvertisement() {
+        if (!Interfaces.isInterfaceSubstantiated(52)) {
+            Log.debug("[Debug]: Opening host advertisements");
+            if (OUTSIDE_RIMMINGTON_PORTAL.distanceTo(Player.getPosition()) > 20)
+                PathingUtil.walkToTile(OUTSIDE_RIMMINGTON_PORTAL, 2, false);
+
+
+            Optional<GameObject> ad =
+                    Query.gameObjects().idEquals(ADVERTISEMENT_ID).stream().findFirst();
+            if (ad.isPresent() && !ad.get().isVisible()) {
+
+                LocalWalking.walkTo(ad.get().getTile().translate(General.random(0, 1), General.random(0, 1)));
+                if (Timer.waitCondition(() -> Player.isMoving(), 1500, 2000))
+                    Waiting.waitNormal(2050, 420);
+            }
+            if (Utils.clickObject(ADVERTISEMENT_ID, "View", true)) {
+                Timer.slowWaitCondition(() -> Interfaces.get(52) != null, 5000, 7000);
+            }
+        }
+        return Interfaces.get(52) != null;
+    }
+
+    List<Widget> houseBlackList = new ArrayList<>();
+    List<Widget> goodHouses = new ArrayList<>();
+
+    public void selectHost() {
+        if (!Game.isInInstance() && Inventory.contains(ItemID.SOFT_CLAY) && clickAdvertisement()) {
+            List<Widget> button = Query.widgets().actionContains("Enter House")
+                    .isVisible()
+                    .stream()
+                    .filter(wid -> !houseBlackList.contains(wid))
+                    .collect(Collectors.toList());
+            cQuesterV2.status = "Selecting Host";
+            for (Widget w : button) {
+                Log.log("[Debug]: Entering host");
+                if (w.click("Enter House") && Timer.waitCondition(Game::isInInstance, 3000, 4500)) {
+                    Waiting.waitNormal(2500, 50);
+                    return;
+                } else {
+                    //  Log.log("[Debug]: Blacklisting failed host");
+                    //houseBlackList.add(w);
+                    clickAdvertisement();
+
+                }
+            }
+        }
+    }
+
+    public boolean atLecturn() {
+        return org.tribot.api2007.Objects.findNearest(30, "Lectern").length > 0;
+    }
+
+    public void studyLecturn(String teleport) {
+        if (Inventory.contains(ItemID.LAW_RUNE) && Inventory.contains(SOFT_CLAY) && atLecturn()) {
+            cQuesterV2.status = "Studying Lecturn";
+            if (Player.getAnimation() == ANIMATION_ID) {
+                Log.debug("Making Tabs");
+                Timer.slowWaitCondition(() -> !Inventory.contains(SOFT_CLAY) , 60000, 69000);
+                profit = Utils.getInventoryValue() - startInvValue;
+                General.println("[Debug]: Current profit is " + profit);
+                return;
+            }
+            Optional<GameObject> lectern = Query.gameObjects().nameContains("Lectern")
+                    .findBestInteractable();
+
+            if (lectern.isPresent()) {
+                Log.debug("Going to Lectern");
+
+                if (!lectern.get().isVisible() || lectern.get().getTile().distanceTo(MyPlayer.getPosition()) > 10) {
+                    Log.debug("Walking closer to Lectern");
+                    if (lectern.map(l -> LocalWalking.walkTo(l.getTile())).orElse(false))
+                        Timer.waitCondition(() -> lectern.get().isVisible(), 6000, 9000);
+                }
+
+                if (!Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID) && Utils.clickObj(lectern, "Study"))
+                    Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID), 8000, 12000);
+
+
+                Optional<Widget> tabWidget = Query.widgets()
+                        .inIndexPath(PARENT_INTERFACE_ID)
+                        .nameContains(teleport + " Teleport")
+                        .isVisible()
+                        .findFirst();
+
+                if (tabWidget.map(w -> w.click()).orElse(false))
+                    Timer.waitCondition(() -> Player.getAnimation() == ANIMATION_ID, 5000, 7000);
+
+            }
+        }
+    }
+
+    public void leaveHouse() {
+        if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
+            Timer.waitCondition(() -> !Game.isInInstance() &&
+                            Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),
+                    7000, 9000);
+        }
+    }
+
+    public void unNoteClay() {
+        if (!Inventory.contains(ItemID.SOFT_CLAY)) {
+            if (!atLecturn()) {
+                cQuesterV2.status = "Unnoting clay";
+                Optional<InventoryItem> item = Query.inventory()
+                        .nameContains("Soft clay")
+                        .isNoted().findFirst();
+                Optional<Npc> phials = Query.npcs()
+                        .nameContains("Phials")
+                        .stream().findFirst();
+                if (phials.isPresent() && item.isPresent()) {
+                    if (!phials.get().isVisible()) {
+                        LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
+                        Waiting.waitNormal(750, 220);
+                    }
+                    if (Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
+                            Timer.waitCondition(Player::isMoving, 1200, 1800)) {
+                        Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
+
+                    }
+                }
+                if (NPCInteraction.isConversationWindowUp()) {
+                    if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
+                        Timer.waitCondition(() -> Inventory.contains(ItemID.SOFT_CLAY),
+                                2000, 4000);
+                    else if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange 5"))
+                        Timer.waitCondition(() -> Inventory.contains(ItemID.SOFT_CLAY),
+                                2000, 4000);
+
+                    if (NPCInteraction.isConversationWindowUp())
+                        ChatScreen.handle();
+                }
+            } else {
+
+                leaveHouse();
+            }
+        }
+
+    }
+
+    @AllArgsConstructor
+    public enum Tabs {
+        VARROCK(25, ItemID.FIRE_RUNE, 25,"Varrock", ItemID.VARROCK_TELEPORT),
+        LUMBRIDGE(31, ItemID.EARTH_RUNE, 37,"Lumbridge", ItemID.LUMBRIDGE_TELEPORT),
+        HOUSE(40, ItemID.EARTH_RUNE, 30,"House", ItemID.TELEPORT_TO_HOUSE),
+        FALADOR(37, ItemID.WATER_RUNE, 48,"Falador", ItemID.FALADOR_TELEPORT),
+        CAMELOT(45, -1, 55,"Camelot", ItemID.CAMELOT_TELEPORT);
+
+        private int levelReq;
+        private int otherRuneId;
+        private int xpGained;
+        @Getter
+        private String name;
+        @Getter
+        private int tabID;
+
+    }
+
+
+    public Tabs getMostProfitableTab(){
+        int profit = 0;
+        Tabs tab = Tabs.VARROCK;
+        for (Tabs t: Tabs.values()){
+            if (profitPerTab(t) >= profit) {
+                profit = profitPerTab(t);
+                tab = t;
+            }
+        }
+        Log.debug("Best tab is " + tab.getName());
+        return tab;
+    }
+    public boolean hasAnyClay() {
+        return Inventory.contains(SOFT_CLAY) || Inventory.contains(NOTED_SOFT_CLAY);
+    }
+
+
+    private int profitPerTab(Tabs tab) {
+        int lawPrice = GrandExchange.getPrice(ItemID.LAW_RUNE);
+        int tabPrice = GrandExchange.getPrice(tab.getTabID());
+        int profit = tabPrice - (lawPrice + 5);
+        Log.debug("Profit per tab " + tab.getName() + " is " + profit + "gp");
+        return profit;
+    }
+
+    public static int startInvValue = Utils.getInventoryValue();
+    public static int profit = 0;
 
 
     @Override
@@ -501,9 +710,15 @@ public class TestClass implements QuestTask {
     @Override
     public void execute() {
         //getGoutWeed();
-       // autoClick();
-        pickpocket();
-        Waiting.waitNormal(60,10);
+        // autoClick();
+       // profitPerTab(Tabs.CAMELOT);
+       /* unNoteClay();
+        selectHost();
+        studyLecturn(getMostProfitableTab().getName());*/
+        VarplayerRequirement req = new VarplayerRequirement(1196, false, 2);
+        Log.debug("Requirement: " + req.check());
+
+        Waiting.waitNormal(600, 10);
     }
 
     @Override
@@ -513,7 +728,7 @@ public class TestClass implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
     }
 
     @Override
