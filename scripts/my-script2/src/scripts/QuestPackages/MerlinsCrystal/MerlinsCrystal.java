@@ -386,7 +386,7 @@ public class MerlinsCrystal implements QuestTask {
             if (NpcChat.talkToNPC("King Arthur")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("I want to become a knight of the round table!");
-                NPCInteraction.handleConversation();
+                NPCInteraction.handleConversation("Yes.");
             }
         }
     }
