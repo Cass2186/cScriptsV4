@@ -56,10 +56,10 @@ public class BankFireMaking implements Task {
         );
         General.println("[BankFireMaking]: getLog() inv.size() is: " + inv.size());
 
-        inv = SkillBank.withdraw(inv);
-        if (inv != null && inv.size() > 0) {
+        List<ItemReq> newInv = SkillBank.withdraw(inv);
+        if (newInv != null && newInv.size() > 0) {
             General.println("[Firemaking Training]: Creating buy list");
-            BuyItems.itemsToBuy = BuyItems.populateBuyList(inv);
+            BuyItems.itemsToBuy = BuyItems.populateBuyList(newInv);
         }
     }
 

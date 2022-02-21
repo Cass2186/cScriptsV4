@@ -39,16 +39,6 @@ public enum FiremakingItems {
         return (int) (xpTillMax / this.xpPer) + 5;
     }
 
-  /*  public static int getRequiredLogs(int ItemID) {
-        int i = 0;
-        for (FiremakingItems b : values()) {
-            if (b.getItemID() == ItemID) {
-                i = i + b.determineResourcesToNextItem();
-                return i;
-            }
-        }
-        return i;
-    }*/
 
     public static List<ItemReq> getRequiredLogList() {
         List<ItemReq> i = new ArrayList<>();

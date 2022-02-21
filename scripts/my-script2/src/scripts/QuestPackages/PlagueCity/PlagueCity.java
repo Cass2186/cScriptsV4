@@ -56,13 +56,6 @@ public class PlagueCity implements QuestTask {
 
 
     RSNPC[] edmond = NPCs.findNearest("Edmond");
-    RSNPC[] alrena = NPCs.findNearest("Alrena");
-    RSNPC[] ted = NPCs.findNearest("Ted Rehnison");
-    RSNPC[] jethick = NPCs.findNearest("Jethick");
-    RSNPC[] milli = NPCs.findNearest("Milli Rehnison");
-    RSNPC[] clerk = NPCs.findNearest("Clerk");
-    RSNPC[] bravek = NPCs.findNearest("Bravek");
-    RSNPC[] elena = NPCs.findNearest("Elena");
 
     RSItem[] invWater = Inventory.find(ItemID.BUCKET_OF_WATER);
 
@@ -139,15 +132,15 @@ public class PlagueCity implements QuestTask {
             Banking.depositAll();
         }
         BankManager.checkEquippedGlory();
-        BankManager.withdraw2(1, true, ItemID.DWELLBERRIES);
-        BankManager.withdraw2(1, true, ItemID.SPADE);
-        BankManager.withdraw2(1, true, ItemID.BUCKET_OF_MILK);
-        BankManager.withdraw2(4, true, ItemID.BUCKET_OF_WATER);
-        BankManager.withdraw2(4, true, ItemID.CAMELOT_TELEPORT);
-        BankManager.withdraw2(1, true, ItemID.SNAPE_GRASS);
-        BankManager.withdraw2(1, true, ItemID.ROPE);
-        BankManager.withdraw2(1, true, ItemID.CHOCOLATE_DUST);
-        BankManager.withdraw2(1, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(1, true, ItemID.DWELLBERRIES);
+        BankManager.withdraw(1, true, ItemID.SPADE);
+        BankManager.withdraw(1, true, ItemID.BUCKET_OF_MILK);
+        BankManager.withdraw(4, true, ItemID.BUCKET_OF_WATER);
+        BankManager.withdraw(4, true, ItemID.CAMELOT_TELEPORT);
+        BankManager.withdraw(1, true, ItemID.SNAPE_GRASS);
+        BankManager.withdraw(1, true, ItemID.ROPE);
+        BankManager.withdraw(1, true, ItemID.CHOCOLATE_DUST);
+        BankManager.withdraw(1, true, ItemID.STAMINA_POTION[0]);
         Banking.close();
     }
 
@@ -339,10 +332,13 @@ public class PlagueCity implements QuestTask {
         }
     }
 
+
+    int CLERK_4255;
+
     public void step13() {
         cQuesterV2.status = "Talking to Clerk";
         PathingUtil.walkToArea(CLERK_STANDING_AREA);
-        if (NpcChat.talkToNPC("Clerk")) {
+        if (NpcChat.talkToNPC(CLERK_4255)) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Who is through that door?");
             NPCInteraction.handleConversation("This is urgent though! Someone's been kidnapped!");

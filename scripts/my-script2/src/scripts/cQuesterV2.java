@@ -241,7 +241,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     taskList.add(Contact.get());
                 } else if (arg.toLowerCase().contains("legends")) {
                     General.println("[Args]: Added Legends quest");
-                     taskList.add( LegendsQuest.get());
+                    taskList.add(LegendsQuest.get());
                 } else if (arg.toLowerCase().contains("dreammentor")) {
                     General.println("[Args]: Added Dream Mentor");
                     taskList.add(new DreamMentor());
@@ -250,7 +250,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     taskList.add(HazeelCult.get());
                 } else if (arg.toLowerCase().contains("heroes")) {
                     General.println("[Args]: Added Heroes quest");
-                     taskList.addAll(Arrays.asList(HeroesQuestBlackArmsGang.get()));
+                    taskList.addAll(Arrays.asList(HeroesQuestBlackArmsGang.get()));
                 } else if (arg.toLowerCase().contains("lunardiplomacy")) {
                     General.println("[Args]: Added Lunar Diplomacy");
                     taskList.addAll(Arrays.asList(new ChanceChallenge(),
@@ -263,11 +263,11 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     //   taskList.addAll(Arrays.asList(new OneSmallFavour()));
                 } else if (arg.toLowerCase().contains("pheonix")) {
                     General.println("[Args]: Added Shield of Arav Pheonix Gang");
-                         taskList.addAll(Arrays.asList( PheonixGang.get()));
+                    taskList.addAll(Arrays.asList(PheonixGang.get()));
                 }
                 if (arg.toLowerCase().contains("blackarm")) {
                     General.println("[Args]: Added Shield of Arav Black arms Gang");
-                    taskList.addAll(List.of( BlackArmsGang.get()));
+                    taskList.addAll(List.of(BlackArmsGang.get()));
                 }
                 if (arg.toLowerCase().contains("fishingcontest")) {
                     General.println("[Args]: Added Fishing Contest");
@@ -460,7 +460,11 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 } else if (arg.toLowerCase().contains("bonevoyage")) {
                     General.println("[Args]: Added Bone voyage");
                     taskList.add(RuneMysteries.get());
-                    //  taskList.add(VarrockMuseum.get());
+                    taskList.add(HazeelCult.get());
+                    taskList.add(MerlinsCrystal.get());
+                    taskList.add(GrandTree.get());
+                    taskList.add(PriestInPeril.get());
+                    taskList.add(VarrockMuseum.get());
                     taskList.add(BoneVoyage.get());
                 } else if (arg.toLowerCase().contains("grandtree")) {
                     General.println("[Args]: Added The grand tree");
@@ -490,90 +494,68 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                         arg.toLowerCase().contains("lairoftarn")) {
                     General.println("[Args]: Added Tarn's Lair");
                     taskList.add(TarnRoute.get());
-                }
-                else if (arg.toLowerCase().contains("familycrest")) {
+                } else if (arg.toLowerCase().contains("familycrest")) {
                     General.println("[Args]: Added Family crest");
                     taskList.add(FamilyCrest.get());
-                }
-                else if (arg.toLowerCase().contains("test")) {
+                } else if (arg.toLowerCase().contains("test")) {
                     General.println("[Args]: Added Test");
                     taskList.add(TestClass.get());
-                }
-                else if (arg.toLowerCase().contains("murdermystery")) {
+                } else if (arg.toLowerCase().contains("murdermystery")) {
                     General.println("[Args]: Added Murder Mystery");
                     taskList.add(MurderMystery.get());
-                }
-                else if (arg.toLowerCase().contains("goblindiplomacy")) {
+                } else if (arg.toLowerCase().contains("goblindiplomacy")) {
                     General.println("[Args]: Added goblin Diplomacy");
                     taskList.add(GoblinDiplomacy.get());
-                }
-                else if (arg.toLowerCase().contains("romeo")) {
+                } else if (arg.toLowerCase().contains("romeo")) {
                     General.println("[Args]: Added Romeo and Juliet");
                     taskList.add(RomeoAndJuliet.get());
-                }
-                else if (arg.toLowerCase().contains("biohazard")) {
+                } else if (arg.toLowerCase().contains("biohazard")) {
                     General.println("[Args]: Added Biohazard");
                     taskList.add(Biohazard.get());
-                }
-                else if (arg.toLowerCase().contains("plaguecity")) {
+                } else if (arg.toLowerCase().contains("plaguecity")) {
                     General.println("[Args]: Added Plague City");
                     taskList.add(PlagueCity.get());
-                }
-
-                else if (arg.toLowerCase().contains("mtd")) {
+                } else if (arg.toLowerCase().contains("mtd")) {
                     General.println("[Args]: Added Mountain Daughter");
                     taskList.add(MountainDaughter.get());
-                }
-                else if (arg.toLowerCase().contains("library")) {
+                } else if (arg.toLowerCase().contains("library")) {
                     General.println("[Args]: Added Arceuus library");
                     taskList.add(ArceuusLibrary.get());
-                }
-                else if (arg.toLowerCase().contains("ascentofarceuus")) {
+                } else if (arg.toLowerCase().contains("ascentofarceuus")) {
                     General.println("[Args]: Added Ascent of Arceuus");
                     taskList.add(AscentOfArceuus.get());
-                }
-                else if (arg.toLowerCase().contains("rfdskratch")) {
+                } else if (arg.toLowerCase().contains("rfdskratch")) {
                     General.println("[Args]: Added RFD skratch ");
                     taskList.add(BigChompyBirdHunting.get());
                     taskList.add(RfdSkratch.get());
-                }
-                else if (arg.toLowerCase().contains("bigchompy")) {
+                } else if (arg.toLowerCase().contains("bigchompy")) {
                     General.println("[Args]: Added Big Chompy");
                     taskList.add(BigChompyBirdHunting.get());
-                }
-                else if (arg.toLowerCase().contains("lostcity")) {
+                } else if (arg.toLowerCase().contains("lostcity")) {
                     General.println("[Args]: Added Lost City");
                     taskList.add(LostCity.get());
-                }
-                else if (arg.toLowerCase().contains("templeofikov")) {
+                } else if (arg.toLowerCase().contains("templeofikov")) {
                     General.println("[Args]: Added  Temple of Ikov");
                     taskList.add(TempleOfIkov.get());
-                }
-                else if (arg.toLowerCase().contains("trollstronghold")) {
+                } else if (arg.toLowerCase().contains("trollstronghold")) {
                     General.println("[Args]: Added  Troll Stronghold");
                     taskList.add(TrollStronghold.get());
-                }
-                else if (arg.toLowerCase().contains("rfdguide")) {
+                } else if (arg.toLowerCase().contains("rfdguide")) {
                     General.println("[Args]: Added  RFD Guide");
                     taskList.add(RfdLumbridgeGuide.get());
-                }
-                else if (arg.toLowerCase().contains("princeali")) {
+                } else if (arg.toLowerCase().contains("princeali")) {
                     General.println("[Args]: Added Prince ali rescue");
                     taskList.add(PrinceAliRescue.get());
-                }
-                else if (arg.toLowerCase().contains("blackknight")) {
+                } else if (arg.toLowerCase().contains("blackknight")) {
                     General.println("[Args]: Added BKF");
                     taskList.add(BlackKnight.get());
-                }
-                else if (arg.toLowerCase().contains("tearsofguthix")) {
+                } else if (arg.toLowerCase().contains("tearsofguthix")) {
                     General.println("[Args]: Added tears ");
                     taskList.add(TearsOfGuthix.get());
-                }
-                else if (arg.toLowerCase().contains("rfdpirate")) {
+                } else if (arg.toLowerCase().contains("rfdpirate")) {
                     General.println("[Args]: Added RFD Pirate pete ");
                     taskList.add(RfdPiratePete.get());
-                }
-                else if (arg.toLowerCase().contains("lament")) {
+                } else if (arg.toLowerCase().contains("lament")) {
                     General.println("[Args]: Added Enakrah's lament  ");
                     taskList.add(EnakhrasLament.get());
                 }
@@ -611,7 +593,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     "Viewport scale: " + Game.getViewportScale()
             ));
         }
-        if (taskList.size() > 0  &&taskList.get(0).equals(FamilyCrest.get())){
+        if (taskList.size() > 0 && taskList.get(0).equals(FamilyCrest.get())) {
             myString.add("northRoomLever " + FamilyCrest.northRoomLever);
             myString.add("northWallLever " + FamilyCrest.northWallLever);
             myString.add("southRoomLever " + FamilyCrest.southRoomLever);
@@ -633,7 +615,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         if (message.contains("You haven't got enough.")) {
             cQuesterV2.isRunning.set(false);
         }
-        if (message.contains("you are dead")){
+        if (message.contains("you are dead")) {
             taskList.add(DeathsOffice.get());
         }
         // QuestHelper.autocastAndGrandExchangeFailSafe(message);

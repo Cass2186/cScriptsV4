@@ -3,6 +3,7 @@ package scripts;
 import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
+import dax.api_lib.models.RunescapeBank;
 import dax.teleports.Teleport;
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
@@ -32,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @ScriptManifest(name = "cCombat v1.5", authors = {"Cass2186"}, category = "Testing")
 
-public class cCombat extends Script implements Painting, Starting, Ending, Arguments, MessageListening07 {
+public class cCombat extends Script implements Painting, Starting, Ending, Arguments, MessageListening07, Breaking {
 
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
@@ -210,10 +211,21 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
     @Override
     public void serverMessageReceived(String message) {
-        if (message.contains("dead") || message.contains("died")){
+        if (message.contains("are dead") || message.contains("died")){
             Log.error("Died, ending script");
             isRunning.set(false);
             throw new NullPointerException();
         }
+    }
+
+    @Override
+    public void onBreakStart(long l) {
+        Log.info("Break starting, going to bank for safety");
+        PathingUtil.walkToTile(RunescapeBank.VARROCK_WEST.getPosition());
+    }
+
+    @Override
+    public void onBreakEnd() {
+
     }
 }

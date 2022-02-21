@@ -8,6 +8,8 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.types.GroundItem;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RestlessGhost.RestlessGhost;
@@ -74,7 +76,7 @@ public class ZogreFleshEaters implements QuestTask {
     RSArea OUTSIDE_WIZARDS_GUILD = new RSArea(new RSTile(2597, 3089, 0), new RSTile(2600, 3086, 0));
     RSArea SITHIK_ROOM = new RSArea(new RSTile(2592, 3103, 1), new RSTile(2590, 3104, 1));
     private RSArea HUGE_START_AREA = new RSArea(
-            new RSTile[] {
+            new RSTile[]{
                     new RSTile(2451, 3052, 0),
                     new RSTile(2451, 3046, 0),
                     new RSTile(2440, 3038, 0),
@@ -222,16 +224,15 @@ public class ZogreFleshEaters implements QuestTask {
     }
 
     private void climbBaracade() {
-        if (HUGE_START_AREA.contains(Player.getPosition())){
+        if (HUGE_START_AREA.contains(Player.getPosition())) {
             PathingUtil.walkToArea(GUARD_BEFORE_GATE);
         }
-         if (GUARD_BEFORE_GATE.contains(Player.getPosition())) {
+        if (GUARD_BEFORE_GATE.contains(Player.getPosition())) {
             cQuesterV2.status = "Climbing over gate";
             if (Utils.clickObj(CRUSHED_BARACADE, "Climb-over"))
                 Timer.waitCondition(() -> AFTER_GATE.contains(Player.getPosition()), 5000, 12000);
         }
     }
-
 
 
     private void goDownStairs() {
@@ -252,18 +253,23 @@ public class ZogreFleshEaters implements QuestTask {
 
         if (WHOLE_DUNGEON_LEVEL_2.contains(Player.getPosition()) && !IN_FRONT_OF_COFFIN.contains(Player.getPosition())) {
             PathingUtil.localNavigation(IN_FRONT_OF_COFFIN.getRandomTile());
+            Timer.waitCondition(() -> Utils.inCutScene(), 1500, 2000);
             Utils.cutScene();
-            Utils.idle(6000, 9000);
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            //Utils.idle(5000, 6000);
+            if (NPCInteraction.waitForConversationWindow())
+                NPCInteraction.handleConversation();
         }
     }
 
     private void searchBrokenLecturn() {
         // Autocast.enableAutocast(Autocast.EARTH_BOLT);
 
-        if (Combat.isUnderAttack()) {
+        if (Combat.isUnderAttack() && Inventory.find(ItemID.RUINED_BACKPACK).length == 0 &&
+                GroundItems.find(ItemID.RUINED_BACKPACK).length == 0) {
             cQuesterV2.status = "Killing Skeleton";
+            Waiting.waitNormal(500, 50);
+        } else if (GroundItems.find(ItemID.RUINED_BACKPACK).length == 0) {
+            pickUpRuinedBackpack();
         }
 
         if (Inventory.find(TORN_PAGE).length < 1) {
@@ -289,31 +295,35 @@ public class ZogreFleshEaters implements QuestTask {
 
     }
 
-    private void lootBackPack() {
-        RSGroundItem[] ruinedBackpack = GroundItems.find(RUINED_BACKPACK);
+    private boolean pickUpRuinedBackpack() {
+        RSGroundItem[] ruinedBackpack = GroundItems.find(ItemID.RUINED_BACKPACK);
         if (ruinedBackpack.length > 0) {
-            if (AccurateMouse.click(ruinedBackpack[0], "Take"))
-                Timer.waitCondition(() -> Inventory.find(RUINED_BACKPACK).length > 0, 6000, 9000);
+            cQuesterV2.status = "Getting ruined backpack";
+            if (Inventory.isFull())
+                EatUtil.eatFood();
+
+            return Utils.clickGroundItem(ItemID.RUINED_BACKPACK);
         }
-        Inventory.drop(ItemID.ROTTEN_FOOD);
+        return Inventory.find(ItemID.RUINED_BACKPACK).length > 0;
     }
 
     private void openBackPack() {
-        RSItem[] backpack = Inventory.find(RUINED_BACKPACK);
+        RSItem[] backpack = Inventory.find(ItemID.RUINED_BACKPACK);
         if (backpack.length > 0 && Inventory.find(TANKARD).length == 0) {
             cQuesterV2.status = "Opening backpack";
-            if (Inventory.getAll().length > 24) {
-                RSItem[] food = Inventory.find(ItemID.MONKFISH);
-                if (food.length > 0)
-                    if (food[0].click())
-                        Utils.microSleep();
+            for (int i = 0; i < 3; i++) {
+                if (Inventory.getAll().length > 24) {
+                    EatUtil.eatFood();
 
-            } else if (backpack[0].click("Open")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> Inventory.find(KNIFE).length > 0, 4000, 6000);
+                } else if (backpack[0].click("Open")) {
+                    if (NPCInteraction.waitForConversationWindow())
+                        NPCInteraction.handleConversation();
+                    Timer.waitCondition(() -> Inventory.find(KNIFE).length > 0, 4000, 6000);
+                    break;
+                }
             }
         }
+        Utils.dropItem(ItemID.ROTTEN_FOOD);
     }
 
     private void lootCoffin() {
@@ -454,7 +464,7 @@ public class ZogreFleshEaters implements QuestTask {
     }
 
     private void useBookOnSithik() {
-        if (Inventory.find(PORTRAIT).length ==0) {
+        if (Inventory.find(PORTRAIT).length == 0) {
             if (Utils.useItemOnObject(BOOK_OF_HAM, SITHIK_ID)) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
@@ -735,7 +745,7 @@ public class ZogreFleshEaters implements QuestTask {
             getItems();
             startQuest();
 
-        } else if (RSVarBit.get(507).getValue() == 1 && RSVarBit.get(487).getValue() == 2) {
+        } else if (RSVarBit.get(487).getValue() == 2) {
             goToGuard();
 
         } else if (RSVarBit.get(487).getValue() == 3 && RSVarBit.get(505).getValue() == 0) { // also 496 goes 0 -> 1
@@ -748,14 +758,15 @@ public class ZogreFleshEaters implements QuestTask {
 
         } else if (RSVarBit.get(487).getValue() == 3 && RSVarBit.get(503).getValue() == 1) {
             searchBrokenLecturn();
-            lootBackPack();
+            if (pickUpRuinedBackpack())
+                openBackPack();
 
         } else if (RSVarBit.get(487).getValue() == 3 && RSVarBit.get(503).getValue() == 2
                 && RSVarBit.get(488).getValue() <= 2 && Utils.getVarBitValue(503) == 2
                 && Utils.getVarBitValue(507) == 1) {
             goToCoffins();
-            lootBackPack();
-            openBackPack();
+            if (pickUpRuinedBackpack())
+                openBackPack();
             lootCoffin();
 
 
@@ -793,8 +804,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
+                && RSVarBit.get(503).getValue() == 2){
 
             goToWizardsGuild2();
 
@@ -802,8 +812,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
+                && RSVarBit.get(503).getValue() == 2){
 
             addPotionToTea();
 
@@ -811,8 +820,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
+                && RSVarBit.get(503).getValue() == 2){
 
             revealOgre();
 
@@ -820,8 +828,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
+                && RSVarBit.get(503).getValue() == 2){
 
             returnToGrish();
             getCompBowSkills();
@@ -830,8 +837,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
+                && RSVarBit.get(503).getValue() == 2){
 
             getCompBowSkills();
             goToWestDoors();
@@ -840,8 +846,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
+                && RSVarBit.get(503).getValue() == 2){
 
             finishQuest();
 
@@ -849,9 +854,7 @@ public class ZogreFleshEaters implements QuestTask {
                 && RSVarBit.get(488).getValue() == 5
                 && RSVarBit.get(489).getValue() == 1
                 && RSVarBit.get(490).getValue() == 1
-                && RSVarBit.get(503).getValue() == 2
-                && RSVarBit.get(507).getValue() == 1) {
-
+                && RSVarBit.get(503).getValue() == 2){
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
 

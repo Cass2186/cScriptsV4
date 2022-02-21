@@ -7,6 +7,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.World;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -133,39 +134,39 @@ public class MerlinsCrystal implements QuestTask {
     ItemReq litBlackCandle = new ItemReq("Lit black candle", ItemID.LIT_BLACK_CANDLE);
     ItemReq excalibur = new ItemReq("Excalibur", ItemID.EXCALIBUR);
     ItemReq equippedExcalibur = new ItemReq(ItemID.EXCALIBUR, 1, true, true);
-
-
+    RSArea fayeDock = new RSArea(new RSTile(2776, 3402, 0), new RSTile(2781, 3399, 0));
+    AreaRequirement inFayeDock = new AreaRequirement(fayeDock);
 
     RSArea fayeGround = new RSArea(new RSTile(2764, 3395, 0), new RSTile(2781, 3410, 0));
-    RSArea  faye1 = new RSArea(new RSTile(2764, 3395, 1), new RSTile(2781, 3410, 1));
-    RSArea  faye2 = new RSArea(new RSTile(2764, 3395, 2), new RSTile(2781, 3410, 2));
-    RSArea    camelot1 = new RSArea(new RSTile(2744, 3483, 1), new RSTile(2769, 3517, 1));
-    RSArea    camelot2 = new RSArea(new RSTile(2744, 3483, 2), new RSTile(2769, 3517, 2));
-    RSArea    camelotGround1 = new RSArea(new RSTile(2744, 3483, 0), new RSTile(2774, 3517, 0));
-    RSArea    camelotGround2 = new RSArea(new RSTile(2775, 3511, 0), new RSTile(2783, 3517, 0));
-    RSArea    camelotGround3 = new RSArea(new RSTile(2774, 3505, 0), new RSTile(2776, 3511, 0));
-    RSArea    star = new RSArea(new RSTile(2780, 3515, 0), new RSTile(2780, 3515, 0));
-    RSArea    camelotTower1 = new RSArea(new RSTile(2765, 3490, 1), new RSTile(2770, 3495, 1));
-    RSArea    camelotTower2 = new RSArea(new RSTile(2765, 3490, 2), new RSTile(2770, 3494, 2));
+    RSArea faye1 = new RSArea(new RSTile(2764, 3395, 1), new RSTile(2781, 3410, 1));
+    RSArea faye2 = new RSArea(new RSTile(2764, 3395, 2), new RSTile(2781, 3410, 2));
+    RSArea camelot1 = new RSArea(new RSTile(2744, 3483, 1), new RSTile(2769, 3517, 1));
+    RSArea camelot2 = new RSArea(new RSTile(2744, 3483, 2), new RSTile(2769, 3517, 2));
+    RSArea camelotGround1 = new RSArea(new RSTile(2744, 3483, 0), new RSTile(2774, 3517, 0));
+    RSArea camelotGround2 = new RSArea(new RSTile(2775, 3511, 0), new RSTile(2783, 3517, 0));
+    RSArea camelotGround3 = new RSArea(new RSTile(2774, 3505, 0), new RSTile(2776, 3511, 0));
+    RSArea star = new RSArea(new RSTile(2780, 3515, 0), new RSTile(2780, 3515, 0));
+    RSArea camelotTower1 = new RSArea(new RSTile(2765, 3490, 1), new RSTile(2770, 3495, 1));
+    RSArea camelotTower2 = new RSArea(new RSTile(2765, 3490, 2), new RSTile(2770, 3494, 2));
 
 
-        AreaRequirement    inFaye = new AreaRequirement(faye1, fayeGround, faye2);
-        AreaRequirement    inFayeGround = new AreaRequirement(fayeGround);
-        AreaRequirement    inFaye1 = new AreaRequirement(faye1);
-        AreaRequirement    inFaye2 = new AreaRequirement(faye2);
-        AreaRequirement    inCamelot = new AreaRequirement(camelotGround1, camelotGround2, camelotGround3);
-        AreaRequirement    inCamelot1 = new AreaRequirement(camelot1);
-        AreaRequirement    inCamelot2 = new AreaRequirement(camelot2);
-        //  morganNearby = new NpcCondition(NpcID.MORGAN_LE_FAYE);
-        // clearedHive = new ObjectCondition(ObjectID.BEEHIVE_305);
-        // hasAnyBlackCandle = new Conditions(LogicType.OR, blackCandle, litBlackCandle);
-        // beggarNearby = new NpcCondition(NpcID.BEGGAR);
-        // talkedToLady = new WidgetTextRequirement(217, 5, "Ok. That seems easy enough.");
-        // hasReadSpell = new Conditions(true, LogicType.AND, new WidgetTextRequirement(229, 1, "You find a small inscription"));
-        AreaRequirement    inStar = new AreaRequirement(star);
-        // thrantaxNearby = new NpcCondition(NpcID.THRANTAX_THE_MIGHTY);
-        AreaRequirement   inCamelotTower1 = new AreaRequirement(camelotTower1);
-        AreaRequirement    inCamelotTower2 = new AreaRequirement(camelotTower2);
+    AreaRequirement inFaye = new AreaRequirement(faye1, fayeGround, faye2);
+    AreaRequirement inFayeGround = new AreaRequirement(fayeGround);
+    AreaRequirement inFaye1 = new AreaRequirement(faye1);
+    AreaRequirement inFaye2 = new AreaRequirement(faye2);
+    AreaRequirement inCamelot = new AreaRequirement(camelotGround1, camelotGround2, camelotGround3);
+    AreaRequirement inCamelot1 = new AreaRequirement(camelot1);
+    AreaRequirement inCamelot2 = new AreaRequirement(camelot2);
+    //  morganNearby = new NpcCondition(NpcID.MORGAN_LE_FAYE);
+    // clearedHive = new ObjectCondition(ObjectID.BEEHIVE_305);
+    // hasAnyBlackCandle = new Conditions(LogicType.OR, blackCandle, litBlackCandle);
+    // beggarNearby = new NpcCondition(NpcID.BEGGAR);
+    // talkedToLady = new WidgetTextRequirement(217, 5, "Ok. That seems easy enough.");
+    // hasReadSpell = new Conditions(true, LogicType.AND, new WidgetTextRequirement(229, 1, "You find a small inscription"));
+    AreaRequirement inStar = new AreaRequirement(star);
+    // thrantaxNearby = new NpcCondition(NpcID.THRANTAX_THE_MIGHTY);
+    AreaRequirement inCamelotTower1 = new AreaRequirement(camelotTower1);
+    AreaRequirement inCamelotTower2 = new AreaRequirement(camelotTower2);
 
 
     public void setupSteps() {
@@ -426,7 +427,8 @@ public class MerlinsCrystal implements QuestTask {
     }
 
     public void hideInCrates() {
-        if (!cratedropoff.contains(Player.getPosition()) && !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()) && !KEEP_LE_FE_THIRD_FLOOR.contains(Player.getPosition())) {
+        if (!cratedropoff.contains(Player.getPosition()) &&
+                !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()) && !KEEP_LE_FE_THIRD_FLOOR.contains(Player.getPosition())) {
             cQuesterV2.status = "Hiding in crates";
             PathingUtil.walkToTile(crateTile);
             if (Utils.clickObj(63, "Hide-in")) {
@@ -443,10 +445,9 @@ public class MerlinsCrystal implements QuestTask {
 
 
     public void navigateFirstFloor() {
-        if (!inFayeGround.check() &&
-                cratedropoff.contains(Player.getPosition())) {
+        if (inFayeDock.check()) {
             cQuesterV2.status = "Going to Mordred";
-            door = Objects.findNearest(15, "Large door");
+            door = Objects.findNearest(5, "Large door");
             if (door.length > 0) {
                 if (Doors.handleDoor(door[0], true))
                     General.sleep(General.random(2000, 3000));
@@ -477,7 +478,8 @@ public class MerlinsCrystal implements QuestTask {
     public void navigateSecondFloor() {
         if (inFaye1.check()) {
             Log.debug("In second floor");
-            Utils.blindWalkToTile(new RSTile(2770, 3396, 0));
+            Utils.blindWalkToTile( new RSTile(2769, 3396, 1));
+            Waiting.waitNormal(750,90);
             checkEat();
             if (Utils.clickObj(15645, "Climb-up")) {
                 Timer.waitCondition(() -> !KEEP_LE_FE_SECOND_FLOOR.contains(Player.getPosition()), 7000, 15000);
