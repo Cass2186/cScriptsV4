@@ -32,6 +32,7 @@ import scripts.QuestPackages.DeathPlateau.DeathPlateau;
 import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestPackages.DemonSlayer.DemonSlayer;
 import scripts.QuestPackages.DepthsofDespair.DepthsOfDespair;
+import scripts.QuestPackages.DigSite.DigSite;
 import scripts.QuestPackages.DoricsQuest.DoricsQuest;
 import scripts.QuestPackages.DragonSlayer.DragonSlayer;
 import scripts.QuestPackages.DreamMentor.DreamMentor;
@@ -576,6 +577,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 else if (arg.toLowerCase().contains("lament")) {
                     General.println("[Args]: Added Enakrah's lament  ");
                     taskList.add(EnakhrasLament.get());
+                }
+                else if (arg.toLowerCase().contains("digsite")) {
+                    General.println("[Args]: Added Dig Site  ");
+                    taskList.add(DigSite.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

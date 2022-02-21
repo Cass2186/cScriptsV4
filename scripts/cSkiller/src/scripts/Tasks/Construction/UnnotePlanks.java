@@ -26,10 +26,10 @@ public class UnnotePlanks implements Task {
 
     public void leaveHouse() {
         if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
-            Timer.waitCondition(() -> !Game.isInInstance() &&
+            Timer.slowWaitCondition(() -> !Game.isInInstance() &&
                             Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),
-                    7000, 9000);
-
+                    9000, 12000);
+            Waiting.waitNormal(1000,50);
         }
     }
 

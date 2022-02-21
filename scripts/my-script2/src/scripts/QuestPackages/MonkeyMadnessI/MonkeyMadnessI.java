@@ -137,16 +137,16 @@ public class MonkeyMadnessI implements QuestTask {
     public ArrayList<String>
             DAERO_CHAT_1 = new ArrayList<String>(Arrays.asList("Talk about the journey...",
             "What lies to the south of Karamja?")),
-            DAERO_CHAT_2 = new ArrayList<String>(Arrays.asList("How will I travel?")),
-            DAERO_CHAT_3 = new ArrayList<String>(Arrays.asList("Are you coming with me?")),
+            DAERO_CHAT_2 = new ArrayList<String>(List.of("How will I travel?")),
+            DAERO_CHAT_3 = new ArrayList<String>(List.of("Are you coming with me?")),
             DAERO_CHAT_4 = new ArrayList<String>(Arrays.asList("Talk about the 10th squad...",
                     "Why did the king send a squad of the Royal Guard?")),
             DAERO_CHAT_5 = new ArrayList<String>(List.of("Who is Garkor?")),
             DAERO_CHAT_6 = new ArrayList<String>(List.of("Why are the 10th squad so famous?")),
-            DAERO_CHAT_7 = new ArrayList<String>(Arrays.asList("Talk about Caranock...")),
-            DAERO_CHAT_11 = new ArrayList<String>(Arrays.asList("Leave...")),
-            DAERO_CHAT_12 = new ArrayList<String>(Arrays.asList("Who is it?")),
-            DAERO_CHAT_13 = new ArrayList<String>(Arrays.asList("<col=0000ff>Return to previous menu"));
+            DAERO_CHAT_7 = new ArrayList<String>(List.of("Talk about Caranock...")),
+            DAERO_CHAT_11 = new ArrayList<String>(List.of("Leave...")),
+            DAERO_CHAT_12 = new ArrayList<String>(List.of("Who is it?")),
+            DAERO_CHAT_13 = new ArrayList<String>(List.of("<col=0000ff>Return to previous menu"));
 
 
     RSTile[] PATH_TO_GET_CAPTURED = new RSTile[]{new RSTile(2726, 2732, 0), new RSTile(2726, 2733, 0), new RSTile(2726, 2734, 0), new RSTile(2726, 2735, 0), new RSTile(2726, 2736, 0), new RSTile(2726, 2738, 0), new RSTile(2726, 2739, 0), new RSTile(2726, 2740, 0), new RSTile(2726, 2741, 0), new RSTile(2726, 2743, 0), new RSTile(2725, 2745, 0), new RSTile(2724, 2747, 0), new RSTile(2723, 2749, 0), new RSTile(2723, 2750, 0)};
@@ -1609,10 +1609,11 @@ public class MonkeyMadnessI implements QuestTask {
                         Equipment.find(greegree)[0].click("Remove");
                         Timer.waitCondition(() -> Inventory.find(greegree).length > 0, 6000, 8000);
                     }
-                    if (NpcChat.talkToNPC("Monkey minder")) {
+                    //have to use this, not NPCChat
+                    if (Utils.clickNPC("Monkey minder", "Talk-to")) {
                         NPCInteraction.waitForConversationWindow();
                         NPCInteraction.handleConversation();
-                        General.sleep(General.random(3500, 5000));
+                        General.sleep(3500, 5000);
                         NPCInteraction.waitForConversationWindow();
                         NPCInteraction.handleConversation();
                     }
@@ -1969,6 +1970,7 @@ public class MonkeyMadnessI implements QuestTask {
     public void execute() {
 
         if (DeathsOffice.shouldHandleDeath()) {
+            Log.error("Died");
             cQuesterV2.taskList.remove(this);
             return;
         }

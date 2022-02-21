@@ -61,7 +61,7 @@ public class DrinkPotion implements Task {
         if (invItem.length > 0) {
             General.println("[Debug]: Drinking " + potionName);
             if (invItem[0].click("Drink")) {
-                Waiting.waitNormal(300, 65);
+                Waiting.waitNormal(300, 55);
                 Vars.get().lastAction = System.currentTimeMillis();
                 return true;
             }
@@ -123,7 +123,7 @@ public class DrinkPotion implements Task {
         } else if (sleep < 100) {
             sleep = General.random(500, 2500);
         }*/
-        Log.info("[Debug]: Sleeping for: " + sleep + "ms (unmodified: " + initialSleep + " ms)");
+        Log.info("Sleeping for: " + sleep + "ms (unmodified: " + initialSleep + " ms)");
         Timer.waitCondition(() -> (Prayer.getPrayerPoints() < 5 && Vars.get().usingPrayerPots), sleep);
         // General.sleep(sleep);
     }
@@ -145,16 +145,22 @@ public class DrinkPotion implements Task {
                         break;
 
                     if (rockCake[0].click("Guzzle")) {
-                        Log.info("[Debug]: Guzzled");
+                        Log.info("Guzzled");
                         General.sleep(General.randomSD(150, 700, 350, 75));
                     }
                     if (Combat.getHP() == 1)
                         break;
                 }
+            } else if (Vars.get().usingOverloadPots &&  !Vars.get().overloadTimer.isRunning()){
+              Log.debug("Overload timer isn't running");
+
             }
 
             Vars.get().eatRockCakeAt = General.randomSD(2, 6, 3, 2);
-            Log.info("[Debug]: Next eating rock cake at: " + Vars.get().eatRockCakeAt);
+            Log.info("Next eating rock cake at: " + Vars.get().eatRockCakeAt);
+        } else {
+            Log.error("Error with rock caking: do we have one? " + (rockCake.length > 0));
+            Log.error("Is HP > eatRockCake at: " + (Combat.getHP() >= Vars.get().eatRockCakeAt));
         }
     }
 
@@ -167,7 +173,7 @@ public class DrinkPotion implements Task {
             int startHp = Combat.getHP();
             if (startHp > 50) {
                 Log.info("Drinking overload");
-                determineSleep();
+               // determineSleep(); //redundant with hte one calledin rockcake() prior to this
 
                 if (drinkPotion(Const.OVERLOAD_POTION)) {
                     Vars.get().overloadTimer = new Timer(300000);
@@ -181,11 +187,9 @@ public class DrinkPotion implements Task {
                         }
                     }
                 }
-                rockCake();
             } else {
                 Vars.get().overloadTimer = new Timer(300000);
                 Log.info("[Debug]: Cannot overload due to low HP");
-                rockCake();
             }
         }
     }
@@ -199,11 +203,12 @@ public class DrinkPotion implements Task {
         if (shouldDrinkAbsorption()) {
 
             // if we have >150 abs points left it will sleep, otherwise it drinks to avoid death
-            if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) > 150)
-                determineSleep();
+
 
             Log.info("[Debug]: Drinking up to: " + Vars.get().drinkAbsorptionUpTo);
             if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo) {
+                if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) > 150)
+                    determineSleep();
                 for (int i =0; i < 100; i++) {
                     Waiting.waitNormal(120,30);
                     if (!Game.isInInstance() || !org.tribot.script.sdk.Login.isLoggedIn())
@@ -247,6 +252,7 @@ public class DrinkPotion implements Task {
     public void execute() {
         Log.info("[Debug]: DrinkPotion validated: " +
                 (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()));
+
         drinkPrayerPotion();
 
         if (Vars.get().usingAbsorptions)
@@ -257,6 +263,7 @@ public class DrinkPotion implements Task {
 
         if (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning())
             drinkOverload();
+
         rockCake();
 
        /* if (Vars.get().usingPrayerPots) {
