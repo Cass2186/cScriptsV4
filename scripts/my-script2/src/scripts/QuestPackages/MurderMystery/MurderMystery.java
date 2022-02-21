@@ -7,6 +7,7 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -127,10 +128,10 @@ public class MurderMystery implements QuestTask {
     ItemRequirement criminalsDaggerFlourHighlighted = new ItemRequirement(ItemID.CRIMINALS_DAGGER_1814);
 
 
-    ItemRequirement criminalsThread = new ItemRequirement("Criminal's thread", ItemID.CRIMINALS_THREAD);
-    ItemRequirement criminalsThread1 = new ItemRequirement("Criminal's thread", ItemID.CRIMINALS_THREAD);
-    ItemRequirement criminalsThread2 = new ItemRequirement("Criminal's thread", ItemID.CRIMINALS_THREAD_1809);
-    ItemRequirement criminalsThread3 = new ItemRequirement("Criminal's thread", ItemID.CRIMINALS_THREAD_1810);
+    ItemRequirement criminalsThread = new ItemRequirement( ItemID.CRIMINALS_THREAD);
+    ItemRequirement criminalsThread1 = new ItemRequirement( ItemID.CRIMINALS_THREAD);
+    ItemRequirement criminalsThread2 = new ItemRequirement( ItemID.CRIMINALS_THREAD_1809);
+    ItemRequirement criminalsThread3 = new ItemRequirement( ItemID.CRIMINALS_THREAD_1810);
     ItemRequirement threeFlypaper = new ItemRequirement("Flypaper", ItemID.FLYPAPER, 3);
     ItemRequirement flypaper = new ItemRequirement("Flypaper", ItemID.FLYPAPER);
 
@@ -239,7 +240,7 @@ public class MurderMystery implements QuestTask {
     public void setupSteps() {
         NPCStep talkToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0),
                 "Talk to the Guard in the Sinclair Manor north of Camelot.");
-        talkToGuard.addDialogStep("Sure, I'll help.", "Yes.");
+        talkToGuard.addDialogStep("Yes.", "Sure, I'll help.", "Yes.");
 
         GroundItemStep pickUpPungentPot = new GroundItemStep(pungentPot.getId(), new RSTile(2747, 3579, 0));
         GroundItemStep pickUpDagger = new GroundItemStep(criminalsDaggerAny.getId(), new RSTile(2746, 3578, 0));
@@ -489,6 +490,9 @@ public class MurderMystery implements QuestTask {
                         break;
                     }
                 }
+                if(PathingUtil.localNav(MyPlayer.getPosition().translate(0, -4)))
+                    PathingUtil.movementIdle();
+
             }
         }
     }
@@ -863,6 +867,7 @@ public class MurderMystery implements QuestTask {
         criminalsDaggerAny.addAlternateItemID(ItemID.CRIMINALS_DAGGER_1814);
         criminalsThread.addAlternateItemID(ItemID.CRIMINALS_THREAD_1809, ItemID.CRIMINALS_THREAD_1810);
 
+        Log.debug("check? " + new Conditions(pungentPot, criminalsDaggerAny, criminalsThread2).check());
         if (Game.getSetting(192) == 0) {
             buyItems();
             getItems();
@@ -877,6 +882,7 @@ public class MurderMystery implements QuestTask {
                 talkToGossip();
                 poisonSalesman();
                 finishUpInvestigation();
+                step11();
             } else if (new Conditions(pungentPot, criminalsThread1, unknownPrint, hasAnyThread1Item).check()) {
                 usePaperOnCupOrBottle();
                 compareAllPrints();
@@ -909,6 +915,7 @@ public class MurderMystery implements QuestTask {
             } else if (new Conditions(pungentPot, criminalsDaggerAny, criminalsThread3, silverNeedle).check()) {
                 cQuesterV2.status = "Searching frank's barrel";
                 searchFranksBarrel.execute();
+                searchFranksBarrel.execute();
             } else if (new Conditions(pungentPot, criminalsDaggerAny, criminalsThread3).check()) {
                 cQuesterV2.status = "Searching elizabeth's barrel";
                 searchElizabethsBarrel.execute();
@@ -917,6 +924,7 @@ public class MurderMystery implements QuestTask {
                 searchDavidsBarrel.execute();
             } else if (new Conditions(pungentPot, criminalsDaggerAny, criminalsThread2).check()) {
                 cQuesterV2.status = "Searching annas's barrel";
+                Log.debug("Searching annas's barrel");
                 searchAnnasBarrel.execute();
             } else if (new Conditions(pungentPot, criminalsDaggerAny).check()) {
                 searchSmashedWindow();

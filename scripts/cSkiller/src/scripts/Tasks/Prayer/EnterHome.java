@@ -7,6 +7,7 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.WorldHopper;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.Widget;
@@ -20,7 +21,9 @@ import scripts.QuestSteps.ObjectStep;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,7 +38,7 @@ public class EnterHome implements Task {
 
     public boolean clickAdvertisement() {
         if (!Interfaces.isInterfaceSubstantiated(52)) {
-            Log.log("[Debug]: Opening host advertisements");
+            Log.debug("[Debug]: Opening host advertisements");
             if (OUTSIDE_RIMMINGTON_PORTAL.distanceTo(Player.getPosition()) > 20)
                 PathingUtil.walkToTile(OUTSIDE_RIMMINGTON_PORTAL, 2, false);
 
@@ -54,28 +57,37 @@ public class EnterHome implements Task {
         return Interfaces.get(52) != null;
     }
 
-    List<Widget> houseBlackList  = new ArrayList<>();
-    List<Widget> goodHouses  = new ArrayList<>();
+    List<Widget> houseBlackList = new ArrayList<>();
+    List<Widget> goodHouses = new ArrayList<>();
 
     public void selectHost() {
         if (clickAdvertisement()) {
-            List<Widget> button = Query.widgets().actionContains("Enter House").stream()
+            List<Widget> button = Query.widgets().actionContains("Enter House")
+                    .stream()
                     .filter(wid -> !houseBlackList.contains(wid))
+                    .sorted(Comparator.comparing(w-> w.getBounds().getLocation().getY()))
                     .collect(Collectors.toList());
             for (Widget w : button) {
-                Log.log("[Debug]: Entering host");
+                Log.debug("[Debug]: Entering host");
                 if (w.click("Enter House") && Timer.waitCondition(Game::isInInstance, 3000, 4500)) {
                     return;
                 } else {
-                  //  Log.log("[Debug]: Blacklisting failed host");
-                    //houseBlackList.add(w);
+                    //  Log.log("[Debug]: Blacklisting failed host");
+                    houseBlackList.add(w);
                     clickAdvertisement();
                 }
             }
         }
     }
+
+
+    private boolean changeToRightWorld() {
+        return WorldHopper.hop(330);
+    }
+
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Entering POH";
     }
 
@@ -93,7 +105,8 @@ public class EnterHome implements Task {
 
     @Override
     public void execute() {
-        selectHost();
+        if (changeToRightWorld())
+            selectHost();
     }
 
     @Override

@@ -87,10 +87,11 @@ public class SkillBank {
                 Log.log("[SkillBank]: Missing ENOUGH of Item -> itemList size: " + itemList.size());
                 continue;
             }
-
-            if (i.isItemNoted() && !BankManager.areNotesOn())
+            Log.debug("Is Item Noted? " + i.isItemNoted());
+            if (i.isItemNoted() && !BankManager.areNotesOn()) {
                 BankManager.toggleNoted(true);
 
+            }
             if (!i.isItemNoted() && BankManager.areNotesOn())
                 BankManager.toggleNoted(false);
 

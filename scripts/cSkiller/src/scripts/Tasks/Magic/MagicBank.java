@@ -80,9 +80,11 @@ public class MagicBank implements Task {
             teleItems();
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 55) {
             teleBank(-1);// teleItems();
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 99) {
+        }  else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 66) {
             alchBank(Vars.get().alchItem.getId());
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) {
+        }else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 99) {
+            teleAlchBank(ItemID.YEW_LONGBOW);
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) { //wont execute on purpose
             myEnchBank2(diamondBraceletTAsk);
         }
     }
@@ -280,6 +282,60 @@ public class MagicBank implements Task {
 
         BankManager.close(true);
 
+    }
+
+
+    public void teleAlchBank(int alchItemID) {
+        cSkiller.status = "Banking";
+        int staffId = SpellInfo.getCurrentSpell().map(sp -> sp.getStaffId()).orElse(-1);
+
+        cSkiller.status = "Banking";
+
+
+        BankManager.open(true);
+        BankManager.depositAll(true);
+
+        if (staffId != -1 && !org.tribot.api2007.Equipment.isEquipped(staffId)) {
+            General.println("[Magic Training]: Getting staff");
+            BankManager.withdraw(1, true, staffId);
+            Utils.equipItem(staffId);
+        }
+
+        List<ItemReq> inv = SkillBank.withdraw(SpellInfo.getRequiredItemList());
+
+        if (inv != null && inv.size() > 0) {
+            General.println("[Magic Bank]: Creating buy list");
+            BuyItems.itemsToBuy = BuyItems.populateBuyList(SpellInfo.getRequiredItemList());
+            return;
+        }
+        /** alch stuff
+         */
+        if (Inventory.find(ItemID.getNotedId(alchItemID)).length ==0
+                || Inventory.find(ItemID.NATURE_RUNE).length  ==0) {
+
+            BankManager.open(true);
+            BankManager.depositAll(true);
+
+            List<ItemReq> newInv = SkillBank.withdraw(inv);
+            BankManager.turnNotesOn();
+            BankManager.withdraw(0, true, alchItemID);
+
+            if (Inventory.find(ItemID.getNotedId(alchItemID)).length == 0) {
+                General.println("[Magic Training]: Adding items to buy list : " + alchItemID);
+                if (newInv == null)
+                    newInv = new ArrayList<>();
+
+                newInv.add(new ItemReq(alchItemID, determineAmountOfAlchItem()));
+                newInv.add(new ItemReq(ItemID.NATURE_RUNE, determineAmountOfAlchItem()));
+            }
+            if (newInv != null && newInv.size() > 0) {
+                General.println("[Magic Training]: Creating buy list");
+                BuyItems.itemsToBuy = BuyItems.populateBuyList(newInv);
+                return;
+            }
+
+            BankManager.close(true);
+        }
     }
 
     public void alchBank(int alchItemID) {

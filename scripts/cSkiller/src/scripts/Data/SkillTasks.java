@@ -106,6 +106,7 @@ public enum SkillTasks {
     }
 
     public static SkillTasks getSkillTask() {
+
         List<SkillTasks> list = generateList();
         if (Vars.get().prevTask != null && list.contains(Vars.get().prevTask)) {
             General.println("[Debug]: removing prev task from list");

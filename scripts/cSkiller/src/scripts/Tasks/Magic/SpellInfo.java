@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
+import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.tasks.Amount;
@@ -14,6 +15,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
 import scripts.Utils;
 
 import java.awt.*;
@@ -40,15 +42,17 @@ public enum SpellInfo {
 
     HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemID.NATURE_RUNE,
             Utils.getNotedItemID(Vars.get().alchItem.getId())),
-            ItemID.STAFF_OF_FIRE, 55, 99),
+            ItemID.STAFF_OF_FIRE, 55, 66),
 
 
-    TELE_ALCH("High Level Alchemy", SPELL_TYPE.ALCH, 65,
+    TELE_ALCH("High Level Alchemy", SPELL_TYPE.TELE_ALCH, 110,
             new HashMap<>() {{
                 put(ItemID.FIRE_RUNE, 5);
                 put(ItemID.LAW_RUNE, 1);
+                put(ItemID.NATURE_RUNE, 1);
+               // put(ItemID.YEW_LONGBOW, 1);
             }},
-            ItemID.STAFF_OF_AIR, 55, 99),
+            ItemID.STAFF_OF_AIR, 66, 99),
 
     DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemID.COSMIC_RUNE,
             ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());
@@ -124,7 +128,7 @@ public enum SpellInfo {
     private int staffId;
 
     @Getter
-    private HashMap<Integer, Integer> runeMap;
+    private HashMap<Integer, Integer> runeMap = new HashMap<>();
 
     private SPELL_TYPE spellType;
     private int minLevel;
@@ -133,13 +137,10 @@ public enum SpellInfo {
     enum SPELL_TYPE {
         ENCHANT,
         TELEPORT,
+        TELE_ALCH,
         ALCH
     }
 
-    private HashMap<Integer, Integer> teleAlchRuneMapList = new HashMap<>() {{
-        put(ItemID.FIRE_RUNE, 5);
-        put(ItemID.LAW_RUNE, 1);
-    }};
 
     private static Skills.SKILLS skill = Skills.SKILLS.MAGIC;
 
@@ -170,9 +171,18 @@ public enum SpellInfo {
     }
 
     public boolean hasRequiredItems() {
-        for (Integer r : runes) {
-            if (Inventory.find(r).length == 0) {
-                Log.log("[SpellInfo]: We are missing a rune");
+        if (runes != null) {
+            for (Integer r : runes) {
+                RSItem[] rune = Inventory.find(r);
+                if (rune.length == 0) {
+                    Log.error("[SpellInfo]: We are missing a rune");
+                    return false;
+                }
+            }
+        }
+        for (Integer r : runeMap.keySet()) {
+            if (org.tribot.script.sdk.Inventory.getCount(r) < runeMap.get(r)) {
+                Log.error("[SpellInfo]: We are missing a rune from runeMap");
                 return false;
             }
         }
@@ -189,18 +199,37 @@ public enum SpellInfo {
 
             getCurrentSpell().ifPresent(h -> i.add(new ItemReq(h.getStaffId(), 1, true)));
 
-            if (getCurrentSpell().get().runeMap != null){
-                for (Integer integ : getCurrentSpell().get().runeMap.keySet()){
-                    getCurrentSpell().ifPresent(h -> i.add(new ItemReq(integ ,
-                            (h.determineResourcesToNextItem() * getCurrentSpell().get().runeMap.get(integ) ))));
+            if (getCurrentSpell().get().runeMap != null) {
+                for (Integer integ : getCurrentSpell().get().runeMap.keySet()) {
+                    getCurrentSpell().ifPresent(h -> i.add(new ItemReq(integ,
+                            (h.determineResourcesToNextItem() * getCurrentSpell().get().runeMap.get(integ)))));
                 }
             }
 
             List<Integer> runes = getCurrentSpell().get().getRunes();
-            for (Integer r : runes) {
-                getCurrentSpell().ifPresent(h -> i.add(new ItemReq(r, h.determineResourcesToNextItem())));
-            }
+            if (runes != null) {
+                for (Integer r : runes) {
+                    getCurrentSpell().ifPresent(h -> i.add(new ItemReq(r, h.determineResourcesToNextItem())));
+                }
+            } else {
+                for (Integer r : getCurrentSpell().get().runeMap.keySet()) {
+                    if (r == ItemID.YEW_LONGBOW) {
+                        getCurrentSpell().ifPresent(h -> i.add(new ItemReq.Builder()
+                                .isItemNoted(true)
+                                .idEquals(r)
 
+                                .amount(h.determineResourcesToNextItem() *
+                                        getCurrentSpell().get().runeMap.get(r))
+                                .build()
+                        ));
+                        Log.debug("Adding yew longbow");
+                        //adds rune from runeMap and get teh right quantity by multiplying by value
+                    } else
+                        getCurrentSpell().ifPresent(h -> i.add(new ItemReq(r, h.determineResourcesToNextItem() *
+                                getCurrentSpell().get().runeMap.get(r))));
+
+                }
+            }
             General.println("[SpellItems]: We need " + getCurrentSpell().get().determineResourcesToNextItem() +
                     " items", Color.BLACK);
 
