@@ -709,7 +709,7 @@ public class TestClass implements QuestTask {
 
     @Override
     public void execute() {
-        //getGoutWeed();
+        getGoutWeed();
         // autoClick();
        // profitPerTab(Tabs.CAMELOT);
        /* unNoteClay();

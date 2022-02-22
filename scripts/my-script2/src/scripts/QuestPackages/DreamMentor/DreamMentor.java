@@ -172,14 +172,14 @@ public class DreamMentor implements QuestTask {
                     //TODO change combat gear to melee + trident
                     new GEItem(ItemID.DRAGON_PLATELEGS, 1, 15),
                     new GEItem(ItemID.OCCULT_NECKLACE, 1, 15),
-                    new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
-
-                    new GEItem(ItemID.BLACK_DHIDE_VAMBRACES, 1, 25),
-                    new GEItem(12504, 1, 25), //bandos coif
-                    new GEItem(ItemID.RUNE_CROSSBOW, 1, 25),
-                    new GEItem(ItemID.RUNITE_BOLTS, 500, 25),
+                 //   new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
+                    new GEItem(ItemID.RUNE_PLATEBODY, 1, 15),
+                    new GEItem(ItemID.RUNE_BOOTS, 1, 45),
+                    new GEItem(ItemID.RUNE_FULL_HELM, 1, 15),
+                    new GEItem(ItemID.RUNE_KITESHIELD, 1, 25),
                     new GEItem(ItemID.RING_OF_RECOIL, 1, 40),
-                    new GEItem(ItemID.RANGING_POTION4, 1, 40),
+
+
                     new GEItem(ItemID.COOKED_KARAMBWAN, 25, 40)
 
             )
@@ -215,11 +215,11 @@ public class DreamMentor implements QuestTask {
                             new ItemReq(ItemID.TINDERBOX, 1),
                             new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
                             tridentReq,
-                            new ItemReq(ItemID.MYSTIC_BOOTS, 1, true, true),
-                            new ItemReq(ItemID.MYSTIC_GLOVES, 1, true, true),
-                            new ItemReq(ItemID.MYSTIC_HAT, 1, true, true),
-                            new ItemReq(ItemID.MYSTIC_ROBE_BOTTOM, 1, true, true),
-                            new ItemReq(ItemID.MYSTIC_ROBE_TOP, 1, true, true),
+                            new ItemReq(ItemID.RUNE_BOOTS, 1, true, true),
+                            new ItemReq(ItemID.RUNE_KITESHIELD, 1, true, true),
+                            new ItemReq(ItemID.RUNE_FULL_HELM, 1, true, true),
+                            new ItemReq(ItemID.RUNE_PLATEBODY, 1, true, true),
+                            new ItemReq(ItemID.DRAGON_PLATELEGS, 1, true, true),
                             new ItemReq(ItemID.OCCULT_NECKLACE, 1, true, true),
                             new ItemReq(12504, 1, 0),
                             new ItemReq(ItemID.DREAM_POTION, 1, 0),

@@ -37,24 +37,20 @@ public class BigChompyBirdHunting implements QuestTask {
         return quest == null ? quest = new BigChompyBirdHunting() : quest;
     }
 
-    int mithrilAxe = 1355;
-    int adamantAxe = 1357;
-    int feather = 314;
-    int knife = 946;
-    int chisel = 1755;
-    int onion = 1957;
+    //Objects
+    int ACHEY_TREE_ID = 2023;
+    int UNLOCKED_CHEST_ID = 3378;
+
+    //items
     int equaLeaves = 2128;
     int wolfBones = 2859;
     int cabbage = 1965;
     int tomato = 1982;
     int potato = 1942;
     int doogleLeaves = 1573;
-    int lobster = 379;
     int wolfBoneArrowTips = 2861;
-    int acheyLogs = 2862;
+
     int acheyArrowShaft = 2864;
-    int flightedOgreArrow = 2865;
-    int ogreArrow = 2866;
     int bellows = 2871;
     int[] inflatedBellows = {2872, 2873, 2874};
     int bloatedToad = 2875;
@@ -127,10 +123,10 @@ public class BigChompyBirdHunting implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw(1, true, ItemID.IRON_AXE);
-        BankManager.withdraw(100, true, feather);
-        BankManager.withdraw(1, true, knife);
-        BankManager.withdraw(1, true, chisel);
-        BankManager.withdraw(1, true, onion);
+        BankManager.withdraw(100, true, ItemID.FEATHER);
+        BankManager.withdraw(1, true, ItemID.KNIFE);
+        BankManager.withdraw(1, true, ItemID.CHISEL);
+        BankManager.withdraw(1, true, ItemID.ONION);
         BankManager.withdraw(1, true, equaLeaves);
         BankManager.withdraw(5, true, wolfBones);
         BankManager.withdraw(1, true, cabbage);
@@ -138,8 +134,8 @@ public class BigChompyBirdHunting implements QuestTask {
         BankManager.withdraw(1, true, potato);
         BankManager.withdraw(1, true, doogleLeaves);
         BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
-        BankManager.withdraw(2, true, BankManager.STAMINA_POTION[0]);
-        BankManager.withdraw(4, true, lobster);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
+        BankManager.withdraw(4, true, ItemID.LOBSTER);
         BankManager.close(true);
     }
 
@@ -148,76 +144,82 @@ public class BigChompyBirdHunting implements QuestTask {
         PathingUtil.walkToArea(START_AREA);
         if (NpcChat.talkToNPC("Rantz")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Ok, I'll make you some 'stabbers'.","Yes.");
+            NPCInteraction.handleConversation("Ok, I'll make you some 'stabbers'.", "Yes.");
             NPCInteraction.handleConversation();
         }
     }
 
     public void makeArrowTips() {
         cQuesterV2.status = "Making ArrowTips";
-        if (Inventory.find(wolfBones).length > 0) {
-            if (Utils.useItemOnItem(chisel, wolfBones))
-                Timer.waitCondition(() -> Interfaces.get(270, 14) != null, 5000, 8000);
+        if (Utils.useItemOnItem(ItemID.CHISEL, ItemID.WOLF_BONES))
+            Timer.waitCondition(MakeScreen::isOpen, 3000, 4000);
 
-            if (Interfaces.get(270, 14) != null)
-                if (Interfaces.get(270, 14).click())
-                    Timer.abc2WaitCondition(() -> Inventory.find(wolfBones).length < 1, 8000, 12000);
+        if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.WOLFBONE_ARROWTIPS))
+            Timer.abc2WaitCondition(() -> Inventory.find(ItemID.WOLF_BONES).length < 1, 8000, 12000);
+
+    }
+
+    public void getLogsForArrows() {
+        RSItem[] ogreArrows = Inventory.find(ItemID.OGRE_ARROW);
+        RSItem[] logs = Inventory.find(ItemID.ACHEY_TREE_LOGS);
+        RSItem[] arrowShaft = Inventory.find(acheyArrowShaft);
+
+        if (ogreArrows.length == 0 && logs.length == 0 && arrowShaft.length == 0) {
+            cQuesterV2.status = "Cutting logs for arrow shaft";
+            for (int i = 0; i < 15; i++) {
+                RSItem[] acheyLogs = Inventory.find(ItemID.ACHEY_TREE_LOGS);
+                RSItem[] flightedArrow = Inventory.find(ItemID.FLIGHTED_OGRE_ARROW);
+
+                if (acheyLogs.length < 5 && flightedArrow.length == 0) {
+                    if (Utils.clickObj(ACHEY_TREE_ID, "Chop")) {
+                        Timer.waitCondition(() -> Inventory.find(ItemID.ACHEY_TREE_LOGS).length >
+                                acheyLogs.length, 7000, 9000);
+                        Waiting.waitNormal(350, 45);
+                    }
+                } else
+                    break;
+
+            }
         }
     }
 
     public void makeArrowShaft() {
-        if (Inventory.find(ogreArrow).length < 1) {
-            cQuesterV2.status = "Cutting logs";
-            if (Inventory.find(acheyLogs).length < 1 && Inventory.find(acheyArrowShaft).length < 1) {
+        getLogsForArrows();
 
-                for (int i = 0; i < 15; i++) {
-                    if (Inventory.find(acheyLogs).length < 5 && Inventory.find(flightedOgreArrow).length < 1) {
-                        General.sleep(100);
-                        RSItem[] invItem1 = Inventory.find(acheyLogs);
-                        if (Utils.clickObj(2023, "Chop")) {
-                            Timer.waitCondition(() -> Inventory.find(acheyLogs).length > invItem1.length, 7000, 9000);
-                            Waiting.waitNormal(350, 45);
-                        }
-                    } else
-                        break;
-                }
-            }
-        }
-
-        if (Inventory.find(acheyLogs).length > 1) {
+        RSItem[] acheyLogs = Inventory.find(ItemID.ACHEY_TREE_LOGS);
+        if (acheyLogs.length > 1) {
             cQuesterV2.status = "Making arrow shafts";
-            if (Utils.useItemOnItem(knife, acheyLogs))
+            if (Utils.useItemOnItem(ItemID.KNIFE, ItemID.ACHEY_TREE_LOGS))
                 Timer.waitCondition(MakeScreen::isOpen, 5000, 7000);
 
             if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.OGRE_ARROW_SHAFT))
-                Timer.waitCondition(() -> Inventory.find(acheyLogs).length < 1, 8000, 12000);
+                Timer.waitCondition(() -> Inventory.find(ItemID.ACHEY_TREE_LOGS).length < 1, 8000, 12000);
         }
     }
 
     public void makeArrows() {
         cQuesterV2.status = "Adding feathers";
-        if (Inventory.find(flightedOgreArrow).length < 1 && Inventory.find(feather).length > 0) {
-            if (Utils.useItemOnItem(feather, acheyArrowShaft))
-                Timer.waitCondition(() -> Interfaces.get(270, 14) != null, 5000, 7000);
+        if (Inventory.find(ItemID.FLIGHTED_OGRE_ARROW).length < 1 && Inventory.find(ItemID.FEATHER).length > 0) {
+            if (Utils.useItemOnItem(ItemID.FEATHER, acheyArrowShaft))
+                Timer.waitCondition(MakeScreen::isOpen, 5000, 7000);
 
-            if (Interfaces.get(270, 14) != null)
-                if (Interfaces.get(270, 14).click())
-                    Timer.waitCondition(() -> Inventory.find(acheyArrowShaft).length < 1, 10000, 15000);
+            if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.FLIGHTED_OGRE_ARROW))
+                Timer.waitCondition(() -> Inventory.find(acheyArrowShaft).length == 0, 10000, 15000);
         }
 
-        if (Inventory.find(flightedOgreArrow).length > 0 && Inventory.find(ogreArrow).length < 1) {
+        if (Inventory.find(ItemID.FLIGHTED_OGRE_ARROW).length > 0 &&
+                Inventory.find(ItemID.OGRE_ARROW).length < 1) {
             cQuesterV2.status = "Adding arrowheads";
-            if (Utils.useItemOnItem(wolfBoneArrowTips, flightedOgreArrow))
-                Timer.waitCondition(() -> Interfaces.get(270, 14) != null, 5000, 7000);
+            if (Utils.useItemOnItem(wolfBoneArrowTips, ItemID.FLIGHTED_OGRE_ARROW))
+                Timer.waitCondition(MakeScreen::isOpen, 5000, 7000);
 
-            if (Interfaces.get(270, 14) != null)
-                if (Interfaces.get(270, 14).click())
-                    Timer.waitCondition(() -> Inventory.find(flightedOgreArrow).length < 1, 10000, 15000);
+            if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.OGRE_ARROW))
+                Timer.waitCondition(() -> Inventory.find(ItemID.FLIGHTED_OGRE_ARROW).length == 0, 10000, 15000);
         }
     }
 
     public void returnToRantz() {
-        if (Inventory.find(ogreArrow).length > 0) {
+        if (Inventory.find(ItemID.OGRE_ARROW).length > 0) {
             cQuesterV2.status = "Going to Rantz";
             PathingUtil.walkToArea(START_AREA);
             if (NpcChat.talkToNPC("Rantz")) {
@@ -231,14 +233,15 @@ public class BigChompyBirdHunting implements QuestTask {
         }
     }
 
-    int UNLOCKED_CHEST_ID = 3378;
 
     public void goToChest() {
-        if (!CAVE_ENTRANCE_AREA.contains(Player.getPosition()) && !INSIDE_CAVE.contains(Player.getPosition())) {
+        if (!CAVE_ENTRANCE_AREA.contains(Player.getPosition()) &&
+                !INSIDE_CAVE.contains(Player.getPosition())) {
             cQuesterV2.status = "Walking to cave entrance";
             PathingUtil.walkToArea(CAVE_ENTRANCE_AREA);
         }
 
+        cQuesterV2.status = "Entering Cave";
         if (Utils.clickObj("Cave entrance", "Enter"))
             Timer.waitCondition(() -> INSIDE_CAVE.contains(Player.getPosition()), 7000, 10000);
 
@@ -247,12 +250,15 @@ public class BigChompyBirdHunting implements QuestTask {
             PathingUtil.walkToArea(BUGS_AREA);
         }
 
-        if (INSIDE_CAVE.contains(Player.getPosition())) { //was bugs area check before
+        if (INSIDE_CAVE.contains(Player.getPosition())) {
+            // he doesn't have the usual "Talk-to" interaction string
             if (Utils.clickNPC("Bugs", "Talk")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
             }
-            for (int i = 0; i < 3; i++) {
+
+            //can take multiple attempts to open successfully
+            for (int i = 0; i < 5; i++) {
                 RSObject[] chest = Objects.findNearest(20, "Locked Ogre chest");
                 if (chest.length > 0 && Inventory.find(bellows).length < 1) {
                     cQuesterV2.status = "Unlocking chest";
@@ -265,19 +271,19 @@ public class BigChompyBirdHunting implements QuestTask {
                     }
                 }
             }
+
             RSObject[] unlockedChest = Objects.find(20, UNLOCKED_CHEST_ID);
             if (unlockedChest.length > 0) {
                 cQuesterV2.status = "Searching chest";
                 if (Utils.clickObj(UNLOCKED_CHEST_ID, "Search")) {
                     NPCInteraction.waitForConversationWindow();
-                    Keyboard.typeString(" ");
+                    ChatScreen.handle();
                     Timer.waitCondition(() -> Inventory.find(bellows).length > 0, 3000, 5000);
                 }
             }
         }
     }
 
-    RSTile BUBBLE_TILE = new RSTile(2595, 2966, 0);
 
     public void inflateToads() {
         if (Inventory.find(bellows).length > 0) {
@@ -289,8 +295,8 @@ public class BigChompyBirdHunting implements QuestTask {
                     Timer.waitCondition((() -> CAVE_ENTRANCE_AREA.contains(Player.getPosition())), 8900, 12000);
             }
 
-        } else if (Inventory.find(inflatedBellows).length == 0){
-            Log.log("[Debug]: Missing bellows");
+        } else if (Inventory.find(inflatedBellows).length == 0) {
+            Log.error("[Debug]: Missing bellows");
             return;
         }
 
@@ -299,10 +305,12 @@ public class BigChompyBirdHunting implements QuestTask {
             PathingUtil.walkToTile(new RSTile(2595, 2967, 0));
             Timer.waitCondition(() -> TOAD_AREA.contains(Player.getPosition()), 8900, 12000);
         }
+
         while (TOAD_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length < 3) {
             General.sleep(150);
             if (Inventory.find(inflatedBellows).length < 1) {
                 cQuesterV2.status = "Inflating bellow";
+                // good to get the specific bubble tile to prevent issues clicking others
                 Optional<GameObject> bubbles = Query.gameObjects()
                         .tileEquals(new WorldTile(2595, 2966, 0))
                         .nameContains("Swamp bubbles")
@@ -329,15 +337,13 @@ public class BigChompyBirdHunting implements QuestTask {
         }
     }
 
-    public void returnToRantz2() {
+    public void returnToRantzWithBloatedToads() {
         if (Inventory.find(bloatedToad).length > 2) {
             cQuesterV2.status = "Going to Rantz";
             PathingUtil.walkToArea(START_AREA);
-            if (START_AREA.contains(Player.getPosition())) {
-                NpcChat.talkToNPC("Rantz");
+            if (NpcChat.talkToNPC("Rantz")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-
             }
         }
     }
@@ -401,7 +407,7 @@ public class BigChompyBirdHunting implements QuestTask {
 
     public void equipBow() {
         Utils.equipItem(orgreBow);
-        Utils.equipItem(ogreArrow);
+        Utils.equipItem(ItemID.OGRE_ARROW);
     }
 
     public void kill() {
@@ -494,9 +500,9 @@ public class BigChompyBirdHunting implements QuestTask {
             for (int i = 0; i < 5; i++) {
                 RSInterface myChatCont = Interfaces.get(217, 4);
                 RSInterface theirChatCont = Interfaces.get(231, 4);
-                if (theirChatCont != null){
+                if (theirChatCont != null) {
                     ChatScreen.clickContinue();
-                    Waiting.waitNormal(750,50);
+                    Waiting.waitNormal(750, 50);
                     determineIngredients();
                 }
 
@@ -539,10 +545,10 @@ public class BigChompyBirdHunting implements QuestTask {
         if (spit.length > 0) {
             PathingUtil.walkToTile(spit[0].getPosition());
             if (!addOnion) {
-                if (Inventory.find(onion).length > 0) {
-                    AccurateMouse.click(Inventory.find(onion)[0], "Drop");
-                    General.sleep(General.random(300, 800));
-                }
+                RSItem[] invOnion = Inventory.find(ItemID.ONION);
+                if (invOnion.length > 0 && invOnion[0].click("Drop"))
+                    General.sleep(300, 800);
+
             }
             if (!addDoogleLeaves) {
                 RSItem[] invLeaves = Inventory.find(doogleLeaves);
@@ -574,6 +580,7 @@ public class BigChompyBirdHunting implements QuestTask {
                 Timer.abc2WaitCondition(() -> Inventory.find(seasonedChompy).length > 0, 10000, 15000);
         }
     }
+
 
     public void finishQuest() {
         cQuesterV2.status = "Going to Rantz";
@@ -613,15 +620,15 @@ public class BigChompyBirdHunting implements QuestTask {
         if (Game.getSetting(293) == 20) {
             goToChest();
             inflateToads();
-            returnToRantz2();
+            returnToRantzWithBloatedToads();
         }
         if (Game.getSetting(293) == 25) {
             rantzHunt();
-            returnToRantz2();
+            returnToRantzWithBloatedToads();
         }
         if (Game.getSetting(293) == 30) {
             rantzHunt();
-            returnToRantz2();
+            returnToRantzWithBloatedToads();
         }
         if (Game.getSetting(293) == 40) {
             returnToRantz3();
@@ -636,7 +643,7 @@ public class BigChompyBirdHunting implements QuestTask {
             returnToRantz3();
         }
         if (Game.getSetting(293) == 55) {
-           goToKids();
+            goToKids();
             getRantzIngredient();
             cook();
         }
@@ -669,6 +676,7 @@ public class BigChompyBirdHunting implements QuestTask {
     public boolean checkRequirements() {
         return checkLevel();
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
