@@ -6,9 +6,14 @@ import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.QuestPackages.PriestInPeril.PriestInPeril;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.InventoryRequirement;
@@ -20,6 +25,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class NatureSpirit implements QuestTask {
 
@@ -91,7 +97,7 @@ public class NatureSpirit implements QuestTask {
         General.println("[Debug]: Buying Items");
 
         if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 40) {
-           itemsToBuy.add(new GEItem(ItemID.RUNE_SCIMITAR, 1, 20));
+            itemsToBuy.add(new GEItem(ItemID.RUNE_SCIMITAR, 1, 20));
         } else if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 30) {
             itemsToBuy.add(new GEItem(ItemID.ADAMANT_SCIMITAR, 1, 50));
         }
@@ -572,10 +578,30 @@ public class NatureSpirit implements QuestTask {
         }
         while ((Inventory.find(FILLED_DRUIDIC_POUCH).length > 0 || Combat.isUnderAttack())) {
             General.sleep(100);
+            Optional<Npc> vis = Query.npcs().idEquals(VISIBLE_GHAST)
+                    .findBestInteractable();
+            Optional<Npc> inVis = Query.npcs().idEquals(INVISIBLE_GHAST)
+                    .findBestInteractable();
+            Optional<InventoryItem> filledPouch = Query.inventory()
+                    .idEquals(FILLED_DRUIDIC_POUCH)
+                    .findClosestToMouse();
             RSNPC[] visible = NPCs.find(VISIBLE_GHAST);
             RSNPC[] invisible = NPCs.find(INVISIBLE_GHAST);
-
-            if (!Combat.isUnderAttack() && invisible.length > 0) {
+            if (vis.isPresent()) {
+                if (!MyPlayer.isHealthBarVisible() &&
+                        vis.map(n -> n.interact("Attack")).orElse(false)) {
+                    cQuesterV2.status = "Attacking VISIBLE Ghast";
+                    Timer.waitCondition(MyPlayer::isHealthBarVisible, 3500, 5000);
+                }
+            } else if (inVis.isPresent() && filledPouch.isPresent()) {
+                if (GameState.isAnyItemSelected()) {
+                    Utils.unselectItem();
+                }
+                cQuesterV2.status = "Attacking Invisible Ghast";
+                if (filledPouch.map(p -> p.useOn(inVis.get())).orElse(false))
+                    Timer.waitCondition(MyPlayer::isHealthBarVisible, 3500, 5000);
+            }
+            /*if (!Combat.isUnderAttack() && invisible.length > 0) {
                 cQuesterV2.status = "Attacking Ghast";
                 if (AccurateMouse.click(Inventory.find(FILLED_DRUIDIC_POUCH)[0], "Use")) {
                     if (DynamicClicking.clickRSNPC(invisible[0], "Use Druid pouch ->"))
@@ -584,16 +610,15 @@ public class NatureSpirit implements QuestTask {
             } else if (!Combat.isUnderAttack() && visible.length > 0) {
                 if (CombatUtil.clickTarget(visible[0]))
                     Timer.waitCondition(() -> Combat.isUnderAttack(), 12000, 15000);
-            }
-            if (Combat.getHPRatio() < General.random(40, 65) && Inventory.find(LOBSTER).length > 0) {
+            }*/
+
+            if (Combat.getHPRatio() < General.random(40, 65)) {
                 cQuesterV2.status = "Eating";
                 General.println("[Debug]: " + cQuesterV2.status);
-                Utils.shortSleep();
-                if (AccurateMouse.click(Inventory.find(LOBSTER)[0], "Eat"))
-                    General.sleep(General.random(500, 1000));
+                EatUtil.eatFood(true);
             } else {
                 cQuesterV2.status = "Idling...";
-                General.sleep(General.random(500, 3000));
+                General.sleep(700, 3000);
             }
         }
 
@@ -763,6 +788,7 @@ public class NatureSpirit implements QuestTask {
         }
         return true;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
