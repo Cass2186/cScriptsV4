@@ -48,7 +48,7 @@ public class BuyItemsStep {
 
     private void getItemCache() {
         if (this.bankCache == null) {
-            General.println("[Debug]: Caching bank");
+            General.println("[BuyItemsStep]: Caching bank");
             BankManager.open(true);
             BankManager.depositAll(true);
             BankManager.withdraw(0, true, ItemID.COINS);
@@ -60,8 +60,9 @@ public class BuyItemsStep {
             this.bankCache = Banking.getAllList();
         }
         if (this.gearCache == null) {
-            General.println("[Debug]: Caching gear");
+            General.println("[BuyItemsStep]: Caching gear");
             this.gearCache = Arrays.asList(Equipment.getItems());
+            this.bankCache.addAll(this.gearCache);
         }
     }
 
@@ -100,13 +101,13 @@ public class BuyItemsStep {
             if (item.getItemID() == myItems.get(i).getID()) {
                 stack = myItems.get(i).getStack();
                 if (stack > 0) {
-                    General.println("[GEItem]: We already have " + stack + " of " + itemName);
+                    General.println("[BuyItemsStep]: We already have " + stack + " of " + itemName);
                     numOfItem = item.getItemQuantity() - stack;
                     return numOfItem;
 
                 } else {
-                    General.println("[GEItem]: We already have " + stack + " of " + itemName);
-                    General.println("[GEItem]: itemQuantity " + item.getItemQuantity());
+                    General.println("[BuyItemsStep]: We already have " + stack + " of " + itemName);
+                    General.println("[BuyItemsStep]: itemQuantity " + item.getItemQuantity());
                     return item.getItemQuantity();
                 }
             }
@@ -119,7 +120,7 @@ public class BuyItemsStep {
         numOfItem = item.getItemQuantity() - stack;
 
 
-        General.println("[Debug]: Need to buy " + numOfItem + " of " + itemName);
+        General.println("[BuyItemsStep]: Need to buy " + numOfItem + " of " + itemName);
         return numOfItem;
     }
 

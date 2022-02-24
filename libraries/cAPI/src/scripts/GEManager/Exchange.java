@@ -9,6 +9,7 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
@@ -313,8 +314,8 @@ public class Exchange {
             BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
         }
 
-        if (Banking.isBankScreenOpen())
-            Banking.close(); //replace with a custom method
+        if (Bank.isOpen())
+            Bank.close();
 
 
         String itemString = Utils.getItemName(geItem.getItemID()); //needs null check or optional
@@ -327,7 +328,9 @@ public class Exchange {
         if (getEmptyOffer() == null) {
             collectItems();
         }
+
         General.println("[GEManager]: Buying: " + itemString + " x " + geItem.quantity + " for " + geItem.percentIncrease + "% more");
+
         if (selectBuyItem(geItem))
             General.sleep(General.random(800, 1500)); // lets load
 

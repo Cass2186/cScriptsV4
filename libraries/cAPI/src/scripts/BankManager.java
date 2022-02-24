@@ -46,6 +46,10 @@ public class BankManager {
     public static RSItem[] myItems;
     public static RSItem[] myEquipedItems;
 
+
+    public static ArrayList<RSItem> items = new ArrayList<RSItem>();
+    public static List<RSItem> list;
+
     private static RSItem[] cachedSearch;
 
     public static RSArea GE_Area = new RSArea(new RSTile(3160, 3494, 0), new RSTile(3168, 3485, 0));
@@ -403,8 +407,7 @@ public class BankManager {
     }
 
 
-    public static ArrayList<RSItem> items = new ArrayList<RSItem>();
-    public static List<RSItem> list;
+
 
     /**
      * Caches and combines both banked and equipped items to a single array...
@@ -427,7 +430,7 @@ public class BankManager {
             items.addAll(list);
 
             myItems = items.toArray(new RSItem[0]); // likely don't need this anymore as I changed determine purchase amounts
-            Log.log("[Debug]: Cached Items: " + myItems.length);
+            Log.log("[BankManager]: Cached Items: " + myItems.length);
         }
     }
 
@@ -637,7 +640,7 @@ public class BankManager {
     public static boolean withdraw(int num, boolean shouldWait, int[] ItemID) {
         General.sleep(General.randomSD(50, 400, 250, 75)); // sleep here so withdraws are not back to back speedy
 
-        if (!Banking.isBankScreenOpen())
+        if (!Bank.isOpen())
             open(true);
 
         closeHelpWindow();
