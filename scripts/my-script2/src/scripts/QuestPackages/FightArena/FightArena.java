@@ -406,15 +406,17 @@ public class FightArena implements QuestTask {
                     General.sleep(400, 2000);
                 }
 
-                if ((npc[0].getPosition().distanceTo(Player.getPosition()) <= 2) && safeTile.equals(Player.getPosition())) {
+                if ((npc[0].getPosition().distanceTo(Player.getPosition()) <= 2) &&
+                        safeTile.equals(Player.getPosition())) {
                     General.println("[Debug]: Safe Tile 1 seems to have failed, moving.");
                     Walking.clickTileMS(safeTile2, "Walk here");
-                    General.sleep(1000, 2000);
+                    General.sleep(1400, 2000);
                 }
-                if ((npc[0].getPosition().distanceTo(Player.getPosition()) <= 2) && safeTile2.equals(Player.getPosition())) {
+                if ((npc[0].getPosition().distanceTo(Player.getPosition()) <= 2) &&
+                        safeTile2.equals(Player.getPosition())) {
                     General.println("[Debug]: Safe Tile 2 seems to have failed, moving.");
                     Walking.clickTileMS(safeTile, "Walk here");
-                    General.sleep(1000, 2000);
+                    General.sleep(1400, 2000);
                 }
                 if (npc[0].getHealthPercent() == 0) {
                     break;
@@ -438,7 +440,7 @@ public class FightArena implements QuestTask {
                     .idEquals(NPCName)
                     .inArea(FIGHT_AREA)
                     .getResults();
-           killNPC(npc);
+            killNPC(npc);
         }
     }
 
@@ -575,9 +577,11 @@ public class FightArena implements QuestTask {
         if (COMBAT_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Killing Bouncer";
             General.println("[Debug]: " + cQuesterV2.status);
-            NPCInteraction.handleConversation();
-            General.sleep(General.random(2500, 4000));
-            Walking.blindWalkTo(safeTile);
+            if (NPCInteraction.isConversationWindowUp())
+                NPCInteraction.handleConversation();
+            //General.sleep(2500, 4000);
+            if (!Player.getPosition().equals(safeTile))
+                Walking.blindWalkTo(safeTile);
             Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 8000);
         }
         killNPC("Bouncer");
