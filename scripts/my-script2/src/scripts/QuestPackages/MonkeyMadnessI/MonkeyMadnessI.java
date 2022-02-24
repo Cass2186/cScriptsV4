@@ -126,12 +126,20 @@ public class MonkeyMadnessI implements QuestTask {
 
     String[] DAERO_CHAT = {
             "Talk about the journey...",
+            "<col=0000ff>Return to previous menu",
             "Talk about the 10th squad...",
+            "<col=0000ff>Return to previous menu",
             "Talk about Caranock...",
             "Leave...",
             "Who is it?",
-            "<col=0000ff>Return to previous menu.", // may not have a period
     };
+    String[] DAERO_CHAT2 = {
+            "<col=0000ff>Return to previous menu",
+            "Talk about Caranock...",
+            "Leave...",
+            "Who is it?",
+    };
+
 
     // I have no idea why i did it like this, but it works
     public ArrayList<String>
@@ -392,8 +400,9 @@ public class MonkeyMadnessI implements QuestTask {
     public void chat() {
         if (NPCInteraction.isConversationWindowUp()) {
             Waiting.waitUniform(2000, 3500);
-            NPCInteraction.handleConversation(DAERO_CHAT[0]);
-            Timer.waitCondition((() -> Interfaces.isInterfaceSubstantiated(219, 1, 4)), 5000, 7000); // talk about the journey
+            NPCInteraction.handleConversation(DAERO_CHAT);
+            NPCInteraction.handleConversation(DAERO_CHAT2);
+           /* Timer.waitCondition((() -> Interfaces.isInterfaceSubstantiated(219, 1, 4)), 5000, 7000); // talk about the journey
             if (Interfaces.get(219, 1, 4) != null) {
                 General.println("[Debug]: Return to previous menu");
                 if (Interfaces.get(219, 1, 4).click())
@@ -434,24 +443,21 @@ public class MonkeyMadnessI implements QuestTask {
                     Timer.waitCondition(() -> GLIDER_BASE.contains(Player.getPosition()), 8000, 12000);
                     return;
                 }
-            }
-            if (Interfaces.get(219, 1, 4) != null) {
-                if (Interfaces.get(219, 1, 4).getText().contains("Leave")) {
-                    Interfaces.get(219, 1, 4).click();
-                    General.sleep(General.random(900, 2000));
-                    NPCInteraction.handleConversation(DAERO_CHAT_12.toArray(new String[DAERO_CHAT_12.size()]));
-                    NPCInteraction.handleConversation();
-                    Timer.waitCondition(() -> GLIDER_BASE.contains(Player.getPosition()), 8000, 12000);
-                    General.sleep(General.random(1000, 3000));
-                }
-            }
+            }*/
+
+            NPCInteraction.handleConversation();
+            Log.debug("Waiting for glider bas");
+            Timer.waitCondition(() -> GLIDER_BASE.contains(Player.getPosition()), 8000, 12000);
+            General.sleep(2000, 3000);
+            //
+
         }
     }
 
     public void step6Part2() {
         cQuesterV2.status = "Step 6a: Talking to Daero";
         General.println("[Debug]: " + cQuesterV2.status);
-        General.sleep(General.random(1000, 3000));
+        General.sleep(2000, 3000);
         if (NpcChat.talkToNPC("Daero")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation();
@@ -1971,8 +1977,8 @@ public class MonkeyMadnessI implements QuestTask {
 
         if (DeathsOffice.shouldHandleDeath()) {
             Log.error("Died");
-            cQuesterV2.taskList.remove(this);
-            return;
+            // cQuesterV2.taskList.remove(this);
+            // return;
         }
         if (Game.getSetting(365) == 0) {
             buyItems();
