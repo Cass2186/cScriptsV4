@@ -345,7 +345,7 @@ public class TreeGnomeVillage implements QuestTask {
         if (NpcChat.talkToNPC("King Bolren")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Can I help at all?");
-            NPCInteraction.handleConversation("I would be glad to help.");
+            NPCInteraction.handleConversation("I would be glad to help.", "Yes.");
             NPCInteraction.handleConversation();
             Utils.modSleep();
         }
