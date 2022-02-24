@@ -111,14 +111,13 @@ public class Utils {
         return new RSTile(tile.getX(), tile.getY(), tile.getPlane());
     }
 
-    public static Area getAreaFromRSArea(RSArea area){
+    public static Area getAreaFromRSArea(RSArea area) {
         List<Tile> wolrdTiles = new ArrayList<>();
-        for (RSTile t: area.getAllTiles()){
+        for (RSTile t : area.getAllTiles()) {
             wolrdTiles.add(getWorldTileFromRSTile(t));
         }
-       return Area.fromPolygon(wolrdTiles);
+        return Area.fromPolygon(wolrdTiles);
     }
-
 
 
     public static int random(int min, int max) {
@@ -435,8 +434,7 @@ public class Utils {
                 if (walkable.isPresent()) {
                     if (!PathingUtil.localNav(walkable.get()))
                         Walking.blindWalkTo(obj.getPosition());
-                }
-                else
+                } else
                     Timer.waitCondition(() -> obj.getPosition().distanceTo(Player.getPosition()) < 7, 5000, 7000);
 
                 DaxCamera.focus(obj);
@@ -448,21 +446,21 @@ public class Utils {
         return obj.isClickable();
     }
 
-    public static boolean isItemNoted(int itemID){
+    public static boolean isItemNoted(int itemID) {
         Optional<ItemDefinition> def = ItemDefinition.get(itemID);
         if (def.isEmpty())
             return false;
         return def.get().isNoted();
     }
 
-    public static boolean itemNameContains(String referenceItem, String comparator ){
+    public static boolean itemNameContains(String referenceItem, String comparator) {
         return referenceItem.toLowerCase(Locale.ROOT).contains(comparator.toLowerCase(Locale.ROOT));
     }
 
-    public static List<ItemRequirement> multiplyItemList(List<ItemRequirement> list, int multiplier){
+    public static List<ItemRequirement> multiplyItemList(List<ItemRequirement> list, int multiplier) {
         List<ItemRequirement> newList = new ArrayList<>();
-        for (int i =0 ; i < list.size(); i++){
-            newList.add(new ItemRequirement(list.get(i).getId(), list.get(i).getAmount()*multiplier));
+        for (int i = 0; i < list.size(); i++) {
+            newList.add(new ItemRequirement(list.get(i).getId(), list.get(i).getAmount() * multiplier));
         }
         return newList;
     }
@@ -1025,34 +1023,41 @@ public class Utils {
     }
 
     public static void setNPCAttackPreference() {
-        if (Interfaces.get(116, 7, 4) != null) { // don't use is substantiated
-            if (Interfaces.get(116, 7, 4).getText().contains("Left-click where available")) {
-                Log.log("[Utils]: Attack preferences already set");
+        //tries 3x to set
+        for (int i = 0; i < 3; i++) {
+            //already set, break;
+            if (GameState.getSetting(1306) == 2)
                 return;
-            }
-        }
-        Log.log("[Utils]: Setting NPC Attach preferences");
-        if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
-            GameTab.open(GameTab.TABS.OPTIONS);
-            General.sleep(General.randomSD(100, 750, 400, 150));
-        }
-        if (GameTab.getOpen() == GameTab.TABS.OPTIONS) {
 
-            if (Interfaces.get(109, 6) != null) { // selects tab
-                Interfaces.get(109, 6).click();
+            Log.log("[Utils]: Setting NPC Attach preferences");
+            if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
+                GameTab.open(GameTab.TABS.OPTIONS);
                 General.sleep(General.randomSD(100, 750, 400, 150));
             }
 
-            if (Interfaces.get(116, 7, 3) != null) { // selects drop down
-                Interfaces.get(116, 7, 3).click();
-                General.sleep(General.randomSD(100, 750, 400, 150));
-            }
-            if (Interfaces.get(116, 36, 3) != null) { // selects 'left click when availible'
-                Interfaces.get(116, 36, 3).click();
-                General.sleep(General.randomSD(100, 750, 400, 150));
+            if (GameTab.getOpen() == GameTab.TABS.OPTIONS) {
+                // not in the right options tab (gear one)
+                if (Utils.getVarBitValue(9683) != 0) {
+                    if (Interfaces.get(109, 6) != null) { // selects tab in options
+                        Interfaces.get(109, 6).click();
+                        Timer.waitCondition(() -> Utils.getVarBitValue(9683) == 0, 1750, 2250);
+                    }
+                }
+
+                if (Interfaces.get(116, 7, 3) != null) { // selects drop down
+                    Interfaces.get(116, 7, 3).click();
+                    General.sleep(General.randomSD(100, 750, 400, 150));
+                }
+
+                Optional<Widget> first = Query.widgets()
+                        .textContains("Left-click where available").findFirst();
+                Log.debug("is button present: " + first.isPresent());
+                if (first.map(f -> f.click("Select")).orElse(false)) {
+                    Timer.waitCondition(()-> GameState.getSetting(1306) == 2, 2250, 2750);
+                    break;
+                }
             }
         }
-
     }
 
     public static boolean waitCondtion(BooleanSupplier condition) {
@@ -1803,7 +1808,7 @@ public class Utils {
         return false;
     }
 
-    public static int[] reverseIntArray(int[] a){
+    public static int[] reverseIntArray(int[] a) {
         int[] b = new int[a.length];
         int j = a.length;
         for (int i = 0; i < a.length; i++) {
@@ -1814,7 +1819,7 @@ public class Utils {
     }
 
 
-    public static Optional<Npc> getClosestInteractingNpc(){
+    public static Optional<Npc> getClosestInteractingNpc() {
         return Query.npcs().isInteractingWithMe().findClosestByPathDistance();
     }
 

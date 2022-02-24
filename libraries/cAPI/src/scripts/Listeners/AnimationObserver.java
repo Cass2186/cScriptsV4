@@ -37,7 +37,9 @@ public class AnimationObserver extends Thread {
             General.sleep(50);
             if (Login.getLoginState() != Login.STATE.INGAME) continue;
 
-            Optional<Npc> bestInteractable = Query.npcs().nameContains(this.npcName).findBestInteractable();
+            Optional<Npc> bestInteractable = Query.npcs()
+                    .nameContains(this.npcName)
+                    .findBestInteractable();
 
             if (bestInteractable.isPresent()){
                 int currentAnimation = bestInteractable.get().getAnimation();

@@ -22,6 +22,9 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.types.GroundItem;
 import scripts.API.AntiPKThread;
 import scripts.Data.Vars;
+import scripts.Listeners.InterfaceObserver;
+import scripts.Listeners.PkListener;
+import scripts.Listeners.PkObserver;
 import scripts.Tasks.*;
 import scripts.rsitem_services.GrandExchange;
 
@@ -35,12 +38,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class cCombat extends Script implements Painting, Starting, Ending, Arguments, MessageListening07, Breaking {
 
-
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
-    public static java.util.List<Task> taskList = new ArrayList<>();
 
     //AntiPKThread pkObj = new AntiPKThread("Pk thread");
+
+    private void initializeListeners() {
+        PkObserver pkObserver = new PkObserver(() -> true);
+        pkObserver.start();
+    }
 
     @Override
     public void run() {
@@ -51,17 +57,18 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 new MoveToArea(),
                 new WorldHop(),
                 new EatDrink(),
-               new Bank()
+                new Bank()
 
 
         );
-      //  AntiPKThread pkObj = new AntiPKThread("Pk thread");
-    //    pkObj.start();
+        //  AntiPKThread pkObj = new AntiPKThread("Pk thread");
+        //    pkObj.start();
         Mouse.setSpeed(250);
-      //  AntiPKThread.scrollToWorld(AntiPKThread.nextWorld);
-          isRunning.set(true);
+        //  AntiPKThread.scrollToWorld(AntiPKThread.nextWorld);
+        isRunning.set(true);
+        initializeListeners();
+
         while (isRunning.get()) {
-       //    Log.log("woo");
             General.sleep(20, 40);
             Task task = tasks.getValidTask();
             if (task != null) {
@@ -83,8 +90,8 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
                 if (arg.toLowerCase().contains("target:")) {
                     String[] s = arg.split("target:");
-                    if (s.length > 1){
-                        General.println("[Args]: Target is "+ s[1]);
+                    if (s.length > 1) {
+                        General.println("[Args]: Target is " + s[1]);
                         Vars.get().targets = new String[]{s[1]};
                     }
                 }
@@ -139,11 +146,11 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 "cCombat v2",
                 "Running For: " + Timing.msToString(getRunningTime()),
                 "Task: " + status,
-                "Loot Value: " +Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
-                        Utils.addCommaToNum(Math.round(Vars.get().lootValue/timeRanMin))
+                "Loot Value: " + Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
+                        Utils.addCommaToNum(Math.round(Vars.get().lootValue / timeRanMin))
         ));
         Optional<GroundItem> item = LootItems.getLootItem();
-        if (item.isPresent()){
+        if (item.isPresent()) {
             Polygon p = Projection.getTileBoundsPoly(item.get().getLegacyRSGroundItem().getPosition(), 0);
             g.drawPolygon(p);
         }
@@ -211,7 +218,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
     @Override
     public void serverMessageReceived(String message) {
-        if (message.contains("are dead") || message.contains("died")){
+        if (message.contains("are dead") || message.contains("died")) {
             Log.error("Died, ending script");
             isRunning.set(false);
             throw new NullPointerException();
@@ -228,4 +235,5 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
     public void onBreakEnd() {
 
     }
+
 }

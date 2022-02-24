@@ -1,6 +1,8 @@
 package scripts.Tasks;
 
-public class WorldHop implements Task  {
+import scripts.Listeners.PkListener;
+
+public class WorldHop implements Task, PkListener {
 
 
 
@@ -22,5 +24,10 @@ public class WorldHop implements Task  {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public void onPkerNearby() {
+        // valiate and hop?
     }
 }

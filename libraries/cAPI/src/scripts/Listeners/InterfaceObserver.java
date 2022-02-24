@@ -36,7 +36,8 @@ public class InterfaceObserver extends Thread {
 
             for (RSInterfaceChildId rsInterfaceChildId : rsInterfaceChildMap.keySet()) {
 
-                RSInterfaceChild currentInterface = Interfaces.get(rsInterfaceChildId.getIndex(), rsInterfaceChildId.getChild());
+                RSInterfaceChild currentInterface = Interfaces
+                        .get(rsInterfaceChildId.getIndex(), rsInterfaceChildId.getChild());
 
                 String lastInterfaceText = rsInterfaceChildMap.get(rsInterfaceChildId);
                 if (currentInterface != null
