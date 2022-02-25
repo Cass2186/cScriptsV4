@@ -9,6 +9,8 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
@@ -138,6 +140,8 @@ public class DwarfCannon implements QuestTask {
         return i.length > 0 ? i[0].getStack() : 0;
     }
 
+    int[] BROKEN_RAILING_IDS = {15595, 15594, 15593, 15592, 15591, 15590};
+
     public void fixRailings() {
         cQuesterV2.status = "Fixing Railings";
         General.println("[Debug]: " + cQuesterV2.status);
@@ -151,19 +155,23 @@ public class DwarfCannon implements QuestTask {
             case (5):
                 PathingUtil.walkToTile(new RSTile(2573, 3457), 1, false);
                 inspectRailing(15594);
-
+                break;
             case (4):
                 PathingUtil.walkToTile(new RSTile(2563, 3457), 1, false);
                 inspectRailing(15593);
+                break;
             case (3):
                 PathingUtil.walkToTile(new RSTile(2559, 3458), 1, false);
                 inspectRailing(15592);
+                break;
             case (2):
                 PathingUtil.walkToTile(new RSTile(2557, 3468), 1, false);
                 inspectRailing(15591);
+                break;
             case (1):
                 PathingUtil.walkToTile(new RSTile(2555, 3479), 1, false);
                 inspectRailing(15590);
+                break;
 
         }
     }
@@ -172,9 +180,11 @@ public class DwarfCannon implements QuestTask {
     public void inspectRailing(int railingId) {
         railings = Objects.findNearest(15, railingId);
         int railingStack = getRailingStack();
+        // just in case we're moving
+        Waiting.waitNormal(750, 100);
 
         checkEat();
-
+        int health = MyPlayer.getCurrentHealth();
         if (railings.length > 0 && railingStack > 0) {
             if (!railings[0].isClickable())
                 DaxCamera.focus(railings[0]);
@@ -182,11 +192,11 @@ public class DwarfCannon implements QuestTask {
             if (railings[0].click("Inspect")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-                if (Timer.waitCondition(() -> Player.getAnimation() != -1, 5000))
+                if (Timer.waitCondition(() -> Player.getAnimation() != -1, 3000))
                     Timer.waitCondition(() -> Inventory.find(14).length == 0 ||
-                            getRailingStack() < railingStack || Player.getAnimation() == -1, 8000, 12000);
-                Utils.shortSleep();
-
+                                    getRailingStack() < railingStack || Player.getAnimation() == -1 ||
+                                    health > MyPlayer.getCurrentHealth(),
+                            8000, 12000);
             }
         }
     }
@@ -232,22 +242,26 @@ public class DwarfCannon implements QuestTask {
                     Timer.slowWaitCondition(() -> Inventory.find(0).length > 0, 8000, 12000);
                 }
             }
-        } else {
-            if (THIRD_FLOOR.contains(Player.getPosition())
-                    && Utils.clickObject("Ladder", "Climb-down", false))
-                Timer.waitCondition(() -> SECOND_FLOOR.contains(Player.getPosition()), 4000, 6000);
-
-            if (SECOND_FLOOR.contains(Player.getPosition())
-                    && Utils.clickObject(Filters.Objects.actionsContains("Climb-down"), "Climb-down"))
-                Timer.waitCondition(() -> UNDER_TOWER_AREA.contains(Player.getPosition()), 8000, 12000);
-
         }
+    }
+
+    public void descentTower() {
+        if (THIRD_FLOOR.contains(Player.getPosition())
+                && Utils.clickObject("Ladder", "Climb-down", false))
+            Timer.waitCondition(() -> SECOND_FLOOR.contains(Player.getPosition()), 4000, 6000);
+
+        if (SECOND_FLOOR.contains(Player.getPosition())
+                && Utils.clickObject(Filters.Objects.actionsContains("Climb-down"), "Climb-down"))
+            Timer.waitCondition(() -> MyPlayer.getPosition().getPlane() == 0, 8000, 12000);
+
     }
 
     public void returnRemains() {
         if (Inventory.find(DWARF_REMAINS_ID).length > 0) {
             cQuesterV2.status = "Returning Remains";
             General.println("[Debug]: " + cQuesterV2.status);
+            descentTower();
+
             PathingUtil.walkToArea(START_AREA, false);
             if (NpcChat.talkToNPC("Captain Lawgof")) {
                 NPCInteraction.waitForConversationWindow();

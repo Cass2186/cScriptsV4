@@ -6,13 +6,12 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
@@ -20,6 +19,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class DepthsOfDespair implements QuestTask {
 
@@ -150,14 +150,13 @@ public class DepthsOfDespair implements QuestTask {
     );
 
 
-
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
 
     public void buyItems() {
         if (!BankManager.checkInventoryItems(LOBSTER, MIND_RUNE, AIR_RUNE,
                 ItemID.SKILLS_NECKLACE[0])) {
-         buyStep.buyItems();
+            buyStep.buyItems();
         }
     }
 
@@ -234,14 +233,12 @@ public class DepthsOfDespair implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (NpcChat.talkToNPC("Galana"))
                 NPCInteraction.waitForConversationWindow();
-            if (Interfaces.get(217, 4) != null)
-                if (Interfaces.get(217, 4).click())
-                    Timer.abc2WaitCondition(() -> Interfaces.get(231, 5) != null, 4000, 6000);
-
-            if (Interfaces.get(231, 5) != null) {
+            if (ChatScreen.clickContinue()) ;
+            Timer.abc2WaitCondition(() -> Interfaces.get(231, 5) != null, 4000, 6000);
+            Optional<String> chat = ChatScreen.getMessage();
+            if (chat.isPresent()) {
                 try {
-
-                    bookLocation = NPCChat.getMessage().split("Try the ")[1];//Interfaces.get(231, 5).getText().split("Try the ")[1];
+                    bookLocation = chat.get().split("Try the ")[1];//Interfaces.get(231, 5).getText().split("Try the ")[1];
                     bookLocationFloor = bookLocation.split("floor,")[0]; // will be bottom or top
                     bookLocationBay = bookLocation.split("floor,")[1];
                     General.println("[Debug]: Book location floor is " + bookLocationFloor);
@@ -601,7 +598,7 @@ public class DepthsOfDespair implements QuestTask {
             claimFavour();
             dropBooks();
             cQuesterV2.taskList.remove(this);
-        } else{
+        } else {
             cQuesterV2.taskList.remove(this);
         }
 

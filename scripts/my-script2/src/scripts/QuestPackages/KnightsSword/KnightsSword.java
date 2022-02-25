@@ -52,7 +52,7 @@ public class KnightsSword implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(REDBERRY_PIE, 1, 500),
+                    new GEItem(REDBERRY_PIE, 1, 1000),
                     new GEItem(ItemID.LOBSTER, 35, 50),
                     new GEItem(ItemID.STEEL_PICKAXE, 1, 500),
                     new GEItem(ItemID.IRON_BAR, 4, 50),

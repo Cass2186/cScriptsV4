@@ -14,8 +14,11 @@ import org.tribot.script.interfaces.Arguments;
 import org.tribot.script.interfaces.Ending;
 import org.tribot.script.interfaces.Painting;
 import org.tribot.script.interfaces.Starting;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.antiban.PlayerPreferences;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Widget;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 import scripts.Steps.*;
@@ -26,6 +29,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ScriptManifest(name = "cTutorial Island", authors = {"Cass2186"}, category = "Testing")
@@ -76,10 +80,16 @@ public class cTutorialIsland extends Script implements Painting, Starting, Endin
         while (isRunning.get()) {
             General.sleep(Vars.get().minLoopSleep, Vars.get().maxLoopSleep);
             Task task = tasks.getValidTask();
+            Optional<Widget> first = Query.widgets().indexEquals(263, 1).findFirst();
+            if (first.isPresent() && !first.get().isVisible()){
+                Log.debug("Clicking Continue failsafe");
+               Keyboard.typeString(" ");
+            }
             if (task != null) {
                 status = task.toString();
                 task.execute();
             }
+
             if (Game.getSetting(Const.GAME_SETTING) == 1000)
                 break;
         }

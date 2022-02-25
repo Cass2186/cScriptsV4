@@ -113,15 +113,12 @@ public class FightArena implements QuestTask {
                 ItemID.STAMINA_POTION[0]);
         BankManager.withdraw2(1, true,
                 ItemID.RING_OF_WEALTH[0]);
-        Banking.close();
+        BankManager.close(true);
         Utils.equipItem(staffOfAir);
     }
 
     public void startQuest() {
-        if (!BankManager.checkInventoryItems(
-                ItemID.FIRE_RUNE,
-                ItemID.MIND_RUNE,
-                ItemID.LOBSTER)) {
+        if (!BankManager.checkInventoryItems(ItemID.FIRE_RUNE, ItemID.MIND_RUNE, ItemID.LOBSTER)) {
             buyItems();
             getItems();
         }
@@ -431,6 +428,9 @@ public class FightArena implements QuestTask {
 
 
     public void killNPC(int NPCName) {
+        if (!Game.isRunOn())
+            Options.setRunEnabled(true);
+
         if (!SAFE_AREA1.contains(Player.getPosition()) && !SAFE_AREA2.contains(Player.getPosition()) && !safeTile.equals(Player.getPosition())) {
             Walking.blindWalkTo(safeTile);
             Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 8000);
@@ -448,9 +448,10 @@ public class FightArena implements QuestTask {
         if (!Game.isRunOn())
             Options.setRunEnabled(true);
 
-        if (!SAFE_AREA1.contains(Player.getPosition()) && !SAFE_AREA2.contains(Player.getPosition()) && !safeTile.equals(Player.getPosition())) {
+        if (!SAFE_AREA1.contains(Player.getPosition()) && !SAFE_AREA2.contains(Player.getPosition())
+                && !safeTile.equals(Player.getPosition())) {
             Walking.blindWalkTo(safeTile);
-            Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 8000);
+            Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 6000,7000);
         }
 
         if (SAFE_AREA1.contains(Player.getPosition()) || SAFE_AREA2.contains(Player.getPosition())) {
@@ -459,6 +460,20 @@ public class FightArena implements QuestTask {
                     .nameContains(NPCName)
                     .inArea(FIGHT_AREA)
                     .getResults();
+
+            if (npc.length == 0){
+                // there's no npc in the fight area, talk to the kid to initiate the cut scene
+                // usually only happens on bouncer
+                if (Utils.clickNPC("Sammy Servil", "Talk-to")) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation();
+                }
+                npc = Entities.find(NpcEntity::new)
+                        .nameContains(NPCName)
+                        .inArea(FIGHT_AREA)
+                        .getResults();
+            }
+
             killNPC(npc);
         }
     }
