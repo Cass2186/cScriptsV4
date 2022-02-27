@@ -135,18 +135,18 @@ public class FightArena implements QuestTask {
         cQuesterV2.status = "Getting Armour";
         if (!ARMOUR_AREA.contains(Player.getPosition()) && !ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
             PathingUtil.walkToArea(ARMOUR_AREA_DOOR);
-            if (Utils.clickObject(1535, "Open", false)) {
+           /* if (Utils.clickObject(1535, "Open", false)) {
                 Timer.waitCondition(() -> Objects.findNearest(20, 1536).length > 0, 6000);
                 General.sleep(General.randomSD(250, 2500, 1200, 400));
-            }
+            }*/
         }
         if (!ARMOUR_AREA.contains(Player.getPosition()) && ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
-            PathingUtil.clickScreenWalk(ARMOUR_AREA.getRandomTile());
+            PathingUtil.localNavigation(ARMOUR_AREA.getRandomTile());
             Timer.waitCondition(() -> ARMOUR_AREA.contains(Player.getPosition()), 8000, 12000);
         }
         if (ARMOUR_AREA.contains(Player.getPosition())) {
             if (Utils.clickObject(75, "Open", false))
-                Timer.waitCondition(() -> Objects.findNearest(20, 76).length > 0, 6000, 8000);
+                Timer.waitCondition(() -> Objects.findNearest(5, 76).length > 0, 6000, 8000);
 
             if (Utils.clickObject(76, "Search", false)) {
                 NPCInteraction.waitForConversationWindow();

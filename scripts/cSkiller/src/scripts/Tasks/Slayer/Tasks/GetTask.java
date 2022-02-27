@@ -454,7 +454,14 @@ public class GetTask implements Task {
                 General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
                 SlayerVars.get().shouldSkipTask = false;
 
-            } else if (SlayerVars.get().pointBoosting) {
+            } else if (Equipment.isEquipped(
+                    ItemID.SLAYER_HELMET) && Utils.getCombatLevel() > 70) {
+                getTaskChaeldar();
+                SlayerVars.get().shouldBank = true;
+                General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
+                SlayerVars.get().shouldSkipTask = false;
+            }
+            else if (SlayerVars.get().pointBoosting) {
                 General.println("[GetTask]: Point boosting -  Task number is " + Utils.getVarBitValue(SlayerConst.TASK_STREAK_VARBIT) );
 
                 for (int i = 0; i < NINES.length; i++) {

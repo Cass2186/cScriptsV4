@@ -333,14 +333,14 @@ public class PlagueCity implements QuestTask {
     }
 
 
-    int CLERK_4255;
+    int CLERK_4255 = 4255;
 
     public void step13() {
         cQuesterV2.status = "Talking to Clerk";
         PathingUtil.walkToArea(CLERK_STANDING_AREA);
         if (NpcChat.talkToNPC(CLERK_4255)) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Who is through that door?");
+            NPCInteraction.handleConversation("Who is through that door?" );
             NPCInteraction.handleConversation("This is urgent though! Someone's been kidnapped!");
             NPCInteraction.handleConversation();
         }
@@ -597,7 +597,7 @@ public class PlagueCity implements QuestTask {
 
     @Override
     public String questName() {
-        return null;
+        return "Plague City ( "+ Game.getSetting(165) +")";
     }
 
     @Override

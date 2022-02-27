@@ -183,21 +183,24 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             General.sleep(50);
             QuestTask task = tasks.getValidTask();
             if (cQuesterV2.taskList.size() == 0) {
-                Log.log("[Debug]: Finished all quests");
+                Log.debug("[Debug]: Finished all quests");
                 break;
             }
-
+            if (DeathsOffice.shouldHandleDeath()){
+                Log.error("Died - Handling death");
+                DeathsOffice.collectItems();
+            }
             if (task != null) {
                 gameSetting = task.questName();
                 task.execute();
             } else {
-                Log.log("[Debug]: Task is null");
+                Log.debug("[Debug]: Task is null");
             }
             if (taskList.isEmpty())
                 break;
             else {
-                Log.log("[Debug]: Task list size is: " + taskList.size());
-                Log.log("[Debug]: Task Quest is: " + taskList.get(0).questName());
+                Log.debug("[Debug]: Task list size is: " + taskList.size());
+                Log.debug("[Debug]: Task Quest is: " + taskList.get(0).questName());
             }
 
         }
@@ -512,6 +515,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     taskList.add(RomeoAndJuliet.get());
                 } else if (arg.toLowerCase().contains("biohazard")) {
                     General.println("[Args]: Added Biohazard");
+                    taskList.add(PlagueCity.get());
                     taskList.add(Biohazard.get());
                 } else if (arg.toLowerCase().contains("plaguecity")) {
                     General.println("[Args]: Added Plague City");

@@ -213,7 +213,7 @@ public class GertrudesCat implements QuestTask {
 
     RSTile crate2Tile = new RSTile(3307, 3507, 0);
     RSTile crate3Tile = new RSTile(3303, 3506, 0);
-    RSTile crate4Tile = new RSTile(3298, 3514, 0);
+    RSTile crate5Tile = new RSTile(3298, 3514, 0);
     // RSTile crate5Tile = new RSTile(3307, 3507, 0);
     RSTile crate6Tile = new RSTile(3315, 3515, 0);
 
@@ -226,6 +226,7 @@ public class GertrudesCat implements QuestTask {
         searchCrate(CRATE1_TILE, crate1Area);
         searchCrate(crate2Tile);
         searchCrate(crate3Tile);
+        searchCrate(crate5Tile);
         searchCrate(crate4, crate4Area);
         searchCrate(crate5, crate5Area);
         searchCrate(crate6Tile);

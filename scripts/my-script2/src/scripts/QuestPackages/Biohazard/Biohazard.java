@@ -163,16 +163,11 @@ public class Biohazard implements QuestTask {
             Log.log("[Debug]: Getting Cage");
 
             if (PathingUtil.walkToTile(new RSTile(2619, 3324, 0))) {
-
-                if (GroundItems.find(424).length > 0)
-                    Timer.abc2WaitCondition(() -> GroundItems.find(424)[0].getPosition().distanceTo(Player.getPosition()) < 2, 8000, 12000);
-                else
-                    Utils.modSleep();
+                PathingUtil.movementIdle();
             }
-            if (AccurateMouse.click(GroundItems.find(424)[0], "Take"))
-                Timer.abc2WaitCondition(() -> Inventory.find(BIRD_CAGE).length > 0, 5000, 9000);
+            if (Utils.clickGroundItem(424))
+                Utils.idleNormalAction();
         }
-        Utils.shortSleep();
     }
 
     public void goToOmart() {
@@ -182,13 +177,13 @@ public class Biohazard implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
 
             PathingUtil.walkToArea(OMART_AREA);
-            if (OMART_AREA.contains(Player.getPosition())) {
-                if (NpcChat.talkToNPC("Omart")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                    Utils.modSleep();
-                }
+
+            if (NpcChat.talkToNPC("Omart")) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation();
+                Utils.modSleep();
             }
+
         }
     }
 
@@ -222,17 +217,17 @@ public class Biohazard implements QuestTask {
 
         PathingUtil.walkToArea(OMART_AREA);
 
-        if (OMART_AREA.contains(Player.getPosition())) {
-            if (NpcChat.talkToNPC("Omart")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Okay, lets do it.");
-                NPCInteraction.handleConversation();
 
-                General.sleep(General.random(3500, 6000));
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-            }
+        if (NpcChat.talkToNPC("Omart")) {
+            NPCInteraction.waitForConversationWindow();
+            NPCInteraction.handleConversation("Okay, lets do it.");
+            NPCInteraction.handleConversation();
+
+            General.sleep(General.random(3500, 6000));
+            NPCInteraction.waitForConversationWindow();
+            NPCInteraction.handleConversation();
         }
+
     }
 
     public void goToHQ() {
@@ -240,11 +235,9 @@ public class Biohazard implements QuestTask {
             cQuesterV2.status = "Going to Mourner HQ";
             General.println("[Debug]: " + cQuesterV2.status);
             PathingUtil.walkToArea(HQ_DOOR);
-            if (HQ_DOOR.contains(Player.getPosition())) {
-                if (Utils.clickObj("Door", "Open")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                }
+            if (Utils.clickObj("Door", "Open")) {
+                NPCInteraction.waitForConversationWindow();
+                NPCInteraction.handleConversation();
             }
         }
     }
@@ -255,17 +248,20 @@ public class Biohazard implements QuestTask {
         PathingUtil.walkToArea(OUTSIDE_BACKYARD);
         if (OUTSIDE_BACKYARD.contains(Player.getPosition()) && Inventory.find(ROTTEN_APPLE).length < 1) {
             RSGroundItem[] apple = GroundItems.find(ROTTEN_APPLE);
-            if (apple.length > 0) {
+            if (Utils.clickGroundItem(ROTTEN_APPLE)) {
+                Utils.idleNormalAction();
+            }
+           /* if (apple.length > 0) {
                 if (!apple[0].isClickable())
                     apple[0].adjustCameraTo();
 
                 if (AccurateMouse.click(apple[0], "Take"))
                     Timer.waitCondition(() -> Inventory.find(ROTTEN_APPLE).length > 0, 6000, 9000);
-            }
+            }*/
         }
         if (Inventory.find(ROTTEN_APPLE).length > 0 && !HQ_BACKYARD.contains(Player.getPosition())) {
             if (Utils.clickObj(2068, "Squeeze-through"))
-                Timer.abc2WaitCondition(() -> HQ_BACKYARD.contains(Player.getPosition()), 8000, 12000);
+                Timer.waitCondition(() -> HQ_BACKYARD.contains(Player.getPosition()), 8000, 12000);
 
         }
         if (Inventory.find(ROTTEN_APPLE).length > 0 && HQ_BACKYARD.contains(Player.getPosition())) {
@@ -311,7 +307,7 @@ public class Biohazard implements QuestTask {
                 General.sleep(General.random(1500, 4000));
 
             if (Utils.clickObj("Staircase", "Climb-up"))
-                Timer.abc2WaitCondition(() -> HQ_UPSTAIRS.contains(Player.getPosition()), 8000, 12000);
+                Timer.waitCondition(() -> HQ_UPSTAIRS.contains(Player.getPosition()), 8000, 12000);
         }
         if (HQ_UPSTAIRS.contains(Player.getPosition()) && Objects.findNearest(20, 2034).length > 0) {
             if (Utils.clickObj(2034, "Open"))
@@ -348,12 +344,11 @@ public class Biohazard implements QuestTask {
     public void goToChemist() {
         cQuesterV2.status = "Going to chemist";
         General.println("[Debug]: " + cQuesterV2.status);
-        PathingUtil.walkToArea(CHEMIST_BUILDING);
+        PathingUtil.walkToArea(CHEMIST_BUILDING, false);
         if (NpcChat.talkToNPC("Chemist")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Your quest.");
             NPCInteraction.handleConversation();
-            Utils.modSleep();
         }
     }
 
@@ -475,7 +470,6 @@ public class Biohazard implements QuestTask {
         } else if (Game.getSetting(68) == 6) {
             goToHQ();
             goToNurse();
-            Utils.longSleep();
             goToHQ();
             goToHQUpstairs();
 
