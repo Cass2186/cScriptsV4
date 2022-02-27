@@ -1053,7 +1053,7 @@ public class Utils {
                         .textContains("Left-click where available").findFirst();
                 Log.debug("is button present: " + first.isPresent());
                 if (first.map(f -> f.click("Select")).orElse(false)) {
-                    Timer.waitCondition(()-> GameState.getSetting(1306) == 2, 2250, 2750);
+                    Timer.waitCondition(() -> GameState.getSetting(1306) == 2, 2250, 2750);
                     break;
                 }
             }
@@ -1434,37 +1434,34 @@ public class Utils {
     }
 
     public static boolean equipItem(int[] itemArray) {
-        RSItem[] inv = Inventory.find(itemArray);
-        if (inv.length > 0) {
-            String[] actions = inv[0].getDefinition().getActions();
-            if (Arrays.stream(actions).anyMatch(s -> s.contains("Wield"))) {
-                if (inv[0].click("Wield"))
-                    return Timer.waitCondition(() -> Equipment.isEquipped(inv[0].getID()), 2000, 4000);
-            } else if (Arrays.stream(actions).anyMatch(s -> s.contains("Wear"))) {
-                if (inv[0].click("Wear"))
-                    return Timer.waitCondition(() -> Equipment.isEquipped(inv[0].getID()), 2000, 4000);
-            } else if (inv[0].click()) {
-                return Timer.waitCondition(() -> Equipment.isEquipped(inv[0].getID()), 2000, 4000);
-            }
-        }
-        return Equipment.isEquipped(itemArray[0]);
+        Optional<InventoryItem> closestToMouse = Query.inventory().idEquals(itemArray).findClosestToMouse();
+        return equipItem(closestToMouse);
     }
 
     public static boolean equipItem(int ItemID) {
-        RSItem[] inv = Inventory.find(ItemID);
-        if (inv.length > 0) {
-            String[] actions = inv[0].getDefinition().getActions();
-            if (Arrays.stream(actions).anyMatch(s -> s.contains("Wield"))) {
-                if (inv[0].click("Wield"))
-                    return Timer.waitCondition(() -> Equipment.isEquipped(inv[0].getID()), 2000, 4000);
-            } else if (Arrays.stream(actions).anyMatch(s -> s.contains("Wear"))) {
-                if (inv[0].click("Wear"))
-                    return Timer.waitCondition(() -> Equipment.isEquipped(inv[0].getID()), 2000, 4000);
-            } else if (inv[0].click()) {
-                return Timer.waitCondition(() -> Equipment.isEquipped(inv[0].getID()), 2000, 4000);
+        Optional<InventoryItem> closestToMouse = Query.inventory().idEquals(ItemID).findClosestToMouse();
+        return equipItem(closestToMouse);
+    }
+
+    public static boolean equipItem(Optional<InventoryItem> itemOptional) {
+        if (itemOptional.isPresent()) {
+            if (!itemOptional.get().getDefinition().isStackable() &&
+                    Equipment.isEquipped(itemOptional.get().getId())) {
+                //already equipped and not stackable (e.g. arrows)
+                return true;
+            }
+            ItemDefinition def = itemOptional.get().getDefinition();
+            if (def.getActions().stream().anyMatch(s -> s.contains("Wield")) &&
+                    itemOptional.map(i -> i.click("Wield")).orElse(false)) {
+                return Timer.waitCondition(() -> Equipment.isEquipped(def.getId()), 1200, 2000);
+            } else if (def.getActions().stream().anyMatch(s -> s.contains("Wear")) &&
+                    itemOptional.map(i -> i.click("Wear")).orElse(false)) {
+                return Timer.waitCondition(() -> Equipment.isEquipped(def.getId()), 1200, 2000);
+            } else if (itemOptional.map(InventoryItem::click).orElse(false)) {
+                return Timer.waitCondition(() -> Equipment.isEquipped(def.getId()), 1200, 2000);
             }
         }
-        return Equipment.isEquipped(ItemID);
+        return false;
     }
 
     public static String getObjectName(RSObject obj) {
