@@ -13,6 +13,7 @@ import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Options;
 import scripts.Data.Paint;
 import scripts.Data.Vars;
 import scripts.Tasks.*;
@@ -55,6 +56,7 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
 
     @Override
     public void run() {
+        Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
         populateInitialMap();
         TaskSet tasks;
         tasks = new TaskSet(
@@ -65,9 +67,12 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                 new Fight(),
                 new ResetAggro()
         );
+
         Utils. setCameraZoomAboveDefault();
         super.setLoginBotState(false);
+
         isRunning.set(true);
+
         while (isRunning.get()) {
             General.sleep(50, 150);
             if (Game.isInInstance()) //died

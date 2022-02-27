@@ -304,6 +304,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 sleep(500);
         }
 
+        Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
+
         Utils.setCameraZoomAboveDefault();
         Mouse.setSpeed(Vars.get().mouseSpeed);
         Log.log("Mouse speed is " + Vars.get().mouseSpeed);

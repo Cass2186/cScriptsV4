@@ -148,6 +148,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 return new DaxCredentials("sub_DPjXXzL5DeSiPf", "PUBLIC-KEY");
             }
         });
+        org.tribot.script.sdk.Options.AttackOption.setNpcAttackOption(org.tribot.script.sdk.Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
         Utils.setCameraZoomAboveDefault();
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);

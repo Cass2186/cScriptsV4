@@ -114,10 +114,6 @@ public class SlayerVars {
 
     public boolean shouldLoot = false;
 
-    public boolean cannoning = true;
-
-    public boolean hasCannon = false;
-
     public boolean getTask = false;
 
     public boolean cancelTask = false;
@@ -169,8 +165,6 @@ public class SlayerVars {
 
     public long currentTime, startTime;
 
-    // public Tabs tab = Paint.Tabs.INFO;
-
     /**
      * GEAR
      */
@@ -197,7 +191,7 @@ public class SlayerVars {
     /**
      * CANNON
      */
-    public boolean use_cannon = true;
+    public boolean use_cannon = false;
 
     public boolean otherCannonInOurArea = false;
 

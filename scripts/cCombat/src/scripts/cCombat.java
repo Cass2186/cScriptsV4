@@ -19,6 +19,7 @@ import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.types.GroundItem;
 import scripts.API.AntiPKThread;
 import scripts.Data.Vars;
@@ -67,7 +68,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         //  AntiPKThread.scrollToWorld(AntiPKThread.nextWorld);
         isRunning.set(true);
         initializeListeners();
-
+        Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
         while (isRunning.get()) {
             General.sleep(20, 40);
             Task task = tasks.getValidTask();

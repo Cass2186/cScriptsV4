@@ -10,6 +10,7 @@ import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
@@ -130,12 +131,11 @@ public class MonkeyMadnessI implements QuestTask {
             "Talk about the 10th squad...",
             "<col=0000ff>Return to previous menu",
             "Talk about Caranock...",
+            "<col=0000ff>Return to previous menu",
             "Leave...",
             "Who is it?",
     };
     String[] DAERO_CHAT2 = {
-            "<col=0000ff>Return to previous menu",
-            "Talk about Caranock...",
             "Leave...",
             "Who is it?",
     };
@@ -397,11 +397,18 @@ public class MonkeyMadnessI implements QuestTask {
         }
     }
 
+
     public void chat() {
         if (NPCInteraction.isConversationWindowUp()) {
-            Waiting.waitUniform(2000, 3500);
-            NPCInteraction.handleConversation(DAERO_CHAT);
-            NPCInteraction.handleConversation(DAERO_CHAT2);
+            for (String s :DAERO_CHAT){
+                if(ChatScreen.containsOption("Leave...")){
+                    ChatScreen.selectOption(DAERO_CHAT2);
+                    break;
+                }
+                if (NPCInteraction.isConversationWindowUp()){
+                    NPCInteraction.handleConversation(s);
+                }
+            }
            /* Timer.waitCondition((() -> Interfaces.isInterfaceSubstantiated(219, 1, 4)), 5000, 7000); // talk about the journey
             if (Interfaces.get(219, 1, 4) != null) {
                 General.println("[Debug]: Return to previous menu");
