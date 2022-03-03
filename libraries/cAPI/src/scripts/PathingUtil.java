@@ -17,6 +17,7 @@ import org.tribot.api2007.util.DPathNavigator;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
@@ -26,6 +27,7 @@ import org.tribot.script.sdk.walking.WalkState;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.function.Supplier;
 
 public class PathingUtil {
@@ -77,6 +79,15 @@ public class PathingUtil {
                 if (Combat.getHPRatio() <= eatAtPercent) {
                     General.println("[DaxPref]: Need to eat food");
                     EatUtil.eatFood();
+                }
+                RSItem[] pPot = Inventory.find(ItemID.PRAYER_POTION);
+                if (Prayer.getPrayerPoints() <= General.random(12, 20)
+                        && pPot.length > 0
+                        && CombatUtil.isPraying()) {
+                    int points = Prayer.getPrayerPoints();
+                    General.println("[DaxPref]: Need to drink prayer potion");
+                    if (pPot[0].click("Drink"))
+                        Timer.waitCondition(() -> Prayer.getPrayerPoints() > points, 2250, 2750);
                 }
 
             } catch (Exception e) {
@@ -135,7 +146,7 @@ public class PathingUtil {
         for (int i = 0; i < 3; i++) {
             if (!GlobalWalking.walkTo(destination, state)) {
                 Log.log("[PathingUtil]  Worldtile failed to generate a path, sleeping 1.5s");
-                Waiting.waitNormal(1500,300);
+                Waiting.waitNormal(1500, 300);
             } else
                 return true;
         }
@@ -338,6 +349,19 @@ public class PathingUtil {
         }
     }
 
+    public RSTile getClosestTileInArea(RSArea area) {
+        RSTile[] ts = area.getAllTiles();
+        RSTile closest = null;
+        for (RSTile t : ts) {
+            if (closest == null)
+                closest = t;
+            if (t.getPosition().distanceTo(Player.getPosition()) <
+                    closest.getPosition().distanceTo(Player.getPosition()))
+                closest = t;
+        }
+        return closest;
+    }
+
     public static boolean clickScreenWalk(RSTile tile) {
         if (!Player.getPosition().equals(tile)) {
             checkRun();
@@ -483,8 +507,9 @@ public class PathingUtil {
         return false;
     }
 
+
     public static boolean walkToArea(RSArea area) {
-        return walkToArea(area, true);
+        return walkToArea(area, false);
     }
 
     public static boolean walkToArea(RSArea area, boolean abc2Sleep) {
@@ -497,13 +522,19 @@ public class PathingUtil {
         if (!area.contains(Player.getPosition())) {
             General.println("[PathingUtil]: Walking to area. ABC2 Sleep? " + abc2Sleep);
             for (int i = 0; i < 3; i++) {
-                if (DaxWalker.walkTo(area.getRandomTile(), DaxWalker.getGlobalWalkingCondition())) {
+                RSTile targetTile = area.getRandomTile();
+                if (DaxWalker.walkTo(targetTile, DaxWalker.getGlobalWalkingCondition())) {
                     currentTime = System.currentTimeMillis();
                     Timer.waitCondition(() -> largeArea.contains(Player.getPosition()), sleepMin, sleepMax);
-                    if (abc2Sleep)
-                        Utils.abc2ReactionSleep(currentTime);
-                    return largeArea.contains(Player.getPosition());
 
+                    if (!area.contains(Player.getPosition()) &&
+                            targetTile.distanceTo(Player.getPosition()) < 6) {
+                        Log.debug("[PathingUtil]: Not quite in area, adjusting");
+                        localNavigation(targetTile);
+                    }
+
+                    if (abc2Sleep && area.contains(Player.getPosition()))
+                        Utils.abc2ReactionSleep(currentTime);
                 } else {
                     General.println("[PathingUtil]: Failed to generate a path, waiting 3-5s and trying again.");
                     General.sleep(2500, 3500);

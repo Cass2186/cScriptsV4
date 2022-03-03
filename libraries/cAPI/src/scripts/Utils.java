@@ -1443,6 +1443,16 @@ public class Utils {
         return equipItem(closestToMouse);
     }
 
+    public static RSTile[] getContainedTiles(RSNPC rsnpc) {
+        RSArea searchArea = new RSArea(rsnpc.getPosition(), 5);
+
+        return Arrays.asList(searchArea.getAllTiles())
+                .parallelStream()
+                .unordered()
+                .filter(tile -> NPCs.isAt(tile, rsnpc.getID()))
+                .toArray(RSTile[]::new);
+    }
+
     public static boolean equipItem(Optional<InventoryItem> itemOptional) {
         if (itemOptional.isPresent()) {
             if (!itemOptional.get().getDefinition().isStackable() &&

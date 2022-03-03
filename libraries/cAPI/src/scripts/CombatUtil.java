@@ -188,11 +188,12 @@ public class CombatUtil {
             RSItem[] item = Inventory.find(ItemID.SLAYER_SPECIAL_ITEMS);
             if (item.length > 0) {
                 General.println("[CombatUtils]: Using Slayer Item on NPC");
-                return useSlayerItemOnNPC(target);
+                return useSlayerItemOnNPC();
             }
         }
         return false;
     }
+
 
     private static boolean useSlayerItemOnNPC(RSNPC npc) {
         RSItem[] item = Inventory.find(ItemID.SLAYER_SPECIAL_ITEMS);
@@ -224,6 +225,23 @@ public class CombatUtil {
 
         }
         Log.log("UseSlayerItemOnNPC is false");
+        return false;
+    }
+    private static boolean useSlayerItemOnNPC() {
+        Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
+                .findClosestToMouse();
+
+        Optional<Npc> n = Query.npcs().isInteractingWithMe().stream().findFirst();
+        if (i.isPresent() && n.isPresent() && n.get().getHealthBarPercent() < 0.15) {
+            Log.log("[AttackNPC]: Health percent is " + n.get().getHealthBarPercent());
+            if (Game.getItemSelectionState() == 0 &&
+                    i.get().click())
+                Waiting.waitNormal(75, 20);
+            if (Game.getItemSelectionState() == 1)
+                return Timing.waitCondition(() -> n.get().interact("Use"), 1000);
+
+        }
+        Log.log("[AttackNPC]: UseSlayerItemOnNPC is false");
         return false;
     }
 
