@@ -364,27 +364,24 @@ public class AttackNpc implements Task {
                     .findClosestToMouse();
             if (i.isPresent()) {
                 General.println("[CombatUtils]: Using Slayer Item on NPC");
-                return useSlayerItemOnNPC(target);
+                return useSlayerItemOnNPC();
             }
         }
         return false;
     }
 
-    private static boolean useSlayerItemOnNPC(Npc npc) {
+    private static boolean useSlayerItemOnNPC() {
         Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
                 .findClosestToMouse();
 
         Optional<Npc> n = Query.npcs().isInteractingWithMe().stream().findFirst();
-        if (!npc.isVisible())
-            npc.adjustCameraTo();
-
         if (i.isPresent() && n.isPresent() && n.get().getHealthBarPercent() < 0.15) {
             Log.log("[AttackNPC]: Health percent is " + n.get().getHealthBarPercent());
             if (Game.getItemSelectionState() == 0 &&
                     i.get().click())
                 Waiting.waitNormal(75, 20);
             if (Game.getItemSelectionState() == 1)
-                return Timing.waitCondition(() -> npc.interact("Use"), 1000);
+                return Timing.waitCondition(() -> n.get().interact("Use"), 1000);
 
         }
         Log.log("[AttackNPC]: UseSlayerItemOnNPC is false");
