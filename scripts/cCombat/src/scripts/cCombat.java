@@ -71,6 +71,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
         while (isRunning.get()) {
             General.sleep(20, 40);
+            Utils.forceDownwardCameraAngle();
             Task task = tasks.getValidTask();
             if (task != null) {
                 status = task.toString();

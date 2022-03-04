@@ -74,7 +74,7 @@ public class Vars {
     public int playerCount, npcItemID, remainingKills;
 
     public int eatAtHP = Combat.getMaxHP() - General.random(22, 40);
-    public int drinkPrayerAt = General.random(5, 25);
+    public int drinkPrayerAt = General.random(8, 20);
 
     public int lootValue = 0;
 

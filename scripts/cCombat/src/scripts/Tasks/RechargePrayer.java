@@ -26,7 +26,7 @@ public class RechargePrayer implements Task {
         int maxLevel =  Skill.RANGED.getActualLevel() + (int) Utils.getLevelBoost(Skills.SKILLS.RANGED);
         if (Skill.RANGED.getCurrentLevel() <= (maxLevel - General.random(4,6)) ||
                 Skill.RANGED.getCurrentLevel() == Skill.RANGED.getActualLevel()){
-            Utils.drinkPotion(ItemID.RANGING_POTION);
+            Utils.drinkPotion(ItemID.RANGING_POTION_INVERSE);
 
         }
         Log.debug("Recharging prayer");
@@ -58,7 +58,7 @@ public class RechargePrayer implements Task {
     @Override
     public boolean validate() {
         return Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()) &&
-                Prayer.getPrayerPoints() < General.random(17,22);
+                Prayer.getPrayerPoints() < General.random(10,17);
     }
 
     @Override
