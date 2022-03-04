@@ -85,6 +85,7 @@ public final class ItemID {
     public static final int[] CANNON_IDS = {6, 7, 8, 10, 12};
     public static final int[] COMBAT_POTION = {9739, 9741, 9743, 9745};
     public static final int[] RANGING_POTION = {2444, 169, 171, 173};
+    public static final int[] RANGING_POTION_INVERSE = { 173 , 171, 169,2444, };
     public static final int[] SUPER_STRENGTH_POTION = {2440, 157, 159, 161};
     public static final int[] SUPER_ATTACK_POTION = {2436, 145, 147, 149};
     public static final int[] SUPER_DEFENCE_POTION = {2442, 163, 165, 167};

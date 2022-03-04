@@ -376,6 +376,8 @@ public class PathingUtil {
         return false;
     }
 
+
+
     public static RSTile nearestBankTile(RSTile startTile) {
 
         int distance = startTile.distanceTo(RunescapeBank.VARROCK_WEST.getPosition());
@@ -530,7 +532,7 @@ public class PathingUtil {
                     if (!area.contains(Player.getPosition()) &&
                             targetTile.distanceTo(Player.getPosition()) < 6) {
                         Log.debug("[PathingUtil]: Not quite in area, adjusting");
-                        localNavigation(targetTile);
+                        clickScreenWalk(targetTile);
                     }
 
                     if (abc2Sleep && area.contains(Player.getPosition()))

@@ -1,5 +1,6 @@
 package scripts;
 
+import dax.api_lib.DaxWalker;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
@@ -10,6 +11,7 @@ import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Keyboard;
 import org.tribot.api.input.Mouse;
+import org.tribot.api.interfaces.Clickable;
 import org.tribot.api.interfaces.Positionable;
 import org.tribot.api2007.Camera;
 import org.tribot.api2007.Combat;
@@ -1588,6 +1590,15 @@ public class Utils {
         Log.log("[Utils]: We have all items in ArrayList (x1)");
         return true;
     }
+
+    public static void forceDownwardCameraAngle() {
+        if (org.tribot.script.sdk.Camera.getAngle() < 80) {
+            Log.debug("[Utils]: Adjusting camera angle");
+            org.tribot.script.sdk.Camera.setAngle(General.random(80, 100));
+        }
+    }
+
+
 
     public static boolean setCameraZoomAboveDefault() {
         int setTo = General.random(285, 320);
