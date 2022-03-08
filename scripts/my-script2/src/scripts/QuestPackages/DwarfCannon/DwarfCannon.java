@@ -221,7 +221,7 @@ public class DwarfCannon implements QuestTask {
             if (!UNDER_TOWER_AREA.contains(Player.getRSPlayer())
                     && !SECOND_FLOOR.contains(Player.getRSPlayer())
                     && !THIRD_FLOOR.contains(Player.getRSPlayer())) {
-                PathingUtil.walkToArea(UNDER_TOWER_AREA, false);
+                PathingUtil.walkToTile(new RSTile(2570,3342,0));
             }
 
             if (UNDER_REMAINS_TOWER.contains(Player.getPosition()))

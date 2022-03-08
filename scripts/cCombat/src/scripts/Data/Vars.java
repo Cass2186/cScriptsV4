@@ -63,6 +63,9 @@ public class Vars {
 
     public RSTile safeTile = new RSTile(3208, 3812, 0);
 
+    public RSTile combatCentreTile;
+    public int areaRadius = 10;
+
     public RSArea fightArea = Areas.UNDEAD_DRUID_AREA;
 
     public List<Integer> gearIdList;

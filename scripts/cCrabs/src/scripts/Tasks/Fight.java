@@ -17,6 +17,7 @@ import scripts.AntiBan;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 import scripts.EatUtil;
+import scripts.ItemID;
 import scripts.Utils;
 
 import java.util.LinkedList;
@@ -119,6 +120,12 @@ public class Fight implements Task {
             if (mouseOffScreen && Mouse.isInBounds())
                 Mouse.leaveGame(true);
 
+
+            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.HAWK_EYE) && EatDrink.checkPrayer()){
+                Utils.idleAfkAction();
+                Utils.drinkPotion(ItemID.PRAYER_POTION);
+            }
+
             return (checkAggro() && !Player.getRSPlayer().isInCombat())
                     || Combat.getHPRatio() < Vars.get().eatAt;
         }, General.random(300000, 460000));
@@ -138,8 +145,8 @@ public class Fight implements Task {
         if (Combat.isUnderAttack() || Combat.getAttackingEntities().length > 0) {
 
             if (Vars.get().usingPrayer) {
-                if (!Prayer.isPrayerEnabled(Prayer.PRAYERS.EAGLE_EYE))
-                    Prayer.enable(Prayer.PRAYERS.EAGLE_EYE);
+                if (!Prayer.isPrayerEnabled(Prayer.PRAYERS.HAWK_EYE))
+                    Prayer.enable(Prayer.PRAYERS.HAWK_EYE);
             }
 
             General.println("[Fight]: AFK'ing");

@@ -137,12 +137,28 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
         }
         PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }
-
     @Override
     public void passArguments(HashMap<String, String> hashMap) {
+        String scriptSelect = hashMap.get("custom_input");
+        String clientStarter = hashMap.get("autostart");
+        String input = clientStarter != null ? clientStarter : scriptSelect;
+        Log.debug("[Args]: Argument entered: " + input);
 
+        for (String arg : input.split(";")) {
+            try {
+            if (arg.toLowerCase().contains("pray")){
+                Log.debug("[Args] Praying enabled");
+                Vars.get().usingPrayer = true;
+            }
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                General.println("[Error]: Args are incorrect", Color.RED);
+            }
+        }
     }
-
     @Override
     public void onEnd() {
         General.println("[Ending]: Runtime: " + Timing.msToString(this.getRunningTime()));

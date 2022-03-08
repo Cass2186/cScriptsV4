@@ -3,12 +3,16 @@ package scripts.QuestPackages.HorrorFromTheDeep;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.checkerframework.checker.units.qual.A;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
@@ -264,7 +268,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
                     new ItemReq(ItemID.WATER_RUNE, 1200, 300),
                     new ItemReq(ItemID.STAFF_OF_AIR, 1, 0),
                     new ItemReq(ItemID.LOBSTER, 15, 5),
-                   // new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0, true, true),
+                    // new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
                     new ItemReq(ItemID.PRAYER_POTION[0], 3, 0)
             ))
@@ -275,17 +279,17 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
     BankTask bankTaskOne = BankTask.builder()
             .addInvItem(ItemID.CHAOS_RUNE, Amount.of(400))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY).item(ItemID.MONKS_ROBE_TOP, Amount.of(1)))
-           .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS).item(ItemID.MONKS_ROBE_BOTTOM, Amount.of(1)))
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS).item(ItemID.MONKS_ROBE_BOTTOM, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON).item(
                     ItemID.STAFF_OF_AIR, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.NECK)
                     .chargedItem("Games necklace", 2))
-            .addInvItem(ItemID.LAVA_RUNE, Amount.of(1200))
-            .addInvItem(ItemID.WATER_RUNE, Amount.of(1200))
-            .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(1))
+            .addInvItem(ItemID.LAVA_RUNE, Amount.fill(250))
+            .addInvItem(ItemID.WATER_RUNE, Amount.fill(250))
+            // .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(1))
             .addInvItem(ItemID.PRAYER_POTION[0], Amount.of(3))
-            .addInvItem(ItemID.LOBSTER, Amount.fill(1))
             .addInvItem(ItemID.COINS, Amount.of(25000))
+            .addInvItem(ItemID.LOBSTER, Amount.fill(1))
             .build();
 
     public boolean setSpell(Autocast spell) {
@@ -341,6 +345,9 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
             if (dagFinal.length > 0) {
                 General.println("[Debug]: Dagganoth is present, waiting for interaction");
                 Timer.waitCondition(() -> dagFinal[0].isInteractingWithMe(), 5000, 6000);
+                //wait is needed after it is interacting, otherwise fails to move
+                Log.debug("Waiting for healthbar visible");
+                Waiting.waitUntil(3000, () -> MyPlayer.isHealthBarVisible());
             }
 
             moveToSafeArea();
@@ -401,14 +408,20 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
 
     public void moveToSafeArea() {
-        if (!HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition())) {
-            if (HorrorConst.MOTHER_SAFE_TILE.isClickable())
-                Walking.clickTileMS(HorrorConst.MOTHER_SAFE_TILE, "Walk here");
+        for (int i = 0; i <3; i++ ) {
+            Log.debug("Loop i = " + i);
+            if (!HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition())) {
 
-            else Walking.blindWalkTo(HorrorConst.MOTHER_SAFE_TILE);
+                if (HorrorConst.MOTHER_SAFE_TILE.isClickable())
+                    Walking.clickTileMS(HorrorConst.MOTHER_SAFE_TILE, "Walk here");
 
-            Timer.waitCondition(Player::isMoving, 750);
-            Timer.waitCondition(() -> HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition()) || Player.isMoving(), 4000, 6000);
+                else Walking.blindWalkTo(HorrorConst.MOTHER_SAFE_TILE);
+
+                if (Timer.waitCondition(Player::isMoving, 750))
+                    Timer.waitCondition(() -> HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition())
+                            || !Player.isMoving(), 4000, 6000);
+            } else
+                break;
         }
     }
 
@@ -493,9 +506,10 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
     public void handleBankError() {
         Optional<BankTaskError> err = bankTaskOne.execute();
+        BankManager.withdrawArray(ItemID.STAMINA_POTION, 1);
         if (err.isPresent()) {
             General.println("[Debug]: bank task gave an error: " + err.get().toString());
-
+            buyInitial.buyItems();
         }
     }
 
@@ -655,6 +669,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
     public boolean checkRequirements() {
         return true;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;

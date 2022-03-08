@@ -1,6 +1,7 @@
 package scripts.QuestPackages.ElementalWorkshopI;
 
 import dax.walker.utils.AccurateMouse;
+import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
@@ -99,7 +100,7 @@ public class ElementalWorkshop implements QuestTask {
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     public void buyItems() {
-        if(!initialItemReqs.check()) {
+        if (!initialItemReqs.check()) {
             cQuesterV2.status = "Buying Items";
             General.println("[Debug]: " + cQuesterV2.status);
             buyStep.buyItems();
@@ -107,7 +108,7 @@ public class ElementalWorkshop implements QuestTask {
     }
 
     public void getItems() {
-        if(!initialItemReqs.check()) {
+        if (!initialItemReqs.check()) {
             cQuesterV2.status = "Getting Items";
             General.println("[Debug]: " + cQuesterV2.status);
             BankManager.open(true);
@@ -125,16 +126,20 @@ public class ElementalWorkshop implements QuestTask {
 
     public void startQuest() {
         cQuesterV2.status = "Starting Quest";
-        PathingUtil.walkToTile(new RSTile(2715,3481,0 ));
+        PathingUtil.walkToTile(new RSTile(2715, 3481, 0));
         if (Utils.clickObj(26113, "Search"))
             Timer.abc2WaitCondition(() -> Inventory.find(BATTERED_BOOK).length > 0, 7000, 9000);
 
         RSItem[] book = Inventory.find(BATTERED_BOOK);
         if (book.length > 0 && book[0].click("Read")) {
-            Timer.waitCondition(() -> Interfaces.get(49) != null, 2000, 2700);
-            RSInterface close = Interfaces.findWhereAction("Close", 49);
-            if (close != null && close.click()) {
-                General.sleep(700, 1200);
+            if (NPCInteraction.waitForConversationWindow()) {
+                NPCInteraction.handleConversation("Yes.");
+            } else {
+                Timer.waitCondition(() -> Interfaces.get(49) != null, 2000, 2700);
+                RSInterface close = Interfaces.findWhereAction("Close", 49);
+                if (close != null && close.click()) {
+                    General.sleep(700, 1200);
+                }
             }
         }
     }
@@ -144,10 +149,10 @@ public class ElementalWorkshop implements QuestTask {
             cQuesterV2.status = "Getting key";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Utils.useItemOnItem(KNIFE, BATTERED_BOOK))
-               return Timer.waitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
+                return Timer.waitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
 
         }
-        return  Inventory.find(BATTERED_KEY).length > 0;
+        return Inventory.find(BATTERED_KEY).length > 0;
     }
 
     public void enterUnderground() {
@@ -179,7 +184,7 @@ public class ElementalWorkshop implements QuestTask {
             General.sleep(1500, 3500);
         }
 
-        if(pullLever())
+        if (pullLever())
             return;
 
         fixWestWheel();

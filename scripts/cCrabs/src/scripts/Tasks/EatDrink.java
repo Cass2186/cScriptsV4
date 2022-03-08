@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public class EatDrink implements Task {
 
-    int drinkPPotAt = General.random(5, 18);
+    public static int drinkPPotAt = General.random(5, 18);
 
     /**
      * Methods - Drink/eat
@@ -109,10 +109,12 @@ public class EatDrink implements Task {
     }
 
 
-    public boolean checkPrayer() {
+    public static boolean checkPrayer() {
         RSItem[] invPot = Inventory.find(Const.PRAYER_POTION);
         return invPot.length > 0 && Prayer.getPrayerPoints() < drinkPPotAt && Vars.get().usingPrayer;
     }
+
+
 
 
     @Override
