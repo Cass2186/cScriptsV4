@@ -247,10 +247,11 @@ public class MonkeyMadnessI implements QuestTask {
                     new GEItem(ItemID.RING_OF_DUELING[0], 3, 50),
                     new GEItem(ItemID.PRAYER_POTION[0], 6, 20),
                     new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 5, 40),
-                    new GEItem(ItemID.STAMINA_POTION[0], 6, 20),
+                    new GEItem(ItemID.STAMINA_POTION[0], 8, 20),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 20),
                     new GEItem(ItemID.ADAMANT_KITESHIELD, 1, 50),
-                    new GEItem(ItemID.ADAMANT_FULL_HELM, 1, 50)
+                    new GEItem(ItemID.ADAMANT_FULL_HELM, 1, 50),
+                    new GEItem(ItemID.MONKEY_BONES, 1, 500)
             )
     );
 
@@ -378,7 +379,7 @@ public class MonkeyMadnessI implements QuestTask {
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
         BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS);
-        BankManager.withdraw(1, true, LOCKPICK);
+        BankManager.withdraw(1, true, ItemID.LOCKPICK);
         BankManager.withdraw(2, true, stamina4);
         BankManager.withdraw(12, true, lobster);
         BankManager.withdraw(1, true, narnodesOrders);
@@ -400,12 +401,12 @@ public class MonkeyMadnessI implements QuestTask {
 
     public void chat() {
         if (NPCInteraction.isConversationWindowUp()) {
-            for (String s :DAERO_CHAT){
-                if(ChatScreen.containsOption("Leave...")){
+            for (String s : DAERO_CHAT) {
+                if (ChatScreen.containsOption("Leave...")) {
                     ChatScreen.selectOption(DAERO_CHAT2);
                     break;
                 }
-                if (NPCInteraction.isConversationWindowUp()){
+                if (NPCInteraction.isConversationWindowUp()) {
                     NPCInteraction.handleConversation(s);
                 }
             }
@@ -453,10 +454,12 @@ public class MonkeyMadnessI implements QuestTask {
             }*/
 
             NPCInteraction.handleConversation();
-            Log.debug("Waiting for glider bas");
-            Timer.waitCondition(() -> GLIDER_BASE.contains(Player.getPosition()), 8000, 12000);
-            General.sleep(2000, 3000);
-            //
+            Waiting.waitUntil(1500, () -> !NPCInteraction.isConversationWindowUp());
+            if (!NPCInteraction.isConversationWindowUp()) {
+                Log.debug("Waiting for glider base");
+                Timer.waitCondition(() -> GLIDER_BASE.contains(Player.getPosition()), 8000, 12000);
+                General.sleep(2000, 3000);
+            }
 
         }
     }
@@ -759,7 +762,7 @@ public class MonkeyMadnessI implements QuestTask {
                 stopMovingWait(300, 900);
 
                 while (Inventory.find(monkeyDentures).length < 1) {
-                    General.sleep(50);
+                    General.sleep(50,75);
                     if (Utils.clickObj(4715, "Search")) {
                         NPCInteraction.waitForConversationWindow();
                         NPCInteraction.handleConversation("Yes");
@@ -802,6 +805,7 @@ public class MonkeyMadnessI implements QuestTask {
             Walking.blindWalkTo(new RSTile(2782, 9173, 0));
             PathingUtil.movementIdle();
             invAmuletMould = Inventory.find(amuletmould);
+            // can take several attempts due to a spider that attacks you
             while (Inventory.find(amuletmould).length < 1) {
                 General.sleep(50, 200);
                 if (Utils.clickObj(4724, "Search")) {
@@ -833,6 +837,9 @@ public class MonkeyMadnessI implements QuestTask {
                 BankManager.withdraw(2, true, varrockTab);
                 BankManager.withdraw(1, true, 542);
                 BankManager.withdraw(1, true, 544);
+                if (Inventory.find(ItemID.STAMINA_POTION[0]).length < 2) {
+                    BankManager.withdrawArray(STAMINA_POTION, 2);
+                }
 
                 BankManager.getTeleItem(ItemID.RING_OF_DUELING[0], ItemID.RING_OF_DUELING[1],
                         ItemID.RING_OF_DUELING[2], ItemID.RING_OF_DUELING[3]);
@@ -846,7 +853,7 @@ public class MonkeyMadnessI implements QuestTask {
         }
     }
 
-    public void goToZookNock() {
+    public void goToZooknock() {
         if (Inventory.find(monkeyDentures).length > 0 && Inventory.find(amuletmould).length > 0 && Inventory.find(goldBar).length > 0) {
             cQuesterV2.status = "Going to Zooknock";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -861,7 +868,7 @@ public class MonkeyMadnessI implements QuestTask {
         }
     }
 
-    public void goToZookNockNoCheck() {
+    public void goToZooknockNoCheck() {
         cQuesterV2.status = "Going to Zooknock";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToTile(outsideDungeon);
@@ -910,7 +917,7 @@ public class MonkeyMadnessI implements QuestTask {
                 Utils.modSleep();
             }
             Timer.waitCondition(() -> Inventory.find(enchantedBar).length > 0, 9000, 12000);
-            Utils.modSleep();
+            Utils.shortSleep();
         }
     }
 
@@ -1280,7 +1287,7 @@ public class MonkeyMadnessI implements QuestTask {
                             break;
                         }
                     }
-                    General.sleep(General.random(500, 2000));
+                    General.sleep(General.random(500, 1000));
                 }
             }
         }
@@ -1325,17 +1332,23 @@ public class MonkeyMadnessI implements QuestTask {
 
                     cQuesterV2.status = "Waiting to pick bananas";
                     theMonkeysAunt = NPCs.findNearest("The Monkey's Aunt");
-                    if (theMonkeysAunt.length > 0 &&
-                            outsideMonkeyChildArea.contains(theMonkeysAunt[0].getPosition())) {
+                    if (theMonkeysAunt.length > 0) {
+                        if (outsideMonkeyChildArea.contains(theMonkeysAunt[0].getPosition())) {
 
-                        General.println("[Debug]: Getting bananas.");
-                        //spam click the tree
-                        if (Utils.clickObj("Banana Tree", "Search", true))
-                            General.sleep(120, 400);
-                        if (Inventory.find("Banana").length > 4) {
-                            General.println("[Debug]: We have 5 bananas, hiding");
-                            if (PathingUtil.localNavigation(monkeyChildHidingTile))
-                                PathingUtil.movementIdle();
+                            General.println("[Debug]: Getting bananas.");
+                            //spam click the tree
+                            if (Utils.clickObj("Banana Tree", "Search", true))
+                                General.sleep(120, 400);
+                            if (Inventory.find("Banana").length > 4) {
+                                General.println("[Debug]: We have 5 bananas, hiding");
+                                if (PathingUtil.localNavigation(monkeyChildHidingTile))
+                                    PathingUtil.movementIdle();
+                                break;
+                            }
+                        } else if (!monkeyChildHidingTile.equals(Player.getPosition()) &&
+                                PathingUtil.localNavigation(monkeyChildHidingTile)) {
+                            General.println("[Debug]: avoiding mom");
+                            PathingUtil.movementIdle();
                             break;
                         }
                     }
@@ -1382,7 +1395,7 @@ public class MonkeyMadnessI implements QuestTask {
 
     public void returnToZooknock() {
         if (Inventory.find(greegree).length < 1 && Inventory.find(monkeyTalisman).length > 0) {
-            goToZookNockNoCheck();
+            goToZooknockNoCheck();
             Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
             if (Utils.useItemOnNPC(monkeyTalisman, ZOOKNOCK_ID)) {
                 NPCInteraction.waitForConversationWindow();
@@ -2055,7 +2068,7 @@ public class MonkeyMadnessI implements QuestTask {
                 goToAmuletMould(); // dropping down and getting mould
                 getAmuletMould();
                 bankAfterMouldAndDentures(); // will only bank if you have dentures adn mould
-                goToZookNock();
+                goToZooknock();
                 getEnchantedBar();
             }
 

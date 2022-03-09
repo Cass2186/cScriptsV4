@@ -417,9 +417,11 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
                 else Walking.blindWalkTo(HorrorConst.MOTHER_SAFE_TILE);
 
-                if (Timer.waitCondition(Player::isMoving, 750))
+                if (Timer.waitCondition(Player::isMoving, 1000))
                     Timer.waitCondition(() -> HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition())
                             || !Player.isMoving(), 4000, 6000);
+
+                Waiting.waitNormal(500,70);
             } else
                 break;
         }

@@ -29,6 +29,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.Script;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.interfaces.Tile;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
@@ -1934,6 +1935,28 @@ public class Utils {
                 //     Log.log("[Debug]: " + s.toString() + " has increased experience since start: " +currentXp );
                 return true;
             }
+        }
+        return false;
+    }
+
+
+    public static boolean shouldDecantPotion(String potionNameBase){
+        int oneDose = 0;
+        int twoDose = 0;
+        int threeDose = 0;
+        int totalDoses = 0;
+
+        if (!BankCache.isInitialized()){
+
+        }
+
+        if (potionNameBase.toLowerCase().contains("stamina")){
+            oneDose =  BankCache.getStack(ItemID.STAMINA_POTION[3]);
+            twoDose =  BankCache.getStack(ItemID.STAMINA_POTION[2]);
+            threeDose =  BankCache.getStack(ItemID.STAMINA_POTION[1]);
+            totalDoses = (oneDose) + (twoDose*2) + (threeDose *3);
+            Log.debug("We have " + totalDoses + " total doses of stamina potions");
+            return totalDoses >= 4;
         }
         return false;
     }
