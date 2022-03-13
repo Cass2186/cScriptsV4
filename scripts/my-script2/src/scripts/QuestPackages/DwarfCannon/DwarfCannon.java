@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
@@ -221,7 +222,8 @@ public class DwarfCannon implements QuestTask {
             if (!UNDER_TOWER_AREA.contains(Player.getRSPlayer())
                     && !SECOND_FLOOR.contains(Player.getRSPlayer())
                     && !THIRD_FLOOR.contains(Player.getRSPlayer())) {
-                PathingUtil.walkToTile(new RSTile(2570,3342,0));
+                Log.debug("Going to under remains");
+                PathingUtil.walkToTile(new RSTile(2568,3442,0));
             }
 
             if (UNDER_REMAINS_TOWER.contains(Player.getPosition()))

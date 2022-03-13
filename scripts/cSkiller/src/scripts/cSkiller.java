@@ -4,6 +4,7 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
@@ -41,6 +42,7 @@ import scripts.Tasks.PestControl.PestTasks.EnterBoat;
 import scripts.Tasks.Smithing.BlastFurnace.BfTasks.*;
 import scripts.Tasks.SorceressGarden.ElementalCollisionDetector;
 import scripts.dax.tracker.DaxTracker;
+import scripts.skillergui.GUI;
 import scripts.skillergui.SkillerGUI;
 import scripts.Tasks.Agility.Tasks.Canifis.CanifisCourse;
 import scripts.Tasks.Agility.Tasks.Canifis.GoToCanifis;
@@ -276,10 +278,12 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
     }
 
 
+    @SneakyThrows
     @Override
     public void run() {
         String user = Tribot.getUsername();
-        String lcn = "https://raw.githubusercontent.com/Cass2186/cScriptsV2/main/cSkillerGUI.fxml";
+        URL lcn = new URL("https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
+        //String lcn = "https://raw.githubusercontent.com/Cass2186/cScriptsV2/main/cSkillerGUI.fxml";
         Log.log("Username is " + user);
         Log.log("Location is " + lcn);
 
@@ -293,12 +297,16 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
         General.println("[Debug]: setting fxml || workingDir is " + Util.getHomeDirectory());
 
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("scripts/resources/cSkillerGUI.fxml");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
+        InputStream stream = getClass().getClassLoader()
+                .getResourceAsStream("scripts/resources/cSkillerGUI.fxml");
+       // BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
+        //SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
+        lcn = new URL("https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
+        GUI gui = new GUI(lcn);
 
         if (Vars.get().shouldShowGUI) {
+            Log.debug("Loading GUI");
             gui.show();
             while (gui.isOpen())
                 sleep(500);

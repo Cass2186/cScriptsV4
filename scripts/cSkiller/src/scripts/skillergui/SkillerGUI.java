@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
+import org.tribot.script.Script;
 
 import javax.swing.*;
 import java.io.ByteArrayInputStream;
@@ -21,12 +22,12 @@ import java.net.URL;
  */
 public class SkillerGUI extends Application {
 
-    private final String fxml;
+    private  String fxml = null;
+
+    private  URL url= null;
 
     private final URL stylesheet;
-
-
-
+    Script script;
     private Stage stage;
 
     private Scene scene;
@@ -39,6 +40,48 @@ public class SkillerGUI extends Application {
 
     private boolean isOpen = false;
 
+
+    public SkillerGUI(URL fxml) {
+        this(fxml, null);
+        this.script = script;
+    }
+
+    public SkillerGUI(URL fxml, boolean decorated) {
+        this(fxml, null, decorated);
+    }
+
+    public SkillerGUI(URL fxml, URL stylesheet) {
+        this(fxml, stylesheet, true);
+    }
+
+    public SkillerGUI(URL fxml, URL stylesheet, boolean decorated) {
+
+        this.url = fxml;
+        this.stylesheet = stylesheet;
+        this.decorated = decorated;
+
+        // We have to start the JFX thread from the EDT otherwise tribot will end it.
+        SwingUtilities.invokeLater(() -> {
+
+            new JFXPanel(); // we have to init the toolkit
+
+            Platform.runLater(() -> {
+                try {
+                    final Stage stage = new Stage();
+
+                    if (!this.decorated) {
+                        stage.initStyle(StageStyle.TRANSPARENT);
+                    }
+
+                    start(stage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+
+        waitForInit();
+    }
 
 
     public SkillerGUI(String fxml) {
@@ -115,8 +158,6 @@ public class SkillerGUI extends Application {
 
         });
 
-
-
         waitForInit();
 
     }
@@ -175,9 +216,34 @@ public class SkillerGUI extends Application {
 
     public void start(Stage stage) throws Exception {
 
+        FXMLLoader loader = new FXMLLoader(url);
+
+        // By default FXMLLoader uses a different classloader, this caused issues with upcasting
+        loader.setClassLoader(this.getClass().getClassLoader());
+
+        Parent box = loader.load();
+
+        controller = loader.getController();
+
+        if (controller == null) {
+            return;
+        }
+
+       // controller.setGUI(this);
+
+        scene = new Scene(box);
+
+        if (!this.decorated) {
+            scene.setFill(Color.TRANSPARENT);
+        }
+
+        if (this.stylesheet != null)
+            scene.getStylesheets().add(this.stylesheet.toExternalForm());
+
+        stage.setScene(scene);
 
 
-        if (fxml == null) {
+     /*   if (url == null ) { //used to be if fxml == null
             return;
         }
 
@@ -192,9 +258,10 @@ public class SkillerGUI extends Application {
 
         Platform.setImplicitExit(false);
 
+        FXMLLoader loader = new FXMLLoader(url);
 
 
-        FXMLLoader loader = new FXMLLoader();
+       // FXMLLoader loader = new FXMLLoader();
 
 
 
@@ -218,15 +285,9 @@ public class SkillerGUI extends Application {
 
         }
 
-
-
         controller.setGUI(this);
 
-
-
         scene = new Scene(box);
-
-
 
         if (!this.decorated) {
 
@@ -238,7 +299,7 @@ public class SkillerGUI extends Application {
             scene.getStylesheets().add(this.stylesheet.toExternalForm());
 
 
-        stage.setScene(scene);
+        stage.setScene(scene);*/
     }
 
 

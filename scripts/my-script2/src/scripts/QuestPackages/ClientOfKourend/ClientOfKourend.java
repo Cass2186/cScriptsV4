@@ -49,6 +49,8 @@ public class ClientOfKourend implements QuestTask {
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(FEATHER, 1, 300),
+                    new GEItem(ItemID.LOBSTER, 10, 60),
+
                     new GEItem(ItemID.GAMES_NECKLACE[0], 2, 30),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
                     new GEItem(ItemID.RING_OF_DUELING[0], 2, 30),
@@ -77,6 +79,7 @@ public class ClientOfKourend implements QuestTask {
         BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
         BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(1, true, FEATHER);
+        BankManager.withdraw(10, true, ItemID.LOBSTER);
         BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(2, true, BankManager.STAMINA_POTION[0]);
         BankManager.close(true);

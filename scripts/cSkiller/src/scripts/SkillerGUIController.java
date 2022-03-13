@@ -393,7 +393,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         afkEverySD.setText(String.valueOf(Vars.get().afkFrequencySD/1000));
         afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg/1000));
         afkForSD.setText(String.valueOf(Vars.get().afkDurationSD/1000));
-        chancetoClickJewleryBox.setText(String.valueOf(Vars.get().clickAllJeweleryChance));
+        //chancetoClickJewleryBox.setText(String.valueOf(Vars.get().clickAllJeweleryChance));
 
         for (SkillTasks s : SkillTasks.values()) {
             startingSkillDropDown.getItems().add(s.getSkillName());

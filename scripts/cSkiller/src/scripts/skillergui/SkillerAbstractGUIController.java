@@ -8,13 +8,13 @@ import javafx.fxml.Initializable;
 
 public abstract class SkillerAbstractGUIController implements Initializable {
 
-    private SkillerGUI gui = null;
+    private GUI gui = null;
 
-    public void setGUI(SkillerGUI gui) {
+    public void setGUI(GUI gui) {
         this.gui = gui;
     }
 
-    public SkillerGUI getGUI() {
+    public GUI getGUI() {
         return this.gui;
     }
 
