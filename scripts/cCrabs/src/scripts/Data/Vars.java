@@ -4,6 +4,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Skill;
 import scripts.AntiBan;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class Vars {
 
     public long currentTime;
 
-    public long startTime;
+    public long startTime = System.currentTimeMillis();
 
     public int hops = 0;
     public int eatAt = General.random(35,65);
@@ -59,6 +60,13 @@ public class Vars {
     public int startRangeXp = Skills.getXP(Skills.SKILLS.RANGED);
     public int startMageXp = Skills.getXP(Skills.SKILLS.MAGIC);
     public int startHPXP = Skills.getXP(Skills.SKILLS.HITPOINTS);
+
+    public int gainedAtkLvl = Skill.ATTACK.getActualLevel() - Const.startAttLvl;
+    public int gainedStrLvl = Skill.STRENGTH.getActualLevel() - Const.startStrLvl;
+    public int gainedDefLvl = Skill.DEFENCE.getActualLevel() - Const.startDefLvl;
+    public int gainedHPLvl = Skill.HITPOINTS.getActualLevel() - Const.startHPLvl;
+    public int gainedRangedLvl = Skill.RANGED.getActualLevel() - Const.startRangeLvl;
+    public int gainedMagicLvl = Skill.MAGIC.getActualLevel() - Const.startMageLvl;
 
 
 }

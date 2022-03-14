@@ -3,39 +3,76 @@ package scripts.Nodes;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Skill;
 import scripts.BankManager;
 
+import scripts.Data.Birdhouse;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 
+import scripts.GEManager.GEItem;
 import scripts.ItemID;
+import scripts.QuestSteps.BuyItemsStep;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 import scripts.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class Restock implements Task {
 
 // will need to 'open' all nests before selling them and seeds
     // enchant new necklaces if needed
 
-    public void restock() {
-     /*   GEManager.goToGE();
-        GEManager.getCoins();
+    ArrayList<GEItem> itemsToBuyInitial = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.LOGS, 1, 50),
+                    new GEItem(ItemID.OAK_LOGS, 1, 50),
+                    new GEItem(ItemID.WILLOW_LOGS, 1, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 20),
+                    new GEItem(ItemID.MAPLE_LOGS, 1, 50),
+                    new GEItem(ItemID.TEAK_LOGS, 1, 30),
+                    new GEItem(ItemID.CLOCKWORK, 13, 200),
+                    new GEItem(ItemID.CHISEL, 1, 200),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 50),
+                    new GEItem(ItemID.HAMMER, 1, 200)
 
-        GEManager.buyItem(Const.get().VARROCK_TELEPORT, 40, 25);
-        if (Skills.getActualLevel(Skills.SKILLS.HUNTER) < 30) {
-            GEManager.buyItem(Const.get().CLOCKWORK, 100, 25);
-            GEManager.buyItem(Const.get().CHISEL, 500, 25);
-            if (Skills.getActualLevel(Skills.SKILLS.HUNTER) > 15) {
-                GEManager.buyItem(Const.get().OAK_LOGS, 100, 25);
-            } else {
-                GEManager.buyItem(Const.get().LOGS, 100, 25);
-            }
+            )
+    );
+
+    ArrayList<GEItem> restockItems = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 20),
+                    new GEItem(ItemID.BARLEY_SEED, 500, 200),
+                    new GEItem(ItemID.VARROCK_TELEPORT, 10, 50)
+                    //ruby necklace?
+            )
+    );
+
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuyInitial);
+
+
+    public void restock() {
+        Optional<Birdhouse> bestHouse = Birdhouse.getBestBirdhouse();
+
+        // if we can craft the best birdhouse, add the logs, clockwork and equipment
+        if (bestHouse.map(Birdhouse::canCraft).orElse(false)) {
+            restockItems.add(new GEItem(bestHouse.get().getLogID(), 8, 50));
+            restockItems.add(new GEItem(ItemID.CLOCKWORK, 8, 50));
+            restockItems.add(new GEItem(ItemID.CHISEL, 1, 200));
+            restockItems.add(new GEItem(ItemID.HAMMER, 1, 200));
         } else {
-            GEManager.buyItem(Vars.get().currentBirdHouseId, 100, 25);
+            // add the birdhouse to the purchase list if we can't craft it
+            bestHouse.ifPresent(b -> restockItems
+                    .add(new GEItem(b.getBirdhouseID(), 12, 50)));
         }
-*/
+
+        BuyItemsStep buyStep = new BuyItemsStep(restockItems);
+        buyStep.buyItems();
 
     }
 
@@ -61,9 +98,8 @@ public class Restock implements Task {
                 BankManager.withdraw(0, true, Const.get().RUBY_NECKLACE);
                 BankManager.close(true);
             }
-        }
-        else{
-           // MagicUtils.castEnchant(Const.get().RUBY_NECKLACE, ItemID.STAFF_OF_FIRE, "Lvl-3 Enchant");
+        } else {
+            // MagicUtils.castEnchant(Const.get().RUBY_NECKLACE, ItemID.STAFF_OF_FIRE, "Lvl-3 Enchant");
         }
     }
 

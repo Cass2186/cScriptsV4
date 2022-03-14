@@ -1,5 +1,6 @@
 package scripts.Data;
 
+import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 
@@ -92,4 +93,20 @@ public class Const {
 
     public int AMMONITE_ROCK_ID = 7800;
     public int AMMONITE_CRAB_ID = 7799;
+
+    public static int startSlayerXP = Skills.getXP(Skills.SKILLS.SLAYER);
+    public  static int startAttXp = Skills.getXP(Skills.SKILLS.ATTACK);
+    public  static int startStrXp = Skills.getXP(Skills.SKILLS.STRENGTH);
+    public  static int startDefXp = Skills.getXP(Skills.SKILLS.DEFENCE);
+    public  static int startRangeXp = Skills.getXP(Skills.SKILLS.RANGED);
+    public  static int startMageXp = Skills.getXP(Skills.SKILLS.MAGIC);
+    public  static int startHPXP = Skills.getXP(Skills.SKILLS.HITPOINTS);
+
+    public final static int startSlayerLvl= Skills.getActualLevel(Skills.SKILLS.SLAYER);
+    public  final static int startAttLvl = Skills.getActualLevel(Skills.SKILLS.ATTACK);
+    public  final  static int startStrLvl = Skills.getActualLevel(Skills.SKILLS.STRENGTH);
+    public  final static int startDefLvl = Skills.getActualLevel(Skills.SKILLS.DEFENCE);
+    public final static int startRangeLvl = Skills.getActualLevel(Skills.SKILLS.RANGED);
+    public  final static int startMageLvl = Skills.getActualLevel(Skills.SKILLS.MAGIC);
+    public  final static int startHPLvl = Skills.getActualLevel(Skills.SKILLS.HITPOINTS);
 }

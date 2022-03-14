@@ -275,7 +275,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
             }
         });
         Utils.setNPCAttackPreference();
-        addPaint();
+       // addPaint();
 
     }
 
@@ -686,25 +686,25 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
             long ttl = (long) (xpToLevel1 / ((xpMap.get(s) / timeRan)));
             int gained = s.getActualLevel() - startLvl;
             if (gained > 0) {
-                String txt =
-              //  myString.add(
+               // String txt =
+                myString.add(
                         StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
                                 + " [" + s.getActualLevel() + " (+" + gained + ")]: "
                                 + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
                                 "|| TNL: "
-                                + Timing.msToString(ttl);
-              //  );
-                rows.add(template.toBuilder().label(txt).build());
+                                + Timing.msToString(ttl)
+                );
+               // rows.add(template.toBuilder().label(txt).build());
             } else {
-                String txt =
-             //  myString.add(
+               // String txt =
+              myString.add(
                         StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
                         + " [" + s.getActualLevel() + "]: "
                         + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
                         "|| TNL: "
-                        + Timing.msToString(ttl);
-             //   );
-                rows.add(template.toBuilder().label(txt).build());
+                        + Timing.msToString(ttl)
+                );
+             //   rows.add(template.toBuilder().label(txt).build());
             }
         }
         if (Vars.get().currentTask != null &&
@@ -737,7 +737,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
         }
 
-      //  PaintUtil.createPaint(g, myString.toArray(String[]::new));
+       PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }
 
 

@@ -4,6 +4,7 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.analysis.function.Exp;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.Game;
@@ -14,6 +15,10 @@ import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Options;
+import org.tribot.script.sdk.ScriptListening;
+import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.painting.template.basic.*;
+import scripts.Data.Const;
 import scripts.Data.Paint;
 import scripts.Data.Vars;
 import scripts.Tasks.*;
@@ -32,22 +37,22 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
 
     Skills.SKILLS currentSkill = Skills.SKILLS.STRENGTH;
 
-    public void populateInitialMap(){
+    public void populateInitialMap() {
         Log.log("[Debug]: Populating intial skills xp HashMap");
-        for (Skills.SKILLS s : Skills.SKILLS.values() ){
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
             Vars.get().skillStartXpMap.put(s, s.getXP());
         }
     }
 
-    public HashMap<Skills.SKILLS, Integer> getXpMap(){
+    public HashMap<Skills.SKILLS, Integer> getXpMap() {
         if (Vars.get().skillStartXpMap == null || Vars.get().skillStartXpMap.size() == 0)
             populateInitialMap();
 
         HashMap<Skills.SKILLS, Integer> map = new HashMap<>();
-        for (Skills.SKILLS s : Skills.SKILLS.values() ){
-            int startXp =  Vars.get().skillStartXpMap.get(s);
-            if (s.getXP() > startXp){
-                map.put(s,s.getXP() - startXp );
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
+            int startXp = Vars.get().skillStartXpMap.get(s);
+            if (s.getXP() > startXp) {
+                map.put(s, s.getXP() - startXp);
             }
         }
 
@@ -68,10 +73,14 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                 new ResetAggro()
         );
 
-        Utils. setCameraZoomAboveDefault();
+        Utils.setCameraZoomAboveDefault();
         super.setLoginBotState(false);
 
         isRunning.set(true);
+        addPaint();
+        ExpHandler.updateStartXpAndLevel();
+
+        Vars.get().startTime = System.currentTimeMillis();
 
         while (isRunning.get()) {
             General.sleep(50, 150);
@@ -88,6 +97,7 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
 
     }
 
+
     @Override
     public void onStart() {
         WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
@@ -98,6 +108,65 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
         });
     }
 
+    public void addPaint() {
+        PaintTextRow template = PaintTextRow.builder().background(Color.DARK_GRAY.darker()).build();
+
+        Collection<PaintRow> rows = new ArrayList<>();
+
+        BasicPaintTemplate paint = BasicPaintTemplate.builder()
+                .row(PaintRows.scriptName(template.toBuilder()))
+                .row(PaintRows.runtime(template.toBuilder()))
+                //  .row(template.toBuilder().label("Task").value(() -> (double) (System.currentTimeMillis() - Vars.get().startTime)/3600000).build())
+                .row(template.toBuilder().label("Task").value(() -> status).build())
+                .row(template.toBuilder().condition(() -> Skill.RANGED.getXp() > Const.startRangeXp)
+                        .label("Ranged")
+                        .value(() -> "[" + Skill.RANGED.getActualLevel() + "+" +
+                                ExpHandler.get().gainedRangedLvl + "] " +
+                                Utils.addCommaToNum(Skill.RANGED.getXp() - Const.startRangeXp)
+                                + "xp (" +
+                                Utils.addCommaToNum((int) ((Skill.RANGED.getXp() - Const.startRangeXp)
+                                        / ((double) (System.currentTimeMillis() - Vars.get().startTime) / 3600000)))
+                                + "/hr) || TNL: ").build())
+
+                .row(template.toBuilder().condition(() -> Skill.STRENGTH.getXp() > Const.startStrXp)
+                        .label("Strength")
+                        .value(() ->
+                                "[" + Skill.STRENGTH.getActualLevel() + "+" +
+                                        ExpHandler.get().gainedDefLvl + "] " +
+                                        Utils.addCommaToNum(Skill.STRENGTH.getXp() - Const.startStrXp)
+                                        + "xp (" +
+                                        Utils.addCommaToNum((int) ((Skill.STRENGTH.getXp() - Const.startStrXp)
+                                                / ((double) (System.currentTimeMillis() - Vars.get().startTime) / 3600000)))
+                                        + "/hr) || TNL: ").build())
+
+                .row(template.toBuilder().condition(() -> Skill.ATTACK.getXp() > Const.startAttXp)
+                        .label("Attack")
+                        .value(() -> "[" + Skill.ATTACK.getActualLevel() + "+" +
+                                ExpHandler.get().gainedAtkLvl + "] " +
+                                Utils.addCommaToNum(Skill.ATTACK.getXp() - Const.startAttXp))
+                        .build())
+
+
+                .row(template.toBuilder().condition(() -> Skill.DEFENCE.getXp() > Const.startDefXp)
+                        .label("Defence")
+                        .value(() -> "[" + Skill.DEFENCE.getActualLevel() + "+"
+                                + ExpHandler.get().gainedDefLvl +"] " +
+                                Utils.addCommaToNum(Skill.DEFENCE.getXp() - Const.startDefXp)
+                                + "xp").build())
+
+                .row(template.toBuilder().condition(() -> Skill.HITPOINTS.getXp() > Const.startHPXP)
+                        .label("Hitpoints")
+                        .value(() -> "[" + Skill.HITPOINTS.getActualLevel() + "] " +
+                                Utils.addCommaToNum(Skill.HITPOINTS.getXp() - Const.startHPXP))
+                        .build())
+
+                .rows(rows)
+                // .row(template.toBuilder().label("Solved State").condition(() -> Vars.get().getRunningProfile().getArceuus().get() && Calculations.get().getBooksFound() > 0).value(() -> Vars.get().getLibrary().getState()).build())
+                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
+                .build();
+
+        org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
+    }
 
     @Override
     public void onPaint(Graphics g) {
@@ -135,8 +204,11 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                 }
             }
         }
-        PaintUtil.createPaint(g, myString.toArray(String[]::new));
+        // Create the template
+
+        //  PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }
+
     @Override
     public void passArguments(HashMap<String, String> hashMap) {
         String scriptSelect = hashMap.get("custom_input");
@@ -146,11 +218,10 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
 
         for (String arg : input.split(";")) {
             try {
-            if (arg.toLowerCase().contains("pray")){
-                Log.debug("[Args] Praying enabled");
-                Vars.get().usingPrayer = true;
-            }
-
+                if (arg.toLowerCase().contains("pray")) {
+                    Log.debug("[Args] Praying enabled");
+                    Vars.get().usingPrayer = true;
+                }
 
 
             } catch (Exception e) {
@@ -159,6 +230,7 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
             }
         }
     }
+
     @Override
     public void onEnd() {
         General.println("[Ending]: Runtime: " + Timing.msToString(this.getRunningTime()));

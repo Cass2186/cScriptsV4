@@ -20,6 +20,7 @@ public class Vars {
     public boolean shouldBank = true;
 
     public boolean shouldRestock = false;
+    public boolean craftBirdhouses = true;
 
     public int currentBirdHouseId;
 

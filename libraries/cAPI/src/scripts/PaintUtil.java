@@ -1,9 +1,13 @@
 package scripts;
 
+import org.apache.commons.lang3.StringUtils;
+import org.tribot.api.Timing;
 import org.tribot.api2007.Interfaces;
+import org.tribot.script.sdk.Skill;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class PaintUtil {
 
@@ -15,6 +19,14 @@ public class PaintUtil {
         this.numberOfItems = paintInformationArray.length;
         this.xCoords = new int[numberOfItems];
         this.yCoords = new int[numberOfItems];
+    }
+
+    public static String formatSkillString(Skill s, int gainedXp, int xpHr, long ttl){
+       return StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
+                + " [" + s.getActualLevel() + "]: "
+                + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                "|| TNL: "
+                + Timing.msToString(ttl);
     }
 
     public static void createPaint(Graphics g, ArrayList<String> words){
