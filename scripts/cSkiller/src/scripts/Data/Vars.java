@@ -72,9 +72,9 @@ public class Vars {
     public int oreDeposits = 0;
 
     //afk stuff
-    public int afkDurationAvg = General.random(30000,40000); //30-40s
+    public int afkDurationAvg = General.random(20000,40000); //30-40s
     public int afkDurationSD = 20000; //20s SD
-    public int afkFrequencyAvg = 540000; //every 9 min
+    public int afkFrequencyAvg = 1200000; //every 20 min
     public int afkFrequencySD = 180000; //3m SD
     public boolean moveMouseOffScreenAfk = true;
     public Timer afkTimer = new Timer(General.randomSD(afkFrequencyAvg, afkFrequencySD));

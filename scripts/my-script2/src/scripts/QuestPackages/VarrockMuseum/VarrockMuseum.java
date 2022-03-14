@@ -7,6 +7,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
@@ -423,7 +424,6 @@ public class VarrockMuseum implements QuestTask {
             leech();
         }
         if (RSVarBit.get(3685).getValue() == 3) {
-            cQuesterV2.taskList.remove(VarrockMuseum.get());
             finishQuest();
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(VarrockMuseum.get());

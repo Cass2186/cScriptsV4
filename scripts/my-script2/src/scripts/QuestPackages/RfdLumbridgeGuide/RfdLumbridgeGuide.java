@@ -1,7 +1,7 @@
 package scripts.QuestPackages.RfdLumbridgeGuide;
 
 
-import com.trilezstudios.updater.hooks.NPC;
+
 import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;

@@ -1,6 +1,6 @@
 package scripts.QuestPackages.Contact;
 
-import com.trilezstudios.updater.hooks.NPC;
+
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;

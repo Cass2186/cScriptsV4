@@ -1,9 +1,8 @@
 package scripts.QuestSteps;
 
-import com.trilezstudios.updater.hooks.NPC;
+
 import dax.walker_engine.interaction_handling.NPCInteraction;
-import dax.walker_engine.local_pathfinding.Reachable;
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;

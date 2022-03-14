@@ -4,7 +4,7 @@ import dax.api_lib.DaxWalker;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
-import org.tribot.Constants;
+
 import org.tribot.api.Clicking;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;

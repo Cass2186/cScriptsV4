@@ -678,7 +678,7 @@ public class MerlinsCrystal implements QuestTask {
             buyItems();
             getItems();
             startQuest();
-        } else if (Inventory.getAll().length == 0) {
+        } else if (Inventory.getAll().length == 0 && Game.getSetting(14) < 7) {
             buyItems();
             getItems();
             return;

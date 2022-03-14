@@ -18,6 +18,7 @@ import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Options;
+import org.tribot.script.sdk.painting.template.basic.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.util.Util;
@@ -274,6 +275,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
             }
         });
         Utils.setNPCAttackPreference();
+        addPaint();
 
     }
 
@@ -511,6 +513,59 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
         }
     }
 
+    public void addPaint(){
+        double timeRan = super.getRunningTime();
+        double timeRanMin = (timeRan / 3600000);
+        List<String> skillsList = getCurrentSkillXP();
+        List<String> skillsLevelList = getCurrentSkillLevel();
+        PaintTextRow template = PaintTextRow.builder().background(Color.darkGray.darker()).build();
+
+        Collection<PaintRow> rows = new ArrayList<>();
+
+        HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
+        for (Skills.SKILLS s : xpMap.keySet()) {
+            int startLvl = Skills.getLevelByXP(Vars.get().skillStartXpMap.get(s));
+            int xpHr = (int) (xpMap.get(s) / timeRanMin);
+            long xpToLevel1 = Skills.getXPToLevel(s, s.getActualLevel() + 1);
+            long ttl = (long) (xpToLevel1 / ((xpMap.get(s) / timeRan)));
+            int gained = s.getActualLevel() - startLvl;
+            if (gained > 0) {
+                String txt =
+                        //  myString.add(
+                        StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
+                                + " [" + s.getActualLevel() + " (+" + gained + ")]: "
+                                + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                                "|| TNL: "
+                                + Timing.msToString(ttl);
+                //  );
+                rows.add(template.toBuilder().label(txt).build());
+            } else {
+                String txt =
+                        //  myString.add(
+                        StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
+                                + " [" + s.getActualLevel() + "]: "
+                                + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                                "|| TNL: "
+                                + Timing.msToString(ttl);
+                //   );
+                rows.add(template.toBuilder().label(txt).build());
+            }
+        }
+
+        BasicPaintTemplate paint = BasicPaintTemplate.builder()
+                .row(PaintRows.scriptName(template.toBuilder()))
+                .row(PaintRows.runtime(template.toBuilder()))
+                // .row(template.toBuilder().label("Rotate Task").onClick(() -> Log.debug("CLICKED!")).build())
+                .row(template.toBuilder().label("Task").value(() -> currentSkillName).build())
+                .row(template.toBuilder().label("Action").value(() -> status).build())
+
+                .rows(rows)
+                .row(template.toBuilder().label("AFK Timer").value(()->
+                        Timing.msToString(Vars.get().afkTimer.getRemaining())).build())
+                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
+                .build();
+        org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
+    }
 
     @Override
     public void onPaint(Graphics g) {
@@ -618,6 +673,11 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                     Game.getSetting(394));
 
         }
+        // Create the template
+        PaintTextRow template = PaintTextRow.builder().background(Color.darkGray.darker()).build();
+
+        Collection<PaintRow> rows = new ArrayList<>();
+
         HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
         for (Skills.SKILLS s : xpMap.keySet()) {
             int startLvl = Skills.getLevelByXP(Vars.get().skillStartXpMap.get(s));
@@ -626,20 +686,25 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
             long ttl = (long) (xpToLevel1 / ((xpMap.get(s) / timeRan)));
             int gained = s.getActualLevel() - startLvl;
             if (gained > 0) {
-                myString.add(
+                String txt =
+              //  myString.add(
                         StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
                                 + " [" + s.getActualLevel() + " (+" + gained + ")]: "
                                 + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
                                 "|| TNL: "
-                                + Timing.msToString(ttl)
-                );
+                                + Timing.msToString(ttl);
+              //  );
+                rows.add(template.toBuilder().label(txt).build());
             } else {
-                myString.add(StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
+                String txt =
+             //  myString.add(
+                        StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
                         + " [" + s.getActualLevel() + "]: "
                         + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
                         "|| TNL: "
-                        + Timing.msToString(ttl)
-                );
+                        + Timing.msToString(ttl);
+             //   );
+                rows.add(template.toBuilder().label(txt).build());
             }
         }
         if (Vars.get().currentTask != null &&
@@ -672,7 +737,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
         }
 
-        PaintUtil.createPaint(g, myString.toArray(String[]::new));
+      //  PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }
 
 
