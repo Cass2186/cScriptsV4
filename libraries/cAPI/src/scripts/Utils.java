@@ -13,6 +13,7 @@ import org.tribot.api.input.Keyboard;
 import org.tribot.api.input.Mouse;
 import org.tribot.api.interfaces.Clickable;
 import org.tribot.api.interfaces.Positionable;
+import org.tribot.api.types.generic.CustomRet_2P;
 import org.tribot.api2007.Camera;
 import org.tribot.api2007.Combat;
 import org.tribot.api2007.Equipment;
@@ -74,6 +75,10 @@ public class Utils {
         Collections.reverse(list);
         return list.stream().toArray();
     }
+
+
+
+
 
     public static RSArea getObjectRSArea(RSObject object) {
 
@@ -1755,6 +1760,13 @@ public class Utils {
         return p.length;
     }
 
+    public static String getRuntimeString(long runtime) {
+        long millis = runtime;
+        long second = (millis / 1000) % 60;
+        long minute = (millis / (1000 * 60)) % 60;
+        long hour = (millis / (1000 * 60 * 60)); //% 24;
+        return String.format("%02d:%02d:%02d", hour, minute, second);
+    }
 
     public static boolean isItemSelected(int ItemID) {
         RSItemDefinition itemDef = RSItemDefinition.get(ItemID);

@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class BuyGear implements Task{
 
 
-    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+    ArrayList<GEItem> rangedItemToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(ItemID.SNAKESKIN_BANDANA, 1, 500),
                     new GEItem(ItemID.SNAKESKIN_BOOTS, 1, 500),
@@ -31,7 +31,7 @@ public class BuyGear implements Task{
             )
     );
 
-    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+    BuyItemsStep buyStep = new BuyItemsStep(rangedItemToBuy);
 
 
     @Override

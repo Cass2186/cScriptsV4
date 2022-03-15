@@ -2,6 +2,7 @@ package scripts.Data;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Skill;
 import scripts.Timer;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class Vars {
 
     public long currentTime;
 
-    public long startTime = System.currentTimeMillis();
+    public final long startTime = System.currentTimeMillis();
 
     public long lastAction = System.currentTimeMillis();
 
@@ -44,7 +45,7 @@ public class Vars {
 
     public int drinkAbsorptionAt = General.random(100, 250);
     public int drinkAbsorptionUpTo = General.random(400, 800);
-    public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
+    public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 
 
     /**

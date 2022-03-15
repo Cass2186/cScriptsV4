@@ -12,7 +12,9 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import scripts.API.CrabUtils;
 import scripts.AntiBan;
 import scripts.Data.Const;
 import scripts.Data.Vars;
@@ -121,12 +123,13 @@ public class Fight implements Task {
                 Mouse.leaveGame(true);
 
 
-            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.HAWK_EYE) && EatDrink.checkPrayer()){
+            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.EAGLE_EYE) && EatDrink.checkPrayer()){
                 Utils.idleAfkAction();
                 Utils.drinkPotion(ItemID.PRAYER_POTION);
             }
 
-            return (checkAggro() && !Player.getRSPlayer().isInCombat())
+            return (CrabUtils.lostAgro(Utils.getWorldTileFromRSTile(Vars.get().crabTile)) /*checkAggro()*/
+                    && !MyPlayer.isHealthBarVisible())
                     || Combat.getHPRatio() < Vars.get().eatAt;
         }, General.random(300000, 460000));
     }

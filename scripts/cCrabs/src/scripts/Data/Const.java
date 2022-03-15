@@ -82,8 +82,8 @@ public class Const {
 
 
 
-    public   int[] SAND_CRAB_IDS = {7206, 5935, 7799};
-    public   int[] SAND_ROCKS_IDS = {7207, 5936, 7800};
+    public  static   int[] SAND_CRAB_IDS = {7206, 5935, 7799};
+    public   static  int[] SAND_ROCKS_IDS = {7207, 5936, 7800};
 
     public static RSTile SWAMP_CRAB_TILE_1 = new RSTile(3596,3480,0);
     public static RSTile SWAMP_CRAB_TILE_2 = new RSTile(3755,3354,0); //near vyres
@@ -91,8 +91,8 @@ public class Const {
     public static int SWAMPY_LOG_ID = 8299;
     public static int SWAMP_CRAB_ID = 8297;
 
-    public int AMMONITE_ROCK_ID = 7800;
-    public int AMMONITE_CRAB_ID = 7799;
+    public  static  int AMMONITE_ROCK_ID = 7800;
+    public  static int AMMONITE_CRAB_ID = 7799;
 
     public static int startSlayerXP = Skills.getXP(Skills.SKILLS.SLAYER);
     public  static int startAttXp = Skills.getXP(Skills.SKILLS.ATTACK);

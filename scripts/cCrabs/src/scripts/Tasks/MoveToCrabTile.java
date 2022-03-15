@@ -28,7 +28,7 @@ public class MoveToCrabTile implements Task {
             PathingUtil.walkToArea(Const.BEACH_AREA);
             if (Utils.clickNPC(Const.SANDICRAHB_NPC, "Travel")) {
                 NPCInteraction.waitForConversationWindow();
-                Timer.waitCondition(() -> Const.SANDCRAB_ISLAND.contains(Player.getPosition()), 10000);
+                Timer.waitCondition(() -> Const.SANDCRAB_ISLAND.contains(Player.getPosition()), 8000);
             }
         }
 

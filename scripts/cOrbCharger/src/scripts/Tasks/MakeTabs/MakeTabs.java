@@ -104,7 +104,7 @@ public class MakeTabs implements Task {
 
     public void studyLecturn(String teleport) {
         if (org.tribot.script.sdk.Inventory.contains(ItemID.LAW_RUNE) && org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) && atLecturn()) {
-            if (Player.getAnimation() == ANIMATION_ID) {
+            if (MyPlayer.getAnimation() == ANIMATION_ID) {
                 Log.debug("Making Tabs");
                 Timer.slowWaitCondition(() -> !org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) , 60000, 69000);
                 profit = Utils.getInventoryValue() - startInvValue;
