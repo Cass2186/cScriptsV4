@@ -47,15 +47,7 @@ public class Vars {
     public int drinkAbsorptionUpTo = General.random(400, 800);
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 
+    public int startMagicLevel = 1;
+    public int startMagicXp = 1;
 
-    /**
-     * Booleans
-     */
-    public boolean usingAbsorptions = false;
-    public  boolean usingPrayerPots = false;
-    public  boolean usingSuperCombat = false;
-    public boolean usingOverloadPots = false;
-    public boolean isOverloadActive = false;
-
-    public Timer overloadTimer = new Timer(0);  //5 min
 }

@@ -29,6 +29,7 @@ public class PaintUtil {
                 + Timing.msToString(ttl);
     }
 
+
     public static void createPaint(Graphics g, ArrayList<String> words){
         int xWords = 10; // for words
         int xGraphics = 5;

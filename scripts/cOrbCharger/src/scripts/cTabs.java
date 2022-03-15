@@ -4,6 +4,7 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.script.ScriptManifest;
 
 import org.tribot.script.sdk.*;
@@ -17,6 +18,7 @@ import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
 import scripts.Data.Vars;
 import scripts.Tasks.MakeTabs.MakeTabs;
+import scripts.Tasks.MakeTabs.UnnoteClay;
 import scripts.Tasks.Task;
 import scripts.Tasks.TaskSet;
 
@@ -81,7 +83,9 @@ public class cTabs implements TribotScript {
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
-                .row(template.toBuilder().label("Test").value("ing").onClick(() -> Log.log("CLICKED!")).build())
+                .row(template.toBuilder().label("Task").value(() -> status).build())
+                .row(template.toBuilder().label("Magic").value(() -> getXpGainedString()).build())
+                //.row(template.toBuilder().label("Test").value("ing").onClick(() -> Log.log("CLICKED!")).build())
                 //.row(template.toBuilder().label("Resources").value(() -> this.resourcesCollected).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
@@ -109,8 +113,11 @@ public class cTabs implements TribotScript {
         /**
          Tasks
          */
-        TaskSet tasks = new TaskSet(new MakeTabs());
+        TaskSet tasks = new TaskSet(new MakeTabs(), new UnnoteClay());
         isRunning.set(true);
+
+        Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
+        Vars.get().startMagicXp = Skill.MAGIC.getXp();
 
         while (isRunning.get()) {
             Waiting.waitNormal(50, 75);
@@ -126,48 +133,31 @@ public class cTabs implements TribotScript {
     }
 
 
+    public static String getXpGainedString() {
+        int currentLvl = Skill.MAGIC.getActualLevel();
+        int gainedLvl = currentLvl - Vars.get().startMagicLevel;
+        int gainedXp = Skill.MAGIC.getXp() - Vars.get().startMagicXp;
 
-
-  /*  public void onPaint(Graphics g) {
-        int currentLvl = Skills.getActualLevel(currentSkill);
-        gainedLvl = currentLvl - startLevel;
-        gainedXp = Skills.getXP(currentSkill) - startXp;
-        HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
-        double timeRan = getRunningTime();
+        double timeRan = System.currentTimeMillis() - Vars.get().startTime;
         double timeRanMin = (timeRan / 3600000);
 
-        List<String> myString = new ArrayList<>(Arrays.asList(
-                "cTabs",
-                "Running For: " + Timing.msToString(getRunningTime()),
-                "Task: " + status
-                //   "Vars.get().add:  " + Vars.get().add
-        ));
-        for (Skills.SKILLS s : xpMap.keySet()){
-            int startLvl =  Skills.getLevelByXP(Vars.get().skillStartXpMap.get(s));
-            int xpHr = (int) (xpMap.get(s) / timeRanMin);
-            long xpToLevel1 = Skills.getXPToLevel(s, s.getActualLevel() + 1);
-            long ttl = (long) ( xpToLevel1 / ((xpMap.get(s) / timeRan)));
-            int gained = s.getActualLevel() - startLvl;
-            if (gained >0) {
-                myString.add(StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
-                        + " [" + s.getActualLevel() + "(" + gained + ")]: "
-                        + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                        "|| TNL: "
-                        + Timing.msToString(ttl)
-                );
-            } else{
-                myString.add(StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
-                        + " [" + s.getActualLevel() + "]: "
-                        + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                        "|| TNL: "
-                        + Timing.msToString(ttl)
-                );
-            }
-        }
+        int xpHr = (int) (gainedXp / timeRanMin);
+        long xpToLevel1 = Skill.MAGIC.getCurrentXpToNextLevel();
+        long ttl = (long) (xpToLevel1 / ((gainedXp / timeRan)));
 
-        PaintUtil.createPaint(g, myString.toArray(String[]::new));
+
+        if (gainedLvl > 0) {
+           return  "[" + currentLvl + " (+" + gainedLvl + ")]: "
+                    + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                    "|| TNL: "
+                    + Utils.getRuntimeString(ttl);
+        } else {
+            return "[" + currentLvl + "]: "
+                    + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                    "|| TNL: "
+                    + Utils.getRuntimeString(ttl);
+        }
     }
-*/
 
 
 }

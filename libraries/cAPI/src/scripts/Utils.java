@@ -5,6 +5,7 @@ import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 
+import obf.ih;
 import org.tribot.api.Clicking;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
@@ -151,6 +152,7 @@ public class Utils {
                 NPCInteraction.handleConversation();
         }
     }
+
 
     public static boolean inCutScene() {
         return GameState.getVarbit(12139) == 1;

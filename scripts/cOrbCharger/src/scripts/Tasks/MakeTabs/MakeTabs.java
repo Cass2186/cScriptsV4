@@ -10,11 +10,9 @@ import org.tribot.api2007.types.RSInterfaceComponent;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.*;
 
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
@@ -33,9 +31,6 @@ import java.util.stream.Collectors;
 
 public class MakeTabs implements Task {
 
-    /**
-     * @return
-     */
 
     int STUDYING_ANIMATION = 9491;
     int ANIMATION_ID = 4068;
@@ -52,7 +47,7 @@ public class MakeTabs implements Task {
 
     public boolean clickAdvertisement() {
         if (!Interfaces.isInterfaceSubstantiated(52)) {
-            Log.debug("[Debug]: Opening host advertisements");
+            Log.debug("Opening host advertisements");
             if (OUTSIDE_RIMMINGTON_PORTAL.distanceTo(Player.getPosition()) > 20)
                 PathingUtil.walkToTile(OUTSIDE_RIMMINGTON_PORTAL, 2, false);
 
@@ -82,14 +77,14 @@ public class MakeTabs implements Task {
                     .stream()
                     .filter(wid -> !houseBlackList.contains(wid))
                     .collect(Collectors.toList());
-            Log.debug("[Debug]: Entering host");
+            Log.debug("Entering host");
             for (Widget w : button) {
 
                 if (w.click("Enter House") && Timer.waitCondition(Game::isInInstance, 3000, 4500)) {
                     Waiting.waitNormal(2500, 50);
                     return;
                 } else {
-                    //  Log.log("[Debug]: Blacklisting failed host");
+                    //  Log.log("Blacklisting failed host");
                     //houseBlackList.add(w);
                     clickAdvertisement();
 
@@ -98,17 +93,25 @@ public class MakeTabs implements Task {
         }
     }
 
-    public boolean atLecturn() {
-        return org.tribot.api2007.Objects.findNearest(30, "Lectern").length > 0;
+    public static boolean atLecturn() {
+        return Query.gameObjects()
+                .nameContains("Lectern")
+                .maxDistance(30)
+                .findBestInteractable()
+                .isPresent();
     }
 
     public void studyLecturn(String teleport) {
-        if (org.tribot.script.sdk.Inventory.contains(ItemID.LAW_RUNE) && org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) && atLecturn()) {
+        if (org.tribot.script.sdk.Inventory.contains(ItemID.LAW_RUNE) &&
+                org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) && atLecturn()) {
             if (MyPlayer.getAnimation() == ANIMATION_ID) {
                 Log.debug("Making Tabs");
-                Timer.slowWaitCondition(() -> !org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) , 60000, 69000);
+                Timer.slowWaitCondition(() ->
+                        !org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) ||
+                                Widgets.get(233, 2).isPresent(), 60000, 69000);
                 profit = Utils.getInventoryValue() - startInvValue;
-                General.println("[Debug]: Current profit is " + profit);
+                //Log.debug("Current profit is " + profit);
+                Utils.idleAfkAction();
                 return;
             }
             Optional<GameObject> lectern = Query.gameObjects().nameContains("Lectern")
@@ -133,69 +136,22 @@ public class MakeTabs implements Task {
                         .isVisible()
                         .findFirst();
 
-                if (tabWidget.map(w -> w.click()).orElse(false))
+                if (tabWidget.map(Widget::click).orElse(false))
                     Timer.waitCondition(() -> Player.getAnimation() == ANIMATION_ID, 5000, 7000);
 
             }
         }
     }
 
-    public void leaveHouse() {
-        if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
-            Timer.waitCondition(() -> !Game.isInInstance() &&
-                            Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),
-                    7000, 9000);
-        }
-    }
-
-    public void unNoteClay() {
-        if (!org.tribot.script.sdk.Inventory.contains(ItemID.SOFT_CLAY)) {
-            if (!atLecturn()) {
-                Log.debug("Unnoting clay");
-                Optional<InventoryItem> item = Query.inventory()
-                        .nameContains("Soft clay")
-                        .isNoted().findFirst();
-                Optional<Npc> phials = Query.npcs()
-                        .nameContains("Phials")
-                        .stream().findFirst();
-                if (phials.isPresent() && item.isPresent()) {
-                    if (!phials.get().isVisible()) {
-                        LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
-                        Waiting.waitNormal(750, 220);
-                    }
-                    if (Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
-                            Timer.waitCondition(Player::isMoving, 1200, 1800)) {
-                        Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
-
-                    }
-                }
-                if (NPCInteraction.isConversationWindowUp()) {
-                    if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
-                        Timer.waitCondition(() -> org.tribot.script.sdk.Inventory.contains(ItemID.SOFT_CLAY),
-                                2000, 4000);
-                    else if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange 5"))
-                        Timer.waitCondition(() -> org.tribot.script.sdk.Inventory.contains(ItemID.SOFT_CLAY),
-                                2000, 4000);
-
-                    if (NPCInteraction.isConversationWindowUp())
-                        ChatScreen.handle();
-                }
-            } else {
-
-                leaveHouse();
-            }
-        }
-
-    }
-
     @AllArgsConstructor
     public enum Tabs {
-        VARROCK(25, ItemID.FIRE_RUNE, 25,"Varrock", ItemID.VARROCK_TELEPORT),
-        LUMBRIDGE(31, ItemID.EARTH_RUNE, 37,"Lumbridge", ItemID.LUMBRIDGE_TELEPORT),
-        HOUSE(40, ItemID.EARTH_RUNE, 30,"House", ItemID.TELEPORT_TO_HOUSE),
-        FALADOR(37, ItemID.WATER_RUNE, 48,"Falador", ItemID.FALADOR_TELEPORT),
-        CAMELOT(45, -1, 55,"Camelot", ItemID.CAMELOT_TELEPORT);
+        VARROCK(25, ItemID.FIRE_RUNE, 25, "Varrock", ItemID.VARROCK_TELEPORT),
+        LUMBRIDGE(31, ItemID.EARTH_RUNE, 37, "Lumbridge", ItemID.LUMBRIDGE_TELEPORT),
+        HOUSE(40, ItemID.EARTH_RUNE, 30, "House", ItemID.TELEPORT_TO_HOUSE),
+        FALADOR(37, ItemID.WATER_RUNE, 48, "Falador", ItemID.FALADOR_TELEPORT),
+        CAMELOT(45, -1, 55, "Camelot", ItemID.CAMELOT_TELEPORT);
 
+        @Getter
         private int levelReq;
         @Getter
         private int otherRuneId;
@@ -207,17 +163,15 @@ public class MakeTabs implements Task {
 
     }
 
+    public boolean canCraftTab(Tabs t) {
+        return Skill.MAGIC.getActualLevel() >= t.getLevelReq();
+    }
 
-    public Tabs getMostProfitableTab(){
+    public Tabs getMostProfitableTab() {
         Optional<Tabs> t = Arrays.stream(Tabs.values()).max(Comparator.comparingInt(this::profitPerTab));
         Tabs tab = t.orElse(Tabs.VARROCK);
         Log.debug("Best tab is " + tab.getName());
         return tab;
-    }
-
-
-    public boolean hasAnyClay() {
-        return org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) || org.tribot.script.sdk.Inventory.contains(NOTED_SOFT_CLAY);
     }
 
 
@@ -245,10 +199,13 @@ public class MakeTabs implements Task {
 
     @Override
     public void execute() {
-        unNoteClay();
         selectHost();
-        studyLecturn(getMostProfitableTab().getName());
+        studyLecturn(Tabs.VARROCK.getName());
     }
 
+    @Override
+    public String toString() {
+        return "Making Tabs";
+    }
 
 }
