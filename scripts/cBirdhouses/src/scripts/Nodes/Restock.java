@@ -106,13 +106,13 @@ public class Restock implements Task {
     @Override
     public void execute() {
 
-        // restock
+        restock();
         Vars.get().shouldRestock = false;
     }
 
     @Override
     public Priority priority() {
-        return Priority.LOW;
+        return Priority.HIGH;
     }
 
     @Override

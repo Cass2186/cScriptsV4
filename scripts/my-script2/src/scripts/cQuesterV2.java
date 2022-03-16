@@ -90,6 +90,7 @@ import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
 import scripts.QuestPackages.SeaSlug.SeaSlug;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
+import scripts.QuestPackages.SheepShearer.SheepShearer;
 import scripts.QuestPackages.TearsOfGuthix.TearsOfGuthix;
 import scripts.QuestPackages.TempleOfIkov.TempleOfIkov;
 import scripts.QuestPackages.TheFeud.TheFeud;
@@ -568,6 +569,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 else if (arg.toLowerCase().contains("digsite")) {
                     General.println("[Args]: Added Dig Site  ");
                     taskList.add(DigSite.get());
+                }
+                else if (arg.toLowerCase().contains("sheepshearer")) {
+                    General.println("[Args]: Added Sheep Shearer");
+                    taskList.add(SheepShearer.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

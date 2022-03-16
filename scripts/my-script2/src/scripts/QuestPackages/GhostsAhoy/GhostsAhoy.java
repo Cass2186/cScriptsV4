@@ -136,7 +136,7 @@ public class GhostsAhoy implements QuestTask {
                     new ItemReq(ItemID.ECTOTOKEN, 35, 10),
                     new ItemReq(ItemID.LEATHER_GLOVES, 1, 1, true),
                     new ItemReq(ItemID.LOGS, 2, 0),
-                    new ItemReq(ItemID.TINDERBOX, 1, 0),
+                    new ItemReq(ItemID.TINDERBOX, 1, 1),
                     new ItemReq(ItemID.BOWL_OF_WATER, 2),
                     new ItemReq(ItemID.BUCKET_OF_MILK, 2),
                     new ItemReq(ItemID.NETTLES, 2)
@@ -166,7 +166,7 @@ public class GhostsAhoy implements QuestTask {
                     new ItemReq(ItemID.AIR_RUNE, 600),
 
                     new ItemReq(ItemID.STAFF_OF_FIRE, 1),
-                    new ItemReq(ItemID.NETTLES, 1),
+                 //   new ItemReq(ItemID.NETTLES, 1),
                     new ItemReq(ItemID.STAFF_OF_FIRE, 1),
                     new ItemReq(ItemID.BLUE_DYE, 3),
                     new ItemReq(ItemID.RED_DYE, 3),
@@ -360,10 +360,10 @@ public class GhostsAhoy implements QuestTask {
 
                 RSArea nettleArea = new RSArea(new RSTile(3089, 3468, 0), new RSTile(3091, 3468, 0));
                 PathingUtil.walkToTile(GhostsAhoyConst.NETTLE_TILE, 2, false);
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 5; i++) {
                     RSObject net = Entities.find(ObjectEntity::new)
                             .inArea(nettleArea)
-                            .idEquals(1181)
+                            .nameContains("Nettle")
                             .getFirstResult();
 
                     int b = i;
@@ -371,7 +371,7 @@ public class GhostsAhoy implements QuestTask {
                     if (net != null && Utils.clickObject(net, "Pick", false))
                         Timer.waitCondition(() -> Inventory.find(ItemID.NETTLES).length > b, 3500, 4500);
 
-                    General.sleep(500, 750);
+                    General.sleep(1200, 1750);
                 }
             }
         }
