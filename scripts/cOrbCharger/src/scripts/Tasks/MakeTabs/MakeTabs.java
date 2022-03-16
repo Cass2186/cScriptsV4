@@ -76,6 +76,7 @@ public class MakeTabs implements Task {
                     .isVisible()
                     .stream()
                     .filter(wid -> !houseBlackList.contains(wid))
+
                     .collect(Collectors.toList());
             Log.debug("Entering host");
             for (Widget w : button) {
@@ -200,7 +201,7 @@ public class MakeTabs implements Task {
     @Override
     public void execute() {
         selectHost();
-        studyLecturn(Tabs.VARROCK.getName());
+        studyLecturn(Tabs.CAMELOT.getName());
     }
 
     @Override

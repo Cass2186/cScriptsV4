@@ -69,7 +69,6 @@ public class EnterHouse implements Task {
                     .collect(Collectors.toList());
             Log.debug("Entering host");
             for (Widget w : button) {
-
                 if (w.click("Enter House") && Timer.waitCondition(GameState::isInInstance, 3000, 4500)) {
                     Waiting.waitNormal(2500, 50);
                     return;
@@ -85,7 +84,7 @@ public class EnterHouse implements Task {
 
     @Override
     public Priority priority() {
-        return null;
+        return Priority.MEDIUM;
     }
 
     @Override

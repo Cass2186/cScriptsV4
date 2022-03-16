@@ -17,6 +17,7 @@ import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
 import scripts.Data.Vars;
+import scripts.Tasks.MakeTabs.EnterHouse;
 import scripts.Tasks.MakeTabs.MakeTabs;
 import scripts.Tasks.MakeTabs.UnnoteClay;
 import scripts.Tasks.Task;
@@ -113,7 +114,11 @@ public class cTabs implements TribotScript {
         /**
          Tasks
          */
-        TaskSet tasks = new TaskSet(new MakeTabs(), new UnnoteClay());
+        TaskSet tasks = new TaskSet(
+                new MakeTabs(),
+                new UnnoteClay(),
+                new EnterHouse()
+        );
         isRunning.set(true);
 
         Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
@@ -122,6 +127,9 @@ public class cTabs implements TribotScript {
         while (isRunning.get()) {
             Waiting.waitNormal(50, 75);
             if (!Login.isLoggedIn())
+                break;
+
+            if (!UnnoteClay.hasAnyClay())
                 break;
 
             Task task = tasks.getValidTask();

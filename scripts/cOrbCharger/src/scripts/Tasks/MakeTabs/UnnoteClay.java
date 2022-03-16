@@ -22,7 +22,7 @@ import java.util.Optional;
 
 public class UnnoteClay implements Task {
 
-    public boolean hasAnyClay() {
+    public static boolean hasAnyClay() {
         return Inventory.contains(ItemID.SOFT_CLAY) ||
                 Inventory.contains(ItemID.getNotedId(ItemID.SOFT_CLAY));
     }

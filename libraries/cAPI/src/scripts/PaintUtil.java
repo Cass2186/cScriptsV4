@@ -22,13 +22,20 @@ public class PaintUtil {
     }
 
     public static String formatSkillString(Skill s, int gainedXp, int xpHr, long ttl){
-       return StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
-                + " [" + s.getActualLevel() + "]: "
+       return "[" + s.getActualLevel() + "]: "
                 + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
                 "|| TNL: "
                 + Timing.msToString(ttl);
     }
+    public static String formatSkillString(Skill s, int gainedXp, int xpHr){
+        return "[" + s.getActualLevel() + "]: "
+                + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr)";
+    }
 
+    public static int getXpHr(Skill s, int startXp, long startTimeMs){
+       return (int) ((s.getXp() - startXp)
+                / ((double) (System.currentTimeMillis() - startTimeMs) / 3600000));
+    }
 
     public static void createPaint(Graphics g, ArrayList<String> words){
         int xWords = 10; // for words

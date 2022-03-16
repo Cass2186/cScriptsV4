@@ -116,52 +116,47 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
-                //  .row(template.toBuilder().label("Task").value(() -> (double) (System.currentTimeMillis() - Vars.get().startTime)/3600000).build())
                 .row(template.toBuilder().label("Task").value(() -> status).build())
+                .row(template.toBuilder().label("Force Rest Aggression")
+                        .onClick(() -> Vars.get().shouldResetAggro = true )
+                        .onClick(()->Log.debug("Force reset aggro clicked")).build())
                 .row(template.toBuilder().condition(() -> Skill.RANGED.getXp() > Const.startRangeXp)
                         .label("Ranged")
-                        .value(() -> "[" + Skill.RANGED.getActualLevel() + "+" +
-                                ExpHandler.get().gainedRangedLvl + "] " +
-                                Utils.addCommaToNum(Skill.RANGED.getXp() - Const.startRangeXp)
-                                + "xp (" +
-                                Utils.addCommaToNum((int) ((Skill.RANGED.getXp() - Const.startRangeXp)
-                                        / ((double) (System.currentTimeMillis() - Vars.get().startTime) / 3600000)))
-                                + "/hr) || TNL: ").build())
+                        .value(() -> PaintUtil.formatSkillString(Skill.RANGED,
+                                (Skill.RANGED.getXp() - Const.startRangeXp),
+                                PaintUtil.getXpHr(Skill.RANGED, Vars.get().startRangeXp, Vars.get().startTime)))
+                        .build())
 
                 .row(template.toBuilder().condition(() -> Skill.STRENGTH.getXp() > Const.startStrXp)
                         .label("Strength")
-                        .value(() ->
-                                "[" + Skill.STRENGTH.getActualLevel() + "+" +
-                                        ExpHandler.get().gainedDefLvl + "] " +
-                                        Utils.addCommaToNum(Skill.STRENGTH.getXp() - Const.startStrXp)
-                                        + "xp (" +
-                                        Utils.addCommaToNum((int) ((Skill.STRENGTH.getXp() - Const.startStrXp)
-                                                / ((double) (System.currentTimeMillis() - Vars.get().startTime) / 3600000)))
-                                        + "/hr) || TNL: ").build())
+                        .value(() -> PaintUtil.formatSkillString(Skill.STRENGTH,
+                                (Skill.STRENGTH.getXp() - Const.startStrXp),
+                                PaintUtil.getXpHr(Skill.STRENGTH, Vars.get().startStrXp, Vars.get().startTime)))
+                        .build())
 
                 .row(template.toBuilder().condition(() -> Skill.ATTACK.getXp() > Const.startAttXp)
                         .label("Attack")
-                        .value(() -> "[" + Skill.ATTACK.getActualLevel() + "+" +
-                                ExpHandler.get().gainedAtkLvl + "] " +
-                                Utils.addCommaToNum(Skill.ATTACK.getXp() - Const.startAttXp))
+                        .value(() -> PaintUtil.formatSkillString(Skill.ATTACK,
+                                (Skill.ATTACK.getXp() - Const.startAttXp),
+                                PaintUtil.getXpHr(Skill.ATTACK, Vars.get().startAttXp, Vars.get().startTime)))
                         .build())
 
 
                 .row(template.toBuilder().condition(() -> Skill.DEFENCE.getXp() > Const.startDefXp)
                         .label("Defence")
-                        .value(() -> "[" + Skill.DEFENCE.getActualLevel() + "+"
-                                + ExpHandler.get().gainedDefLvl +"] " +
-                                Utils.addCommaToNum(Skill.DEFENCE.getXp() - Const.startDefXp)
-                                + "xp").build())
+                        .value(() -> PaintUtil.formatSkillString(Skill.DEFENCE,
+                                (Skill.DEFENCE.getXp() - Const.startDefXp),
+                                PaintUtil.getXpHr(Skill.DEFENCE, Vars.get().startDefXp, Vars.get().startTime)))
+                        .build())
 
                 .row(template.toBuilder().condition(() -> Skill.HITPOINTS.getXp() > Const.startHPXP)
                         .label("Hitpoints")
-                        .value(() -> "[" + Skill.HITPOINTS.getActualLevel() + "] " +
-                                Utils.addCommaToNum(Skill.HITPOINTS.getXp() - Const.startHPXP))
+                        .value(() -> PaintUtil.formatSkillString(Skill.HITPOINTS,
+                                (Skill.HITPOINTS.getXp() - Const.startHPXP),
+                                PaintUtil.getXpHr(Skill.HITPOINTS, Vars.get().startHPXP, Vars.get().startTime)))
                         .build())
 
                 .rows(rows)
-                // .row(template.toBuilder().label("Solved State").condition(() -> Vars.get().getRunningProfile().getArceuus().get() && Calculations.get().getBooksFound() > 0).value(() -> Vars.get().getLibrary().getState()).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
 
