@@ -81,7 +81,7 @@ public class cTabs implements TribotScript {
         });
 
         //SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
-        URL lcn = new URL("https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
+        URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cOrbCharger/src/scripts/gui/cTabsGui.fxml");
         GUI gui = new GUI(lcn);
 
 
