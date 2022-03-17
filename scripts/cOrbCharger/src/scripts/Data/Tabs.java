@@ -14,11 +14,13 @@ import java.util.Optional;
 
 @AllArgsConstructor
 public enum Tabs {
+
     VARROCK(25, ItemID.FIRE_RUNE, 25, "Varrock", ItemID.VARROCK_TELEPORT),
     LUMBRIDGE(31, ItemID.EARTH_RUNE, 37, "Lumbridge", ItemID.LUMBRIDGE_TELEPORT),
-    HOUSE(40, ItemID.EARTH_RUNE, 30, "House", ItemID.TELEPORT_TO_HOUSE),
     FALADOR(37, ItemID.WATER_RUNE, 48, "Falador", ItemID.FALADOR_TELEPORT),
-    CAMELOT(45, -1, 55, "Camelot", ItemID.CAMELOT_TELEPORT);
+    HOUSE(40, ItemID.EARTH_RUNE, 30, "House", ItemID.TELEPORT_TO_HOUSE),
+    CAMELOT(45, -1, 55, "Camelot", ItemID.CAMELOT_TELEPORT),
+    ARDOUGNE(51, ItemID.WATER_RUNE, 61, "Ardougne", ItemID.ARDOUGNE_TELEPORT);
 
     @Getter
     private int levelReq;
@@ -33,9 +35,13 @@ public enum Tabs {
 
     public boolean canCraftTab() {
         if (this.otherRuneId == -1) {
-            return (Skill.MAGIC.getActualLevel() >= this.getLevelReq());
+            return (Skill.MAGIC.getActualLevel() >= this.getLevelReq()) &&
+                    Inventory.contains(ItemID.LAW_RUNE);
         } else
-            return (Skill.MAGIC.getActualLevel() >= this.getLevelReq()) && Inventory.contains(otherRuneId);
+            return (Skill.MAGIC.getActualLevel() >= this.getLevelReq()) &&
+                    Inventory.contains(otherRuneId) &&
+                    Inventory.contains(ItemID.LAW_RUNE);
+
     }
 
     public static Tabs getMostProfitableTab() {
@@ -43,7 +49,7 @@ public enum Tabs {
                 .filter(Tabs::canCraftTab)
                 .max(Comparator.comparingInt(MakeTabs::profitPerTab));
         Tabs tab = t.orElse(Tabs.VARROCK);
-        Log.debug("Best tab is " + tab.getName());
+        Log.debug("Most Profitable tab is " + tab.getName());
         return tab;
     }
 

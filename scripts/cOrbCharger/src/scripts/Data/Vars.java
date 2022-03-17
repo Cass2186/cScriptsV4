@@ -69,8 +69,8 @@ public class Vars {
 
     public Tabs selectedTab = Tabs.VARROCK;
 
-    //2 min timer
-    public Timer safetyTimer = new Timer(1200000);
+    //2.5 min timer for xp gain
+    public Timer safetyTimer = new Timer(150000);
 
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 

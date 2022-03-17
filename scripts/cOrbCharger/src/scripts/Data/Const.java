@@ -22,4 +22,6 @@ public class Const {
 
     public static WorldTile OBILISK_TILE = new WorldTile(3088, 3570,0);
     public static int startInvValue = Utils.getInventoryValue();
+
+    public static int HOUSE_AD_WIDGET_PARENT = 52;
 }

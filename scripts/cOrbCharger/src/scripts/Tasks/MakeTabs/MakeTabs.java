@@ -7,10 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
-import org.tribot.api2007.types.RSInterfaceComponent;
-import org.tribot.api2007.types.RSNPC;
-import org.tribot.api2007.types.RSObject;
-import org.tribot.api2007.types.RSTile;
+
 import org.tribot.script.sdk.*;
 
 import org.tribot.script.sdk.Inventory;

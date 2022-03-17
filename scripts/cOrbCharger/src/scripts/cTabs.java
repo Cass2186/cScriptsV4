@@ -16,8 +16,10 @@ import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
 import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
+import org.tribot.script.sdk.types.Widget;
 import scripts.Data.Const;
 import scripts.Data.Tabs;
 import scripts.Data.Vars;
@@ -33,9 +35,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @ScriptManifest(name = "cTabs", authors = {"Cass2186"}, category = "Testing")
-public class cTabs implements TribotScript {
+public class cTabs implements TribotScript{
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
@@ -112,7 +115,9 @@ public class cTabs implements TribotScript {
                 //.row(template.toBuilder().label("Resources").value(() -> this.resourcesCollected).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
+
         Painting.addPaint(g -> paint.render(g));
+
 
 
         /**
@@ -151,6 +156,21 @@ public class cTabs implements TribotScript {
             if (message.contains("can't reach that")) {
                 Vars.get().messageCount++;
                 Log.error("Can't reach failsafe: " + Vars.get().messageCount);
+            }
+        });
+        Painting.addPaint(graphics2D -> {
+            if (Widgets.get(Const.HOUSE_AD_WIDGET_PARENT).isPresent()){
+                getArrowWidget(graphics2D);
+                List<Widget> button = getArrowWidget(graphics2D);
+                for (Widget w: button){
+                    Log.debug("in loop: " + button.size());
+                    Optional<Widget> name = getHostNameFromButtonWidget(w);
+                    if (name.isPresent()){
+                        Log.debug("name is present: " + name.get().getText());
+                        graphics2D.drawRect((int) name.get().getBounds().getX(), (int)name.get().getBounds().getY(),
+                                (int) name.get().getBounds().getWidth(),(int)name.get().getBounds().getHeight());
+                    }
+                }
             }
         });
 
@@ -213,6 +233,28 @@ public class cTabs implements TribotScript {
         }
     }
 
+    public  static Optional<Widget> getHostNameFromButtonWidget(Widget widget) {
+        double y = widget.getBounds().getLocation().getY();
+        return  Query.widgets()
+                .inIndexPath(Const.HOUSE_AD_WIDGET_PARENT,9 )
+                .filter(w-> w.getBounds().getHeight() < 30) // the box is 25 tall in fixed mode
+                .filter(w -> w.getBounds().contains(w.getBounds().getX(), y))
+                .filter(w-> w.getText().isPresent() )
+                .stream().findFirst();
+
+    }
+
+    public  List<Widget>  getArrowWidget(Graphics g){
+       return  Query.widgets()
+                .actionContains("Enter House")
+                .isVisible()
+                .stream()
+                //  .filter(wid -> !houseBlackList.contains(wid))
+                .sorted(Comparator.comparingInt(a -> (int) a.getBounds().getY()))
+                .collect(Collectors.toList());
+
+
+    }
 
 }
 

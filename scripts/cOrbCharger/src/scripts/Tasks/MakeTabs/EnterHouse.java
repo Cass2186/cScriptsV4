@@ -7,6 +7,8 @@ import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.Widget;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.LocalWalking;
+import scripts.Data.Const;
+import scripts.Data.Vars;
 import scripts.ItemID;
 import scripts.PathingUtil;
 import scripts.QuestSteps.ObjectStep;
@@ -15,6 +17,7 @@ import scripts.Tasks.Task;
 import scripts.Timer;
 import scripts.Utils;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -23,64 +26,82 @@ import java.util.stream.Collectors;
 
 public class EnterHouse implements Task {
 
-    List<Widget> houseBlackList = new ArrayList<>();
-    List<Widget> goodHouses = new ArrayList<>();
-    int STUDYING_ANIMATION = 9491;
-    int ANIMATION_ID = 4068;
-    int PARENT_INTERFACE_ID = 79;
-    int NOTED_SOFT_CLAY = 1762;
-    int SOFT_CLAY = 1761;
+    private int ADVERTISEMENT_ID = 29091;
+    private WorldTile OUTSIDE_RIMMINGTON_PORTAL = new WorldTile(2953, 3219, 0);
+
+    private Optional<String> getHostNameFromButtonWidget(Widget widget) {
+        double y = widget.getBounds().getLocation().getY();
+        Optional<Widget> nameWidget = Query.widgets()
+                .inIndexPath(Const.HOUSE_AD_WIDGET_PARENT, 9)
+                .filter(w -> w.getBounds().getHeight() < 30) // the box is 25 tall in fixed mode
+                .filter(w -> w.getBounds().contains(w.getBounds().getX(), y))
+                .filter(w -> w.getText().isPresent())
+                .stream().findFirst();
 
 
-    int ADVERTISEMENT_ID = 29091;
-    WorldTile OUTSIDE_RIMMINGTON_PORTAL = new WorldTile(2953, 3219, 0);
+        if (nameWidget.isPresent()) {
+            Optional<String> name = nameWidget.get().getText();
+            if (name.isPresent()) {
+                Log.debug("Name is " + nameWidget.get().getText().get());
+                return name;
+            }
 
+        }
+        return Optional.empty();
+    }
 
-    public boolean clickAdvertisement() {
-        if (!Widgets.isVisible(52)) {
+    private boolean clickAdvertisement() {
+        if (!Widgets.isVisible(Const.HOUSE_AD_WIDGET_PARENT)) {
             Log.debug("[Debug]: Opening host advertisements");
             if (OUTSIDE_RIMMINGTON_PORTAL.distanceTo(MyPlayer.getPosition()) > 20)
                 PathingUtil.walkToTile(OUTSIDE_RIMMINGTON_PORTAL);
 
 
             Optional<GameObject> ad = Query.gameObjects()
-                            .idEquals(ADVERTISEMENT_ID)
-                            .stream()
-                            .findFirst();
+                    .idEquals(ADVERTISEMENT_ID)
+                    .stream()
+                    .findFirst();
 
             if (ad.isPresent() && !ad.get().isVisible()) {
                 LocalWalking.walkTo(ad.get().getTile().translate(Utils.random(0, 1), Utils.random(0, 1)));
                 if (Timer.waitCondition(MyPlayer::isMoving, 1500, 2000))
                     Waiting.waitNormal(2050, 420);
             }
-            if (Utils.clickObject(ADVERTISEMENT_ID, "View", true)) {
+            if (ad.map(a -> a.interact("View")).orElse(false)) {
                 Timer.slowWaitCondition(() -> Widgets.get(52).isPresent(), 5000, 7000);
             }
         }
-        return Widgets.get(52).isPresent();
+        return Widgets.get(Const.HOUSE_AD_WIDGET_PARENT).isPresent();
     }
 
-    public void selectHost() {
+    private void selectHost() {
         if (!GameState.isInInstance() && Inventory.contains(ItemID.SOFT_CLAY) &&
                 clickAdvertisement()) {
-            List<Widget> button = Query.widgets().actionContains("Enter House")
+            List<Widget> button = Query.widgets()
+                    .actionContains("Enter House")
                     .isVisible()
-                    .stream()
-                    .filter(wid -> !houseBlackList.contains(wid))
-                    .sorted(Comparator.comparingInt(a -> (int) a.getBounds().getY()))
+                    .stream().sorted(Comparator.comparingInt(a -> (int) a.getBounds().getY()))
                     .collect(Collectors.toList());
 
             Log.debug("Entering host");
             for (Widget w : button) {
+
+                Optional<String> name = getHostNameFromButtonWidget(w);
+                if (name.isPresent() && Vars.get().houseBlackListNames.contains(name.get())) {
+                    Log.debug("Blacklisted host detected, continuing");
+                    continue;
+                }
+
                 if (w.click("Enter House") && Timer.waitCondition(GameState::isInInstance, 3000, 4500)) {
-                    Waiting.waitNormal(2500, 50);
+                    Waiting.waitNormal(2500, 125); //wait after arriving in instance for house screen to disapear
                     return;
                 } else {
-                    //  Log.log("Blacklisting failed host");
-                    //houseBlackList.add(w);
+                    Log.error("Blacklisting failed host");
+                    name.ifPresent(n -> Vars.get().houseBlackListNames.add(n));
                     clickAdvertisement();
                 }
             }
+
         }
     }
 
@@ -97,7 +118,7 @@ public class EnterHouse implements Task {
 
     @Override
     public void execute() {
-        if (WorldHopper.getCurrentWorld() != 330){
+        if (WorldHopper.getCurrentWorld() != 330) {
             WorldHopper.hop(330);
             return;
         }
