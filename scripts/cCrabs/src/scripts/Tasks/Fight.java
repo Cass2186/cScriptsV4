@@ -130,7 +130,7 @@ public class Fight implements Task {
 
             return (CrabUtils.lostAgro(Utils.getWorldTileFromRSTile(Vars.get().crabTile)) /*checkAggro()*/
                     && !MyPlayer.isHealthBarVisible())
-                    || Combat.getHPRatio() < Vars.get().eatAt;
+                    || Combat.getHPRatio() < Vars.get().eatAt || Vars.get().shouldResetAggro;
         }, General.random(300000, 460000));
     }
 
@@ -175,7 +175,6 @@ public class Fight implements Task {
                 Vars.get().shouldEat = true;
             } else if (chance < 60) {
                 Utils.idleAfkAction();
-
             } else {
                 // Utils.idleAfkAction();
                 Utils.abc2ReactionSleep(Vars.get().currentTime);

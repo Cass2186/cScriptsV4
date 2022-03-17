@@ -113,6 +113,7 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
 
         Collection<PaintRow> rows = new ArrayList<>();
 
+
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
@@ -122,21 +123,21 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                         .onClick(()->Log.debug("Force reset aggro clicked")).build())
                 .row(template.toBuilder().condition(() -> Skill.RANGED.getXp() > Const.startRangeXp)
                         .label("Ranged")
-                        .value(() -> PaintUtil.formatSkillString(Skill.RANGED,
+                        .value(() -> PaintUtil.formatSkillString(Skill.RANGED,Const.startRangeLvl,
                                 (Skill.RANGED.getXp() - Const.startRangeXp),
                                 PaintUtil.getXpHr(Skill.RANGED, Vars.get().startRangeXp, Vars.get().startTime)))
                         .build())
 
                 .row(template.toBuilder().condition(() -> Skill.STRENGTH.getXp() > Const.startStrXp)
                         .label("Strength")
-                        .value(() -> PaintUtil.formatSkillString(Skill.STRENGTH,
+                        .value(() -> PaintUtil.formatSkillString(Skill.STRENGTH, Const.startStrLvl,
                                 (Skill.STRENGTH.getXp() - Const.startStrXp),
                                 PaintUtil.getXpHr(Skill.STRENGTH, Vars.get().startStrXp, Vars.get().startTime)))
                         .build())
 
                 .row(template.toBuilder().condition(() -> Skill.ATTACK.getXp() > Const.startAttXp)
                         .label("Attack")
-                        .value(() -> PaintUtil.formatSkillString(Skill.ATTACK,
+                        .value(() -> PaintUtil.formatSkillString(Skill.ATTACK,Const.startAttLvl,
                                 (Skill.ATTACK.getXp() - Const.startAttXp),
                                 PaintUtil.getXpHr(Skill.ATTACK, Vars.get().startAttXp, Vars.get().startTime)))
                         .build())
@@ -144,14 +145,14 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
 
                 .row(template.toBuilder().condition(() -> Skill.DEFENCE.getXp() > Const.startDefXp)
                         .label("Defence")
-                        .value(() -> PaintUtil.formatSkillString(Skill.DEFENCE,
+                        .value(() -> PaintUtil.formatSkillString(Skill.DEFENCE, Const.startDefLvl,
                                 (Skill.DEFENCE.getXp() - Const.startDefXp),
                                 PaintUtil.getXpHr(Skill.DEFENCE, Vars.get().startDefXp, Vars.get().startTime)))
                         .build())
 
                 .row(template.toBuilder().condition(() -> Skill.HITPOINTS.getXp() > Const.startHPXP)
                         .label("Hitpoints")
-                        .value(() -> PaintUtil.formatSkillString(Skill.HITPOINTS,
+                        .value(() -> PaintUtil.formatSkillString(Skill.HITPOINTS,Const.startHPLvl,
                                 (Skill.HITPOINTS.getXp() - Const.startHPXP),
                                 PaintUtil.getXpHr(Skill.HITPOINTS, Vars.get().startHPXP, Vars.get().startTime)))
                         .build())

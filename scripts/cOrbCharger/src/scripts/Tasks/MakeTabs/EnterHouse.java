@@ -16,6 +16,7 @@ import scripts.Timer;
 import scripts.Utils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,13 +61,15 @@ public class EnterHouse implements Task {
     }
 
     public void selectHost() {
-        if (!GameState.isInInstance() && org.tribot.script.sdk.Inventory.contains(ItemID.SOFT_CLAY) &&
+        if (!GameState.isInInstance() && Inventory.contains(ItemID.SOFT_CLAY) &&
                 clickAdvertisement()) {
             List<Widget> button = Query.widgets().actionContains("Enter House")
                     .isVisible()
                     .stream()
                     .filter(wid -> !houseBlackList.contains(wid))
+                    .sorted(Comparator.comparingInt(a -> (int) a.getBounds().getY()))
                     .collect(Collectors.toList());
+
             Log.debug("Entering host");
             for (Widget w : button) {
                 if (w.click("Enter House") && Timer.waitCondition(GameState::isInInstance, 3000, 4500)) {
@@ -89,12 +92,12 @@ public class EnterHouse implements Task {
 
     @Override
     public boolean validate() {
-        return false;
+        return !GameState.isInInstance() && Inventory.contains(ItemID.SOFT_CLAY);
     }
 
     @Override
     public void execute() {
-
+        selectHost();
     }
 
     @Override

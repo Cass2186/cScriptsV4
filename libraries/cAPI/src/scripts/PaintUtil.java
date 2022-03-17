@@ -31,6 +31,15 @@ public class PaintUtil {
         return "[" + s.getActualLevel() + "]: "
                 + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr)";
     }
+    public static String formatSkillString(Skill s, int startLevel, int gainedXp, int xpHr) {
+        if (s.getActualLevel() > startLevel) {
+            return "[" + s.getActualLevel() + "+" + (s.getActualLevel() - startLevel) + "]: "
+                    + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr)";
+        } else
+            return "[" + s.getActualLevel() + "]: "
+                    + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr)";
+    }
+
 
     public static int getXpHr(Skill s, int startXp, long startTimeMs){
        return (int) ((s.getXp() - startXp)

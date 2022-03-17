@@ -3,6 +3,7 @@ package scripts.Data;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Skill;
 
 public class Const {
 
@@ -102,11 +103,11 @@ public class Const {
     public  static int startMageXp = Skills.getXP(Skills.SKILLS.MAGIC);
     public  static int startHPXP = Skills.getXP(Skills.SKILLS.HITPOINTS);
 
-    public final static int startSlayerLvl= Skills.getActualLevel(Skills.SKILLS.SLAYER);
-    public  final static int startAttLvl = Skills.getActualLevel(Skills.SKILLS.ATTACK);
-    public  final  static int startStrLvl = Skills.getActualLevel(Skills.SKILLS.STRENGTH);
-    public  final static int startDefLvl = Skills.getActualLevel(Skills.SKILLS.DEFENCE);
-    public final static int startRangeLvl = Skills.getActualLevel(Skills.SKILLS.RANGED);
-    public  final static int startMageLvl = Skills.getActualLevel(Skills.SKILLS.MAGIC);
-    public  final static int startHPLvl = Skills.getActualLevel(Skills.SKILLS.HITPOINTS);
+    public final static int startSlayerLvl= Skill.SLAYER.getActualLevel();
+    public  final static int startAttLvl = Skill.ATTACK.getActualLevel();
+    public  final  static int startStrLvl = Skill.STRENGTH.getActualLevel();
+    public  final static int startDefLvl =Skill.DEFENCE.getActualLevel();
+    public final static int startRangeLvl = Skill.RANGED.getActualLevel();
+    public  final static int startMageLvl = Skill.MAGIC.getActualLevel();
+    public  final static int startHPLvl = Skill.HITPOINTS.getActualLevel();
 }

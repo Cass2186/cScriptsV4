@@ -6,6 +6,7 @@ import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.ItemID;
+import scripts.Utils;
 
 public class Const {
 
@@ -20,5 +21,5 @@ public class Const {
             .build();
 
     public static WorldTile OBILISK_TILE = new WorldTile(3088, 3570,0);
-
+    public static int startInvValue = Utils.getInventoryValue();
 }

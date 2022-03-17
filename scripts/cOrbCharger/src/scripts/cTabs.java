@@ -4,6 +4,7 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.script.ScriptManifest;
 
@@ -16,14 +17,18 @@ import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
+import scripts.Data.Const;
+import scripts.Data.Tabs;
 import scripts.Data.Vars;
 import scripts.Tasks.MakeTabs.EnterHouse;
 import scripts.Tasks.MakeTabs.MakeTabs;
 import scripts.Tasks.MakeTabs.UnnoteClay;
 import scripts.Tasks.Task;
 import scripts.Tasks.TaskSet;
+import scripts.gui.GUI;
 
 import java.awt.*;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,6 +65,7 @@ public class cTabs implements TribotScript {
         // modify the "config" object here
     }
 
+    @SneakyThrows
     @Override
     public void execute(String args) {
         AntiBan.create();
@@ -74,6 +80,17 @@ public class cTabs implements TribotScript {
             }
         });
 
+        //SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
+        URL lcn = new URL("https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
+        GUI gui = new GUI(lcn);
+
+
+        Log.debug("Loading GUI");
+        gui.show();
+        while (gui.isOpen())
+            Waiting.wait(500);
+
+
         populateInitialMap();
 
         /**
@@ -86,6 +103,8 @@ public class cTabs implements TribotScript {
                 .row(PaintRows.runtime(template.toBuilder()))
                 .row(template.toBuilder().label("Task").value(() -> status).build())
                 .row(template.toBuilder().label("Magic").value(() -> getXpGainedString()).build())
+                .row(template.toBuilder().label("Profit").value(() ->
+                        Vars.get().getProfitString()).build())
                 //.row(template.toBuilder().label("Test").value("ing").onClick(() -> Log.log("CLICKED!")).build())
                 //.row(template.toBuilder().label("Resources").value(() -> this.resourcesCollected).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
@@ -124,11 +143,23 @@ public class cTabs implements TribotScript {
         Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
         Vars.get().startMagicXp = Skill.MAGIC.getXp();
 
+        // if we end up inside a house that we can't reach the lecturn b/c of doors or something, this triggers
+        MessageListening.addServerMessageListener(message -> {
+            if (message.contains("can't reach that")) {
+                Vars.get().messageCount++;
+                Log.error("Can't reach failsafe: " + Vars.get().messageCount);
+            }
+        });
+
         while (isRunning.get()) {
             Waiting.waitNormal(50, 75);
             if (!Login.isLoggedIn())
                 break;
 
+            if (Vars.get().messageCount >= 3) {
+                Log.error("Can't reach failsafe > 3, failing");
+                break;
+            }
             if (!UnnoteClay.hasAnyClay())
                 break;
 
@@ -155,7 +186,7 @@ public class cTabs implements TribotScript {
 
 
         if (gainedLvl > 0) {
-           return  "[" + currentLvl + " (+" + gainedLvl + ")]: "
+            return "[" + currentLvl + " (+" + gainedLvl + ")]: "
                     + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
                     "|| TNL: "
                     + Utils.getRuntimeString(ttl);

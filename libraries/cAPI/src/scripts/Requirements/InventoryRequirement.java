@@ -27,6 +27,30 @@ public class InventoryRequirement implements Requirement {
         this.invList = invList;
     }
 
+    /**
+     *
+     * @param itemReqList
+     * @return a list of itemrequirements of missing items from bank, can be used to buy items
+     */
+    public static List<ItemRequirement>  checkBankCacheForItemList(List<ItemRequirement> itemReqList) {
+        if (!BankCache.isInitialized()) {
+            Log.error("BankCache needs to be updated, opening bank");
+            BankManager.open(true);
+            BankCache.update();
+        }
+
+        int i = 0;
+        List<ItemRequirement> missingItemReqs = new ArrayList<>();
+
+        for (ItemRequirement itemReq : itemReqList) {
+            if (BankCache.getStack(itemReq.getId()) >= itemReq.getMinAmount())
+                i++;
+            else {
+                missingItemReqs.add(itemReq);
+            }
+        }
+        return missingItemReqs;
+    }
 
     public ArrayList<ItemReq> getMissingInventoryItemsList() {
         ArrayList<ItemReq> missing = new ArrayList<>();

@@ -2,10 +2,15 @@ package scripts.Data;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.types.Widget;
 import scripts.Timer;
+import scripts.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Vars {
     private static Vars vars;
@@ -33,21 +38,39 @@ public class Vars {
 
     public long lastAction = System.currentTimeMillis();
 
+    public long getRunTime() {
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public int getProfitHr() {
+        double timeRanMin = ((double) this.getRunTime() / 3600000);
+        int hr = (int) (getProfit() /timeRanMin);
+        //Log.debug("Hourly: " + hr);
+        return Math.max(hr, 0);
+    }
+
+    public int getProfit(){
+        return Utils.getInventoryValue() - Const.startInvValue;
+    }
+
+    public String getProfitString(){
+        return Utils.addCommaToNum(getProfit()) + " | " + Utils.addCommaToNum(getProfitHr()) + "/hr";
+    }
+
+    public List<String> houseBlackListNames = new ArrayList<>();
+
     /**
      * Integers
      */
-    public int xpHr = 0;
-    public int add = General.random(5, 10);
-    public int drinkAt = General.random(7, 25);
-    public int eatAt = General.random(3, 10);
-    public double drinkPrayAtPercentage =General.randomSD(6, 65, 40, 12);
-    public int eatRockCakeAt =   General.randomSD(2, 6, 3, 2);
+    public int profit = Utils.getInventoryValue() - Const.startInvValue;
+    public int messageCount = 0;
 
-    public int drinkAbsorptionAt = General.random(100, 250);
-    public int drinkAbsorptionUpTo = General.random(400, 800);
+    public boolean shouldMakeMostProfitableTab = false;
+
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 
     public int startMagicLevel = 1;
     public int startMagicXp = 1;
+
 
 }
