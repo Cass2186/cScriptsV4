@@ -10,6 +10,7 @@ import org.tribot.script.ScriptManifest;
 
 import org.tribot.script.sdk.*;
 
+import org.tribot.script.sdk.interfaces.BreakStartListener;
 import org.tribot.script.sdk.painting.Painting;
 import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
@@ -90,6 +91,7 @@ public class cTabs implements TribotScript {
         while (gui.isOpen())
             Waiting.wait(500);
 
+        Vars.get().safetyTimer.reset();
 
         populateInitialMap();
 
@@ -102,6 +104,7 @@ public class cTabs implements TribotScript {
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
                 .row(template.toBuilder().label("Task").value(() -> status).build())
+                .row(template.toBuilder().label("Tab").value(() -> Vars.get().selectedTab.toString()).build())
                 .row(template.toBuilder().label("Magic").value(() -> getXpGainedString()).build())
                 .row(template.toBuilder().label("Profit").value(() ->
                         Vars.get().getProfitString()).build())
@@ -151,10 +154,22 @@ public class cTabs implements TribotScript {
             }
         });
 
+        // reset timer when script is paused so we don't time out
+        ScriptListening.addPauseListener(()-> Vars.get().safetyTimer.reset());
+
         while (isRunning.get()) {
             Waiting.waitNormal(50, 75);
             if (!Login.isLoggedIn())
                 break;
+
+            //reset safety timer if we've gained xp
+            if (Skill.MAGIC.getXp() > Vars.get().startMagicXp)
+                Vars.get().safetyTimer.reset();
+
+            if (!Vars.get().safetyTimer.isRunning()){
+                Log.error("XP Safety timer timed out, ending");
+                break;
+            }
 
             if (Vars.get().messageCount >= 3) {
                 Log.error("Can't reach failsafe > 3, failing");

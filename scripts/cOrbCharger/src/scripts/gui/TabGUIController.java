@@ -32,16 +32,43 @@ public class TabGUIController extends AbstractGUIController {
 
     @FXML
     @DoNotRename
+    public Tabs getSelectedTab() {
+        switch (selectTabComboBox.getValue()) {
+            case ("VARROCK"):
+                return Tabs.VARROCK;
+
+            case ("LUMBRIDGE"):
+                return Tabs.LUMBRIDGE;
+
+            case("HOUSE"):
+                return Tabs.HOUSE;
+
+            case("FALADOR"):
+                return Tabs.FALADOR;
+
+
+            case("CAMELOT"):
+                return Tabs.CAMELOT;
+
+        }
+        return Tabs.VARROCK;
+    }
+
+    @FXML
+    @DoNotRename
     void startButtonPressed(ActionEvent event) {
         General.println("[GUIController]: Start button pressed");
         Vars settings = Vars.get();
         ScriptSettings handler = ScriptSettings.getDefault();
         handler.save("last", settings);
 
-        if (makeProfitableTabButton.isSelected())
+        if (makeProfitableTabButton.isSelected()) {
             Vars.get().shouldMakeMostProfitableTab = true;
-        else
+            Vars.get().selectedTab = Tabs.getMostProfitableTab();
+        }else {
             Vars.get().shouldMakeMostProfitableTab = false;
+            Vars.get().selectedTab = getSelectedTab();
+        }
 
         this.getGUI().close();
     }

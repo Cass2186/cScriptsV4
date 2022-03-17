@@ -67,6 +67,11 @@ public class Vars {
 
     public boolean shouldMakeMostProfitableTab = false;
 
+    public Tabs selectedTab = Tabs.VARROCK;
+
+    //2 min timer
+    public Timer safetyTimer = new Timer(1200000);
+
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 
     public int startMagicLevel = 1;

@@ -91,12 +91,11 @@ public class MakeTabs implements Task {
     }
 
 
-
     public static int profitPerTab(Tabs tab) {
         int lawPrice = scripts.rsitem_services.GrandExchange.getPrice(ItemID.LAW_RUNE);
         int tabPrice = GrandExchange.getPrice(tab.getTabID());
         int profit = tabPrice - (lawPrice + 5);
-      //  Log.debug("Profit per tab " + tab.getName() + " is " + profit + "gp");
+        //  Log.debug("Profit per tab " + tab.getName() + " is " + profit + "gp");
         return profit;
     }
 
@@ -114,15 +113,13 @@ public class MakeTabs implements Task {
 
     @Override
     public void execute() {
-        if (WorldHopper.getCurrentWorld() != 330){
+        if (WorldHopper.getCurrentWorld() != 330) {
             WorldHopper.hop(330);
             return;
         }
-        if (Skill.MAGIC.getActualLevel() < 45)
-            studyLecturn(Tabs.VARROCK.getName());
-        else {
-            studyLecturn(Tabs.CAMELOT.getName());
-        }
+
+        studyLecturn(Vars.get().selectedTab.getName());
+
     }
 
     @Override
