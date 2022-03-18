@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @ScriptManifest(name = "cTabs", authors = {"Cass2186"}, category = "Testing")
-public class cTabs implements TribotScript{
+public class cTabs implements TribotScript {
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
@@ -86,7 +86,6 @@ public class cTabs implements TribotScript{
         Vars.get().safetyTimer.reset();
 
 
-
         /**
          Paint
          */
@@ -123,24 +122,16 @@ public class cTabs implements TribotScript{
         isRunning.set(true);
         while (isRunning.get()) {
             Waiting.waitNormal(50, 75);
-            if (!Login.isLoggedIn())
+
+            if (shouldEndScript())
                 break;
 
-            if (!Vars.get().selectedTab.canCraftTab() || !UnnoteClay.hasAnyClay()) {
-                Log.error("Missing runes/staff for tab or don't have soft clay, ending");
-                break;
-            }
             //reset safety timer if we've gained xp
             if (Skill.MAGIC.getXp() > Vars.get().startMagicXp)
                 Vars.get().safetyTimer.reset();
 
-            if (!Vars.get().safetyTimer.isRunning()){
+            if (!Vars.get().safetyTimer.isRunning()) {
                 Log.error("XP Safety timer timed out, ending");
-                break;
-            }
-
-            if (Vars.get().messageCount >= 3) {
-                Log.error("Can't reach failsafe > 3, failing");
                 break;
             }
 
@@ -153,7 +144,7 @@ public class cTabs implements TribotScript{
     }
 
 
-    public static String getXpGainedString() {
+    private static String getXpGainedString() {
         int currentLvl = Skill.MAGIC.getActualLevel();
         int gainedLvl = currentLvl - Vars.get().startMagicLevel;
         int gainedXp = Skill.MAGIC.getXp() - Vars.get().startMagicXp;
@@ -179,7 +170,7 @@ public class cTabs implements TribotScript{
         }
     }
 
-    private void initializeListeners(){
+    private void initializeListeners() {
         MessageListening.addServerMessageListener(message -> {
             if (message.contains("can't reach that")) {
                 Vars.get().messageCount++;
@@ -204,9 +195,24 @@ public class cTabs implements TribotScript{
 
         });
         // reset timer when script is paused so we don't time out
-        ScriptListening.addPauseListener(()-> Vars.get().safetyTimer.reset());
+        ScriptListening.addPauseListener(() -> Vars.get().safetyTimer.reset());
     }
 
+    private boolean shouldEndScript() {
+        if (!Login.isLoggedIn()) {
+            return true;
+        } else if (Inventory.contains(ItemID.COINS_995)) {
+            Log.error("Missing coins, ending");
+            return true;
+        } else if (!Vars.get().selectedTab.canCraftTab() || !UnnoteClay.hasAnyClay()) {
+            Log.error("Missing runes/staff for tab or missing soft clay, ending");
+            return true;
+        } else if (Vars.get().messageCount >= 3) {
+            Log.error("Can't reach failsafe > 3, failing");
+            return true;
+        }
+        return false;
+    }
 
 }
 

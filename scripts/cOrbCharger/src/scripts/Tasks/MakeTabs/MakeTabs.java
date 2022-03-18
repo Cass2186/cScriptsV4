@@ -68,7 +68,7 @@ public class MakeTabs implements Task {
 
                 if (!lectern.get().isVisible() || lectern.get().getTile().distanceTo(MyPlayer.getPosition()) > 10) {
                     Log.debug("Walking closer to Lectern");
-                    if (lectern.map(l -> PathingUtil.localNav(l.getTile())).orElse(false))
+                    if (lectern.map(l -> PathingUtil.localNav(l.getTile().translate(-1,-1))).orElse(false))
                         Timer.waitCondition(() -> lectern.get().isVisible(), 6000, 9000);
                 }
 
