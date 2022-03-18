@@ -10,6 +10,7 @@ import org.tribot.script.ScriptManifest;
 
 import org.tribot.script.sdk.*;
 
+import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.interfaces.BreakStartListener;
 import org.tribot.script.sdk.painting.Painting;
 import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
@@ -51,18 +52,6 @@ public class cTabs implements TribotScript{
         }
     }
 
-    public HashMap<Skill, Integer> getXpMap() {
-        HashMap<Skill, Integer> map = new HashMap<>();
-        for (Skill s : Skill.values()) {
-            int startXp = Vars.get().skillStartXpMap.get(s);
-            if (s.getXp() > startXp) {
-                map.put(s, s.getXp() - startXp);
-            }
-        }
-
-        return map;
-    }
-
 
     @Override
     public void configure(ScriptConfig config) {
@@ -96,7 +85,7 @@ public class cTabs implements TribotScript{
 
         Vars.get().safetyTimer.reset();
 
-        populateInitialMap();
+
 
         /**
          Paint
@@ -111,33 +100,18 @@ public class cTabs implements TribotScript{
                 .row(template.toBuilder().label("Magic").value(() -> getXpGainedString()).build())
                 .row(template.toBuilder().label("Profit").value(() ->
                         Vars.get().getProfitString()).build())
-                //.row(template.toBuilder().label("Test").value("ing").onClick(() -> Log.log("CLICKED!")).build())
-                //.row(template.toBuilder().label("Resources").value(() -> this.resourcesCollected).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
 
         Painting.addPaint(g -> paint.render(g));
 
+        initializeListeners();
+        populateInitialMap();
 
+        Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
+        Vars.get().startMagicXp = Skill.MAGIC.getXp();
 
-        /**
-         Ending listener
-         */
-        ScriptListening.addEndingListener(() -> {
-            if (Vars.get().skillStartXpMap == null)
-                populateInitialMap();
-
-            for (Skill s : Skill.values()) {
-                int startXp = Vars.get().skillStartXpMap.get(s);
-                if (s.getXp() > startXp) {
-                    Log.debug("[Ending]: Gained " + (s.getXp() - startXp) + " " + s + " exp");
-                }
-            }
-            Log.debug("[Ending]: Runtime " +
-                    Utils.getRuntimeString(System.currentTimeMillis() - Vars.get().startTime));
-
-        });
-
+        Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
         /**
          Tasks
          */
@@ -147,41 +121,15 @@ public class cTabs implements TribotScript{
                 new EnterHouse()
         );
         isRunning.set(true);
-
-        Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
-        Vars.get().startMagicXp = Skill.MAGIC.getXp();
-
-        // if we end up inside a house that we can't reach the lecturn b/c of doors or something, this triggers
-        MessageListening.addServerMessageListener(message -> {
-            if (message.contains("can't reach that")) {
-                Vars.get().messageCount++;
-                Log.error("Can't reach failsafe: " + Vars.get().messageCount);
-            }
-        });
-        Painting.addPaint(graphics2D -> {
-            if (Widgets.get(Const.HOUSE_AD_WIDGET_PARENT).isPresent()){
-                getArrowWidget(graphics2D);
-                List<Widget> button = getArrowWidget(graphics2D);
-                for (Widget w: button){
-                    Log.debug("in loop: " + button.size());
-                    Optional<Widget> name = getHostNameFromButtonWidget(w);
-                    if (name.isPresent()){
-                        Log.debug("name is present: " + name.get().getText());
-                        graphics2D.drawRect((int) name.get().getBounds().getX(), (int)name.get().getBounds().getY(),
-                                (int) name.get().getBounds().getWidth(),(int)name.get().getBounds().getHeight());
-                    }
-                }
-            }
-        });
-
-        // reset timer when script is paused so we don't time out
-        ScriptListening.addPauseListener(()-> Vars.get().safetyTimer.reset());
-
         while (isRunning.get()) {
             Waiting.waitNormal(50, 75);
             if (!Login.isLoggedIn())
                 break;
 
+            if (!Vars.get().selectedTab.canCraftTab() || !UnnoteClay.hasAnyClay()) {
+                Log.error("Missing runes/staff for tab or don't have soft clay, ending");
+                break;
+            }
             //reset safety timer if we've gained xp
             if (Skill.MAGIC.getXp() > Vars.get().startMagicXp)
                 Vars.get().safetyTimer.reset();
@@ -195,8 +143,6 @@ public class cTabs implements TribotScript{
                 Log.error("Can't reach failsafe > 3, failing");
                 break;
             }
-            if (!UnnoteClay.hasAnyClay())
-                break;
 
             Task task = tasks.getValidTask();
             if (task != null) {
@@ -233,28 +179,34 @@ public class cTabs implements TribotScript{
         }
     }
 
-    public  static Optional<Widget> getHostNameFromButtonWidget(Widget widget) {
-        double y = widget.getBounds().getLocation().getY();
-        return  Query.widgets()
-                .inIndexPath(Const.HOUSE_AD_WIDGET_PARENT,9 )
-                .filter(w-> w.getBounds().getHeight() < 30) // the box is 25 tall in fixed mode
-                .filter(w -> w.getBounds().contains(w.getBounds().getX(), y))
-                .filter(w-> w.getText().isPresent() )
-                .stream().findFirst();
+    private void initializeListeners(){
+        MessageListening.addServerMessageListener(message -> {
+            if (message.contains("can't reach that")) {
+                Vars.get().messageCount++;
+                Log.error("Can't reach failsafe: " + Vars.get().messageCount);
+            }
+        });
+        /**
+         Ending listener
+         */
+        ScriptListening.addEndingListener(() -> {
+            if (Vars.get().skillStartXpMap == null)
+                populateInitialMap();
 
+            for (Skill s : Skill.values()) {
+                int startXp = Vars.get().skillStartXpMap.get(s);
+                if (s.getXp() > startXp) {
+                    Log.debug("[Ending]: Gained " + (s.getXp() - startXp) + " " + s + " exp");
+                }
+            }
+            Log.debug("[Ending]: Runtime " +
+                    Utils.getRuntimeString(System.currentTimeMillis() - Vars.get().startTime));
+
+        });
+        // reset timer when script is paused so we don't time out
+        ScriptListening.addPauseListener(()-> Vars.get().safetyTimer.reset());
     }
 
-    public  List<Widget>  getArrowWidget(Graphics g){
-       return  Query.widgets()
-                .actionContains("Enter House")
-                .isVisible()
-                .stream()
-                //  .filter(wid -> !houseBlackList.contains(wid))
-                .sorted(Comparator.comparingInt(a -> (int) a.getBounds().getY()))
-                .collect(Collectors.toList());
-
-
-    }
 
 }
 

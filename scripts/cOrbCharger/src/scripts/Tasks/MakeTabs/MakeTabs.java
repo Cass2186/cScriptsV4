@@ -11,6 +11,7 @@ import org.tribot.api2007.Player;
 import org.tribot.script.sdk.*;
 
 import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.WorldHopper;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
@@ -45,6 +46,7 @@ public class MakeTabs implements Task {
                 .isPresent();
     }
 
+
     public void studyLecturn(String teleport) {
         if (Inventory.contains(ItemID.LAW_RUNE) &&
                 Inventory.contains(ItemID.SOFT_CLAY) && atLecturn()) {
@@ -66,17 +68,18 @@ public class MakeTabs implements Task {
 
                 if (!lectern.get().isVisible() || lectern.get().getTile().distanceTo(MyPlayer.getPosition()) > 10) {
                     Log.debug("Walking closer to Lectern");
-                    if (lectern.map(l -> LocalWalking.walkTo(l.getTile())).orElse(false))
+                    if (lectern.map(l -> PathingUtil.localNav(l.getTile())).orElse(false))
                         Timer.waitCondition(() -> lectern.get().isVisible(), 6000, 9000);
                 }
 
-                if (!Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID) && Utils.clickObj(lectern, "Study"))
+                if (!Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID) &&
+                        Utils.clickObj(lectern, "Study"))
                     Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID), 8000, 12000);
 
 
                 Optional<Widget> tabWidget = Query.widgets()
                         .inIndexPath(PARENT_INTERFACE_ID)
-                        .nameContains(teleport + " Teleport")
+                        .nameContains(teleport)
                         .isVisible()
                         .findFirst();
 

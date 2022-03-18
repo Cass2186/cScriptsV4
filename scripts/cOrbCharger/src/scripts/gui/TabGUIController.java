@@ -53,6 +53,14 @@ public class TabGUIController extends AbstractGUIController {
                 Log.debug("Camelot selected");
                 return Tabs.CAMELOT;
 
+            case("enchant sapphire"):
+                Log.debug("Sapphire enchant selected");
+                return Tabs.ENCHANT_SAPPHIRE;
+
+            case("enchant emerald"):
+                Log.debug("emerald enchant selected");
+                return Tabs.ENCHANT_EMERALD;
+
             default:
                 return Tabs.VARROCK;
 
