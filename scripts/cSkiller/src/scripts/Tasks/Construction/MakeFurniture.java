@@ -71,6 +71,7 @@ public class MakeFurniture implements Task {
             Log.log("[Debug]: Making room");
             RSInterface viewButton = Interfaces.findWhereAction("Viewer", roomViewerInterface);
             if (viewButton != null && viewButton.click()){
+                //do stuff
                  }
             RSInterface addRoom = Interfaces.get(addRoomInterface, 5, 12);
             Log.log("[Debug]: Adding room");
@@ -158,7 +159,7 @@ public class MakeFurniture implements Task {
                 }
             }
         }else {
-            Log.log("[Debug]: Need to build rooms");
+            Log.debug("Need to build rooms");
            // House.buildRoom(furniture.getRoom());
         }
     }
@@ -171,6 +172,7 @@ public class MakeFurniture implements Task {
                     .getFirstResult();
             if (obj != null && Utils.clickObject(obj, "Build mode")) {
                 Timer.slowWaitCondition(() -> Game.isInInstance(), 6500, 7000);
+                Waiting.waitNormal(2900,250);
             }
         }
     }
@@ -225,8 +227,10 @@ public class MakeFurniture implements Task {
         } else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.OAK_LARDER.getReqLevl()) {
             buildFurniture(FURNITURE.OAK_TABLE);
 
-        } else
+        } else {
+            Log.debug("Making larder");
             buildFurniture(FURNITURE.OAK_LARDER);
+        }
 
     }
 

@@ -11,6 +11,7 @@ import scripts.API.Task;
 import scripts.*;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.Woodcutting.WoodcuttingData.WoodCuttingConst;
 
 public class CutLogs implements Task {
 

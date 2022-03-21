@@ -92,7 +92,7 @@ public enum FURNITURE {
                   //  SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
                 continue;
 
-            Log.log("[Debug]: Item is " + furn.toString());
+            Log.debug("[Debug]: Item is " + furn.toString());
             int plankNum = furn.determineResourcesToNextItem();
             // add planks
             if (furn.getMaxLevel() < 23) {

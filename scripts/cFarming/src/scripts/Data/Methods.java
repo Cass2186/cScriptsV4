@@ -18,8 +18,8 @@ public class Methods {
     private static void rakeWeeds(int patchId) {
         RSObject[] weeds = Objects.findNearest(20, Filters.Objects.actionsContains("Rake").and(Filters.Objects.idEquals(patchId)));
         if (weeds.length > 0) {
-            if (Game.getItemSelectionState() == 1){
-                Clicking.click(weeds[0]);
+            if (Game.getItemSelectionState() == 1 && weeds[0].click()){
+                Utils.idleNormalAction();
             }
 
             if (Utils.clickObject(patchId, "Rake", false))

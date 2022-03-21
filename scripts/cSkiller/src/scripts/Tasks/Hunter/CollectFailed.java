@@ -24,12 +24,12 @@ public class CollectFailed implements Task {
         return Utils.clickGroundItem(HunterConst.ROPE);
     }
 
-    public void collectBirdSnare(){
-        RSObject[] disabledSnare =   Objects.findNearest(20, HunterConst.DISABLED_BIRD_SNARE);
+    public void collectBirdSnare() {
+        RSObject[] disabledSnare = Objects.findNearest(20, HunterConst.DISABLED_BIRD_SNARE);
         RSItem[] num = Inventory.find(HunterConst.BIRD_SNARE);
         if (disabledSnare.length > 0 &&
-            disabledSnare[0].click("Dismantle")){
-            Timer.waitCondition(()-> Inventory.find(HunterConst.BIRD_SNARE).length > num.length, 5000,7000);
+                disabledSnare[0].click("Dismantle")) {
+            Timer.waitCondition(() -> Inventory.find(HunterConst.BIRD_SNARE).length > num.length, 5000, 7000);
         }
     }
 
@@ -47,19 +47,19 @@ public class CollectFailed implements Task {
 
     @Override
     public boolean validate() {
-        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.HUNTER)){
-        if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
-            return GroundItems.find(HunterConst.BIRD_SNARE).length > 0 ||
-                    Objects.findNearest(20, HunterConst.DISABLED_BIRD_SNARE).length > 0;
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.HUNTER)) {
+            if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
+                return GroundItems.find(HunterConst.BIRD_SNARE).length > 0 ||
+                        Objects.findNearest(20, HunterConst.DISABLED_BIRD_SNARE).length > 0;
 
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) { // should be 43
-            return GroundItems.find(HunterConst.ROPE).length > 0 ||
-                    GroundItems.find(HunterConst.SMALL_FISHING_NET).length > 0;
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
+            } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) { // should be 43
+                return GroundItems.find(HunterConst.ROPE).length > 0 ||
+                        GroundItems.find(HunterConst.SMALL_FISHING_NET).length > 0;
+            } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
 
-        } else {
+            } else {
 
-        }
+            }
         }
         return false;
 

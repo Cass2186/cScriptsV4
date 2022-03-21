@@ -62,7 +62,6 @@ public class cTabs implements TribotScript {
     @Override
     public void execute(String args) {
         AntiBan.create();
-
         Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA,
                 Teleport.RING_OF_DUELING_FEROX_ENCLAVE);
 
@@ -85,7 +84,6 @@ public class cTabs implements TribotScript {
 
         Vars.get().safetyTimer.reset();
 
-
         /**
          Paint
          */
@@ -97,8 +95,7 @@ public class cTabs implements TribotScript {
                 .row(template.toBuilder().label("Task").value(() -> status).build())
                 .row(template.toBuilder().label("Tab").value(() -> Vars.get().selectedTab.toString()).build())
                 .row(template.toBuilder().label("Magic").value(() -> getXpGainedString()).build())
-                .row(template.toBuilder().label("Profit").value(() ->
-                        Vars.get().getProfitString()).build())
+                .row(template.toBuilder().label("Profit").value(() -> Vars.get().getProfitString()).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
 
@@ -107,29 +104,34 @@ public class cTabs implements TribotScript {
         initializeListeners();
         populateInitialMap();
 
+
         Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
         Vars.get().startMagicXp = Skill.MAGIC.getXp();
 
-        Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
-        /**
-         Tasks
-         */
+        Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
+
+        //Tasks
         TaskSet tasks = new TaskSet(
                 new MakeTabs(),
                 new UnnoteClay(),
                 new EnterHouse()
         );
+
         isRunning.set(true);
         while (isRunning.get()) {
-            Waiting.waitNormal(50, 75);
+            Waiting.waitUniform(50, 90);
 
+            //check several fail safes
             if (shouldEndScript())
                 break;
 
-            //reset safety timer if we've gained xp
-            if (Skill.MAGIC.getXp() > Vars.get().startMagicXp)
+            //reset safety timer if we've gained xp since last itteration
+            if (Skill.MAGIC.getXp() > Vars.get().lastIterMagicXp) {
                 Vars.get().safetyTimer.reset();
+                Vars.get().lastIterMagicXp = Skill.MAGIC.getXp();
+            }
 
+            // if we have not gained exp and the timer has expired, end script
             if (!Vars.get().safetyTimer.isRunning()) {
                 Log.error("XP Safety timer timed out, ending");
                 break;
@@ -179,7 +181,7 @@ public class cTabs implements TribotScript {
         });
         /**
          Ending listener
-         */
+         **/
         ScriptListening.addEndingListener(() -> {
             if (Vars.get().skillStartXpMap == null)
                 populateInitialMap();
@@ -201,7 +203,7 @@ public class cTabs implements TribotScript {
     private boolean shouldEndScript() {
         if (!Login.isLoggedIn()) {
             return true;
-        } else if (Inventory.contains(ItemID.COINS_995)) {
+        } else if (!Inventory.contains(ItemID.COINS_995)) {
             Log.error("Missing coins, ending");
             return true;
         } else if (!Vars.get().selectedTab.canCraftTab() || !UnnoteClay.hasAnyClay()) {

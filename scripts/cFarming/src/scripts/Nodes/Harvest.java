@@ -13,6 +13,8 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.Data.Const;
 import scripts.Data.FarmingUtils;
 import scripts.Data.Vars;
@@ -20,6 +22,9 @@ import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Timer;
 import scripts.Utils;
+
+import java.util.List;
+import java.util.Optional;
 
 
 public class Harvest implements Task {
@@ -31,7 +36,6 @@ public class Harvest implements Task {
 
             if (Inventory.isFull()) {
                 Inventory.drop(6055, 1925);
-                Utils.unselectItem();
                 noteHerbs();
                 noteItem(Const.LIMPWURT_ROOT);
                 getGroundItems();
@@ -118,7 +122,7 @@ public class Harvest implements Task {
                             || Inventory.isFull(), 20000, 40000);
             }
         }
-        if (ptch.length >0){
+        if (ptch.length > 0) {
             return true;
         }
         return false;
@@ -179,38 +183,33 @@ public class Harvest implements Task {
 
 
     private void noteItem(int id) {
-        RSItem[] item = Inventory.find(id);
+        Optional<InventoryItem> item = Query.inventory().idEquals(id).findClosestToMouse();
+        if (item.map(i -> !i.getDefinition().isNoted()).orElse(false)) {
+            Vars.get().status = "Noting herbs";
 
-        if (item.length > 0) {
-
-            if (item[0].getDefinition().getID() != item[0].getDefinition().getNotedItemID()) {
-                Vars.get().status = "Noting herbs";
-
-                if (Utils.useItemOnNPC(id, "Tool Leprechaun")) {
-                    NPCInteraction.waitForConversationWindow();
-                    Utils.shortSleep();
-                }
+            if (Utils.useItemOnNPC(id, "Tool Leprechaun")) {
+                NPCInteraction.waitForConversationWindow();
+                Utils.shortSleep();
             }
         }
-
     }
 
     private static void noteHerbs() {
         if (Inventory.isFull()) {
             Inventory.drop(6055, 6925); //weeds and empty buckets
+            Utils.unselectItem();
+
             General.println("[Debug]: Inventory is full");
-            RSItem[] grimyHerbs = Inventory.find(Filters.Items.nameContains("Grimy"));
-            if (grimyHerbs.length > 0) {
 
-                for (RSItem inv : grimyHerbs) {
-                    if (inv.getDefinition().getID() != inv.getDefinition().getNotedItemID()) {
-                        Vars.get().status = "Noting herbs";
+            List<InventoryItem> grimyHerbs = Query.inventory().nameContains("Grimy").toList();
+            for (InventoryItem i : grimyHerbs) {
+                if (i.getDefinition().isNoted())
+                    continue;
 
-                        if (Utils.useItemOnNPC(inv.getDefinition().getID(), "Tool Leprechaun")) {
-                            NPCInteraction.waitForConversationWindow();
-                            Utils.shortSleep();
-                        }
-                    }
+                Vars.get().status = "Noting herbs";
+                if (Utils.useItemOnNPC(i.getDefinition().getId(), "Tool Leprechaun")) {
+                    NPCInteraction.waitForConversationWindow();
+                    Utils.idleNormalAction();
                 }
             }
         }
@@ -248,8 +247,6 @@ public class Harvest implements Task {
     }
 
 
-
-
     @Override
     public void execute() {
         Vars.get().status = "Harvesting.";
@@ -269,7 +266,7 @@ public class Harvest implements Task {
                     Const.MORYTANIA_S_ALLOTMENT_ID);
             if (harvestAllotmentMorytania(Const.MORYTANIA_N_ALLOTMENT_ID)) {
                 General.println("[Harvest]: Set allotments to false");
-             //   Vars.get().doingAllotments = false;
+                //   Vars.get().doingAllotments = false;
                 if (Vars.get().doingHerbs) {
                     Vars.get().shouldBank = true;
                     Log.log("Harvest]: Po" +
@@ -294,7 +291,7 @@ public class Harvest implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.LOW ;
+        return Priority.LOW;
     }
 
     @Override
@@ -311,8 +308,8 @@ public class Harvest implements Task {
 
                 } else {
                     RSObject[] herbs = FarmingUtils.getNearbyReadyHerbs();
-                    Log.log("[Debug]: HErbs.length "  + herbs.length  );
-                    return herbs.length > 0 ;//&& !Move.determineLocation();
+                    Log.log("[Debug]: HErbs.length " + herbs.length);
+                    return herbs.length > 0;//&& !Move.determineLocation();
                 }
             }
         }

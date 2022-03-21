@@ -77,6 +77,7 @@ public class EnterHouse implements Task {
     private void selectHost() {
         if (!GameState.isInInstance() && Inventory.contains(ItemID.SOFT_CLAY) &&
                 clickAdvertisement()) {
+
             List<Widget> button = Query.widgets()
                     .actionContains("Enter House")
                     .isVisible()

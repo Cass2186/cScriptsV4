@@ -72,10 +72,12 @@ public class Vars {
     //2.5 min timer for xp gain
     public Timer safetyTimer = new Timer(150000);
 
+
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 
     public int startMagicLevel = 1;
     public int startMagicXp = 1;
+    public int lastIterMagicXp = 1;
 
 
 }

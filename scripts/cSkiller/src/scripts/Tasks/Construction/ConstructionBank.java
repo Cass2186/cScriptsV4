@@ -59,7 +59,7 @@ public class ConstructionBank implements Task {
         BankManager.close(true);
         RSItem[] tele = Inventory.find(ItemID.TELEPORT_TO_HOUSE);
         if (tele.length > 0 && tele[0].click("Outside")) {
-            Waiting.waitNormal(4000, 500);
+            Waiting.waitNormal(4000, 400);
         }
 
     }
