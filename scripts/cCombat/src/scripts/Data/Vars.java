@@ -41,6 +41,7 @@ public class Vars {
     public HashMap<Integer, Integer> restockList = new HashMap<>();
     public boolean killingScarabs = false;
     public boolean killingUndeadDruids = true;
+    public boolean killingSpidines = false;
 
     public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
 

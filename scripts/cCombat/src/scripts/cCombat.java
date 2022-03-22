@@ -6,6 +6,7 @@ import dax.api_lib.models.DaxCredentialsProvider;
 import dax.api_lib.models.RunescapeBank;
 import dax.teleports.Teleport;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.K;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
@@ -29,6 +30,8 @@ import scripts.Listeners.InterfaceObserver;
 import scripts.Listeners.PkListener;
 import scripts.Listeners.PkObserver;
 import scripts.Tasks.*;
+import scripts.Tasks.Spidines.KillSpidine;
+import scripts.Tasks.Spidines.SpawnSpidine;
 import scripts.rsitem_services.GrandExchange;
 
 
@@ -64,6 +67,12 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
 
         );
+        if (Vars.get().killingSpidines){
+            tasks = new TaskSet(
+                    new SpawnSpidine(),
+                    new KillSpidine()
+            );
+        }
         //  AntiPKThread pkObj = new AntiPKThread("Pk thread");
         //    pkObj.start();
         Mouse.setSpeed(250);
@@ -104,6 +113,11 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                     Log.debug("Killing Scarab mages");
                     Vars.get().killingScarabs = true;
                     Vars.get().killingUndeadDruids = false;
+                } else if (arg.toLowerCase().contains("spidine")) {
+                    Log.debug("Killing Spidines");
+                    Vars.get().killingScarabs = false;
+                    Vars.get().killingUndeadDruids = false;
+                    Vars.get().killingSpidines = true;
                 } else {
                     Log.debug("New Target = Undead Druid");
                     Vars.get().targets = new String[]{"Undead Druid"};
@@ -141,7 +155,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         return map;
     }
 
-    public void addPaint(){
+    public void addPaint() {
         double timeRan = getRunningTime();
         double timeRanMin = (timeRan / 3600000);
 
@@ -186,10 +200,10 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 .row(PaintRows.runtime(template.toBuilder()))
                 .row(template.toBuilder().label("Task").value(() -> status).build())
                 .row(template.toBuilder().label("Loot Value").value(() -> Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
-                        Utils.addCommaToNum(Math.round(Vars.get().lootValue / (getRunningTime()/3600000)))).build())
+                        Utils.addCommaToNum(Math.round(Vars.get().lootValue / (getRunningTime() / 3600000)))).build())
                 .rows(rows)
-               // .row(template.toBuilder().label("Solved State").condition(() -> Vars.get().getRunningProfile().getArceuus().get() && Calculations.get().getBooksFound() > 0).value(() -> Vars.get().getLibrary().getState()).build())
-               .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
+                // .row(template.toBuilder().label("Solved State").condition(() -> Vars.get().getRunningProfile().getArceuus().get() && Calculations.get().getBooksFound() > 0).value(() -> Vars.get().getLibrary().getState()).build())
+                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
     }
@@ -225,7 +239,7 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
             long ttl = (long) (xpToLevel1 / ((xpMap.get(s) / timeRan)));
             int gained = s.getActualLevel() - startLvl;
             if (gained > 0) {
-              //  String txt =
+                //  String txt =
                 myString.add(
                         StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
                                 + " [" + s.getActualLevel() + " (+" + gained + ")]: "
@@ -233,17 +247,17 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                                 "|| TNL: "
                                 + Timing.msToString(ttl)
                 );
-               // rows.add(template.toBuilder().label(txt).build());
+                // rows.add(template.toBuilder().label(txt).build());
             } else {
                 //String txt =
                 myString.add(
                         StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
-                        + " [" + s.getActualLevel() + "]: "
-                        + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                        "|| TNL: "
-                        + Timing.msToString(ttl)
+                                + " [" + s.getActualLevel() + "]: "
+                                + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
+                                "|| TNL: "
+                                + Timing.msToString(ttl)
                 );
-              //  rows.add(template.toBuilder().label(txt).build());
+                //  rows.add(template.toBuilder().label(txt).build());
             }
         }
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
