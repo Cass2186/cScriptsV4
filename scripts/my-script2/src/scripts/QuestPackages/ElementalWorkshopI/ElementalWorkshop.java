@@ -127,6 +127,9 @@ public class ElementalWorkshop implements QuestTask {
     public void startQuest() {
         cQuesterV2.status = "Starting Quest";
         PathingUtil.walkToTile(new RSTile(2715, 3481, 0));
+
+        if (Inventory.isFull()) EatUtil.eatFood();
+
         if (Utils.clickObj(26113, "Search"))
             Timer.abc2WaitCondition(() -> Inventory.find(BATTERED_BOOK).length > 0, 7000, 9000);
 
@@ -148,6 +151,7 @@ public class ElementalWorkshop implements QuestTask {
         if (Inventory.find(BATTERED_BOOK).length > 0) {
             cQuesterV2.status = "Getting key";
             General.println("[Debug]: " + cQuesterV2.status);
+            if (Inventory.isFull()) EatUtil.eatFood();
             if (Utils.useItemOnItem(KNIFE, BATTERED_BOOK))
                 return Timer.waitCondition(() -> Inventory.find(BATTERED_KEY).length > 0, 8000, 9000);
 
@@ -156,11 +160,16 @@ public class ElementalWorkshop implements QuestTask {
     }
 
     public void enterUnderground() {
-        cQuesterV2.status = "Going underground";
-        PathingUtil.walkToArea(WALL_AREA);
-        if (getKey() && !BEHIND_WALL.contains(Player.getPosition()) &&
-                Utils.clickObj(26114, "Open"))
-            Timer.slowWaitCondition(() -> BEHIND_WALL.contains(Player.getPosition()), 7000, 8500);
+        if (Inventory.find(ItemID.BATTERED_KEY).length > 0) {
+            cQuesterV2.status = "Going underground";
+            PathingUtil.walkToArea(WALL_AREA);
+            if (getKey() && !BEHIND_WALL.contains(Player.getPosition()) &&
+                    Utils.clickObj(26114, "Open"))
+                Timer.slowWaitCondition(() -> BEHIND_WALL.contains(Player.getPosition()), 7000, 8500);
+        }
+        else {
+            getKey();
+        }
     }
 
     public void goDownStairs() {
