@@ -2,20 +2,22 @@ package scripts.Gear;
 
 import lombok.Getter;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.ItemID;
 
 
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public enum ProgressiveMeleeGear {
 
-    WEAPON(Skills.SKILLS.ATTACK, new HashMap<>() {
-        {
+    WEAPON(Skills.SKILLS.ATTACK, new HashMap<>() {{
             put(ItemID.DRAGON_SWORD, 60);
             put(ItemID.RUNE_SCIMITAR, 40);
             put(ItemID.ADAMANT_SCIMITAR, 30);
             put(ItemID.MITHRIL_SCIMITAR, 20);
-       //     put(ItemID.STEEL_SCIMITAR, 5);
+            put(ItemID.STEEL_SCIMITAR, 5);
             put(ItemID.IRON_SCIMITAR, 1);
         }
     }),
@@ -26,7 +28,7 @@ public enum ProgressiveMeleeGear {
             put(ItemID.RUNE_FULL_HELM, 40);
             put(ItemID.ADAMANT_FULL_HELM, 30);
             put(ItemID.MITHRIL_FULL_HELM, 20);
-            //  put(ItemID.STEEL_FULL_HELM, 5);
+            put(ItemID.STEEL_FULL_HELM, 5);
             put(ItemID.IRON_FULL_HELM, 1);
         }
     }),
@@ -64,9 +66,25 @@ public enum ProgressiveMeleeGear {
             put(ItemID.IRON_KITESHIELD, 1);
         }
     }),
-    BOOTS,
+    BOOTS(new HashMap<>() {
+        {
+            put(ItemID.RUNE_BOOTS, 40);
+            put(ItemID.ADAMANT_KITESHIELD, 30);
+            put(ItemID.MITHRIL_KITESHIELD, 20);
+            put(ItemID.STEEL_KITESHIELD, 5);
+            put(ItemID.IRON_KITESHIELD, 1);
+        }
+    }),
 
-    WRIST();
+    WRIST(new HashMap<>() {
+        {
+            put(ItemID.RUNE_KITESHIELD, 40);
+            put(ItemID.ADAMANT_KITESHIELD, 30);
+            put(ItemID.MITHRIL_KITESHIELD, 20);
+            put(ItemID.STEEL_KITESHIELD, 5);
+            put(ItemID.IRON_KITESHIELD, 1);
+        }
+    });
 
     @Getter
     private Skills.SKILLS skill;
@@ -89,15 +107,24 @@ public enum ProgressiveMeleeGear {
     }
 
 
-    public static final int STEEL_SCIMITAR = 1325;
+    public static List<Integer> getBestUsableGearList() {
+        List<Integer> gearList = new ArrayList<>();
+        for (ProgressiveMeleeGear gear : values()) {
+            for (Integer i : gear.map.keySet().stream().sorted(Comparator
+                            .comparingInt(max-> gear.map.get(max))
+                            .reversed()).collect(Collectors.toList())) {
 
-    public int getBestItemFromMap() {
-        for (Integer i : this.map.keySet()) {
-            if (this.skill.getActualLevel() >= this.map.get(i)) {
-                return i;
+                if (gear.skill.getActualLevel() >= gear.map.get(i)) {
+                    Optional<ItemDefinition> itemDefinition = ItemDefinition.get(i);
+                    itemDefinition.ifPresent(def ->
+                            Log.debug("Adding " + def.getName() + " to item List"));
+                    //  Log.debug("Adding " + i + " to item List");
+                    gearList.add(i);
+                    break;
+                }
             }
         }
-        return -1;
+        return gearList;
     }
 
 }

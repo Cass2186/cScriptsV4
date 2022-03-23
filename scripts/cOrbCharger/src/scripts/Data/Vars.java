@@ -72,6 +72,7 @@ public class Vars {
     //2.5 min timer for xp gain
     public Timer safetyTimer = new Timer(150000);
 
+    public String mostRecentHouse = "";
 
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
 

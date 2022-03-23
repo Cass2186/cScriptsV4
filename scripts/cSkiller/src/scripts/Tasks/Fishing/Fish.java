@@ -95,19 +95,25 @@ public class Fish implements Task {
                 message = "Clicking fishing spot";
                 if (isBarbFishing() && Utils.clickNPC("Fishing spot", "Use-rod"))
                     Timer.slowWaitCondition(() ->
-                            Player.getAnimation() != -1, 4200, 5000);
+                            Player.getAnimation() != -1, 6000, 7500);
                 else if (Utils.clickNPC(FISHING_NPC_ID, "Lure"))
                     Timer.slowWaitCondition(() ->
-                            Player.getAnimation() != -1,4200, 5000);
+                            Player.getAnimation() != -1,6000, 7500);
 
             }
-            Waiting.waitNormal(500,50);
+            Waiting.waitNormal(700,50); //needed otherwise the timers below return
             if (Player.getAnimation() != -1) {
                 message = "Fishing idle...";
                 General.println(message);
+                int chance = Utils.random(0,100);
+                if (chance < 40)
                 Timer.abc2SkillingWaitCondition(() -> (Interfaces.get(233, 2) != null ||
                         Inventory.isFull() || Player.getAnimation() != Const.FISHING_ANIMATION[1]), 65000, 75000);
-
+                else {
+                    Timer.waitCondition(() -> (Interfaces.get(233, 2) != null ||
+                            Inventory.isFull() || Player.getAnimation() != Const.FISHING_ANIMATION[1]), 65000, 75000);
+                    Utils.idleAfkAction();
+                }
             }
 
         } else

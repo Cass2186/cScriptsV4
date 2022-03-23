@@ -35,21 +35,21 @@ public class TabGUIController extends AbstractGUIController {
     @DoNotRename
     public Tabs getSelectedTab() {
         switch (selectTabComboBox.getValue().toLowerCase()) {
-            case ("varrock"):
+            case ("varrock teleport"):
                 return Tabs.VARROCK;
 
-            case ("lumbridge"):
+            case ("lumbridge teleport"):
                 return Tabs.LUMBRIDGE;
 
-            case("house"):
+            case("house teleport"):
                 return Tabs.HOUSE;
 
-            case("falador"):
+            case("falador teleport"):
                 Log.debug("falador selected");
                 return Tabs.FALADOR;
 
 
-            case("camelot"):
+            case("camelot teleport"):
                 Log.debug("Camelot selected");
                 return Tabs.CAMELOT;
 

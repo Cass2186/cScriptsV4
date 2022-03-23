@@ -21,6 +21,7 @@ import org.tribot.script.sdk.painting.template.basic.*;
 import scripts.Data.Const;
 import scripts.Data.Paint;
 import scripts.Data.Vars;
+import scripts.Gear.ProgressiveMeleeGear;
 import scripts.Tasks.*;
 
 import java.awt.*;
@@ -81,6 +82,8 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
         ExpHandler.updateStartXpAndLevel();
 
         Vars.get().startTime = System.currentTimeMillis();
+
+        ProgressiveMeleeGear.getBestUsableGearList();
 
         while (isRunning.get()) {
             General.sleep(50, 150);

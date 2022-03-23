@@ -93,6 +93,7 @@ public class cTabs implements TribotScript {
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
                 .row(template.toBuilder().label("Task").value(() -> status).build())
+                .row(template.toBuilder().label("House").value(() -> Vars.get().mostRecentHouse).build())
                 .row(template.toBuilder().label("Tab").value(() -> Vars.get().selectedTab.toString()).build())
                 .row(template.toBuilder().label("Magic").value(() -> getXpGainedString()).build())
                 .row(template.toBuilder().label("Profit").value(() -> Vars.get().getProfitString()).build())

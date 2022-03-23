@@ -12,6 +12,8 @@ import scripts.Data.Vars;
 import scripts.ItemID;
 import scripts.PathingUtil;
 import scripts.QuestSteps.ObjectStep;
+import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Timer;
@@ -94,7 +96,9 @@ public class EnterHouse implements Task {
                 }
 
                 if (w.click("Enter House") && Timer.waitCondition(GameState::isInInstance, 3000, 4500)) {
+                    name.ifPresent(n -> Vars.get().mostRecentHouse = n);
                     Waiting.waitNormal(2500, 125); //wait after arriving in instance for house screen to disapear
+                    blacklistFailedHouseAndLeave();
                     return;
                 } else {
                     Log.error("Blacklisting failed host");
@@ -106,6 +110,37 @@ public class EnterHouse implements Task {
         }
     }
 
+    private void blacklistFailedHouseAndLeave() {
+        Optional<GameObject> lectern = Query.gameObjects()
+                .nameContains("Lectern")
+                .maxDistance(30)
+                .findBestInteractable();
+
+        Optional<GameObject> reachable = Query.gameObjects()
+                .nameContains("Lectern")
+                .isReachable()
+                .maxDistance(30)
+                .findBestInteractable();
+        if (lectern.isPresent() && reachable.isEmpty()) {
+            Log.error("Cannot raech lecturn, blacklisting house");
+            Vars.get().houseBlackListNames.add(Vars.get().mostRecentHouse);
+            UnnoteClay.leaveHouse();
+        }
+    }
+
+
+    public void test(){
+        ItemRequirement itemReq = new ItemRequirement.Builder()
+                .id(ItemID.RING_OF_WEALTH_5)
+                .chargesNeeded(1)
+                .minAmount(1)
+                .build();
+
+        Log.error("ItemRequrement charge check " + itemReq.hasEnoughCharges());
+
+
+
+    }
 
     @Override
     public Priority priority() {
@@ -119,6 +154,7 @@ public class EnterHouse implements Task {
 
     @Override
     public void execute() {
+        test();
         if (WorldHopper.getCurrentWorld() != 330) {
             WorldHopper.hop(330);
             return;

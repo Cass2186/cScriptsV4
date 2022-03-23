@@ -73,7 +73,7 @@ public class UnnoteClay implements Task {
         }
     }
 
-    public void leaveHouse() {
+    public static void leaveHouse() {
         if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
             Timer.waitCondition(() -> !Game.isInInstance() &&
                             Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),

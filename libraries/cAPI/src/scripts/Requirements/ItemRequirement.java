@@ -1,6 +1,5 @@
 package scripts.Requirements;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;
@@ -13,8 +12,7 @@ import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.EquipmentItem;
 import org.tribot.script.sdk.types.InventoryItem;
-import scripts.EntitySelector.Entities;
-import scripts.EntitySelector.finders.prefabs.ItemEntity;
+import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.Utils;
 
 import java.util.*;
@@ -69,37 +67,42 @@ public class ItemRequirement implements Requirement {
     @Getter
     private Requirement conditionToHide;
 
-    @lombok.Builder
+
     public ItemRequirement(int ItemID) {
         this.id = ItemID;
         this.amount = 1;
         this.minAmount = 1;
     }
-    @lombok.Builder
+
+
     public ItemRequirement(int ItemID, int amount) {
         this.id = ItemID;
         this.amount = amount;
         this.minAmount = amount;
     }
-    @lombok.Builder
+
+
     public ItemRequirement(String name, int ItemID, int amount) {
         this.itemName = name;
         this.id = ItemID;
         this.amount = amount;
         this.minAmount = amount;
     }
-    @lombok.Builder
+
+
     public ItemRequirement(String name, int ItemID) {
         this.itemName = name;
         this.id = ItemID;
         this.amount = 1;
         this.minAmount = 1;
     }
-    @lombok.Builder
+
+
     public ItemRequirement(String name, List<Integer> ItemIDs) {
         this(name, ItemIDs.get(0), 1);
         this.addAlternateItemID(ItemIDs.subList(1, ItemIDs.size()));
     }
+
     @lombok.Builder
     public ItemRequirement(List<Integer> ItemIDs, int num) {
         this(ItemIDs.get(0), num);
@@ -111,6 +114,7 @@ public class ItemRequirement implements Requirement {
         this(ItemID, amount);
         this.acceptEquipped = acceptEquipped;
     }
+
     @lombok.Builder
     public ItemRequirement(int ItemID, int amount, boolean acceptEquipped, boolean shouldEquip) {
         this(ItemID, amount);
@@ -123,6 +127,7 @@ public class ItemRequirement implements Requirement {
         this(ItemID, amount);
         this.minAmount = minAmount;
     }
+
     @lombok.Builder
     public ItemRequirement(int ItemID, int amount, int minAmount, boolean acceptEquipped) {
         this(ItemID, amount, minAmount);
@@ -136,8 +141,6 @@ public class ItemRequirement implements Requirement {
     }
 
 
-
-
     public ItemRequirement(ItemRequirement.Builder builder) {
         this.itemName = builder.itemName;
         this.id = builder.id;
@@ -148,7 +151,6 @@ public class ItemRequirement implements Requirement {
         this.chargesNeeded = builder.amountOfChargesNeeded;
         this.alternateItems = builder.alternateItemIDs;
     }
-
 
 
     public ItemRequirement equipped() {
@@ -167,7 +169,7 @@ public class ItemRequirement implements Requirement {
         RSItem[] i = Inventory.find(this.getId());
         RSItemDefinition def = RSItemDefinition.get(this.getId());
         if (Equipment.isEquipped(this.getId())) {
-            Log.log("Has item equipped w/ ID of " + this.getId());
+            Log.debug("Has item equipped w/ ID of " + this.getId());
             return true;
         }
 
@@ -181,8 +183,8 @@ public class ItemRequirement implements Requirement {
 
         if (this.alternateItems != null && this.alternateItems.size() > 0) {
             for (Integer b : alternateItems) {
-                if (Inventory.find(b).length > this.minAmount-1) {
-                    General.println("[ItemRequirement]: Accepted an alternative id of " + b +
+                if (Inventory.find(b).length > this.minAmount - 1) {
+                    Log.debug("[ItemRequirement]: Accepted an alternative id of " + b +
                             " for ItemID of:  " + this.id);
                     return true;
                 }
@@ -191,16 +193,15 @@ public class ItemRequirement implements Requirement {
 
         if (i.length > 0) {
             if (def == null)
-                General.println("[ItemRequirement]: Definition is null");
-
+                Log.error("[ItemRequirement]: Definition is null");
 
 
             if (def != null && !def.isStackable()) {
-                General.println("[ItemRequirement]: We have x" + i.length + " of unstackable item " +
+                System.out.println("[ItemRequirement]: We have x" + i.length + " of unstackable item " +
                         this.getId() + " (min = " + this.minAmount + ")");
                 return i.length >= this.minAmount;
             } else if (def != null && def.isStackable()) {
-                General.println("[ItemRequirement]: We have x" + i.length + " of stackable item " +
+                System.out.println("[ItemRequirement]: We have x" + i.length + " of stackable item " +
                         this.getId() + " (min = " + this.minAmount + ")");
                 return i[0].getStack() >= this.minAmount;
             }
@@ -211,10 +212,10 @@ public class ItemRequirement implements Requirement {
 
         boolean b = (i.length >= this.minAmount);
         if (def != null)
-            General.println("[ItemRequirement]: We are missing inv item " + def.getName() + " (min = " + this.minAmount + ") " +
+            System.out.println("[ItemRequirement]: We are missing inv item " + def.getName() + " (min = " + this.minAmount + ") " +
                     b);
         else
-            General.println("[ItemRequirement]: We are missing inv item " + " (min = " + this.minAmount + ") " +
+            General.println("[ItemRequirement]: We are missing inventory req item " + " (min = " + this.minAmount + ") " +
                     b);
         // General.println("[ItemRequirement]: boolean (i.e. do we have item) for this item(#" + this.id + " ): " + b);
         return b;
@@ -236,42 +237,49 @@ public class ItemRequirement implements Requirement {
     /**
      * Checks if we have adequate charges for our task
      *
-     * @param itemName without the "(X)"
      * @return
      */
-    public boolean hasEnoughCharges(String itemName) {
+    public boolean hasEnoughCharges() {
         int charges = 0;
         if (this.chargesNeeded > 0) {
-            RSItem[] invItems = Entities.find(ItemEntity::new)
-                    .nameContains(itemName)
-                    .getResults();
+            Optional<String> name = getTrimmedName(ItemDefinition.get(this.id));
+            if (name.isPresent()) {
+                List<InventoryItem> invItemList =
+                        Query.inventory()
+                                .nameContains(name.get())
+                                .toList();
 
-            for (RSItem i : invItems) {
-                charges = charges + getCharges(i);
+                for (InventoryItem i : invItemList) {
+                    charges = charges + getCharges(i);
+                }
             }
         }
+        Log.debug("Charges on player " + charges);
         boolean b = charges >= this.chargesNeeded;
-        Log.log("[ItemRequirement]: Do we have at least " + this.chargesNeeded + " charges of item: " +
-                itemName + ": " + b);
+        Log.debug("[ItemRequirement]: Do we have at least " + this.chargesNeeded + " charges of item: " +
+                this.id + ": " + b);
         return b;
     }
 
-    private String getName(RSItem rsItem) {
-        Optional<RSItemDefinition> defOptional = Optional.ofNullable(rsItem.getDefinition());
-        if (defOptional.isPresent()) {
-            Optional<String> name = Optional.ofNullable(defOptional.get().getName());
-            if (name.isPresent())
-                return name.get();
+    private Optional<String> getTrimmedName(Optional<ItemDefinition> def) {
+        if (def.isEmpty())
+            return Optional.empty();
+
+        String[] nameSplit = def.get().getName().split(" \\(");
+
+        if (nameSplit.length > 1) {
+            Log.debug("Name is " + nameSplit[0]);
+            return Optional.of(nameSplit[0]);
         }
-        return "";
+        return Optional.empty();
     }
 
-    private int getCharges(RSItem rsItem) {
-        String[] nameSplit = getName(rsItem).split("\\(");
+    private int getCharges(InventoryItem invItem) {
+        String[] nameSplit = invItem.getDefinition().getName().split("\\(");
         if (nameSplit.length > 1) {
             String[] chargesUnformatted = nameSplit[1].split("\\)");
             if (chargesUnformatted.length > 0) {
-                Log.log("[ItemRequirement]: Detected item in inventory with " + chargesUnformatted[0] + " charges");
+                Log.debug("[ItemRequirement]: Detected item in inventory with " + chargesUnformatted[0] + " charges");
                 return Integer.parseInt(chargesUnformatted[0]);
             }
         }
@@ -305,7 +313,7 @@ public class ItemRequirement implements Requirement {
             return BankCache.getStack(this.getId()) >= this.getAmount();
         }
         //TODO finish this somehow
-        Log.log("[ItemRequirement]: Bank Cache isn't initialized, need to open the bank (method NOT FINISHED)");
+        Log.error("[ItemRequirement]: Bank Cache isn't initialized, need to open the bank (method NOT FINISHED)");
         return false;
     }
 
@@ -373,6 +381,7 @@ public class ItemRequirement implements Requirement {
             //Do some basic validations to check
             //if user object does not break any assumption of system
         }
+
     }
 
 
@@ -431,8 +440,8 @@ public class ItemRequirement implements Requirement {
         return newItem;
     }
 
-    public int getBuyQuantity(){
-        if (BankCache.isInitialized()){
+    public int getBuyQuantity() {
+        if (BankCache.isInitialized()) {
             return BankCache.getStack(this.id) - this.amount;
         }
         return 0;
