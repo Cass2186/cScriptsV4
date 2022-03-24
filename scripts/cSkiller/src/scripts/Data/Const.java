@@ -4,6 +4,8 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 
+import java.util.List;
+
 public class Const {
 
     public enum LOG_ACTIONS{
@@ -16,10 +18,12 @@ public class Const {
 
     public static final long startTime = System.currentTimeMillis();
 
-    public static int FISHING_ANIMATION[] = {
+    public static List<Integer>  FISHING_ANIMATION = List.of(
             621, // net fishing
             623 // rod fishing
-    };
+    );
+
+
 
     public static int[] FISH_IDS = {
             317, // raw shrimp

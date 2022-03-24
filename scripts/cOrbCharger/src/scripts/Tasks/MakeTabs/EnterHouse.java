@@ -154,7 +154,6 @@ public class EnterHouse implements Task {
 
     @Override
     public void execute() {
-        test();
         if (WorldHopper.getCurrentWorld() != 330) {
             WorldHopper.hop(330);
             return;

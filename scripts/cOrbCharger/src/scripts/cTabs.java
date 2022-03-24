@@ -1,29 +1,20 @@
 package scripts;
 
-import dax.api_lib.WebWalkerServerApi;
-import dax.api_lib.models.DaxCredentials;
-import dax.api_lib.models.DaxCredentialsProvider;
-import dax.teleports.Teleport;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
+
 import org.tribot.script.ScriptManifest;
 
 import org.tribot.script.sdk.*;
-
 import org.tribot.script.sdk.input.Mouse;
-import org.tribot.script.sdk.interfaces.BreakStartListener;
 import org.tribot.script.sdk.painting.Painting;
 import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
 import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
-import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
-import org.tribot.script.sdk.types.Widget;
-import scripts.Data.Const;
-import scripts.Data.Tabs;
 import scripts.Data.Vars;
+import scripts.ScriptUtils.CassScript;
 import scripts.Tasks.MakeTabs.EnterHouse;
 import scripts.Tasks.MakeTabs.MakeTabs;
 import scripts.Tasks.MakeTabs.UnnoteClay;
@@ -34,23 +25,13 @@ import scripts.gui.GUI;
 import java.awt.*;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 @ScriptManifest(name = "cTabs", authors = {"Cass2186"}, category = "Testing")
-public class cTabs implements TribotScript {
+public class cTabs extends CassScript implements TribotScript {
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
-
-
-    public void populateInitialMap() {
-        Log.debug("[Debug]: Populating initial skills xp HashMap");
-        for (Skill s : Skill.values()) {
-            Vars.get().skillStartXpMap.put(s, s.getXp());
-        }
-    }
 
 
     @Override
@@ -61,8 +42,10 @@ public class cTabs implements TribotScript {
     @SneakyThrows
     @Override
     public void execute(String args) {
+
         AntiBan.create();
-        Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA,
+        super.initializeDax();
+       /* Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA,
                 Teleport.RING_OF_DUELING_FEROX_ENCLAVE);
 
         WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
@@ -70,12 +53,10 @@ public class cTabs implements TribotScript {
             public DaxCredentials getDaxCredentials() {
                 return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
             }
-        });
+        });*/
 
-        //SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
         URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cOrbCharger/src/scripts/gui/cTabsGui.fxml");
         GUI gui = new GUI(lcn);
-
 
         Log.debug("Loading GUI");
         gui.show();
@@ -103,7 +84,8 @@ public class cTabs implements TribotScript {
         Painting.addPaint(g -> paint.render(g));
 
         initializeListeners();
-        populateInitialMap();
+
+        populateInitialMap(Vars.get().skillStartXpMap);
 
 
         Vars.get().startMagicLevel = Skill.MAGIC.getCurrentLevel();
@@ -185,7 +167,7 @@ public class cTabs implements TribotScript {
          **/
         ScriptListening.addEndingListener(() -> {
             if (Vars.get().skillStartXpMap == null)
-                populateInitialMap();
+                populateInitialMap(Vars.get().skillStartXpMap);
 
             for (Skill s : Skill.values()) {
                 int startXp = Vars.get().skillStartXpMap.get(s);

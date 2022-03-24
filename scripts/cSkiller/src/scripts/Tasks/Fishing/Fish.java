@@ -3,6 +3,7 @@ package scripts.Tasks.Fishing;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
@@ -90,7 +91,8 @@ public class Fish implements Task {
         if (checkItems()
                 && goToFishingSpot() && !Inventory.isFull()) {
 
-            if (Player.getAnimation() != Const.FISHING_ANIMATION[1]) {
+            if (Const.FISHING_ANIMATION.stream()
+                    .noneMatch(a -> MyPlayer.getAnimation() == a)) {
                 Utils.unselectItem();
                 message = "Clicking fishing spot";
                 if (isBarbFishing() && Utils.clickNPC("Fishing spot", "Use-rod"))
@@ -98,20 +100,23 @@ public class Fish implements Task {
                             Player.getAnimation() != -1, 6000, 7500);
                 else if (Utils.clickNPC(FISHING_NPC_ID, "Lure"))
                     Timer.slowWaitCondition(() ->
-                            Player.getAnimation() != -1,6000, 7500);
+                            Player.getAnimation() != -1, 6000, 7500);
 
             }
-            Waiting.waitNormal(700,50); //needed otherwise the timers below return
+            Waiting.waitNormal(700, 50); //needed otherwise the timers below return
             if (Player.getAnimation() != -1) {
                 message = "Fishing idle...";
                 General.println(message);
-                int chance = Utils.random(0,100);
+                int chance = Utils.random(0, 100);
                 if (chance < 40)
-                Timer.abc2SkillingWaitCondition(() -> (Interfaces.get(233, 2) != null ||
-                        Inventory.isFull() || Player.getAnimation() != Const.FISHING_ANIMATION[1]), 65000, 75000);
+                    Timer.abc2SkillingWaitCondition(() -> (Interfaces.get(233, 2) != null ||
+                            Inventory.isFull() ||
+                            Const.FISHING_ANIMATION.stream()
+                                    .noneMatch(a -> MyPlayer.getAnimation() == a)), 65000, 75000);
                 else {
                     Timer.waitCondition(() -> (Interfaces.get(233, 2) != null ||
-                            Inventory.isFull() || Player.getAnimation() != Const.FISHING_ANIMATION[1]), 65000, 75000);
+                            Inventory.isFull() || Const.FISHING_ANIMATION.stream()
+                            .noneMatch(a -> MyPlayer.getAnimation() == a)), 65000, 75000);
                     Utils.idleAfkAction();
                 }
             }
