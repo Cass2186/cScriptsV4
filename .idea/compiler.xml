@@ -31,6 +31,7 @@
         <module name="myScripts.scripts.cAutoClicker.main" />
         <module name="myScripts.scripts.cZulrah.test" />
         <module name="myScripts.scripts.cTutorialIsland.test" />
+        <module name="myScripts.scripts.cRunecrafting.main" />
         <module name="myScripts.scripts.cNMZ.main" />
         <module name="myScripts.scripts.cZulrah.main" />
         <module name="myScripts.scripts.cBirdhouses.main" />
@@ -44,6 +45,7 @@
         <module name="myScripts.scripts.cVorkath.test" />
         <module name="myScripts.test" />
         <module name="myScripts.scripts.cAutoClicker.test" />
+        <module name="myScripts.scripts.cRunecrafting.test" />
         <module name="myScripts.scripts.my-script2.test" />
       </profile>
     </annotationProcessing>
