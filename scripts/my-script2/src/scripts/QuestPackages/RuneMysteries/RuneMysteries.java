@@ -39,14 +39,14 @@ public class RuneMysteries implements QuestTask {
 
     NPCStep talkToHoracio = new NPCStep("Duke Horacio", new RSTile(3210, 3220, 1),
             new String[]{"Have you any quests for me?", "Have you any quests for me?", "Yes."});
-    NPCStep talkToSedridor = new NPCStep("Sedridor", new RSTile(3104, 9571, 0),
+    NPCStep talkToSedridor = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0),
             new String[]{"I'm looking for the head wizard.", "Ok, here you are.", "Yes, certainly."}, airTalisman);
-    NPCStep finishTalkingToSedridor = new NPCStep("Sedridor", new RSTile(3104, 9571, 0),
+    NPCStep finishTalkingToSedridor = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0),
             new String[]{"Yes, certainly."});
     NPCStep talkToAubury = new NPCStep(NpcID.AUBURY, new RSTile(3253, 3401, 0),
             new String[]{"I have been sent here with a package for you."}, researchPackage);
     NPCStep talkToAudburyAgain = new NPCStep(NpcID.AUBURY, new RSTile(3253, 3401, 0));
-    NPCStep talkToSedridor2 = new NPCStep("Sedridor", new RSTile(3104, 9571, 0), notes);
+    NPCStep talkToSedridor2 = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0), notes);
 
     // old areas for nick
     RSArea START_AREA = new RSArea(new RSTile(3213, 3218, 1), new RSTile(3208, 3225, 1));
