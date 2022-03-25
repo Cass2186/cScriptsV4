@@ -13,16 +13,14 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Options;
-import org.tribot.script.sdk.ScriptListening;
-import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.painting.template.basic.*;
 import scripts.Data.Const;
 import scripts.Data.Paint;
 import scripts.Data.Vars;
 import scripts.Gear.ProgressiveMeleeGear;
 import scripts.Tasks.*;
+import scripts.Tasks.Bank;
 
 import java.awt.*;
 import java.util.*;
@@ -88,6 +86,9 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
         while (isRunning.get()) {
             General.sleep(50, 150);
             if (Game.isInInstance()) //died
+                break;
+
+            if (!WorldHopper.isInMembersWorld())
                 break;
 
             Task task = tasks.getValidTask();

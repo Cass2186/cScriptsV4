@@ -22,6 +22,7 @@ import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.WorldHopper;
 import org.tribot.script.sdk.painting.template.basic.*;
 import org.tribot.script.sdk.types.GroundItem;
 import scripts.API.AntiPKThread;
@@ -83,6 +84,10 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
 
         while (isRunning.get()) {
             General.sleep(20, 40);
+
+            if (!WorldHopper.isInMembersWorld())
+                break;
+
             Utils.forceDownwardCameraAngle();
             Task task = tasks.getValidTask();
             if (task != null) {
