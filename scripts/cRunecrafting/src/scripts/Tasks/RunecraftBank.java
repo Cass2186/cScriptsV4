@@ -2,10 +2,7 @@ package scripts.Tasks;
 
 import org.tribot.api2007.Equipment;
 import org.tribot.script.sdk.*;
-import dax.api_lib.DaxWalker;
 import dax.api_lib.models.RunescapeBank;
-import dax.walker.utils.camera.DaxCamera;
-import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
@@ -25,7 +22,6 @@ import scripts.*;
 import scripts.Data.Const;
 import scripts.Data.RunecraftItems;
 
-import java.awt.*;
 import java.util.List;
 
 import scripts.Data.Vars;
@@ -129,7 +125,7 @@ public class RunecraftBank implements Task {
     public boolean itemInInv(int... items) {
         for (int i : items) {
             String name = RSItemDefinition.get(i).getName();
-            if (Inventory.contains(i)) {
+            if (!Inventory.contains(i)) {
                 Log.error("Missing an inventory item: " + name);
                 return false;
             } else {
@@ -189,7 +185,6 @@ public class RunecraftBank implements Task {
 
     public void getItemsComboRunes(int talisman, int regularRune) {
         if (!itemInInv(talisman, regularRune, ItemID.PURE_ESSENCE)) {
-
 
             List<InventoryItem> p = CraftRunes.getPouches();
             goToCWBank();
@@ -525,14 +520,14 @@ public class RunecraftBank implements Task {
 
         //   } else
         if (getLevel() < 14) {
-            return !Inventory.contains(ItemID.PURE_ESSENCE) || !Equipment.isEquipped(ItemID.EARTH_TIARA);
+            return !Inventory.contains(ItemID.PURE_ESSENCE) ||
+                    !Equipment.isEquipped(ItemID.EARTH_TIARA);
 
         } else if (getLevel() < 19) {
             return (!Inventory.contains(ItemID.PURE_ESSENCE)
                     || !Equipment.isEquipped(ItemID.FIRE_TIARA));
 
         } else if (Vars.get().lava && !Vars.get().abyssCrafting && !Vars.get().usingLunarImbue) {
-            General.println("Lava runes at ine 230 of bank");
             return !itemInInv(ItemID.EARTH_TALISMAN, ItemID.EARTH_RUNE, ItemID.PURE_ESSENCE);
 
         } else if (!Vars.get().abyssCrafting && !Vars.get().zanarisCrafting) {

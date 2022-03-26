@@ -63,5 +63,15 @@ public class Const {
     );
     public static RSArea ZANARIS_ALTAR = new RSArea(new RSTile(2407, 4381, 0), new RSTile(2414, 4376, 0));
     public static RSTile FIRE_ALTAR_TILE_BEFORE_RUINS = new RSTile(3312, 3253, 0);
-
+    public static   RSArea CASTLE_WARS_BANK = new RSArea(new RSTile(2447, 3079, 0), new RSTile(2435, 3098, 0));
+    public static   RSArea MIND_ALTAR_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2771, 4851, 0),
+                    new RSTile(2772, 4830, 0),
+                    new RSTile(2790, 4816, 0),
+                    new RSTile(2805, 4825, 0),
+                    new RSTile(2803, 4846, 0),
+                    new RSTile(2789, 4855, 0)
+            }
+    );
 }

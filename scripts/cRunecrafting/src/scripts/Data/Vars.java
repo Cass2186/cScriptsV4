@@ -95,6 +95,8 @@ public class Vars {
 
     public boolean mudRuneCrafting = false;
 
+    public boolean mindTiaraCrafting = false;
+
     public boolean goToBloodAltar = false;
 
     public boolean bloodRuneCrafting = false;

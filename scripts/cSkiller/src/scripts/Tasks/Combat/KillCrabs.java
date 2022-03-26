@@ -10,6 +10,11 @@ import scripts.Tasks.BirdHouseRuns.Data.Paint;
 
 public class KillCrabs implements Task {
 
+    // make the constructor specify the skill and level target?
+    public KillCrabs(){
+
+    }
+
     private boolean setAttackStyle() {
         if (Vars.get().currentTask == null)
             return false;

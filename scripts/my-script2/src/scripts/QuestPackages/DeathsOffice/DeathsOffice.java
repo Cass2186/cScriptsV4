@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.QuestSteps.QuestTask;
@@ -25,6 +26,7 @@ public class DeathsOffice implements QuestTask {
     public static DeathsOffice get() {
         return quest == null ? quest = new DeathsOffice() : quest;
     }
+   public static int[] GRAVESTONE_TIMER = { 548, 39 ,0};
 
     public static int DEATHS_DOMAIN_ID = 38426;
     public static int DEATHS_ID = 9855;
@@ -52,8 +54,9 @@ public class DeathsOffice implements QuestTask {
     };
 
     public static boolean shouldHandleDeath() {
-        RSNPC[] death = NPCs.findNearest("Death");
-        return death.length > 0 || Game.getSetting(1697) > 0;
+
+        RSNPC[] death = NPCs.findNearest(DEATHS_ID);
+        return death.length > 0 || Widgets.get(GRAVESTONE_TIMER).isPresent();//Game.getSetting(1697) > 0;
 
     }
 
