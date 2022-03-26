@@ -104,9 +104,9 @@ public class EnterTheAbyss implements QuestTask {
         if (NpcChat.talkToNPC("Mage of Zamorak")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Where do you get your runes from?");
-            NPCInteraction.handleConversation(); // need this
-            NPCInteraction.handleConversation("Yes");
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation("Maybe I could make it worth your while?"); // need this
+            NPCInteraction.handleConversation("I did it so that I could then steal their secrets.");
+            NPCInteraction.handleConversation("Deal.");
         }
     }
 
@@ -115,10 +115,10 @@ public class EnterTheAbyss implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(AUBURY_AREA);
         Utils.shortSleep();
-        if (NpcChat.talkToNPC("Aubury")) {
+        if (Utils.clickNPC("Aubury", "Teleport")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Can you teleport me to the Rune Essence?");
-            NPCInteraction.handleConversation();
+            //NPCInteraction.handleConversation("Can you teleport me to the Rune Essence Mine?");
+           // NPCInteraction.handleConversation();
             Utils.idle(2500, 6000);
         }
     }
@@ -127,10 +127,10 @@ public class EnterTheAbyss implements QuestTask {
         cQuesterV2.status = "Going To Wizards Tower";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(WIZARDS_TOWER);
-        if (NpcChat.talkToNPC("Sedridor")) {
+        if (Utils.clickNPC("Archmage Sedridor", "Teleport")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Can you teleport me to the Rune Essence?");
-            NPCInteraction.handleConversation();
+          //  NPCInteraction.handleConversation("Can you teleport me to the Rune Essence Mine?");
+          //  NPCInteraction.handleConversation();
             Utils.idle(2500, 6000);
         }
     }
@@ -140,10 +140,8 @@ public class EnterTheAbyss implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(ARDOUGNE_AREA);
         Utils.shortSleep();
-        if (NpcChat.talkToNPC("Wizard Cromperty")) {
+        if (Utils.clickNPC("Wizard Cromperty", "Teleport")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Can you teleport me to the Rune Essence?");
-            NPCInteraction.handleConversation();
             Utils.idle(2500, 6000);
         }
     }
