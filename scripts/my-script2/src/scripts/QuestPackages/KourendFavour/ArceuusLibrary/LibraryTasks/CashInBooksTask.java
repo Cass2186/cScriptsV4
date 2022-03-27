@@ -5,9 +5,13 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Waiting;
 
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Widget;
 import scripts.InterfaceUtil;
+import scripts.ItemID;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.ArceuusLibrary;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Constants;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
@@ -19,6 +23,7 @@ import scripts.Tasks.Priority;
 import scripts.Utils;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CashInBooksTask implements QuestTask {
     private static CashInBooksTask quest;
@@ -26,6 +31,10 @@ public class CashInBooksTask implements QuestTask {
     public static CashInBooksTask get() {
         return quest == null ? quest = new CashInBooksTask() : quest;
     }
+
+
+    public String rewardSkill = "Runecrafting";//"Magic"; // "Runecrafting"
+
     @Override
     public Priority priority() {
         return Priority.HIGHEST;
@@ -33,7 +42,8 @@ public class CashInBooksTask implements QuestTask {
 
     @Override
     public boolean validate() {
-        return Inventory.isFull();
+        return org.tribot.script.sdk.
+                Inventory.getCount(ItemID.BOOK_OF_ARCANE_KNOWLEDGE) > 3 || org.tribot.script.sdk.Inventory.isFull();
     }
 
     @Override
@@ -43,7 +53,7 @@ public class CashInBooksTask implements QuestTask {
 
     @Override
     public String questName() {
-        return null;
+        return "Kourend Library";
     }
 
     @Override
@@ -61,10 +71,15 @@ public class CashInBooksTask implements QuestTask {
     public boolean cashInBook(RSItem book) {
         State.get().setStatus("Cashing in books");
         int currentXp = Skills.getXP(Skills.SKILLS.RUNECRAFTING);
+
         if (Utils.clickInventoryItem(book.getID())
-                && Waiting.waitUntil(2000, () ->
-                Interfaces.get(219, 1, 2) != null)) {
-            return InterfaceUtil.clickInterfaceText(219, "Continue");
+                && Waiting.waitUntil(2000, ChatScreen::isOpen)) {
+            Optional<Widget> first = Query.widgets().textContains(rewardSkill).findFirst();
+            if (first.map(Widget::click).orElse(false)){
+                Waiting.waitNormal(400,60);
+                ChatScreen.clickContinue();
+                return true;
+            }
         }
         return false;
     }

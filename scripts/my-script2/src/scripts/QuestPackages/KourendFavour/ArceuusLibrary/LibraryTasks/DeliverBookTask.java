@@ -25,6 +25,7 @@ public class DeliverBookTask implements QuestTask {
     @Override
     public boolean validate() {
         return State.get().getCurrentAssignment().isPresent()
+                && State.get().getCurrentBooks() != null
                 && State.get().getCurrentBooks().contains(State.get().getCurrentAssignment().get());
     }
 
