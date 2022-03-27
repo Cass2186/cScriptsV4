@@ -43,6 +43,10 @@ public class Vars {
 
     public boolean shouldBank = false;
 
+    public boolean progressiveMelee = false;
+
+    public HashMap<Skill, Integer> progressiveMeleeMap  = new HashMap<>();
+
     public boolean shouldResetAggro = false;
     public boolean shouldEat = false;
     public boolean shouldDrink = false;

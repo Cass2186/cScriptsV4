@@ -13,6 +13,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
 import scripts.API.CrabUtils;
 import scripts.AntiBan;
@@ -123,7 +124,7 @@ public class Fight implements Task {
                 Mouse.leaveGame(true);
 
 
-            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.EAGLE_EYE) && EatDrink.checkPrayer()){
+            if (Prayer.isPrayerEnabled(Prayer.PRAYERS.EAGLE_EYE) && EatDrink.checkPrayer()) {
                 Utils.idleAfkAction();
                 Utils.drinkPotion(ItemID.PRAYER_POTION);
             }
@@ -134,10 +135,29 @@ public class Fight implements Task {
         }, General.random(300000, 460000));
     }
 
+
+    private void handleProgressive() {
+        if (Vars.get().progressiveMelee) {
+            if (Skill.STRENGTH.getActualLevel() < 58){
+                org.tribot.script.sdk.
+                        Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.AGGRESSIVE);
+            } else if (Skill.ATTACK.getActualLevel() < 60) {
+                org.tribot.script.sdk.
+                        Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.ACCURATE);
+            } else if (Skill.STRENGTH.getActualLevel() < 62){
+                org.tribot.script.sdk.
+                        Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.AGGRESSIVE);
+            } else if (Skill.DEFENCE.getActualLevel() < 60){
+                org.tribot.script.sdk.
+                        Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.DEFENSIVE);
+            }
+        }
+    }
+
+
     /**
      * Methods - Main handling of crabs
      */
-
     public void afk(RSTile crabTile) {
         if (!crabTile.equals(Player.getPosition())) {
             Vars.get().task = "Moving to crab tile";
@@ -145,6 +165,7 @@ public class Fight implements Task {
             Vars.get().shouldMoveToCrabTile = true;
             return;
         }
+
         if (Combat.isUnderAttack() || Combat.getAttackingEntities().length > 0) {
 
             if (Vars.get().usingPrayer) {
@@ -201,6 +222,7 @@ public class Fight implements Task {
 
     @Override
     public void execute() {
+        handleProgressive();
         afk(Vars.get().crabTile);
     }
 

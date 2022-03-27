@@ -219,8 +219,15 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
         for (String arg : input.split(";")) {
             try {
                 if (arg.toLowerCase().contains("pray")) {
-                    Log.debug("[Args] Praying enabled");
+                    Log.info("[Args] Praying enabled");
                     Vars.get().usingPrayer = true;
+                }
+                if (arg.toLowerCase().contains("progressive")){
+                    Log.info("[Args] Progressive enabled");
+                    Vars.get().progressiveMelee = true;
+                    Vars.get().progressiveMeleeMap.put(Skill.ATTACK, 60);
+                    Vars.get().progressiveMeleeMap.put(Skill.STRENGTH, 60);
+                    Vars.get().progressiveMeleeMap.put(Skill.DEFENCE, 60);
                 }
 
 
