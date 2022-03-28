@@ -154,6 +154,13 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                                 PaintUtil.getXpHr(Skill.DEFENCE, Vars.get().startDefXp, Vars.get().startTime)))
                         .build())
 
+                .row(template.toBuilder().condition(() -> Skill.MAGIC.getXp() > Const.startMageXp)
+                        .label("Magic")
+                        .value(() -> PaintUtil.formatSkillString(Skill.MAGIC,Const.startMageLvl,
+                                (Skill.MAGIC.getXp() - Const.startMageXp),
+                                PaintUtil.getXpHr(Skill.MAGIC, Vars.get().startMageXp, Vars.get().startTime)))
+                        .build())
+
                 .row(template.toBuilder().condition(() -> Skill.HITPOINTS.getXp() > Const.startHPXP)
                         .label("Hitpoints")
                         .value(() -> PaintUtil.formatSkillString(Skill.HITPOINTS,Const.startHPLvl,
