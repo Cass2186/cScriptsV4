@@ -37,9 +37,10 @@ public class QuestGUIController extends AbstractGUIController {
     @FXML
     void addQuestPressed(ActionEvent event) {
         int index = questListView.getSelectionModel().getSelectedIndex();
-        if (questListView.getItems().get(index) != null) {
-            questListView.getItems().remove(questListView.getItems().get(index));
-            selectedQuestsListView.getItems().add(questListView.getItems().get(index));
+        String s =  questListView.getItems().get(index);
+        if (s != null) {
+            questListView.getItems().remove(s);
+            selectedQuestsListView.getItems().add(s);
 
         }
 
@@ -49,9 +50,11 @@ public class QuestGUIController extends AbstractGUIController {
     @FXML
     void removedQuestPressed(ActionEvent event) {
         int index = selectedQuestsListView.getSelectionModel().getSelectedIndex();
-        if (selectedQuestsListView.getItems().get(index) != null) {
-            questListView.getItems().add(questListView.getItems().get(index));
-            selectedQuestsListView.getItems().remove(selectedQuestsListView.getItems().get(index));
+        String s = selectedQuestsListView.getItems().get(index);
+        if (s != null) {
+            selectedQuestsListView.getItems().remove(s);
+            questListView.getItems().add(s);
+
         }
     }
 

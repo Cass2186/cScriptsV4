@@ -97,15 +97,7 @@
                            <children>
                               <AnchorPane layoutX="139.0" layoutY="152.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="341.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <ScrollPane layoutX="29.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
-                                             <children>
-                                                <ListView fx:id="questListView" layoutX="7.0" layoutY="-14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </ScrollPane>
+                                    <ListView fx:id="questListView" layoutX="37.0" layoutY="42.0" prefHeight="191.0" prefWidth="219.0" AnchorPane.bottomAnchor="163.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="384.0" AnchorPane.topAnchor="42.0" />
                                     <Label layoutX="97.0" layoutY="21.0" text="Quest List">
                                        <font>
                                           <Font size="15.0" />
@@ -127,7 +119,7 @@
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="startScriptButton" layoutX="277.0" layoutY="303.0" mnemonicParsing="false" text="Start Quests" />
+                                    <Button fx:id="startScriptButton" layoutX="277.0" layoutY="303.0" mnemonicParsing="false" onAction="#startButtonPressed" text="Start Quests" />
                                     <ScrollPane layoutX="29.0" layoutY="281.0" prefHeight="96.0" prefWidth="200.0">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">

@@ -163,7 +163,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
     @Override
     public void run() {
 
-        URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cOrbCharger/src/scripts/gui/cTabsGui.fxml");
+        URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/my-script2/src/scripts/gui/cQuesterGUI.fxml");
+
         GUI gui = new GUI(lcn);
 
         Log.debug("Loading GUI");

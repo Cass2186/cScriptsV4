@@ -183,9 +183,5 @@ public enum SupportedQuests {
     private final int configId;
     private final boolean isVarbit;
 
-    @Override
-    public String toString() {
-     return StringUtils.capitalize(this.toString().toLowerCase(Locale.ROOT));
-    }
 
 }
