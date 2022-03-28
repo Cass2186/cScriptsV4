@@ -167,6 +167,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
 
         GUI gui = new GUI(lcn);
 
+
         Log.debug("Loading GUI");
         gui.show();
         while (gui.isOpen())
@@ -203,7 +204,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 Log.debug("[Debug]: Finished all quests");
                 break;
             }
-            if (DeathsOffice.shouldHandleDeath()){
+            if (DeathsOffice.shouldHandleDeath()) {
                 Log.error("Died - Handling death");
                 DeathsOffice.collectItems();
             }
@@ -580,12 +581,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 } else if (arg.toLowerCase().contains("lament")) {
                     General.println("[Args]: Added Enakrah's lament  ");
                     taskList.add(EnakhrasLament.get());
-                }
-                else if (arg.toLowerCase().contains("digsite")) {
+                } else if (arg.toLowerCase().contains("digsite")) {
                     General.println("[Args]: Added Dig Site  ");
                     taskList.add(DigSite.get());
-                }
-                else if (arg.toLowerCase().contains("sheepshearer")) {
+                } else if (arg.toLowerCase().contains("sheepshearer")) {
                     General.println("[Args]: Added Sheep Shearer");
                     taskList.add(SheepShearer.get());
                 }

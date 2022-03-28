@@ -11,6 +11,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
@@ -18,6 +19,7 @@ import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DeathsOffice implements QuestTask {
 
@@ -54,9 +56,8 @@ public class DeathsOffice implements QuestTask {
     };
 
     public static boolean shouldHandleDeath() {
-
-        RSNPC[] death = NPCs.findNearest(DEATHS_ID);
-        return death.length > 0 || Widgets.get(GRAVESTONE_TIMER).isPresent();//Game.getSetting(1697) > 0;
+        Optional<Widget> w = Widgets.get(GRAVESTONE_TIMER[0], GRAVESTONE_TIMER[1], GRAVESTONE_TIMER[2]);
+        return w.isPresent() && w.get().isVisible();//Game.getSetting(1697) > 0;
 
     }
 

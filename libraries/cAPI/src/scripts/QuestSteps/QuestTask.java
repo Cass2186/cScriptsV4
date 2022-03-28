@@ -23,4 +23,5 @@ public interface QuestTask {
 
     List<ItemRequirement> getBuyList();
 
+
 }
