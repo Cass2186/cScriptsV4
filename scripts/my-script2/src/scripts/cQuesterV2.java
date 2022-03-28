@@ -6,6 +6,7 @@ import dax.api_lib.models.DaxCredentialsProvider;
 import dax.shared.helpers.questing.Quest;
 import dax.shared.helpers.questing.QuestHelper;
 import dax.teleports.Teleport;
+import lombok.SneakyThrows;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.*;
@@ -14,6 +15,7 @@ import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import scripts.MoneyMaking.ClockWorks.MakeClockWork;
 import scripts.QuestPackages.APorcineOfInterest.APorcineOfInterest;
 import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
@@ -115,8 +117,10 @@ import scripts.QuestPackages.ShieldOfArrav.PheonixGang;
 import scripts.Tasks.Task;
 import scripts.QuestPackages.TribalTotem.TribalTotem;
 import scripts.QuestPackages.icthlarinslittlehelper.Icthlarinslittlehelper;
+import scripts.gui.GUI;
 
 import java.awt.*;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -155,8 +159,18 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             Combat.setAutoRetaliate(true);
     }
 
+    @SneakyThrows
     @Override
     public void run() {
+
+        URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cOrbCharger/src/scripts/gui/cTabsGui.fxml");
+        GUI gui = new GUI(lcn);
+
+        Log.debug("Loading GUI");
+        gui.show();
+        while (gui.isOpen())
+            Waiting.wait(500);
+
         Vars.get().startingQuestPoints = Utils.getQuestPoints();
         TaskSet tasks;
         if (taskList == null) {

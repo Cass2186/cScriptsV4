@@ -1,8 +1,11 @@
 package scripts.QuestUtils;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Quest;
+
+import java.util.Locale;
 
 @RequiredArgsConstructor
 public enum SupportedQuests {
@@ -16,7 +19,7 @@ public enum SupportedQuests {
     GOBLIN_DIPLOMACY(306, 2378, true),
     IMP_CATCHER(307, 160, false),
     THE_KNIGHTS_SWORD(308, 122, false),
-   // PIRATES_TREASURE(310, 71, false),
+    // PIRATES_TREASURE(310, 71, false),
     PRINCE_ALI_RESCUE(311, 273, false),
     THE_RESTLESS_GHOST(312, 107, false),
     ROMEO_JULIET(313, 144, false),
@@ -24,10 +27,10 @@ public enum SupportedQuests {
     SHEEP_SHEARER(315, 179, false),
     VAMPYRE_SLAYER(1278, 178, false),
     WITCHS_POTION(318, 67, false),
-   // MISTHALIN_MYSTERY(309, 3468, true),
+    // MISTHALIN_MYSTERY(309, 3468, true),
     THE_CORSAIR_CURSE(301, 6071, true),
     ANIMAL_MAGNETISM(331, 3185, true),
-   // BETWEEN_A_ROCK(333, 299, true),
+    // BETWEEN_A_ROCK(333, 299, true),
     BIG_CHOMPY_BIRD_HUNTING(334, 293, false),
     BIOHAZARD(335, 68, false),
     // CABIN_FEVER(336, 655, false),
@@ -51,7 +54,7 @@ public enum SupportedQuests {
     //  THE_EYES_OF_GLOUPHRIE(358, 2497, true),
     FAIRYTALE_I_GROWING_PAINS(359, 1803, true),
     //  FAIRYTALE_II_CURE_A_QUEEN(360, 2326, true),
-     FAMILY_CREST(361, 148, false),
+    FAMILY_CREST(361, 148, false),
     THE_FEUD(362, 334, true),
     FIGHT_ARENA(363, 17, false),
     FISHING_CONTEST(364, 11, false),
@@ -112,7 +115,7 @@ public enum SupportedQuests {
     // SWAN_SONG(428, 2098, true),
     // TAI_BWO_WANNAI_TRIO(429, 320, false),
     // A_TAIL_OF_TWO_CATS(430, 1028, true),
-   TEARS_OF_GUTHIX(433, 451, true),
+    TEARS_OF_GUTHIX(433, 451, true),
     TEMPLE_OF_IKOV(434, 26, false),
     //  THRONE_OF_MISCELLANIA(435, 359, false),
     THE_TOURIST_TRAP(436, 197, false),
@@ -154,7 +157,7 @@ public enum SupportedQuests {
     //   IN_SEARCH_OF_KNOWLEDGE(3143, 8403, true),
     //   SKIPPY_AND_THE_MOGRES(3153, 1344, true),
     //   MAGE_ARENA_I(3146, 267, false),
-       LAIR_OF_TARN_RAZORLOR(3144, 3290, true),
+    LAIR_OF_TARN_RAZORLOR(3144, 3290, true),
     // FAMILY_PEST(329, 5347, true),
     // MAGE_ARENA_II(330, 6067, true),
     // DADDYS_HOME(1688, 10570, true),
@@ -180,10 +183,9 @@ public enum SupportedQuests {
     private final int configId;
     private final boolean isVarbit;
 
-    /**
-     * Gets the current step of this quest
-     *
-     * @return the current step of this quest
-     */
+    @Override
+    public String toString() {
+     return StringUtils.capitalize(this.toString().toLowerCase(Locale.ROOT));
+    }
 
 }
