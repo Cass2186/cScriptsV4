@@ -8,6 +8,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.script.sdk.Log;
 import scripts.QuestUtils.SupportedQuests;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @DoNotRename
@@ -69,14 +71,9 @@ public class QuestGUIController extends AbstractGUIController {
         // Vars settings = Vars.get();
         // ScriptSettings handler = ScriptSettings.getDefault();
         // handler.save("last", settings);
-        for (String s : selectedQuestsListView.getItems()){
-            for (SupportedQuests quest : SupportedQuests.values()){
-                if (quest.getTask().toString().contains(s)){
-                    Log.info("Adding " + quest.getQuestName() + " to quest list");
-                    cQuesterV2.taskList.add(quest.getTask());
-                    break;
-                }
-            }
+        for (String str : selectedQuestsListView.getItems()){
+            String s = str.replace(" ", "");
+            cQuesterV2.handleArgs(s);
         }
 
         this.getGUI().close();
@@ -86,8 +83,7 @@ public class QuestGUIController extends AbstractGUIController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         for (SupportedQuests s : SupportedQuests.values()) {
-            questListView.getItems().add(s.getTask().toString());
-
+            questListView.getItems().add(StringUtils.capitalize(s.getQuestName()));
         }
 
     }
