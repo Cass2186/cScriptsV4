@@ -49,7 +49,7 @@ public class Const {
     public static int FEATHER = 314;
 
     public static   RSArea LUMBRIDGE_FISHING_AREA = new RSArea(new RSTile(3241, 3153, 0), 15);
-    public static RSArea BARBARIAN_OUTPOST = new RSArea(new RSTile(3100, 3435, 0), new RSTile(3110, 3422, 0));
+    public static RSArea BARBARIAN_VILLAGE_FISHING_AREA = new RSArea(new RSTile(3100, 3435, 0), new RSTile(3110, 3422, 0));
     public static RSArea CATHERBY_BANK_AND_COOK_AREA = new RSArea(new RSTile(2820, 3437, 0), new RSTile(2804, 3446, 0));
 
 

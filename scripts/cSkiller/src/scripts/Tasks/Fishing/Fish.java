@@ -79,10 +79,10 @@ public class Fish implements Task {
                 PathingUtil.walkToTile(BARB_FISHING_TILE, 3, false);
             }
             return BARB_FISHING_TILE.distanceTo(Player.getPosition()) < 20;
-        } else if (!isBarbFishing() && !Const.BARBARIAN_OUTPOST.contains(Player.getPosition())) {
+        } else if (!isBarbFishing() && !Const.BARBARIAN_VILLAGE_FISHING_AREA.contains(Player.getPosition())) {
             message = "Going to fishing spot - barb village";
-            PathingUtil.walkToArea(Const.BARBARIAN_OUTPOST, false);
-            return Const.BARBARIAN_OUTPOST.contains(Player.getPosition());
+            PathingUtil.walkToArea(Const.BARBARIAN_VILLAGE_FISHING_AREA, false);
+            return Const.BARBARIAN_VILLAGE_FISHING_AREA.contains(Player.getPosition());
         }
         return true;
     }
