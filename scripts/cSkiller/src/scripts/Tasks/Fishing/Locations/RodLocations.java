@@ -2,5 +2,6 @@ package scripts.Tasks.Fishing.Locations;
 
 public enum RodLocations {
     BARBARIAN_VILLAGE,
-    AL_KHARID;
+    AL_KHARID,
+    BARBARIAN_OUTPOST;
 }

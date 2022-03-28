@@ -541,7 +541,7 @@
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox disable="true" layoutX="25.0" layoutY="109.0" prefHeight="25.0" prefWidth="180.0" promptText="Trout/Salmon Location" />
+                                                <ComboBox fx:id="troutLocationsDropDown" layoutX="25.0" layoutY="109.0" prefHeight="25.0" prefWidth="180.0" promptText="Trout/Salmon Location" />
                                                 <ComboBox disable="true" layoutX="362.0" layoutY="74.0" prefWidth="150.0" promptText="Item 1" />
                                                 <Label layoutX="362.0" layoutY="14.0" text="Cooking">
                                                    <font>
@@ -549,7 +549,7 @@
                                                    </font>
                                                 </Label>
                                                 <CheckBox fx:id="getBarbarianRodCheckBox" layoutX="25.0" layoutY="41.0" mnemonicParsing="false" text="Get Barbarian Rod at level 58" />
-                                                <ComboBox disable="true" layoutX="25.0" layoutY="74.0" prefHeight="25.0" prefWidth="180.0" promptText="Shrimp Location" />
+                                                <ComboBox fx:id="shrimpLocationsDropDown" layoutX="25.0" layoutY="74.0" prefHeight="25.0" prefWidth="180.0" promptText="Shrimp Location" />
                                                 <ComboBox disable="true" layoutX="25.0" layoutY="146.0" prefHeight="25.0" prefWidth="180.0" promptText="Lobster Location" />
                                                 <ComboBox disable="true" layoutX="25.0" layoutY="185.0" prefHeight="25.0" prefWidth="180.0" promptText="Harpoon Location" />
                                                 <CheckBox disable="true" layoutX="362.0" layoutY="41.0" mnemonicParsing="false" text="Space Holder" />

@@ -20,6 +20,8 @@ import scripts.Data.Enums.Crafting.CraftMethods;
 import scripts.Data.Enums.Methods;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.Fishing.Locations.RodLocations;
+import scripts.Tasks.Fishing.Locations.ShrimpLocations;
 import scripts.Tasks.Magic.Alch;
 import scripts.Tasks.Slayer.SlayerConst.CombatPotions;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
@@ -140,7 +142,9 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown ,slayerCombatPotionBox;
+    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown ,slayerCombatPotionBox,
+            shrimpLocationsDropDown,
+            troutLocationsDropDown;
 
     @FXML
     @DoNotRename
@@ -434,6 +438,12 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg/1000));
         afkForSD.setText(String.valueOf(Vars.get().afkDurationSD/1000));
         //chancetoClickJewleryBox.setText(String.valueOf(Vars.get().clickAllJeweleryChance));
+        for (RodLocations r : RodLocations.values()){
+            troutLocationsDropDown.getItems().add(StringUtils.capitalize(r.toString().toLowerCase()));
+        }
+        for (ShrimpLocations r : ShrimpLocations.values()){
+            shrimpLocationsDropDown.getItems().add(StringUtils.capitalize(r.toString().toLowerCase()));
+        }
         for (CombatPotions c: CombatPotions.values()){
             slayerCombatPotionBox.getItems().add(StringUtils.capitalize(c.toString().toLowerCase()));
         }
