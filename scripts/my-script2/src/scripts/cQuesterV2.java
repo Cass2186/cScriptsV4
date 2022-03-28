@@ -168,10 +168,13 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         GUI gui = new GUI(lcn);
 
 
-        Log.debug("Loading GUI");
-        gui.show();
-        while (gui.isOpen())
-            Waiting.wait(500);
+
+        if (Vars.get().shouldShowGui) {
+            Log.debug("Loading GUI");
+            gui.show();
+            while (gui.isOpen())
+                Waiting.wait(500);
+        }
 
         Vars.get().startingQuestPoints = Utils.getQuestPoints();
         TaskSet tasks;
@@ -232,6 +235,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         General.println("[Debug]: Argument entered: " + input);
         for (String arg : input.split(";")) {
             try {
+                Vars.get().shouldShowGui = false;
                 handleArgs(arg);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -568,7 +572,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             General.println("[Args]: Added Demon Slayer");
             taskList.add(DemonSlayer.get());
         } else if (arg.toLowerCase().contains("bonevoyage")) {
-            General.println("[Args]: Added Bone voyage");
+            General.println("[Args]: Added Bone voyage line");
             taskList.add(RuneMysteries.get());
             taskList.add(HazeelCult.get());
             taskList.add(MerlinsCrystal.get());

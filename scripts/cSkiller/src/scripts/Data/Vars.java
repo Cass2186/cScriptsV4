@@ -65,9 +65,13 @@ public class Vars {
     //cooking
     public boolean doingWines = Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35;
 
+    //Thieving
+    public boolean useFruitStalls = true;
 
     //Magic
     public int clickAllJeweleryChance = General.random(25,45);
+    public boolean preferJeweleryOverTeleports = false;
+
     //mining
     public int oreDeposits = 0;
 

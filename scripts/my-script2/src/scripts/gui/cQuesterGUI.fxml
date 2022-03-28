@@ -104,7 +104,7 @@
                                     </Label>
                                     <Button fx:id="addQuestButton" layoutX="271.0" layoutY="91.0" mnemonicParsing="false" onAction="#addQuestPressed" prefHeight="26.0" prefWidth="98.0" text="Add Quest" />
                                     <Button fx:id="removeQuestButton" layoutX="271.0" layoutY="149.0" mnemonicParsing="false" onAction="#removedQuestPressed" text="Remove Quest" />
-                                    <ListView fx:id="selectedQuestsListView" layoutX="408.0" layoutY="42.0" prefHeight="295.0" prefWidth="200.0" AnchorPane.bottomAnchor="59.0" AnchorPane.leftAnchor="408.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="42.0" />
+                                    <ListView fx:id="selectedQuestsListView" layoutX="408.0" layoutY="42.0" prefHeight="295.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="408.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="42.0" />
                                     <Label layoutX="455.0" layoutY="21.0" text="Selected Quests">
                                        <font>
                                           <Font size="15.0" />

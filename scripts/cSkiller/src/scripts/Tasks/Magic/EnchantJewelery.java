@@ -24,7 +24,6 @@ import java.util.Optional;
 public class EnchantJewelery implements Task {
 
 
-
     public void enchantItems(SpellInfo spell) {
         BankTask bnk = spell.getBankTask();
 
@@ -54,9 +53,9 @@ public class EnchantJewelery implements Task {
                             Timer.waitCondition(() -> {
                                         AntiBan.timedActions();
                                         General.sleep(General.randomSD(160, 30));
-                                      return  GameTab.getOpen().equals(GameTab.TABS.MAGIC);
+                                        return GameTab.getOpen().equals(GameTab.TABS.MAGIC);
                                     }
-                                 , 2500, 3250);
+                                    , 2500, 3250);
                         }
                     }
                 }
@@ -108,10 +107,9 @@ public class EnchantJewelery implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().currentTask != null &&
-                Vars.get().currentTask.equals(SkillTasks.MAGIC)){
-            if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 37) {
-               return true;
-            } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC)  <37) { //should be > 67
+                Vars.get().currentTask.equals(SkillTasks.MAGIC)) {
+            if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 37 ||
+                    Vars.get().preferJeweleryOverTeleports) {
                 return true;
             }
         }
@@ -123,6 +121,8 @@ public class EnchantJewelery implements Task {
         if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 27) {
             enchantItems(SpellInfo.SAPPHIRE_ENCHANT);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 37) {
+            enchantItems(SpellInfo.EMERALD_ENCHANT);
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 57) {
             enchantItems(SpellInfo.EMERALD_ENCHANT);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) > 57) {
             enchantItems(SpellInfo.DIAMOND_ENCHANT);

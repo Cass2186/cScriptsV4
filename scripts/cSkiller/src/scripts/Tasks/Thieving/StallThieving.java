@@ -140,10 +140,12 @@ public class StallThieving implements Task {
         }
         return false;
     }
+
     @Override
     public String toString() {
         return "Stall thieving";
     }
+
     @Override
     public Priority priority() {
         return Priority.LOW;
@@ -157,10 +159,12 @@ public class StallThieving implements Task {
 
     @Override
     public void execute() {
-        if (Skills.SKILLS.THIEVING.getActualLevel() < 25 && Skills.SKILLS.THIEVING.getActualLevel() >= 5) {
+        if ((!Vars.get().useFruitStalls || Skills.SKILLS.THIEVING.getActualLevel() < 25)
+                && Skills.SKILLS.THIEVING.getActualLevel() >= 5) {
             stealBakersStall();
         } else if (Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 150 && //15% favour
-                Skills.SKILLS.THIEVING.getActualLevel() >= 25 && Skills.SKILLS.THIEVING.getActualLevel() < 55) {
+                Skills.SKILLS.THIEVING.getActualLevel() >= 25 && Skills.SKILLS.THIEVING.getActualLevel() < 55 &&
+                Vars.get().useFruitStalls) {
             stealFruitStall();
         }
     }

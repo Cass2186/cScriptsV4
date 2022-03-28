@@ -29,6 +29,7 @@ public class Vars {
 
     public int startingQuestPoints = 0;
     public int currentQuestPoints = 0;
+    public boolean shouldShowGui = true;
 
     public int afkDurationAvg = 0;
     public int afkDurationSD = 0;

@@ -304,7 +304,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
        // BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
         //SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
-        lcn = new URL("https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
+        lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cSkiller/src/scripts/resources/cSkillerGUI.fxml");
+                //"https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
         GUI gui = new GUI(lcn);
 
         if (Vars.get().shouldShowGUI) {

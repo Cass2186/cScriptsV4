@@ -9,21 +9,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.util.ScriptSettings;
 import scripts.Data.CombatTask;
 import scripts.Data.Const;
+import scripts.Data.Enums.Crafting.CraftMethods;
 import scripts.Data.Enums.Methods;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Magic.Alch;
-import scripts.Timer;
-import scripts.Utils;
 import scripts.skillergui.SkillerAbstractGUIController;
 
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @DoNotRename
@@ -50,6 +51,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @FXML
     @DoNotRename
     private TextField woodcuttingGoalLevelBox;
+
 
     @FXML
     @DoNotRename
@@ -135,15 +137,15 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private ComboBox<String> magicAlchItemBox;
+    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown;
 
     @FXML
     @DoNotRename
-    private CheckBox useMlmBox1;
+    private CheckBox useMlmBox1, useFruitStallButton;
 
     @FXML
     @DoNotRename
-    private CheckBox useBlastFurnaceBox;
+    private CheckBox useBlastFurnaceBox ,preferJewleryOverTeleportsCheckBox;
 
     @FXML
     @DoNotRename
@@ -162,15 +164,25 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         updateAfkDuration(event);
         updateAFKFrequency(event);
         //updateABC2Modifier(event);
-        if (useMlmBox1.isSelected())
-            Vars.get().useMLM = true;
-        else
-            Vars.get().useMLM = false;
+        setUseMlmBox(event);
+        handleCheckBoxes();
         //  setUseCBalls(event);
         this.getGUI().close();
     }
 
-
+    private void handleCheckBoxes(){
+        String s = chancetoClickJewleryBox.getText();
+        if (s != null) {
+            System.out.println("[GUIController]: Chance to click Jewlery adjusted to " + chancetoClickJewleryBox.getText());
+            Vars.get().clickAllJeweleryChance = Integer.parseInt(chancetoClickJewleryBox.getText());
+        } else {
+            int i =  Utils.random(25,45);
+            System.out.println("[GUIController]: Chance to click Jewlery adjusted to " + i);
+            Vars.get().clickAllJeweleryChance =i;
+        }
+        Vars.get().useFruitStalls = useFruitStallButton.isSelected();
+        Vars.get().preferJeweleryOverTeleports = preferJewleryOverTeleportsCheckBox.isSelected();
+    }
 
 
  /*   @FXML
@@ -394,15 +406,18 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg/1000));
         afkForSD.setText(String.valueOf(Vars.get().afkDurationSD/1000));
         //chancetoClickJewleryBox.setText(String.valueOf(Vars.get().clickAllJeweleryChance));
-
+        for (CraftMethods c : CraftMethods.values()){
+            craftingMethodsDropDown.getItems().add(StringUtils.capitalize(c.toString().toLowerCase()));
+        }
         for (SkillTasks s : SkillTasks.values()) {
-            startingSkillDropDown.getItems().add(s.getSkillName());
+            startingSkillDropDown.getItems().add(StringUtils.capitalize(s.getSkillName().toLowerCase()));
         }
         for (Const.LOG_ACTIONS action : Const.LOG_ACTIONS.values()) {
-            logActionBox.getItems().add(action.toString());
+            logActionBox.getItems().add(StringUtils.capitalize(action.toString().toLowerCase()));
         }
         for (Alch.AlchItems item : Alch.AlchItems.values()) {
-            magicAlchItemBox.getItems().add(item.toString() + " (" + item.getProfit() + ")");
+            magicAlchItemBox.getItems().add(StringUtils.capitalize(item.toString().toLowerCase())
+                    + " (" + item.getProfit() + ")");
         }
 
         for (Methods.HERBLORE meth : Methods.HERBLORE.values()) {

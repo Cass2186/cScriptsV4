@@ -7,6 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
@@ -158,15 +159,18 @@ public enum SpellInfo {
 
 
     public static Optional<SpellInfo> getCurrentSpell() {
+        // special case, otherwise we follow order above
+        if (Vars.get().preferJeweleryOverTeleports && Skill.MAGIC.getActualLevel() >= 37 &&
+                Skill.MAGIC.getActualLevel() < 57 ){
+            return Optional.of(EMERALD_ENCHANT);
+        }
+
         for (SpellInfo i : values()) {
-            boolean b = Skills.getActualLevel(skill) < i.maxLevel;
-            // Log.log("b = " + b + " for " + i.toString() + " max: " + i.maxLevel);
             if (Skills.getActualLevel(skill) >= i.minLevel &&
                     Skills.getActualLevel(skill) < i.maxLevel) {
                 return Optional.of(i);
             }
         }
-        // Log.log("[SpellInfo]: returning an empty optional");
         return Optional.empty();
     }
 
