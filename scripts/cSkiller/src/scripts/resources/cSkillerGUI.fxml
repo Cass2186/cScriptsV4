@@ -336,7 +336,6 @@
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
-                                        <ComboBox fx:id="magicAlchItemBox" layoutX="37.0" layoutY="315.0" onAction="#updateAlchItem" prefWidth="150.0" promptText="Alch Item" />
                                         <Label layoutX="266.0" layoutY="85.0" text="Herblore" underline="true">
                                             <font>
                                                 <Font size="16.0" />
@@ -435,17 +434,17 @@
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <CheckBox disable="true" layoutX="30.0" layoutY="38.0" mnemonicParsing="false" selected="true" text="Point Boosting?" />
+                                                <CheckBox fx:id="pointBoosingBox" layoutX="30.0" layoutY="38.0" mnemonicParsing="false" selected="true" text="Point Boosting?" />
                                                 <CheckBox disable="true" layoutX="29.0" layoutY="135.0" mnemonicParsing="false" text="Use Cannon (when applicable)" />
                                                 <ComboBox disable="true" layoutX="31.0" layoutY="65.0" prefWidth="150.0" promptText="Slayer Master" />
-                                                <TextField alignment="CENTER" disable="true" layoutX="137.0" layoutY="314.0" prefHeight="25.0" prefWidth="41.0" promptText="# Trips" text="10" />
-                                                <Label disable="true" layoutX="30.0" layoutY="318.0" text="Restock Multiplier:" />
+                                                <TextField fx:id="restockMultiplierBox" alignment="CENTER" layoutX="137.0" layoutY="314.0" prefHeight="25.0" prefWidth="41.0" promptText="Restock #" text="5" />
+                                                <Label layoutX="30.0" layoutY="318.0" text="Restock Multiplier:" />
                                                 <CheckBox disable="true" layoutX="31.0" layoutY="293.0" mnemonicParsing="false" selected="true" text="Restocking" />
-                                                <ComboBox disable="true" layoutX="33.0" layoutY="351.0" prefWidth="150.0" promptText="Combat Potion" />
-                                                <TextField alignment="CENTER" disable="true" layoutX="162.0" layoutY="168.0" prefHeight="25.0" prefWidth="53.0" promptText="# Trips" text="750" />
-                                                <Label disable="true" layoutX="29.0" layoutY="172.0" text="Loot over gp threshold:" />
-                                                <Slider disable="true" layoutX="162.0" layoutY="203.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="20.0" />
-                                                <Label disable="true" layoutX="29.0" layoutY="213.0" text="ABC2 Sleep chance:" />
+                                                <ComboBox fx:id="slayerCombatPotionBox" layoutX="33.0" layoutY="351.0" prefWidth="150.0" promptText="Combat Potion" />
+                                                <TextField fx:id="lootOverGpText" alignment="CENTER" layoutX="162.0" layoutY="168.0" prefHeight="25.0" prefWidth="53.0" promptText="GP" text="1500" />
+                                                <Label layoutX="29.0" layoutY="172.0" text="Loot over gp threshold:" />
+                                                <Slider fx:id="slayerAbc2ChanceSlider" layoutX="162.0" layoutY="203.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="20.0" />
+                                                <Label layoutX="29.0" layoutY="213.0" text="ABC2 Sleep chance:" />
                                                 <ComboBox disable="true" layoutX="33.0" layoutY="393.0" prefWidth="150.0" promptText="Food Name" />
                                                 <Label layoutX="378.0" layoutY="12.0" text="Equipment Preferences">
                                                    <font>
@@ -549,7 +548,7 @@
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <CheckBox disable="true" layoutX="25.0" layoutY="41.0" mnemonicParsing="false" text="Get Barbarian Rod at level 58" />
+                                                <CheckBox fx:id="getBarbarianRodCheckBox" layoutX="25.0" layoutY="41.0" mnemonicParsing="false" text="Get Barbarian Rod at level 58" />
                                                 <ComboBox disable="true" layoutX="25.0" layoutY="74.0" prefHeight="25.0" prefWidth="180.0" promptText="Shrimp Location" />
                                                 <ComboBox disable="true" layoutX="25.0" layoutY="146.0" prefHeight="25.0" prefWidth="180.0" promptText="Lobster Location" />
                                                 <ComboBox disable="true" layoutX="25.0" layoutY="185.0" prefHeight="25.0" prefWidth="180.0" promptText="Harpoon Location" />
@@ -604,6 +603,7 @@
                                                 <CheckBox disable="true" layoutX="364.0" layoutY="55.0" mnemonicParsing="false" selected="true" text="Man" />
                                                 <CheckBox disable="true" layoutX="364.0" layoutY="83.0" mnemonicParsing="false" selected="true" text="Cake Stall" />
                                                 <CheckBox fx:id="useFruitStallButton" layoutX="364.0" layoutY="110.0" mnemonicParsing="false" selected="true" text="Fruit Stall (15% hosidius favour required)" />
+                                                <ComboBox fx:id="magicAlchItemBox" layoutX="29.0" layoutY="119.0" onAction="#updateAlchItem" prefHeight="25.0" prefWidth="155.0" promptText="Alch Item" />
                                              </children>
                                           </AnchorPane>
                                        </content>

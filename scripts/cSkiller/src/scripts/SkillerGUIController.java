@@ -21,6 +21,8 @@ import scripts.Data.Enums.Methods;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Magic.Alch;
+import scripts.Tasks.Slayer.SlayerConst.CombatPotions;
+import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.skillergui.SkillerAbstractGUIController;
 
 import java.net.URL;
@@ -46,7 +48,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @DoNotRename
     private TextField agilityGoalLevelBox, herbloreGoalLevelBox,
             craftingGoalLevelBox, atkLvlGoalBox, defLvlGoalBox, rangedLvlGoalBox, strLvlGoalBox,
-            miningGoalLevelBox ,chancetoClickJewleryBox, fletchingGoalLevelBox ,firemakingGoalLevelBox;
+            miningGoalLevelBox ,chancetoClickJewleryBox, fletchingGoalLevelBox ,firemakingGoalLevelBox ,
+            lootOverGpText ,restockMultiplierBox;
 
     @FXML
     @DoNotRename
@@ -137,11 +140,11 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown;
+    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown ,slayerCombatPotionBox;
 
     @FXML
     @DoNotRename
-    private CheckBox useMlmBox1, useFruitStallButton;
+    private CheckBox useMlmBox1, useFruitStallButton ,pointBoosingBox ,getBarbarianRodCheckBox;
 
     @FXML
     @DoNotRename
@@ -150,6 +153,11 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @FXML
     @DoNotRename
     public ImageView skillsImage;
+
+
+    @FXML
+    @DoNotRename
+    private Slider slayerAbc2ChanceSlider;
 
 
     @FXML
@@ -166,22 +174,27 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         //updateABC2Modifier(event);
         setUseMlmBox(event);
         handleCheckBoxes();
+
+
+        SlayerVars.get().minLootValue = lootOverGpText.getText() != null ?
+                Integer.parseInt(lootOverGpText.getText()) : 1500;
+        SlayerVars.get().restockNumber = restockMultiplierBox.getText() != null ?
+                Integer.parseInt(restockMultiplierBox.getText()) : 6;
+       // SlayerVars.get().potionToUse =
+        SlayerVars.get().pointBoosting = pointBoosingBox.isSelected();
+        updateSlayerPotion();
+        SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() +1; // adding 1 in case it's set to 0
         //  setUseCBalls(event);
         this.getGUI().close();
     }
 
     private void handleCheckBoxes(){
         String s = chancetoClickJewleryBox.getText();
-        if (s != null) {
-            System.out.println("[GUIController]: Chance to click Jewlery adjusted to " + chancetoClickJewleryBox.getText());
-            Vars.get().clickAllJeweleryChance = Integer.parseInt(chancetoClickJewleryBox.getText());
-        } else {
-            int i =  Utils.random(25,45);
-            System.out.println("[GUIController]: Chance to click Jewlery adjusted to " + i);
-            Vars.get().clickAllJeweleryChance =i;
-        }
+        Vars.get().clickAllJeweleryChance = s != null ?
+                Integer.parseInt(chancetoClickJewleryBox.getText()) :Utils.random(25,45);
         Vars.get().useFruitStalls = useFruitStallButton.isSelected();
         Vars.get().preferJeweleryOverTeleports = preferJewleryOverTeleportsCheckBox.isSelected();
+        Vars.get().getBarbarianRod = getBarbarianRodCheckBox.isSelected();
     }
 
 
@@ -331,6 +344,21 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         }
     }
 
+    @FXML
+    @DoNotRename
+    void updateSlayerPotion() {
+        switch (slayerCombatPotionBox.getValue()) {
+            case ("Super_attack"):
+                SlayerVars.get().potionToUse = ItemID.SUPER_ATTACK_POTION;
+                break;
+            case ("Super_strength"):
+                SlayerVars.get().potionToUse = ItemID.SUPER_STRENGTH_POTION;
+                break;
+            default:
+                SlayerVars.get().potionToUse = ItemID.SUPER_COMBAT_POTION;
+        }
+    }
+
 
     @FXML
     @DoNotRename
@@ -406,6 +434,9 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg/1000));
         afkForSD.setText(String.valueOf(Vars.get().afkDurationSD/1000));
         //chancetoClickJewleryBox.setText(String.valueOf(Vars.get().clickAllJeweleryChance));
+        for (CombatPotions c: CombatPotions.values()){
+            slayerCombatPotionBox.getItems().add(StringUtils.capitalize(c.toString().toLowerCase()));
+        }
         for (CraftMethods c : CraftMethods.values()){
             craftingMethodsDropDown.getItems().add(StringUtils.capitalize(c.toString().toLowerCase()));
         }

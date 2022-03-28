@@ -62,6 +62,9 @@ public class Vars {
 
     public boolean switchingTasks = false;
 
+    //fishing
+    public boolean getBarbarianRod = false; //TODO implement this in fishing tasks
+
     //cooking
     public boolean doingWines = Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35;
 
