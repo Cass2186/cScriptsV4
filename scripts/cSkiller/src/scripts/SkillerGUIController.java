@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.util.ScriptSettings;
 import scripts.Data.CombatTask;
 import scripts.Data.Const;
@@ -50,8 +51,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @DoNotRename
     private TextField agilityGoalLevelBox, herbloreGoalLevelBox,
             craftingGoalLevelBox, atkLvlGoalBox, defLvlGoalBox, rangedLvlGoalBox, strLvlGoalBox,
-            miningGoalLevelBox ,chancetoClickJewleryBox, fletchingGoalLevelBox ,firemakingGoalLevelBox ,
-            lootOverGpText ,restockMultiplierBox;
+            miningGoalLevelBox, chancetoClickJewleryBox, fletchingGoalLevelBox, firemakingGoalLevelBox,
+            lootOverGpText, restockMultiplierBox;
 
     @FXML
     @DoNotRename
@@ -142,17 +143,17 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown ,slayerCombatPotionBox,
+    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown, slayerCombatPotionBox,
             shrimpLocationsDropDown,
             troutLocationsDropDown;
 
     @FXML
     @DoNotRename
-    private CheckBox useMlmBox1, useFruitStallButton ,pointBoosingBox ,getBarbarianRodCheckBox;
+    private CheckBox useMlmBox1, useFruitStallButton, pointBoosingBox, getBarbarianRodCheckBox;
 
     @FXML
     @DoNotRename
-    private CheckBox useBlastFurnaceBox ,preferJewleryOverTeleportsCheckBox;
+    private CheckBox useBlastFurnaceBox, preferJewleryOverTeleportsCheckBox;
 
     @FXML
     @DoNotRename
@@ -178,24 +179,24 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         //updateABC2Modifier(event);
         setUseMlmBox(event);
         handleCheckBoxes();
-
+        updateFishingLocations();
 
         SlayerVars.get().minLootValue = lootOverGpText.getText() != null ?
                 Integer.parseInt(lootOverGpText.getText()) : 1500;
         SlayerVars.get().restockNumber = restockMultiplierBox.getText() != null ?
                 Integer.parseInt(restockMultiplierBox.getText()) : 6;
-       // SlayerVars.get().potionToUse =
+        // SlayerVars.get().potionToUse =
         SlayerVars.get().pointBoosting = pointBoosingBox.isSelected();
         updateSlayerPotion();
-        SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() +1; // adding 1 in case it's set to 0
+        SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() + 1; // adding 1 in case it's set to 0
         //  setUseCBalls(event);
         this.getGUI().close();
     }
 
-    private void handleCheckBoxes(){
+    private void handleCheckBoxes() {
         String s = chancetoClickJewleryBox.getText();
-        Vars.get().clickAllJeweleryChance = s != null ?
-                Integer.parseInt(chancetoClickJewleryBox.getText()) :Utils.random(25,45);
+        Vars.get().clickAllJeweleryChance = !s.equals("") ?
+                Integer.parseInt(chancetoClickJewleryBox.getText()) : Utils.random(25, 45);
         Vars.get().useFruitStalls = useFruitStallButton.isSelected();
         Vars.get().preferJeweleryOverTeleports = preferJewleryOverTeleportsCheckBox.isSelected();
         Vars.get().getBarbarianRod = getBarbarianRodCheckBox.isSelected();
@@ -350,16 +351,59 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
+    void updateFishingLocations() {
+        if (troutLocationsDropDown.getValue() != null) {
+            switch (shrimpLocationsDropDown.getValue()) {
+                case ("Lumbridge"):
+                    Vars.get().fishingLocation = ShrimpLocations.LUMBRIDGE_SWAMP;
+                    break;
+                case ("Catherby"):
+                    Vars.get().fishingLocation = ShrimpLocations.CATHERBY;
+                    break;
+                default:
+                    Vars.get().fishingLocation = ShrimpLocations.LUMBRIDGE_SWAMP;
+            }
+        } else {
+            Vars.get().fishingLocation = ShrimpLocations.LUMBRIDGE_SWAMP;
+        }
+        if (troutLocationsDropDown.getValue() != null) {
+            switch (troutLocationsDropDown.getValue()) {
+                case ("Barbarian_village"):
+                    Vars.get().fishingLocation = RodLocations.BARBARIAN_VILLAGE;
+                    break;
+                case ("Ottos_grotto"):
+                    if (Skill.FISHING.getActualLevel() >= RodLocations.OTTOS_GROTTO.getRequiredLevel()) {
+                        Vars.get().fishingLocation = RodLocations.OTTOS_GROTTO;
+                        break;
+                    }
+                case ("Al_kharid"):
+                    Vars.get().fishingLocation = RodLocations.AL_KHARID;
+                    break;
+
+                default:
+                    Vars.get().fishingLocation = RodLocations.BARBARIAN_VILLAGE;
+            }
+        } else {
+            Vars.get().fishingLocation = RodLocations.BARBARIAN_VILLAGE;
+        }
+    }
+
+    @FXML
+    @DoNotRename
     void updateSlayerPotion() {
-        switch (slayerCombatPotionBox.getValue()) {
-            case ("Super_attack"):
-                SlayerVars.get().potionToUse = ItemID.SUPER_ATTACK_POTION;
-                break;
-            case ("Super_strength"):
-                SlayerVars.get().potionToUse = ItemID.SUPER_STRENGTH_POTION;
-                break;
-            default:
-                SlayerVars.get().potionToUse = ItemID.SUPER_COMBAT_POTION;
+        if (slayerCombatPotionBox.getValue() != null) {
+            switch (slayerCombatPotionBox.getValue()) {
+                case ("Super_attack"):
+                    SlayerVars.get().potionToUse = ItemID.SUPER_ATTACK_POTION;
+                    break;
+                case ("Super_strength"):
+                    SlayerVars.get().potionToUse = ItemID.SUPER_STRENGTH_POTION;
+                    break;
+                default:
+                    SlayerVars.get().potionToUse = ItemID.SUPER_COMBAT_POTION;
+            }
+        } else {
+            SlayerVars.get().potionToUse = ItemID.SUPER_COMBAT_POTION;
         }
     }
 
@@ -382,7 +426,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     void addStrSkillTaskToList(ActionEvent event) {
         Vars.get().combatTaskList.add(new CombatTask(Skills.SKILLS.STRENGTH,
                 Integer.parseInt(strLvlGoalBox.getText())));
-        combatProgressionBox.getChildren().add( new Text( "Train Strength to Lvl " +  strLvlGoalBox.getText()));
+        combatProgressionBox.getChildren().add(new Text("Train Strength to Lvl " + strLvlGoalBox.getText()));
     }
 
     @FXML
@@ -390,7 +434,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     void addAtkSkillTaskToList(ActionEvent event) {
         Vars.get().combatTaskList.add(new CombatTask(Skills.SKILLS.ATTACK,
                 Integer.parseInt(atkLvlGoalBox.getText())));
-        combatProgressionBox.getChildren().add( new Text( "Train Attack to Lvl " +  atkLvlGoalBox.getText()));
+        combatProgressionBox.getChildren().add(new Text("Train Attack to Lvl " + atkLvlGoalBox.getText()));
     }
 
     @FXML
@@ -398,7 +442,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     void addDefSkillTaskToList(ActionEvent event) {
         Vars.get().combatTaskList.add(new CombatTask(Skills.SKILLS.DEFENCE,
                 Integer.parseInt(defLvlGoalBox.getText())));
-        combatProgressionBox.getChildren().add( new Text( "Train Defence to Lvl " +  defLvlGoalBox.getText()));
+        combatProgressionBox.getChildren().add(new Text("Train Defence to Lvl " + defLvlGoalBox.getText()));
     }
 
     @FXML
@@ -406,7 +450,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     void addRangedSkillTaskToList(ActionEvent event) {
         Vars.get().combatTaskList.add(new CombatTask(Skills.SKILLS.RANGED,
                 Integer.parseInt(rangedLvlGoalBox.getText())));
-        combatProgressionBox.getChildren().add( new Text( "Train Ranged to Lvl " +  defLvlGoalBox.getText()));
+        combatProgressionBox.getChildren().add(new Text("Train Ranged to Lvl " + defLvlGoalBox.getText()));
     }
 
 
@@ -429,30 +473,30 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         runecraftingGoalLevelBox.setText(String.valueOf(Skills.SKILLS.RUNECRAFTING.getActualLevel()));
         hunterGoalLevelBox.setText(String.valueOf(Skills.SKILLS.HUNTER.getActualLevel()));
         slayerGoalLevelBox.setText(String.valueOf(Skills.SKILLS.SLAYER.getActualLevel()));
-         constructionGoalLevelBox.setText(String.valueOf(Skills.SKILLS.CONSTRUCTION.getActualLevel()));
+        constructionGoalLevelBox.setText(String.valueOf(Skills.SKILLS.CONSTRUCTION.getActualLevel()));
         thievingGoalLevelBox.setText(String.valueOf(Skills.SKILLS.THIEVING.getActualLevel()));
         switchSkillMinTime.setText(String.valueOf(Vars.get().skillSwitchMin / 60000));
         switchSkillMaxTime.setText(String.valueOf(Vars.get().skillSwitchMax / 60000));
-        afkEveryAverage.setText(String.valueOf(Vars.get().afkFrequencyAvg/1000));
-        afkEverySD.setText(String.valueOf(Vars.get().afkFrequencySD/1000));
-        afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg/1000));
-        afkForSD.setText(String.valueOf(Vars.get().afkDurationSD/1000));
+        afkEveryAverage.setText(String.valueOf(Vars.get().afkFrequencyAvg / 1000));
+        afkEverySD.setText(String.valueOf(Vars.get().afkFrequencySD / 1000));
+        afkForAverage.setText(String.valueOf(Vars.get().afkDurationAvg / 1000));
+        afkForSD.setText(String.valueOf(Vars.get().afkDurationSD / 1000));
 
-        
-        for (RodLocations r : RodLocations.values()){
+        //TODO implement fishign location reading above
+        for (RodLocations r : RodLocations.values()) {
             troutLocationsDropDown.getItems().add(StringUtils.capitalize(r.toString().toLowerCase()));
         }
-        for (ShrimpLocations r : ShrimpLocations.values()){
+        for (ShrimpLocations r : ShrimpLocations.values()) {
             shrimpLocationsDropDown.getItems().add(StringUtils.capitalize(r.toString().toLowerCase()));
         }
-        for (CombatPotions c: CombatPotions.values()){
+        for (CombatPotions c : CombatPotions.values()) {
             slayerCombatPotionBox.getItems().add(StringUtils.capitalize(c.toString().toLowerCase()));
         }
-        for (CraftMethods c : CraftMethods.values()){
+        for (CraftMethods c : CraftMethods.values()) {
             craftingMethodsDropDown.getItems().add(StringUtils.capitalize(c.toString().toLowerCase()));
         }
         for (SkillTasks s : SkillTasks.values()) {
-            startingSkillDropDown.getItems().add(StringUtils.capitalize(s.getSkillName().toLowerCase()));
+            startingSkillDropDown.getItems().add(s.getSkillName());
         }
         for (Const.LOG_ACTIONS action : Const.LOG_ACTIONS.values()) {
             logActionBox.getItems().add(StringUtils.capitalize(action.toString().toLowerCase()));

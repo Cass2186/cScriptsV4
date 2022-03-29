@@ -5,8 +5,11 @@ import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
+import org.tribot.api2007.types.RSArea;
 import scripts.AntiBan;
 import scripts.ItemID;
+import scripts.Tasks.Fishing.Fish;
+import scripts.Tasks.Fishing.Locations.FishingLocation;
 import scripts.Tasks.Magic.Alch;
 import scripts.Timer;
 import scripts.dax.tracker.DaxTracker;
@@ -70,6 +73,9 @@ public class Vars {
 
     //Thieving
     public boolean useFruitStalls = true;
+
+    //Fishing
+    public FishingLocation fishingLocation = null;
 
     //Magic
     public int clickAllJeweleryChance = General.random(25,45);

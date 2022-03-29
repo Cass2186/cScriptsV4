@@ -4,6 +4,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
@@ -72,6 +73,14 @@ public class Fish implements Task {
 
 
     public boolean goToFishingSpot() {
+        if (Vars.get().fishingLocation != null &&
+                Vars.get().fishingLocation.getRequiredLevel() <= Skill.FISHING.getActualLevel()){
+            if (!Vars.get().fishingLocation.getArea().contains(Player.getPosition())){
+                message = "Going to fishing spot - " + Vars.get().fishingLocation.toString();
+                PathingUtil.walkToArea(Vars.get().fishingLocation.getArea(), false);
+                return Vars.get().fishingLocation.getArea().contains(Player.getPosition());
+            }
+        }
         if (isBarbFishing()) {
             if (BARB_FISHING_TILE.distanceTo(Player.getPosition()) > 15) {
                 message = "Going to fishing spot - barb fishing";
