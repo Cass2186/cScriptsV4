@@ -72,7 +72,35 @@ public class Const {
                     new RSTile(2865, 3429, 0)
             }
     );
-
+    public static   RSArea OTTOS_GROTTO_FISHING_AREA = new RSArea(
+            new RSTile[] {
+                    new RSTile(2506, 3493, 0),
+                    new RSTile(2504, 3497, 0),
+                    new RSTile(2504, 3500, 0),
+                    new RSTile(2500, 3505, 0),
+                    new RSTile(2500, 3513, 0),
+                    new RSTile(2504, 3517, 0),
+                    new RSTile(2510, 3517, 0),
+                    new RSTile(2510, 3520, 0),
+                    new RSTile(2499, 3520, 0),
+                    new RSTile(2498, 3517, 0),
+                    new RSTile(2498, 3514, 0),
+                    new RSTile(2496, 3511, 0),
+                    new RSTile(2496, 3505, 0),
+                    new RSTile(2499, 3499, 0),
+                    new RSTile(2498, 3494, 0),
+                    new RSTile(2498, 3491, 0)
+            }
+    );
+    public static   RSArea AL_KHARID_FISHING_AREA = new RSArea(
+            new RSTile[] {
+                    new RSTile(3265, 3149, 0),
+                    new RSTile(3277, 3137, 0),
+                    new RSTile(3282, 3141, 0),
+                    new RSTile(3270, 3152, 0),
+                    new RSTile(3266, 3151, 0)
+            }
+    );
     public static int FLY_FISHING_ROD = 509;
     public static int FEATHER = 314;
 
