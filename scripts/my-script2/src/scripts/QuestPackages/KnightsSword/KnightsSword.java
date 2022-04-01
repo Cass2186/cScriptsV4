@@ -1,6 +1,5 @@
 package scripts.QuestPackages.KnightsSword;
 
-import dax.shared.helpers.questing.Quest;
 import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.Clicking;
@@ -10,6 +9,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
@@ -357,5 +357,10 @@ public class KnightsSword implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_KNIGHTS_SWORD.getState().equals(Quest.State.COMPLETE);
     }
 }

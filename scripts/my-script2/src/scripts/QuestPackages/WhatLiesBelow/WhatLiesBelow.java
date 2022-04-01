@@ -3,6 +3,7 @@ package scripts.QuestPackages.WhatLiesBelow;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.ItemID;
 import scripts.NpcID;
 import scripts.QuestSteps.NPCStep;
@@ -90,5 +91,8 @@ public class WhatLiesBelow implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
-
+    @Override
+    public boolean isComplete() {
+        return Quest.WHAT_LIES_BELOW.getState().equals(Quest.State.COMPLETE);
+    }
 }

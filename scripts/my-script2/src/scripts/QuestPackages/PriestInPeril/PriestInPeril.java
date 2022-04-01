@@ -6,6 +6,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ImpCatcher.ImpCatcher;
@@ -508,5 +509,10 @@ public class PriestInPeril implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.PRIEST_IN_PERIL.getState().equals(Quest.State.COMPLETE);
     }
 }

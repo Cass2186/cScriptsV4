@@ -19,7 +19,10 @@ public class FindBookTask implements QuestTask {
     public static FindBookTask get() {
         return quest == null ? quest = new FindBookTask() : quest;
     }
-
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
     @Override
     public Priority priority() {
         return Priority.NONE;

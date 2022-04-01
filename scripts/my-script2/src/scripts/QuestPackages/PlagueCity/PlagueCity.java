@@ -7,6 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.GroundItem;
 import org.tribot.script.sdk.types.LocalTile;
@@ -613,5 +614,10 @@ public class PlagueCity implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.PLAGUE_CITY.getState().equals(Quest.State.COMPLETE);
     }
 }

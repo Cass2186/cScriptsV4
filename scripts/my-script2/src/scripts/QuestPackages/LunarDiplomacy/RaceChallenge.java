@@ -8,6 +8,7 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.EntitySelector.Entities;
@@ -123,5 +124,10 @@ public class RaceChallenge implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

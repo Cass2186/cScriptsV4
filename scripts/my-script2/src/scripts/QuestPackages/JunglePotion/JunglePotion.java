@@ -8,6 +8,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.FairyTalePt1.FairyTalePt1;
@@ -329,5 +330,10 @@ public class JunglePotion implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.JUNGLE_POTION.getState().equals(Quest.State.COMPLETE);
     }
 }

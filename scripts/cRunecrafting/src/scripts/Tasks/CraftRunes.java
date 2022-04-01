@@ -171,8 +171,9 @@ public class CraftRunes implements Task {
     }
 
     public static boolean atAltar() {
-        RSObject[] altar = Objects.findNearest(30, "Altar");
-        return altar.length > 0;
+        List<GameObject> altarList = Query.gameObjects().nameContains("Altar")
+                .actionNotContains("Pray").toList();;
+        return altarList.size() > 0;
     }
 
     Timer expTimer = new Timer(General.random(420000, 480000));

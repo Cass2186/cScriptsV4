@@ -464,4 +464,9 @@ public class VarrockMuseum implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Utils.getVarBitValue(3688) != 0;
+    }
 }

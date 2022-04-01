@@ -6,6 +6,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestPackages.icthlarinslittlehelper.Icthlarinslittlehelper;
 import scripts.QuestSteps.*;
@@ -337,5 +338,10 @@ public class GettingAhead implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.GETTING_AHEAD.getState().equals(Quest.State.COMPLETE);
     }
 }

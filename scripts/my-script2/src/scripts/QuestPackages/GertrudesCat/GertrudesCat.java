@@ -11,6 +11,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
 import scripts.*;
@@ -396,5 +397,10 @@ public class GertrudesCat implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.GERTRUDES_CAT.getState().equals(Quest.State.COMPLETE);
     }
 }

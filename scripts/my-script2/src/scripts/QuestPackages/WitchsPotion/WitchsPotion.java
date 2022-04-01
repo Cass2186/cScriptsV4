@@ -5,6 +5,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.WitchsHouse.WitchsHouse;
@@ -149,5 +150,10 @@ public class WitchsPotion implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.WITCHS_POTION.getState().equals(Quest.State.COMPLETE);
     }
 }

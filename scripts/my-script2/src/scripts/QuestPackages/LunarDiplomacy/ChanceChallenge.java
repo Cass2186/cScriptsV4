@@ -2,6 +2,7 @@ package scripts.QuestPackages.LunarDiplomacy;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.NpcID;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.ObjectStep;
@@ -176,5 +177,10 @@ public class ChanceChallenge implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

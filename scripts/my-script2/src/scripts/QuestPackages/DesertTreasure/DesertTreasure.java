@@ -4,6 +4,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Skill;
 import scripts.ItemID;
 import scripts.NpcID;
@@ -592,5 +593,10 @@ public class DesertTreasure implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.DESERT_TREASURE.getState().equals(Quest.State.COMPLETE);
     }
 }

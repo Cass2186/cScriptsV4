@@ -7,6 +7,7 @@ import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestPackages.HauntedMine.HauntedMine;
 import scripts.QuestPackages.HauntedMine.HauntedMineConst;
@@ -395,5 +396,10 @@ public class TarnRoute implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LAIR_OF_TARN_RAZORLOR.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -3,6 +3,7 @@ package scripts.QuestPackages.DoricsQuest;
 import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
@@ -111,5 +112,10 @@ public class DoricsQuest implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.DORICS_QUEST.getState().equals(Quest.State.COMPLETE);
     }
 }

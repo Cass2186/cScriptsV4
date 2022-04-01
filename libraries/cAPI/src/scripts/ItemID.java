@@ -13,6 +13,8 @@ public final class ItemID {
     public static int getNotedId(int itemId){
         return itemId+1;
     }
+
+    public static final int CHARGED_RING_OF_ELEMENTS = 26818;
     public static final int[] EXTENDED_SUPER_ANTIFIRE_POTION = {22209, 22212, 22215, 22218};
     public static final int[] ANTI_VENOM_PLUS = {12913, 12915, 12917, 12919};
     public static final int[] SUPER_STRENGTH = {2440, 157, 159, 161};

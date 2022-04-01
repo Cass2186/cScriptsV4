@@ -5,6 +5,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.GEManager.GEItem;
 import scripts.*;
 import scripts.QuestPackages.RfdGoblin.RfdGoblin;
@@ -231,5 +232,10 @@ public class TribalTotem implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.TRIBAL_TOTEM.getState().equals(Quest.State.COMPLETE);
     }
 }

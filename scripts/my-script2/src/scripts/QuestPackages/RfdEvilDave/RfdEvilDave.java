@@ -9,6 +9,7 @@ import org.tribot.api.Timing;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.Npc;
 import scripts.*;
@@ -945,5 +946,10 @@ public class RfdEvilDave implements QuestTask {
     @Override
     public java.util.List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -11,6 +11,7 @@ import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -463,5 +464,10 @@ public class DwarfCannon implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.DWARF_CANNON.getState().equals(Quest.State.COMPLETE);
     }
 }

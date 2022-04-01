@@ -3,6 +3,7 @@ package scripts.QuestPackages.OlafsQuest;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.ItemID;
 import scripts.NpcID;
 import scripts.NullObjectID;
@@ -273,5 +274,10 @@ public class OlafsQuest implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.OLAFS_QUEST.getState().equals(Quest.State.COMPLETE);
     }
 }

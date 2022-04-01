@@ -186,4 +186,9 @@ public class ArceuusLibrary implements QuestTask, InterfaceListener, InventoryLi
         return null;
     }
 
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
+
 }

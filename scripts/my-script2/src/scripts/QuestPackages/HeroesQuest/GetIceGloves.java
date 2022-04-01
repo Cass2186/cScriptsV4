@@ -7,6 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ShieldOfArrav.PheonixGang;
@@ -241,5 +242,10 @@ public class GetIceGloves implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 }

@@ -4,6 +4,7 @@ package scripts.QuestPackages.ImpCatcher;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.GEManager.GEItem;
 import scripts.ItemID;
 import scripts.QuestPackages.MonksFriend.MonksFriend;
@@ -123,5 +124,10 @@ public class ImpCatcher implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.IMP_CATCHER.getState().equals(Quest.State.COMPLETE);
     }
 }

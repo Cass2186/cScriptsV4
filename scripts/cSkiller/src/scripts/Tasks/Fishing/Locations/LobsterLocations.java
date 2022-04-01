@@ -1,6 +1,10 @@
 package scripts.Tasks.Fishing.Locations;
 
-public enum LobsterLocations {
+import org.tribot.api2007.types.RSArea;
+
+public enum LobsterLocations{
     KARAMJA,
+    ;
+
 
 }

@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Skill;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -511,5 +512,10 @@ public class TrollStronghold implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.TROLL_STRONGHOLD.getState().equals(Quest.State.COMPLETE);
     }
 }

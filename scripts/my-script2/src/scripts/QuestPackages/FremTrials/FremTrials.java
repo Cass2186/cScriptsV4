@@ -11,12 +11,16 @@ import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.GameTab;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Options;
+import org.tribot.api2007.Prayer;
+import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Waiting;
-import org.tribot.script.sdk.Widgets;
+import org.tribot.script.sdk.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
@@ -1138,91 +1142,91 @@ public class FremTrials implements QuestTask {
 
     public void sigmundPart2() {
         checkSpecialItem();
-     //   while (invExoticFlower.length < 1) {
-            thoraTalk();
+        //   while (invExoticFlower.length < 1) {
+        thoraTalk();
+        checkSpecialItem();
+        General.sleep(100);
+        if (invWeatherForecast.length > 0) {
+            swensenTalk();
             checkSpecialItem();
-            General.sleep(100);
-            if (invWeatherForecast.length > 0) {
-                swensenTalk();
-                checkSpecialItem();
-            }
-            if (invSeaFishingMap.length > 0) {
-                fishermanTalk();
-                checkSpecialItem();
-            }
-            if (invUnusualFish.length > 0) {
-                skulrimenTalk();
-                checkSpecialItem();
-            }
-            if (invBowString.length > 0) {
-                sigiliTalk();
-                checkSpecialItem();
-            }
-            if (invTrackingMap.length > 0) {
-                brundtTalk();
-                checkSpecialItem();
-            }
-            if (invFiscalStatement.length > 0) {
-                yrsaTalk();
-                checkSpecialItem();
+        }
+        if (invSeaFishingMap.length > 0) {
+            fishermanTalk();
+            checkSpecialItem();
+        }
+        if (invUnusualFish.length > 0) {
+            skulrimenTalk();
+            checkSpecialItem();
+        }
+        if (invBowString.length > 0) {
+            sigiliTalk();
+            checkSpecialItem();
+        }
+        if (invTrackingMap.length > 0) {
+            brundtTalk();
+            checkSpecialItem();
+        }
+        if (invFiscalStatement.length > 0) {
+            yrsaTalk();
+            checkSpecialItem();
 
-            }
-            if (invSturdyBoots.length > 0) {
-                olafTalk();
-                sailorTalk();
-                startSigmund();
-                checkSpecialItem();
-            }
-            if (invPromissaryNote.length > 0) {
-                gotoManni();
-                checkSpecialItem();
-            }
-            if (invLegendaryCocktail.length > 0) {
-                talkToManni1();
-                checkSpecialItem();
-            }
-            if (invChampionsToken.length > 0) {
-                thorvaldTalk();
-                checkSpecialItem();
-            }
-            if (invWarriorsContraction.length > 0) {
-                peerTalk();
-                checkSpecialItem();
-            }
-            if (invWeatherForecast.length > 0) {
-                swensenTalk();
-                checkSpecialItem();
-            }
-            if (invSeaFishingMap.length > 0) {
-                fishermanTalk();
-                checkSpecialItem();
-            }
-            if (invUnusualFish.length > 0) {
-                skulrimenTalk();
-                checkSpecialItem();
-            }
-            if (invBowString.length > 0) {
-                sigiliTalk();
-                checkSpecialItem();
-            }
-            if (invTrackingMap.length > 0) {
-                brundtTalk();
-                checkSpecialItem();
-            }
-            if (invFiscalStatement.length > 0) {
-                yrsaTalk();
-                checkSpecialItem();
-            }
-            if (invSturdyBoots.length > 0) {
-                olafTalk();
-                checkSpecialItem();
-            }
-            if (invFremennikBallad.length > 0) {
-                sailorTalk();
-                checkSpecialItem();
-            }
+        }
+        if (invSturdyBoots.length > 0) {
+            olafTalk();
+            sailorTalk();
+            startSigmund();
             checkSpecialItem();
-       // }
+        }
+        if (invPromissaryNote.length > 0) {
+            gotoManni();
+            checkSpecialItem();
+        }
+        if (invLegendaryCocktail.length > 0) {
+            talkToManni1();
+            checkSpecialItem();
+        }
+        if (invChampionsToken.length > 0) {
+            thorvaldTalk();
+            checkSpecialItem();
+        }
+        if (invWarriorsContraction.length > 0) {
+            peerTalk();
+            checkSpecialItem();
+        }
+        if (invWeatherForecast.length > 0) {
+            swensenTalk();
+            checkSpecialItem();
+        }
+        if (invSeaFishingMap.length > 0) {
+            fishermanTalk();
+            checkSpecialItem();
+        }
+        if (invUnusualFish.length > 0) {
+            skulrimenTalk();
+            checkSpecialItem();
+        }
+        if (invBowString.length > 0) {
+            sigiliTalk();
+            checkSpecialItem();
+        }
+        if (invTrackingMap.length > 0) {
+            brundtTalk();
+            checkSpecialItem();
+        }
+        if (invFiscalStatement.length > 0) {
+            yrsaTalk();
+            checkSpecialItem();
+        }
+        if (invSturdyBoots.length > 0) {
+            olafTalk();
+            checkSpecialItem();
+        }
+        if (invFremennikBallad.length > 0) {
+            sailorTalk();
+            checkSpecialItem();
+        }
+        checkSpecialItem();
+        // }
         if (Inventory.find(3698).length > 0) {
             talkToSigmund();
         }
@@ -2403,8 +2407,10 @@ public class FremTrials implements QuestTask {
         }
     }
 
+    private int[] QUEST_BOX_VISIBLE = {399, 6};
+
     public boolean isQuestNameVisible(String questName) {
-        RSInterface questBox = Interfaces.get(399, 5);
+        RSInterface questBox = Interfaces.get(QUEST_BOX_VISIBLE[0], QUEST_BOX_VISIBLE[1]);
         RSInterface questListParent = Interfaces.get(399, 7);
 
         if (questBox != null && questListParent != null) {
@@ -2802,6 +2808,7 @@ public class FremTrials implements QuestTask {
                 Skills.SKILLS.STRENGTH.getActualLevel() >= 30 &&
                 Skills.SKILLS.MAGIC.getActualLevel() >= 13;
     }
+
     @Override
     public java.util.List<Requirement> getGeneralRequirements() {
         return null;
@@ -2810,5 +2817,10 @@ public class FremTrials implements QuestTask {
     @Override
     public java.util.List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_FREMENNIK_TRIALS.getState().equals(Quest.State.COMPLETE);
     }
 }

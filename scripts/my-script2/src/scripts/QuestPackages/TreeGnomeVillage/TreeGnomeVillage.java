@@ -9,6 +9,7 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.FightArena.FightArena;
@@ -732,5 +733,10 @@ public class TreeGnomeVillage implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.TREE_GNOME_VILLAGE.getState().equals(Quest.State.COMPLETE);
     }
 }

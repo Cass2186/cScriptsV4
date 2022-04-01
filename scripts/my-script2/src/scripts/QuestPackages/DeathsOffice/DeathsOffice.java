@@ -201,4 +201,9 @@ public class DeathsOffice implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
 }

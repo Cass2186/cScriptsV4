@@ -9,6 +9,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
@@ -250,6 +251,11 @@ public class XMarksTheSpot implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.X_MARKS_THE_SPOT.getState().equals(Quest.State.COMPLETE);
     }
 
 }

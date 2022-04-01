@@ -60,11 +60,11 @@ public class Bank implements Task {
     List<ItemReq> itemReqList = new ArrayList<>(
             Arrays.asList(
                     new ItemReq.Builder()
-                            .idEquals(FarmConst.FENKENSTRAINS_TAB)
+                            .id(FarmConst.FENKENSTRAINS_TAB)
                             .amount(5)
                             .build(),
                     new ItemReq.Builder()
-                            .idEquals(FarmConst.MAGIC_SECATEURS)
+                            .id(FarmConst.MAGIC_SECATEURS)
                             .amount(1)
                             .shouldEquip(true)
                             .build(),

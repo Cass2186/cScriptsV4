@@ -6,6 +6,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.NatureSpirit.NatureSpirit;
@@ -238,5 +239,10 @@ public class RestlessGhost implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_RESTLESS_GHOST.getState().equals(Quest.State.COMPLETE);
     }
 }

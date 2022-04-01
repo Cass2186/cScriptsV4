@@ -41,9 +41,22 @@ public class RunecraftBank implements Task {
     public BankTask getBankTaskFromComboRune(RunecraftItems rune) {
         Optional<RunecraftItems> itemOptional = RunecraftItems.getCurrentItem();
         if (itemOptional.isEmpty())
-            throw new NullPointerException();
+            throw new NullPointerException("Missing bank item, ending");
 
-        if (itemOptional.get().equals(RunecraftItems.STEAM_RUNE)) {
+        if (Vars.get().useRingOfElements && itemOptional.get().equals(RunecraftItems.STEAM_RUNE)) {
+            return BankTask.builder()
+                    .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HEAD)
+                            .item(rune.getTiaraId(), Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.NECK)
+                            .item(ItemID.BINDING_NECKLACE, Amount.of(1)))
+                    .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
+                            .chargedItem(rune.getChargedTeleItemBaseName(), 2))
+                    .addInvItem(rune.getCombiningRuneId(), Amount.fill(28))
+                    .addInvItem(ItemID.CHARGED_RING_OF_ELEMENTS, Amount.of(1))
+                    .addInvItem(rune.getAdditionalTalisman(), Amount.of(1))
+                    .addInvItem(ItemID.PURE_ESSENCE, Amount.fill(1))
+                    .build();
+        } else if (itemOptional.get().equals(RunecraftItems.STEAM_RUNE)) {
             return BankTask.builder()
                     .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HEAD)
                             .item(rune.getTiaraId(), Amount.of(1)))
@@ -155,6 +168,7 @@ public class RunecraftBank implements Task {
 
                 if (chest.map(c -> c.interact("Bank")).orElse(false)) {
                     Timer.waitCondition(Bank::isOpen, 5000, 7000);
+                    return;
                 }
             }
         }

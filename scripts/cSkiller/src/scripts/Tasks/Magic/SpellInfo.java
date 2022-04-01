@@ -220,7 +220,7 @@ public enum SpellInfo {
                     if (r == ItemID.YEW_LONGBOW) {
                         getCurrentSpell().ifPresent(h -> i.add(new ItemReq.Builder()
                                 .isItemNoted(true)
-                                .idEquals(r)
+                                .id(r)
 
                                 .amount(h.determineResourcesToNextItem() *
                                         getCurrentSpell().get().runeMap.get(r))

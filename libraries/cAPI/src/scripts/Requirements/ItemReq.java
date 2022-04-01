@@ -65,6 +65,10 @@ public class ItemReq implements Requirement {
     @Getter
     private boolean isStackable;
 
+    @Getter
+    private int minimumDosesNeeded = 0;
+
+
     public ItemReq(int ItemID) {
         this.id = ItemID;
         this.amount = 1;
@@ -144,12 +148,27 @@ public class ItemReq implements Requirement {
         this.isStackable = isItemStackable();
     }
 
+    private ItemReq(Builder builder) {
+        setEquip(builder.equip);
+        setAmountOfChargesNeeded(builder.amountOfChargesNeeded);
+        itemName = builder.itemName;
+        isItemNoted = builder.isItemNoted;
+        setId(builder.id);
+        setAlternateItemIDs(builder.alternateItemIDs);
+        setAmount(builder.amount);
+        setMinAmount(builder.minAmount);
+        setAcceptEquipped(builder.acceptEquipped);
+        setShouldEquip(builder.shouldEquip);
+        isStackable = builder.isStackable;
+        minimumDosesNeeded = builder.minimumDosesNeeded;
+    }
+
     public boolean isItemStackable(){
         Optional<ItemDefinition> def = ItemDefinition.get(this.id);
         return def.map(ItemDefinition::isStackable).orElse(false);
     }
 
-    public ItemReq(Builder builder) {
+   /*  public ItemReq(Builder builder) {
         this.itemName = builder.itemName;
         this.id = builder.id;
         this.amount = builder.amount;
@@ -162,7 +181,7 @@ public class ItemReq implements Requirement {
         this.isStackable = isItemStackable();
     }
 
-    public static class Builder {
+   public static class Builder {
 
         private int amountOfChargesNeeded;
         private String itemName;
@@ -173,6 +192,7 @@ public class ItemReq implements Requirement {
         private int minAmount = 0;
         private boolean acceptEquipped = false;
         private boolean shouldEquip = false;
+        private int minimumDosesNeeded = 0;
 
 
         public Builder itemName(String itemName) {
@@ -232,7 +252,7 @@ public class ItemReq implements Requirement {
             //Do some basic validations to check
             //if user object does not break any assumption of system
         }
-    }
+    }*/
 
     public boolean hasItem() {
         RSItem[] i = Inventory.find(this.id);
@@ -354,5 +374,87 @@ public class ItemReq implements Requirement {
     @Override
     public boolean check() {
         return hasItem();
+    }
+
+    public static final class Builder {
+        private boolean equip;
+        private int amountOfChargesNeeded;
+        private String itemName;
+        private boolean isItemNoted;
+        private int id;
+        private List<Integer> alternateItemIDs;
+        private int amount;
+        private int minAmount;
+        private boolean acceptEquipped;
+        private boolean shouldEquip;
+        private boolean isStackable;
+        private int minimumDosesNeeded;
+
+        public Builder() {
+        }
+
+        public Builder equip(boolean val) {
+            equip = val;
+            return this;
+        }
+
+        public Builder amountOfChargesNeeded(int val) {
+            amountOfChargesNeeded = val;
+            return this;
+        }
+
+        public Builder itemName(String val) {
+            itemName = val;
+            return this;
+        }
+
+        public Builder isItemNoted(boolean val) {
+            isItemNoted = val;
+            return this;
+        }
+
+        public Builder id(int val) {
+            id = val;
+            return this;
+        }
+
+        public Builder alternateItemIDs(List<Integer> val) {
+            alternateItemIDs = val;
+            return this;
+        }
+
+        public Builder amount(int val) {
+            amount = val;
+            return this;
+        }
+
+        public Builder minAmount(int val) {
+            minAmount = val;
+            return this;
+        }
+
+        public Builder acceptEquipped(boolean val) {
+            acceptEquipped = val;
+            return this;
+        }
+
+        public Builder shouldEquip(boolean val) {
+            shouldEquip = val;
+            return this;
+        }
+
+        public Builder isStackable(boolean val) {
+            isStackable = val;
+            return this;
+        }
+
+        public Builder minimumDosesNeeded(int val) {
+            minimumDosesNeeded = val;
+            return this;
+        }
+
+        public ItemReq build() {
+            return new ItemReq(this);
+        }
     }
 }

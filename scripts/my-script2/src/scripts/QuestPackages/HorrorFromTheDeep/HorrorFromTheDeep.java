@@ -12,6 +12,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
@@ -681,4 +682,9 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+    @Override
+    public boolean isComplete() {
+        return Quest.HORROR_FROM_THE_DEEP.getState().equals(Quest.State.COMPLETE);
+    }
+
 }

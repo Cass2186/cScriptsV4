@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -959,5 +960,10 @@ public class RfdMonkey implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

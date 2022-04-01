@@ -781,6 +781,11 @@ public class HauntedMine implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.HAUNTED_MINE.getState().equals(Quest.State.COMPLETE);
+    }
 }
 
 

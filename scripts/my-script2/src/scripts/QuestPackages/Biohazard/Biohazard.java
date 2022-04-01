@@ -529,4 +529,9 @@ public class Biohazard implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.BIOHAZARD.getState().equals(Quest.State.COMPLETE);
+    }
 }

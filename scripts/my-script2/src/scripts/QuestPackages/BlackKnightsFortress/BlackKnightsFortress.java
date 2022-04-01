@@ -7,6 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -335,5 +336,9 @@ public class BlackKnightsFortress implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+    @Override
+    public boolean isComplete() {
+        return Quest.BLACK_KNIGHTS_FORTRESS.getState().equals(Quest.State.COMPLETE);
     }
 }

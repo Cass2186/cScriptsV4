@@ -8,15 +8,14 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
-import scripts.GEManager.Exchange;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.DruidicRitual.DruidicRitual;
-import scripts.QuestPackages.FishingContest.FishingContest;
 import scripts.QuestPackages.JunglePotion.JunglePotion;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.QuestUtils.TaskSet;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
@@ -24,6 +23,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class FairyTalePt1 implements QuestTask {
 
@@ -345,39 +345,94 @@ public class FairyTalePt1 implements QuestTask {
         }
     }
 
+
+    private static int[] QUEST_BOX_VISIBLE = {399, 6};
+
+    public static boolean isQuestNameVisible(String questName) {
+        RSInterface questBox = Interfaces.get(QUEST_BOX_VISIBLE[0], QUEST_BOX_VISIBLE[1]);
+        RSInterface questListParent = Interfaces.get(399, 7);
+
+        if (questBox != null && questListParent != null) {
+            RSInterface[] quests = questListParent.getChildren();
+            RSInterface questInter = null;
+            if (quests != null) {
+                for (RSInterface q : quests) {
+                    String name = q.getComponentName();
+
+                    if (name != null) {
+                        String stripped = General.stripFormatting(name);
+
+                        if (stripped.toLowerCase().contains(questName.toLowerCase())) {
+                            return questBox.getAbsoluteBounds().contains(q.getAbsolutePosition());
+                        }
+
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static int[] SCROLL_BAR_WIDGET = {399, 5, 1};
+
+    private static void moveMouseToQuestBox() {
+        RSInterfaceChild box = Interfaces.get(QUEST_BOX_VISIBLE[0], QUEST_BOX_VISIBLE[1]);
+        if (box != null && !box.getAbsoluteBounds().contains(Mouse.getPos())){
+            Mouse.moveBox(box.getAbsoluteBounds());
+        }
+    }
+
     public static void openQuestGuide() {
         if (Interfaces.get(119, 180) == null) {
             General.println("[Debug]: Opening quest guide");
             GameTab.open(GameTab.TABS.QUESTS);
+        }
+        for (int i = 0; i < 3; i++) {
             if (GameTab.getOpen() == GameTab.TABS.QUESTS) {
-                int Y = General.random(320, 324);
-                if (Interfaces.get(399, 2) != null
-                        && !Interfaces.get(399, 2).getAbsoluteBounds().contains(Mouse.getPos())) {
-                    Mouse.moveBox(Interfaces.get(399, 2).getAbsoluteBounds());
-                    while (Interfaces.get(399, 4, 1) != null &&
-                            Interfaces.get(399, 4, 1).getAbsolutePosition().getY() < Y) {
-                        General.sleep(General.random(200, 500));
-                        if (!Interfaces.get(399, 2).getAbsoluteBounds().contains(Mouse.getPos())) {
-                            Mouse.moveBox(Interfaces.get(399, 2).getAbsoluteBounds());
-                        }
+                int Y = General.random(306, 312); //this is teh range for the scroll bar
+                Optional<Widget> fairytale = Query.widgets().inIndexPath(399, 7)
+                        .nameContains("Fairytale I").findFirst();
+                if (isQuestNameVisible("Fairytale I") && fairytale.map(f -> f.click()).orElse(false)) {
+                    Log.debug("Clicking fairytale");
+                    Timer.waitCondition(() -> Interfaces.get(119) != null, 5000, 7000);
+                    General.sleep(General.random(500, 2000));
+                    return;
+                }
+                if (Interfaces.get(399, 7) != null
+                        && !Interfaces.get(399, 7).getAbsoluteBounds().contains(Mouse.getPos())) {
+                    moveMouseToQuestBox();
+
+                    while (Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]) != null &&
+                            Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]).getAbsolutePosition().getY() < Y) {
+                        moveMouseToQuestBox();
+
                         Mouse.scroll(false);
-                    }
-                    while (Interfaces.get(399, 4, 1) != null
-                            && Interfaces.get(399, 4, 1).getAbsolutePosition().getY() > Y) {
                         General.sleep(General.random(200, 500));
+                        if (isQuestNameVisible("Fairytale I"))
+                            break;
+                    }
+                    while (Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]) != null
+                            && Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]).getAbsolutePosition().getY() > Y) {
+                        moveMouseToQuestBox();
                         Mouse.scroll(true);
+                        General.sleep(General.random(200, 500));
+                        if (isQuestNameVisible("Fairytale I"))
+                            break;
                     }
                 }
             }
-            General.sleep(General.random(200, 900));
-            General.println("[Debug]: Clicking quest");
-            if (Interfaces.get(399, 7, 28) != null &&
-                    Interfaces.get(399, 7, 28).click()) { // clicks quest
+            General.sleep(300, 550); //need this after scrolling
+            Optional<Widget> fairytale = Query.widgets().inIndexPath(399, 7)
+                    .nameContains("Fairytale I").findFirst();
+            Log.info("[Debug]: Clicking quest");
+            if (isQuestNameVisible("Fairytale I") && fairytale.map(f -> f.click()).orElse(false)) {
                 Timer.waitCondition(() -> Interfaces.get(119) != null, 5000, 7000);
                 General.sleep(General.random(500, 2000));
+                return;
             }
         }
     }
+
 
     public void checkUniqueItems() {
         cQuesterV2.status = "Checking unique items needed";
@@ -1182,9 +1237,9 @@ public class FairyTalePt1 implements QuestTask {
         } else if (RSVarBit.get(1803).getValue() == 80) {
             finishQuest();
 
-        } else if (RSVarBit.get(1803).getValue() == 90 && Utils.getVarBitValue(PART_2_VARBIT) <50) {
+        } else if (RSVarBit.get(1803).getValue() == 90 && Utils.getVarBitValue(PART_2_VARBIT) < 50) {
             doQuestPart2();
-        } else if (Utils.getVarBitValue(PART_2_VARBIT) < 50  && Utils.getVarBitValue(2329) == 2) {
+        } else if (Utils.getVarBitValue(PART_2_VARBIT) < 50 && Utils.getVarBitValue(2329) == 2) {
             Log.log("VARBIT" + Utils.getVarBitValue(PART_2_VARBIT));
             doQuestPart2();
         } else {
@@ -1229,5 +1284,10 @@ public class FairyTalePt1 implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.FAIRYTALE_I_GROWING_PAINS.getState().equals(Quest.State.COMPLETE);
     }
 }

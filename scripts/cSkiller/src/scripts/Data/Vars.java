@@ -7,6 +7,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import scripts.AntiBan;
 import scripts.ItemID;
+import scripts.Tasks.Fishing.Locations.FishingLocation;
 import scripts.Tasks.Magic.Alch;
 import scripts.Timer;
 import scripts.dax.tracker.DaxTracker;
@@ -64,6 +65,7 @@ public class Vars {
 
     //fishing
     public boolean getBarbarianRod = false; //TODO implement this in fishing tasks
+    public FishingLocation fishingLocation;
 
     //cooking
     public boolean doingWines = Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35;
@@ -101,6 +103,7 @@ public class Vars {
     public Timer miniBreakTimer = new Timer(General.randomSD(miniBreakFrequencyAvg*1000, miniBreakFrequencySD*1000));
 
     public DaxTracker daxTracker;
+
 
 
     public boolean shouldShowGUI = true;

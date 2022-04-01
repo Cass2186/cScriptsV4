@@ -3,6 +3,7 @@ package scripts.QuestPackages.TaleOfTheRighteous;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestPackages.ShieldOfArrav.BlackArmsGang;
 import scripts.QuestSteps.*;
@@ -307,5 +308,10 @@ public class TaleOfTheRighteous implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.TALE_OF_THE_RIGHTEOUS.getState().equals(Quest.State.COMPLETE);
     }
 }

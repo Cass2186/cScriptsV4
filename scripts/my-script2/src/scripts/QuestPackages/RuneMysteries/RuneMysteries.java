@@ -7,6 +7,7 @@ import org.tribot.api2007.Banking;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
@@ -40,11 +41,11 @@ public class RuneMysteries implements QuestTask {
     NPCStep talkToHoracio = new NPCStep("Duke Horacio", new RSTile(3210, 3220, 1),
             new String[]{"Have you any quests for me?", "Have you any quests for me?", "Yes."});
     NPCStep talkToSedridor = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0),
-            new String[]{"I'm looking for the head wizard.", "Ok, here you are.", "Yes, certainly."}, airTalisman);
+            new String[]{"I'm looking for the head wizard.", "Okay, here you are.", "Yes, certainly."}, airTalisman);
     NPCStep finishTalkingToSedridor = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0),
             new String[]{"Yes, certainly."});
     NPCStep talkToAubury = new NPCStep(NpcID.AUBURY, new RSTile(3253, 3401, 0),
-            new String[]{"I have been sent here with a package for you."}, researchPackage);
+            new String[]{"I've been sent here with a package for you."}, researchPackage);
     NPCStep talkToAudburyAgain = new NPCStep(NpcID.AUBURY, new RSTile(3253, 3401, 0));
     NPCStep talkToSedridor2 = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0), notes);
 
@@ -179,5 +180,10 @@ public class RuneMysteries implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.RUNE_MYSTERIES.getState().equals(Quest.State.COMPLETE);
     }
 }

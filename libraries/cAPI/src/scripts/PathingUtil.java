@@ -141,7 +141,7 @@ public class PathingUtil {
         });
     }
 
-    public static boolean walkToTile(WorldTile destination, Supplier<WalkState> state) {
+    public static boolean lle(WorldTile destination, Supplier<WalkState> state) {
         Log.log("[PathingUtil] walking V2 - Worldtile");
         for (int i = 0; i < 3; i++) {
             if (!GlobalWalking.walkTo(destination, state)) {
@@ -377,7 +377,6 @@ public class PathingUtil {
     }
 
 
-
     public static RSTile nearestBankTile(RSTile startTile) {
 
         int distance = startTile.distanceTo(RunescapeBank.VARROCK_WEST.getPosition());
@@ -492,7 +491,11 @@ public class PathingUtil {
             for (int i = 0; i < 3; i++) {
                 if (DaxWalker.walkTo(area.getRandomTile(), DaxWalker.getGlobalWalkingCondition())) {
                     currentTime = System.currentTimeMillis();
-                    Timer.waitCondition(() -> largeArea.contains(Player.getPosition()), sleepMin, sleepMax);
+                    if (Waiting.waitUntil(1500, () -> MyPlayer.isMoving()))
+                        Timer.waitCondition(() ->
+                                largeArea.contains(Player.getPosition()) ||
+                                        area.contains(Player.getPosition()) ||
+                                        !MyPlayer.isMoving(), sleepMin, sleepMax);
                     if (abc2Sleep)
                         Utils.abc2ReactionSleep(currentTime);
                     return true;
@@ -527,12 +530,16 @@ public class PathingUtil {
                 RSTile targetTile = area.getRandomTile();
                 if (DaxWalker.walkTo(targetTile, DaxWalker.getGlobalWalkingCondition())) {
                     currentTime = System.currentTimeMillis();
-                    Timer.waitCondition(() -> largeArea.contains(Player.getPosition()), sleepMin, sleepMax);
+                    if (Waiting.waitUntil(1500, () -> MyPlayer.isMoving()))
+                        Timer.waitCondition(() ->
+                                largeArea.contains(Player.getPosition()) ||
+                                        area.contains(Player.getPosition()) ||
+                                        !MyPlayer.isMoving(), sleepMin, sleepMax);
 
                     if (!area.contains(Player.getPosition()) &&
                             targetTile.distanceTo(Player.getPosition()) < 6) {
                         Log.debug("[PathingUtil]: Not quite in area, adjusting");
-                        clickScreenWalk(targetTile);
+                        Walking.blindWalkTo(area.getRandomTile());
                     }
 
                     if (abc2Sleep && area.contains(Player.getPosition()))
@@ -560,7 +567,11 @@ public class PathingUtil {
             for (int i = 0; i < attempts; i++) {
                 if (DaxWalker.walkTo(area.getRandomTile(), DaxWalker.getGlobalWalkingCondition())) {
                     currentTime = System.currentTimeMillis();
-                    Timer.waitCondition(() -> largeArea.contains(Player.getPosition()), sleepMin, sleepMax);
+                    if (Waiting.waitUntil(1500, () -> MyPlayer.isMoving()))
+                        Timer.waitCondition(() ->
+                                largeArea.contains(Player.getPosition()) ||
+                                        area.contains(Player.getPosition()) ||
+                                        !MyPlayer.isMoving(), sleepMin, sleepMax);
                     if (abc2Sleep)
                         Utils.abc2ReactionSleep(currentTime);
                     return largeArea.contains(Player.getPosition());

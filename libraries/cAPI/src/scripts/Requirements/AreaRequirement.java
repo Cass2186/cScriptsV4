@@ -71,6 +71,12 @@ public class AreaRequirement implements Requirement {
         this.checkInZone = true;
     }
 
+    private AreaRequirement(Builder builder) {
+        zones = builder.zones;
+        checkInZone = builder.checkInZone;
+        displayText = builder.displayText;
+    }
+
     @Override
     public boolean check() {
         for (int i = 0; i < zones.size(); i++) {
@@ -78,5 +84,29 @@ public class AreaRequirement implements Requirement {
                 return true;
         }
         return false;
+    }
+
+    public static final class Builder {
+        private List<RSArea> zones;
+        private final boolean checkInZone;
+        private String displayText;
+
+        public Builder(boolean checkInZone) {
+            this.checkInZone = checkInZone;
+        }
+
+        public Builder zones(List<RSArea> val) {
+            zones = val;
+            return this;
+        }
+
+        public Builder displayText(String val) {
+            displayText = val;
+            return this;
+        }
+
+        public AreaRequirement build() {
+            return new AreaRequirement(this);
+        }
     }
 }

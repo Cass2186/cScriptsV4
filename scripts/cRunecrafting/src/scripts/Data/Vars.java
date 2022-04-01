@@ -1,6 +1,8 @@
 package scripts.Data;
 
 import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.query.Query;
+import scripts.ItemID;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -62,9 +64,9 @@ public class Vars {
 
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
     public int endRcLevel = 77;
-    public int startMagicLevel = 1;
-    public int startMagicXp = 1;
-    public int lastIterMagicXp = 1;
+    public int startRcLevel = 1;
+    public int startRcXp = 1;
+    public int lastIterRcXp = 1;
 
     public int avgWaitLoopSleep = 200;
     public int sdWaitLoopSleep = 40;
@@ -94,6 +96,10 @@ public class Vars {
     public boolean zanarisCrafting = false;
 
     public boolean mudRuneCrafting = false;
+
+    public boolean useRingOfElements = Query.inventory()
+            .idEquals(ItemID.CHARGED_RING_OF_ELEMENTS)
+            .findClosestToMouse().isPresent();
 
     public boolean mindTiaraCrafting = false;
 

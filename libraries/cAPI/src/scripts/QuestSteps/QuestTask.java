@@ -23,5 +23,7 @@ public interface QuestTask {
 
     List<ItemRequirement> getBuyList();
 
+    boolean isComplete();
+
 
 }

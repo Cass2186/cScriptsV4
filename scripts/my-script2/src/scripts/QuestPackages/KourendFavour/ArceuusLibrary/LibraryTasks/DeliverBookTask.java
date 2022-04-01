@@ -17,6 +17,11 @@ public class DeliverBookTask implements QuestTask {
     public static DeliverBookTask get() {
         return quest == null ? quest = new DeliverBookTask() : quest;
     }
+
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
     @Override
     public Priority priority() {
         return Priority.MEDIUM;

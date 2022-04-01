@@ -135,4 +135,9 @@ public class SheepShearer implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.SHEEP_SHEARER.getState().equals(Quest.State.COMPLETE);
+    }
 }

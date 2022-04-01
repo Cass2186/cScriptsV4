@@ -2,6 +2,7 @@ package scripts.QuestPackages.RatCatchers;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
@@ -444,5 +445,10 @@ public class RatCatchers implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.RATCATCHERS.getState().equals(Quest.State.COMPLETE);
     }
 }

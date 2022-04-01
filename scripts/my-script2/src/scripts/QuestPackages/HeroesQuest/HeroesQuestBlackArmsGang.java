@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -661,6 +662,11 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.HEROES_QUEST.getState().equals(Quest.State.COMPLETE);
     }
 }
 

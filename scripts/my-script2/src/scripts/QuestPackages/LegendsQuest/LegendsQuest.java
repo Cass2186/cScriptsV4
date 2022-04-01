@@ -6,13 +6,14 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Magic;
 import org.tribot.api2007.Objects;
+import org.tribot.api2007.Prayer;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Bank;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Widgets;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
@@ -2084,5 +2085,10 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LEGENDS_QUEST.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -12,6 +12,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -21,6 +22,8 @@ import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestPackages.DruidicRitual.DruidicRitual;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.InventoryRequirement;
+import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
@@ -372,20 +375,35 @@ public class MonkeyMadnessI implements QuestTask {
         }
     }
 
+
+    InventoryRequirement bankTwoInv = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 2, 1),
+                    new ItemReq(ItemID.LOCKPICK, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.LOBSTER, 12, 1),
+                    new ItemReq(ItemID.NARNODES_ORDERS, 1, 0),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 2, 1),
+                    new ItemReq(ItemID.COINS_995, 200000)
+            )
+    ));
+
     public void step4Part2Banking() {
-        cQuesterV2.status = "Banking";
-        General.println("[Debug]: Banking.");
-        BankManager.open(true);
-        BankManager.checkEquippedGlory();
-        BankManager.depositAll(true);
-        BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS);
-        BankManager.withdraw(1, true, ItemID.LOCKPICK);
-        BankManager.withdraw(2, true, stamina4);
-        BankManager.withdraw(12, true, lobster);
-        BankManager.withdraw(1, true, narnodesOrders);
-        BankManager.withdraw(2, true, varrockTab);
-        BankManager.withdraw(200000, true, 995);
-        BankManager.close(true);
+        if (!bankTwoInv.check()) {
+            cQuesterV2.status = "Banking";
+            General.println("[Debug]: Banking.");
+            BankManager.open(true);
+            BankManager.checkEquippedGlory();
+            BankManager.depositAll(true);
+            BankManager.withdraw(2, true, ItemID.ANTIDOTE_PLUS_PLUS);
+            BankManager.withdraw(1, true, ItemID.LOCKPICK);
+            BankManager.withdraw(2, true, stamina4);
+            BankManager.withdraw(12, true, lobster);
+            BankManager.withdraw(1, true, narnodesOrders);
+            BankManager.withdraw(2, true, varrockTab);
+            BankManager.withdraw(200000, true, 995);
+            BankManager.close(true);
+        }
     }
 
     public void step5Part2TalkToDaero() {
@@ -401,13 +419,21 @@ public class MonkeyMadnessI implements QuestTask {
 
     public void chat() {
         if (NPCInteraction.isConversationWindowUp()) {
+            Log.info("Handling chat");
+
             for (String s : DAERO_CHAT) {
                 if (ChatScreen.containsOption("Leave...")) {
-                    ChatScreen.selectOption(DAERO_CHAT2);
+                    ChatScreen.handle("Leave...", "Who is it?");
+                    Log.info("Selected Leave and who is it");
                     break;
+                } else {
+                    Log.info("handle");
+                    ChatScreen.handle(s);
+                    Log.info("handle done" );
                 }
                 if (NPCInteraction.isConversationWindowUp()) {
-                    NPCInteraction.handleConversation(s);
+                //    Log.info("Using Dax");
+                   // NPCInteraction.handleConversation(s);
                 }
             }
            /* Timer.waitCondition((() -> Interfaces.isInterfaceSubstantiated(219, 1, 4)), 5000, 7000); // talk about the journey
@@ -762,7 +788,7 @@ public class MonkeyMadnessI implements QuestTask {
                 stopMovingWait(300, 900);
 
                 while (Inventory.find(monkeyDentures).length < 1) {
-                    General.sleep(50,75);
+                    General.sleep(50, 75);
                     if (Utils.clickObj(4715, "Search")) {
                         NPCInteraction.waitForConversationWindow();
                         NPCInteraction.handleConversation("Yes");
@@ -2014,12 +2040,12 @@ public class MonkeyMadnessI implements QuestTask {
             goToGloCarancock(); //goes to Caranock
             talkingToCaranock();
         } else if (Game.getSetting(365) == 2) {
-            General.println("Varbut 123  = " + RSVarBit.get(123).getValue());
+            Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
             if (RSVarBit.get(123).getValue() <= 4) {
-                talkToKing();
+               // talkToKing();
+                 Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
                 step4Part2Banking(); // banking
                 step5Part2TalkToDaero(); // going to Daero
-                chat();
             }
             if (RSVarBit.get(123).getValue() == 4) {
                 step6Part2(); // talking to Daero and waydar
@@ -2162,5 +2188,10 @@ public class MonkeyMadnessI implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.MONKEY_MADNESS_I.getState().equals(Quest.State.COMPLETE);
     }
 }

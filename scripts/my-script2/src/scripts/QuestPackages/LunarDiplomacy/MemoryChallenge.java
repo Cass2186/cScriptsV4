@@ -1,6 +1,7 @@
 package scripts.QuestPackages.LunarDiplomacy;
 
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
@@ -252,5 +253,10 @@ public class MemoryChallenge implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

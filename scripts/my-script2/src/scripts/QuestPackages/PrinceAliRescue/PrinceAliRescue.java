@@ -376,4 +376,8 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
         return null;
     }
 
+    @Override
+    public boolean isComplete() {
+        return Quest.PRINCE_ALI_RESCUE.getState().equals(Quest.State.COMPLETE);
+    }
 }

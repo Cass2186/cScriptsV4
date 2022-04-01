@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.GoblinDiplomacy.GoblinDiplomacy;
@@ -681,5 +682,10 @@ public class RfdPiratePete implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

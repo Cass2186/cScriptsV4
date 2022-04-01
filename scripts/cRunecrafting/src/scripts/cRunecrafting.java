@@ -62,10 +62,10 @@ public class cRunecrafting extends CassScript implements TribotScript {
         populateInitialMap(Vars.get().skillStartXpMap);
 
 
-        Vars.get().startMagicLevel = Skill.RUNECRAFT.getCurrentLevel();
-        Vars.get().startMagicXp = Skill.RUNECRAFT.getXp();
+        Vars.get().startRcLevel = Skill.RUNECRAFT.getCurrentLevel();
+        Vars.get().startRcXp = Skill.RUNECRAFT.getXp();
 
-        Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
+        Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
 
         //Tasks
         TaskSet tasks = new TaskSet(
@@ -74,16 +74,16 @@ public class cRunecrafting extends CassScript implements TribotScript {
                 new RunecraftBank()
         );
 
-
+        initializeListeners();
         isRunning.set(true);
         while (isRunning.get()) {
             Waiting.waitUniform(50, 100);
 
 
             //reset safety timer if we've gained xp since last itteration
-            if (Skill.MAGIC.getXp() > Vars.get().lastIterMagicXp) {
+            if (Skill.RUNECRAFT.getXp() > Vars.get().lastIterRcXp) {
                 Vars.get().safetyTimer.reset();
-                Vars.get().lastIterMagicXp = Skill.MAGIC.getXp();
+                Vars.get().lastIterRcXp = Skill.RUNECRAFT.getXp();
             }
 
             // if we have not gained exp and the timer has expired, end script
@@ -130,8 +130,8 @@ public class cRunecrafting extends CassScript implements TribotScript {
 
     private static String getXpGainedString() {
         int currentLvl = Skill.RUNECRAFT.getActualLevel();
-        int gainedLvl = currentLvl - Vars.get().startMagicLevel;
-        int gainedXp = Skill.RUNECRAFT.getXp() - Vars.get().startMagicXp;
+        int gainedLvl = currentLvl - Vars.get().startRcLevel;
+        int gainedXp = Skill.RUNECRAFT.getXp() - Vars.get().startRcXp;
 
         double timeRan = System.currentTimeMillis() - Vars.get().startTime;
         double timeRanMin = (timeRan / 3600000);

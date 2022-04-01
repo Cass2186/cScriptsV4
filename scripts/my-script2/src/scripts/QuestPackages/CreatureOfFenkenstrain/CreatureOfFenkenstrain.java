@@ -9,6 +9,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.EnterTheAbyss.EnterTheAbyss;
@@ -433,5 +434,10 @@ public class CreatureOfFenkenstrain implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.CREATURE_OF_FENKENSTRAIN.getState().equals(Quest.State.COMPLETE);
     }
 }

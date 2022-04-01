@@ -6,6 +6,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestPackages.TrollRomance.TrollRomance;
 import scripts.QuestSteps.*;
@@ -281,7 +282,10 @@ public class TheHandInTheSand implements QuestTask {
 
     }
 
-
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_HAND_IN_THE_SAND.getState().equals(Quest.State.COMPLETE);
+    }
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;

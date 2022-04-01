@@ -11,6 +11,7 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
@@ -1243,5 +1244,10 @@ public class GhostsAhoy implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.GHOSTS_AHOY.getState().equals(Quest.State.COMPLETE);
     }
 }

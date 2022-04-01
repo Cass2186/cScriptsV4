@@ -74,4 +74,6 @@ public class Const {
                     new RSTile(2789, 4855, 0)
             }
     );
+
+    public static WorldTile FIRE_ALTAR_RING_TELE_TILE = new WorldTile(3309, 3260, 0);
 }

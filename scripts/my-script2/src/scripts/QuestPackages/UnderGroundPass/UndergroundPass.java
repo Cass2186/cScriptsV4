@@ -7,6 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
@@ -2195,5 +2196,10 @@ public class UndergroundPass implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.UNDERGROUND_PASS.getState().equals(Quest.State.COMPLETE);
     }
 }

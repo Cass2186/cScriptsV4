@@ -8,6 +8,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestSteps.*;
 import scripts.Requirements.InventoryRequirement;
@@ -256,5 +257,10 @@ public class PheonixGang implements QuestTask, QuestInterface {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.SHIELD_OF_ARRAV.getState().equals(Quest.State.COMPLETE);
     }
 }

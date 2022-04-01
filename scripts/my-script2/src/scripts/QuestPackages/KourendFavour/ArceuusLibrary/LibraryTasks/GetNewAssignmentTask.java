@@ -21,6 +21,11 @@ public class GetNewAssignmentTask implements QuestTask {
     public static GetNewAssignmentTask get() {
         return quest == null ? quest = new GetNewAssignmentTask() : quest;
     }
+
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
     @Override
     public Priority priority() {
         return Priority.MEDIUM;

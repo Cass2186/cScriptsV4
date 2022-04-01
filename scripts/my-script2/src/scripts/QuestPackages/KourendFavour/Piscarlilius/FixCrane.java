@@ -7,6 +7,7 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
@@ -103,6 +104,11 @@ public class FixCrane implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 
 }

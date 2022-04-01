@@ -8,6 +8,7 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.MakeScreen;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
@@ -800,6 +801,10 @@ public class OneSmallFavour implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+    @Override
+    public boolean isComplete() {
+        return Quest.ONE_SMALL_FAVOUR.getState().equals(Quest.State.COMPLETE);
     }
 
 }

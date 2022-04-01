@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.MerlinsCrystal.MerlinsCrystal;
@@ -258,5 +259,10 @@ public class GoblinDiplomacy implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.GOBLIN_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

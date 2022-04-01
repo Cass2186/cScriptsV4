@@ -3,19 +3,18 @@ package scripts;
 import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
-import dax.shared.helpers.questing.Quest;
 import dax.shared.helpers.questing.QuestHelper;
 import dax.teleports.Teleport;
 import lombok.SneakyThrows;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import scripts.MoneyMaking.ClockWorks.MakeClockWork;
 import scripts.QuestPackages.APorcineOfInterest.APorcineOfInterest;
 import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
@@ -117,9 +116,11 @@ import scripts.QuestPackages.ShieldOfArrav.PheonixGang;
 import scripts.Tasks.Task;
 import scripts.QuestPackages.TribalTotem.TribalTotem;
 import scripts.QuestPackages.icthlarinslittlehelper.Icthlarinslittlehelper;
+import scripts.dax.tracker.DaxTracker;
 import scripts.gui.GUI;
 
 import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -130,18 +131,22 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
-    public static String gameSetting = "Initializing";
     public static int gameSettingInt = 0;
-    public static String currentQuest = "Initializing";
     public static List<QuestTask> taskList = new ArrayList<>();
-    // public List<Quest> questList = new ArrayList<>();
-    public int nextStaminaPotionUse = General.randomSD(50, 85, 75, 5);
+
+    public cQuesterV2() {
+        try {
+            Vars.get().daxTracker = new DaxTracker(
+                    "3d50ebcf-daa0-4d79-82fd-c76633f97ed0",
+                    "tqRBZL6zoacmgLn7pwANpA==");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
     public void onStart() {
-        // action();
-
         AntiBan.create();
 
         Teleport.clearTeleportBlacklist();
@@ -153,21 +158,22 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 return new DaxCredentials("sub_DPjXXzL5DeSiPf", "PUBLIC-KEY");
             }
         });
-        org.tribot.script.sdk.Options.AttackOption.setNpcAttackOption(org.tribot.script.sdk.Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
-        Utils.setCameraZoomAboveDefault();
-        if (!Combat.isAutoRetaliateOn())
-            Combat.setAutoRetaliate(true);
+
     }
 
     @SneakyThrows
     @Override
     public void run() {
+        if (Tribot.getUsername().equalsIgnoreCase("cass2186") || Tribot.getUsername().equalsIgnoreCase("Whipz")
+                || Tribot.getUsername().equalsIgnoreCase("SkrrtNick") || Tribot.getUsername().equalsIgnoreCase("Destinbrown1225")) {
 
+        } else {
+            Log.error("Username is not permitted. Message me on discord for access");
+            return;
+        }
         URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/my-script2/src/scripts/gui/cQuesterGUI.fxml");
 
         GUI gui = new GUI(lcn);
-
-
 
         if (Vars.get().shouldShowGui) {
             Log.debug("Loading GUI");
@@ -175,25 +181,19 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             while (gui.isOpen())
                 Waiting.wait(500);
         }
+        org.tribot.script.sdk.Options.AttackOption.setNpcAttackOption(org.tribot.script.sdk.Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
 
-        Vars.get().startingQuestPoints = Utils.getQuestPoints();
+        Utils.setCameraZoomAboveDefault();
+
+        if (!Combat.isAutoRetaliateOn())
+            Combat.setAutoRetaliate(true);
+
+        Vars.get().startingQuestPoints = MyPlayer.getQuestPoints();
+
         TaskSet tasks;
         if (taskList == null) {
             General.println("[Debug]: Task list is null");
-            tasks = new TaskSet(
-                    // new StartHorror(),
-                    //  new LightHouseSteps(),
-                    // new HorrorFight()
-                    // new BlackArmsGang()
-                    //  new PheonixGang()
-                    // new GhostsAhoy()
-                    //new DreamMentor()
-                    //  new ChanceChallenge(),
-                    // new MemoryChallenge(),
-                    //  new MimicChallenge(),
-                    // new NumberChallenge()
-                    // new HeroesQuestBlackArmsGang()
-            );
+            tasks = new TaskSet();
         } else {
             tasks = new TaskSet(taskList);
         }
@@ -212,7 +212,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 DeathsOffice.collectItems();
             }
             if (task != null) {
-                gameSetting = task.questName();
+                Vars.get().questName = task.questName();
                 task.execute();
             } else {
                 Log.debug("[Debug]: Task is null");
@@ -235,7 +235,6 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         General.println("[Debug]: Argument entered: " + input);
         for (String arg : input.split(";")) {
             try {
-                Vars.get().shouldShowGui = false;
                 handleArgs(arg);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -256,8 +255,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             myString = new ArrayList<>(Arrays.asList(
                     "cQuester v2",
                     "Running For: " + Timing.msToString(getRunningTime()),
+                    "Quest: " + Vars.get().questName,
                     "Task: " + status,
-                    "Game setting: " + gameSetting,
                     "Varbit 3633  (" + Utils.getVarBitValue(3633) + ")",
                     "Is interacting with: " + inadeq[0].isInteractingWithMe()
             ));
@@ -265,10 +264,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             myString = new ArrayList<>(Arrays.asList(
                     "cQuester v2",
                     "Running For: " + Timing.msToString(getRunningTime()),
-                    "Quest: " + gameSetting,
+                    "Quest: " + Vars.get().questName,
                     "Task: " + status,
                     "Tasks To Do: " + taskList.size(),
-                    "Viewport scale: " + Game.getViewportScale()
+                    "Gained QP: " + (MyPlayer.getQuestPoints() - Vars.get().startingQuestPoints)
             ));
         }
         if (taskList.size() > 0 && taskList.get(0).equals(FamilyCrest.get())) {
@@ -283,7 +282,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
 
     @Override
     public void onEnd() {
-
+        int gainedQp = MyPlayer.getQuestPoints() - Vars.get().startingQuestPoints;
+        Log.info("QP Gained: " + gainedQp);
+        Vars.get().daxTracker.trackData("Quest Points", gainedQp);
+        Vars.get().daxTracker.stop();
     }
 
     @Override
@@ -292,6 +294,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         Utils.handleRecoilMessage(message);
         if (message.contains("You haven't got enough.")) {
             cQuesterV2.isRunning.set(false);
+            throw new NullPointerException("Do not have enough coins, ending");
         }
         if (message.contains("you are dead")) {
             taskList.add(DeathsOffice.get());
@@ -320,9 +323,6 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 }
             }
         }
-
-        //  if (ZOGRE_FLESH_EATERS)
-        //      ZogreFleshEaters.handlePortraitMessage(message);
     }
 
     public static void handleArgs(String arg) {
@@ -680,7 +680,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             General.println("[Args]: Added Sheep Shearer");
             taskList.add(SheepShearer.get());
         }
-
+        if (taskList.size() > 0)
+            Vars.get().shouldShowGui = false;
     }
 
 }

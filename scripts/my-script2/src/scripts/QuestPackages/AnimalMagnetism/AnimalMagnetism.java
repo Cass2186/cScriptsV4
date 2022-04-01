@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.AscentOfArceuus.AscentOfArceuus;
@@ -670,5 +671,10 @@ public class AnimalMagnetism implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.ANIMAL_MAGNETISM.getState().equals(Quest.State.COMPLETE);
     }
 }

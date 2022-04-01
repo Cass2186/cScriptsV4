@@ -4,6 +4,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Quest;
 import scripts.ItemID;
 import scripts.NpcID;
 import scripts.ObjectID;
@@ -852,5 +853,9 @@ public class LunarDiplomacy implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

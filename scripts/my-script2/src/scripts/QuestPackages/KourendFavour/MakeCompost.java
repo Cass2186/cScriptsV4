@@ -4,6 +4,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestSteps.QuestTask;
@@ -84,5 +85,10 @@ public class MakeCompost implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 }

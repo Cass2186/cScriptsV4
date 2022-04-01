@@ -6,6 +6,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RestlessGhost.RestlessGhost;
@@ -29,7 +30,7 @@ public class EnterTheAbyss implements QuestTask {
         return quest == null ? quest = new EnterTheAbyss() : quest;
     }
 
-
+    int SCRYING_ORB_EMPTY = 5519;
     int SCRYING_ORB = 5518;
 
     RSArea START_AREA = new RSArea(new RSTile(3109, 3552, 0), new RSTile(3101, 3559, 0));
@@ -252,5 +253,10 @@ public class EnterTheAbyss implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.ENTER_THE_ABYSS.getState().equals(Quest.State.COMPLETE);
     }
 }

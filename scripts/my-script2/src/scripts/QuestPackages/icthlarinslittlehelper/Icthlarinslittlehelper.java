@@ -789,4 +789,9 @@ public class Icthlarinslittlehelper implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.ICTHLARINS_LITTLE_HELPER.getState().equals(Quest.State.COMPLETE);
+    }
 }

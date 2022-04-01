@@ -701,4 +701,9 @@ public class EnakhrasLament implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.ENAKHRAS_LAMENT.getState().equals(Quest.State.COMPLETE);
+    }
 }

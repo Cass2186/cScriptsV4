@@ -7,6 +7,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
@@ -201,7 +202,6 @@ public class MonksFriend implements QuestTask {
     }
 
 
-
     @Override
     public void execute() {
         if (Game.getSetting(30) == 0) {
@@ -250,6 +250,7 @@ public class MonksFriend implements QuestTask {
     public String questName() {
         return "Monk's Friend";
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
@@ -259,8 +260,13 @@ public class MonksFriend implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
     @Override
     public boolean checkRequirements() {
         return true;
+    }
+    @Override
+    public boolean isComplete() {
+        return Quest.MONKS_FRIEND.getState().equals(Quest.State.COMPLETE);
     }
 }

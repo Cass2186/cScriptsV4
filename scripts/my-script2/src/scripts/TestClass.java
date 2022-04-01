@@ -29,6 +29,7 @@ import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.QuestUtils.Vars;
 import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
@@ -404,7 +405,7 @@ public class TestClass implements QuestTask {
         RSItem[] salmon = org.tribot.api2007.Inventory.find(ItemID.SALMON);
         int lng = salmon.length;
         if (salmon.length > 0 && npcCat != null) {
-            cQuesterV2.status = "Feeding Cat";
+            Vars.get().status = "Feeding Cat";
             General.println("[Debug]: Feeding Cat", Color.red);
             for (int i = 0; i < 3; i++) {
                 if (Utils.useItemOnNPC(ItemID.SALMON, npcCat)) {
@@ -739,5 +740,10 @@ public class TestClass implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return false;
     }
 }

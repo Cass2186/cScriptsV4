@@ -2,6 +2,7 @@ package scripts.QuestPackages.CorsairCurse;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.ItemID;
 import scripts.NpcID;
 import scripts.ObjectID;
@@ -220,5 +221,10 @@ public class CorsairCurse implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_CORSAIR_CURSE.getState().equals(Quest.State.COMPLETE);
     }
 }

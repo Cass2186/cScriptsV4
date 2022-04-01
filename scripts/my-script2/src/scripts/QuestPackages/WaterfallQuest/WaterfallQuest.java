@@ -10,6 +10,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.GEManager.Exchange;
 import scripts.GEManager.GEItem;
 import scripts.*;
@@ -923,5 +924,10 @@ public class WaterfallQuest implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.WATERFALL_QUEST.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.TheFeud.TheFeud;
@@ -777,5 +778,10 @@ public class GrandTree implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_GRAND_TREE.getState().equals(Quest.State.COMPLETE);
     }
 }

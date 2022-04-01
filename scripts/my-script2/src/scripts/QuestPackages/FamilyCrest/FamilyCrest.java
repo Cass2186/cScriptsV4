@@ -7,6 +7,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
@@ -415,10 +416,12 @@ public class FamilyCrest implements QuestTask {
         }
 
         if (GOLD_ORE_AREA.contains(Player.getPosition())) {
+            Log.info("In gold ore area");
             if (!Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MELEE))
                 Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 
             for (int i = 0; i < 15; i++) {
+                Log.info("In gold ore area, I = " + i );
                 int num = Inventory.find(ItemID.PERFECT_GOLD_ORE).length;
                 checkEat();
 
@@ -428,7 +431,7 @@ public class FamilyCrest implements QuestTask {
                 if (Utils.clickObj(11371, "Mine")) { //gold rocks
                     if (Timer.waitCondition(() -> Player.getAnimation() != -1, 1800, 3300))
                         Timer.waitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_ORE).length > num,
-                                2200, 3200);
+                                2200, 3800);
 
                     checkEat();
                 }
@@ -969,5 +972,10 @@ public class FamilyCrest implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.FAMILY_CREST.getState().equals(Quest.State.COMPLETE);
     }
 }

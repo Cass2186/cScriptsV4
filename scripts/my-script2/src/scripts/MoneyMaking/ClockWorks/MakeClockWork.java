@@ -152,4 +152,9 @@ public class MakeClockWork implements QuestTask {
         return null;
     }
 
+    @Override
+    public boolean isComplete() {
+        return false;
+    }
+
 }

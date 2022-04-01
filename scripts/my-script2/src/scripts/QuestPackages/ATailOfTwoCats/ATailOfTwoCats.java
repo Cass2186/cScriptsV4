@@ -5,6 +5,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -285,5 +286,9 @@ public class ATailOfTwoCats implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+    @Override
+    public boolean isComplete() {
+        return Quest.A_TAIL_OF_TWO_CATS.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -8,6 +8,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
@@ -797,5 +798,10 @@ public class NatureSpirit implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.NATURE_SPIRIT.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -44,7 +44,7 @@ public class QuestGUIController extends AbstractGUIController {
     @FXML
     void addQuestPressed(ActionEvent event) {
         int index = questListView.getSelectionModel().getSelectedIndex();
-        String s =  questListView.getItems().get(index);
+        String s = questListView.getItems().get(index);
         if (s != null) {
             questListView.getItems().remove(s);
             selectedQuestsListView.getItems().add(s);
@@ -71,7 +71,7 @@ public class QuestGUIController extends AbstractGUIController {
         // Vars settings = Vars.get();
         // ScriptSettings handler = ScriptSettings.getDefault();
         // handler.save("last", settings);
-        for (String str : selectedQuestsListView.getItems()){
+        for (String str : selectedQuestsListView.getItems()) {
             String s = str.replace(" ", "");
             cQuesterV2.handleArgs(s);
         }
@@ -83,7 +83,8 @@ public class QuestGUIController extends AbstractGUIController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         for (SupportedQuests s : SupportedQuests.values()) {
-            questListView.getItems().add(StringUtils.capitalize(s.getQuestName()));
+            if (!s.isComplete())
+                questListView.getItems().add(StringUtils.capitalize(s.getQuestName()));
         }
 
     }

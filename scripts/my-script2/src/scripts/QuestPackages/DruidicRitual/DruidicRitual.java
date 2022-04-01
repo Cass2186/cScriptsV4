@@ -3,6 +3,7 @@ package scripts.QuestPackages.DruidicRitual;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import scripts.*;
@@ -168,5 +169,10 @@ public class DruidicRitual implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.DRUIDIC_RITUAL.getState().equals(Quest.State.COMPLETE);
     }
 }

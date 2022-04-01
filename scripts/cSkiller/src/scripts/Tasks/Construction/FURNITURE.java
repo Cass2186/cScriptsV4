@@ -105,7 +105,7 @@ public enum FURNITURE {
         }
         //make req for planks items
         i.add(new ItemReq.Builder()
-                .idEquals(ItemID.PLANK)
+                .id(ItemID.PLANK)
                 .isItemNoted(true)
                 .amount(numOfRegPlanks).build());
 
@@ -116,7 +116,7 @@ public enum FURNITURE {
 
         //make req for oak planks items
         i.add(new ItemReq.Builder()
-                .idEquals(ItemID.OAK_PLANK)
+                .id(ItemID.OAK_PLANK)
                 .isItemNoted(true)
                 .amount(numOfOakPlanks).build());
 

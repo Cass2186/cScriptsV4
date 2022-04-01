@@ -26,7 +26,10 @@ public class SolveTask implements QuestTask {
         return quest == null ? quest = new SolveTask() : quest;
     }
    // private static final JustLogger LOGGER = new JustLogger(SolveTask.class);
-
+   @Override
+   public boolean isComplete() {
+       return false;
+   }
     /**
      * TODO
      * - make it not check both sides of a sticking out bit, it's weird

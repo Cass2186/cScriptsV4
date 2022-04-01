@@ -1,6 +1,7 @@
 package scripts.QuestPackages.LunarDiplomacy;
 
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.ObjectID;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
@@ -123,5 +124,10 @@ public class NumberChallenge implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
     }
 }

@@ -5,25 +5,20 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
-import org.tribot.api2007.ext.Filters;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MakeScreen;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.QuestPackages.RfdSkratch.RfdSkratch;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +35,8 @@ public class BigChompyBirdHunting implements QuestTask {
     //Objects
     int ACHEY_TREE_ID = 2023;
     int UNLOCKED_CHEST_ID = 3378;
+    //NPC
+    int NPC_INFLATED_TOAD = 1474;
 
     //items
     int equaLeaves = 2128;
@@ -235,50 +232,53 @@ public class BigChompyBirdHunting implements QuestTask {
 
 
     public void goToChest() {
-        if (!CAVE_ENTRANCE_AREA.contains(Player.getPosition()) &&
-                !INSIDE_CAVE.contains(Player.getPosition())) {
-            cQuesterV2.status = "Walking to cave entrance";
-            PathingUtil.walkToArea(CAVE_ENTRANCE_AREA);
-        }
-
-        cQuesterV2.status = "Entering Cave";
-        if (Utils.clickObj("Cave entrance", "Enter"))
-            Timer.waitCondition(() -> INSIDE_CAVE.contains(Player.getPosition()), 7000, 10000);
-
-        if (!BUGS_AREA.contains(Player.getPosition())) {
-            cQuesterV2.status = "Going to Bugs";
-            PathingUtil.walkToArea(BUGS_AREA);
-        }
-
-        if (INSIDE_CAVE.contains(Player.getPosition())) {
-            // he doesn't have the usual "Talk-to" interaction string
-            if (Utils.clickNPC("Bugs", "Talk")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+        if (Inventory.find(ItemID.OGRE_BELLOWS).length == 0) {
+            if (!CAVE_ENTRANCE_AREA.contains(Player.getPosition()) &&
+                    !INSIDE_CAVE.contains(Player.getPosition())) {
+                cQuesterV2.status = "Walking to cave entrance";
+                PathingUtil.walkToArea(CAVE_ENTRANCE_AREA);
             }
 
-            //can take multiple attempts to open successfully
-            for (int i = 0; i < 5; i++) {
-                RSObject[] chest = Objects.findNearest(20, "Locked Ogre chest");
-                if (chest.length > 0 && Inventory.find(bellows).length < 1) {
-                    cQuesterV2.status = "Unlocking chest";
-                    if (Utils.clickObj("Locked Ogre chest", "Unlock")) {
-                        Timer.waitCondition(() -> Objects.find(20, UNLOCKED_CHEST_ID).length > 0, 7000, 9000);
-                    }
-                    RSObject[] unlockedChest = Objects.find(20, UNLOCKED_CHEST_ID);
-                    if (unlockedChest.length > 0) {
-                        break;
+            cQuesterV2.status = "Entering Cave";
+            if (Utils.clickObj("Cave entrance", "Enter"))
+                Timer.waitCondition(() -> INSIDE_CAVE.contains(Player.getPosition()), 7000, 10000);
+
+            if (!BUGS_AREA.contains(Player.getPosition())) {
+                cQuesterV2.status = "Going to Bugs";
+                PathingUtil.walkToArea(BUGS_AREA);
+            }
+
+            if (INSIDE_CAVE.contains(Player.getPosition())) {
+                // he doesn't have the usual "Talk-to" interaction string
+                if (Utils.clickNPC("Bugs", "Talk")) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation();
+                }
+
+                //can take multiple attempts to open successfully
+                for (int i = 0; i < 5; i++) {
+                    RSObject[] chest = Objects.findNearest(20, "Locked Ogre chest");
+                    if (chest.length > 0 && Inventory.find(bellows).length < 1) {
+                        cQuesterV2.status = "Unlocking chest";
+                        if (Utils.clickObj("Locked Ogre chest", "Unlock")) {
+                            Timer.waitCondition(() -> Objects.find(20, UNLOCKED_CHEST_ID).length > 0, 7000, 9000);
+                        }
+                        RSObject[] unlockedChest = Objects.find(20, UNLOCKED_CHEST_ID);
+                        if (unlockedChest.length > 0) {
+                            break;
+                        }
                     }
                 }
-            }
 
-            RSObject[] unlockedChest = Objects.find(20, UNLOCKED_CHEST_ID);
-            if (unlockedChest.length > 0) {
-                cQuesterV2.status = "Searching chest";
-                if (Utils.clickObj(UNLOCKED_CHEST_ID, "Search")) {
-                    NPCInteraction.waitForConversationWindow();
-                    ChatScreen.handle();
-                    Timer.waitCondition(() -> Inventory.find(bellows).length > 0, 3000, 5000);
+                RSObject[] unlockedChest = Objects.find(20, UNLOCKED_CHEST_ID);
+                if (unlockedChest.length > 0) {
+                    cQuesterV2.status = "Searching chest";
+                    if (Utils.clickObj(UNLOCKED_CHEST_ID, "Search")) {
+                        NPCInteraction.waitForConversationWindow();
+                        Keyboard.typeString(" ");
+                        ChatScreen.handle();
+                        Timer.waitCondition(() -> Inventory.find(bellows).length > 0, 3000, 5000);
+                    }
                 }
             }
         }
@@ -372,6 +372,8 @@ public class BigChompyBirdHunting implements QuestTask {
         }
     }
 
+
+
     public void rantzHunt() {
         if (Inventory.find(bloatedToad).length < 1)
             inflateToads();
@@ -382,12 +384,18 @@ public class BigChompyBirdHunting implements QuestTask {
         }
         RSItem[] bloatedTd = Inventory.find(bloatedToad);
         if (HUNT_AREA.contains(Player.getPosition()) && bloatedTd.length > 0) {
-            if (AccurateMouse.click(bloatedTd[0], "Drop")) {
-                Timer.waitCondition(() -> NPCs.findNearest(1474).length > 0, 8000, 12000); // 1474 = toad ID
-                General.sleep(General.random(500, 2000));
+            cQuesterV2.status = "Dropping Toad";
+            if (NPCs.findNearest(NPC_INFLATED_TOAD).length == 0
+                    && AccurateMouse.click(bloatedTd[0], "Drop")) {
+                Timer.waitCondition(() -> NPCs.findNearest(NPC_INFLATED_TOAD).length > 0, 8000, 10000); // 1474 = toad ID
+                General.sleep(500, 1500);
+            }
+
+            if (NPCs.findNearest(NPC_INFLATED_TOAD).length > 0) {
+                cQuesterV2.status = "Hiding";
                 PathingUtil.walkToArea(HIDE_AREA);
                 cQuesterV2.status = "Waiting...";
-                Timer.waitCondition(() -> HIDE_AREA.contains(Player.getPosition()), 8000, 12000);
+                Timer.waitCondition(() -> HIDE_AREA.contains(Player.getPosition()), 8000, 10000);
                 Timer.waitCondition(() -> Game.getSetting(293) == 40 || NPCs.findNearest(1474).length < 1, 60000, 80000);
                 Utils.shortSleep();
             }
@@ -503,41 +511,49 @@ public class BigChompyBirdHunting implements QuestTask {
                 if (theirChatCont != null) {
                     ChatScreen.clickContinue();
                     Waiting.waitNormal(750, 50);
-                    determineIngredients();
+                    if(determineIngredients())
+                        break;
                 }
-
-                General.sleep(General.random(1500, 4000));
+                if (!ChatScreen.isOpen())
+                    break;
             }
+            General.sleep(1500, 4000);
         }
 
     }
 
-    public void determineIngredients() {
-        RSInterface chat = Interfaces.get(231, 5);
-        if (chat != null) {
-            if (chat.getText().toLowerCase().contains("equa leaves")) {
+    public boolean determineIngredients() {
+        Optional<String> chat = ChatScreen.getMessage();
+        if (chat.isPresent()) {
+            if (chat.get().toLowerCase().contains("equa leaves")) {
                 addEquaLeaves = true;
-                General.println("[Debug]: Adding equa leaves");
-            } else if (chat.getText().toLowerCase().contains("tomato")) {
+                Log.info("[Debug]: Adding equa leaves");
+                return true;
+            } else if (chat.get().toLowerCase().contains("tomato")) {
                 addTomato = true;
-                General.println("[Debug]: Adding tomato");
-            } else if (chat.getText().toLowerCase().contains("cabbage")) {
+                Log.info("[Debug]: Adding tomato");
+                return true;
+            } else if (chat.get().toLowerCase().contains("cabbage")) {
                 addCabbage = true;
-                General.println("[Debug]: Adding cabbage");
-            } else if (chat.getText().toLowerCase().contains("potato")) {
+                Log.info("[Debug]: Adding cabbage");
+                return true;
+            } else if (chat.get().toLowerCase().contains("potato")) {
                 addPotato = true;
-                General.println("[Debug]: Adding potato");
-            } else if (chat.getText().toLowerCase().contains("doogle")) {
+                Log.info("[Debug]: Adding potato");
+                return true;
+            } else if (chat.get().toLowerCase().contains("doogle")) {
                 addDoogleLeaves = true;
-                General.println("[Debug]: Adding doogle leaves");
-            } else if (chat.getText().toLowerCase().contains("onion")) {
+                Log.info("[Debug]: Adding doogle leaves");
+                return true;
+            } else if (chat.get().toLowerCase().contains("onion")) {
                 addOnion = true;
-                General.println("[Debug]: Adding onion");
+                Log.info("Adding onion");
+                return true;
             } else {
-
-                General.println("[Debug]: Failed to get ingredient from this chat");
+                Log.error("Failed to get ingredient from this chat");
             }
         }
+        return false;
     }
 
     public void cook() {
@@ -685,6 +701,11 @@ public class BigChompyBirdHunting implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.BIG_CHOMPY_BIRD_HUNTING.getState().equals(Quest.State.COMPLETE);
     }
 
 }

@@ -5,6 +5,7 @@ import scripts.QuestSteps.QuestStep;
 import scripts.Quests;
 import scripts.Tasks.Task;
 import scripts.Timer;
+import scripts.dax.tracker.DaxTracker;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,12 @@ public class Vars {
     public int startingQuestPoints = 0;
     public int currentQuestPoints = 0;
     public boolean shouldShowGui = true;
+
+    public String status = "Initializing";
+    public String questName = "Initializing";
+
+
+    public DaxTracker daxTracker;
 
     public int afkDurationAvg = 0;
     public int afkDurationSD = 0;

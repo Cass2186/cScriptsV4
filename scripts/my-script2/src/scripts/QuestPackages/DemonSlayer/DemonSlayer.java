@@ -598,4 +598,9 @@ public class DemonSlayer implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.DEMON_SLAYER.getState().equals(Quest.State.COMPLETE);
+    }
 }

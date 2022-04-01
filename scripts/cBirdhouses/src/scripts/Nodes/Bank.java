@@ -82,10 +82,10 @@ public class Bank implements Task {
                     new ItemReq(Const.get().BARLEY_SEED_ID, 500,40),
                     new ItemReq(ItemID.STAMINA_POTION, 1),
                    new ItemReq.Builder()
-                           .idEquals(Const.get().DIGSITE_PENDANT[0])
-                           .addAlternateIds(Const.get().DIGSITE_PENDANT)
+                           .id(Const.get().DIGSITE_PENDANT[0])
+                           //.alternateItemIDs(Const.get().DIGSITE_PENDANT[1])
                             .minAmount(1)
-                            .chargesNeeded(1)
+                           // .chargesNeeded(1)
                             .build()
             );
          //   BankManager.withdrawList(list);

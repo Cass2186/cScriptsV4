@@ -726,4 +726,9 @@ public class Contact implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.CONTACT.getState().equals(Quest.State.COMPLETE);
+    }
 }

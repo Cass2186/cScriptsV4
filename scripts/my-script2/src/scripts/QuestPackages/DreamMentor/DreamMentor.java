@@ -9,6 +9,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
@@ -936,5 +937,10 @@ public class DreamMentor implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.DREAM_MENTOR.getState().equals(Quest.State.COMPLETE);
     }
 }

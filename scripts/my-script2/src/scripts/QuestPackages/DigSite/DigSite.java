@@ -8,6 +8,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.DoricsQuest.DoricsQuest;
@@ -106,7 +107,7 @@ public class DigSite implements QuestTask {
             Arrays.asList(
                     new GEItem(ItemID.PESTLE_AND_MORTAR, 1, 500),
                     new GEItem(ItemID.VIAL, 1, 300),
-                    new GEItem(ItemID.CUP_OF_TEA, 1, 500),
+                    new GEItem(ItemID.CUP_OF_TEA_1978, 1, 500),
                     new GEItem(ItemID.OPAL, 1, 500),
                     new GEItem(ItemID.ROPE, 2, 200),
                     new GEItem(ItemID.CHARCOAL, 2, 500),
@@ -143,7 +144,7 @@ public class DigSite implements QuestTask {
         BankManager.withdraw(1, true, LEATHER_BOOTS);
         BankManager.withdraw(1, true, LEATHER_GLOVES);
         BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
-        BankManager.withdraw(1, true, CUP_OF_TEA);
+        BankManager.withdraw(1, true, ItemID.CUP_OF_TEA_1978);
         BankManager.withdraw(1, true, OPAL);
         BankManager.withdraw(2, true, CHARCOAL);
         BankManager.withdraw(2, true, ROPE);
@@ -932,5 +933,10 @@ public class DigSite implements QuestTask {
     @Override
     public List<ItemRequirement> getBuyList() {
         return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return Quest.THE_DIG_SITE.getState().equals(Quest.State.COMPLETE);
     }
 }
