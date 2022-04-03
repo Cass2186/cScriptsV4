@@ -2,6 +2,7 @@ package scripts.NmzData;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Skill;
 import scripts.Timer;
 
 import java.util.HashMap;
@@ -55,6 +56,15 @@ public class Vars {
     public  boolean usingSuperCombat = false;
     public boolean usingOverloadPots = false;
     public boolean isOverloadActive = false;
+    public boolean showDetailedPaint = false;
 
     public Timer overloadTimer = new Timer(0);  //5 min
+
+
+    public int gainedAtkLvl = Skill.ATTACK.getActualLevel() - Const.startAttLvl;
+    public int gainedStrLvl = Skill.STRENGTH.getActualLevel() - Const.startStrLvl;
+    public int gainedDefLvl = Skill.DEFENCE.getActualLevel() - Const.startDefLvl;
+    public int gainedHPLvl = Skill.HITPOINTS.getActualLevel() - Const.startHPLvl;
+    public int gainedRangedLvl = Skill.RANGED.getActualLevel() - Const.startRangeLvl;
+    public int gainedMagicLvl = Skill.MAGIC.getActualLevel() - Const.startMageLvl;
 }

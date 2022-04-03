@@ -28,6 +28,7 @@ public class Afk implements Task {
     public boolean waitCond(Boolean abc2Actions, boolean mouseOffScreen) {
         boolean condition;
         return Timing.waitCondition(() -> {
+
             if (Vars.get().usingPrayerPots)
                 Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 

@@ -16,7 +16,9 @@ import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Login;
+import org.tribot.script.sdk.MessageListening;
 import scripts.NmzData.Const;
+import scripts.NmzData.Paint;
 import scripts.NmzData.Vars;
 import scripts.Tasks.*;
 
@@ -31,42 +33,25 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
-    public static String gameSetting = "Initializing";
-    public static int gameSettingInt = 0;
-    public static String currentQuest = "Initializing";
-    public java.util.List<Task> taskList = new ArrayList<>();
-    public java.util.List<Quests> questList = new ArrayList<>();
-    public int nextStaminaPotionUse = General.randomSD(50, 85, 75, 5);
 
-    Skills.SKILLS currentSkill = Skills.SKILLS.STRENGTH;
-
-
-    public void populateInitialMap(){
+    public void populateInitialMap() {
         Log.log("[Debug]: Populating intial skills xp HashMap");
-        for (Skills.SKILLS s : Skills.SKILLS.values() ){
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
             Vars.get().skillStartXpMap.put(s, s.getXP());
         }
     }
 
-    public HashMap<Skills.SKILLS, Integer> getXpMap(){
+    public HashMap<Skills.SKILLS, Integer> getXpMap() {
         HashMap<Skills.SKILLS, Integer> map = new HashMap<>();
-        for (Skills.SKILLS s : Skills.SKILLS.values() ){
-           int startXp =  Vars.get().skillStartXpMap.get(s);
-           if (s.getXP() > startXp){
-               map.put(s,s.getXP() - startXp );
-           }
+        for (Skills.SKILLS s : Skills.SKILLS.values()) {
+            int startXp = Vars.get().skillStartXpMap.get(s);
+            if (s.getXP() > startXp) {
+                map.put(s, s.getXP() - startXp);
+            }
         }
 
         return map;
     }
-
-
-
-    final int startLevel = Skills.getActualLevel(currentSkill);
-    final int startXp = Skills.getXP(currentSkill);
-    int gainedXp = 0;
-    int gainedLvl = 0;
-    int currentXp = Skills.getXP(currentSkill);
 
 
     @Override
@@ -80,23 +65,27 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
                 new EnterDream()
 
         );
-
+        Paint.initializeDetailedPaint();
+        Paint.addPaint();
 
         isRunning.set(true);
         while (isRunning.get()) {
             General.sleep(50, 150);
+
             if (!Game.isInInstance())
                 break;
+
             if (!Login.isLoggedIn())
                 break;
+
+            if (!Combat.isAutoRetaliateOn())
+                Combat.setAutoRetaliate(true);
+
             Task task = tasks.getValidTask();
             if (task != null) {
                 status = task.toString();
                 task.execute();
-
             }
-            Log.debug("[Debug]: Vars.get().rockcakeAt " + Vars.get().eatRockCakeAt);
-
         }
 
     }
@@ -122,7 +111,7 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
 
     @Override
     public void onPaint(Graphics g) {
-        int currentLvl = Skills.getActualLevel(currentSkill);
+    /*       int currentLvl = Skills.getActualLevel(currentSkill);
         gainedLvl = currentLvl - startLevel;
         gainedXp = Skills.getXP(currentSkill) - startXp;
         HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
@@ -177,16 +166,14 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
         myString.add("Time to Next Level (" + (currentLvl + 1) + "): "
                 + Timing.msToString(timeToLevel)
         );
-*/
 
-        PaintUtil.createPaint(g, myString.toArray(String[]::new));
+
+        PaintUtil.createPaint(g, myString.toArray(String[]::new));*/
     }
 
     @Override
     public void onStart() {
-
         AntiBan.create();
-
         Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA,
                 Teleport.RING_OF_DUELING_FEROX_ENCLAVE);
 
@@ -206,6 +193,20 @@ public class cNMZ extends Script implements Starting, Arguments, Painting, Endin
     @Override
     public void onEnd() {
         General.println("[Ending]: Runtime " + Timing.msToString(getRunningTime()));
+    }
+
+    private void initializeMessageListeners() {
+        MessageListening.addServerMessageListener((message) -> {
+                    if (message.toLowerCase().contains("you drink some of your overload")) {
+                        General.println("[Debug]: Overload message recieved");
+                        Vars.get().overloadTimer.reset();
+                    }
+                    if (message.toLowerCase().contains("overload have worn off")) {
+                        General.println("[Debug]: Overload finished message recieved");
+                        Vars.get().overloadTimer.setEndIn(1);
+                    }
+                }
+        );
     }
 
     @Override
