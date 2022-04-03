@@ -271,7 +271,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
         WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
             @Override
             public DaxCredentials getDaxCredentials() {
-                return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
+                return new DaxCredentials("sub_H0C2eULZfbWeoF", "acb35610-d868-4ce8-8797-0d2e659f87f4");
+                //return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
             }
         });
         Utils.setNPCAttackPreference();
@@ -420,6 +421,29 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                // new MakeCannonballs()
 
         );
+        Color backgroundColor = new Color(93, 140, 245, 160);
+        PaintTextRow template = PaintTextRow.builder().background(backgroundColor).build();
+
+        BasicPaintTemplate timers = BasicPaintTemplate.builder()
+                  .row(template.toBuilder().label("AFK Timer").value(()
+                          ->Timing.msToString(Vars.get().afkTimer.getRemaining()))
+                          .condition(()-> Vars.get().showTimers).build())
+                .row(template.toBuilder().label("Skill Timer").value(()
+                                ->Timing.msToString(Vars.get().skillSwitchTimer.getRemaining()))
+                        .condition(()-> Vars.get().showTimers).build())
+                .location(PaintLocation.TOP_RIGHT_CHATBOX)
+                .build();
+
+        BasicPaintTemplate paint = BasicPaintTemplate.builder()
+                .row(template.toBuilder().label("Open Timers").onClick(()->
+                        Vars.get().showTimers = true).build())
+                .row(template.toBuilder().label("Close Timers").onClick(()->
+                        Vars.get().showTimers = false).build())
+                .location(PaintLocation.TOP_LEFT_CHATBOX)
+                .build();
+
+        org.tribot.script.sdk.painting.Painting.addPaint(g -> timers.render(g));
+        org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));
 
         HashMap<Skills.SKILLS, Integer> startHashMap = Utils.getXpForAllSkills();
         isRunning.set(true);
@@ -556,7 +580,6 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
-                // .row(template.toBuilder().label("Rotate Task").onClick(() -> Log.debug("CLICKED!")).build())
                 .row(template.toBuilder().label("Task").value(() -> currentSkillName).build())
                 .row(template.toBuilder().label("Action").value(() -> status).build())
 
@@ -648,9 +671,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                     g.drawPolygon(tile.get());
                     g.drawString("angle: " + n.getOrientation().getAngle(),
                             (int) tile.get().getBounds2D().getX(), (int) tile.get().getBounds2D().getY());
-
                 }
-
             }
         }
 
@@ -659,10 +680,10 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 "cSkiller v" + this.getScriptVersion(),
                 "Running For: " + Timing.msToString(getRunningTime()),
                 "Task: " + currentSkillName,
-                "Action: " + status,
+                "Action: " + status
                 // "ItemsToBuy: " + BuyItems.itemsToBuy.size(),
-                "Skill Timer: " + Timing.msToString(Vars.get().skillSwitchTimer.getRemaining()),
-                "AFK Timer: " + Timing.msToString(Vars.get().afkTimer.getRemaining())
+            //    "Skill Timer: " + Timing.msToString(Vars.get().skillSwitchTimer.getRemaining())
+              //  "AFK Timer: " + Timing.msToString(Vars.get().afkTimer.getRemaining())
         ));
         if (Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MINING)) {

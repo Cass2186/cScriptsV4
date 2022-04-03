@@ -7,6 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.EquipmentItem;
 import scripts.ItemID;
 import scripts.Tasks.Slayer.SlayerConst.Assign;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
@@ -14,6 +15,7 @@ import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class SlayerVars {
 
@@ -176,17 +178,17 @@ public class SlayerVars {
     };
     public int abc2Chance = General.random(0, 100);
 
-    public RSItem HEAD_GEAR;
-    public RSItem CAPE_GEAR;
-    public RSItem NECK_GEAR;
-    public RSItem AMMO_GEAR;
-    public RSItem WEAPON_GEAR;
-    public RSItem BODY_GEAR;
-    public RSItem SHIELD_GEAR;
-    public RSItem LEG_GEAR;
-    public RSItem BOOT_GEAR;
-    public RSItem GLOVES_GEAR;
-    public RSItem RING_GEAR;
+    public Optional<EquipmentItem>  HEAD_GEAR;
+    public Optional<EquipmentItem> CAPE_GEAR;
+    public Optional<EquipmentItem> NECK_GEAR;
+    public Optional<EquipmentItem> AMMO_GEAR;
+    public Optional<EquipmentItem> WEAPON_GEAR;
+    public Optional<EquipmentItem> BODY_GEAR;
+    public Optional<EquipmentItem> SHIELD_GEAR;
+    public Optional<EquipmentItem> LEG_GEAR;
+    public Optional<EquipmentItem> BOOT_GEAR;
+    public Optional<EquipmentItem> GLOVES_GEAR;
+    public Optional<EquipmentItem> RING_GEAR;
 
     /**
      * CANNON

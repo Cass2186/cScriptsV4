@@ -492,7 +492,8 @@ public class AttackNpc implements Task {
     public void execute() {
         setPrayer();
         //  Log.log("Assignment is " + SlayerVars.get().assignment);
-        if (SlayerVars.get().assignment.equals(Assign.WALL_BEAST)) {
+        if (SlayerVars.get().assignment != null &&
+                SlayerVars.get().assignment.equals(Assign.WALL_BEAST)) {
             wallBeastTask();
         } else
             fight();

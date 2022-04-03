@@ -9,6 +9,7 @@ import scripts.AntiBan;
 import scripts.ItemID;
 import scripts.Tasks.Fishing.Locations.FishingLocation;
 import scripts.Tasks.Magic.Alch;
+import scripts.Tasks.Woodcutting.WoodcuttingData.WcLocations;
 import scripts.Timer;
 import scripts.dax.tracker.DaxTracker;
 
@@ -74,14 +75,22 @@ public class Vars {
     public boolean useFruitStalls = true;
 
     //Magic
-    public int clickAllJeweleryChance = General.random(25,45);
+    public int clickAllJeweleryChance = General.random(25, 45);
     public boolean preferJeweleryOverTeleports = false;
 
     //mining
     public int oreDeposits = 0;
 
+    //woodcutting
+    public List<WcLocations> wcLocationsList = new ArrayList<>(List.of(
+            WcLocations.VARROCK_WEST_TREES,
+            WcLocations.VARROCK_WEST_OAKS,
+            WcLocations.PORT_SARIM_WILLOWS,
+            WcLocations.SEERS_MAPLES
+    ));
+
     //afk stuff
-    public int afkDurationAvg = General.random(20000,40000); //30-40s
+    public int afkDurationAvg = General.random(20000, 40000); //30-40s
     public int afkDurationSD = 20000; //20s SD
     public int afkFrequencyAvg = 1200000; //every 20 min
     public int afkFrequencySD = 180000; //3m SD
@@ -96,14 +105,13 @@ public class Vars {
     public int miniBreakDurationMax = 1200;//20
 
     public int marksCollected = 0;
-    public int eatAt = General.random(30,65);
+    public int eatAt = General.random(30, 65);
 
     public int miniBreakFrequencyAvg = 2700; //45m
     public int miniBreakFrequencySD = 3600; //60m
-    public Timer miniBreakTimer = new Timer(General.randomSD(miniBreakFrequencyAvg*1000, miniBreakFrequencySD*1000));
+    public Timer miniBreakTimer = new Timer(General.randomSD(miniBreakFrequencyAvg * 1000, miniBreakFrequencySD * 1000));
 
     public DaxTracker daxTracker;
-
 
 
     public boolean shouldShowGUI = true;
@@ -112,6 +120,7 @@ public class Vars {
     public boolean afkMode = false;
     public boolean shouldAlchAgil = false;
     public boolean overridingCourse = false;
+    public boolean showTimers = false;
 
     public Alch.AlchItems alchItem = Alch.AlchItems.AIR_BATTLESTAFF;
 

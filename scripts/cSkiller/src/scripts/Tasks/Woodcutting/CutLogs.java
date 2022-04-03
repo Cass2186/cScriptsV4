@@ -5,13 +5,18 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.query.Query;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.Woodcutting.WoodcuttingData.WcLocations;
 import scripts.Tasks.Woodcutting.WoodcuttingData.WoodCuttingConst;
+
+import java.util.Comparator;
+import java.util.Optional;
 
 public class CutLogs implements Task {
 
@@ -59,8 +64,9 @@ public class CutLogs implements Task {
             PathingUtil.movementIdle();
     }
 
-    public void progressive() {
+    public void defaultProgressive() {
         WoodCuttingConst.equipAxe();
+        checkAxe();
         int currentLevel = Skills.getActualLevel(Skills.SKILLS.WOODCUTTING);
         if (currentLevel < 15) {
             chopTree(WoodCuttingConst.VARROCK_WESK_REGULAR, "Tree");
@@ -72,8 +78,20 @@ public class CutLogs implements Task {
             checkAxe();
             chopTree(WoodCuttingConst.PORT_SARIM_WILLOWS, "Willow");
         } else {
-            checkAxe();
+            chopTree(WoodCuttingConst.SEERS_MAPLES_AREA, "Maple");
         }
+    }
+
+    public void progressive(){
+        WoodCuttingConst.equipAxe();
+        checkAxe();
+
+        Optional<WcLocations> wcOptional = Vars.get().wcLocationsList.stream()
+                .filter(WcLocations::isWithinLevelRange)
+                .max(Comparator.comparingInt(WcLocations::getMinLevel));
+
+        wcOptional.ifPresent(w->chopTree(w.getArea(), w.getTreeName()));
+
     }
 
 
@@ -164,6 +182,7 @@ public class CutLogs implements Task {
     @Override
     public void execute() {
         Utils.FACTOR = .55;
+        //defaultProgressive();
         progressive();
     }
 

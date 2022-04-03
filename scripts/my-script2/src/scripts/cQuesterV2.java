@@ -155,7 +155,9 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
             @Override
             public DaxCredentials getDaxCredentials() {
-                return new DaxCredentials("sub_DPjXXzL5DeSiPf", "PUBLIC-KEY");
+                return new DaxCredentials("sub_H0C2eULZfbWeoF", "acb35610-d868-4ce8-8797-0d2e659f87f4");
+                //return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
+
             }
         });
 

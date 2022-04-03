@@ -378,6 +378,11 @@ public class VarrockMuseum implements QuestTask {
 
     @Override
     public void execute() {
+        if (Utils.getVarBitValue(3688) != 0) {
+            Utils.closeQuestCompletionWindow();
+            cQuesterV2.taskList.remove(VarrockMuseum.get());
+            return;
+        }
         if (Game.getSetting(1014) == 0) {
             startQuest();
         }
@@ -427,10 +432,7 @@ public class VarrockMuseum implements QuestTask {
             finishQuest();
             Utils.closeQuestCompletionWindow();
         }
-        if (Utils.getVarBitValue(3688) != 0) {
-            Utils.closeQuestCompletionWindow();
-            cQuesterV2.taskList.remove(VarrockMuseum.get());
-        }
+
 
     }
 

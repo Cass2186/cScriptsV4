@@ -8,6 +8,7 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.api2007.types.RSTile;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -20,11 +21,13 @@ import scripts.Timer;
 import scripts.Utils;
 
 public class GoToRcAltar implements Task {
+
     public void goToEarthAltar() {
-        if (((Inventory.find(ItemID.PURE_ESSENCE).length > 0 || Inventory.find("Tiara").length > 0)
+        if (((Inventory.find(ItemID.PURE_ESSENCE).length > 0 ||
+                Inventory.find("Tiara").length > 0)
                 && Equipment.isEquipped(ItemID.EARTH_TIARA)) && !atAltar()) {
 
-            PathingUtil.walkToArea(RcConst.EARTH_ALTAR_AREA, false);
+            PathingUtil.walkToTile(new RSTile(3305, 3472, 0), 3, false);
 
             if (Utils.clickObj("Mysterious ruins", "Enter")) {
                 Timer.waitCondition(() -> Objects.findNearest(30, "Altar").length > 0, 7000, 12000);
@@ -42,7 +45,9 @@ public class GoToRcAltar implements Task {
                     Filters.Objects.nameContains("Bank chest")).length == 0, 3000, 5000);
         }
 
-        RSObject[] altar = Objects.findNearest(30, Filters.Objects.nameContains("Altar").and(Filters.Objects.actionsNotContains("Pray")));
+        RSObject[] altar = Objects.findNearest(30,
+                Filters.Objects.nameContains("Altar")
+                        .and(Filters.Objects.actionsNotContains("Pray")));
         if (altar.length == 0) {
             General.println("[Debug] Going to fire altar");
             PathingUtil.walkToTile(RcConst.FIRE_ALTAR_TILE_BEFORE_RUINS, 8, false);

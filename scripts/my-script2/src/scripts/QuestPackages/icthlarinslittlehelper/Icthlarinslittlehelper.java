@@ -2,6 +2,7 @@ package scripts.QuestPackages.icthlarinslittlehelper;
 
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import obf.Ch;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.Combat;
@@ -72,10 +73,10 @@ public class Icthlarinslittlehelper implements QuestTask {
     //  Requirement catFollower;
 
 
-    NPCStep talkToWanderer = new NPCStep(6187, new RSTile(3316, 2849, 0),
+    NPCStep talkToWanderer = new NPCStep(6187, new RSTile(3315, 2848, 0),
 
             tinderbox);
-    NPCStep talkToWandererAgain = new NPCStep(6187, new RSTile(3316, 2849, 0),
+    NPCStep talkToWandererAgain = new NPCStep(6187, new RSTile(3315, 2848, 0),
             waterskin4, tinderbox);
     NPCStep talkToSphinx = new NPCStep(4209, new RSTile(3301, 2785, 0));
     //        catFollower);
@@ -89,7 +90,7 @@ public class Icthlarinslittlehelper implements QuestTask {
     ObjectStep jumpPit = new ObjectStep(ObjectID.PIT, new RSTile(3292, 9193, 0),
             "Jump-Across");
 
-    ObjectStep openWestDoor = new ObjectStep(6643, new RSTile(3280, 9199, 0),
+    ObjectStep openWestDoor = new ObjectStep(6643, new RSTile(3280, 9200, 0),
             "Open");
 
     ObjectStep openPyramidDoor = new ObjectStep(6614, new RSTile(3295, 2780, 0),
@@ -274,7 +275,7 @@ public class Icthlarinslittlehelper implements QuestTask {
                     new ItemReq(ItemID.BUCKET_OF_SAP, 1, 0),
                     new ItemReq(ItemID.LINEN, 1, 0),
                     new ItemReq(ItemID.NARDAH_TELEPORT, 5, 1),
-                    new ItemReq(ItemID.ANTIDOTE4, 2, 0),
+                    new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 2, 0),
                     new ItemReq(ItemID.WILLOW_LOGS, 1),
                     new ItemReq(ItemID.BAG_OF_SALT, 1),
                     new ItemReq(ItemID.RUNE_SCIMITAR, 1, true, true),
@@ -308,7 +309,7 @@ public class Icthlarinslittlehelper implements QuestTask {
         if (!Interfaces.isInterfaceSubstantiated(147)) {
             openWestDoor.execute();
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            ChatScreen.handle();
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(147, 3), 5000, 6000);
         }
         RSInterfaceMaster puzzleInter = Interfaces.get(147);
@@ -559,6 +560,9 @@ public class Icthlarinslittlehelper implements QuestTask {
 
     @Override
     public void execute() {
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
+
         setupSteps();
         talkToWanderer.addDialogStep("Why? What's your problem with it?");
         talkToWanderer.addDialogStep("Ok I'll get your supplies.", "Yes.");
@@ -656,10 +660,10 @@ public class Icthlarinslittlehelper implements QuestTask {
                 cQuesterV2.status = "Jumping pit";
                 jumpPit();
                 handlePuzzle();
-            } else if (inSoph.check()) {
+            } else if (inSoph.check() && !inPyramid.check()) {
                 cQuesterV2.status = "Opening Pyramid door";
                 openPyramidDoor.execute();
-            } else {
+            } else if (!inPyramid.check()){
                 cQuesterV2.status = "Entering Rock";
                 enterRock.execute();
             }

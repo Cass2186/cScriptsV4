@@ -1,49 +1,50 @@
 package scripts.Tasks.Slayer.SlayerUtils;
 
-import org.tribot.api2007.Equipment;
-import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.types.EquipmentItem;
 
 public class GearSet {
-    RSItem head;
-    RSItem cape;
-    RSItem body;
-    RSItem legs;
-    RSItem boots;
-    RSItem weapon;
-    RSItem shield;
-    RSItem ammo;
+
+    EquipmentItem head;
+    EquipmentItem cape;
+    EquipmentItem body;
+    EquipmentItem legs;
+    EquipmentItem boots;
+    EquipmentItem weapon;
+    EquipmentItem shield;
+    EquipmentItem ammo;
 
     /**
      * constructor that will make an object with all the gear the player is wearing
-     * pass   Equipment.getItems() as arg to get your current gear as an array of RSItem[]
+     * pass   Equipment.getItems() as arg to get your current gear as an array of EquipmentItem[]
      * @param
      */
-    public GearSet(RSItem[] allGear) {
+    public GearSet(EquipmentItem[] allGear) {
         // may need all the factors before
-        for (RSItem item : allGear) {
+        for (EquipmentItem item : allGear) {
 
-            if (item.getEquipmentSlot() == Equipment.SLOTS.HELMET) {
+            if (item.getSlot()== Equipment.Slot.HEAD) {
                 head = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.CAPE) {
+            } else if (item.getSlot() == Equipment.Slot.CAPE) {
                 cape = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.BODY) {
+            } else if (item.getSlot() == Equipment.Slot.BODY) {
                 body = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.LEGS) {
+            } else if (item.getSlot() == Equipment.Slot.LEGS) {
                 legs = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.BOOTS) {
+            } else if (item.getSlot() == Equipment.Slot.FEET) {
                 boots = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.WEAPON) {
+            } else if (item.getSlot() == Equipment.Slot.WEAPON) {
                 weapon = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.SHIELD) {
+            } else if (item.getSlot() == Equipment.Slot.SHIELD) {
                 shield = item;
 
-            } else if (item.getEquipmentSlot() == Equipment.SLOTS.ARROW) {
+            } else if (item.getSlot() == Equipment.Slot.AMMO) {
                 ammo = item;
             }
         }

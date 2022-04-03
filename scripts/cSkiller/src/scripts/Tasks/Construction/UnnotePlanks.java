@@ -5,6 +5,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
@@ -29,25 +30,25 @@ public class UnnotePlanks implements Task {
             Timer.slowWaitCondition(() -> !Game.isInInstance() &&
                             Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),
                     9000, 12000);
-            Waiting.waitNormal(1000,50);
+            Waiting.waitNormal(1100, 75);
         }
     }
 
     public static void unnotePlanks() {
         Optional<InventoryItem> item = Query.inventory().nameContains("plank").isNoted().findFirst();
         Optional<Npc> phials = Query.npcs().nameContains("Phials").stream().findFirst();
-        if (phials.isPresent() && item.isPresent()) {
-            if (!phials.get().isVisible()) {
-                LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
-                Waiting.waitNormal(750, 220);
-            }
-            if (Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
-                    Timer.waitCondition(Player::isMoving, 1200, 1800)) {
-                Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
-
-            }
+        // walk closer if needed
+        if (phials.map(p -> !p.isVisible() &&
+                        LocalWalking.walkTo(p.getTile().translate(0, 1)))
+                .orElse(false)) {
+            Waiting.waitNormal(750, 220);
         }
-        if (NPCInteraction.isConversationWindowUp()) {
+        if (phials.map(p -> item.map(i -> i.useOn(p)).orElse(false)).orElse(false)
+                && Timer.waitCondition(Player::isMoving, 1200, 1800)) {
+            Timer.waitCondition(ChatScreen::isOpen, 6000, 8000);
+        }
+
+        if (ChatScreen.isOpen()) {
             if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
                 Timer.waitCondition(() -> Query.inventory().nameContains("plank")
                                 .isNotNoted().findFirst().isPresent(),
@@ -102,7 +103,7 @@ public class UnnotePlanks implements Task {
     @Override
     public void execute() {
         leaveHouse();
-        if (!Construction.RIMMINGTON.contains(Player.getPosition()) && !Game.isInInstance()){
+        if (!Construction.RIMMINGTON.contains(Player.getPosition()) && !Game.isInInstance()) {
             PathingUtil.walkToArea(Construction.RIMMINGTON);
         }
 

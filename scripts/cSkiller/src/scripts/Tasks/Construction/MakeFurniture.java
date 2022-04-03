@@ -10,7 +10,10 @@ import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -25,6 +28,7 @@ import scripts.Tasks.Construction.ConsData.House;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 
 public class MakeFurniture implements Task {
 
@@ -129,19 +133,34 @@ public class MakeFurniture implements Task {
 
     public void buildFurniture(FURNITURE furniture) {
 
-        RSObject[] furnitureObject = org.tribot.api2007.Objects.findNearest(25, furniture.getObjectName());
-        if (furnitureObject.length > 0) {
+        // extremely short wait in case we are still animating,
+        // but briefly went -1 on the previous itteration
+        if (Waiting.waitUntil(120,()-> MyPlayer.getAnimation() != -1)){
+            Log.debug("Still animating, waiting");
+            Waiting.waitUntil(1500,()-> MyPlayer.getAnimation() == -1);
+            return;
+        }
+        RSObject[] furnitureObject =
+                org.tribot.api2007.Objects.findNearest(30, furniture.getObjectName());
+
+        RSObject[] furnitureSpace =
+                org.tribot.api2007.Objects.findNearest(30, furniture.getSpaceId());
+
+        if (furnitureObject.length > 0){
+            Log.debug("Removing furniture");
+            removeFurniture(furniture.getObjectName());
+        }
+
+       else if (furnitureSpace.length > 0) {
             if (Inventory.find(furniture.getPlankId()).length >= furniture.getPlankNum()) {
                 if (House.isViewerOpen())
                     House.closeViewer();
-                removeFurniture(furniture.getObjectName());
 
-                RSObject obj = Entities.find(ObjectEntity::new)
+                Optional<GameObject> gameObj = Query.gameObjects()
                         .idEquals(furniture.getSpaceId())
-                        .actionsContains("Build")
-                        .getFirstResult();
-
-                if (obj != null && Utils.clickObject(obj, "Build")) {
+                        .actionContains("Build")
+                        .findBestInteractable();
+                if (gameObj.map(o->o.interact("Build")).orElse(false)){
                     Timer.quickWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
                     Utils.idlePredictableAction();
                 } else {
@@ -155,7 +174,7 @@ public class MakeFurniture implements Task {
                 if (Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE)) {
                     Keyboard.typeString(furniture.getKeyString());
                     if (Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 6000))
-                        Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 4500, 6000);
+                        Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 5500, 7250);
                 }
             }
         }else {
