@@ -4,6 +4,8 @@ import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Skill;
 import scripts.Timer;
+import scripts.Utils;
+import scripts.Varbits;
 
 import java.util.HashMap;
 
@@ -54,12 +56,20 @@ public class Vars {
     public boolean usingAbsorptions = false;
     public  boolean usingPrayerPots = false;
     public  boolean usingSuperCombat = false;
+    public  boolean usingRangingPotion = false;
     public boolean usingOverloadPots = false;
     public boolean isOverloadActive = false;
     public boolean showDetailedPaint = false;
 
     public Timer overloadTimer = new Timer(0);  //5 min
 
+    public int getGainedNmzPoints(){
+        return Utils.getVarBitValue(Varbits.NMZ_POINTS.getId()) - Const.STARTING_NMZ_POINTS;
+    }
+    public  int getNmzPointsHr(long startTimeMs) {
+        return (int) ((getGainedNmzPoints())
+                / ((double) (System.currentTimeMillis() - startTimeMs) / 3600000));
+    }
 
     public int gainedAtkLvl = Skill.ATTACK.getActualLevel() - Const.startAttLvl;
     public int gainedStrLvl = Skill.STRENGTH.getActualLevel() - Const.startStrLvl;

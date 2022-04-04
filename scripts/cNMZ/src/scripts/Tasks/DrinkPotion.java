@@ -1,51 +1,60 @@
 package scripts.Tasks;
 
-import dax.walker.utils.AccurateMouse;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
-import org.tribot.api2007.*;
-import org.tribot.api2007.types.RSItem;
-import org.tribot.api2007.types.RSItemDefinition;
+
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Game;
+import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.NmzData.Const;
 import scripts.NmzData.Vars;
 
-import java.util.List;
+import java.util.Optional;
 
 public class DrinkPotion implements Task {
 
 
     public static void determinePotion() {
-        if (Inventory.find(ItemID.PRAYER_POTION).length > 0) {
+        if (Inventory.contains(ItemID.PRAYER_POTION)) {
             Vars.get().usingPrayerPots = true;
             Vars.get().usingAbsorptions = false;
-        } else if (Inventory.find(Const.ABSORPTION_POTION).length > 0) {
+        } else if (Inventory.contains(Const.ABSORPTION_POTION)) {
             Vars.get().usingPrayerPots = false;
             Vars.get().usingAbsorptions = true;
         }
-        if (Inventory.find(ItemID.SUPER_COMBAT_POTION).length > 0) {
+        if (Inventory.contains(ItemID.SUPER_COMBAT_POTION)) {
 
             Vars.get().usingSuperCombat = true;
             Vars.get().usingOverloadPots = false;
-        } else if (Inventory.find(Const.OVERLOAD_POTION).length > 0) {
+        } else if (Inventory.contains(Const.OVERLOAD_POTION)) {
             Vars.get().usingOverloadPots = true;
         } else {
             Vars.get().usingOverloadPots = false;
         }
-        Log.info("[Debug]: Using Super combat potions? " + Vars.get().usingSuperCombat);
-        Log.info("[Debug]: Using prayer potions? " + Vars.get().usingPrayerPots);
-        Log.info("[Debug]: Using absorption potions? " + Vars.get().usingAbsorptions);
-        Log.info("[Debug]: Using overload potions? " + Vars.get().usingOverloadPots);
-
+        if (Inventory.contains(ItemID.RANGING_POTION) || Inventory.contains(ItemID.SUPER_RANGING_4, ItemID.SUPER_RANGING_3,
+                ItemID.SUPER_RANGING_2,
+                ItemID.SUPER_RANGING_1)) {
+            Vars.get().usingRangingPotion = true;
+        }
+        Log.info("Using Super combat potions? " + Vars.get().usingSuperCombat);
+        Log.info("Using prayer potions? " + Vars.get().usingPrayerPots);
+        Log.info("Using absorption potions? " + Vars.get().usingAbsorptions);
+        Log.info("Using overload potions? " + Vars.get().usingOverloadPots);
+        Log.info("Using Ranging potions? " + Vars.get().usingRangingPotion);
     }
 
 
     public static boolean shouldDrinkPrayerPot() {
         int drinkAtAbsolute = getAbsolutePrayerDrinkAt();
-        System.out.println("[Debug]: Drinking Prayer Potion at " + Vars.get().drinkPrayAtPercentage + "% || " +
-                "Absolute: " + drinkAtAbsolute);
+     //   System.out.println("[Debug]: Drinking Prayer Potion at " + Vars.get().drinkPrayAtPercentage + "% || " +
+      //          "Absolute: " + drinkAtAbsolute);
         return Prayer.getPrayerPoints() < drinkAtAbsolute;
     }
 
@@ -56,16 +65,16 @@ public class DrinkPotion implements Task {
 
 
     public boolean drinkPotion(int[] potion) {
-        RSItem[] invItem = Inventory.find(potion);
-        String potionName = RSItemDefinition.get(potion[0]).getName();
-        if (invItem.length > 0) {
-            General.println("[Debug]: Drinking " + potionName);
-            if (invItem[0].click("Drink")) {
-                Waiting.waitNormal(300, 55);
-                Vars.get().lastAction = System.currentTimeMillis();
-                return true;
-            }
+        Optional<InventoryItem> invItem = Query.inventory()
+                .idEquals(potion)
+                .findClosestToMouse();
+        if (invItem.map(i -> i.click("Drink")).orElse(false)) {
+            invItem.ifPresent(pot -> Log.debug("Drinking " + pot.getName()));
+            Waiting.waitNormal(300, 55);
+            Vars.get().lastAction = System.currentTimeMillis();
+            return true;
         }
+
         return false;
     }
 
@@ -92,19 +101,18 @@ public class DrinkPotion implements Task {
     }
 
     public void drinkPotion(int[] potionArray, Skills.SKILLS skill) {
-        General.println("Drinking ranged at " + (Skills.getActualLevel(skill) + Vars.get().add));
         if (Skills.getCurrentLevel(skill) <=
-                Skills.getActualLevel(skill) + Vars.get().add) {
-            Log.info("[DrinkPotion]: Drinking potion");
+                Skills.getActualLevel(skill) + Vars.get().add && Inventory.contains(potionArray)) {
+            Log.debug("Drinking " + skill.toString().toLowerCase() + " potion at "
+                    + (Skills.getActualLevel(skill) + Vars.get().add));
             drinkPotion(potionArray);
-            Vars.get().add = General.random(3, 10);
-
+            Vars.get().add = General.random(3, 8);
         }
     }
 
     public static long timeSinceLastAction(long lastActionTime) {
         long time = System.currentTimeMillis() - lastActionTime;
-        General.println("[Debug]: Time since last action: " + Timing.msToString(time));
+        Log.debug("Time since last action: " + Timing.msToString(time));
         return time;
     }
 
@@ -129,8 +137,10 @@ public class DrinkPotion implements Task {
     }
 
     public void rockCake() {
-        RSItem[] rockCake = Inventory.find(Const.ROCK_CAKE);
-        if (rockCake.length > 0 &&
+        Optional<InventoryItem> rockCake = Query.inventory()
+                .idEquals(Const.ROCK_CAKE)
+                .findClosestToMouse();
+        if (rockCake.isPresent() &&
                 Combat.getHP() != 1 //&& Vars.get().overloadTimer.isRunning()
                 && Combat.getHP() >= Vars.get().eatRockCakeAt) {
             determineSleep();
@@ -144,22 +154,22 @@ public class DrinkPotion implements Task {
                     if (!Game.isInInstance())
                         break;
 
-                    if (rockCake[0].click("Guzzle")) {
+                    if (rockCake.get().click("Guzzle")) {
                         Log.info("Guzzled");
                         General.sleep(General.randomSD(150, 700, 350, 75));
                     }
                     if (Combat.getHP() == 1)
                         break;
                 }
-            } else if (Vars.get().usingOverloadPots &&  !Vars.get().overloadTimer.isRunning()){
-              Log.debug("Overload timer isn't running");
+            } else if (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()) {
+                Log.debug("Overload timer isn't running");
 
             }
 
             Vars.get().eatRockCakeAt = General.randomSD(2, 6, 3, 2);
             Log.info("Next eating rock cake at: " + Vars.get().eatRockCakeAt);
-        } else {
-            Log.error("Error with rock caking: do we have one? " + (rockCake.length > 0));
+        } else if (Vars.get().usingAbsorptions) {
+            Log.error("Error with rock caking: do we have one? " + rockCake.isPresent());
             Log.error("Is HP > eatRockCake at: " + (Combat.getHP() >= Vars.get().eatRockCakeAt));
         }
     }
@@ -168,12 +178,12 @@ public class DrinkPotion implements Task {
     public void drinkOverload() {
         if (Vars.get().usingOverloadPots) {
             if (Vars.get().usingPrayerPots)
-                Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
+                Prayer.enableAll(Prayer.PROTECT_FROM_MELEE);
 
             int startHp = Combat.getHP();
             if (startHp > 50) {
                 Log.info("Drinking overload");
-               // determineSleep(); //redundant with hte one calledin rockcake() prior to this
+                // determineSleep(); //redundant with the one called in rockcake() prior to this
 
                 if (drinkPotion(Const.OVERLOAD_POTION)) {
                     Vars.get().overloadTimer = new Timer(300000);
@@ -189,7 +199,7 @@ public class DrinkPotion implements Task {
                 }
             } else {
                 Vars.get().overloadTimer = new Timer(300000);
-                Log.info("[Debug]: Cannot overload due to low HP");
+                Log.info("Cannot overload due to low HP");
             }
         }
     }
@@ -201,19 +211,16 @@ public class DrinkPotion implements Task {
 
     public void drinkAbsorption() {
         if (shouldDrinkAbsorption()) {
-
             // if we have >150 abs points left it will sleep, otherwise it drinks to avoid death
-
-
             Log.info("[Debug]: Drinking up to: " + Vars.get().drinkAbsorptionUpTo);
             if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo) {
                 if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) > 150)
                     determineSleep();
-                for (int i =0; i < 100; i++) {
-                    Waiting.waitNormal(120,30);
+                for (int i = 0; i < 100; i++) {
+                    Waiting.waitNormal(120, 30);
                     if (!Game.isInInstance() || !org.tribot.script.sdk.Login.isLoggedIn())
                         break;
-                    if(Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo)
+                    if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo)
                         drinkPotion(Const.ABSORPTION_POTION);
                     else
                         break;
@@ -259,6 +266,7 @@ public class DrinkPotion implements Task {
             drinkAbsorption();
 
         drinkPotion(Const.SUPER_RANGING_POTION, Skills.SKILLS.RANGED);
+        drinkPotion(ItemID.RANGING_POTION, Skills.SKILLS.RANGED);
         drinkPotion(ItemID.SUPER_COMBAT_POTION, Skills.SKILLS.STRENGTH);
 
         if (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning())

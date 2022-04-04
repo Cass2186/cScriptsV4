@@ -4,6 +4,7 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.painting.template.basic.*;
 import scripts.PaintUtil;
+import scripts.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,6 +26,12 @@ public class Paint {
                                 Vars.get().showDetailedPaint = true;
                             }
                         }).build())
+                .row(template.toBuilder().label("NMZ Points Gained").value(() ->
+                                Utils.addCommaToNum(Vars.get().getGainedNmzPoints())
+                                        + " (" + Utils.addCommaToNum(
+                                Vars.get().getNmzPointsHr(Vars.get().startTime)) +
+                                "/hr)")
+                        .build())
                 .row(template.toBuilder().condition(() -> Skill.RANGED.getXp() > Const.startRangeXp)
                         .label("Ranged")
                         .value(() -> PaintUtil.formatSkillString(Skill.RANGED, Const.startRangeLvl,

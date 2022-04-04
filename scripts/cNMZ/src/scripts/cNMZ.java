@@ -33,23 +33,16 @@ public class cNMZ extends Script implements Starting, Ending, MessageListening07
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
 
-    public void populateInitialMap() {
-        Log.log("[Debug]: Populating intial skills xp HashMap");
-        for (Skills.SKILLS s : Skills.SKILLS.values()) {
-            Vars.get().skillStartXpMap.put(s, s.getXP());
-        }
-    }
 
     @Override
     public void run() {
-        populateInitialMap();
+
         TaskSet tasks;
         tasks = new TaskSet(
                 new Afk(),
                 new AttackNpc(),
                 new DrinkPotion(),
                 new EnterDream()
-
         );
         Paint.initializeDetailedPaint();
         Paint.addPaint();
