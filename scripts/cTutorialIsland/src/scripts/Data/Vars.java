@@ -23,7 +23,9 @@ public class Vars {
 
     public String accountName = "";
 
-    public boolean disableMusic = false;
+    public boolean disableMusic = true;
+
+    public boolean setFixedMode = false;
 
     public boolean nameCharacter = false;
 

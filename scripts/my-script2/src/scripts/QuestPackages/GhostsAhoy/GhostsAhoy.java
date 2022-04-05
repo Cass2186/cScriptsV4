@@ -15,6 +15,8 @@ import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
@@ -167,7 +169,7 @@ public class GhostsAhoy implements QuestTask {
                     new ItemReq(ItemID.AIR_RUNE, 600),
 
                     new ItemReq(ItemID.STAFF_OF_FIRE, 1),
-                 //   new ItemReq(ItemID.NETTLES, 1),
+                    //   new ItemReq(ItemID.NETTLES, 1),
                     new ItemReq(ItemID.STAFF_OF_FIRE, 1),
                     new ItemReq(ItemID.BLUE_DYE, 3),
                     new ItemReq(ItemID.RED_DYE, 3),
@@ -388,9 +390,30 @@ public class GhostsAhoy implements QuestTask {
 
 
     public void croneStep3() {
-        scripts.cQuesterV2.status = "Going to Crone";
-        croneStep3.execute();
+        if (Inventory.find(ItemID.CUP_OF_TEA_W_MILK, ItemID.CUP_OF_TEA,
+                ItemID.PORCELAIN_CUP).length == 0) {
+            scripts.cQuesterV2.status = "Going to Crone (step 3)";
+            croneStep3.execute();
+        }
     }
+
+    public void mixTeaSteps() {
+        Optional<InventoryItem> cupOfTeaWithMilk = Query.inventory()
+                .idEquals(ItemID.CUP_OF_TEA_W_MILK).findClosestToMouse();
+        Optional<Npc> crone = Query.npcs()
+                .idEquals(GhostsAhoyConst.CRONE_ID).findBestInteractable();
+
+        if (crone.map(c -> cupOfTeaWithMilk.map(
+                t -> t.useOn(c)).orElse(false)).orElse(false)) {
+            Log.info("Used tea w/ milk on crone");
+            NPCInteraction.waitForConversationWindow();
+            NPCInteraction.handleConversation();
+        } else {
+            makeCupOfTea();
+        }
+
+    }
+
 
     public void makeCupOfTea() {
         scripts.cQuesterV2.status = "Making tea for crone";
@@ -1071,8 +1094,9 @@ public class GhostsAhoy implements QuestTask {
             General.println("At line 1067");
             makeNettleTea();
             croneStep3();
-            makeCupOfTea();
-            useTeaOnCrone();
+            mixTeaSteps();
+           // makeCupOfTea();
+          //  useTeaOnCrone();
             croneStep4.execute();
         } else if (Utils.getVarBitValue(VARBIT) == 4 &&
                 Utils.getVarBitValue(214) == 0) {

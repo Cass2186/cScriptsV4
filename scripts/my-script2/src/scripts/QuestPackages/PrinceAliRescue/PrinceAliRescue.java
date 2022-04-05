@@ -2,16 +2,15 @@ package scripts.QuestPackages.PrinceAliRescue;
 
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.Listeners.InterfaceListener;
-import scripts.Listeners.InterfaceObserver;
-import scripts.Listeners.InventoryListener;
-import scripts.Listeners.InventoryObserver;
+import scripts.Listeners.*;
+import scripts.Listeners.Model.ChatListener;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
@@ -24,7 +23,8 @@ import scripts.Tasks.Priority;
 import java.util.*;
 import java.util.regex.Matcher;
 
-public class PrinceAliRescue implements QuestTask, InterfaceListener {
+
+public class PrinceAliRescue implements QuestTask, InterfaceListener, ChatListener {
 
 
     private static PrinceAliRescue quest;
@@ -41,7 +41,7 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
 
     Requirement hasOrGivenKeyMould, inCell, givenKeyMould, hasWigPasteAndKey;
 
-    WidgetTextRequirement firstKey, secondKey, thirdKey;
+    WidgetTextRequirement secondKey, thirdKey;
 
     QuestStep talkToHassan, talkToOsman, talkToNed, talkToAggie, dyeWig, talkToKeli, bringImprintToOsman, talkToLeela, talkToJoe, useRopeOnKeli, useKeyOnDoor, talkToAli, returnToHassan;
 
@@ -116,13 +116,14 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
         //  makeKeyMould.setLockingCondition(hasOrGivenKeyMould);
 
         getKey = new ConditionalStep(bringImprintToOsman);
-        // getKey.setLockingCondition(givenKeyMould);
+         getKey.setLockingCondition(givenKeyMould);
 
         ConditionalStep prepareToSaveAli = new ConditionalStep(makeDyedWig);
         prepareToSaveAli.addStep(new Conditions(dyedWig, paste, givenKeyMould), talkToLeela);
-        prepareToSaveAli.addStep(new Conditions(dyedWig, paste, hasOrGivenKeyMould), getKey);
+        prepareToSaveAli.addStep(new Conditions(dyedWig, paste, hasOrGivenKeyMould ), getKey);
         prepareToSaveAli.addStep(new Conditions(dyedWig, paste), makeKeyMould);
         prepareToSaveAli.addStep(dyedWig, makePaste);
+
 
         steps.put(20, prepareToSaveAli);
 
@@ -188,20 +189,27 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
         interfaceObserver.addRSInterfaceChild(WidgetInfo.DIALOG_NPC_TEXT.getId(),
                 WidgetInfo.DIALOG_NPC_TEXT.getChildId());
         interfaceObserver.start();
+
+        ChatObserver chatListener = new ChatObserver(()-> true);
+        chatListener.addListener(this);
+        chatListener.addString("I have duplicated a key, I need to get it from");
+        chatListener.addString("the key from Leela.");
+        chatListener.addString("pickup the key");
+        chatListener.addString("I got a duplicated cell door key");
+        chatListener.start();
     }
 
-
+    WidgetTextRequirement  firstKey = new WidgetTextRequirement(217, 5,
+                                                 true, "I have duplicated a key, I need to get it from");
     public void setupConditions() {
         inCell = new AreaRequirement(cell);
         hasWigPasteAndKey = new Conditions(dyedWig, paste, key);
-        firstKey = new WidgetTextRequirement(217, 5,
-                true, "I have duplicated a key, I need to get it from");
+
         secondKey = new WidgetTextRequirement(231, 5, "the key from Leela.");
         thirdKey = new WidgetTextRequirement(217, 5, true,
                 "I got a duplicated cell door key");
 
-        givenKeyMould = new Conditions(true, LogicType.OR, firstKey, secondKey, thirdKey,
-                key);
+        givenKeyMould = new Conditions(LogicType.OR, firstKey);
         hasOrGivenKeyMould = new Conditions(LogicType.OR, keyMould, givenKeyMould, key);
     }
 
@@ -233,7 +241,8 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
         talkToKeli.addDialogStep("Could I touch the key for a moment please?");
         bringImprintToOsman = new NPCStep(6165, new RSTile(3285, 3179, 0),
                 keyMould, bronzeBar);
-        talkToLeela = new NPCStep(NpcID.LEELA, new RSTile(3113, 3262, 0), beers3, dyedWig, paste, rope, pinkSkirt);
+        talkToLeela = new NPCStep(NpcID.LEELA, new RSTile(3113, 3262, 0),
+                beers3, dyedWig, paste, rope, pinkSkirt);
         talkToJoe = new NPCStep(NpcID.JOE_4275, new RSTile(3124, 3245, 0),
                 beers3, key, dyedWig, paste, rope, pinkSkirt);
         talkToJoe.addDialogStep("I have some beer here, fancy one?");
@@ -345,8 +354,9 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
 
     @Override
     public boolean checkRequirements() {
+        SkillRequirement hpReq = new SkillRequirement(Skills.SKILLS.HITPOINTS, 24);
         // usually check skill and quest requirements here
-        return true;
+        return hpReq.check();
     }
 
     @Override
@@ -379,5 +389,15 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener {
     @Override
     public boolean isComplete() {
         return Quest.PRINCE_ALI_RESCUE.getState().equals(Quest.State.COMPLETE);
+    }
+
+    @Override
+    public void onAppear() {
+        Log.debug("Chat message appeared");
+        firstKey.setHasPassed(true);
+        secondKey.setHasPassed(true);
+        thirdKey.setHasPassed(true);
+
+        Log.debug("End on appear");
     }
 }

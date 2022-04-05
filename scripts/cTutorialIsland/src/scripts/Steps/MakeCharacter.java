@@ -37,6 +37,7 @@ public class MakeCharacter implements Task {
             Keyboard.typeString(Const.NAMES[i]);
             Keyboard.pressEnter();
             Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INDEX_NAMING, 14), 9000, 13000);
+
         }
         RSInterfaceChild goodNameText = Interfaces.get(PARENT_INDEX_NAMING, 13);
         if (goodNameText != null) {
@@ -44,8 +45,7 @@ public class MakeCharacter implements Task {
                 General.println("[Debug]: Name is NOT available");
                 RSInterfaceChild nameSuggestionOne = Interfaces.get(PARENT_INDEX_NAMING, 15);
                 if (nameSuggestionOne != null && nameSuggestionOne.click()) {
-                    //selects suggested name
-
+                    Waiting.waitNormal(3000,150);
                 }
             }
             if (goodNameText.getText().contains(greenCol)) {

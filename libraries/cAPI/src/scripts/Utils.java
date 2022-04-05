@@ -1092,13 +1092,13 @@ public class Utils {
     }
 
     public static void shortSleep() {
-        int sleepTime = General.randomSD(1000, 3000, 1500, 500);
+        int sleepTime = General.randomSD(1000, 3200, 1600, 200);
         Log.log("[Debug]: Sleeping for " + sleepTime + "ms");
         General.sleep(sleepTime);
     }
 
     public static void modSleep() {
-        int sleepTime = General.randomSD(2500, 8000, 5000, 1000);
+        int sleepTime = General.randomSD(2500, 8000, 5000, 600);
         Log.log("[Debug]: Sleeping for " + sleepTime + "ms");
         General.sleep(sleepTime);
     }

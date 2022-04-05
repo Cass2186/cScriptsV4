@@ -173,32 +173,28 @@ public class TheFeud implements QuestTask {
         }
     }
 
-    public void step2() {
+    public void giveBeerToAli() {
         Utils.useItemOnItem(FAKE_BEARD, KHARIDIAN_HEADPIECE);
-        if (!BAR_AREA.contains(Player.getPosition())) {
-            cQuesterV2.status = "Going to Pollnivneach";
-            General.println("[Debug]: " + cQuesterV2.status);
-            PathingUtil.walkToArea(BAR_AREA);
-        }
-        if (BAR_AREA.contains(Player.getPosition())) {
-            cQuesterV2.status = "Talking to Drunken Ali";
-            General.println("[Debug]: " + cQuesterV2.status);
-            if (NpcChat.talkToNPC(3534)) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+        if (Inventory.find(ItemID.BEER).length > 2) {
+            if (!BAR_AREA.contains(Player.getPosition())) {
+                cQuesterV2.status = "Going to Pollnivneach";
+                General.println("[Debug]: " + cQuesterV2.status);
+                PathingUtil.walkToArea(BAR_AREA);
             }
-            Utils.idle(500, 2500);
-            if (Utils.useItemOnNPC(BEER, "Drunken Ali")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-            }
-            if (Utils.useItemOnNPC(BEER, "Drunken Ali")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-            }
-            if (Utils.useItemOnNPC(BEER, "Drunken Ali")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+            if (BAR_AREA.contains(Player.getPosition())) {
+                cQuesterV2.status = "Talking to Drunken Ali";
+                General.println("[Debug]: " + cQuesterV2.status);
+                if (NpcChat.talkToNPC(3534)) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation();
+                }
+                Utils.idle(500, 2500);
+                for (int i = 0; i < 3; i++) {
+                    if (Utils.useItemOnNPC(BEER, "Drunken Ali")) {
+                        NPCInteraction.waitForConversationWindow();
+                        NPCInteraction.handleConversation();
+                    }
+                }
             }
         }
     }
@@ -820,7 +816,7 @@ public class TheFeud implements QuestTask {
             startQuest();
         }
         if (Game.getSetting(435) == 1) {
-            step2();
+            giveBeerToAli();
         }
         if (Game.getSetting(435) == 2) {
             if (RSVarBit.get(315).getValue() == 0) {

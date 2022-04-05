@@ -47,6 +47,9 @@ public class cTutorialIsland extends CassScript implements TribotScript {
 
     @Override
     public void execute(String args) {
+
+        handleArgs(args);
+
         super.initializeDax();
 
         AntiBan.create();
@@ -111,9 +114,31 @@ public class cTutorialIsland extends CassScript implements TribotScript {
                 Log.debug("Disabling Sounds");
                 Options.turnAllSoundsOff();
             }
+            if (Vars.get().setFixedMode){
+                Options.setResizableModeType(Options.ResizableType.FIXED);
+            }
         }
     }
 
+
+    public void handleArgs(String args) {
+        Log.info("Argument entered: " + args);
+        for (String arg : args.split(";")) {
+            try {
+                String tasks = arg.split(";")[0].toLowerCase();
+                if (tasks.contains("fixed")) {
+                    Log.info("Fixed mode enabled via args");
+                    Vars.get().setFixedMode = true;
+                } else
+                if (tasks.contains("name")) {
+                    Log.info("Naming mode enabled via args");
+                    Vars.get().nameCharacter = true;
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
 
 
 }

@@ -132,7 +132,8 @@ public class WidgetTextRequirement implements Requirement {
 
     @Override
     public boolean check() {
-          return checkWidget() || hasPassed;
+        Log.info("Has passed? " + hasPassed);
+          return hasPassed || checkWidget();
 
     }
 }

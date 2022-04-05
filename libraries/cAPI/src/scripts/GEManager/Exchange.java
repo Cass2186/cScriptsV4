@@ -278,18 +278,18 @@ public class Exchange {
 
     private static boolean scrollToAndSelect(Optional<Widget> widget) {
         for (int i = 0; i < 3; i++) {
-            if (widget.map(w -> w.isVisible() && w.click()).orElse(false)) {
-                Log.debug("[Exchange]: Successfully clicked");
-                Waiting.waitNormal(400, 60);
-                return true;
-            } else if (widget.map(w -> w.scrollTo() && w.click()).orElse(false)) {
+            if (widget.map(w -> w.scrollTo() && w.click()).orElse(false)) {
                 Log.debug("[Exchange]: Successfully scrolled");
                 Waiting.waitNormal(400, 60);
                 return true;
+            } else if (widget.map(w -> w.isVisible() && w.click()).orElse(false)) {
+                Log.debug("[Exchange]: Successfully clicked");
+                Waiting.waitNormal(400, 60);
+                return true;
             }
-            Log.debug("[Exchange]: Failed scroll; i = " + i);
-            Waiting.waitNormal(125, 20);
-        }
+            Waiting.waitNormal(50, 20);
+        }        Log.debug("[Exchange]: Failed scroll");
+
         return false;
     }
 

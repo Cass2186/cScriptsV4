@@ -618,7 +618,7 @@ public class MonkeyMadnessI implements QuestTask {
             cQuesterV2.status = "Step 8 - Going to Glough";
             Log.log("[Debug]: Step 7- Going to Glough");
 
-            if (Inventory.find(995).length < 1) {
+            if (Inventory.find(995).length == 0) {
                 step4Part2Banking();
             }
 
@@ -633,10 +633,14 @@ public class MonkeyMadnessI implements QuestTask {
                 if (NpcChat.talkToNPC("Glough")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation("Yes, I suppose I do.");
-                    NPCInteraction.handleConversation("Ok then. You win again, Glough.");
                     if (NPCInteraction.isConversationWindowUp())
                         PAID_GLOUGH = true; // to prevent errors in script causing a loop and paying >1x
+                    NPCInteraction.handleConversation("Ok then. You win again, Glough.");
                     NPCInteraction.handleConversation();
+                    if (Inventory.find(ItemID.COINS_995).length ==0){
+                        PAID_GLOUGH  = true;
+                        Log.debug("Paid the sum bish");
+                    }
                 }
                 if (Utils.clickObj("Ladder", "Climb-down"))
                     Timer.abc2WaitCondition(() -> !gloughArea.contains(Player.getPosition()), 9000, 12000);
@@ -2042,7 +2046,7 @@ public class MonkeyMadnessI implements QuestTask {
         } else if (Game.getSetting(365) == 2) {
             Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
             if (RSVarBit.get(123).getValue() <= 4) {
-               // talkToKing();
+               talkToKing();
                  Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
                 step4Part2Banking(); // banking
                 step5Part2TalkToDaero(); // going to Daero
