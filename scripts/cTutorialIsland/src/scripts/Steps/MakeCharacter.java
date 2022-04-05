@@ -8,6 +8,7 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import scripts.Data.Const;
 import scripts.Data.Vars;
@@ -29,13 +30,13 @@ public class MakeCharacter implements Task {
     // game setting = 0
     public void nameCharacter() {
         RSInterface nameBox = Interfaces.findWhereAction("Enter name", PARENT_INDEX_NAMING);
-        if (nameBox != null && nameBox.click()) {
+        if (nameBox != null ){//&& nameBox.click()) {
             Waiting.waitNormal(500,1250);
             int i = General.random(0, Const.NAMES.length - 1);
             General.println("[Debug]: Typing Name: " +Const.NAMES[i] );
-
             Keyboard.typeString(Const.NAMES[i]);
             Keyboard.pressEnter();
+            Log.debug("Pressed enter");
             Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INDEX_NAMING, 14), 9000, 13000);
 
         }
