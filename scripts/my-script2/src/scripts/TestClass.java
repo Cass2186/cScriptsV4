@@ -27,6 +27,9 @@ import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
+import scripts.GEManager.Exchange;
+import scripts.GEManager.GEItem;
+import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.Vars;
@@ -710,15 +713,18 @@ public class TestClass implements QuestTask {
 
     @Override
     public void execute() {
-        getGoutWeed();
+       // getGoutWeed();
         // autoClick();
        // profitPerTab(Tabs.CAMELOT);
        /* unNoteClay();
         selectHost();
         studyLecturn(getMostProfitableTab().getName());*/
-        VarplayerRequirement req = new VarplayerRequirement(1196, false, 2);
-        Log.debug("Requirement: " + req.check());
-
+       // VarplayerRequirement req = new VarplayerRequirement(1196, false, 2);
+       // Log.debug("Requirement: " + req.check());
+        BuyItemsStep buyStep = new BuyItemsStep(
+                new ArrayList<>(
+                        Arrays.asList(new GEItem(ItemID.POT, 65, 25))));
+        buyStep.buyItems();
         Waiting.waitNormal(600, 10);
     }
 

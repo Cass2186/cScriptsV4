@@ -412,7 +412,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @DoNotRename
     void updateAlchItem(ActionEvent event) {
         for (Alch.AlchItems item : Alch.AlchItems.values()) {
-            if (magicAlchItemBox.getValue().contains(item.toString())) {
+            String s = magicAlchItemBox.getValue().replace(" ", "_");
+            if (s.contains(item.toString())) {
                 Vars.get().alchItem = item;
                 Log.log("[Debug]: Updated Alch item to " + item.toString());
                 break;
@@ -502,7 +503,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
             logActionBox.getItems().add(StringUtils.capitalize(action.toString().toLowerCase()));
         }
         for (Alch.AlchItems item : Alch.AlchItems.values()) {
-            magicAlchItemBox.getItems().add(StringUtils.capitalize(item.toString().toLowerCase())
+            magicAlchItemBox.getItems().add(item.toString().replace("_", " ")
                     + " (" + item.getProfit() + ")");
         }
 

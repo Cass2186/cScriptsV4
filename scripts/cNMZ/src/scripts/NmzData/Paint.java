@@ -120,6 +120,14 @@ public class Paint {
                         .condition(() -> Vars.get().showDetailedPaint &&
                                 Vars.get().usingPrayerPots)
                         .build())
+
+                .row(template.toBuilder().label("Drink Super Cb at")
+                        .value(() -> Skill.STRENGTH.getActualLevel()  + Vars.get().superCombatAdd
+                        + " (" + Vars.get().superCombatPotionAddMean + "+/-" + Vars.get().superCombatPotionAddSd
+                        + ")")
+                        .condition(() -> Vars.get().showDetailedPaint &&
+                                Vars.get().usingSuperCombat)
+                        .build())
                 .location(PaintLocation.BOTTOM_RIGHT_VIEWPORT)
                 .build();
 

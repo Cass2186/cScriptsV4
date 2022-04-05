@@ -142,7 +142,7 @@ public enum SupportedQuests {
     // FAMILY_PEST(329, 5347, true),
     // FORGETTABLE_TALE(365, 822, true),
     // LEGENDS_QUEST(3145, 139, false),
-    // LUNAR_DIPLOMACY(391, 2448, true),
+     LUNAR_DIPLOMACY(391, 2448, true),
     // MAGE_ARENA_II(330, 6067, true),
     // MAKING_HISTORY(393, 1383, true),
     // MISTHALIN_MYSTERY(309, 3468, true),

@@ -13,6 +13,7 @@ import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 
@@ -225,6 +226,8 @@ public class Exchange {
 
                 RSInterface compItemInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT,
                         SMALL_ITEM_SELECTION_BOX_COMP, i);
+                Optional<Widget> compItemInterWidget = Query.widgets().inIndexPath(ITEM_SELECTION_BOX_PARENT,
+                        SMALL_ITEM_SELECTION_BOX_COMP, i).findFirst();
 
                 if (compItemInter != null) {
                     componentItem = compItemInter.getComponentItem();
@@ -232,6 +235,10 @@ public class Exchange {
                     RSInterface scrollBarInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT, 51, 3);
                     // identified the item in the options
                     if (componentItem == item.getItemID() && scrollBarInter != null) {
+                        if (scrollToAndSelect(compItemInterWidget)) {
+                            return Timer.waitCondition(() -> Interfaces.get(465, 25, 21) != null &&
+                                    Interfaces.get(465, 25, 21).getComponentItem() == item.getItemID(), 4000, 6000);
+                        }
                         if (i >= 25) {// item should be offs  screen if this is true (check item index for this)
                             //  if (y > 65) { // is off screen if this is true (checking y point)
                             long startTime = System.currentTimeMillis();
@@ -265,6 +272,23 @@ public class Exchange {
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    private static boolean scrollToAndSelect(Optional<Widget> widget) {
+        for (int i = 0; i < 3; i++) {
+            if (widget.map(w -> w.isVisible() && w.click()).orElse(false)) {
+                Log.debug("[Exchange]: Successfully clicked");
+                Waiting.waitNormal(400, 60);
+                return true;
+            } else if (widget.map(w -> w.scrollTo() && w.click()).orElse(false)) {
+                Log.debug("[Exchange]: Successfully scrolled");
+                Waiting.waitNormal(400, 60);
+                return true;
+            }
+            Log.debug("[Exchange]: Failed scroll; i = " + i);
+            Waiting.waitNormal(125, 20);
         }
         return false;
     }
@@ -311,7 +335,7 @@ public class Exchange {
             BankManager.open(true);
             BankManager.withdraw(0, true, 995);
             if (!org.tribot.script.sdk.GrandExchange.isNearby())
-            BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+                BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
         }
 
         if (Bank.isOpen())

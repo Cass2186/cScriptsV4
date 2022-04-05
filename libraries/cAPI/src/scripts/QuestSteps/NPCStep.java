@@ -352,7 +352,7 @@ public class NPCStep extends DetailedQuestStep  {
                 ChatScreen.handle();
         }
 
-        Log.log("[NPCStep]: Execution finished");
+        Log.debug("[NPCStep]: Execution finished");
     }
 
 

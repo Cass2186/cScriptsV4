@@ -89,7 +89,6 @@ public class MakeCharacter implements Task {
     NPCStep guide = new NPCStep("Gielinor Guide", new RSTile(3094, 3107, 0));
 
     public void gielinorGuide() {
-
         guide.addDialogStep("I am an experienced player.");
         guide.execute();
 

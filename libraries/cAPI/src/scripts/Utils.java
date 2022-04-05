@@ -128,6 +128,14 @@ public class Utils {
         return Area.fromPolygon(wolrdTiles);
     }
 
+    public static double random(double min, double max) {
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+        Random r = new Random();
+        double randomValue = min + (max - min) * r.nextDouble();
+        return randomValue;
+    }
 
     public static int random(int min, int max) {
 
@@ -1159,7 +1167,12 @@ public class Utils {
         return false;
     }
 
-
+    public static double getLevelBoost(Skill skill) {
+        int lvl = skill.getActualLevel();
+        double boost = Math.floor(lvl * .10 + 4);
+        //        Log.log("[Utils]: Boost is " + Math.round(boost));
+        return Math.round(boost);
+    }
     public static double getLevelBoost(Skills.SKILLS skill) {
         int lvl = skill.getActualLevel();
         double boost = Math.floor(lvl * .10 + 4);
@@ -1498,6 +1511,13 @@ public class Utils {
      * @return the MAX boosted skill level
      */
     public static double getSuperLevelBoost(Skills.SKILLS skill) {
+        int lvl = skill.getActualLevel();
+        double boost = Math.floor(lvl * 0.15 + 5);
+        //        Log.log("[Utils]: Boost is " + Math.round(boost));
+        return Math.round(boost);
+    }
+
+    public static double getSuperLevelBoost(Skill skill) {
         int lvl = skill.getActualLevel();
         double boost = Math.floor(lvl * 0.15 + 5);
         //        Log.log("[Utils]: Boost is " + Math.round(boost));

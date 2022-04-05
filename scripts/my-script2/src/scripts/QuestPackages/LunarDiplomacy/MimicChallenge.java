@@ -11,6 +11,7 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Npc;
 import scripts.NpcID;
 import scripts.PathingUtil;
@@ -29,6 +30,14 @@ import java.util.Optional;
 
 public class MimicChallenge implements QuestTask {
 
+    private static int[] xyzTranslateCoordinates = {6, -8, 0};
+    // these are the .translate() coordinates for the launch pad from the centre "My life" piece
+
+    public static LocalTile getMimicLaunchPadTile(LocalTile centreTile){
+        return centreTile.translate(xyzTranslateCoordinates[0],
+                xyzTranslateCoordinates[1], xyzTranslateCoordinates[2]);
+    }
+
 
     EmoteStep cry = new EmoteStep("Cry", new RSTile(1769, 5058, 2));
     EmoteStep bow = new EmoteStep("Bow", new RSTile(1770, 5063, 2));
@@ -43,7 +52,7 @@ public class MimicChallenge implements QuestTask {
             Optional<Npc> mim = Query.npcs().idEquals(NpcID.ETHEREAL_MIMIC).maxDistance(12).isReachable()
                     .stream().findFirst();
             Log.log("Talking to mim with SDK version");
-            if (Utils.clickNPC(mim, "Talk-to") && mim.isPresent()){
+            if (mim.map(m->m.interact("Talk-to")).orElse(false)){
                 Timer.waitCondition(()-> mim.get().distanceTo(MyPlayer.getPosition()) < 1, 5000,7000);
             }
           //  talk.setUseLocalNav(true);
@@ -73,8 +82,9 @@ public class MimicChallenge implements QuestTask {
                 break;
         }
         Timer.waitCondition(() -> Player.getAnimation() == -1, 2000,3000);
+
         if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation();
+            NPCInteraction.handleConversation("Suppose I may as well have a go.");
 
     }
     @Override

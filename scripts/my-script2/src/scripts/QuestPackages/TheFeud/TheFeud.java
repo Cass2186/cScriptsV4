@@ -334,7 +334,7 @@ public class TheFeud implements QuestTask {
     }
 
     public void step11() {
-        if (Inventory.find(BLACKJACK).length < 1 && Equipment.find(BLACKJACK).length < 1) {
+        if (Inventory.find("Oak Blackjack").length < 1 && Equipment.find("Oak Blackjack").length < 1) {
             cQuesterV2.status = "Going to Ali the Operator";
             General.println("[Debug]: " + cQuesterV2.status);
             PathingUtil.walkToArea(TENT_AREA);
@@ -352,42 +352,42 @@ public class TheFeud implements QuestTask {
     }
 
     public void step12() {
-        ;
-        if (Utils.equipItem(BLACKJACK)) {
-        cQuesterV2.status = "Going to Building to lure";
-        General.println("[Debug]: " + cQuesterV2.status);
-        PathingUtil.walkToArea(LURE_BUILDING_1);
 
-        if (LURE_BUILDING_1.contains(Player.getPosition())) {
-            cQuesterV2.status = "Luring...";
+        if (Utils.equipItem(BLACKJACK) || Equipment.find("Oak Blackjack").length >0) {
+            cQuesterV2.status = "Going to Building to lure";
             General.println("[Debug]: " + cQuesterV2.status);
-            RSNPC[] target = NPCs.findNearest("Villager");
-            if (target.length > 0) {
+            PathingUtil.walkToArea(LURE_BUILDING_1);
 
-                if (!target[0].isClickable())
-                    target[0].adjustCameraTo();
+            if (LURE_BUILDING_1.contains(Player.getPosition())) {
+                cQuesterV2.status = "Luring...";
+                General.println("[Debug]: " + cQuesterV2.status);
+                RSNPC[] target = NPCs.findNearest("Villager");
+                if (target.length > 0) {
 
-                if (!LURE_BUILDING_1.contains(target[0])) {
-                    if (AccurateMouse.click(target[0], "Lure")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation();
+                    if (!target[0].isClickable())
+                        target[0].adjustCameraTo();
+
+                    if (!LURE_BUILDING_1.contains(target[0])) {
+                        if (AccurateMouse.click(target[0], "Lure")) {
+                            NPCInteraction.waitForConversationWindow();
+                            NPCInteraction.handleConversation();
+                        }
+                        PathingUtil.walkToArea(LURE_BUILDING_1);
                     }
-                    PathingUtil.walkToArea(LURE_BUILDING_1);
-                }
-                if (LURE_BUILDING_1.contains(target[0])) {
-                    cQuesterV2.status = "Knocking out...";
-                    if (AccurateMouse.click(target[0], "Knock-Out"))
-                        Timer.waitCondition(() -> target[0].getAnimation() == 838, 5000, 7000);
-                    if (target[0].getAnimation() == 838) {
-                        if (AccurateMouse.click(target[0], "Pickpocket"))
-                            Timer.waitCondition(() -> Player.getAnimation() == 881, 5000, 8000);
+                    if (LURE_BUILDING_1.contains(target[0])) {
+                        cQuesterV2.status = "Knocking out...";
+                        if (AccurateMouse.click(target[0], "Knock-Out"))
+                            Timer.waitCondition(() -> target[0].getAnimation() == 838, 5000, 7000);
+                        if (target[0].getAnimation() == 838) {
+                            if (AccurateMouse.click(target[0], "Pickpocket"))
+                                Timer.waitCondition(() -> Player.getAnimation() == 881, 5000, 8000);
 
-                        Utils.idle(2000, 5000);
+                            Utils.idle(2000, 5000);
+                        }
                     }
-                }
 
+                }
             }
-        }
         } else {
             step13();
         }
@@ -775,7 +775,7 @@ public class TheFeud implements QuestTask {
                         AccurateMouse.click(banditChampion[0], "Attack"))
                     Utils.shortSleep();
                 else {
-                    Waiting.waitNormal(200,50);
+                    Waiting.waitNormal(200, 50);
                 }
             }
             banditChampion = NPCs.findNearest("Bandit champion");
@@ -945,6 +945,7 @@ public class TheFeud implements QuestTask {
     public boolean checkRequirements() {
         return Skills.SKILLS.THIEVING.getActualLevel() >= 30;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;

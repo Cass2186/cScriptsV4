@@ -4,6 +4,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 
 public class Areas {
+
     public static RSArea FALADOR_AREA =
             new RSArea(new RSTile(3059, 3312, 0), new RSTile(3055, 3309, 0));
     public static RSArea CATHERBY_AREA = new RSArea(new RSTile(2816, 3461, 0), new RSTile(2811, 3466, 0));

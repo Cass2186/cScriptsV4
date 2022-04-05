@@ -32,15 +32,6 @@ public class cRunecrafting extends CassScript implements TribotScript {
         AntiBan.create();
         super.initializeDax();
 
-       /* URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cOrbCharger/src/scripts/gui/cTabsGui.fxml");
-        GUI gui = new GUI(lcn);
-
-        Log.debug("Loading GUI");
-        gui.show();
-        while (gui.isOpen())
-            Waiting.wait(500);
-
-        Vars.get().safetyTimer.reset();*/
         /**
          Paint
          */

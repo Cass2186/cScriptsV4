@@ -14,13 +14,19 @@ import org.tribot.script.interfaces.Arguments;
 import org.tribot.script.interfaces.Ending;
 import org.tribot.script.interfaces.Painting;
 import org.tribot.script.interfaces.Starting;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.antiban.PlayerPreferences;
+import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
+import org.tribot.script.sdk.painting.template.basic.PaintLocation;
+import org.tribot.script.sdk.painting.template.basic.PaintRows;
+import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.script.TribotScript;
 import org.tribot.script.sdk.types.Widget;
 import scripts.Data.Const;
+import scripts.Data.Paint;
 import scripts.Data.Vars;
+import scripts.ScriptUtils.CassScript;
 import scripts.Steps.*;
 import scripts.Tasks.Task;
 import scripts.Tasks.TaskSet;
@@ -33,36 +39,29 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ScriptManifest(name = "cTutorial Island", authors = {"Cass2186"}, category = "Testing")
-public class cTutorialIsland extends Script implements Painting, Starting, Ending, Arguments {
+public class cTutorialIsland extends CassScript implements TribotScript {
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
 
 
     @Override
-    public void onStart() {
+    public void execute(String args) {
+        super.initializeDax();
+
         AntiBan.create();
 
         Mouse.setSpeed(Vars.get().mouseSpeed);
-        General.println("[Debug]: Setting mouse speed to " + Vars.get().mouseSpeed);
+        Log.info("Setting mouse speed to " + Vars.get().mouseSpeed);
 
         Teleport.blacklistTeleports(Teleport.values());
 
-        WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
-            @Override
-            public DaxCredentials getDaxCredentials() {
-                return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
-            }
-        });
-
-    }
-
-    @Override
-    public void run() {
         double preference = PlayerPreferences.preference(
                 "antiban.double", g -> g.uniform(0.2, 1.0));
-        Log.log("[Debug]: Unique Antiban Modifier is: " + preference);
+
+        Log.info("Unique Antiban Modifier is: " + preference);
         Utils.FACTOR = preference;
+
         TaskSet tasks = new TaskSet(
                 new MakeCharacter(),
                 new SurvivalGuide(),
@@ -75,16 +74,21 @@ public class cTutorialIsland extends Script implements Painting, Starting, Endin
                 new MagicTask()
         );
 
-        isRunning.set(true);
+        Paint.startPaint();
 
+        isRunning.set(true);
         while (isRunning.get()) {
-            General.sleep(Vars.get().minLoopSleep, Vars.get().maxLoopSleep);
-            Task task = tasks.getValidTask();
+            Waiting.waitUniform(Vars.get().minLoopSleep, Vars.get().maxLoopSleep);
+
+            handleSettings();
+
             Optional<Widget> first = Query.widgets().indexEquals(263, 1).findFirst();
-            if (first.isPresent() && !first.get().isVisible()){
+            if (first.isPresent() && !first.get().isVisible() && !ChatScreen.isOpen()) {
                 Log.debug("Clicking Continue failsafe");
-               Keyboard.typeString(" ");
+                Keyboard.typeString(" ");
             }
+
+            Task task = tasks.getValidTask();
             if (task != null) {
                 status = task.toString();
                 task.execute();
@@ -95,40 +99,21 @@ public class cTutorialIsland extends Script implements Painting, Starting, Endin
         }
     }
 
-    @Override
-    public void onPaint(Graphics g) {
-        java.util.List<String> myString = new ArrayList<>(Arrays.asList(
-                "cTutorial Island v0.1",
-                "Running For: " + Timing.msToString(getRunningTime()),
-                "Task: " + status,
-                "Game setting 281: " + Game.getSetting(281)
-        ));
-        PaintUtil.createPaint(g, myString.toArray(String[]::new));
-    }
 
-    @Override
-    public void passArguments(HashMap<String, String> hashMap) {
-        String scriptSelect = hashMap.get("custom_input");
-        String clientStarter = hashMap.get("autostart");
-        String input = clientStarter != null ? clientStarter : scriptSelect;
-        General.println("[Debug]: Argument entered: " + input);
-
-        for (String arg : input.split(";")) {
-            try {
-                if (arg.toLowerCase().contains("namechar")) {
-                    Vars.get().nameCharacter = true;
-                    Log.log("[Debug]: Naming character");
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                General.println("[Error]: Args are incorrect", Color.RED);
+    private void handleSettings() {
+        if (Game.getSetting(Const.GAME_SETTING) >= 10) {
+            if (Options.isRoofsEnabled()) {
+                Log.debug("Disabling Roofs");
+                Options.setRemoveRoofsEnabled(true);
+                Widgets.closeAll();
+            }
+            if (Options.isAnySoundOn()) {
+                Log.debug("Disabling Sounds");
+                Options.turnAllSoundsOff();
             }
         }
     }
 
-    @Override
-    public void onEnd() {
 
-    }
+
 }

@@ -6,10 +6,7 @@ import org.tribot.api.Timing;
 import org.tribot.api2007.Combat;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Skills;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Prayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
@@ -70,7 +67,7 @@ public class DrinkPotion implements Task {
                 .findClosestToMouse();
         if (invItem.map(i -> i.click("Drink")).orElse(false)) {
             invItem.ifPresent(pot -> Log.debug("Drinking " + pot.getName()));
-            Waiting.waitNormal(300, 55);
+            Waiting.waitNormal(500, 55);
             Vars.get().lastAction = System.currentTimeMillis();
             return true;
         }
@@ -100,12 +97,26 @@ public class DrinkPotion implements Task {
         }
     }
 
-    public void drinkPotion(int[] potionArray, Skills.SKILLS skill) {
-        if (Skills.getCurrentLevel(skill) <=
-                Skills.getActualLevel(skill) + Vars.get().add && Inventory.contains(potionArray)) {
+
+
+    public boolean drinkPotion(int[] potionArray, Skill skill, int add) {
+        if (skill.getCurrentLevel() <=
+                (skill.getActualLevel() + add) && Inventory.contains(potionArray)) {
             Log.debug("Drinking " + skill.toString().toLowerCase() + " potion at "
-                    + (Skills.getActualLevel(skill) + Vars.get().add));
+                    + (skill.getActualLevel() + add));
             drinkPotion(potionArray);
+            return true;
+        }
+        return false;
+    }
+
+    public void drinkPotion(int[] potionArray, Skill skill) {
+        if (skill.getCurrentLevel() <=
+                (skill.getActualLevel() + Vars.get().add) && Inventory.contains(potionArray)) {
+            Log.debug("Drinking " + skill.toString().toLowerCase() + " potion at "
+                    + (skill.getActualLevel() + Vars.get().add));
+            drinkPotion(potionArray);
+            //TODO make player specific preference
             Vars.get().add = General.random(3, 8);
         }
     }
@@ -257,7 +268,7 @@ public class DrinkPotion implements Task {
 
     @Override
     public void execute() {
-        Log.info("[Debug]: DrinkPotion validated: " +
+        Log.info("DrinkPotion validated: " +
                 (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()));
 
         drinkPrayerPotion();
@@ -265,22 +276,17 @@ public class DrinkPotion implements Task {
         if (Vars.get().usingAbsorptions)
             drinkAbsorption();
 
-        drinkPotion(Const.SUPER_RANGING_POTION, Skills.SKILLS.RANGED);
-        drinkPotion(ItemID.RANGING_POTION, Skills.SKILLS.RANGED);
-        drinkPotion(ItemID.SUPER_COMBAT_POTION, Skills.SKILLS.STRENGTH);
+        drinkPotion(Const.SUPER_RANGING_POTION, Skill.RANGED);
+        drinkPotion(ItemID.RANGING_POTION, Skill.RANGED);
+        if(drinkPotion(ItemID.SUPER_COMBAT_POTION, Skill.STRENGTH, Vars.get().superCombatAdd)){
+            Vars.get().superCombatAdd =  General.randomSD(Vars.get().superCombatPotionAddMean,
+                    Vars.get().superCombatPotionAddSd);
+        }
 
         if (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning())
             drinkOverload();
 
         rockCake();
 
-       /* if (Vars.get().usingPrayerPots) {
-            General.println("[Debug]: Drinking Prayer Potion");
-            General.sleep(250, 2800);
-            if (PrayerUtil.drinkPrayerPotion()) {
-                Vars.get().drinkPrayAtPercentage = General.randomSD(6, 72, 43, 18);
-                General.println("[Debug]: Drinking Next Prayer Potion at: " + getAbsolutePrayerDrinkAt());
-            }
-        }*/
     }
 }

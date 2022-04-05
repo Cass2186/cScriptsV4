@@ -12,10 +12,12 @@ import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -41,7 +43,7 @@ public class ObjectStep extends QuestStep {
 
     @Getter
     @Setter
-    private boolean waitCond;
+    private boolean waitCond = true;
 
     @Getter
     @Setter
@@ -66,7 +68,7 @@ public class ObjectStep extends QuestStep {
 
     @Getter
     @Setter
-    private int[]alternateItems ;
+    private List<Integer> alternateIds = new ArrayList<>();
 
     @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
@@ -96,6 +98,16 @@ public class ObjectStep extends QuestStep {
         this.waitCond = NPCInteraction.isConversationWindowUp();
         this.handleChat = false;
     }
+
+    // USe this for instanced objects
+    public ObjectStep(int objectId, String objectAction) {
+        this.objectId = objectId;
+        this.tile = null;
+        this.objectAction = objectAction;
+        this.waitCond = NPCInteraction.isConversationWindowUp();
+        this.handleChat = false;
+    }
+
 
     public ObjectStep(int objectId, RSTile tile, String objectAction, Requirement... requirements) {
         this.objectId = objectId;
@@ -174,7 +186,7 @@ public class ObjectStep extends QuestStep {
     @Override
     public void addSubSteps(QuestStep... substep) {
 
-            this.substeps.addAll(Arrays.asList(substep));
+        this.substeps.addAll(Arrays.asList(substep));
 
     }
 
@@ -190,8 +202,45 @@ public class ObjectStep extends QuestStep {
                 .findBestInteractable();
     }
 
-    public void addAlternateObjects(int... ids){
+    public void addAlternateObjects(int... ids) {
+        for (int i : ids)
+            this.alternateIds.add(i);
+    }
 
+    private boolean handleSuccessfulClick() {
+        if (!handleChat) {
+            if (NPCInteraction.isConversationWindowUp())
+                NPCInteraction.handleConversation();
+        } else {
+            Log.debug("[ObjectStep]: Handling chat");
+            NPCInteraction.waitForConversationWindow();
+            if (chat != null && NPCInteraction.isConversationWindowUp()) {
+                String[] s = new String[chat.size()];
+                NPCInteraction.handleConversation(chat.toArray(s));
+            } else if (NPCInteraction.isConversationWindowUp()) {
+                NPCInteraction.handleConversation();
+            }
+            //  return; //I Don't think this should be here as it will never exectute the wait condition
+        }
+        // will end after click if no wait condition as it is default true
+        return Timer.waitCondition(() -> this.waitCond, 6000, 9000);
+    }
+
+    private boolean humanWalkIdle(WorldTile endTile) {
+        if (Waiting.waitUntil(1250, MyPlayer::isMoving)) {
+            return Timer.waitCondition(() -> endTile.distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) ||
+                    MyPlayer.isMoving(), 6000, 8000);
+        }
+        return endTile.distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) || !MyPlayer.isMoving();
+    }
+
+    private boolean humanWalkIdle(RSTile endTile) {
+        if (Waiting.waitUntil(1250, MyPlayer::isMoving)) {
+            return Timer.waitCondition(() -> Utils.getWorldTileFromRSTile(endTile)
+                    .distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) ||
+                    MyPlayer.isMoving(), 6000, 8000);
+        }
+        return Utils.getWorldTileFromRSTile(endTile).distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) || !MyPlayer.isMoving();
     }
 
     @Override
@@ -200,13 +249,15 @@ public class ObjectStep extends QuestStep {
             Log.error("[ObjectStep]: We failed a requirement to execute this NPCStep");
             return;
         }
-        if (this.substeps.size() > 0){
+        if (this.substeps.size() > 0) {
             General.println("[NPCStep]: There are substeps for this NPCStep, executing them");
-            for (QuestStep sub : this.substeps){
+            for (QuestStep sub : this.substeps) {
                 sub.execute();
             }
         }
 
+
+        // Navigate if needed
         if (this.tile != null) {
             RSArea objArea = new RSArea(this.tile, this.tileRadius);
             if (!objArea.contains(Player.getPosition())) {
@@ -215,26 +266,26 @@ public class ObjectStep extends QuestStep {
                 Optional<LocalTile> walkable = getWalkableTile(tile);
                 if (walkable.map(LocalWalking::walkTo).orElse(false)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK (walkable)");
-                    PathingUtil.movementIdle();
+                    humanWalkIdle(tile.toWorldTile());
                 } else if (LocalWalking.walkTo(tile)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK");
-                    PathingUtil.movementIdle();
+                    humanWalkIdle(tile.toWorldTile());
                 } else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
-                        PathingUtil.walkToTile(this.tile, tileRadius, false))
-                    PathingUtil.movementIdle();
-                else if (walkable.isPresent() && PathingUtil.localNav(walkable.get())){
+                        PathingUtil.walkToTile(this.tile, tileRadius, false)) {
+                    humanWalkIdle(this.tile);
+                } else if (walkable.map(PathingUtil::localNav).orElse(false)) {
+                    //    else if (walkable.isPresent() && PathingUtil.localNav(walkable.get())) {
                     Log.debug("[ObjectStep]: Navigating to object area - local walkable tile");
-                    PathingUtil.movementIdle();
-                }
-                else if (PathingUtil.localNavigation(this.tile)) {
+                    humanWalkIdle(walkable.get().toWorldTile());
+                } else if (PathingUtil.localNavigation(this.tile)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local");
-                    PathingUtil.movementIdle();
+                    humanWalkIdle(this.tile);
                 }
             }
         }
-        if (this.priorAction != null){
+        if (this.priorAction != null) {
             Log.info("[ObjectStep]: Executing prior action boolean supplier");
-            Timer.waitCondition(this.priorAction, 5000,7000);
+            Timer.waitCondition(this.priorAction, 5000, 7000);
         }
 
         Log.info("[ObjectStep]: Interacting with object: " + this.objectId + " with: " + this.objectAction);
@@ -244,23 +295,40 @@ public class ObjectStep extends QuestStep {
             RSObject[] obj = Objects.findNearest(this.tileRadius, predicate);
             if (obj.length > 0 &&
                     Utils.clickObject(obj[0], this.objectAction, false)) {
-                if (!handleChat) {
-                    if (NPCInteraction.isConversationWindowUp())
-                        NPCInteraction.handleConversation();
-                } else {
-                    Log.debug("[ObjectStep]: Handling chat");
-                    NPCInteraction.waitForConversationWindow();
-                    if (chat != null && NPCInteraction.isConversationWindowUp()) {
-                        String[] s = new String[chat.size()];
-                        NPCInteraction.handleConversation(chat.toArray(s));
-                    } else if (NPCInteraction.isConversationWindowUp()) {
-                        NPCInteraction.handleConversation();
-                    }
-                    return;
-                }
-                // will end after click if no wait condition
-                Timer.waitCondition(() -> this.waitCond, 6000, 9000);
+                handleSuccessfulClick();
+                return;
+            }
+        }
 
+        // this is for handling instanced objects where there's no tile in the object
+        // declaration and therefore this.tile == null
+        if (this.tile == null) {
+            Optional<GameObject> object = Query.gameObjects()
+                    .idEquals(this.objectId)
+                    .actionContains(this.objectAction)
+                    .isReachable()
+                    .sortedByPathDistance()
+                    .findBestInteractable();
+
+            if (object.map(obj -> obj.interact(this.objectAction)).orElse(false)) {
+                handleSuccessfulClick();
+                return;
+            } else if (this.alternateIds.size() > 0) {
+                for (Integer i : this.alternateIds) {
+                    object = Query.gameObjects()
+                            .idEquals(i)
+                            .actionContains(this.objectAction)
+                            .isReachable()
+                            .sortedByPathDistance()
+                            .findBestInteractable();
+                    if (object.map(obj -> obj.interact(this.objectAction)).orElse(false)) {
+                        handleSuccessfulClick();
+                        return;
+                    }
+                }
+            } else {
+                Log.error("Failed to handle object with a null tile");
+                return;
             }
         }
 
@@ -272,51 +340,26 @@ public class ObjectStep extends QuestStep {
 
         if ((tileObj != null && Utils.clickObject(tileObj, this.objectAction))
                 || Utils.clickObject(this.objectId, this.objectAction, false)) {
-            if (!handleChat) {
-                if (NPCInteraction.isConversationWindowUp())
-                    NPCInteraction.handleConversation();
-            } else {
-                Log.debug("[ObjectStep]: Handling chat");
-                NPCInteraction.waitForConversationWindow();
-                if (chat != null && NPCInteraction.isConversationWindowUp()) {
-                    String[] s = new String[chat.size()];
-                    NPCInteraction.handleConversation(chat.toArray(s));
-                } else if (NPCInteraction.isConversationWindowUp()) {
-                    NPCInteraction.handleConversation();
-                }
-                return;
-            }
-            // will end after click if no wait condition
-            Timer.waitCondition(() -> this.waitCond, 6000, 9000);
-        }
-        else if (this.alternateItems != null) {
-            Optional<GameObject> ob = Query.gameObjects()
-                    .tileEquals(Utils.getWorldTileFromRSTile(this.tile))
-                    .idEquals(this.alternateItems)
-                    .findClosest();
-            if (Utils.clickObj(ob, this.objectAction)
-                    || Utils.clickObject(this.objectId, this.objectAction, false)) {
-                if (!handleChat) {
-                    if (NPCInteraction.isConversationWindowUp())
-                        NPCInteraction.handleConversation();
-                } else {
-                    Log.debug("[ObjectStep]: Handling chat");
-                    NPCInteraction.waitForConversationWindow();
-                    if (chat != null && NPCInteraction.isConversationWindowUp()) {
-                        String[] s = new String[chat.size()];
-                        NPCInteraction.handleConversation(chat.toArray(s));
-                    } else if (NPCInteraction.isConversationWindowUp()) {
-                        NPCInteraction.handleConversation();
-                    }
+            handleSuccessfulClick();
+        } else if (this.alternateIds != null) {
+            Log.info("Attempting an alternate ID");
+            for (Integer i : this.alternateIds) {
+                Optional<GameObject> ob = Query.gameObjects()
+                        .tileEquals(Utils.getWorldTileFromRSTile(this.tile))
+                        .idEquals(i)
+                        .findClosest();
+                if (Utils.clickObj(ob, this.objectAction)
+                        || Utils.clickObject(this.objectId, this.objectAction, false)) {
+                    handleSuccessfulClick();
                     return;
                 }
-                // will end after click if no wait condition
-                Timer.waitCondition(() -> this.waitCond, 6000, 9000);
             }
         }
     }
+
+
     @Override
-    public String toString(){
+    public String toString() {
 
 
         return "";

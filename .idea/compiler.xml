@@ -13,6 +13,7 @@
         <module name="myScripts.scripts.cFarming.test" />
         <module name="myScripts.scripts.cOrbCharger.test" />
         <module name="myScripts.scripts.cSkiller.test" />
+        <module name="myScripts.scripts.cHerbRuns.main" />
         <module name="myScripts.scripts.cNMZ.test" />
         <module name="myScripts.scripts.MotherLoadMine.test" />
         <module name="myScripts.libraries.test" />
@@ -38,6 +39,7 @@
         <module name="myScripts.scripts.cOrbCharger.main" />
         <module name="myScripts.scripts.main" />
         <module name="myScripts.scripts.cCrabs.main" />
+        <module name="myScripts.scripts.cHerbRuns.test" />
         <module name="myScripts.scripts.MotherLoadMine.main" />
         <module name="myScripts.scripts.TemplateScript.test" />
         <module name="myScripts.scripts.cTutorialIsland.main" />

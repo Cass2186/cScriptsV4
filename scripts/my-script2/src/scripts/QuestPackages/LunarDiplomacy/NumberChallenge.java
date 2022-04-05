@@ -2,6 +2,7 @@ package scripts.QuestPackages.LunarDiplomacy;
 
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.types.LocalTile;
 import scripts.ObjectID;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
@@ -15,9 +16,17 @@ import java.util.List;
 
 public class NumberChallenge implements QuestTask {
 
+    private static int[] xyzTranslateCoordinates = {9, -7, 0};
+    // these are the .translate() coordinates for the launch pad from the centre "My life" piece
+
+    public static LocalTile getNumbersLaunchPadTile(LocalTile centreTile){
+        return centreTile.translate(xyzTranslateCoordinates[0],
+                xyzTranslateCoordinates[1], xyzTranslateCoordinates[2]);
+    }
 
     //DetailedQuestStep press0, press1, press2, press3, press4, press5, press6, press7, press8, press9, catchStep;
 
+    //TODO remove the tiles and add actions
     ObjectStep   press0 = new ObjectStep( ObjectID.ZERO, new RSTile(1783, 5062, 2));
     ObjectStep    press1 = new ObjectStep( ObjectID.ONE, new RSTile(1786, 5065, 2));
     ObjectStep  press2 = new ObjectStep( ObjectID.TWO, new RSTile(1787, 5063, 2));

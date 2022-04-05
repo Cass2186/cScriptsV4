@@ -3,6 +3,7 @@ package scripts.QuestPackages.LunarDiplomacy;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
 import scripts.ItemID;
@@ -756,7 +757,8 @@ public class LunarDiplomacy implements QuestTask {
         //  fightMe = new NPCStep(NpcID.ME, new RSTile(1823, 5087, 2), "Fight Me.");
         //  fightMe.addAlternateNpcs(NpcID.ME_786);
 
-        leaveLecturn = new ObjectStep(ObjectID.MY_LIFE, new RSTile(1760, 5088, 2), "Read My life to return to Lunar Isle.");
+        leaveLecturn = new ObjectStep(ObjectID.MY_LIFE, new RSTile(1760, 5088, 2),
+                "Read", !GameState.isInInstance());
         leaveLecturn.addDialogStep("Yes");
         finishQuest = new NPCStep(NpcID.ONEIROMANCER, new RSTile(2151, 3867, 0), sealOfPassage);
     }

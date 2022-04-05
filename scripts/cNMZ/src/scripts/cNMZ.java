@@ -13,10 +13,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Login;
-import org.tribot.script.sdk.MessageListening;
+import org.tribot.script.sdk.*;
 import scripts.NmzData.Const;
 import scripts.NmzData.Paint;
 import scripts.NmzData.Vars;
@@ -51,10 +48,7 @@ public class cNMZ extends Script implements Starting, Ending, MessageListening07
         while (isRunning.get()) {
             General.sleep(50, 150);
 
-            if (!Game.isInInstance())
-                break;
-
-            if (!Login.isLoggedIn())
+            if (!Game.isInInstance() || !MyPlayer.isMember() ||!Login.isLoggedIn() )
                 break;
 
             if (!Combat.isAutoRetaliateOn())

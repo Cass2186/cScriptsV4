@@ -12,6 +12,8 @@ import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
 public class QuestGuide implements Task {
+
+
     NPCStep talkToQuestGuide = new NPCStep("Quest Guide", new RSTile(3086, 3122, 0));
 
 

@@ -8,9 +8,10 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.LocalTile;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.NpcID;
@@ -19,18 +20,30 @@ import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
+import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RaceChallenge implements QuestTask {
 
 
     //TODO add summer pie support if <40 agility as I kept failing with 41
+
+    int[] xyzTranslateCoordinates = {11, 1, 0};
+
+    // these are the .translate() coordinates for the launch pad from the centre "My life" piece
+    public static LocalTile getRaceLaunchPadTile(LocalTile centreTile) {
+        return centreTile.translate(11, 1, 0);
+    }
+
+    VarbitRequirement startedRaceChallenge = new VarbitRequirement(2424, 1);
 
 
     NPCStep startRace = new NPCStep(NpcID.ETHEREAL_EXPERT, Player.getPosition(),
@@ -60,6 +73,9 @@ public class RaceChallenge implements QuestTask {
             if (Player.getAnimation() == JUMP_ANIMATION)
                 return;
 
+            if (Utils.getVarBitValue(2424) == 0) //race ended
+                return;
+
             General.println("[Debug]: in loop");
 
             if (h.getPosition().getY() > Player.getPosition().getY()) {
@@ -75,9 +91,13 @@ public class RaceChallenge implements QuestTask {
         }
         RSNPC[] mimic = NPCs.findNearest(NpcID.ETHEREAL_EXPERT);
         if (!NPCInteraction.isConversationWindowUp() &&
-                mimic.length > 0 && PathingUtil.canReach(mimic[0].getPosition())) {
-            PathingUtil.clickScreenWalk(Player.getPosition().translate(0, 5));
-            PathingUtil.movementIdle();
+                // we are past all the hurdles
+                Arrays.stream(hurdles).filter(
+                                h -> h.getPosition().getY() > MyPlayer.getPosition().getY())
+                        .count() == 0) {
+            Log.debug("Running to end!");
+            if (PathingUtil.clickScreenWalk(Player.getPosition().translate(0, 5)))
+                Waiting.waitUntil(3500, ()-> PathingUtil.movementIdle() && ChatScreen.isOpen());
         }
     }
 
@@ -116,6 +136,7 @@ public class RaceChallenge implements QuestTask {
     public boolean checkRequirements() {
         return false;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
