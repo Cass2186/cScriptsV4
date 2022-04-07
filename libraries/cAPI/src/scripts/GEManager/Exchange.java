@@ -222,6 +222,9 @@ public class Exchange {
         RSInterface parent = Interfaces.get(ITEM_SELECTION_BOX_PARENT, SMALL_ITEM_SELECTION_BOX_COMP);
         if (parent != null) {
             interfaceChildren = parent.getChildren();
+            if (interfaceChildren == null)
+                return false;
+
             for (int i = 0; i < interfaceChildren.length; i++) {
 
                 RSInterface compItemInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT,
@@ -273,6 +276,7 @@ public class Exchange {
                 }
             }
         }
+
         return false;
     }
 

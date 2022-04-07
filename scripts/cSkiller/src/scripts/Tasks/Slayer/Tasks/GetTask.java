@@ -12,6 +12,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -159,13 +160,17 @@ public class GetTask implements Task {
         RSItem[] slayHelmI = Equipment.find(ItemID.SLAYER_HELMET_I);
         if (Equipment.isEquipped(ItemID.SLAYER_HELMET) && slayHelm.length > 0) {
             if (slayHelm[0].click("Check")) {
-                General.sleep(General.randomSD(1000, 6000, 3000, 750));
+                Waiting.waitUntil(1500, ()-> SlayerVars.get().targets != null);
+                Log.debug("Targs no longer null");
+                //General.sleep(General.randomSD(1000, 6000, 3000, 750));
                 return;
             }
 
         } else if (Equipment.isEquipped(ItemID.SLAYER_HELMET_I) && slayHelmI.length > 0) {
             if (slayHelmI[0].click("Check")) {
-                General.sleep(General.randomSD(1000, 6000, 3000, 750));
+                Waiting.waitUntil(1500, ()-> SlayerVars.get().targets != null);
+                Log.debug("Targs no longer null");
+                //General.sleep(General.randomSD(1000, 6000, 3000, 750));
                 return;
             }
 
@@ -178,11 +183,13 @@ public class GetTask implements Task {
         }
         gem = Inventory.find(ItemID.ENCHANTED_GEM);
         if (gem.length > 0 && gem[0].click("Check")) {
-            General.sleep(General.randomSD(3000, 9000, 5000, 750));
+            Waiting.waitUntil(1500, ()-> SlayerVars.get().targets != null);
+            Log.debug("Targs no longer null");
+            //General.sleep(General.randomSD(3000, 9000, 5000, 750));
 
         } else {
             SlayerVars.get().needsGem = true;
-            General.println("[Error]: Check Gem Failed");
+            Log.error("Check Gem Failed");
         }
     }
 

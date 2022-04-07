@@ -77,9 +77,10 @@ public class BuyItems implements Task {
         BankManager.open(true);
         BankManager.depositAll(true);
         BankManager.setUnNoted();
-        if (!org.tribot.script.sdk.GrandExchange.isNearby() && Inventory.find(ItemID.RING_OF_WEALTH).length ==0) {
-            Log.log("[BuyItemsStep]: Need RoW, not at GE");
-            BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+        if (!org.tribot.script.sdk.GrandExchange.isNearby() &&
+                Inventory.find(ItemID.RING_OF_WEALTH).length ==0) {
+            Log.info("[BuyItemsStep]: Need RoW, not at GE");
+            BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
         }
        // if (!org.tribot.script.sdk.GrandExchange.isNearby())
         //    BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);

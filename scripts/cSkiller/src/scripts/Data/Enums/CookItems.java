@@ -44,7 +44,7 @@ public enum CookItems {
         General.println("[CookItem]: We have " + xpLeft + "xp left to get to the end level of " + this.maxLevel);
         int successfulCooks = xpLeft / this.xpPer + 1;
 
-        int withBurns = (int) (successfulCooks * 1.35);
+        int withBurns = (int) (successfulCooks * 1.40) + 5;
         General.println("[CookItem]: We need to buy " + withBurns + " raw food to get to the end level of " + this.maxLevel);
         return withBurns;
     }

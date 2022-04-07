@@ -701,9 +701,15 @@ public class SlayerBank implements Task {
 
     private void lightCandle() {
         if (Inventory.find(ItemID.CANDLE).length > 0) {
+            if (Inventory.find(ItemID.TINDERBOX).length == 0){
+                SlayerVars.get().shouldRestock = true;
+                Log.error("Missing an tinderbox");
+                return;
+            }
             BankManager.close(true);
             Utils.useItemOnItem(ItemID.CANDLE, ItemID.TINDERBOX);
             Utils.shortSleep();
+
         }
     }
 

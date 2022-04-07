@@ -1,5 +1,6 @@
 package scripts.Tasks.Cooking;
 
+import dax.api_lib.models.RunescapeBank;
 import org.tribot.api.General;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
@@ -7,6 +8,13 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.cache.BankCache;
+import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.GlobalWalking;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
@@ -24,35 +32,10 @@ import java.util.List;
 
 public class BankCook implements Task {
 
+    WorldTile CATHERBY_BANK_TILE = new WorldTile(2809, 3441, 0);
 
     public void bank() {
         List<ItemReq> inv;
-
-
-        if (!Const.CATHERBY_BANK_AND_COOK_AREA.contains(Player.getPosition())
-                && Skills.getActualLevel(Skills.SKILLS.COOKING) < 35) {
-            General.println("[BankCook]: Going to Catherby");
-            BankManager.open(true);
-            inv = new ArrayList<>(
-                    Arrays.asList(
-                            new ItemReq(ItemID.CAMELOT_TELEPORT, 1),
-                            new ItemReq(ItemID.COINS, 1000)
-                    )
-            );
-            SkillBank.withdraw(inv);
-            BankManager.close(true);
-
-            PathingUtil.walkToArea(Const.CATHERBY_BANK_AND_COOK_AREA, false);
-
-        }
-        if (Utils.clickObject("Bank chest", "Use", true))
-            Timer.waitCondition(Banking::isBankScreenOpen, 5000, 7500);
-        else
-            BankManager.open(true);
-
-        BankManager.depositAll(true);
-
-
         if (Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35) {
             inv = new ArrayList<>(
                     Arrays.asList(
@@ -64,11 +47,29 @@ public class BankCook implements Task {
             inv = new ArrayList<>(
                     Arrays.asList(new ItemReq(CookItems.getCookingRawFoodId(), 0)));
         }
+
+        goToCatherbyBank(inv);
+
+        if (Utils.clickObject("Bank chest", "Use", true))
+            Timer.waitCondition(Banking::isBankScreenOpen, 5000, 7500);
+        else if (Utils.clickObject("Bank booth", "Bank", false))
+            Timer.waitCondition(Banking::isBankScreenOpen, 6500, 7500);
+        else if (GlobalWalking.walkTo(CATHERBY_BANK_TILE)) {
+            Log.info("Going to catherby bank");
+            Waiting.waitUntil(6000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 3);
+            BankManager.open(true);
+        } else {
+            Log.info("Going to bank");
+            BankManager.open(true);
+        }
+        BankManager.depositAll(true);
+
+
         List<ItemReq> newInv = SkillBank.withdraw(inv);
         if (newInv != null && newInv.size() > 0) {
             General.println("[Cooking Training]: Creating buy list");
             BuyItems.itemsToBuy = BuyItems.populateBuyList(CookItems.getRequiredRawFood());
-            BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+            BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
             RSItem[] wealth = Inventory.find(Filters.Items.nameContains("wealth"));
             if (wealth.length > 0)
                 Utils.equipItem(wealth[0].getID());
@@ -80,6 +81,47 @@ public class BankCook implements Task {
 
     }
 
+    private boolean checkBankCache(List<ItemReq> inv) {
+        if (!BankCache.isInitialized()) {
+            BankManager.open(true);
+            BankCache.update();
+        }
+        if (BankCache.isInitialized()) {
+            for (ItemReq i : inv) {
+                int reqAmount = i.getAmount() <= 0 ? 1 : i.getAmount();
+                if (BankCache.getStack(i.getId()) < reqAmount) {
+                    Log.error("Missing Bank item " + i.getId() + " in amount of at least " + reqAmount);
+                    return false;
+                } else
+                    Log.info("We have Bank item " + i.getId() + " in amount of at least " + reqAmount);
+
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean goToCatherbyBank(List<ItemReq> inv) {
+        if (checkBankCache(inv) &&
+                CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) > 20
+                && Skills.getActualLevel(Skills.SKILLS.COOKING) < 35) {
+            General.println("[BankCook]: Going to Catherby Bank");
+            BankManager.open(true);
+            inv = new ArrayList<>(
+                    Arrays.asList(
+                            new ItemReq(ItemID.CAMELOT_TELEPORT, 1),
+                            new ItemReq(ItemID.COINS, 1000)
+                    )
+            );
+            SkillBank.withdraw(inv);
+            BankManager.close(true);
+
+            if (GlobalWalking.walkTo(CATHERBY_BANK_TILE))
+                Waiting.waitUntil(5000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 10);
+            return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 20;
+        }
+        return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 20;
+    }
 
     @Override
     public String toString() {
