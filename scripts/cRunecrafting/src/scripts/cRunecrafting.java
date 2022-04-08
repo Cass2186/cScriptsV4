@@ -41,10 +41,10 @@ public class cRunecrafting extends CassScript implements TribotScript {
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
                 .row(template.toBuilder().label("Task").value(() -> Vars.get().status).build())
-              //  .row(template.toBuilder().label("House").value(() -> Vars.get().mostRecentHouse).build())
+                //  .row(template.toBuilder().label("House").value(() -> Vars.get().mostRecentHouse).build())
                 //.row(template.toBuilder().label("Tab").value(() -> Vars.get().selectedTab.toString()).build())
                 .row(template.toBuilder().label("Runecrafting").value(() -> getXpGainedString()).build())
-             //   .row(template.toBuilder().label("Profit").value(() -> Vars.get().getProfitString()).build())
+                //   .row(template.toBuilder().label("Profit").value(() -> Vars.get().getProfitString()).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
 
@@ -62,15 +62,14 @@ public class cRunecrafting extends CassScript implements TribotScript {
         TaskSet tasks = new TaskSet(
                 new CraftRunes(),
                 new GoToRcAltar(),
-                new RunecraftBank()
+                new RunecraftBank(),
+                new RepairPouches()
         );
 
         initializeListeners();
         isRunning.set(true);
         while (isRunning.get()) {
-            Waiting.waitUniform(50, 100);
-
-
+            Waiting.waitUniform(40, 70);
             //reset safety timer if we've gained xp since last itteration
             if (Skill.RUNECRAFT.getXp() > Vars.get().lastIterRcXp) {
                 Vars.get().safetyTimer.reset();

@@ -2,12 +2,17 @@ package scripts.QuestPackages.DeathPlateau;
 
 import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
+import scripts.Listeners.ChatObserver;
+import scripts.Listeners.InterfaceObserver;
+import scripts.Listeners.Model.ChatListener;
 import scripts.QuestPackages.GertrudesCat.GertrudesCat;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.NPCStep;
@@ -23,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DeathPlateau implements QuestTask {
+public class DeathPlateau implements QuestTask, ChatListener {
 
     private static DeathPlateau quest;
 
@@ -187,6 +192,16 @@ public class DeathPlateau implements QuestTask {
     );
 
 
+    public void initialiseListeners() {
+        ChatObserver chatListener = new ChatObserver(()-> true);
+        chatListener.addListener(this);
+        chatListener.addString("I have duplicated a key, I need to get it from");
+        chatListener.addString("the key from Leela.");
+        chatListener.addString("pickup the key");
+        chatListener.addString("I got a duplicated cell door key");
+        chatListener.start();
+    }
+
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
         General.println("[Debug]: " + cQuesterV2.status);
@@ -326,7 +341,7 @@ public class DeathPlateau implements QuestTask {
             if (!tile.isClickable())
                 tile.adjustCameraTo();
 
-            if (Walking.clickTileMS(tile, "Walk here"))
+            if (DynamicClicking.clickRSTile(tile, "Walk here"))
                 PathingUtil.movementIdle();
 
             if (Utils.useItemOnObject(ballID, placeID)) {
@@ -334,6 +349,7 @@ public class DeathPlateau implements QuestTask {
             }
         }
     }
+
     public void giveHaroldDrink() {
         cQuesterV2.status = "Step 4 - Going to Harold";
         General.println("[Debug]: " + cQuesterV2.status);
@@ -377,7 +393,7 @@ public class DeathPlateau implements QuestTask {
             Walking.blindWalkTo(new RSTile(2894, 3566, 0));
             Utils.idle(3000, 5000);
 
-            if (Utils.clickObj(3742, "Open")) {
+            if (Utils.clickObj(3743, "Open")) {
                 Timer.waitCondition(() -> EQUIPMENT_ROOM.contains(Player.getPosition()), 8000, 10000);
                 Utils.idle(500, 1500);
             }
@@ -409,9 +425,9 @@ public class DeathPlateau implements QuestTask {
             if (!CAVE_OUTSIDE.contains(Player.getPosition()) && !INSIDE_CAVE.contains(Player.getPosition()))
                 PathingUtil.walkToArea(CAVE_OUTSIDE);
 
-            if (CAVE_OUTSIDE.contains(Player.getPosition())) {
+            if (!INSIDE_CAVE.contains(Player.getPosition())) {
                 RSObject[] cave = Objects.findNearest(20, 3735);
-                if (cave.length > 0 && AccurateMouse.click(cave[0], "Enter")){
+                if (cave.length > 0 && AccurateMouse.click(cave[0], "Enter")) {
                     Timer.slowWaitCondition(() -> !CAVE_OUTSIDE.contains(Player.getPosition()), 8000, 12000);
                 }
             }
@@ -430,15 +446,15 @@ public class DeathPlateau implements QuestTask {
         }
     }
 
-    public void goToHouse() {
-        if (Inventory.isFull())
-            Inventory.drop(BLUE_BALL, PURPLE_BALL, YELLOW_BALL, RED_BALL, GREEN_BALL);
+    RSTile TENZING_HOUSE_TILE = new RSTile(2821,3555,0);
 
+    public void goToHouse() {
         if (Inventory.find(MAP).length < 1) {
+            Inventory.drop(BLUE_BALL, PURPLE_BALL, YELLOW_BALL, RED_BALL, GREEN_BALL);
             cQuesterV2.status = "Going to Tenzing";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Inventory.find(CLIMBING_BOOTS).length < 1) {
-                PathingUtil.walkToArea(HOUSE);
+                PathingUtil.walkToTile(TENZING_HOUSE_TILE);
                 if (NpcChat.talkToNPC("Tenzing")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation("OK, I'll get those for you.");
@@ -480,22 +496,21 @@ public class DeathPlateau implements QuestTask {
         cQuesterV2.status = "Going to Tenzing";
         General.println("[Debug]: " + cQuesterV2.status);
         if (Inventory.find(CLIMBING_BOOTS).length < 1) {
-            PathingUtil.walkToArea(HOUSE);
-            NpcChat.talkToNPC("Tenzing");
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation();
-            Utils.continuingChat();
+            PathingUtil.walkToTile(TENZING_HOUSE_TILE);
+           if(NpcChat.talkToNPC("Tenzing")) {
+               NPCInteraction.waitForConversationWindow();
+               NPCInteraction.handleConversation();
+               ChatScreen.handle();
+               Utils.continuingChat();
+           }
 
-            NpcChat.talkToNPC("Tenzing");
-            NPCInteraction.handleConversation();
-
-            Utils.idle(500, 2000);
             if (Inventory.find(MAP).length < 1) {
-                NpcChat.talkToNPC("Tenzing");
-                NPCInteraction.handleConversation();
-
-                Utils.idle(500, 2000);
+                if(NpcChat.talkToNPC("Tenzing")) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation();
+                    ChatScreen.handle();
+                    Utils.continuingChat();
+                }
             }
         }
     }
@@ -535,6 +550,7 @@ public class DeathPlateau implements QuestTask {
 
     @Override
     public void execute() {
+        initialiseListeners();
         //setupItemReqs();
         cQuesterV2.gameSettingInt = 314;
         if (Game.getSetting(314) == 0) {
@@ -552,31 +568,31 @@ public class DeathPlateau implements QuestTask {
             talkToEohric();
 
         } else if (Game.getSetting(314) == 40) {
-             giveHaroldDrink();
+            giveHaroldDrink();
 
         } else if (Game.getSetting(314) == 50) {
-              gamble();
+            gamble();
 
         } else if (Game.getSetting(314) == 55) {
-              readIOU();
+            readIOU();
 
         } else if (Game.getSetting(314) == 60) {
-             leaveUpStairs();
-             goToPuzzle();
+            leaveUpStairs();
+            goToPuzzle();
         }
         if (Game.getSetting(314) == 70) {
             if (Inventory.find(ItemID.CERTIFICATE_3114).length < 1 &&
                     Inventory.find(ItemID.CLIMBING_BOOTS).length < 1 &&
                     Inventory.find(ItemID.SPIKED_BOOTS).length < 1 &&
                     Inventory.find(3104).length < 1) {
-                  goIntoEquipmentRoom();
-                 goToCave();
-                 goToHouse();
+                goIntoEquipmentRoom();
+                goToCave();
+                goToHouse();
             }
             if (Inventory.find(ItemID.CERTIFICATE_3114).length < 1 &&
                     Inventory.find(ItemID.SPIKED_BOOTS).length < 1 &&
                     Inventory.find(3104).length < 1) {
-                  getSpikedBoots();
+                getSpikedBoots();
                 goToDenulth();
             }
             if (Inventory.find(ItemID.CERTIFICATE_3114).length > 0 &&
@@ -585,11 +601,11 @@ public class DeathPlateau implements QuestTask {
                 getSpikedBoots();
             }
             if (Inventory.find(ItemID.SPIKED_BOOTS).length > 0) {
-                 goToHouse2();
+                goToHouse2();
             }
             if (Inventory.find(3104).length > 0) {
-                 goToEndOfPath();
-                  goToFinish();
+                goToEndOfPath();
+                goToFinish();
             }
         }
         if (Game.getSetting(314) == 80) {
@@ -598,6 +614,8 @@ public class DeathPlateau implements QuestTask {
         }
 
     }
+
+
 
     @Override
     public String questName() {
@@ -623,5 +641,10 @@ public class DeathPlateau implements QuestTask {
     @Override
     public boolean isComplete() {
         return Quest.DEATH_PLATEAU.getState().equals(Quest.State.COMPLETE);
+    }
+
+    @Override
+    public void onAppear() {
+
     }
 }

@@ -74,6 +74,16 @@ public class Const {
                     new RSTile(2789, 4855, 0)
             }
     );
+    public static int[] ALL_POUCHES = {
+            5509, //small
+            5510, // med
+            5512,// large
+            5514 // giant
+    };
+    public static final int DEGRADED_MEDIUM_POUCH = 5511;
+    public static int DEGRADED_LARGE_POUCH = 5513;
+    public static int DEGRADED_GIANT_POUCH = 5515;
+    public static final int[] DEGRADED_POUCHES = {DEGRADED_GIANT_POUCH, DEGRADED_LARGE_POUCH, DEGRADED_MEDIUM_POUCH};
 
     public static WorldTile FIRE_ALTAR_RING_TELE_TILE = new WorldTile(3309, 3260, 0);
 }

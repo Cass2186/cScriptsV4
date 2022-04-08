@@ -48,19 +48,19 @@ public class BankCook implements Task {
                     Arrays.asList(new ItemReq(CookItems.getCookingRawFoodId(), 0)));
         }
 
-        goToCatherbyBank(inv);
-
-        if (Utils.clickObject("Bank chest", "Use", true))
-            Timer.waitCondition(Banking::isBankScreenOpen, 5000, 7500);
-        else if (Utils.clickObject("Bank booth", "Bank", false))
-            Timer.waitCondition(Banking::isBankScreenOpen, 6500, 7500);
-        else if (GlobalWalking.walkTo(CATHERBY_BANK_TILE)) {
-            Log.info("Going to catherby bank");
-            Waiting.waitUntil(6000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 3);
-            BankManager.open(true);
-        } else {
-            Log.info("Going to bank");
-            BankManager.open(true);
+        if(goToCatherbyBank(inv)) {
+            if (Utils.clickObject("Bank chest", "Use", true))
+                Timer.waitCondition(Banking::isBankScreenOpen, 5000, 7500);
+            else if (Utils.clickObject("Bank booth", "Bank", false))
+                Timer.waitCondition(Banking::isBankScreenOpen, 6500, 7500);
+            else if (GlobalWalking.walkTo(CATHERBY_BANK_TILE)) {
+                Log.info("Going to catherby bank");
+                Waiting.waitUntil(6000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 3);
+                BankManager.open(true);
+            } else {
+                Log.info("Going to bank");
+                BankManager.open(true);
+            }
         }
         BankManager.depositAll(true);
 
