@@ -335,7 +335,7 @@ public class DemonSlayer implements QuestTask {
             if (Interfaces.get(231, 4) == null && Interfaces.get(217, 3) == null) {
                 if (NpcChat.talkToNPC("Traiborn")) {
                     NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
+                    NPCInteraction.handleConversation("Talk about Demon Slayer.");
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
                     Timer.waitCondition(() -> Inventory.find(key2).length > 0, 10000);
@@ -494,6 +494,11 @@ public class DemonSlayer implements QuestTask {
 
     @Override
     public void execute() {
+        if (Quest.DEMON_SLAYER.getState().equals(Quest.State.COMPLETE)) {
+            Log.info("Finished Demon Slayer, removing");
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
 
         Log.debug("Game Setting: " + Game.getSetting(222));
         Log.debug("2561:  " + Utils.getVarBitValue(2561));
@@ -560,11 +565,7 @@ public class DemonSlayer implements QuestTask {
             Log.debug("Game Setting: " + Game.getSetting(222));
             NPCInteraction.handleConversation();
         }
-        if (Game.getSetting(222) == stage9 || Game.getSetting(222) == 22090083
-                || RSVarBit.get(2561).getValue() == 3 || Quest.DEMON_SLAYER.getState().equals(Quest.State.COMPLETE)) {
-            Log.debug("Game Setting: " + Game.getSetting(222));
-            cQuesterV2.taskList.remove(this);
-        }
+
 
     }
 

@@ -26,4 +26,8 @@ public enum Plank {
         this.experienceGiven = experienceGiven;
         this.itemRequirements = itemRequirements;
     }
+
+    public int getPlankId(){
+        return this.itemRequirements.length > 0 ? this.itemRequirements[0].getId() : -1;
+    }
 }

@@ -79,7 +79,9 @@ public class BankManager {
     }
 
 
-    public void performBankTask(BankTask task) {
+
+
+    public void handleBankTaskError(BankTaskError err) {
 
     }
 

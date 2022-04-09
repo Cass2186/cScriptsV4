@@ -8,7 +8,9 @@ import scripts.ItemID;
 public enum CombatPotions {
     SUPER_COMBAT(ItemID.SUPER_COMBAT_POTION),
     SUPER_STRENGTH(ItemID.SUPER_STRENGTH),
-    SUPER_ATTACK(ItemID.SUPER_ATTACK);
+    SUPER_ATTACK(ItemID.SUPER_ATTACK),
+    SUPER_DEFENCE(ItemID.SUPER_DEFENCE),
+    RANGING(ItemID.RANGING_POTION);
 
     @Getter
     private int[] ids;

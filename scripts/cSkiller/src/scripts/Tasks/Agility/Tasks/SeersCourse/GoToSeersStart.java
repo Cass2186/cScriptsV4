@@ -3,6 +3,9 @@ package scripts.Tasks.Agility.Tasks.SeersCourse;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Player;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.AgilityAreas;
@@ -14,7 +17,12 @@ import scripts.Timer;
 
 public class GoToSeersStart implements Task {
 
+    WorldTile SEERS_START = new WorldTile(2729,  3487 ,0 );
 
+    @Override
+    public String toString() {
+        return "Going to Seers start";
+    }
     @Override
     public Priority priority() {
         return Priority.HIGHEST;
@@ -33,7 +41,8 @@ public class GoToSeersStart implements Task {
     public void execute() {
         General.println("[Debug]: Going to Seers start");
         if (AgilityAreas.SEERS_END_AREA.contains(Player.getPosition())) {
-            if (PathingUtil.localNavigation(AgilityAreas.SEERS_WALL_AREA.getRandomTile()))
+            Log.info("[Debug]: Going to Seers start - SDK");
+            if (LocalWalking.walkTo(SEERS_START))
                 Timer.waitCondition(() ->
                         AgilityAreas.SEERS_LARGE_WALL_AREA.contains(Player.getPosition()), 7000, 9000);
         } else {

@@ -48,11 +48,14 @@ public class Seers implements Task {
             EDGE
     ));
 
-
     String message = "";
 
     @Override
     public String toString() {
+
+        Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
+        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
+                obstacle.getObstacleName());
         return message;
     }
 
@@ -72,6 +75,9 @@ public class Seers implements Task {
     public void execute() {
         AgilUtils.eatSummerPie(60,0);
         WALL.setTimeOutMin(10000);
+        allObstacles.get(0).setTimeOutMin(10000);
+
+
         if (AgilityAreas.UPSTAIRS_SEERS_BANK.contains(Player.getPosition())) {
             if (Utils.clickObject(Filters.Objects.actionsContains("Climb-down"), "Climb-down"))
                 Timer.waitCondition(() -> Player.getPosition().getPlane() == 0, 5000, 7000);

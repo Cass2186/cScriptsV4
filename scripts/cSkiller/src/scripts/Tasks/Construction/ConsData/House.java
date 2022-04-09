@@ -3,14 +3,16 @@ package scripts.Tasks.Construction.ConsData;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSVarBit;
-import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
-import scripts.GameSettings;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Widget;
+import scripts.Timer;
 import scripts.Utils;
 import scripts.Varbits;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class House {
@@ -35,12 +37,20 @@ public class House {
 
     public static boolean openOptions() {
         if (GameTab.open(GameTab.TABS.OPTIONS)) {
+            if (Utils.getVarBitValue(9683) != 0) {
+                Optional<Widget> controls = Query.widgets().inIndexPath(OPTIONS_TAB).actionContains("Controls")
+                        .findFirst();
+                Log.info("Opening controls");
+                if (controls.map(c -> c.click()).orElse(false)) {
+                    Timer.slowWaitCondition(() -> Utils.getVarBitValue(9683) == 0, 1500,2000);
+                }
+            }
             RSInterface houseButton = Interfaces.findWhereAction("View House Options", OPTIONS_TAB);
             if (Interfaces.isInterfaceSubstantiated(houseButton) && houseButton.click("View House Options")) {
-                return Waiting.waitUntil(() -> isOptionsOpen());
+                return Timer.slowWaitCondition(() -> isOptionsOpen(), 2000,3000);
             }
         }
-      return isOptionsOpen();
+        return isOptionsOpen();
     }
 
     public static boolean closeOptions() {
@@ -124,6 +134,21 @@ public class House {
     private static boolean selectSquare(Room room) {
         RSInterface roomSquares = Interfaces.get(VIEWER, 5);
         if (roomSquares != null) {
+            List<Widget> roomWidget = Query.widgets()
+                    .inIndexPath(VIEWER, 5)
+                    .actionContains("Add room")
+                    .indexNotEquals(0)
+                    .indexEquals(19, 20, 21, 22, 1, 2, 3) //some of the tiles you can build on in the viewer
+                    .toList();
+            for (Widget w : roomWidget){
+                if (w.click("Add room") &&
+                        Waiting.waitUntil(() -> ChooseOption.getOptions() != null) &&
+                        ChooseOption.select("Add room"))
+                    return Timer.slowWaitCondition(() -> isRoomCreationOpen(), 3500,  5000);
+                else
+                    Log.debug("Failed to click this widget");
+            }
+
             RSInterface roomSquare = roomSquares.getChild(room.getRoomIndex());
             if (roomSquare != null && roomSquare.click() && Waiting.waitUntil(() ->
                     ChooseOption.getOptions() != null) &&

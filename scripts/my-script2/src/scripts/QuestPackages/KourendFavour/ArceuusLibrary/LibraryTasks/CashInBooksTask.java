@@ -79,7 +79,7 @@ public class CashInBooksTask implements QuestTask {
                 && Waiting.waitUntil(2000, ChatScreen::isOpen)) {
             Optional<Widget> first = Query.widgets().textContains(rewardSkill).findFirst();
             if (first.map(Widget::click).orElse(false)){
-                Waiting.waitNormal(400,60);
+                Waiting.waitNormal(700,60);
                 ChatScreen.clickContinue();
                 return true;
             }

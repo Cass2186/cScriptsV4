@@ -659,7 +659,7 @@ public class EnakhrasLament implements QuestTask {
         Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
 
         // set status
-        cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
+        cQuesterV2.status = step.map(obj-> obj.getClass().getSimpleName()).orElse("Unknown Step Name");
 
         //do the actual step
         step.ifPresent(QuestStep::execute);

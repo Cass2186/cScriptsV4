@@ -336,7 +336,12 @@ public enum Assign {
 
     MOSS_GIANT(new Builder()
             .inArea(Areas.MOSS_GIANT_AREA)
-            .nameContains("Moss_Giant")
+            .nameContains("Moss giant")
+            .useGearType(GearType.MELEE)),
+
+    MOSS_GIANT_FISHING_GUILD(new Builder()
+            .inArea(Areas.MOSS_GIANT_FISHING_GUILD_AREA)
+            .nameContains("Moss giant")
             .useGearType(GearType.MELEE)),
 
 

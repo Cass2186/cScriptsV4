@@ -258,7 +258,7 @@ public class NPCStep extends DetailedQuestStep  {
 
     @Override
     public void execute() {
-        if (requirements != null && requirements.stream().anyMatch(r -> !r.check())) {
+        if (requirements.stream().anyMatch(r -> !r.check())) {
             General.println("[NPCStep]: We failed a requirement to execute this NPCStep");
             return;
         }
@@ -277,7 +277,6 @@ public class NPCStep extends DetailedQuestStep  {
             //attempt to generate a local path first, if that fails call dax walker
             if (!PathingUtil.walkToArea(this.area, false))
                 PathingUtil.localNavigation(this.area.getRandomTile());
-
 
             // check we're moving before we do a longer timeout for movement
             if (Timer.waitCondition(Player::isMoving, 1500, 2250))
@@ -327,13 +326,9 @@ public class NPCStep extends DetailedQuestStep  {
                 }
             }
 
-
             // handle food
-
-
             return;
         }
-
 
         if (NpcChat.talkToNPC(this.rsnpc, this.interactionString) ||
                 (this.npcName != null && NpcChat.talkToNPC(this.npcName)) ||

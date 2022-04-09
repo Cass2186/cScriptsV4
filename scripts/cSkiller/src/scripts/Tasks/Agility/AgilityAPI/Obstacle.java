@@ -108,9 +108,11 @@ public class Obstacle {
             alch(1398);//TODO set this to a modifiable variable
             AgilUtils.getMark(this.obstacleArea);
 
-            Optional<GameObject> object = Query.gameObjects().actionContains(this.obstacleAction)
+            Optional<GameObject> object = Query.gameObjects()
+                    .actionContains(this.obstacleAction)
                     .idEquals(this.obstacleId)
                     .sortedByDistance()
+                    //TODO add is reachable
                     .findBestInteractable();
 
             RSObject[] obj = Objects.findNearest(40,
@@ -118,54 +120,39 @@ public class Obstacle {
                             .and(Filters.Objects.idEquals(this.obstacleId)));
 
 
-
-            if (obj.length > 0) {
-                //cAgility.status = this.obstacleAction + " " + getObstacleName();
-               /* if (!obj[0].isClickable()) {
-                    if (obj[0].getPosition().distanceTo(Player.getPosition()) > General.random(7, 10)) {
-                        General.println("[Obstacle]: Moving to " + getObstacleName());
-                        Log.log("[Debug]: Distance to obstacle: " + obj[0].getPosition().distanceTo(Player.getPosition()));
-                        if (Walking.blindWalkTo(obj[0].getPosition()))
-                            Timer.slowWaitCondition(() -> obj[0].isClickable(), 6000, 10000);
-
-
-                    } else
-                        DaxCamera.focus(obj[0]);
-                }*/
-                if (object.isPresent()) {
-                    if (!object.get().isVisible()) {
-                        // can't click and its far away
-                        if (object.get().getTile().distanceTo(MyPlayer.getPosition()) > General.random(7, 10)
-                                && LocalWalking.walkTo(object.get().getTile())) {
-                            Log.log("[Obstacle]: Distance to obstacle (sdk): " + object.get().getTile().distanceTo(MyPlayer.getPosition()));
-                            Timer.slowWaitCondition(()->object.get().isVisible(), 6000,10000);
-                        }else {
-                            object.get().adjustCameraTo();
-                        }
+            if (object.isPresent()) {
+                if (!object.get().isVisible()) {
+                    // can't click and its far away
+                    if (object.get().getTile().distanceTo(MyPlayer.getPosition()) > General.random(7, 10)
+                            && object.map(LocalWalking::walkTo).orElse(false)) {
+                        Log.info("[Obstacle]: Distance to obstacle (sdk): " + object.get().getTile().distanceTo(MyPlayer.getPosition()));
+                        Timer.slowWaitCondition(() -> object.get().isVisible(), 6000, 10000);
+                    } else {
+                        object.get().adjustCameraTo();
                     }
                 }
+            }
 
-                if (this.nextObstacleArea != null) {
-                    int chance = General.random(0, 100);
-                    if (chance <= Vars.get().abc2Chance) {
-                        if (Player.isMoving())
-                            return clickObject(obj[0], this.obstacleAction, true, true);
+            if (this.nextObstacleArea != null && obj.length > 0) {
+                int chance = General.random(0, 100);
+                if (chance <= Vars.get().abc2Chance) {
+                    if (Player.isMoving())
+                        return clickObject(obj[0], this.obstacleAction, true, true);
 
-                        else
-                            return clickObject(obj[0], this.obstacleAction, false, true);
+                    else
+                        return clickObject(obj[0], this.obstacleAction, false, true);
 
-
-                    } else
-                        return clickObject(obj[0], this.obstacleAction, false, false);
 
                 } else
-                    return DynamicClicking.clickRSObject(obj[0], this.obstacleAction)
-                            && Timer.agilityWaitCondition(() ->
-                                    (!Player.isMoving()
-                                            && !this.obstacleArea.contains(Player.getPosition()) ||
-                                            Player.getPosition().getPlane() == 0),
-                            3500, 5500);
-            }
+                    return clickObject(obj[0], this.obstacleAction, false, false);
+
+            } else if (obj.length > 0)
+                return DynamicClicking.clickRSObject(obj[0], this.obstacleAction)
+                        && Timer.agilityWaitCondition(() ->
+                                (!Player.isMoving()
+                                        && !this.obstacleArea.contains(Player.getPosition()) ||
+                                        Player.getPosition().getPlane() == 0),
+                        3500, 5500);
         }
         return false;
     }

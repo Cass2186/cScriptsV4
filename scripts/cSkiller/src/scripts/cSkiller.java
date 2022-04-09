@@ -26,6 +26,7 @@ import scripts.API.SkillSwitchThread;
 import scripts.API.Task;
 import scripts.API.TaskSet;
 import scripts.Data.Const;
+import scripts.Data.Paint;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
@@ -421,29 +422,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                // new MakeCannonballs()
 
         );
-        Color backgroundColor = new Color(93, 140, 245, 160);
-        PaintTextRow template = PaintTextRow.builder().background(backgroundColor).build();
-
-        BasicPaintTemplate timers = BasicPaintTemplate.builder()
-                  .row(template.toBuilder().label("AFK Timer").value(()
-                          ->Timing.msToString(Vars.get().afkTimer.getRemaining()))
-                          .condition(()-> Vars.get().showTimers).build())
-                .row(template.toBuilder().label("Skill Timer").value(()
-                                ->Timing.msToString(Vars.get().skillSwitchTimer.getRemaining()))
-                        .condition(()-> Vars.get().showTimers).build())
-                .location(PaintLocation.TOP_RIGHT_CHATBOX)
-                .build();
-
-        BasicPaintTemplate paint = BasicPaintTemplate.builder()
-                .row(template.toBuilder().label("Open Timers").onClick(()->
-                        Vars.get().showTimers = true).build())
-                .row(template.toBuilder().label("Close Timers").onClick(()->
-                        Vars.get().showTimers = false).build())
-                .location(PaintLocation.TOP_LEFT_CHATBOX)
-                .build();
-
-        org.tribot.script.sdk.painting.Painting.addPaint(g -> timers.render(g));
-        org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));
+        Paint.setToggleablePaint();
+        Paint.setSlayerPaint();
 
         HashMap<Skills.SKILLS, Integer> startHashMap = Utils.getXpForAllSkills();
         isRunning.set(true);
@@ -682,22 +662,18 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 "Task: " + currentSkillName,
                 "Action: " + status
                 // "ItemsToBuy: " + BuyItems.itemsToBuy.size(),
-            //    "Skill Timer: " + Timing.msToString(Vars.get().skillSwitchTimer.getRemaining())
-              //  "AFK Timer: " + Timing.msToString(Vars.get().afkTimer.getRemaining())
         ));
         if (Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MINING)) {
             myString.add("Deposits: " + Vars.get().oreDeposits);
         }
-        if (Vars.get().currentTask != null &&
+       /* if (Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.SLAYER)) {
             myString.add("Remaining Kills: " +
                     Game.getSetting(394));
 
-        }
+        }*/
         // Create the template
-        PaintTextRow template = PaintTextRow.builder().background(Color.darkGray.darker()).build();
-
         Collection<PaintRow> rows = new ArrayList<>();
 
         HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();

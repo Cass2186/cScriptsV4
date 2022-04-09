@@ -9,6 +9,10 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.AntiBan;
 
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Library.SolvedState;
@@ -16,6 +20,7 @@ import scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryUtils;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.Utils;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 import static scripts.QuestPackages.KourendFavour.ArceuusLibrary.Constants.Rooms.*;
@@ -24,13 +29,13 @@ import static scripts.QuestPackages.KourendFavour.ArceuusLibrary.Constants.Rooms
 
 /**
  * This has got to be up there with the worse code I've written. But it works.
- *
+ * <p>
  * Rather than rely on dax walker for this, I wanted to write my own pathfinding. This is possibly
  * the worst way I could have done it, but it does seem to work okay.
  */
 public class LibraryWalker {
 
-   // private static final JustLogger LOGGER = new JustLogger(LibraryWalker.class);
+    // private static final JustLogger LOGGER = new JustLogger(LibraryWalker.class);
 
     private static final LibraryWalker instance = new LibraryWalker();
 
@@ -47,13 +52,13 @@ public class LibraryWalker {
         Room currentRoom = getCurrentRoom();
 
         if (currentRoom.equals(destRoom)) {
-          //  LOGGER.debug("We're in the current room");
+            //  LOGGER.debug("We're in the current room");
             return true;
         }
 
         List<Room> route = getRouteTo(currentRoom, destRoom);
-      //  LOGGER.info("Current room " + currentRoom);
-      //  LOGGER.info("Found route! " + route);
+        //  LOGGER.info("Current room " + currentRoom);
+        //  LOGGER.info("Found route! " + route);
 
 
         return walkRoute(currentRoom, route);
@@ -92,7 +97,7 @@ public class LibraryWalker {
 
         for (Room nextRoom : route) {
 
-            if(AntiBan.getRunAt() < Game.getRunEnergy()){
+            if (AntiBan.getRunAt() < Game.getRunEnergy()) {
                 //TODO activate run
 
             }
@@ -101,10 +106,14 @@ public class LibraryWalker {
             while (attempts <= 1) {
 
                 if (currentRoom.getRoomLinkTypeToRoom(nextRoom) == RoomLinkType.WALK) {
+                    Log.info("Local walking");
+                    WorldTile tile = Utils.getWorldTileFromRSTile(nextRoom.getArea().getRandomTile());
+                    LocalTile t = Utils.getWalkableTile(tile.toLocalTile()).isPresent() ?
+                            Utils.getWalkableTile(tile.toLocalTile()).get() : tile.toLocalTile();
+                    if (LocalWalking.walkTo(t))
+                        Waiting.waitUntil(4500, () -> isInRoom(nextRoom));
 
-                    WebWalking.walkTo(nextRoom.getArea().getRandomTile(), () -> isInRoom(nextRoom), 50);
-
-                    if (!LibraryUtils.waitAfterWalking(  () -> isInRoom(nextRoom) ,General.random(1000, 2000))) {
+                    if (!LibraryUtils.waitAfterWalking(() -> isInRoom(nextRoom), General.random(1000, 2000))) {
                         //LOGGER.error("Could not walk to " + nextRoom);
                         attempts++;
                     } else {
@@ -150,13 +159,13 @@ public class LibraryWalker {
     }
 
     private void checkForBooks(Room room) {
-       // LOGGER.debug(String.format("Checking current room %s for books", room));
+        // LOGGER.debug(String.format("Checking current room %s for books", room));
 
         State.get().getLibrary().getBookcasesInRoom(room).
                 stream()
                 .filter(LibraryUtils::bookcaseContainsNewBook)
                 .forEach(bookshelf -> {
-                //    LOGGER.info(String.format("Checking bookshelf as we believe it has the following books: %s", bookshelf.getPossibleBooks()));
+                    //    LOGGER.info(String.format("Checking bookshelf as we believe it has the following books: %s", bookshelf.getPossibleBooks()));
                     LibraryUtils.clickBookshelf(bookshelf);
                 });
     }
@@ -171,7 +180,7 @@ public class LibraryWalker {
             if (!Utils.clickObj(staircase.getID(), "Climb")
                     || !LibraryUtils.waitAfterWalking(() -> isInRoom(nextRoom), 3000)) {
 
-             //   LOGGER.error("Could not click staircase");
+                //   LOGGER.error("Could not click staircase");
                 return false;
             }
 
@@ -231,7 +240,7 @@ public class LibraryWalker {
         while (!pathQueue.isEmpty()) {
             currentPath = pathQueue.remove();
 
-            currentRoom = currentPath.get(currentPath.size()-1);
+            currentRoom = currentPath.get(currentPath.size() - 1);
 
             if (!visitedRooms.contains(currentRoom)) {
                 Set<Room> neighbours = currentRoom.getConnectedRooms();
@@ -252,7 +261,7 @@ public class LibraryWalker {
             }
         }
 
-      //  LOGGER.error(String.format("Could not find path %s to %s", startRoom.getArea(), destRoom.getArea()));
+        //  LOGGER.error(String.format("Could not find path %s to %s", startRoom.getArea(), destRoom.getArea()));
         return Lists.newArrayList();
     }
 

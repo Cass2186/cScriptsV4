@@ -626,12 +626,15 @@ public class HauntedMine implements QuestTask {
     private WorldTile eastStandTile = new WorldTile(2797, 4459, 0);
 
     private void handleBossTile(WorldTile tile) {
-        if (PathingUtil.localNav(tile))
+        if (!tile.isVisible() && PathingUtil.localNav(tile))
             Timer.waitCondition(() ->
-                    tile.distanceTo(MyPlayer.getPosition()) < 5, 3500, 4500);
+                    tile.distanceTo(MyPlayer.getPosition()) < 7, 3500, 4500);
 
-        if (tile.interact("Walk here")) {
-            Waiting.waitNormal(500, 95);
+        if (tile.interact("Walk here") &&
+                Waiting.waitUntil(1000, 50, () -> MyPlayer.isMoving())) {
+            Log.info("Waiting to arrive at tile or to stop moving");
+            Timer.waitCondition(() -> MyPlayer.getPosition().equals(tile) ||
+                    !MyPlayer.isMoving(), 7000, 9000);
         }
     }
 
@@ -639,14 +642,14 @@ public class HauntedMine implements QuestTask {
         if (MyPlayer.getCurrentHealthPercent() < General.random(35, 45)) {
             EatUtil.eatFood();
         }
-        if (Prayer.getPrayerPoints() < General.random(7,15)){
+        if (Prayer.getPrayerPoints() < General.random(7, 15)) {
             Utils.drinkPotion(ItemID.PRAYER_POTION);
-            Waiting.waitNormal(500,50);
+            Waiting.waitNormal(500, 50);
         }
     }
 
     private void bossFight() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             Optional<Npc> boss = Query.npcs()
                     .nameContains("Treus Dayth")
                     .findClosest();
@@ -656,13 +659,13 @@ public class HauntedMine implements QuestTask {
             if (boss.isEmpty() && ghost.isEmpty()) {
                 cQuesterV2.status = "Attempting to pickup key";
                 Waiting.waitNormal(500, 50);
-            } else if (ghost.isPresent()){
+            } else if (ghost.isPresent()) {
                 cQuesterV2.status = "waiting on moving ghost";
-                Timer.waitCondition(()-> !ghost.get().isMoving() ||
+                Timer.waitCondition(() -> !ghost.get().isMoving() ||
                         Query.npcs()
                                 .nameContains("Treus Dayth")
-                                .findClosest().isPresent(), 7500,9500 );
-            } else{
+                                .findClosest().isPresent(), 7500, 9500);
+            } else {
                 eatIfNeeded();
                 cQuesterV2.status = "Boss fight";
                /* if (boss.get().isMoving()) {
@@ -670,36 +673,38 @@ public class HauntedMine implements QuestTask {
                     // wait till not
                     //eat/drink if needed
                 } else { //boss not moving*/
-                    WorldTile tile = boss.get().getTile();
-                    if (tile.equals(southBossTile)) {
-                        Log.debug("Boss is on south tile");
-                        handleBossTile(southStandTile);
+                WorldTile tile = boss.get().getTile();
+                if (tile.equals(southBossTile)) {
+                    Log.debug("Boss is on south tile");
+                    handleBossTile(southStandTile);
 
-                    } else if (tile.equals(westBossTile)) {
-                        Log.debug("Boss is on west tile");
-                        handleBossTile(westStandTile);
-                    } else if (tile.equals(eastBossTile)) {
-                        Log.debug("Boss is on east tile");
-                        handleBossTile(eastStandTile);
-                    } else {
-                        // add support for northen tiles
-                    }
-                    if (boss.map(b -> b.interact("Attack")).orElse(false)) {
-                        Timer.waitCondition(() -> Query.npcs()
-                                .idEquals(3617)
-                                .findClosest().isPresent() ||
-                                MyPlayer.getCurrentHealthPercent() < 35, 12500, 15000);
-                    }
+                } else if (tile.equals(westBossTile)) {
+                    Log.debug("Boss is on west tile");
+                    handleBossTile(westStandTile);
+                } else if (tile.equals(eastBossTile)) {
+                    Log.debug("Boss is on east tile");
+                    handleBossTile(eastStandTile);
+                } else {
+                    // add support for northen tiles
+                }
+                if (boss.map(b -> b.interact("Attack")).orElse(false)) {
+                    Timer.waitCondition(() -> Query.npcs()
+                            .idEquals(3617)
+                            .findClosest().isPresent() ||
+                            MyPlayer.getCurrentHealthPercent() < 35, 12500, 15000);
+                }
                 //}
             }
-            if (killedDayth.check()){
+            if (killedDayth.check()) {
+                Log.info("Killed boss");
                 break;
             }
         }
-        if (killedDayth.check()){
+        if (killedDayth.check() && !crystalMineKey.check()) {
             cQuesterV2.status = "Taking key";
             pickUpKey.setInteractionString("Take");
-            pickUpKey.execute();;
+            pickUpKey.execute();
+            ;
         }
     }
 
@@ -755,7 +760,7 @@ public class HauntedMine implements QuestTask {
         Log.debug("[Debug]: Haunted mine gameSetting is " + gameSetting);
         Map<Integer, QuestStep> steps = setconditions();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
-        //step.ifPresent(QuestStep::execute);
+        step.ifPresent(s -> cQuesterV2.status = s.getClass().toGenericString());
         navigateMine();
         exploreMineStep();
         Waiting.waitNormal(500, 20);

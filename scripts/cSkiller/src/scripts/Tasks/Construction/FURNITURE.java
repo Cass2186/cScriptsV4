@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Optional;
 
 public enum FURNITURE {
-    CRUDE_CHAIR("Chair", Room.PARLOUR, 4517, 58, ItemID.PLANK, 2, "1", 1, 8),
-    WOODEN_CHAIR("Chair", Room.PARLOUR, 4517, 87, ItemID.PLANK, 3, "2", 8, 14),
-    BOOKCASE("Bookcase", Room.PARLOUR, 4521, 110, ItemID.PLANK, 4, "1", 14, 22),
+    CRUDE_CHAIR("Chair", Room.PARLOUR, 4517, 58, ItemID.PLANK, 2, "1", 1, 4),
+    WOODEN_CHAIR("Chair", Room.PARLOUR, 4517, 87, ItemID.PLANK, 3, "2", 8, 8),
+    BOOKCASE("Bookcase", Room.PARLOUR, 4521, 110, ItemID.PLANK, 4, "1", 4, 22),
     OAK_TABLE("Oak table", Room.DINING, 15298, 240, ItemID.OAK_PLANK, 4, "2", 22, 33),
     OAK_LARDER("Larder", Room.KITCHEN, 15403, 480, ItemID.OAK_PLANK, 8, "2", 33, 99);
 

@@ -34,8 +34,12 @@ public class UnnotePlanks implements Task {
         }
     }
 
-    public static void unnotePlanks() {
-        Optional<InventoryItem> item = Query.inventory().nameContains("plank").isNoted().findFirst();
+    public static void unnotePlanks(int plankId) {
+        Optional<InventoryItem> item = Query.inventory()
+                .nameContains("plank")
+                .idEquals(plankId+1)
+                .isNoted()
+                .findFirst();
         Optional<Npc> phials = Query.npcs().nameContains("Phials").stream().findFirst();
         // walk closer if needed
         if (phials.map(p -> !p.isVisible() &&
@@ -106,8 +110,8 @@ public class UnnotePlanks implements Task {
         if (!Construction.RIMMINGTON.contains(Player.getPosition()) && !Game.isInInstance()) {
             PathingUtil.walkToArea(Construction.RIMMINGTON);
         }
-
-        unnotePlanks();
+        Optional<FURNITURE> furn = FURNITURE.getCurrentItem();
+        furn.ifPresent(f ->unnotePlanks(f.getPlankId()));
     }
 
     @Override

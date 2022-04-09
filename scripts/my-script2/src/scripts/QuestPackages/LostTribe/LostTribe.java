@@ -53,7 +53,7 @@ public class LostTribe implements QuestTask {
     int DUKE_HORACIO = 815;
     int COOK = 4626;
     int BOB = 10619;
-    int FATHER_AERECK = 921;
+    int FATHER_AERECK = 2812;
     int RELDO = 6203;
     int MISTAG = 5324;
     int KAZGAR = 5325;
@@ -103,7 +103,7 @@ public class LostTribe implements QuestTask {
                     new GEItem(ItemID.TINDERBOX, 1, 500),
                     new GEItem(ItemID.VARROCK_TELEPORT, 5, 40),
                     new GEItem(ItemID.FALADOR_TELEPORT, 5, 40),
-                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 40),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 10, 40),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 25)
             )
@@ -211,7 +211,7 @@ public class LostTribe implements QuestTask {
         if (RSVarBit.get(532).getValue() == 1) {
             cQuesterV2.status = "Talking to Father Aereck";
             PathingUtil.walkToArea(CHURCH_AREA);
-            if (NpcChat.talkToNPC(FATHER_AERECK)) {
+            if (NpcChat.talkToNPC("Father Aereck")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("Do you know what happened in the castle cellar?");
                 NPCInteraction.handleConversation();

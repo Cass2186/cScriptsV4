@@ -65,7 +65,7 @@ public class FindBookTask implements QuestTask {
 
     @Override
     public boolean validate() {
-        return State.get().getCurrentAssignment().isPresent()
+        return State.get().getCurrentAssignment().isPresent() && State.get().getCurrentBooks() != null
                 && !State.get().getCurrentBooks().contains(State.get().getCurrentAssignment().get());
     }
 

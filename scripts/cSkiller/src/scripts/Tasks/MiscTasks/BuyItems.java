@@ -1,8 +1,11 @@
 package scripts.Tasks.MiscTasks;
 
+import obf.G;
 import org.tribot.api.General;
 import org.tribot.api2007.Inventory;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.tasks.BankTaskError;
+import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
@@ -11,12 +14,14 @@ import scripts.GEManager.GEItem;
 import scripts.ItemID;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.ItemRequirement;
 import scripts.rsitem_services.GrandExchange;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class BuyItems implements Task {
 
@@ -72,19 +77,90 @@ public class BuyItems implements Task {
         return listToBuy;
     }
 
+    private void handleBankTaskError(Optional<BankTaskError> err) {
+        err.ifPresent(e -> Log.error(e.toString()));
+
+    }
+
+    /**
+     *
+     */
+    public static void getMissingAndBuyAllQuestItems(List<ItemReq> itemReqList, ArrayList<GEItem> questBuyList) {
+        if (handleMissingItems(itemReqList).size() > 0){
+            Log.info("We're missing item(s), going to buy all required quest items as a fail safe");
+            BuyItemsStep buy = new BuyItemsStep(questBuyList);
+            buy.buyItems();
+        }
+    }
+    /**
+     * @param itemReqList required inventory item list
+     * @return a list of missing inventory items from the list passed
+     */
+    private static List<GEItem> handleMissingItems(List<ItemReq> itemReqList) {
+        List<GEItem> exchangeList = new ArrayList<>();
+        for (ItemReq itemReq : itemReqList) {
+            if (!itemReq.check()) {
+                Optional<ItemDefinition> def = ItemDefinition.get(itemReq.getId());
+
+                if (def.map(ItemDefinition::isGrandExchangeTradeable).orElse(false)) {
+                    Log.error(String.format("Missing GE Tradeable inventory item: %s . Min = %s",
+                            def.get().getName(), itemReq.getAmount()));
+                    //TODO handle this
+                    int amount = itemReq.getAmount() <= 0 ? 1 : itemReq.getAmount();
+                    exchangeList.add(new GEItem(itemReq.getId(), amount, 25));
+                } else if (def.isPresent() && !def.get().isGrandExchangeTradeable()) {
+                    Log.error(String.format("Missing GE NOT-Tradeable inventory item: %s . Min = %s",
+                            def.get().getName(), itemReq.getAmount()));
+                    //TODO handle this
+                    int amount = itemReq.getAmount() <= 0 ? 1 : itemReq.getAmount();
+                    exchangeList.add(new GEItem(itemReq.getId(), amount, 25));
+                }
+            }
+        }
+        return exchangeList;
+    }
+
+  /*  /**
+     * @param itemReqList required inventory item list
+     * @return a list of missing inventory items from the list passed
+
+    private static List<GEItem> handleMissingItems(List<ItemRequirement> itemReqList) {
+        List<GEItem> exchangeList = new ArrayList<>();
+        for (ItemRequirement itemReq : itemReqList) {
+            if (!itemReq.check()) {
+                Optional<ItemDefinition> def = ItemDefinition.get(itemReq.getId());
+
+                if (def.map(ItemDefinition::isGrandExchangeTradeable).orElse(false)) {
+                    Log.error(String.format("Missing GE Tradeable inventory item: %s . Min = %s",
+                            def.get().getName(), itemReq.getAmount()));
+                    //TODO handle this
+                    int amount = itemReq.getAmount() <= 0 ? 1 : itemReq.getAmount();
+                    exchangeList.add(new GEItem(itemReq.getId(), amount, 25));
+                } else if (def.isPresent() && !def.get().isGrandExchangeTradeable()) {
+                    Log.error(String.format("Missing GE NOT-Tradeable inventory item: %s . Min = %s",
+                            def.get().getName(), itemReq.getAmount()));
+                    //TODO handle this
+                    int amount = itemReq.getAmount() <= 0 ? 1 : itemReq.getAmount();
+                    exchangeList.add(new GEItem(itemReq.getId(), amount, 25));
+                }
+            }
+        }
+        return exchangeList;
+    }*/
+
     public void buyItems() {
         BuyItemsStep buy = new BuyItemsStep(this.itemList);
         BankManager.open(true);
         BankManager.depositAll(true);
         BankManager.setUnNoted();
         if (!org.tribot.script.sdk.GrandExchange.isNearby() &&
-                Inventory.find(ItemID.RING_OF_WEALTH).length ==0) {
+                Inventory.find(ItemID.RING_OF_WEALTH).length == 0) {
             Log.info("[BuyItemsStep]: Need RoW, not at GE");
             BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
         }
-       // if (!org.tribot.script.sdk.GrandExchange.isNearby())
+        // if (!org.tribot.script.sdk.GrandExchange.isNearby())
         //    BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
-       // BankManager.withdrawArray(ItemID.AMULET_OF_GLORY, 1);
+        // BankManager.withdrawArray(ItemID.AMULET_OF_GLORY, 1);
         buy.buyItems();
         Exchange.clickCollect();
         itemList.clear();

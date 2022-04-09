@@ -237,8 +237,8 @@ public class ObjectStep extends QuestStep {
     private boolean humanWalkIdle(RSTile endTile) {
         if (Waiting.waitUntil(1250, MyPlayer::isMoving)) {
             return Timer.waitCondition(() -> Utils.getWorldTileFromRSTile(endTile)
-                    .distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) ||
-                    MyPlayer.isMoving(), 6000, 8000);
+                    .distanceTo(MyPlayer.getPosition()) < Utils.random(3,5) ||
+                    !MyPlayer.isMoving(), 7000, 8000);
         }
         return Utils.getWorldTileFromRSTile(endTile).distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) || !MyPlayer.isMoving();
     }

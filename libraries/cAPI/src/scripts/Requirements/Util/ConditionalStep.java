@@ -4,6 +4,7 @@ import dax.shared.helpers.questing.Quest;
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;
+import org.tribot.script.sdk.Log;
 import scripts.QuestSteps.QuestStep;
 import scripts.Requirements.Requirement;
 
@@ -60,10 +61,19 @@ public class ConditionalStep extends QuestStep {
 
     @Override
     public QuestStep getActiveStep() {
-        return currentStep;
+        if (currentStep != null) {
+            return currentStep.getActiveStep();
+        }
+
+        return this;
+
     }
 
-    protected void updateSteps() {
+    public Collection<Requirement> getConditions(){
+        return steps.keySet();
+    }
+
+  /*  protected void updateSteps() {
         Requirement lastPossibleCondition = null;
 
         for (Requirement conditions : steps.keySet()) {
@@ -73,23 +83,57 @@ public class ConditionalStep extends QuestStep {
             }
         }
 
-        // if (!steps.get(null).isLocked())
+        //if (!steps.get(null).isLocked())
         startUpStep(steps.get(null));
+    }*/
 
+    protected void updateSteps()
+    {
+        Requirement lastPossibleCondition = null;
+
+        for (Requirement conditions : steps.keySet())
+        {
+            boolean stepIsLocked = steps.get(conditions).isLocked();
+            if (conditions != null && conditions.check() && !stepIsLocked)
+            {
+                startUpStep(steps.get(conditions));
+                return;
+            }
+            else if (steps.get(conditions).isBlocker() && stepIsLocked)
+            {
+                startUpStep(steps.get(lastPossibleCondition));
+                return;
+            }
+            else if (conditions != null && !stepIsLocked)
+            {
+                lastPossibleCondition = conditions;
+            }
+        }
+
+        if (!steps.get(null).isLocked())
+        {
+            startUpStep(steps.get(null));
+        }
+        else
+        {
+            startUpStep(steps.get(lastPossibleCondition));
+        }
     }
+
 
     protected void startUpStep(QuestStep step) {
         if (currentStep == null) {
+            step.startUp();
             currentStep = step;
             return;
         }
 
         if (!step.equals(currentStep)) {
             shutDownStep();
+            step.startUp();
             currentStep = step;
         }
     }
-
 
     protected void shutDownStep() {
         if (currentStep != null) {
@@ -117,16 +161,18 @@ public class ConditionalStep extends QuestStep {
 
     @Override
     public void addDialogStep(String... dialog) {
+        Log.error("Attempting to add Dialog step to Requirements.Util.ConditionalStep. This method isn't defined" );
 
     }
 
     @Override
     public void addSubSteps(QuestStep... substep) {
-
+        Log.error("Attempting to add substeps to Requirements.Util.ConditionalStep. This method isn't defined" );
     }
 
     @Override
     public void addSubSteps(Collection<QuestStep> substeps) {
+        Log.error("Attempting to add substeps to Requirements.Util.ConditionalStep. This method isn't defined" );
 
     }
 

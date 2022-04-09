@@ -1,14 +1,19 @@
 package scripts.Data;
 
+import lombok.Data;
 import net.sourceforge.jdistlib.Uniform;
 import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import scripts.AntiBan;
 import scripts.ItemID;
 import scripts.Tasks.Fishing.Locations.FishingLocation;
 import scripts.Tasks.Magic.Alch;
+import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Tasks.Woodcutting.WoodcuttingData.WcLocations;
 import scripts.Timer;
 import scripts.dax.tracker.DaxTracker;
@@ -16,6 +21,7 @@ import scripts.dax.tracker.DaxTracker;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 
 public class Vars {
 
@@ -29,6 +35,8 @@ public class Vars {
     public static void reset() {
         vars = new Vars();
     }
+
+
 
     public SkillTasks currentTask, prevTask;
     public int skillSwitchMin = 12000000; //45min //1600000;// ~26m
@@ -121,8 +129,16 @@ public class Vars {
     public boolean shouldAlchAgil = false;
     public boolean overridingCourse = false;
     public boolean showTimers = false;
+    public boolean showSlayerInfo = false;
 
     public Alch.AlchItems alchItem = Alch.AlchItems.AIR_BATTLESTAFF;
 
     public List<CombatTask> combatTaskList = new ArrayList<>();
+
+
+    /**
+     * SLAYER
+     */
+
+    public SlayerVars slayVars = SlayerVars.get();
 }

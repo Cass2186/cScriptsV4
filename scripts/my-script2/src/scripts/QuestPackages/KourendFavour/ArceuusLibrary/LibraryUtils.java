@@ -50,8 +50,6 @@ public class LibraryUtils {
     public static boolean clickBookshelf(Bookcase bookcase) {
 
         if (LibraryWalker.get().walkTo(bookcase.getRoom())) {
-
-
             Optional<RSObject> optionalRSObject = Arrays.stream(
                             Objects.getAt(bookcase.getPosition(), object ->
                                     TribotUtil.getName(object).equals(Constants.Objects.BOOKSHELF)))
@@ -63,7 +61,9 @@ public class LibraryUtils {
 
             RSObject rsObject = optionalRSObject.get();
 
-            if (Player.getPosition().distanceTo(rsObject.getPosition()) > 8 && Walking.blindWalkTo(rsObject)) {
+            if (Player.getPosition().distanceTo(rsObject.getPosition()) > 8 &&
+                    Walking.blindWalkTo(rsObject)) {
+                Log.info("Blind walking");
                 Waiting.waitUntil(7000, () -> Player.getPosition().distanceTo(rsObject.getPosition()) > 5);
             }
 
@@ -85,7 +85,7 @@ public class LibraryUtils {
             if (Player.getPosition().distanceTo(professor.getPosition()) > 4 && Walking.blindWalkTo(professor
                     .getPosition())) {
                 Waiting.waitUntil(7000,
-                        () -> Player.getPosition().distanceTo(professor.getPosition()) > 5);
+                        () -> Player.getPosition().distanceTo(professor.getPosition()) < 5);
             }
 
             return Arrays.stream(NPCs.find(professor.getName())).findFirst().map(rsnpc -> {

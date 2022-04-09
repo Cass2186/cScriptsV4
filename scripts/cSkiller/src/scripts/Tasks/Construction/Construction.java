@@ -61,6 +61,7 @@ public class Construction implements Task {
 
     @Override
     public void execute() {
+        Optional<Furniture> currentFurniture = Furniture.getBestFurniture(furnitureSet);
         if (Banking.isInBank()) {
             General.println("[Construction]: In bank");
             if (Banking.isBankScreenOpen())
@@ -80,10 +81,11 @@ public class Construction implements Task {
 
                 if (Utils.clickObj(bestInteractable, "Build mode"))
                     Waiting.waitUntil(House::isInHouse);
-            } else
-                UnnotePlanks.unnotePlanks();
+            } else {
+               currentFurniture.ifPresent(f-> UnnotePlanks.unnotePlanks(f.getPlankType().getPlankId()));
+            }
         } else if (House.isInHouse()) {
-            Optional<Furniture> currentFurniture = Furniture.getBestFurniture(furnitureSet);
+                currentFurniture = Furniture.getBestFurniture(furnitureSet);
             if (currentFurniture.isPresent()) {
                 if (!House.isBuildingModeOn()) {
                     House.enableBuildingMode(true);

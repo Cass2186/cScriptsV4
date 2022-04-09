@@ -9,18 +9,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.util.ScriptSettings;
-import scripts.Data.CombatTask;
-import scripts.Data.Const;
+import scripts.Data.*;
 import scripts.Data.Enums.Crafting.CraftMethods;
 import scripts.Data.Enums.Methods;
-import scripts.Data.SkillTasks;
-import scripts.Data.Vars;
 import scripts.Tasks.Fishing.Locations.RodLocations;
 import scripts.Tasks.Fishing.Locations.ShrimpLocations;
 import scripts.Tasks.Magic.Alch;
@@ -34,6 +32,8 @@ import java.util.ResourceBundle;
 
 @DoNotRename
 public class SkillerGUIController extends SkillerAbstractGUIController {
+
+
 
     @FXML
     @DoNotRename
@@ -169,9 +169,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @DoNotRename
     void startButtonPressed(ActionEvent event) {
         General.println("[GUIController]: Start button pressed");
-        Vars settings = Vars.get();
-        ScriptSettings handler = ScriptSettings.getDefault();
-        handler.save("last", settings);
+
         updateSkillEndLevel(event);
         updateSkillSwitchTimer(event);
         updateAfkDuration(event);
@@ -190,6 +188,18 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         updateSlayerPotion();
         SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() + 1; // adding 1 in case it's set to 0
         //  setUseCBalls(event);
+        ScriptSettings settingsHandler = ScriptSettings.getDefault();
+        //update slayer vars object in vars
+        Vars.get().slayVars = SlayerVars.get();
+        val settings = new SkillerSettings();
+        settings.setTest("wee");
+
+        Log.info("Settings dir: " + settingsHandler.getDirectory());
+        if(settingsHandler.save("lastTes", settings)){
+            Log.info("Saved settings as last");
+        } else {
+            Log.error("FAILED to Save settings as last");
+        }
         this.getGUI().close();
     }
 
@@ -399,6 +409,12 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
                 case ("Super_strength"):
                     SlayerVars.get().potionToUse = ItemID.SUPER_STRENGTH_POTION;
                     break;
+                case ("Ranging"):
+                    SlayerVars.get().potionToUse = ItemID.RANGING_POTION;
+                    break;
+                case ("Super_defence"):
+                    SlayerVars.get().potionToUse = ItemID.SUPER_DEFENCE_POTION;
+                    break;
                 default:
                     SlayerVars.get().potionToUse = ItemID.SUPER_COMBAT_POTION;
             }
@@ -415,7 +431,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
             String s = magicAlchItemBox.getValue().replace(" ", "_");
             if (s.contains(item.toString())) {
                 Vars.get().alchItem = item;
-                Log.log("[Debug]: Updated Alch item to " + item.toString());
+                Log.info("[Debug]: Updated Alch item to " + item.toString());
                 break;
             }
         }
@@ -457,6 +473,11 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ScriptSettings settingsHandler = ScriptSettings.getDefault();
+        settingsHandler.load("last", Vars.class)
+                .ifPresent(s -> {
+                    Log.info("Loaded settings object: " + s);
+                });
         skillsImage.setImage(new Image("https://i.imgur.com/9WGq5Sy.png"));
         agilityGoalLevelBox.setText(String.valueOf(Skills.SKILLS.AGILITY.getActualLevel()));
         herbloreGoalLevelBox.setText(String.valueOf(Skills.SKILLS.HERBLORE.getActualLevel()));

@@ -21,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="548.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
+<VBox prefHeight="548.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -341,7 +341,6 @@
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
-                                        <CheckBox layoutX="266.0" layoutY="110.0" mnemonicParsing="false" text="Make Tar?" />
                                         <Label layoutX="40.0" layoutY="352.0" text="Runecrafting" underline="true">
                                             <font>
                                                 <Font size="16.0" />
@@ -504,7 +503,7 @@
                                           </AnchorPane>
                                     </content>
                                   </Tab>
-                                  <Tab text="Woodcutting &amp; Firemaking">
+                                  <Tab text="Woodcutting | Firemaking | Fletch">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -529,10 +528,16 @@
                                                    </font>
                                                 </Label>
                                                 <ComboBox fx:id="logActionBox12" disable="true" layoutX="406.0" layoutY="44.0" prefWidth="150.0" promptText="Fire Location" />
+                                                <Label layoutX="404.0" layoutY="150.0" text="Fletching Method">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox disable="true" layoutX="404.0" layoutY="179.0" prefWidth="150.0" promptText="Fletching Method" />
                                              </children></AnchorPane>
                                     </content>
                                   </Tab>
-                                    <Tab text="Fishing &amp; Cooing">
+                                    <Tab text="Fishing | Cooking">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -564,7 +569,7 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="Crafting &amp; Fletching">
+                                    <Tab text="Crafting  | Herb">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -574,8 +579,8 @@
                                                    </font>
                                                 </Label>
                                                 <ComboBox fx:id="craftingMethodsDropDown" layoutX="25.0" layoutY="49.0" prefWidth="150.0" promptText="Crafting Method" />
-                                                <ComboBox disable="true" layoutX="362.0" layoutY="49.0" prefWidth="150.0" promptText="Fletching Method" />
-                                                <Label layoutX="362.0" layoutY="14.0" text="Fletching Method">
+                                                <CheckBox layoutX="25.0" layoutY="131.0" mnemonicParsing="false" text="Make Tar?" />
+                                                <Label layoutX="25.0" layoutY="103.0" text="Herblore">
                                                    <font>
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
@@ -584,7 +589,7 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="Magic &amp; Thieving">
+                                    <Tab text="Magic | Thieving">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>

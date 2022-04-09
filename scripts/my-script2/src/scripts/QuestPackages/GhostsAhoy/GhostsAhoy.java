@@ -390,7 +390,7 @@ public class GhostsAhoy implements QuestTask {
 
 
     public void croneStep3() {
-        if (Inventory.find(ItemID.CUP_OF_TEA_W_MILK, ItemID.CUP_OF_TEA,
+        if (Inventory.find(ItemID.CUP_OF_TEA_W_MILK, ItemID.CUP_OF_TEA_4245,
                 ItemID.PORCELAIN_CUP).length == 0) {
             scripts.cQuesterV2.status = "Going to Crone (step 3)";
             croneStep3.execute();
@@ -418,17 +418,17 @@ public class GhostsAhoy implements QuestTask {
     public void makeCupOfTea() {
         scripts.cQuesterV2.status = "Making tea for crone";
         makeNettleTea();
-        if (Inventory.find(ItemID.CUP_OF_TEA).length == 0 &&
+        if (Inventory.find(ItemID.CUP_OF_TEA_4245).length == 0 &&
                 Utils.useItemOnItem(ItemID.NETTLE_TEA, ItemID.PORCELAIN_CUP))
-            Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA).length > 0, 1500, 2000);
+            Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA_4245).length > 0, 1500, 2000);
 
-        if (Inventory.find(ItemID.CUP_OF_TEA).length > 0 &&
-                Utils.useItemOnItem(ItemID.BUCKET_OF_MILK, ItemID.CUP_OF_TEA))
+        if (Inventory.find(ItemID.CUP_OF_TEA_4245).length > 0 &&
+                Utils.useItemOnItem(ItemID.BUCKET_OF_MILK, ItemID.CUP_OF_TEA_4245))
             Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
     }
 
     public void useTeaOnCrone() {
-        if (Utils.useItemOnItem(ItemID.BUCKET_OF_MILK, ItemID.CUP_OF_TEA))
+        if (Utils.useItemOnItem(ItemID.BUCKET_OF_MILK, ItemID.CUP_OF_TEA_4245))
             Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
 
         if (Utils.useItemOnNPC(ItemID.CUP_OF_TEA_W_MILK, GhostsAhoyConst.CRONE_ID)) {
@@ -439,12 +439,13 @@ public class GhostsAhoy implements QuestTask {
 
 
     public void repairShip() {
+        cQuesterV2.status = Inventory.find(ItemID.REPAIRED_SHIP).length == 0 ?
+                 "Repairing Ship" : "";
         if (Utils.useItemOnItem(ItemID.THREAD, ItemID.MODEL_SHIP))
             Timer.waitCondition(() -> Inventory.find(ItemID.REPAIRED_SHIP).length > 0, 1500, 2500);
     }
 
     public void goToBoat() {
-
         if (Player.getPosition().getPlane() == 0) {
             scripts.cQuesterV2.status = "Going to boat";
             PathingUtil.walkToTile(new RSTile(3605, 3538, 0), 2, false);

@@ -6,6 +6,7 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.WorldHopper;
 import org.tribot.script.sdk.Log;
 ;
+import org.tribot.script.sdk.MyPlayer;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Library.Bookcase;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.Library.SolvedState;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.LibraryUtils;
@@ -15,8 +16,10 @@ import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
+import scripts.Utils;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class SolveTask implements QuestTask {

@@ -178,8 +178,8 @@ public class MakeFurniture implements Task {
                 }
             }
         }else {
-            Log.debug("Need to build rooms");
-           // House.buildRoom(furniture.getRoom());
+            Log.info("Need to build rooms");
+            House.buildRoom(furniture.getRoom());
         }
     }
 

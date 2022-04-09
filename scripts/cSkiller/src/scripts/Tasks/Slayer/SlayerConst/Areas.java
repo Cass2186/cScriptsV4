@@ -158,7 +158,8 @@ public  class Areas {
     public static RSArea MUTATED_ZYGOMITE_AREA = new RSArea(new RSTile(2426, 4462, 0), new RSTile(2409, 4478, 0));
     public static RSArea MONKEY_AREA = new RSArea(new RSTile(2892, 3148, 0), new RSTile(2865, 3163, 0));
    // public static RSArea MOSS_GIANT_AREA = new RSArea(new RSTile(2548, 3411, 0), new RSTile(2562, 3393, 0));
-   public static  RSArea MOSS_GIANT_AREA = new RSArea(
+    //this is in catacombs
+    public static  RSArea MOSS_GIANT_AREA = new RSArea(
            new RSTile[] {
                    new RSTile(1668, 10020, 0),
                    new RSTile(1677, 10020, 0),
@@ -178,6 +179,9 @@ public  class Areas {
                    new RSTile(1664, 10016, 0)
            }
    );
+   public static RSArea MOSS_GIANT_FISHING_GUILD_AREA = new RSArea(
+           new RSTile(2555, 3406, 0),5);
+
     public static RSArea MINOTAUR_AREA = new RSArea(
             new RSTile[]{
                     new RSTile(1869, 5228, 0),
