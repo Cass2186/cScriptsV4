@@ -13,6 +13,9 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.EquipmentItem;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -92,13 +95,13 @@ public class GetTask implements Task {
     public static Assign getAssignmentFromString(String string) {
         General.println("Getting assignment from string " + string);
         for (Assign agn : Assign.values()) {
-          //  Log.log("Getting assignment from string");
+            //  Log.log("Getting assignment from string");
             for (String s : agn.getNameList()) {
                 if (s.equalsIgnoreCase(string)) {
                     SlayerVars.get().assignment = agn;
                     return agn;
                 }
-               // Log.log("assignment" + s);
+                // Log.log("assignment" + s);
                 if (s.toLowerCase().contains(string.toLowerCase())) {
                     if (agn.getNameNotContainsList() != null &&
                             !agn.getNameNotContainsList().get(0).toLowerCase().contains(string.toLowerCase())) {
@@ -154,43 +157,42 @@ public class GetTask implements Task {
     }
 
     public static void checkGem() {
-        SlayerVars.get().status = "Checking task";
-        RSItem[] gem = Inventory.find(ItemID.ENCHANTED_GEM);
-        RSItem[] slayHelm = Equipment.find(ItemID.SLAYER_HELMET);
-        RSItem[] slayHelmI = Equipment.find(ItemID.SLAYER_HELMET_I);
-        if (Equipment.isEquipped(ItemID.SLAYER_HELMET) && slayHelm.length > 0) {
-            if (slayHelm[0].click("Check")) {
-                Waiting.waitUntil(1500, ()-> SlayerVars.get().targets != null);
-                Log.debug("Targs no longer null");
-                //General.sleep(General.randomSD(1000, 6000, 3000, 750));
-                return;
-            }
+        for (int i = 0; i < 3; i++) {
+            SlayerVars.get().status = "Checking task";
+            Optional<InventoryItem> gem = Query.inventory()
+                    .idEquals(ItemID.ENCHANTED_GEM)
+                    .findClosestToMouse();
 
-        } else if (Equipment.isEquipped(ItemID.SLAYER_HELMET_I) && slayHelmI.length > 0) {
-            if (slayHelmI[0].click("Check")) {
-                Waiting.waitUntil(1500, ()-> SlayerVars.get().targets != null);
-                Log.debug("Targs no longer null");
-                //General.sleep(General.randomSD(1000, 6000, 3000, 750));
-                return;
-            }
+            Optional<EquipmentItem> helms = Query.equipment()
+                    .idEquals(ItemID.SLAYER_HELMET, ItemID.SLAYER_HELMET_I)
+                    .findFirst();
 
-        } else if (gem.length < 1) {
-            if (BankManager.open(true)) {
-                BankManager.depositAll(true);
-                BankManager.withdraw(1, true, ItemID.ENCHANTED_GEM);
-                BankManager.close(true);
+            if (helms.map(h-> h.click("Check")).orElse(false)) {
+                if (Waiting.waitUntil(1500, () -> SlayerVars.get().targets != null)) {
+                    Log.debug("Targs no longer null");
+                    return;
+                }
+
+            }  else if (gem.isEmpty()) {
+                if (BankManager.open(true)) {
+                    BankManager.depositAll(true);
+                    BankManager.withdraw(1, true, ItemID.ENCHANTED_GEM);
+                    BankManager.close(true);
+                }
+            }
+            gem = Query.inventory()
+                    .idEquals(ItemID.ENCHANTED_GEM)
+                    .findClosestToMouse();
+            if (gem.map(g -> g.click("Check")).orElse(false) &&
+                    Waiting.waitUntil(1500, () -> SlayerVars.get().targets != null)) {
+                Log.debug("Targs no longer null");
+                return;
+
             }
         }
-        gem = Inventory.find(ItemID.ENCHANTED_GEM);
-        if (gem.length > 0 && gem[0].click("Check")) {
-            Waiting.waitUntil(1500, ()-> SlayerVars.get().targets != null);
-            Log.debug("Targs no longer null");
-            //General.sleep(General.randomSD(3000, 9000, 5000, 750));
 
-        } else {
-            SlayerVars.get().needsGem = true;
-            Log.error("Check Gem Failed");
-        }
+        SlayerVars.get().needsGem = true;
+        Log.error("Check Gem Failed");
     }
 
     RSArea NIEVE_AREA = new RSArea(new RSTile(2433, 3423, 0), 4);
@@ -213,7 +215,7 @@ public class GetTask implements Task {
                     SlayerVars.get().shouldBank = true;
                     General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
                     determineTask();
-                    if (NPCInteraction.isConversationWindowUp()){
+                    if (NPCInteraction.isConversationWindowUp()) {
                         NPCInteraction.handleConversation(initialTaskStrings);
                     }
                 }
@@ -303,7 +305,7 @@ public class GetTask implements Task {
                         if (DynamicClicking.clickRSNPC(chaeldar[0], "Assignment")) {
                             NPCInteraction.waitForConversationWindow();
                             Timer.waitCondition(() -> Interfaces.get(231, 4) != null, 15000);
-                            if (NPCInteraction.isConversationWindowUp()){
+                            if (NPCInteraction.isConversationWindowUp()) {
                                 NPCInteraction.handleConversation(initialTaskStrings);
                             }
                             break;
@@ -356,7 +358,7 @@ public class GetTask implements Task {
                         General.sleep(General.random(1000, 3000));
                         SlayerVars.get().shouldBank = true;
                         determineTask();
-                        if (NPCInteraction.isConversationWindowUp()){
+                        if (NPCInteraction.isConversationWindowUp()) {
                             NPCInteraction.handleConversation(initialTaskStrings);
                         }
                     }
@@ -401,7 +403,7 @@ public class GetTask implements Task {
                             checkGem();
                         }
                     }
-                    if (NPCInteraction.isConversationWindowUp()){
+                    if (NPCInteraction.isConversationWindowUp()) {
                         NPCInteraction.handleConversation(initialTaskStrings);
                     }
                 }
@@ -442,7 +444,7 @@ public class GetTask implements Task {
         checkGem();
         //  CannonHandler.pickupCannon();
 
-        if (SlayerVars.get().assignment!= null &&
+        if (SlayerVars.get().assignment != null &&
                 SlayerVars.get().assignment.equals(Assign.GREEN_DRAGON))
             throw new NullPointerException();
 
@@ -467,9 +469,8 @@ public class GetTask implements Task {
                 SlayerVars.get().shouldBank = true;
                 General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
                 SlayerVars.get().shouldSkipTask = false;
-            }
-            else if (SlayerVars.get().pointBoosting) {
-                General.println("[GetTask]: Point boosting -  Task number is " + Utils.getVarBitValue(SlayerConst.TASK_STREAK_VARBIT) );
+            } else if (SlayerVars.get().pointBoosting) {
+                General.println("[GetTask]: Point boosting -  Task number is " + Utils.getVarBitValue(SlayerConst.TASK_STREAK_VARBIT));
 
                 for (int i = 0; i < NINES.length; i++) {
                     if (Utils.getVarBitValue(SlayerConst.TASK_STREAK_VARBIT) == NINES[i] ||
@@ -482,9 +483,9 @@ public class GetTask implements Task {
                             General.println("[GetTask]: Need to get a task from Chaeldar");
                             getTaskChaeldar();
                             SlayerVars.get().getTask = false;
-                        }  else if (Utils.getCombatLevel() >= 65) {
+                        } else if (Utils.getCombatLevel() >= 65) {
                             getTaskVannaka();
-                        } else{
+                        } else {
                             getTaskTurael();
                         }
                         SlayerVars.get().getTask = false;
@@ -509,7 +510,7 @@ public class GetTask implements Task {
             else if (Utils.getCombatLevel() >= 55)
                 getTaskVannaka();
 
-            else  getTaskTurael();
+            else getTaskTurael();
 
 
         } else

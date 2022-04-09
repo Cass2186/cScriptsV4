@@ -6,6 +6,7 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSCharacter;
 import org.tribot.api2007.types.RSNPC;
+import org.tribot.script.sdk.Combat;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
@@ -126,8 +127,8 @@ public class AttackNpc implements Task {
             General.println("[AttackNPC]: Fight area is null");
             return Optional.empty();
         }
-        if (Combat.isUnderAttack()) {
-            RSCharacter target = Combat.getTargetEntity();
+        if (MyPlayer.isHealthBarVisible()) {
+            RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
 
             if (target != null && target.getHealthPercent() == 0) {
                 RSNPC[] potentialTargets = NPCs.findNearest(monsterStrings);
@@ -136,7 +137,7 @@ public class AttackNpc implements Task {
                     return Optional.ofNullable(potentialTargets[1]);
                 }
             } else {
-                Optional<String> name = Optional.ofNullable(Combat.getTargetEntity())
+                Optional<String> name = Optional.ofNullable(org.tribot.api2007.Combat.getTargetEntity())
                         .map(RSCharacter::getName);
 
                 if (name.isPresent()) {
@@ -202,17 +203,17 @@ public class AttackNpc implements Task {
             if (PathingUtil.clickScreenWalk(Areas.WALL_BEAST_TILE)) {
                 PathingUtil.movementIdle();
                 Timer.slowWaitCondition(()
-                        -> Combat.isUnderAttack(), 12000, 15000);
+                        -> MyPlayer.isHealthBarVisible(), 12000, 15000);
             }
         }
-        if (Combat.isUnderAttack()) {
+        if (MyPlayer.isHealthBarVisible()) {
             Log.log("[Debug]: Fighting Wall beast");
             if (CombatUtil.waitUntilOutOfCombat(AntiBan.getEatAt()))
                 Waiting.waitNormal(1500, 375);
 
         }
 
-        if (Areas.WALL_BEAST_AREA.contains(Player.getPosition()) && !Combat.isUnderAttack()
+        if (Areas.WALL_BEAST_AREA.contains(Player.getPosition()) && !MyPlayer.isHealthBarVisible()
                 && Player.getPosition().equals(Areas.WALL_BEAST_TILE)) {
             Log.log("[Debug]: Resetting Wall beast");
             if (Utils.clickObj("Climbing rope", "Climb"))
@@ -224,18 +225,21 @@ public class AttackNpc implements Task {
     int i = 0;
 
     public void fightNew() {
-        if (!org.tribot.script.sdk.Combat.isAutoRetaliateOn())
-            org.tribot.script.sdk.Combat.setAutoRetaliate(true);
+        if (!Combat.isAutoRetaliateOn())
+            Combat.setAutoRetaliate(true);
 
-        RSCharacter target = Combat.getTargetEntity();
-        Optional<RSNPC> targ = setCurrentTarget(SlayerVars.get().targets);
+        Optional<Npc> targ = setCurrentTargetSDK(SlayerVars.get().targets);
 
         if (targ.isPresent()) {
-            if (!Combat.isUnderAttack() && CombatUtil.clickTarget(targ.get())) {
+            if ((!MyPlayer.isHealthBarVisible() &&
+                    targ.map(t -> !t.isInteractingWithMe()).orElse(false)) &&
+                    targ.map(t -> t.interact("Attack")).orElse(false)) {
                 SlayerVars.get().status = "Attacking Target";
                 SlayerVars.get().currentTime = System.currentTimeMillis();
+                Waiting.waitUntil(4500, 200,
+                        () -> targ.map(t -> t.isInteractingWithMe()).orElse(false));
 
-            } else if (Combat.isUnderAttack() && target != null) {
+            } else if (targ.map(t -> t.isInteractingWithMe()).orElse(false)) { //already fighting
                 SlayerVars.get().status = "Fighting Target";
                 SlayerVars.get().currentTime = System.currentTimeMillis();
             }
@@ -255,10 +259,10 @@ public class AttackNpc implements Task {
 
             if (SlayerVars.get().shouldPrayMelee) {
                 General.println("[Fight]: Using long timeout on fight b/c prayer is being used");
-                if (CombatUtil.waitUntilOutOfCombat(targ.get(), AntiBan.getEatAt(), 65000)) {
+                if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 75000)) {
                     sleep(targ.get());
                 }
-            } else if (waitUntilOutOfCombat(targ.get(), AntiBan.getEatAt(), 45000)) {
+            } else if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 45000)) {
                 sleep(targ.get());
 
             } else
@@ -268,7 +272,7 @@ public class AttackNpc implements Task {
             General.println("[Fight]: Unable to set target");
             Waiting.waitNormal(200, 50);
             i++;
-            if (i >= 10 &&
+            if (i >= 10 && !SlayerVars.get().fightArea.contains(Player.getPosition()) &&
                     PathingUtil.walkToTile(SlayerVars.get().fightArea.getRandomTile())) {
                 General.println("[Fight]: Walking to area");
                 i = 0;
@@ -280,15 +284,15 @@ public class AttackNpc implements Task {
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
-        RSCharacter target = Combat.getTargetEntity();
+        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
         Optional<RSNPC> targ = setCurrentTarget(SlayerVars.get().targets);
 
         if (targ.isPresent()) {
-            if (!Combat.isUnderAttack() && CombatUtil.clickTarget(targ.get())) {
+            if (!MyPlayer.isHealthBarVisible() && CombatUtil.clickTarget(targ.get())) {
                 SlayerVars.get().status = "Attacking Target";
                 SlayerVars.get().currentTime = System.currentTimeMillis();
 
-            } else if (Combat.isUnderAttack() && target != null) {
+            } else if (MyPlayer.isHealthBarVisible() && target != null) {
                 SlayerVars.get().status = "Fighting Target";
                 SlayerVars.get().currentTime = System.currentTimeMillis();
             }
@@ -419,35 +423,53 @@ public class AttackNpc implements Task {
             if (AntiBan.getShouldOpenMenu() && (Mouse.isInBounds() && (!ChooseOption.isOpen())) && name != null)
                 AntiBan.openMenuNextNPC(name.getName());
 
-            RSCharacter target = Combat.getTargetEntity();
+            RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
             if (target != null) {
                 if (target.getHealthPercent() == 0) {
                     Vars.get().daxTracker.trackData("Kills", 1);
                 }
-                return !Combat.isUnderAttack() || !EatUtil.hasFood()
+                return !MyPlayer.isHealthBarVisible() || !EatUtil.hasFood()
                         || (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
             }
-            return !Combat.isUnderAttack() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
+            return !MyPlayer.isHealthBarVisible() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
         }, General.random(longTimeOut - 5000, longTimeOut));
 
         AntiBan.resetShouldOpenMenu();
 
-        RSCharacter target = Combat.getTargetEntity();
+        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
         if (target != null) {
             if (target.getHealthPercent() == 0) {
                 Vars.get().daxTracker.trackData("Kills", 1);
             }
 
-            return target.getHealthPercent() == 0 || !Combat.isUnderAttack()
+            return target.getHealthPercent() == 0 || !MyPlayer.isHealthBarVisible()
                     || !EatUtil.hasFood() || (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
         }
 
-        if (ChooseOption.isOpen() && !Combat.isUnderAttack() && EatUtil.hasFood()) {
+        if (ChooseOption.isOpen() && !MyPlayer.isHealthBarVisible() && EatUtil.hasFood()) {
             CombatUtil.clickAttack();
         }
-        return !Combat.isUnderAttack();
+        return !MyPlayer.isHealthBarVisible();
     }
 
+    private void sleep(Npc currentTarget) {
+        if (currentTarget != null && currentTarget.getHealthBarPercent() == 0) {
+            // General.sleep(General.random(100, 500));
+            if (SlayerVars.get().abc2Delay && SlayerVars.get().abc2Chance < 60) {
+                SlayerVars.get().status = "ABC2 Sleeping...";
+                Utils.abc2ReactionSleep(SlayerVars.get().currentTime);
+                SlayerVars.get().abc2Chance = General.random(0, 100);
+
+            } else {
+                SlayerVars.get().status = "Sleeping...";
+                // int sleep = General.random(150, 3000);
+                int sleepSD = General.randomSD(150, 4000, 1150, 325);
+                Log.log("[AttackNpc]: Sleeping for " + sleepSD);
+                Waiting.wait(sleepSD);
+                SlayerVars.get().abc2Chance = General.random(0, 100);
+            }
+        }
+    }
 
     private void sleep(RSNPC currentTarget) {
         if (currentTarget != null && currentTarget.getHealthPercent() == 0) {
@@ -496,7 +518,7 @@ public class AttackNpc implements Task {
                 SlayerVars.get().assignment.equals(Assign.WALL_BEAST)) {
             wallBeastTask();
         } else
-            fight();
+            fightNew();
     }
 
     @Override
