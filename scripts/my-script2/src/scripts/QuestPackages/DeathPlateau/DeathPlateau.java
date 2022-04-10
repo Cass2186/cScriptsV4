@@ -193,7 +193,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
 
 
     public void initialiseListeners() {
-        ChatObserver chatListener = new ChatObserver(()-> true);
+        ChatObserver chatListener = new ChatObserver(() -> true);
         chatListener.addListener(this);
         chatListener.addString("I have duplicated a key, I need to get it from");
         chatListener.addString("the key from Leela.");
@@ -446,7 +446,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
         }
     }
 
-    RSTile TENZING_HOUSE_TILE = new RSTile(2821,3555,0);
+    RSTile TENZING_HOUSE_TILE = new RSTile(2821, 3555, 0);
 
     public void goToHouse() {
         if (Inventory.find(MAP).length < 1) {
@@ -495,21 +495,17 @@ public class DeathPlateau implements QuestTask, ChatListener {
     public void goToHouse2() {
         cQuesterV2.status = "Going to Tenzing";
         General.println("[Debug]: " + cQuesterV2.status);
-        if (Inventory.find(CLIMBING_BOOTS).length < 1) {
-            PathingUtil.walkToTile(TENZING_HOUSE_TILE);
-           if(NpcChat.talkToNPC("Tenzing")) {
-               NPCInteraction.waitForConversationWindow();
-               NPCInteraction.handleConversation();
-               ChatScreen.handle();
-               Utils.continuingChat();
-           }
-
-            if (Inventory.find(MAP).length < 1) {
-                if(NpcChat.talkToNPC("Tenzing")) {
+        for (int i = 0; i < 3; i++) {
+            if (Inventory.find(CLIMBING_BOOTS).length < 1) {
+                PathingUtil.walkToTile(TENZING_HOUSE_TILE);
+                if (NpcChat.talkToNPC("Tenzing")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
                     ChatScreen.handle();
                     Utils.continuingChat();
+                }
+                if (Inventory.find(MAP).length > 0) {
+                    break;
                 }
             }
         }
@@ -528,7 +524,6 @@ public class DeathPlateau implements QuestTask, ChatListener {
             PathingUtil.walkToArea(HOUSE);
             PathingUtil.walkToArea(START_AREA);
         }
-        START_AREA.contains(Player.getPosition());
         if (NpcChat.talkToNPC("Denulth")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Do you have any quests for me?");
@@ -614,7 +609,6 @@ public class DeathPlateau implements QuestTask, ChatListener {
         }
 
     }
-
 
 
     @Override
