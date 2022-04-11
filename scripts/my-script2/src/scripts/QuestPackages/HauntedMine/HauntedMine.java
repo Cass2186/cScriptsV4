@@ -4,15 +4,14 @@ import dax.walker_engine.WalkerEngine;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.Interfaces;
-import org.tribot.api2007.NPCs;
-import org.tribot.api2007.Player;
+import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Npc;
@@ -43,6 +42,13 @@ public class HauntedMine implements QuestTask {
                     new GEItem(ItemID.CHISEL, 1, 500),
                     new GEItem(ItemID.PRAYER_POTION_4, 2, 20),
                     new GEItem(ItemID.SHARK, 25, 20),
+                    new GEItem(ItemID.RUNE_CROSSBOW, 1, 20),
+                    new GEItem(ItemID.RUNITE_BOLTS, 400, 15),
+                    new GEItem(ItemID.BLACK_DHIDE_BODY, 1, 30),
+                    new GEItem(ItemID.BLACK_DHIDE_CHAPS, 1, 30),
+                    new GEItem(ItemID.BLACK_DHIDE_VAMBRACES, 1, 30),
+                    new GEItem(ItemID.SNAKESKIN_BOOTS, 1, 200),
+                    new GEItem(ItemID.SNAKESKIN_BANDANA, 1, 200),
                     new GEItem(ItemID.MORTTON_TELEPORT, 1, 30),
                     new GEItem(ItemID.STAMINA_POTION[0], 4, 15),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 15),
@@ -52,11 +58,23 @@ public class HauntedMine implements QuestTask {
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemID.STAMINA_POTION[0], 4, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 1),
                     new ItemReq(ItemID.AMULET_OF_GLORY[2], 2, 0, true, true),
+                    new ItemReq(ItemID.BLACK_DHIDE_BODY, 1, true, true),
+                    new ItemReq(ItemID.BLACK_DHIDE_CHAPS, 1, true, true),
+                    new ItemReq(ItemID.BLACK_DHIDE_VAMBRACES, 1, true, true),
+                    new ItemReq(ItemID.RUNE_CROSSBOW, 1, true, true),
+                    new ItemReq(ItemID.RUNITE_BOLTS, 400, 50, true, true),
+                    new ItemReq(ItemID.SNAKESKIN_BOOTS, 1, true, true),
+                    new ItemReq(ItemID.SNAKESKIN_BANDANA, 1, true, true),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true, true),
+
                     new ItemReq(ItemID.CHISEL, 1, 1),
-                    new ItemReq(ItemID.RANGING_POTION[0], 1, 0),
-                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
+
+                    new ItemReq(ItemID.PRAYER_POTION_4, 1),
+                    new ItemReq(ItemID.MORTTON_TELEPORT, 1, 0),
+                    new ItemReq(ItemID.RANGING_POTION[0], 1, 1),
+                    new ItemReq(ItemID.SHARK, 20, 3)
             )
     ));
 
@@ -393,6 +411,96 @@ public class HauntedMine implements QuestTask {
             }
     );
 
+    RSTile[] pathToLaterLevers = {
+            new RSTile(2784, 4516, 0),
+            new RSTile(2784, 4516, 0),
+            new RSTile(2785, 4516, 0),
+            new RSTile(2786, 4516, 0),
+            new RSTile(2787, 4516, 0),
+            new RSTile(2788, 4515, 0),
+            new RSTile(2789, 4514, 0),
+            new RSTile(2790, 4514, 0),
+            new RSTile(2790, 4513, 0),
+            new RSTile(2790, 4512, 0),
+            new RSTile(2790, 4511, 0),
+            new RSTile(2790, 4510, 0),
+            new RSTile(2791, 4509, 0),
+            new RSTile(2791, 4508, 0),
+            new RSTile(2791, 4507, 0),
+            new RSTile(2791, 4506, 0),
+            new RSTile(2791, 4505, 0),
+            new RSTile(2790, 4504, 0),
+            new RSTile(2789, 4504, 0),
+            new RSTile(2788, 4504, 0),
+            new RSTile(2787, 4504, 0),
+            new RSTile(2786, 4504, 0),
+            new RSTile(2785, 4505, 0),
+            new RSTile(2784, 4506, 0),
+            new RSTile(2783, 4506, 0),
+            new RSTile(2782, 4506, 0),
+            new RSTile(2781, 4506, 0),
+            new RSTile(2780, 4506, 0),
+            new RSTile(2779, 4506, 0),
+            new RSTile(2779, 4507, 0),
+            new RSTile(2779, 4508, 0),
+            new RSTile(2779, 4509, 0),
+            new RSTile(2779, 4510, 0),
+            new RSTile(2779, 4511, 0),
+            new RSTile(2779, 4512, 0),
+            new RSTile(2778, 4513, 0),
+            new RSTile(2777, 4513, 0),
+            new RSTile(2777, 4514, 0),
+            new RSTile(2777, 4515, 0),
+            new RSTile(2777, 4516, 0),
+            new RSTile(2777, 4517, 0),
+            new RSTile(2777, 4518, 0),
+            new RSTile(2777, 4519, 0),
+            new RSTile(2777, 4520, 0),
+            new RSTile(2776, 4520, 0),
+            new RSTile(2775, 4520, 0),
+            new RSTile(2774, 4520, 0),
+            new RSTile(2773, 4520, 0),
+            new RSTile(2772, 4520, 0),
+            new RSTile(2771, 4520, 0),
+            new RSTile(2771, 4521, 0),
+            new RSTile(2770, 4521, 0),
+            new RSTile(2769, 4521, 0),
+            new RSTile(2768, 4521, 0),
+            new RSTile(2767, 4521, 0),
+            new RSTile(2767, 4520, 0),
+            new RSTile(2766, 4520, 0),
+            new RSTile(2766, 4519, 0),
+            new RSTile(2765, 4519, 0),
+            new RSTile(2764, 4519, 0),
+            new RSTile(2763, 4519, 0),
+            new RSTile(2762, 4519, 0),
+            new RSTile(2762, 4520, 0),
+            new RSTile(2762, 4521, 0),
+            new RSTile(2762, 4522, 0),
+            new RSTile(2762, 4523, 0),
+            new RSTile(2762, 4524, 0),
+            new RSTile(2762, 4525, 0),
+            new RSTile(2762, 4526, 0),
+            new RSTile(2762, 4527, 0),
+            new RSTile(2761, 4527, 0),
+            new RSTile(2761, 4528, 0),
+            new RSTile(2760, 4528, 0),
+            new RSTile(2760, 4529, 0),
+            new RSTile(2759, 4529, 0),
+            new RSTile(2759, 4530, 0),
+            new RSTile(2759, 4531, 0),
+            new RSTile(2759, 4532, 0),
+            new RSTile(2760, 4532, 0),
+            new RSTile(2761, 4532, 0),
+            new RSTile(2762, 4532, 0),
+            new RSTile(2763, 4532, 0),
+            new RSTile(2764, 4532, 0),
+            new RSTile(2765, 4532, 0),
+            new RSTile(2766, 4532, 0),
+            new RSTile(2767, 4532, 0),
+            new RSTile(2768, 4532, 0)
+    };
+
     public void solveMineCartReverse() {
         RSNPC[] mineCart = NPCs.findNearest(3621);
         if (mineCart.length > 0) {
@@ -568,9 +676,15 @@ public class HauntedMine implements QuestTask {
             else if (leverCWrong.check()) pullLeverC.execute();
             else if (leverDWrong.check()) pullLeverD.execute();
             else if (leverEWrong.check()) pullLeverE.execute();
-            else if (leverFWrong.check()) pullLeverF.execute();
-            else if (leverGWrong.check()) pullLeverG.execute();
-            else if (leverHWrong.check()) pullLeverH.execute();
+            else if (leverFWrong.check()) {
+                if (pullLeverF.getTile().distanceTo(Player.getPosition()) > 4)
+                    Walking.walkPath(pathToLaterLevers);
+                pullLeverF.execute();
+            } else if (leverGWrong.check()) {
+                if (pullLeverG.getTile().distanceTo(Player.getPosition()) > 4)
+                    Walking.walkPath(pathToLaterLevers);
+                pullLeverG.execute();
+            } else if (leverHWrong.check()) pullLeverH.execute();
             else handleStartPanel();
 
         } else if (new Conditions(glowingFungus, inCartRoom).check()) {

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.tribot.api.General;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
+import org.tribot.api2007.WebWalking;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
@@ -18,6 +19,7 @@ import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class ObjectStep extends QuestStep {
 
-
+    @Getter
     private RSTile tile;
     private int objectId;
     private String objectAction;
@@ -237,7 +239,7 @@ public class ObjectStep extends QuestStep {
     private boolean humanWalkIdle(RSTile endTile) {
         if (Waiting.waitUntil(1250, MyPlayer::isMoving)) {
             return Timer.waitCondition(() -> Utils.getWorldTileFromRSTile(endTile)
-                    .distanceTo(MyPlayer.getPosition()) < Utils.random(3,5) ||
+                    .distanceTo(MyPlayer.getPosition()) < Utils.random(3, 5) ||
                     !MyPlayer.isMoving(), 7000, 8000);
         }
         return Utils.getWorldTileFromRSTile(endTile).distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) || !MyPlayer.isMoving();
@@ -262,21 +264,28 @@ public class ObjectStep extends QuestStep {
             RSArea objArea = new RSArea(this.tile, this.tileRadius);
             if (!objArea.contains(Player.getPosition())) {
                 Log.debug("[ObjectStep]: Navigating to object area: ID " + this.objectId);
-                LocalTile tile = new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getPosition().getPlane());
-                Optional<LocalTile> walkable = getWalkableTile(tile);
-                if (walkable.map(LocalWalking::walkTo).orElse(false)) {
+                LocalTile tile =
+                        new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getPosition().getPlane());
+
+                Optional<LocalTile> bestInteractable = Query.tiles()
+                        .isReachable()
+                        .tileEquals(tile)
+                        .findBestInteractable();
+                Optional<LocalTile> walkable = bestInteractable.map(b -> getWalkableTile(b))
+                        .orElse(Optional.empty());
+
+                Log.info("Made tiles");
+                if (bestInteractable.map(LocalWalking::walkTo).orElse(false)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK (walkable)");
                     humanWalkIdle(tile.toWorldTile());
-                } else if (LocalWalking.walkTo(tile)) {
+                }/* else if (tile.isRendered() && LocalWalking.walkTo(tile)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK");
                     humanWalkIdle(tile.toWorldTile());
-                } else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
-                        PathingUtil.walkToTile(this.tile, tileRadius, false)) {
+                } */ else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
+
+                        walkable.map(GlobalWalking::walkTo).orElse(false) ){
+                       // PathingUtil.walkToTile(this.tile, tileRadius, false)) {
                     humanWalkIdle(this.tile);
-                } else if (walkable.map(PathingUtil::localNav).orElse(false)) {
-                    //    else if (walkable.isPresent() && PathingUtil.localNav(walkable.get())) {
-                    Log.debug("[ObjectStep]: Navigating to object area - local walkable tile");
-                    humanWalkIdle(walkable.get().toWorldTile());
                 } else if (PathingUtil.localNavigation(this.tile)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local");
                     humanWalkIdle(this.tile);

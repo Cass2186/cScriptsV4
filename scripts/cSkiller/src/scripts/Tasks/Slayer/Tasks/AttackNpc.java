@@ -12,6 +12,7 @@ import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
+
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.walking.LocalWalking;
@@ -71,10 +72,13 @@ public class AttackNpc implements Task {
             return Optional.empty();
 
         if (MyPlayer.isHealthBarVisible()) {
-            Optional<Character> target = MyPlayer.get().flatMap(player -> player.getInteractingCharacter());
+            Optional<Character> target = MyPlayer.get().
+                    flatMap(player -> player.getInteractingCharacter());
 
-            if (target.isEmpty())
+            if (target.isEmpty()) {
+                Log.info("Returning empty optional, cannot find interacting character");
                 return Optional.empty();
+            }
 
             // NPC we're interacting with is dead, look for next one
             if (target.get().getHealthBarPercent() == 0) {
@@ -89,7 +93,7 @@ public class AttackNpc implements Task {
                     return Optional.ofNullable(potentialTargets.get(0));
                 }
             } else {
-
+            return Optional.of((Npc) target.get());
 
             }
         } else {
@@ -321,7 +325,7 @@ public class AttackNpc implements Task {
             } else
                 Waiting.waitNormal(1300, 430);
 
-        } else {
+        } else if (!MyPlayer.isHealthBarVisible()){
             General.println("[Fight]: Unable to set target");
             Waiting.waitNormal(200, 50);
             i++;
@@ -340,7 +344,7 @@ public class AttackNpc implements Task {
         return Waiting.waitUntil(longTimeOut, () -> {
             Waiting.waitNormal(500, 125);
 
-            //AntiBan.timedActions();
+            AntiBan.timedActions();
 
             if (EatUtil.hpPercent() <= (eatAtHP))
                 EatUtil.eatFood();
@@ -357,6 +361,7 @@ public class AttackNpc implements Task {
 
             }
             return !MyPlayer.isHealthBarVisible() ||
+                    npcOptional.map(npc -> npc.getHealthBarPercent() ==0).orElse(false) ||
                     !EatUtil.hasFood() ||
                     (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
         });
@@ -464,7 +469,7 @@ public class AttackNpc implements Task {
                 SlayerVars.get().status = "Sleeping...";
                 // int sleep = General.random(150, 3000);
                 int sleepSD = General.randomSD(150, 4000, 1150, 325);
-                Log.log("[AttackNpc]: Sleeping for " + sleepSD);
+                Log.debug("[AttackNpc]: Sleeping for " + sleepSD);
                 Waiting.wait(sleepSD);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
             }

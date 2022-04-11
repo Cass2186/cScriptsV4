@@ -76,9 +76,9 @@ public class SlayerBank implements Task {
         if (!isWearingSlayerHelm())
             BankManager.withdraw(1, true, ItemID.ENCHANTED_GEM);
 
-        BankManager.withdrawArray(ItemID.SUPER_COMBAT_POTION, 1);
+        BankManager.withdrawArray(SlayerVars.get().potionToUse, 1);
         BankManager.withdrawArray(ItemID.STAMINA_POTION, 1);
-        BankManager.withdraw(0, true, ItemID.MONKFISH);
+        BankManager.withdraw(0, true, SlayerVars.get().customFoodId);
 
         if (!BankManager.checkInventoryItems(ItemID.MONKFISH, ItemID.VARROCK_TELEPORT)) {
             Log.debug("[Bank]: restocking due to monkfish or varrock tabs missing");
