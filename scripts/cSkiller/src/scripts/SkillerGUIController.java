@@ -38,7 +38,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private Button atkAddButton, defAddButton, rangedAddButton, strAddButton;
+    private Button atkAddButton, defAddButton, rangedAddButton, strAddButton, resetSkillsButton;
 
     @FXML
     @DoNotRename
@@ -471,15 +471,27 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         combatProgressionBox.getChildren().add(new Text("Train Ranged to Lvl " + defLvlGoalBox.getText()));
     }
 
+    @FXML
+    @DoNotRename
+    void addWCAreaToLists(){
+        mapleTreeAreaBox.getItems().add(WcLocations.SEERS_MAPLES.toString());
+        willowTreeAreaBox.getItems().add(WcLocations.PORT_SARIM_WILLOWS.toString());
+        willowTreeAreaBox.getItems().add(WcLocations.DRAYNOR_WILLOWS.toString());
+        willowTreeAreaBox.getItems().add(WcLocations.SEERS_WILLOWS.toString());
+        regularTreeAreaBox.getItems().add(WcLocations.VARROCK_WEST_TREES.toString());
+        oakTreeAreaBox.getItems().add(WcLocations.VARROCK_WEST_OAKS.toString());
+    }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        ScriptSettings settingsHandler = ScriptSettings.getDefault();
-        settingsHandler.load("last", Vars.class)
-                .ifPresent(s -> {
-                    Log.info("Loaded settings object: " + s);
-                });
-        skillsImage.setImage(new Image("https://i.imgur.com/9WGq5Sy.png"));
+
+    @FXML
+    @DoNotRename
+    void resetSkillsButtonPressed(ActionEvent event){
+        addCurrentLevels();
+    }
+
+    @FXML
+    @DoNotRename
+    void addCurrentLevels(){
         agilityGoalLevelBox.setText(String.valueOf(Skills.SKILLS.AGILITY.getActualLevel()));
         herbloreGoalLevelBox.setText(String.valueOf(Skills.SKILLS.HERBLORE.getActualLevel()));
         craftingGoalLevelBox.setText(String.valueOf(Skills.SKILLS.CRAFTING.getActualLevel()));
@@ -498,6 +510,17 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         slayerGoalLevelBox.setText(String.valueOf(Skills.SKILLS.SLAYER.getActualLevel()));
         constructionGoalLevelBox.setText(String.valueOf(Skills.SKILLS.CONSTRUCTION.getActualLevel()));
         thievingGoalLevelBox.setText(String.valueOf(Skills.SKILLS.THIEVING.getActualLevel()));
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        ScriptSettings settingsHandler = ScriptSettings.getDefault();
+        settingsHandler.load("last", Vars.class)
+                .ifPresent(s -> {
+                    Log.info("Loaded settings object: " + s);
+                });
+        skillsImage.setImage(new Image("https://i.imgur.com/9WGq5Sy.png"));
+        addCurrentLevels();
         switchSkillMinTime.setText(String.valueOf(Vars.get().skillSwitchMin / 60000));
         switchSkillMaxTime.setText(String.valueOf(Vars.get().skillSwitchMax / 60000));
         afkEveryAverage.setText(String.valueOf(Vars.get().afkFrequencyAvg / 1000));
@@ -529,12 +552,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
                     + " (" + item.getProfit() + ")");
         }
         // populate trees
-        mapleTreeAreaBox.getItems().add(WcLocations.SEERS_MAPLES.toString());
-        willowTreeAreaBox.getItems().add(WcLocations.PORT_SARIM_WILLOWS.toString());
-        willowTreeAreaBox.getItems().add(WcLocations.DRAYNOR_WILLOWS.toString());
-        willowTreeAreaBox.getItems().add(WcLocations.SEERS_WILLOWS.toString());
-        regularTreeAreaBox.getItems().add(WcLocations.VARROCK_WEST_TREES.toString());
-        oakTreeAreaBox.getItems().add(WcLocations.VARROCK_WEST_OAKS.toString());
+        addWCAreaToLists();
+
         for (Methods.HERBLORE meth : Methods.HERBLORE.values()) {
 
         }

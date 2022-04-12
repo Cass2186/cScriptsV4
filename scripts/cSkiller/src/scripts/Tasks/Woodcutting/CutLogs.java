@@ -62,7 +62,7 @@ public class CutLogs implements Task {
             }
         } else if (PathingUtil.localNavigation(area.getRandomTile()))
             PathingUtil.movementIdle();
-        
+
         else if (PathingUtil.walkToArea(area)) {
             PathingUtil.movementIdle();
         }

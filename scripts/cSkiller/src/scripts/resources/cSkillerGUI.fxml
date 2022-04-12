@@ -204,6 +204,7 @@
                                           <CheckBox layoutX="14.0" layoutY="42.0" mnemonicParsing="false" text="Do Tars at 19 (Less gold required)" />
                                        </children>
                                     </Pane>
+                                    <Button fx:id="resetSkillsButton" layoutX="128.0" layoutY="456.0" mnemonicParsing="false" onAction="#resetSkillsButtonPressed" text="Reset Skills" />
                                             </children>
                                         </AnchorPane>
                                     </children>
