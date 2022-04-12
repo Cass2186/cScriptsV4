@@ -121,11 +121,21 @@ public class SlayerBank implements Task {
         java.util.List<ItemReq> myInv = new ArrayList<>(
                 Arrays.asList(
                         new ItemReq(ItemID.VARROCK_TELEPORT, 2),
-                        new ItemReq(ItemID.STAMINA_POTION, 1),
-                        new ItemReq(SlayerVars.get().potionToUse, 1)
-
+                        new ItemReq.Builder()
+                                .id(ItemID.STAMINA_POTION[0])
+                                .minimumDosesNeeded(1)
+                                .amount(1)
+                                .alternateItemIDs(List.of(ItemID.STAMINA_POTION[1]
+                                        ,ItemID.STAMINA_POTION[2],ItemID.STAMINA_POTION[3])).build(),
+                        new ItemReq.Builder()
+                                .id(SlayerVars.get().potionToUse[0])
+                                .minimumDosesNeeded(1)
+                                .amount(1)
+                                .alternateItemIDs(List.of(SlayerVars.get().potionToUse[1]
+                                        ,SlayerVars.get().potionToUse[2],SlayerVars.get().potionToUse[3])).build()
                 )
         );
+
 
         BankManager.depositAll(true);
         if (itemRequirements != null) {

@@ -322,108 +322,6 @@
                                 </AnchorPane>
                             </content>
                         </Tab>
-                        <Tab text="Skill Methods">
-                            <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                    <children>
-                                        <ComboBox fx:id="logActionBox" disable="true" layoutX="478.0" layoutY="383.0" prefWidth="150.0" promptText="Log Action" />
-                                        <Label layoutX="482.0" layoutY="352.0" text="Woodcutting" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="37.0" layoutY="290.0" text="Magic " underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="266.0" layoutY="85.0" text="Herblore" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="40.0" layoutY="352.0" text="Runecrafting" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="logActionBox11" disable="true" layoutX="37.0" layoutY="377.0" prefWidth="150.0" promptText="Combination Rune" />
-                                        <Label layoutX="39.0" layoutY="224.0" text="Prayer" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="prayerMethodBox" disable="true" layoutX="37.0" layoutY="249.0" prefWidth="150.0" promptText="Prayer Method" />
-                                        <Label layoutX="268.0" layoutY="26.0" text="Agility" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <CheckBox disable="true" layoutX="268.0" layoutY="51.0" mnemonicParsing="false" text="Alch?" />
-                                        <Label layoutX="265.0" layoutY="148.0" text="Thieving" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="prayerMethodBox1" disable="true" layoutX="266.0" layoutY="173.0" prefWidth="150.0" promptText="Prayer Method" />
-                                        <Label layoutX="266.0" layoutY="222.0" text="Crafting" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="prayerMethodBox11" disable="true" layoutX="267.0" layoutY="247.0" prefWidth="150.0" promptText="Crafting Method" />
-                                        <Label layoutX="267.0" layoutY="290.0" text="Fletching" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="prayerMethodBox111" disable="true" layoutX="266.0" layoutY="315.0" prefWidth="150.0" promptText="Fletching Method" />
-                                        <Label layoutX="266.0" layoutY="352.0" text="Slayer" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="prayerMethodBox1111" disable="true" layoutX="266.0" layoutY="377.0" prefWidth="150.0" promptText="Slayer Master" />
-                                        <Label layoutX="266.0" layoutY="415.0" text="Hunter" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="prayerMethodBox11111" disable="true" layoutX="266.0" layoutY="440.0" prefWidth="150.0" promptText="Hunter Method" />
-                                        <Label layoutX="482.0" layoutY="28.0" text="Mining" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <Label layoutX="482.0" layoutY="87.0" text="Smithing" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="fishingMethodBox" disable="true" layoutX="482.0" layoutY="175.0" prefWidth="150.0" promptText="Fishing Method" />
-                                        <Label layoutX="482.0" layoutY="150.0" text="Fishing" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="cookingMethodBox" disable="true" layoutX="482.0" layoutY="247.0" prefWidth="150.0" promptText="Cooking Method" />
-                                        <Label layoutX="482.0" layoutY="222.0" text="Cooking" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <ComboBox fx:id="firemakingMethodBox" disable="true" layoutX="482.0" layoutY="315.0" prefWidth="150.0" promptText="Firemaking Pref" />
-                                        <Label layoutX="482.0" layoutY="290.0" text="Firemaking" underline="true">
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
-                                        </Label>
-                                        <CheckBox fx:id="useMlmBox1" layoutX="482.0" layoutY="51.0" mnemonicParsing="false" onAction="#setUseMlmBox" prefHeight="15.0" prefWidth="142.0" text="Use Motherlaod Mine?" />
-                              <CheckBox disable="true" layoutX="268.0" layoutY="68.0" mnemonicParsing="false" text="Summer Pie?" />
-                                    </children>
-                                </AnchorPane>
-                            </content>
-                        </Tab>
                   <Tab text="Advanced Skilling Options">
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -504,7 +402,7 @@
                                           </AnchorPane>
                                     </content>
                                   </Tab>
-                                  <Tab text="Woodcutting | Firemaking | Fletch">
+                                  <Tab text="Woodcutting  |  Firemaking  |  Fletch">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -538,7 +436,7 @@
                                              </children></AnchorPane>
                                     </content>
                                   </Tab>
-                                    <Tab text="Fishing | Cooking">
+                                    <Tab text="Fishing  |  Cooking">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -570,7 +468,7 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="Crafting  | Herb">
+                                    <Tab text="Crafting  |  Herb">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
@@ -590,7 +488,7 @@
                                           </AnchorPane>
                                        </content>
                                     </Tab>
-                                    <Tab text="Magic | Thieving">
+                                    <Tab text="Magic  |  Thieving">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>

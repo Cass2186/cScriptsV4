@@ -11,6 +11,8 @@ import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
 import scripts.Data.Const;
+import scripts.Data.Paint;
+import scripts.Data.RunecraftItems;
 import scripts.Data.Vars;
 import scripts.ScriptUtils.CassScript;
 import scripts.Tasks.*;
@@ -35,29 +37,15 @@ public class cRunecrafting extends CassScript implements TribotScript {
         /**
          Paint
          */
-        PaintTextRow template = PaintTextRow.builder().background(Color.darkGray.darker()).build();
-
-        BasicPaintTemplate paint = BasicPaintTemplate.builder()
-                .row(PaintRows.scriptName(template.toBuilder()))
-                .row(PaintRows.runtime(template.toBuilder()))
-                .row(template.toBuilder().label("Task").value(() -> Vars.get().status).build())
-                //  .row(template.toBuilder().label("House").value(() -> Vars.get().mostRecentHouse).build())
-                //.row(template.toBuilder().label("Tab").value(() -> Vars.get().selectedTab.toString()).build())
-                .row(template.toBuilder().label("Runecrafting").value(() -> getXpGainedString()).build())
-                //   .row(template.toBuilder().label("Profit").value(() -> Vars.get().getProfitString()).build())
-                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
-                .build();
-
-        Painting.addPaint(g -> paint.render(g));
 
         populateInitialMap(Vars.get().skillStartXpMap);
 
+        Paint.addMainPaint();
 
         Vars.get().startRcLevel = Skill.RUNECRAFT.getCurrentLevel();
         Vars.get().startRcXp = Skill.RUNECRAFT.getXp();
 
         Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
-
         //Tasks
         TaskSet tasks = new TaskSet(
                 new CraftRunes(),
@@ -68,6 +56,10 @@ public class cRunecrafting extends CassScript implements TribotScript {
 
         initializeListeners();
         isRunning.set(true);
+        Utils.setCameraZoomAboveDefault();
+
+        Vars.get().currentRune = RunecraftItems.getCurrentItem();
+
         while (isRunning.get()) {
             Waiting.waitUniform(40, 70);
             //reset safety timer if we've gained xp since last itteration
@@ -91,15 +83,16 @@ public class cRunecrafting extends CassScript implements TribotScript {
     }
 
     private void initializeListeners() {
+        //imbue message listener. there might be a varbit for this
+        //TODO check for varbit
         MessageListening.addServerMessageListener(message -> {
             if (message.contains(Const.imbueOff)) {
                 Vars.get().isImbueActive = false;
             } else if (message.contains(Const.imbueOn))
                 Vars.get().isImbueActive = true;
         });
-        /**
-         Ending listener
-         **/
+
+        // Ending listener
         ScriptListening.addEndingListener(() -> {
             if (Vars.get().skillStartXpMap == null)
                 populateInitialMap(Vars.get().skillStartXpMap);
@@ -107,10 +100,14 @@ public class cRunecrafting extends CassScript implements TribotScript {
             for (Skill s : Skill.values()) {
                 int startXp = Vars.get().skillStartXpMap.get(s);
                 if (s.getXp() > startXp) {
-                    Log.debug("[Ending]: Gained " + (s.getXp() - startXp) + " " + s + " exp");
+                    String str =
+                            String.format("Script Ended. Gained %s %s xp (%s /hr)",
+                                    Utils.addCommaToNum((s.getXp() - startXp)), s,
+                                    Utils.addCommaToNum(PaintUtil.getXpHr(s, startXp, Vars.get().startTime)));
+                    Log.info(str);
                 }
             }
-            Log.debug("[Ending]: Runtime " +
+            Log.info("[Ending]: Runtime " +
                     Utils.getRuntimeString(System.currentTimeMillis() - Vars.get().startTime));
 
         });
@@ -118,30 +115,6 @@ public class cRunecrafting extends CassScript implements TribotScript {
         ScriptListening.addPauseListener(() -> Vars.get().safetyTimer.reset());
     }
 
-    private static String getXpGainedString() {
-        int currentLvl = Skill.RUNECRAFT.getActualLevel();
-        int gainedLvl = currentLvl - Vars.get().startRcLevel;
-        int gainedXp = Skill.RUNECRAFT.getXp() - Vars.get().startRcXp;
 
-        double timeRan = System.currentTimeMillis() - Vars.get().startTime;
-        double timeRanMin = (timeRan / 3600000);
-
-        int xpHr = (int) (gainedXp / timeRanMin);
-        long xpToLevel1 = Skill.RUNECRAFT.getCurrentXpToNextLevel();
-        long ttl = (long) (xpToLevel1 / ((gainedXp / timeRan)));
-
-
-        if (gainedLvl > 0) {
-            return "[" + currentLvl + " (+" + gainedLvl + ")]: "
-                    + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                    "|| TNL: "
-                    + Utils.getRuntimeString(ttl);
-        } else {
-            return "[" + currentLvl + "]: "
-                    + Utils.addCommaToNum(gainedXp) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                    "|| TNL: "
-                    + Utils.getRuntimeString(ttl);
-        }
-    }
 
 }

@@ -4,8 +4,11 @@ import dax.api_lib.models.RunescapeBank;
 import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
-import org.tribot.api2007.types.RSArea;
+import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.Area;
 import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 
@@ -22,7 +25,7 @@ public enum RunecraftItems {
             RunescapeBank.VARROCK_EAST),
     FIRE_RUNE(14, 19, 7, Const.FIRE_ALTAR_AREA,
             ItemID.FIRE_TIARA, "Ring of dueling", RunescapeBank.CASTLE_WARS),
-    STEAM_RUNE(19, 99, 9.3, Const.FIRE_ALTAR_AREA,
+    STEAM_RUNE(19, Vars.get().endRcLevel, 9.3, Const.FIRE_ALTAR_AREA,
             ItemID.FIRE_TIARA, "Ring of dueling",
             ItemID.WATER_TALISMAN, ItemID.WATER_RUNE, true, RunescapeBank.CASTLE_WARS);
     // LAVA_RUNE;
@@ -49,7 +52,7 @@ public enum RunecraftItems {
     private int tiaraId;
 
     @Getter
-    private RSArea altarArea;
+    private Area altarArea;
 
     @Getter
     private String chargedTeleItemBaseName;
@@ -72,7 +75,7 @@ public enum RunecraftItems {
 
     }
 
-    RunecraftItems(int min, int max, double xp, RSArea area, int tiaraId, String chargedItem, RunescapeBank bank) {
+    RunecraftItems(int min, int max, double xp, Area area, int tiaraId, String chargedItem, RunescapeBank bank) {
         this.maxLevel = min;
         this.maxLevel = max;
         this.xpPer = xp;
@@ -82,7 +85,7 @@ public enum RunecraftItems {
         this.bank = bank;
     }
 
-    RunecraftItems(int min, int max, double xp, RSArea area, int tiaraId, int teleportId, RunescapeBank bank) {
+    RunecraftItems(int min, int max, double xp, Area area, int tiaraId, int teleportId, RunescapeBank bank) {
         this.maxLevel = min;
         this.maxLevel = max;
         this.xpPer = xp;
@@ -92,7 +95,7 @@ public enum RunecraftItems {
         this.bank = bank;
     }
 
-    RunecraftItems(int min, int max, double xp, RSArea area, int tiaraId,
+    RunecraftItems(int min, int max, double xp, Area area, int tiaraId,
                    String chargedItem, int additionalTalisman, int combiningRuneId, boolean usingBindingNecklace,
                    RunescapeBank bank) {
         this.maxLevel = min;
@@ -130,7 +133,7 @@ public enum RunecraftItems {
         return Optional.empty();
     }
 
-    //TODO check this division numbers
+    //TODO check these division numbers work well for restocking
     public static ArrayList<ItemReq> getRequiredItemList() {
         ArrayList<ItemReq> i = new ArrayList<>();
         Optional<RunecraftItems> currentItem = getCurrentItem();
@@ -144,7 +147,8 @@ public enum RunecraftItems {
             }
 
             //add tiara
-            currentItem.ifPresent(item -> i.add(new ItemReq(item.getTiaraId(), 1, true, true)));
+            currentItem.ifPresent(item ->
+                    i.add(new ItemReq(item.getTiaraId(), 1, true, true)));
 
             if (currentItem.get().getAdditionalTalisman() > 0)
                 currentItem.ifPresent(item -> i.add(new ItemReq(item.getAdditionalTalisman(),
@@ -156,6 +160,7 @@ public enum RunecraftItems {
 
             currentItem.ifPresent(item -> i.add(new ItemReq(ItemID.PURE_ESSENCE,
                     item.determineResourcesToNextItem())));
+
             //add ROD or tele tab
             if (currentItem.get().equals(RunecraftItems.FIRE_RUNE) ||
                     currentItem.get().equals(RunecraftItems.STEAM_RUNE)) {
@@ -165,14 +170,16 @@ public enum RunecraftItems {
                 currentItem.ifPresent(item -> i.add(new ItemReq(item.getTeleportId(),
                         item.determineResourcesToNextItem() / 20)));
             }
-
-            General.println("[RunecraftItems]: We need " + getCurrentItem().get().determineResourcesToNextItem() +
-                    " items", Color.BLACK);
-
-            General.println("[RunecraftItems]: We need " + i.size() + " sized list for runecraft items", Color.BLACK);
+            getCurrentItem().ifPresent(item ->
+                    Log.info(String.format("[RunecraftItems]: We need %s items", item.determineResourcesToNextItem())));
         }
+        //TODO comment out later, this is for debugging
+        Log.info("[RunecraftItems]: We need " + i.size() + " sized list for runecraft items");
         return i;
     }
 
+    public boolean hasAdditionalTalisman(){
+        return this.additionalTalisman == -1 || Inventory.contains(this.additionalTalisman);
+    }
 
 }

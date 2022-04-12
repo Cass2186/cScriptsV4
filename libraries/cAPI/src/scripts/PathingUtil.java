@@ -6,6 +6,7 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.WalkerEngine;
 import dax.walker_engine.WalkingCondition;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import lombok.val;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
@@ -17,17 +18,19 @@ import org.tribot.api2007.util.DPathNavigator;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import org.tribot.script.sdk.walking.WalkState;
+import org.tribot.script.sdk.walking.adapter.GlobalWalkerAdapter;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class PathingUtil {
@@ -555,6 +558,49 @@ public class PathingUtil {
 
         return false;
     }
+
+    public static boolean walkToArea(Area area, boolean abc2Sleep) {
+        checkRun();
+        int sleepMin = Game.isRunOn() ? 8000 : 15000;
+        int sleepMax = Game.isRunOn() ? 15000 : 20000;
+        long currentTime = System.currentTimeMillis();
+
+        setDaxPref();
+        if (!area.contains(MyPlayer.getPosition())) {
+            Log.debug("[PathingUtil]: Walking to area. ABC2 Sleep? " + abc2Sleep);
+            for (int i = 0; i < 3; i++) {
+                Optional<LocalTile> targetTile = Query.tiles().inArea(area).isReachable()
+                        .sortedByPathDistance()
+                        .findClosest();
+
+                // try walking to center tile first, if it fails, use a random tile
+                if (i == 0)
+                    targetTile = Optional.of(area.getCenter().toLocalTile());
+
+                if (targetTile.map(GlobalWalking::walkTo).orElse(false)) {
+                    val finalTargetTile = targetTile;
+                    currentTime = System.currentTimeMillis();
+                    if (Waiting.waitUntil(1500, 25, MyPlayer::isMoving) &&
+                            Waiting.waitUntil(Utils.random(sleepMin, sleepMax), 250, () ->
+                                    finalTargetTile.get().distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) ||
+                                            area.contains(MyPlayer.getPosition()) || !MyPlayer.isMoving()))
+                        return true;
+
+                    if (abc2Sleep && area.contains(MyPlayer.getPosition()))
+                        Utils.abc2ReactionSleep(currentTime);
+
+                } else {
+                    General.println("[PathingUtil]: Failed to generate a path, waiting 2-3s and trying again.");
+                    Waiting.waitUniform(2000, 3000);
+                }
+            }
+
+        } else // already in area
+            return area.contains(MyPlayer.getPosition());
+
+        return false;
+    }
+
 
     public static boolean walkToArea(RSArea area, int attempts, boolean abc2Sleep) {
         checkRun();

@@ -1,23 +1,17 @@
 package scripts.Tasks;
 
-import org.tribot.script.sdk.GameTab;
-import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.*;
 import org.tribot.api.General;
-import org.tribot.api2007.*;
-import org.tribot.api2007.ext.Filters;
+
 import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Skill;
-import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
-import scripts.Data.Const;
 import scripts.Data.Vars;
 import scripts.*;
+import scripts.RcApi.RcUtils;
 
 
 import java.awt.event.KeyEvent;
@@ -51,8 +45,8 @@ public class CraftRunes implements Task {
 
 
             if (altar.map(a -> a.interact("Craft-rune")).orElse(false)) {
-                Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 9000, 15000);
-                return Timer.waitCondition(() -> Player.getAnimation() == -1, 3000, 5000);
+                Timer.slowWaitCondition(() -> MyPlayer.getAnimation() != -1, 9000, 15000);
+                return Timer.waitCondition(() -> MyPlayer.getAnimation() == -1, 3000, 5000);
             }
         }
         return false;
@@ -60,13 +54,9 @@ public class CraftRunes implements Task {
 
     public void craftRunesAltar(RSArea altarTile) {
         General.sleep(500);
-        RSObject[] altar = Objects.findNearest(30, "Altar");
-        if (altar.length > 0) {
-            Walking.blindWalkTo(altarTile.getRandomTile());
-            Timer.waitCondition(() -> altar[0].isClickable(), 7000, 12000);
-            if (Utils.clickObject("Altar", "Craft-rune", false)) {
-                Timer.abc2WaitCondition(() -> !Inventory.contains(ItemID.PURE_ESSENCE), 9000, 15000);
-            }
+        Optional<GameObject> altar = RcUtils.getAltar();
+        if (altar.map(a->a.interact("Craft-rune")).orElse(false)){
+            Timer.abc2WaitCondition(() -> !Inventory.contains(ItemID.PURE_ESSENCE), 9000, 15000);
         }
     }
 
@@ -87,16 +77,9 @@ public class CraftRunes implements Task {
         return false;
     }
 
-    private Optional<GameObject> getAltar() {
-       return  Query.gameObjects()
-                .nameContains("Altar")
-                .actionNotContains("Pray")
-                .actionContains("Craft-rune")
-                .findClosestByPathDistance();
-    }
 
     public boolean craftCombinationRune(int runeId) {
-        Optional<GameObject> altar = getAltar();
+        Optional<GameObject> altar = RcUtils.getAltar();
 
         if (altar.isPresent()) {
 
@@ -125,8 +108,8 @@ public class CraftRunes implements Task {
 
                 expTimer.reset();
                 if (Vars.get().abyssCrafting) {
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 9000, 15000);
-                    return Timer.waitCondition(() -> Player.getAnimation() == -1, 9000, 15000);
+                    Timer.waitCondition(() -> MyPlayer.getAnimation() != -1, 9000, 15000);
+                    return Timer.waitCondition(() -> MyPlayer.getAnimation() == -1, 9000, 15000);
                 }
                 return Timer.waitCondition(() -> !Inventory.contains(ItemID.PURE_ESSENCE), 9000, 15000);
             }
@@ -135,7 +118,7 @@ public class CraftRunes implements Task {
     }
 
     public void craftRunes() {
-        Optional<GameObject> altar = getAltar();
+        Optional<GameObject> altar = RcUtils.getAltar();
 
         if (altar.isPresent()) {
             for (int i = 0; i < 2; i++) {
@@ -145,8 +128,8 @@ public class CraftRunes implements Task {
                 if (altar.map(a -> a.interact("Craft-rune")).orElse(false)) {
                     expTimer.reset();
                     if (Vars.get().abyssCrafting || Vars.get().zanarisCrafting) {
-                        if (Timer.waitCondition(() -> Player.getAnimation() != -1, 9000, 15000))
-                            Timer.waitCondition(() -> Player.getAnimation() == -1, 9000, 15000);
+                        if (Timer.waitCondition(() -> MyPlayer.getAnimation() != -1, 9000, 13000))
+                            Timer.waitCondition(() -> MyPlayer.getAnimation() == -1, 4000, 6000);
                     } else
                         Timer.waitCondition(() -> !Inventory.contains(ItemID.PURE_ESSENCE), 9000, 15000);
                 }
@@ -162,8 +145,6 @@ public class CraftRunes implements Task {
     }
 
     public static RSArea FIRE_ALTAR_TILE = new RSArea(new RSTile(2583, 4840, 0), 3);
-
-
 
 
     public static boolean castImbue() {

@@ -1,12 +1,12 @@
 package scripts.Tasks;
 
-import org.tribot.api2007.Equipment;
 import org.tribot.script.sdk.*;
 import dax.api_lib.models.RunescapeBank;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.GameTab;
 import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.query.Query;
@@ -14,6 +14,7 @@ import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
 import org.tribot.script.sdk.tasks.EquipmentReq;
+import org.tribot.script.sdk.types.EquipmentItem;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Widget;
@@ -22,6 +23,7 @@ import scripts.*;
 import scripts.Data.Const;
 import scripts.Data.RunecraftItems;
 
+import java.util.Arrays;
 import java.util.List;
 
 import scripts.Data.Vars;
@@ -90,45 +92,45 @@ public class RunecraftBank implements Task {
 
     public void progressiveBank() {
         Optional<RunecraftItems> itemOptional = RunecraftItems.getCurrentItem();
-        if (itemOptional.isPresent()) {
-            PathingUtil.walkToTile(itemOptional.get().getBank().getPosition());
+        if (!Bank.isOpen() && !Bank.isNearby())
+            itemOptional.map(i -> PathingUtil.walkToTile(i.getBank().getPosition()));
 
-            BankTask task = getBankTaskFromComboRune(itemOptional.get());
+        BankTask task = itemOptional.map(this::getBankTaskFromComboRune).orElseThrow();
 
-            Optional<BankTaskError> err = task.execute();
-            err.ifPresent(e -> Log.error("Banking error " + e.toString()));
-            //if (err.isPresent())
-            //   BuyItems.itemsToBuy = BuyItems.populateBuyList(RunecraftItems.getRequiredItemList());
-        }
-
+        Optional<BankTaskError> err = task.execute();
+        err.ifPresent(e -> Log.error("Banking error " + e.toString()));
+        if (err.isPresent())
+            throw new IllegalStateException("Missing items");
+        //   BuyItems.itemsToBuy = BuyItems.populateBuyList(RunecraftItems.getRequiredItemList());
     }
 
     public boolean getAndEquip(int item, String cmd) {
-        if (!Equipment.isEquipped(item)) {
+        if (!Equipment.contains(item)) {
             BankManager.withdraw(1, true, item);
             List<InventoryItem> itm = Query.inventory().idEquals(item).toList();
             if (itm.size() > 0 && itm.get(0).click(cmd))
-                return Timer.waitCondition(() -> Equipment.isEquipped(item), 2500, 3500);
+                return Timer.waitCondition(() -> Equipment.contains(item), 2500, 3500);
         }
-        return Equipment.isEquipped(item);
+        return Equipment.contains(item);
     }
 
     public boolean getAndEquip(int[] item, String cmd) {
-        if (!Equipment.isEquipped(item)) {
+        if (!Equipment.contains(item)) {
             BankManager.withdrawArray(item, 1);
             List<InventoryItem> itm = Query.inventory().idEquals(item).toList();
             if (itm.size() > 0 && itm.get(0).click(cmd))
-                return Timer.waitCondition(() -> Equipment.isEquipped(item) ||
+                return Timer.waitCondition(() -> Equipment.contains(item) ||
                         Inventory.contains(item), 1500, 3000);
 
         }
-        return Equipment.isEquipped(item);
+        return Equipment.contains(item);
     }
 
 
     public void rodFailSafe() {
-        RSItem[] item = Equipment.find(Filters.Items.nameContains("dueling(1)"));
-        if (item.length > 0) {
+        Optional<EquipmentItem> item = Query.equipment()
+                .nameContains("dueling(1)").findFirst();
+        if (item.isPresent()) {
             General.println("[Debug]: ROD(1) failsafe detected");
             if (getAndEquip(RING_OF_DUELING, "Wear"))
                 BankManager.depositAll(true);
@@ -136,17 +138,7 @@ public class RunecraftBank implements Task {
     }
 
     public boolean itemInInv(int... items) {
-        for (int i : items) {
-            String name = RSItemDefinition.get(i).getName();
-            if (!Inventory.contains(i)) {
-                Log.error("Missing an inventory item: " + name);
-                return false;
-            } else {
-                //General.println("[Debug]: We have " + name);
-            }
-        }
-
-        return true;
+        return Arrays.stream(items).allMatch(Inventory::contains);
     }
 
     public void goToCWBank() {
@@ -158,16 +150,20 @@ public class RunecraftBank implements Task {
 
             closeLootInterface();
             if (rodTele("Castle Wars")) {
-                Timer.waitCondition(() -> Query.gameObjects()
+                if(Waiting.waitUntil(5000, 75, () -> Bank.isNearby()
+                       /* Query.gameObjects()
                         .nameContains("Bank chest")
-                        .isAny(), 3000, 5000);
+                        .isAny()*/))
+                    Log.warn("AT BANK");
+                else
+                    Log.warn("Failed at BANK");
 
                 Optional<GameObject> chest = Query.gameObjects()
                         .nameContains("Bank chest")
                         .findBestInteractable();
 
                 if (chest.map(c -> c.interact("Bank")).orElse(false)) {
-                    Timer.waitCondition(Bank::isOpen, 5000, 7000);
+                    Waiting.waitUntil(7000, 120, Bank::isOpen);
                     return;
                 }
             }
@@ -268,7 +264,7 @@ public class RunecraftBank implements Task {
             if (!Inventory.isFull())
                 BankManager.withdraw(0, true, ItemID.PURE_ESSENCE);
 
-            close(true);
+            BankManager.close(true);
 
             Utils.hoverXp(Skills.SKILLS.RUNECRAFTING, 5);
             if (!checkItems()) {
@@ -278,8 +274,8 @@ public class RunecraftBank implements Task {
     }
 
     public boolean checkItems() {
-        if (!Equipment.isEquipped(ItemID.BINDING_NECKLACE)
-                || !Equipment.isEquipped(RING_OF_DUELING)) {
+        if (!Equipment.contains(ItemID.BINDING_NECKLACE)
+                || !Equipment.contains(RING_OF_DUELING)) {
             General.println("[Debug]: Missing equipped binding or dueling, ending");
             return false;
         } else if (!Vars.get().lava) {
@@ -308,127 +304,6 @@ public class RunecraftBank implements Task {
     }
 
 
-  /*  public void getAbyssItems() {
-        //GoToAbyss.gloryTeleport("Edgeville");
-        if (!itemInInv(ItemID.PURE_ESSENCE)) {
-
-            if (Vars.get().zanarisCrafting) {
-                RSObject[] altar = Objects.findNearest(30, Filters.Objects.nameContains("Altar").
-                        and(Filters.Objects.actionsNotContains("Pray")));
-                if (altar.length > 0) {
-                    Utilities.blindWalkToTile(COSMIC_PORTAL_TILE);
-                    if (Utilities.clickObject("Portal", "Use")) {
-                        Timer.waitCondition(() -> Objects.findNearest(30, Filters.Objects.nameContains("Altar")).length == 0, 5000, 7000);
-                        Utils.shortSleep();
-                    }
-                }
-                General.println("[Debug]: Going to Zanaris bank");
-                PathingUtil.walkToArea(ItemID.ZANARIS_BANK, false);
-            }
-
-            RSItem[] p = Inventory.find(Filters.Items.nameContains("pouch").and(Filters.Items.actionsContains("Fill")));
-
-            if (!tmr.isRunning() && Vars.get().shouldAfk) {
-                Utils.afk(General.random(15000, 90000));
-                tmr.reset();
-            }
-            if (!Banking.isBankScreenOpen())
-                open(true);
-
-            if (Vars.get().usingLunarImbue && p.length > 0) {
-                depositAllExcept(true, ItemID.DEGRADED_LARGE_POUCH, ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
-                Timer.waitCondition(() -> Inventory.getAll().length < 4, 1500, 2000);
-            }
-
-            while (Combat.getHP() + 6 < Skills.getActualLevel(Skills.SKILLS.HITPOINTS)) {
-                General.println("[Bank]: Eating food");
-                withdraw(1, true, ItemID.MONKFISH);
-                EatUtil.eatFood();
-                General.sleep(100);
-            }
-
-
-            if (!Vars.get().zanarisCrafting && getAndEquip(ItemID.AMULET_OF_GLORY, "Wear"))
-                depositAllExcept(true, ItemID.DEGRADED_LARGE_POUCH, ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
-
-            if (Vars.get().useStamina && Utils.getVarBitValue(25) == 0 || Game.getRunEnergy() < General.random(75, 80)) {
-                getAndEquip(ItemID.STAMINA_POTION, "Drink");
-                //drinks twice if needed
-                if (Game.getRunEnergy() < 60)
-                    getAndEquip(ItemID.STAMINA_POTION, "Drink");
-                depositAllExcept(true, ItemID.DEGRADED_LARGE_POUCH, ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2]);
-            }
-
-            if (!Equipment.isEquipped(Filters.Items.nameContains("axe")) && !Vars.get().zanarisCrafting)
-                getAndEquip(ItemID.RUNE_AXE, "Wield");
-
-            if (!Vars.get().zanarisCrafting)
-                withdraw(1, true, ItemID.MONKFISH);
-
-            RSItem[] invPouch = Inventory.find(ItemID.ALL_POUCHES);
-            if (invPouch.length < 3) {
-                // gets pouches in case we deposited them somehow
-                withdraw(0, true, ItemID.ALL_POUCHES[0]);
-                withdraw(0, true, ItemID.ALL_POUCHES[1]);
-                withdraw(0, true, ItemID.ALL_POUCHES[2]);
-            }
-
-
-            // get essence
-            withdraw(0, true, ItemID.PURE_ESSENCE);
-
-            // fill pouches (if we have any)
-            for (RSItem pouch : p) {
-                if (pouch.click("Fill"))
-                    AntiBan.waitItemInteractionDelay();
-            }
-
-            Utils.shortSleep();
-
-            if (!Inventory.isFull())
-                withdraw(0, true, ItemID.PURE_ESSENCE);
-
-            Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
-            General.sleep(General.random(300, 500));
-            close(true);
-
-            Utils.hoverXp(Skills.SKILLS.RUNECRAFTING, 5);
-        }
-    }
-
-
-    public void getItemsRegularRunes(int tiara, boolean useStamina, boolean useTeleTab, int tabId, RunescapeBank bank) {
-        if (Inventory.find(ItemID.PURE_ESSENCE).length < 1 || !Equipment.isEquipped(tiara)) {
-            General.println("[Debug]: Getting Items from Bank: " + bank.toString());
-            PathingUtil.walkToTile(bank.getPosition(), 2, true);
-
-            open(true);
-
-            if (useStamina)
-                depositAllExcept(true, tabId, ItemID.STAMINA_POTION[0], ItemID.STAMINA_POTION[1], ItemID.STAMINA_POTION[2], ItemID.STAMINA_POTION[3]);
-            else
-                depositAllExcept(true, tabId);
-
-            if (!Equipment.isEquipped(tiara)) {
-                withdraw(1, true, tiara);
-                Utils.equipItem(tiara);
-            }
-            if (Vars.get().useStamina && Inventory.find(Filters.Items.nameContains("Stamina")).length == 0)
-                withdrawArray(ItemID.STAMINA_POTION, 1);
-
-            if (useTeleTab)
-                withdraw(1, true, tabId);
-
-            withdraw(0, true, ItemID.PURE_ESSENCE);
-            General.sleep(General.random(250, 750));
-            close(true);
-        }
-    }*/
-
-    public static boolean close(boolean shouldWait) {
-        return !Bank.close() || !shouldWait || Waiting.waitUntil(2000, Bank::isOpen);
-    }
-
     public static boolean rodTele(String location) {
         Optional<InventoryItem> rod = Query.inventory()
                 .nameContains("Ring of dueling")
@@ -446,13 +321,14 @@ public class RunecraftBank implements Task {
 
 
     public static boolean gloryTele(String location) {
-        RSItem[] glor = Equipment.find(ItemID.AMULET_OF_GLORY);
-        if (glor.length > 0) {
-            for (int i = 0; i < 3; i++) {
-                General.println("[Teleport Manager]: Going to " + location);
-                if (glor[0].click(location))
-                    return Const.waitCondition(() -> !CraftRunes.atAltar(), 6000, 8000);
-            }
+        Optional<EquipmentItem> equippedGlor = Query.equipment()
+                .idEquals(ItemID.AMULET_OF_GLORY).findFirst();
+
+        for (int i = 0; i < 3; i++) {
+            General.println("[Teleport Manager]: Going to " + location);
+            if (equippedGlor.map(g -> g.click(location)).orElse(false))
+                return Waiting.waitUntil(8000, 300, () -> !CraftRunes.atAltar());
+
         }
 
         return false;
@@ -470,12 +346,12 @@ public class RunecraftBank implements Task {
 
 
     public void stuckFailSafe() {
-        //  if (!Vars\
-        //.get().zanarisCrafting) {
-        RSItem[] eqp = Equipment.find(Filters.Items.nameContains("dueling"));
+        Optional<EquipmentItem> equippedRing = Query.equipment()
+                .nameContains("dueling").findFirst();
+
         RSObject[] portal = Objects.findNearest(30, Filters.Objects.nameContains("Portal"));
         RSObject[] altar = Objects.findNearest(20, Filters.Objects.nameContains("Altar"));
-        if (eqp.length == 0 && portal.length > 0 && altar.length > 0) {
+        if (equippedRing.isEmpty() && portal.length > 0 && altar.length > 0) {
             Log.error("[Debug]: We appear to be stuck, leaving via portal");
             if (Utils.clickObject(portal[0], "Use", true)) {
                 Timer.waitCondition(() -> Objects.findNearest(20, Filters.Objects.nameContains("Altar")).length == 0,
@@ -535,11 +411,11 @@ public class RunecraftBank implements Task {
         //   } else
         if (getLevel() < 14) {
             return !Inventory.contains(ItemID.PURE_ESSENCE) ||
-                    !Equipment.isEquipped(ItemID.EARTH_TIARA);
+                    !Equipment.contains(ItemID.EARTH_TIARA);
 
         } else if (getLevel() < 19) {
             return (!Inventory.contains(ItemID.PURE_ESSENCE)
-                    || !Equipment.isEquipped(ItemID.FIRE_TIARA));
+                    || !Equipment.contains(ItemID.FIRE_TIARA));
 
         } else if (Vars.get().lava && !Vars.get().abyssCrafting && !Vars.get().usingLunarImbue) {
             return !itemInInv(ItemID.EARTH_TALISMAN, ItemID.EARTH_RUNE, ItemID.PURE_ESSENCE);
@@ -564,7 +440,6 @@ public class RunecraftBank implements Task {
     @Override
     public void execute() {
         closeLootInterface();
-        //stuckFailSafe();
         //TODO implement combo runes bank (progressive bank doesn't handle pouches)
         progressiveBank();
     }

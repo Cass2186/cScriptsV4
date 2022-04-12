@@ -42,6 +42,7 @@ public class Vars {
     public int skillSwitchMin = 12000000; //45min //1600000;// ~26m
     public int skillSwitchMax = 24000000;
     public Timer skillSwitchTimer = new Timer(General.random(skillSwitchMin, skillSwitchMax)); //~26-45m //General.random(2400000, 4200000)
+    public long startTime = System.currentTimeMillis();
 
     public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
 

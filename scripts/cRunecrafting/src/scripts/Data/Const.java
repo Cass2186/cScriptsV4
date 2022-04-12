@@ -8,6 +8,7 @@ import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.ItemID;
 import scripts.Utils;
@@ -47,8 +48,8 @@ public class Const {
     public static String imbueOn = "You are charged to combine runes";
     public static String imbueOff = "charge has ended";
     public static RSTile COSMIC_PORTAL_TILE = new RSTile(2122, 4833, 0);
-    public static RSArea EARTH_ALTAR_AREA = new RSArea(new RSTile(3300, 3475, 0), new RSTile(3303, 3472, 0));
-    public static RSArea FIRE_ALTAR_AREA = new RSArea(new RSTile(3315, 3251, 0), new RSTile(3311, 3255, 0));
+    public static Area EARTH_ALTAR_AREA =  Area.fromRectangle(new WorldTile(3300, 3475, 0), new WorldTile(3303, 3472, 0));
+    public static Area FIRE_ALTAR_AREA = Area.fromRectangle(new WorldTile(3315, 3251, 0), new WorldTile(3311, 3255, 0));
     public static RSArea FIRE_ALTAR_TILE = new RSArea(new RSTile(2583, 4840, 0), 3);
     public static RSArea CASTLE_WARS_AREA = new RSArea(new RSTile(2442, 3084, 0), 1);
     public static RSArea ZANARIS_BANK = new RSArea(

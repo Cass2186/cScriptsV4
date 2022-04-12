@@ -9,6 +9,7 @@ import scripts.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class Vars {
     private static Vars vars;
@@ -63,10 +64,16 @@ public class Vars {
     public Timer safetyTimer = new Timer(150000);
 
     public HashMap<Skill, Integer> skillStartXpMap = new HashMap<>();
+
+    //TODO add GUI and allow manual ending level (stored here)
     public int endRcLevel = 77;
+
     public int startRcLevel = 1;
     public int startRcXp = 1;
     public int lastIterRcXp = 1;
+
+    //TODO add GUI and allow selection (stored here)
+    public Optional<RunecraftItems> currentRune = Optional.empty();
 
     public int avgWaitLoopSleep = 200;
     public int sdWaitLoopSleep = 40;
@@ -96,6 +103,8 @@ public class Vars {
     public boolean zanarisCrafting = false;
 
     public boolean mudRuneCrafting = false;
+
+
 
     public boolean useRingOfElements = Query.inventory()
             .idEquals(ItemID.CHARGED_RING_OF_ELEMENTS)
