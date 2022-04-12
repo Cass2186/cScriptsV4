@@ -3,6 +3,7 @@ package scripts.Tasks.Agility.Tasks.SeersCourse;
 
 import org.tribot.api2007.Player;
 import org.tribot.api2007.ext.Filters;
+import org.tribot.script.sdk.Combat;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.AgilityAreas;
@@ -68,7 +69,7 @@ public class Seers implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
-                AgilUtils.isWithinLevelRange(60, 70);
+                AgilUtils.isWithinLevelRange(60, 70) && !Combat.isInWilderness();
     }
 
     @Override

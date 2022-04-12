@@ -272,5 +272,83 @@ public class AgilityAreas {
     public static RSArea RELLEKA_OBS_6_AREA = new RSArea(new RSTile(2662, 3665, 3), new RSTile(2655, 3685, 3));
     public static RSArea RELLEKA_FINISH_AREA = new RSArea(new RSTile(2654, 3671, 0), new RSTile(2647, 3681, 0));
 
+    /**
+     * WILDERNESS
+     */
 
+    public static   RSArea WILDERNESS_START_AREA  = new RSArea(
+            new RSTile[] {
+                    new RSTile(3003, 3939, 0),
+                    new RSTile(2999, 3934, 0),
+                    new RSTile(2988, 3934, 0),
+                    new RSTile(2991, 3931, 0),
+                    new RSTile(3004, 3931, 0),
+                    new RSTile(3007, 3934, 0),
+                    new RSTile(3007, 3939, 0)
+            }
+    );
+    public static   RSArea AFTER_OBSTACLE_PIPE_WILDERNESS = new RSArea(
+            new RSTile[] {
+                    new RSTile(3003, 3950, 0),
+                    new RSTile(3006, 3950, 0),
+                    new RSTile(3007, 3947, 0),
+                    new RSTile(3009, 3950, 0),
+                    new RSTile(3009, 3952, 0),
+                    new RSTile(3010, 3953, 0),
+                    new RSTile(3010, 3954, 0),
+                    new RSTile(3007, 3953, 0),
+                    new RSTile(3003, 3953, 0)
+            }
+    );
+
+    public static   RSArea AFTER_ROPE_SWING_WILDERNESS = new RSArea(
+            new RSTile[] {
+                    new RSTile(3003, 3957, 0),
+                    new RSTile(3001, 3959, 0),
+                    new RSTile(3002, 3961, 0),
+                    new RSTile(3002, 3963, 0),
+                    new RSTile(3000, 3964, 0),
+                    new RSTile(2998, 3964, 0),
+                    new RSTile(2998, 3967, 0),
+                    new RSTile(3005, 3967, 0),
+                    new RSTile(3008, 3964, 0),
+                    new RSTile(3008, 3961, 0),
+                    new RSTile(3010, 3959, 0),
+                    new RSTile(3010, 3958, 0),
+                    new RSTile(3003, 3958, 0)
+            }
+    );
+
+    public static   RSArea AFTER_STEPPING_STONES_WILDERNESS  = new RSArea(
+            new RSTile[] {
+                    new RSTile(2998, 3967, 0),
+                    new RSTile(2998, 3964, 0),
+                    new RSTile(2997, 3962, 0),
+                    new RSTile(2997, 3961, 0),
+                    new RSTile(2997, 3959, 0),
+                    new RSTile(2998, 3958, 0),
+                    new RSTile(3002, 3958, 0),
+                    new RSTile(3003, 3957, 0),
+                    new RSTile(3003, 3944, 0),
+                    new RSTile(3002, 3943, 0),
+                    new RSTile(3001, 3943, 0),
+                    new RSTile(3001, 3949, 0),
+                    new RSTile(2994, 3949, 0),
+                    new RSTile(2990, 3953, 0),
+                    new RSTile(2990, 3964, 0)
+            }
+    );
+    public static   RSArea FAIL_AREA_UNDERGROUND_WILDERNESS  = new RSArea(new RSTile(3008, 10365, 0), new RSTile(2992, 10340, 0));
+    public static   RSArea AFTER_LOG_WILDERNESS  = new RSArea(
+            new RSTile[] {
+                    new RSTile(2996, 3949, 0),
+                    new RSTile(2996, 3943, 0),
+                    new RSTile(3002, 3943, 0),
+                    new RSTile(3003, 3939, 0),
+                    new RSTile(2988, 3939, 0),
+                    new RSTile(2988, 3946, 0),
+                    new RSTile(2991, 3946, 0),
+                    new RSTile(2993, 3949, 0)
+            }
+    );
 }

@@ -9,6 +9,7 @@ public enum COURSES {
     VARROCK("Varrock"),
     CANIFIS("Canifis"),
     FALADOR("Falador"),
+    WILDERNESS("Wilderness"),
     SEERS_VILLAGE("Seers Village"),
     POLLNIVEACH("Pollnivneach"),
     RELLEKA("Relleka");

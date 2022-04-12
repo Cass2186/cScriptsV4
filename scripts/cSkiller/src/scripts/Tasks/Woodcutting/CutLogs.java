@@ -62,6 +62,10 @@ public class CutLogs implements Task {
             }
         } else if (PathingUtil.localNavigation(area.getRandomTile()))
             PathingUtil.movementIdle();
+        
+        else if (PathingUtil.walkToArea(area)) {
+            PathingUtil.movementIdle();
+        }
     }
 
     public void defaultProgressive() {
@@ -82,7 +86,7 @@ public class CutLogs implements Task {
         }
     }
 
-    public void progressive(){
+    public void progressive() {
         WoodCuttingConst.equipAxe();
         checkAxe();
 
@@ -90,7 +94,7 @@ public class CutLogs implements Task {
                 .filter(WcLocations::isWithinLevelRange)
                 .max(Comparator.comparingInt(WcLocations::getMinLevel));
 
-        wcOptional.ifPresent(w->chopTree(w.getArea(), w.getTreeName()));
+        wcOptional.ifPresent(w -> chopTree(w.getArea(), w.getTreeName()));
 
     }
 
@@ -162,12 +166,12 @@ public class CutLogs implements Task {
 
     @Override
     public boolean validate() {
-        boolean hasInvAxe =   Query.inventory()
+        boolean hasInvAxe = Query.inventory()
                 .nameContains("axe")
                 .nameNotContains("pickaxe")
                 .isAny();
 
-        boolean hasEquippedAxe =   Query.equipment()
+        boolean hasEquippedAxe = Query.equipment()
                 .nameContains("axe")
                 .nameNotContains("pickaxe")
                 .isAny();

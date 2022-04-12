@@ -507,10 +507,10 @@
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <ComboBox disable="true" layoutX="23.0" layoutY="44.0" prefWidth="150.0" promptText="Regular Tree Area" />
-                                                <ComboBox disable="true" layoutX="23.0" layoutY="83.0" prefWidth="150.0" promptText="Oak Tree Area" />
-                                                <ComboBox disable="true" layoutX="23.0" layoutY="124.0" prefWidth="150.0" promptText="Willow Tree Area" />
-                                                <ComboBox disable="true" layoutX="23.0" layoutY="166.0" prefWidth="150.0" promptText="Maple Tree Area" />
+                                                <ComboBox fx:id="regularTreeAreaBox" disable="true" layoutX="23.0" layoutY="44.0" prefWidth="150.0" promptText="Regular Tree Area" />
+                                                <ComboBox fx:id="oakTreeAreaBox" disable="true" layoutX="23.0" layoutY="83.0" prefWidth="150.0" promptText="Oak Tree Area" />
+                                                <ComboBox fx:id="willowTreeAreaBox" disable="true" layoutX="23.0" layoutY="124.0" prefWidth="150.0" promptText="Willow Tree Area" />
+                                                <ComboBox fx:id="mapleTreeAreaBox" disable="true" layoutX="23.0" layoutY="166.0" prefWidth="150.0" promptText="Maple Tree Area" />
                                                 <Label layoutX="23.0" layoutY="14.0" text="Tree Areas">
                                                    <font>
                                                       <Font name="System Bold" size="14.0" />

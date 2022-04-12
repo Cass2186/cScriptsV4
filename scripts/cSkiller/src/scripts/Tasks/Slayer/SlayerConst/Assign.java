@@ -403,7 +403,8 @@ public enum Assign {
             .useGearType(GearType.MELEE)),
 
     SCARAB_MAGES(new Builder()
-            //  .inArea(Areas.)
+            // .inArea(Areas.)
+            .nameContains("minions of Scabara") // for gem check
             .nameContains("Scarab mage") //TODO CHECK
             .usePrayerType(PrayerType.MAGIC)
             .useGearType(GearType.RANGED)),

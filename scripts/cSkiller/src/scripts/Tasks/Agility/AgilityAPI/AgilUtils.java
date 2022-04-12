@@ -11,6 +11,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Skill;
 import scripts.Data.AgilityAreas;
 import scripts.Data.Vars;
 import scripts.Tasks.Agility.Data.Const;
@@ -25,7 +26,7 @@ import java.util.Optional;
 
 public class AgilUtils {
 
-    public static boolean isOnAgilityCourse(){
+    public static boolean isOnAgilityCourse() {
         return AgilityAreas.onCanifisCourseReq.check() ||
                 AgilityAreas.onTreeGnomeCourseReq.check() ||
                 AgilityAreas.onDraynorCourseReq.check() ||
@@ -35,19 +36,16 @@ public class AgilUtils {
 
 
     public static Optional<Obstacle> getCurrentObstacle(List<Obstacle> allObstacles) {
-        for (int i = 0; i < allObstacles.size(); i++) {
-            if (allObstacles.get(i).isValidObstacle()) {
-
-                return Optional.ofNullable(allObstacles.get(i));
-            }
-        }
-        return Optional.empty();
+        return allObstacles.stream().filter(Obstacle::isValidObstacle).findFirst();
     }
 
 
     public static boolean isWithinLevelRange(int lower, int upper) {
-        return Skills.getActualLevel(Skills.SKILLS.AGILITY) < upper &&
-                Skills.getActualLevel(Skills.SKILLS.AGILITY) >= lower;
+        return Vars.get().useSummerPieBoost ?
+                (Skill.AGILITY.getActualLevel() < upper &&
+                        (Skill.AGILITY.getActualLevel() + Vars.get().useSummerPieBoostWithinXLevels) >= lower) :
+                (Skill.AGILITY.getActualLevel() < upper &&
+                        Skill.AGILITY.getActualLevel() >= lower);
     }
 
     public static void getMark(RSArea area) {
@@ -61,14 +59,13 @@ public class AgilUtils {
 
             General.println("[Debug]: Getting Mark of Grace", Color.RED);
             if (clickGroundItem(Const.MARK_OF_GRACE_ID))
-               Vars.get().marksCollected++;
+                Vars.get().marksCollected++;
         }
     }
 
     public static boolean clickGroundItem(int ItemID) {
         RSGroundItem[] gItem = GroundItems.find(ItemID);
         if (gItem.length > 0) {
-
 
             if (!gItem[0].isClickable())
                 DaxCamera.focus(gItem[0]);
@@ -91,18 +88,20 @@ public class AgilUtils {
 
 
     public static void eatSummerPie(int minlevel, int allowance) {
-        int min = minlevel + (General.random(0, allowance));
-        RSItem[] pie = Inventory.find(Const.SUMMER_PIE);
-        Inventory.drop(Const.EMPTY_PIE_DISH);
-        Utils.unselectItem();
-        if (Skills.getCurrentLevel(Skills.SKILLS.AGILITY) <= min) {
-            if (pie.length == 0) {
-                General.println("[Debug]: Out of summer pies, ending script");
-                cSkiller.isRunning.set(false);
-            } else {
-                General.println("[Debug]: Eating summer pie");
-                if (pie[0].click("Eat"))
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 1500, 2000);
+        if (Vars.get().useSummerPieBoost) {
+            int min = minlevel + (General.random(0, allowance));
+            RSItem[] pie = Inventory.find(Const.SUMMER_PIE);
+            Inventory.drop(Const.EMPTY_PIE_DISH);
+            Utils.unselectItem();
+            if (Skills.getCurrentLevel(Skills.SKILLS.AGILITY) <= min) {
+                if (pie.length == 0) {
+                    General.println("[Debug]: Out of summer pies, ending script");
+                    cSkiller.isRunning.set(false);
+                } else {
+                    General.println("[Debug]: Eating summer pie");
+                    if (pie[0].click("Eat"))
+                        Timer.waitCondition(() -> Player.getAnimation() != -1, 1500, 2000);
+                }
             }
         }
     }

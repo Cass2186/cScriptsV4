@@ -35,6 +35,8 @@ public enum WcLocations {
         this.maxLevel = maxLevel;
     }
 
+
+
     public boolean isWithinLevelRange() {
         int currentLevel = Skills.getActualLevel(Skills.SKILLS.WOODCUTTING);
         return (currentLevel >= this.minLevel) && (currentLevel < this.maxLevel);

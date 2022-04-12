@@ -32,6 +32,7 @@ import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
+import scripts.Tasks.Agility.Tasks.Wilderness.WildernessAgility;
 import scripts.Tasks.Combat.CrabTasks.EatDrink;
 import scripts.Tasks.Combat.CrabTasks.Fight;
 import scripts.Tasks.Combat.CrabTasks.MoveToCrabTile;
@@ -367,6 +368,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
                 new DefendKnight(),
                 //new AttackPortal(),
                 new EnterBoat(),
+                new WildernessAgility(),
                 new Pollniveach(),
                 new GoToStart(),
                 new GoToTreeGnome(),

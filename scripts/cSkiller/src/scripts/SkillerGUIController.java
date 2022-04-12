@@ -24,6 +24,7 @@ import scripts.Tasks.Fishing.Locations.ShrimpLocations;
 import scripts.Tasks.Magic.Alch;
 import scripts.Tasks.Slayer.SlayerConst.CombatPotions;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
+import scripts.Tasks.Woodcutting.WoodcuttingData.WcLocations;
 import scripts.skillergui.SkillerAbstractGUIController;
 
 import java.net.URL;
@@ -144,8 +145,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @FXML
     @DoNotRename
     private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown, slayerCombatPotionBox,
-            shrimpLocationsDropDown,
-            troutLocationsDropDown;
+            shrimpLocationsDropDown, troutLocationsDropDown, regularTreeAreaBox, oakTreeAreaBox,
+            mapleTreeAreaBox, willowTreeAreaBox;
 
     @FXML
     @DoNotRename
@@ -527,7 +528,13 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
             magicAlchItemBox.getItems().add(item.toString().replace("_", " ")
                     + " (" + item.getProfit() + ")");
         }
-
+        // populate trees
+        mapleTreeAreaBox.getItems().add(WcLocations.SEERS_MAPLES.toString());
+        willowTreeAreaBox.getItems().add(WcLocations.PORT_SARIM_WILLOWS.toString());
+        willowTreeAreaBox.getItems().add(WcLocations.DRAYNOR_WILLOWS.toString());
+        willowTreeAreaBox.getItems().add(WcLocations.SEERS_WILLOWS.toString());
+        regularTreeAreaBox.getItems().add(WcLocations.VARROCK_WEST_TREES.toString());
+        oakTreeAreaBox.getItems().add(WcLocations.VARROCK_WEST_OAKS.toString());
         for (Methods.HERBLORE meth : Methods.HERBLORE.values()) {
 
         }

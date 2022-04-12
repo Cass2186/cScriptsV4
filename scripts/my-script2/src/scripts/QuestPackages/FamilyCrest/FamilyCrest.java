@@ -8,6 +8,7 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
@@ -61,7 +62,17 @@ public class FamilyCrest implements QuestTask {
     RSArea AVAN_AREA = new RSArea(new RSTile(3303, 3276, 0), new RSTile(3293, 3288, 0));
     RSArea BOOT_AREA = new RSArea(new RSTile(2978, 9810, 0), new RSTile(2988, 9803, 0));
     RSArea MINE_ENTRANCE = new RSArea(new RSTile(2698, 3280, 0), new RSTile(2694, 3285, 0));
-    RSArea GOLD_ORE_AREA = new RSArea(new RSTile(2739, 9701, 0), new RSTile(2745, 9695, 0));
+    RSArea GOLD_ORE_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2728, 9695, 0),
+                    new RSTile(2728, 9684, 0),
+                    new RSTile(2738, 9674, 0),
+                    new RSTile(2749, 9678, 0),
+                    new RSTile(2748, 9699, 0),
+                    new RSTile(2741, 9701, 0),
+                    new RSTile(2736, 9703, 0)
+            }
+    );
     RSArea DUNGEON_AREA = new RSArea(new RSTile(2729, 9719, 0), new RSTile(2692, 9665, 0));
     RSArea N_DOOR_AREA = new RSArea(new RSTile(2722, 9710, 0), new RSTile(2724, 9709, 0));
     RSArea S_BEFORE_DOOR_AREA = new RSArea(new RSTile(2724, 9672, 0), new RSTile(2716, 9673, 0));
@@ -83,7 +94,7 @@ public class FamilyCrest implements QuestTask {
     Requirement inDwarvenMines, inHobgoblinDungeon, northWallUp, southRoomUp, northRoomUp, northWallDown, southRoomDown, northRoomDown,
             inJollyBoar, inEdgevilleDungeon, crest3Nearby;
 
-    QuestStep  talkToCaleb, talkToCalebWithFish, talkToCalebOnceMore, talkToGemTrader, talkToMan, enterDwarvenMine, talkToBoot,
+    QuestStep talkToCaleb, talkToCalebWithFish, talkToCalebOnceMore, talkToGemTrader, talkToMan, enterDwarvenMine, talkToBoot,
             enterWitchavenDungeon, pullNorthLever, pullSouthRoomLever, pullNorthLeverAgain, pullNorthRoomLever, pullNorthLever3, pullSouthRoomLever2,
             smeltGold, makeRing, makeNecklace, returnToMan, goUpToJohnathon, talkToJohnathon,
             killChronizon, pickUpCrest3, repairCrest, returnCrest;
@@ -290,8 +301,8 @@ public class FamilyCrest implements QuestTask {
     }
 
     public static LeverState northWallLever = LeverState.UNKNOWN;
-    public static  LeverState northRoomLever = LeverState.UNKNOWN;
-    public static  LeverState southRoomLever = LeverState.UNKNOWN;
+    public static LeverState northRoomLever = LeverState.UNKNOWN;
+    public static LeverState southRoomLever = LeverState.UNKNOWN;
 
     public void checkLeverStates() {
         if (northWallLever == LeverState.UNKNOWN || northRoomLever == LeverState.UNKNOWN || southRoomLever == LeverState.UNKNOWN) {
@@ -315,9 +326,9 @@ public class FamilyCrest implements QuestTask {
     }
 
     private void updateLeverStatesWithoutMovement() {
-        northWallLever = updateState(2422, 2421,northWallLever);
+        northWallLever = updateState(2422, 2421, northWallLever);
         northRoomLever = updateState(2426, 2545, northRoomLever);
-        southRoomLever = updateState(2424, 2423,southRoomLever);
+        southRoomLever = updateState(2424, 2423, southRoomLever);
     }
 
     public void setupConditions() {
@@ -339,6 +350,7 @@ public class FamilyCrest implements QuestTask {
     }
 
     NPCStep talkToDimintheis = new NPCStep("Dimintheis", new RSTile(3280, 3402, 0));
+
     public void setupSteps() {
         Log.debug("Setting up ");
         talkToDimintheis.addDialogStep("Why would a nobleman live in a dump like this?");
@@ -364,8 +376,8 @@ public class FamilyCrest implements QuestTask {
         talkToBoot.addDialogStep("Hello. I'm in search of very high quality gold.");
         //  talkToBoot.addSubSteps(enterDwarvenMine);
 
-        enterWitchavenDungeon = new ObjectStep(18270, new RSTile(2696, 3283, 0),
-                "Climb-down");
+        enterWitchavenDungeon = new ObjectStep(18270, new RSTile(2699, 3283, 0),
+                "Climb-down", hobgoblinDungeon.contains(Player.getPosition()));
 
         pullNorthLever = new ObjectStep(2421, new RSTile(2722, 9710, 0),
                 "Pull");
@@ -421,7 +433,7 @@ public class FamilyCrest implements QuestTask {
                 Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 
             for (int i = 0; i < 15; i++) {
-                Log.info("In gold ore area, I = " + i );
+                Log.info("In gold ore area, I = " + i);
                 int num = Inventory.find(ItemID.PERFECT_GOLD_ORE).length;
                 checkEat();
 
@@ -599,7 +611,7 @@ public class FamilyCrest implements QuestTask {
                 }
             }
         }
-       }
+    }
 
     int eatAt = General.random(40, 60);
 
@@ -772,6 +784,7 @@ public class FamilyCrest implements QuestTask {
             }
         }
     }
+
     public boolean leaveNorthRoom() {
         if (NORTH_ROOM.contains(Player.getPosition())) {
             if (Utils.clickObj(2431, "Open")) {//  entering north room
@@ -851,6 +864,7 @@ public class FamilyCrest implements QuestTask {
 
     @Override
     public void execute() {
+        Waiting.waitUniform(50,100);
         if (!checkRequirements()) {
             cQuesterV2.taskList.remove(this);
             return;
@@ -858,8 +872,8 @@ public class FamilyCrest implements QuestTask {
         setupSteps();
 
         if (Game.getSetting(148) == 0) {
-         buyItems();
-           getInitialItems();
+            buyItems();
+            getInitialItems();
 
         }
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_FAMILY_CREST.getId());
@@ -925,6 +939,7 @@ public class FamilyCrest implements QuestTask {
                 PathingUtil.localNavigation(new RSTile(2721, 9700, 0));
                 checkLeverStates();
             } else {
+                Waiting.waitNormal(30, 60);
                 enterWitchavenDungeon.execute();
             }
 

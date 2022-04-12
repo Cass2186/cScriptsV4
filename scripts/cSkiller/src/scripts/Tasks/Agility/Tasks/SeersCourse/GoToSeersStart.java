@@ -3,6 +3,7 @@ package scripts.Tasks.Agility.Tasks.SeersCourse;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Player;
+import org.tribot.script.sdk.Combat;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.LocalWalking;
@@ -34,7 +35,8 @@ public class GoToSeersStart implements Task {
                         Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
                         (AgilUtils.isWithinLevelRange(60, 70)) &&
                         (Player.getPosition().getPlane() == 0 &&
-                                !AgilityAreas.SEERS_LARGE_WALL_AREA.contains(Player.getPosition()));
+                                !AgilityAreas.SEERS_LARGE_WALL_AREA.contains(Player.getPosition()))
+                && !Combat.isInWilderness();
     }
 
     @Override

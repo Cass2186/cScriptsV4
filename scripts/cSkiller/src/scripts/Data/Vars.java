@@ -63,6 +63,12 @@ public class Vars {
     public boolean isOnBreak = false;
     public long breakLength = 0;
 
+    //agility
+    public boolean useWildernessAgility = true; //TODO currently only goes if you start at the course and <70
+    public int useWildernessAgilityUntilLevel = 70;
+    public boolean useSummerPieBoost = false;
+    public int useSummerPieBoostWithinXLevels = 5;
+
     //firemaking
     public int firemakingTargetLevel = 30;
     public boolean shouldResetFireMaking = true;
