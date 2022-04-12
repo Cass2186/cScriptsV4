@@ -5,21 +5,22 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Keyboard;
-import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Bank;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Waiting;
-import org.tribot.script.sdk.Widgets;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.GrandExchange;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.GrandExchangeOffer;
 import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public class Exchange {
@@ -51,13 +52,14 @@ public class Exchange {
 
 
     public static boolean goToSelectionWindow() {
-        return GrandExchange.getWindowState() == GrandExchange.WINDOW_STATE.SELECTION_WINDOW ||
-                GrandExchange.goToSelectionWindow(true);
+        return GrandExchange.isOpen() &&
+                org.tribot.api2007.GrandExchange.getWindowState() == org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW ||
+                org.tribot.api2007.GrandExchange.goToSelectionWindow(true);
     }
 
     public static RSGEOffer getEmptyOffer() {
         if (goToSelectionWindow()) {
-            RSGEOffer[] offers = GrandExchange.getOffers();
+            RSGEOffer[] offers = org.tribot.api2007.GrandExchange.getOffers();
             for (RSGEOffer ofr : offers) {
                 if (ofr.getStatus() == RSGEOffer.STATUS.EMPTY)
                     return ofr;
@@ -95,15 +97,9 @@ public class Exchange {
         return price;
     }
 
-    public static boolean closeGE() {
-        return GrandExchange.close(true);
-    }
 
     public static boolean isGrandExchangeOpen() {
-        return (GrandExchange.getWindowState() == GrandExchange.WINDOW_STATE.SELECTION_WINDOW ||
-                GrandExchange.getWindowState() == GrandExchange.WINDOW_STATE.OFFER_WINDOW ||
-                GrandExchange.getWindowState() == GrandExchange.WINDOW_STATE.NEW_OFFER_WINDOW);
-
+        return org.tribot.script.sdk.GrandExchange.isOpen();
     }
 
     /**
@@ -116,28 +112,25 @@ public class Exchange {
             PathingUtil.walkToArea(GE_Area, false);
 
         if (Inventory.find(995).length < 1) {
-            //get Coins
+            Log.info("Missing coins, banking.");
+            BankManager.withdraw(0, true, ItemID.COINS_995);
         }
 
-        if (Banking.isBankScreenOpen())
-            Banking.close(); //replace with custom method later
+        if (Bank.isOpen())
+            BankManager.close(true);
 
-        RSObject[] booth = Objects.findNearest(20, Filters.Objects.actionsContains("Exchange"));
+        Optional<GameObject> geBooth = Query.gameObjects()
+                .actionContains("Exchange")
+                .maxDistance(20).findBestInteractable();
+        if (!org.tribot.script.sdk.GrandExchange.isOpen() &&
+                geBooth.map(b->b.interact("Exchange ")).orElse(false) &&
+                Timer.waitCondition(() -> org.tribot.script.sdk.GrandExchange.open() ||
+                        NPCInteraction.isConversationWindowUp(), 5000, 7000)){
 
-        if (!isGrandExchangeOpen() && booth.length > 0) {
-            if (Utils.clickObject(booth[0], "Exchange", true))
-                Timer.waitCondition(() -> GrandExchange.getWindowState() ==
-                        GrandExchange.WINDOW_STATE.SELECTION_WINDOW ||
-                        NPCInteraction.isConversationWindowUp(), 5000, 7000);
-
-            if (NPCInteraction.isConversationWindowUp()) {
+            if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation("I'd like to set up trade offers please.");
-                return Timer.waitCondition(() -> (GrandExchange.getWindowState() == GrandExchange.WINDOW_STATE.SELECTION_WINDOW), 5000, 7000);
-            }
         }
-
-        return GrandExchange.getWindowState() ==
-                GrandExchange.WINDOW_STATE.SELECTION_WINDOW;
+        return Waiting.waitUntil(5000, 75, org.tribot.script.sdk.GrandExchange::isOpen);
     }
 
 
@@ -155,9 +148,11 @@ public class Exchange {
             RSGEOffer ofr = getEmptyOffer();
             if (ofr != null) {
                 int index = ofr.getIndex();
-                General.println("[GEManager]: Creating buy offer: " + index);
-                String s = "Create <col=ff9040>Buy</col> offer";
-                if (InterfaceUtil.click(465, index + 7, 3))
+                Log.info("[GEManager]: Creating buy offer at window: " + index);
+                Optional<Widget> first = Query.widgets()
+                        .inIndexPath(GE_PARENT, index + 7, 3).findFirst();
+
+                if (first.map(Widget::click).orElse(false))
                     return Timer.waitCondition(() ->
                             Interfaces.isInterfaceSubstantiated(162, SEARCH_ITEM_NAME_INTERFACE_ID), 7000, 9000);
 
@@ -214,7 +209,7 @@ public class Exchange {
         if (typeBoxInterface != null) {
             Keyboard.typeString(itemString.toLowerCase());
             // this allows it to load items, otherwise it'll skip it
-            Waiting.waitUniform(1000, 2000);
+            Waiting.waitUniform(1000, 1800);
             Timer.slowWaitCondition(() -> typeBoxInterface.getChildren() != null, 5000, 6000);
         }
 
@@ -226,57 +221,26 @@ public class Exchange {
                 return false;
 
             for (int i = 0; i < interfaceChildren.length; i++) {
-
                 RSInterface compItemInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT,
                         SMALL_ITEM_SELECTION_BOX_COMP, i);
-                Optional<Widget> compItemInterWidget = Query.widgets().inIndexPath(ITEM_SELECTION_BOX_PARENT,
+
+                Optional<Widget> compItemWidget = Query.widgets().inIndexPath(ITEM_SELECTION_BOX_PARENT,
                         SMALL_ITEM_SELECTION_BOX_COMP, i).findFirst();
 
-                if (compItemInter != null) {
-                    componentItem = compItemInter.getComponentItem();
-                    // General.println("Line 385 - ID: " + componentItem + " || Item We are looking for " + item.getItemID());
-                    RSInterface scrollBarInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT, 51, 3);
-                    // identified the item in the options
-                    if (componentItem == item.getItemID() && scrollBarInter != null) {
-                        if (scrollToAndSelect(compItemInterWidget)) {
-                            return Timer.waitCondition(() -> Interfaces.get(465, 25, 21) != null &&
-                                    Interfaces.get(465, 25, 21).getComponentItem() == item.getItemID(), 4000, 6000);
-                        }
-                        if (i >= 25) {// item should be offs  screen if this is true (check item index for this)
-                            //  if (y > 65) { // is off screen if this is true (checking y point)
-                            long startTime = System.currentTimeMillis();
-                            long add = General.random(10000, 15000);
-                            for (int b = 0; b < 50; b++) {
-                                if (compItemInter.getAbsolutePosition().getY() >
-                                        (Interfaces.get(162, 51, 3).getAbsolutePosition().getY())) {
-                                    //  Log.log("Scroll interface 3 is  " + compItemInter.getAbsolutePosition().getY());
-                                    //  Log.log("Y is " + compItemInter.getY());
-                                    if (!parent.getAbsoluteBounds().contains(Mouse.getPos())) //move mouse to box if needed
-                                        Mouse.moveBox(parent.getAbsoluteBounds());
-
-                                    Mouse.scroll(false); //scrolls down
-                                    General.sleep(General.random(50, 400));
-
-                                    if (System.currentTimeMillis() > startTime + add) { // failed to scroll in 7-15s
-                                        Log.log("Timed out");
-                                        break;
-                                    }
-                                } else
-                                    break;
-                            }
-                            Waiting.waitNormal(200, 55);      // sleep once we scroll to right point
-                            //}
-                        }
-
-                        // select item and wait for it to be selected in GE
-                        if (compItemInter.click())
-                            return Timer.waitCondition(() -> Interfaces.get(465, 25, 21) != null &&
-                                    Interfaces.get(465, 25, 21).getComponentItem() == item.getItemID(), 4000, 6000);
-                    }
+                Optional<Widget> compItemInterWidget = Query.widgets().inIndexPath(ITEM_SELECTION_BOX_PARENT,
+                        SMALL_ITEM_SELECTION_BOX_COMP, i).findFirst();
+                if (compItemWidget.map(widg -> widg.toWidgetItem().map(it -> it.getId() ==
+                        item.getItemID()).orElse(false)).orElse(false) &&
+                        scrollToAndSelect(compItemInterWidget)) {
+                    Log.info("Used new itemSelection method");
+                    return Waiting.waitUntil(3500, 50, () ->
+                            Query.widgets().inIndexPath(465, 25, 21)
+                                    .stream().map(q -> q.toItemDefinition().map(
+                                                    def -> def.getId() == item.getItemID())
+                                            .orElse(false)).findAny().isPresent());
                 }
             }
         }
-
         return false;
     }
 
@@ -292,7 +256,8 @@ public class Exchange {
                 return true;
             }
             Waiting.waitNormal(50, 20);
-        }        Log.debug("[Exchange]: Failed scroll");
+        }
+        Log.debug("[Exchange]: Failed scroll");
 
         return false;
     }
@@ -423,7 +388,7 @@ public class Exchange {
             } else { // if the ItemID in the image is not the right one (i.e. we selected the wrong item)
                 if (Interfaces.isInterfaceSubstantiated(GE_PARENT, 4)) {
                     General.println("[GEManager]: Misclicked item... going back to offer screen.");
-                    GrandExchange.goToSelectionWindow(true);
+                    org.tribot.api2007.GrandExchange.goToSelectionWindow(true);
                     General.sleep(800, 2000);
                 }
             }
@@ -440,13 +405,13 @@ public class Exchange {
         // waitForOfferToCompleteAndRelist();
         boolean shouldWait = true;
         long currentTime = System.currentTimeMillis();
-
-        while (shouldWait) {
+        long timeoutTime = System.currentTimeMillis() + 450000; //7.5min
+        while (SHOULD_WAIT ||
+                (System.currentTimeMillis() > timeoutTime)) {
             General.sleep(50);
             INCOMPLETED_OFFER = 0;
             COMPLETED_OFFER = 0;
-            SHOULD_WAIT = false; // while the bottom 4 conditions should cover everything, this ensures it doesn't loop indefinitely should another situation occur
-            RSGEOffer[] offers = GrandExchange.getOffers();
+            RSGEOffer[] offers = org.tribot.api2007.GrandExchange.getOffers();
             for (RSGEOffer of : offers) {
                 if (of.getStatus().equals(RSGEOffer.STATUS.EMPTY))
                     continue;
@@ -456,34 +421,48 @@ public class Exchange {
                     checkRelist();
                 }
             }
-            RSGEOffer[] off = GrandExchange.getOffers();
-            for (RSGEOffer o : off) {
-                if (o.getStatus().equals(RSGEOffer.STATUS.IN_PROGRESS))
-                    INCOMPLETED_OFFER++;
-                else if (o.getStatus().equals(RSGEOffer.STATUS.COMPLETED))
-                    COMPLETED_OFFER++;
-            }
+            List<GrandExchangeOffer> completedOfferList = Query
+                    .grandExchangeOffers()
+                    .statusEquals(GrandExchangeOffer.Status.COMPLETED)
+                    .toList();
 
-            if (COMPLETED_OFFER > 0 && INCOMPLETED_OFFER > 0) {
-                General.println("[Debug]: >= 1 completed offer and incompleted offer, collecting and waiting");
-                int b = General.randomSD(3500, 400);
-                Log.log("[Debug]: Sleeping for  " + b + "ms");
-                Waiting.wait(b);
+            List<GrandExchangeOffer> inProgressOfferList = Query
+                    .grandExchangeOffers()
+                    .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
+                    .toList();
+
+            if (completedOfferList.size() > 0 && inProgressOfferList.size() > 0) {
+                int b = General.randomSD(4500, 400);
+                Log.info(String.format("We have %s completed, and %s offers in progress",
+                        completedOfferList.size(), inProgressOfferList.size()));
+
                 clickCollect();
                 SHOULD_WAIT = true; // will cause loop to continue
-                General.sleep(800, 1500); // short sleep to wait for offers (decrease CPU Use)
-            } else if (COMPLETED_OFFER == 0 && INCOMPLETED_OFFER > 0) {
-                General.println("[Debug]: < 1 completed offer and >0 incompleted offers, waiting");
+                Waiting.waitUntil(30000, 200, () ->
+                        Query.grandExchangeOffers()
+                                .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
+                                .toList().size() == 0);
+                Log.info("Sleeping for  " + b + "ms");
+                Waiting.wait(b);
+                //General.sleep(800, 1500); // short sleep to wait for offers (decrease CPU Use)
+            } else if (completedOfferList.size() == 0 && inProgressOfferList.size() > 0) {
+                Log.info(String.format("We have 0 completed, and %s offers in progress",
+                        inProgressOfferList.size()));
                 SHOULD_WAIT = true; // will cause loop to continue
                 checkRelist();
-                General.sleep(800, 1500); // short sleep to wait for offers (decrease CPU Use)
-            } else if (COMPLETED_OFFER > 0 && INCOMPLETED_OFFER == 0) {
-                General.println("[Debug]: >= 1 completed offer and NO incompleted offers, collecting");
-                Utils.abc2ReactionSleep(currentTime);
+                Waiting.waitUntil(30000, 200, () ->
+                        Query.grandExchangeOffers()
+                                .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
+                                .toList().size() == 0);
+                Waiting.waitNormal(300, 65);
+            } else if (completedOfferList.size() > 0) {
+                Log.info(String.format("We have %s completed, and 0 offers in progress",
+                        completedOfferList.size()));
+                //Utils.abc2ReactionSleep(currentTime);
                 clickCollect();
-                SHOULD_WAIT = false; // by declaring SHOULD_WAIT false here, it ensures we break the loop, otherwise it would continue
+                SHOULD_WAIT = false;
                 break;
-            } else if (COMPLETED_OFFER == 0 && INCOMPLETED_OFFER == 0) { // no offers placed, will break the loop
+            } else { // no offers placed, will break the loop
                 General.println("[Debug]: No offers placed.");
                 SHOULD_WAIT = false;
                 break;
@@ -500,11 +479,11 @@ public class Exchange {
      * @returns as true if there's >=1 in progress offer
      */
     private static Optional<RSGEOffer> checkForOffersInProgress() {
-        if (GrandExchange.getWindowState() != GrandExchange.WINDOW_STATE.SELECTION_WINDOW)
+        if (org.tribot.api2007.GrandExchange.getWindowState() != org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW)
             openGE();
 
         if (goToSelectionWindow()) {
-            RSGEOffer[] offers = GrandExchange.getOffers();
+            RSGEOffer[] offers = org.tribot.api2007.GrandExchange.getOffers();
             for (RSGEOffer ofr : offers) {
                 if (ofr.getStatus() == RSGEOffer.STATUS.IN_PROGRESS &&
                         ofr.getType() == RSGEOffer.TYPE.BUY) {
@@ -517,7 +496,7 @@ public class Exchange {
     }
 
     public static void checkRelist() {
-        if (GrandExchange.getWindowState() == GrandExchange.WINDOW_STATE.SELECTION_WINDOW) {
+        if (org.tribot.api2007.GrandExchange.getWindowState() == org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW) {
             clickCollect(); // collects items first, otherwise an issue if all windows are in use
             General.sleep(General.random(1500, 3000)); // allows for the last offer placed to insta-complete if it's going to.
 

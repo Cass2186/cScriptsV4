@@ -167,13 +167,12 @@ public class GetTask implements Task {
                     .idEquals(ItemID.SLAYER_HELMET, ItemID.SLAYER_HELMET_I)
                     .findFirst();
 
-            if (helms.map(h-> h.click("Check")).orElse(false)) {
-                if (Waiting.waitUntil(1500, () -> SlayerVars.get().targets != null)) {
+            if (helms.map(h -> h.click("Check")).orElse(false)) {
+                if (Waiting.waitUntil(1500, () -> SlayerVars.get().targets != null))
                     Log.debug("Targs no longer null");
-                    return;
-                }
+                return;
 
-            }  else if (gem.isEmpty()) {
+            } else if (gem.isEmpty()) {
                 if (BankManager.open(true)) {
                     BankManager.depositAll(true);
                     BankManager.withdraw(1, true, ItemID.ENCHANTED_GEM);
@@ -183,9 +182,9 @@ public class GetTask implements Task {
             gem = Query.inventory()
                     .idEquals(ItemID.ENCHANTED_GEM)
                     .findClosestToMouse();
-            if (gem.map(g -> g.click("Check")).orElse(false) &&
-                    Waiting.waitUntil(1500, () -> SlayerVars.get().targets != null)) {
-                Log.debug("Targs no longer null");
+            if (gem.map(g -> g.click("Check")).orElse(false)) {
+                if (Waiting.waitUntil(1500, () -> SlayerVars.get().targets != null))
+                    Log.debug("Targs no longer null");
                 return;
 
             }

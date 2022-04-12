@@ -34,13 +34,13 @@ public class Fish implements Task {
         if (isBarbFishing()) {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemID.FEATHER, 5000, 50),
+                            new ItemReq(ItemID.FEATHER, (Utils.random(3,7)*1000), 50),
                             new ItemReq(BARBARIAN_ROD, 1)
                     )));
         } else {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemID.FEATHER, 5000, 50),
+                            new ItemReq(ItemID.FEATHER, (Utils.random(3,7)*1000), 50),
                             new ItemReq(ItemID.FLY_FISHING_ROD, 1)
                     ))
             );

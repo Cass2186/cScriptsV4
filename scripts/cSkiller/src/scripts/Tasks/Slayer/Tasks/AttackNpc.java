@@ -4,12 +4,12 @@ import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
+import org.tribot.api2007.ChooseOption;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.RSCharacter;
 import org.tribot.api2007.types.RSNPC;
-import org.tribot.script.sdk.Combat;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
 
@@ -71,32 +71,12 @@ public class AttackNpc implements Task {
         if (monsterStrings == null)
             return Optional.empty();
 
-        if (MyPlayer.isHealthBarVisible()) {
-            Optional<Character> target = MyPlayer.get().
-                    flatMap(player -> player.getInteractingCharacter());
 
-            if (target.isEmpty()) {
-                Log.info("Returning empty optional, cannot find interacting character");
-                return Optional.empty();
-            }
+        Optional<Character> target = MyPlayer.get().
+                flatMap(player -> player.getInteractingCharacter());
 
-            // NPC we're interacting with is dead, look for next one
-            if (target.get().getHealthBarPercent() == 0) {
-                List<Npc> potentialTargets = Query.npcs()
-                        .nameContains(monsterStrings)
-                        .isNotBeingInteractedWith()
-                        // .inArea(SlayerVars.get().fightArea)
-                        .toList();
-
-                if (potentialTargets.size() > 0) {
-                    General.println("[AttackNPC]: Current target is dead, getting next target");
-                    return Optional.ofNullable(potentialTargets.get(0));
-                }
-            } else {
-            return Optional.of((Npc) target.get());
-
-            }
-        } else {
+        if (target.isEmpty()) {
+            // Log.info("Interacting Target is empty, finding a new one");
             int i = 0;
             List<Npc> potentialTargets = Query.npcs()
                     .nameContains(monsterStrings)
@@ -113,6 +93,7 @@ public class AttackNpc implements Task {
                 // we're close to the target
                 if (targ.getTile().distanceTo(MyPlayer.getPosition()) < General.random(5, 7) &&
                         targ.getHealthBarPercent() != 0) {
+                    Log.info("returning target at index " + i);
                     return Optional.of(targ);
 
                 }
@@ -121,8 +102,28 @@ public class AttackNpc implements Task {
                     return Optional.of(targ);
                 }
             }
+        } else
 
-        }
+            // NPC we're interacting with is dead, look for next one
+            if (target.get().getHealthBarPercent() == 0) {
+                List<Npc> potentialTargets = Query.npcs()
+                        .nameContains(monsterStrings)
+                        .isNotBeingInteractedWith()
+                        .isHealthBarNotVisible()
+                        .isReachable()
+                        .sortedByDistance()
+                        // .inArea(SlayerVars.get().fightArea)
+                        .toList();
+                if (potentialTargets.size() > 0) {
+                    Log.info("[AttackNPC]: Current target is dead, getting next target");
+                    return Optional.ofNullable(potentialTargets.get(0));
+                }
+            } else {
+                Log.info("Returning interacting target");
+                return Optional.of((Npc) target.get());
+            }
+
+
         return Optional.empty();
     }
 
@@ -234,45 +235,7 @@ public class AttackNpc implements Task {
 
         Optional<Npc> targ = setCurrentTargetSDK(SlayerVars.get().targets);
 
-        if (targ.isPresent()) {
-            if ((!MyPlayer.isHealthBarVisible() &&
-                    targ.map(t -> !t.isInteractingWithMe()).orElse(false)) &&
-                    targ.map(t -> t.interact("Attack")).orElse(false)) {
-                SlayerVars.get().status = "Attacking Target";
-                SlayerVars.get().currentTime = System.currentTimeMillis();
-                Waiting.waitUntil(4500, 200,
-                        () -> targ.map(t -> t.isInteractingWithMe()).orElse(false));
-
-            } else if (targ.map(t -> t.isInteractingWithMe()).orElse(false)) { //already fighting
-                SlayerVars.get().status = "Fighting Target";
-                SlayerVars.get().currentTime = System.currentTimeMillis();
-            }
-
-            if (SlayerVars.get().drinkPotions)
-                Utils.drinkPotion(SlayerVars.get().potionNames);
-
-            if (MyPlayer.isPoisoned())
-                Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
-
-            if (Skills.SKILLS.STRENGTH.getCurrentLevel() <= SlayerVars.get().drinkCombatPotion) {
-                if (Utils.drinkPotion(ItemID.SUPER_COMBAT_POTION)) {
-                    SlayerVars.get().drinkCombatPotion = Skills.SKILLS.STRENGTH.getActualLevel() + General.random(3, 6);
-                    Log.log("[Debug]: Next drinking potion at Strength lvl " + SlayerVars.get().drinkCombatPotion);
-                }
-            }
-
-            if (SlayerVars.get().shouldPrayMelee) {
-                General.println("[Fight]: Using long timeout on fight b/c prayer is being used");
-                if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 75000)) {
-                    sleep(targ.get());
-                }
-            } else if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 45000)) {
-                sleep(targ.get());
-
-            } else
-                Waiting.waitNormal(1100, 430);
-
-        } else {
+        if (targ.isEmpty()) {
             General.println("[Fight]: Unable to set target");
             Waiting.waitNormal(200, 50);
             i++;
@@ -281,7 +244,45 @@ public class AttackNpc implements Task {
                 General.println("[Fight]: Walking to area");
                 i = 0;
             }
+            return;
+        } if ((//!MyPlayer.isHealthBarVisible() &&
+                (targ.map(t -> !t.isInteractingWithMe() ||
+                        !t.isHealthBarVisible()).orElse(false))) &&
+                targ.map(t -> t.interact("Attack")).orElse(false)) {
+            SlayerVars.get().status = "Attacking Target";
+            SlayerVars.get().currentTime = System.currentTimeMillis();
+            Waiting.waitUntil(4500, 200,
+                    () -> targ.map(t -> t.isInteractingWithMe()).orElse(false));
+
+        } else if (targ.map(t -> t.isInteractingWithMe()).orElse(false)) { //already fighting
+            SlayerVars.get().status = "Fighting Target";
+            SlayerVars.get().currentTime = System.currentTimeMillis();
         }
+
+        if (SlayerVars.get().drinkPotions)
+            Utils.drinkPotion(SlayerVars.get().potionNames);
+
+        if (MyPlayer.isPoisoned())
+            Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
+
+        if (Skills.SKILLS.STRENGTH.getCurrentLevel() <= SlayerVars.get().drinkCombatPotion) {
+            if (Utils.drinkPotion(ItemID.SUPER_COMBAT_POTION)) {
+                SlayerVars.get().drinkCombatPotion = Skills.SKILLS.STRENGTH.getActualLevel() + General.random(3, 6);
+                Log.log("[Debug]: Next drinking potion at Strength lvl " + SlayerVars.get().drinkCombatPotion);
+            }
+        }
+
+        if (SlayerVars.get().shouldPrayMelee) {
+            General.println("[Fight]: Using long timeout on fight b/c prayer is being used");
+            if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 75000)) {
+                sleep(targ.get());
+            }
+        } else if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 45000)) {
+            sleep(targ.get());
+
+        } else
+            Waiting.waitNormal(1100, 330);
+
     }
 
     public void fight() {
@@ -325,7 +326,7 @@ public class AttackNpc implements Task {
             } else
                 Waiting.waitNormal(1300, 430);
 
-        } else if (!MyPlayer.isHealthBarVisible()){
+        } else if (!MyPlayer.isHealthBarVisible()) {
             General.println("[Fight]: Unable to set target");
             Waiting.waitNormal(200, 50);
             i++;
@@ -349,6 +350,10 @@ public class AttackNpc implements Task {
             if (EatUtil.hpPercent() <= (eatAtHP))
                 EatUtil.eatFood();
 
+            if (MyPlayer.isPoisoned())
+                Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
+
+
             if (prayList.size() > 0 && org.tribot.script.sdk.Prayer.getPrayerPoints() < General.random(7, 27)) {
                 General.println("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
                 EatUtil.drinkPotion(ItemID.PRAYER_POTION);
@@ -356,45 +361,25 @@ public class AttackNpc implements Task {
             if (SlayerVars.get().assignment != null && SlayerVars.get().assignment.isUseSpecialItem()
                     && npcOptional.isPresent()) {
                 //  Log.log("Using special item");
-                if (checkSpecialItem(npcOptional.get()))
+                if (checkSpecialItem())
                     Waiting.waitNormal(1500, 440);
 
             }
             return !MyPlayer.isHealthBarVisible() ||
-                    npcOptional.map(npc -> npc.getHealthBarPercent() ==0).orElse(false) ||
+                    npcOptional.map(npc -> npc.getHealthBarPercent() == 0).orElse(false) ||
                     !EatUtil.hasFood() ||
                     (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
         });
     }
 
-    public static boolean checkSpecialItem(Npc target) {
-        if (target != null && target.getHealthBarPercent() < 14) {
-            Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
-                    .findClosestToMouse();
-            if (i.isPresent()) {
-                General.println("[CombatUtils]: Using Slayer Item on NPC");
-                return useSlayerItemOnNPC();
-            }
-        }
-        return false;
-    }
-
-    private static boolean useSlayerItemOnNPC() {
+    public static boolean checkSpecialItem() {
         Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
                 .findClosestToMouse();
 
         Optional<Npc> n = Query.npcs().isInteractingWithMe().stream().findFirst();
-        if (i.isPresent() && n.isPresent() && n.get().getHealthBarPercent() < 0.15) {
-            Log.log("[AttackNPC]: Health percent is " + n.get().getHealthBarPercent());
-            if (Game.getItemSelectionState() == 0 &&
-                    i.get().click())
-                Waiting.waitNormal(75, 20);
-            if (Game.getItemSelectionState() == 1)
-                return Timing.waitCondition(() -> n.get().interact("Use"), 1000);
-
-        }
-        Log.log("[AttackNPC]: UseSlayerItemOnNPC is false");
-        return false;
+        return n.map(npc -> npc.getHealthBarPercent() <= 0.15 &&
+                i.map(item -> item.useOn(npc)).orElse(false)).orElse(false) &&
+                Waiting.waitUntil(700, 50, () -> MyPlayer.getAnimation() != -1);
     }
 
 
