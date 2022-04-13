@@ -122,7 +122,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         Vars.get().getBarbarianRod = getBarbarianRodCheckBox.isSelected();
         Vars.get().moveMouseOffScreenAfk = moveMouseOffScreenWhileAfkBox.isSelected();
         Vars.get().growKittenDuringFishing = growKittenDuringFishingBox.isSelected();
-        Vars.get().growKittenDuringAgility =  growKittenDuringAgilityBox.isSelected();
+        Vars.get().growKittenDuringAgility =   growKittenDuringAgilityBox.isSelected();
         Vars.get().useSummerPieBoost =  enableSummerPieBoostingBox.isSelected();
         Vars.get().shouldAlchAgil = enableAlchingAgilityBox.isSelected();
         Vars.get().useWildernessAgility = enableWildernessCourseBox.isSelected();
@@ -447,6 +447,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         }
         // populate trees
         addWCAreaToLists();
+
     }
 
 
