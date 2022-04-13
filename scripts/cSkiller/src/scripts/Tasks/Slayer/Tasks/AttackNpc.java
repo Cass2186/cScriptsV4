@@ -6,10 +6,10 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ChooseOption;
 import org.tribot.api2007.Combat;
-import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.RSCharacter;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
 
@@ -42,17 +42,23 @@ public class AttackNpc implements Task {
             else if (assign.getPrayerType().equals(PrayerType.MAGIC))
                 PrayerUtil.setPrayer(PrayerType.MAGIC);
 
-            else if (assign.getPrayerType().equals(PrayerType.NONE)) {
-                if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MELEE))
-                    Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
-
-                if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MAGIC))
-                    Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MAGIC);
-
-                if (Prayer.isPrayerEnabled(Prayer.PRAYERS.PROTECT_FROM_MISSILES))
-                    Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MISSILES);
+            else if (assign.getPrayerType().equals(PrayerType.NONE) &&
+                    Prayer.getActivePrayers().size() > 0) {
+                Prayer.disableAll();
             }
         }
+    }
+
+    private static boolean checkAggro() {
+        if (Waiting.waitUntil(500, 50, () ->
+                MyPlayer.get().
+                        map(player -> player.getInteractingCharacter().isPresent())
+                        .orElse(false))
+                && org.tribot.script.sdk.Combat.isAutoRetaliateOn()) {
+            Log.info("Still have aggro");
+            return true;
+        }
+        return false;
     }
 
     public static void expeditiousMessage(String message) {
@@ -245,7 +251,9 @@ public class AttackNpc implements Task {
                 i = 0;
             }
             return;
-        } if ((//!MyPlayer.isHealthBarVisible() &&
+        }
+        if ((//!MyPlayer.isHealthBarVisible() &&
+                !checkAggro() &&
                 (targ.map(t -> !t.isInteractingWithMe() ||
                         !t.isHealthBarVisible()).orElse(false))) &&
                 targ.map(t -> t.interact("Attack")).orElse(false)) {
@@ -341,7 +349,6 @@ public class AttackNpc implements Task {
     public static boolean waitUntilOutOfCombatNew(Optional<Npc> npcOptional, int eatAt, int longTimeOut) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
 
-        List<org.tribot.script.sdk.Prayer> prayList = org.tribot.script.sdk.Prayer.getActivePrayers();
         return Waiting.waitUntil(longTimeOut, () -> {
             Waiting.waitNormal(500, 125);
 
@@ -354,9 +361,15 @@ public class AttackNpc implements Task {
                 Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
 
 
-            if (prayList.size() > 0 && org.tribot.script.sdk.Prayer.getPrayerPoints() < General.random(7, 27)) {
+            if ((Prayer.getActivePrayers().size() > 0 || SlayerVars.get().shouldPrayMelee) &&
+                    org.tribot.script.sdk.Prayer.getPrayerPoints() <
+                            General.random(7, 27)) {
                 General.println("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
                 EatUtil.drinkPotion(ItemID.PRAYER_POTION);
+            }
+            if (SlayerVars.get().shouldPrayMelee && Prayer.getPrayerPoints() > 0 &&
+                    Prayer.getActivePrayers().size() == 0) {
+                Prayer.enableAll(Prayer.PROTECT_FROM_MELEE);
             }
             if (SlayerVars.get().assignment != null && SlayerVars.get().assignment.isUseSpecialItem()
                     && npcOptional.isPresent()) {
@@ -368,7 +381,7 @@ public class AttackNpc implements Task {
             return !MyPlayer.isHealthBarVisible() ||
                     npcOptional.map(npc -> npc.getHealthBarPercent() == 0).orElse(false) ||
                     !EatUtil.hasFood() ||
-                    (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
+                    (Prayer.getActivePrayers().size() > 0 && Prayer.getPrayerPoints() < 6);
         });
     }
 
@@ -443,6 +456,8 @@ public class AttackNpc implements Task {
     }
 
     private void sleep(Npc currentTarget) {
+        if (checkAggro())
+            return;
         if (currentTarget != null && currentTarget.getHealthBarPercent() == 0) {
             // General.sleep(General.random(100, 500));
             if (SlayerVars.get().abc2Delay && SlayerVars.get().abc2Chance < 60) {

@@ -426,6 +426,8 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
         );
         Paint.setToggleablePaint();
         Paint.setSlayerPaint();
+        Paint.setMainPaint();
+        Paint.setExperiencePaint();
 
         HashMap<Skills.SKILLS, Integer> startHashMap = Utils.getXpForAllSkills();
         isRunning.set(true);
@@ -575,7 +577,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
     @Override
     public void onPaint(Graphics g) {
-
+/*
 
         double timeRan = super.getRunningTime();
         double timeRanMin = (timeRan / 3600000);
@@ -676,7 +678,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
         }*/
         // Create the template
-        Collection<PaintRow> rows = new ArrayList<>();
+     /*   Collection<PaintRow> rows = new ArrayList<>();
 
         HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
         for (Skills.SKILLS s : xpMap.keySet()) {
@@ -737,7 +739,7 @@ public class cSkiller extends Script implements Painting, Starting, Ending, Argu
 
         }
 
-       PaintUtil.createPaint(g, myString.toArray(String[]::new));
+       PaintUtil.createPaint(g, myString.toArray(String[]::new));*/
     }
 
 

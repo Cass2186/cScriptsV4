@@ -17,11 +17,10 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="548.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
+<VBox prefHeight="568.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -93,7 +92,7 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                     <children>
-                                        <AnchorPane id="startingSkillBox" maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="703.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <AnchorPane id="startingSkillBox" maxHeight="-1.0" maxWidth="-1.0" prefHeight="521.0" prefWidth="703.0" AnchorPane.bottomAnchor="-12.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
                                     <Label layoutX="145.0" layoutY="104.0" text="Agility" />
                                     <Label layoutX="141.0" layoutY="154.0" text="Herblore" />
@@ -194,17 +193,81 @@
                                                     </font>
                                                 </TextField>
                                     <Separator layoutX="352.0" layoutY="4.0" orientation="VERTICAL" prefHeight="494.0" prefWidth="5.0" />
-                                    <Pane disable="true" layoutX="354.0" layoutY="2.0" prefHeight="494.0" prefWidth="351.0">
+                                    <Button fx:id="resetSkillsButton" layoutX="128.0" layoutY="463.0" mnemonicParsing="false" onAction="#resetSkillsButtonPressed" text="Reset Skills" />
+                                    <AnchorPane id="startingSkillBox" layoutX="352.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="313.0">
                                        <children>
-                                          <CheckBox layoutX="14.0" layoutY="40.0" mnemonicParsing="false" text="Enchant Jewlery instead of Alch at 57" />
+                                          <ComboBox fx:id="startingSkillDropDown" layoutX="28.0" layoutY="62.0" onAction="#skillSelected" prefHeight="26.0" prefWidth="216.0" promptText="Starting Skill" />
+                                          <TextField id="minTimeBettwenSkillsBox" fx:id="switchSkillMinTime" layoutX="134.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="43.0" text="40" />
+                                          <TextField id="maxTimeBetweenSkillsBox" fx:id="switchSkillMaxTime" layoutX="202.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="43.0" text="60" />
+                                          <Label layoutX="23.0" layoutY="118.0" text="Switch skill every:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="182.0" layoutY="119.0" text="to">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="249.0" layoutY="119.0" text="min ">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField id="minTimeBettwenSkillsBox" fx:id="afkEveryAverage" layoutX="137.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="43.0" text="600" />
+                                          <TextField id="maxTimeBetweenSkillsBox" fx:id="afkEverySD" layoutX="227.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="43.0" text="240" />
+                                          <Label alignment="CENTER_RIGHT" layoutX="62.0" layoutY="168.0" text="AFK every:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="182.0" layoutY="169.0" text="s ">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="273.0" layoutY="168.0" text="(SD)">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField id="minTimeBettwenSkillsBox" fx:id="afkForAverage" layoutX="137.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="43.0" text="35" />
+                                          <TextField id="maxTimeBetweenSkillsBox" fx:id="afkForSD" layoutX="227.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="43.0" text="20" />
+                                          <Label alignment="CENTER_RIGHT" layoutX="76.0" layoutY="204.0" text="AFK for:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="182.0" layoutY="205.0" text="s">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="273.0" layoutY="204.0" text="(SD)">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <CheckBox disable="true" layoutX="26.0" layoutY="401.0" mnemonicParsing="false" text="Do Birdhouse runs when switching skills" />
+                                          <CheckBox disable="true" layoutX="26.0" layoutY="431.0" mnemonicParsing="false" text="Do Herb runs when switching skills" />
+                                          <Label layoutX="28.0" layoutY="24.0" text="Skill Preferences" underline="true">
+                                             <font>
+                                                <Font name="System Font" size="17.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="202.0" layoutY="168.0" text="+/-">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="202.0" layoutY="204.0" text="+/-">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <CheckBox fx:id="moveMouseOffScreenWhileAfkBox" layoutX="27.0" layoutY="371.0" mnemonicParsing="false" selected="true" text="Move mouse off screen while AFK?" />
                                        </children>
-                                    </Pane>
-                                    <Pane layoutX="352.0" layoutY="1.0" prefHeight="468.0" prefWidth="328.0">
-                                       <children>
-                                          <CheckBox layoutX="14.0" layoutY="42.0" mnemonicParsing="false" text="Do Tars at 19 (Less gold required)" />
-                                       </children>
-                                    </Pane>
-                                    <Button fx:id="resetSkillsButton" layoutX="128.0" layoutY="456.0" mnemonicParsing="false" onAction="#resetSkillsButtonPressed" text="Reset Skills" />
+                                    </AnchorPane>
                                             </children>
                                         </AnchorPane>
                                     </children>
@@ -217,77 +280,8 @@
                                     <children>
                                         <AnchorPane id="startingSkillBox" layoutX="-4.0" layoutY="1.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="703.0" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="-4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="1.0">
                                             <children>
-                                                <TextField id="minTimeBettwenSkillsBox" fx:id="switchSkillMinTime" layoutX="134.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="43.0" text="40" />
-                                                <TextField id="maxTimeBetweenSkillsBox" fx:id="switchSkillMaxTime" layoutX="202.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="43.0" text="60" />
-                                                <Label layoutX="23.0" layoutY="118.0" text="Switch skill every:">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="182.0" layoutY="119.0" text="to">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="249.0" layoutY="119.0" text="min ">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <ComboBox fx:id="startingSkillDropDown" layoutX="29.0" layoutY="56.0" onAction="#skillSelected" prefHeight="26.0" prefWidth="216.0" promptText="Starting Skill" />
-                                                <TextField id="minTimeBettwenSkillsBox" fx:id="afkEveryAverage" layoutX="137.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="43.0" text="600" />
-                                                <TextField id="maxTimeBetweenSkillsBox" fx:id="afkEverySD" layoutX="227.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="43.0" text="240" />
-                                                <Label alignment="CENTER_RIGHT" layoutX="62.0" layoutY="168.0" text="AFK every:">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="182.0" layoutY="169.0" text="s ">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="273.0" layoutY="168.0" text="(SD)">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <TextField id="minTimeBettwenSkillsBox" fx:id="afkForAverage" layoutX="137.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="43.0" text="35" />
-                                                <TextField id="maxTimeBetweenSkillsBox" fx:id="afkForSD" layoutX="227.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="43.0" text="20" />
-                                                <Label alignment="CENTER_RIGHT" layoutX="76.0" layoutY="204.0" text="AFK for:">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="182.0" layoutY="205.0" text="s">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="273.0" layoutY="204.0" text="(SD)">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <CheckBox layoutX="28.0" layoutY="269.0" mnemonicParsing="false" text="Do Birdhouse runs when switching skills" />
-                                                <CheckBox layoutX="28.0" layoutY="299.0" mnemonicParsing="false" text="Do Herb runs when switching skills" />
-                                                <Label layoutX="28.0" layoutY="24.0" text="Skill Preferences" underline="true">
-                                                    <font>
-                                                        <Font name="System Font" size="17.0" />
-                                                    </font>
-                                                </Label>
                                                 <TextField id="minTimeBettwenSkillsBox" fx:id="mouseSpeedBox" layoutX="445.0" layoutY="56.0" onAction="#mouseSpeedAdjusted" prefHeight="26.0" prefWidth="43.0" text="100" />
                                                 <Label layoutX="353.0" layoutY="60.0" text="Mouse Speed:">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="202.0" layoutY="168.0" text="+/-">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="202.0" layoutY="204.0" text="+/-">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -315,7 +309,6 @@
                                                     </font>
                                                 </Label>
                                                 <Slider fx:id="abc2Modifier" layoutX="526.0" layoutY="141.0" onDragDetected="#updateABC2Modifier" onDragDone="#updateABC2Modifier" onDragDropped="#updateABC2Modifier" onMouseDragReleased="#updateABC2Modifier" showTickLabels="true" showTickMarks="true" value="25.0" />
-                                                <CheckBox layoutX="29.0" layoutY="239.0" mnemonicParsing="false" selected="true" text="Move mouse off screen while AFK?" />
                                             </children>
                                         </AnchorPane>
                                     </children>
@@ -328,6 +321,73 @@
                            <children>
                               <TabPane prefHeight="494.0" prefWidth="703.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
+                                    <Tab text="Agility  |  Crafting  |  Herb">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <Label layoutX="25.0" layoutY="14.0" text="Agility Preferences" underline="true">
+                                                   <font>
+                                                      <Font name="System Bold" size="15.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="craftingMethodsDropDown" layoutX="27.0" layoutY="255.0" prefWidth="150.0" promptText="Crafting Method" />
+                                                <CheckBox layoutX="401.0" layoutY="45.0" mnemonicParsing="false" text="Make Tar at &gt;30? (cheaper)" />
+                                                <CheckBox fx:id="enableWildernessCourseBox" layoutX="23.0" layoutY="45.0" mnemonicParsing="false" text="Enable Wilderness Course" />
+                                                <CheckBox fx:id="enableAlchingAgilityBox" disable="true" layoutX="23.0" layoutY="72.0" mnemonicParsing="false" text="Enable Alching of Yew Longbows" />
+                                                <CheckBox fx:id="enableSummerPieBoostingBox" disable="true" layoutX="23.0" layoutY="117.0" mnemonicParsing="false" text="Enable Summer Pie Boosting" />
+                                                <Label disable="true" layoutX="51.0" layoutY="90.0" text="(Requires 55 Magic)">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="401.0" layoutY="14.0" text="Herblore Preferences" underline="true">
+                                                   <font>
+                                                      <Font name="System Bold" size="15.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="27.0" layoutY="225.0" text="Crafting Preferences" underline="true">
+                                                   <font>
+                                                      <Font name="System Bold" size="15.0" />
+                                                   </font>
+                                                </Label>
+                                                <CheckBox fx:id="growKittenDuringAgilityBoxgrowKittenDuringAgilityBox" disable="true" layoutX="23.0" layoutY="145.0" mnemonicParsing="false" text="Grow Kitten During Agility" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Fishing  |  Cooking">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <Label layoutX="25.0" layoutY="14.0" text="Fishing">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="troutLocationsDropDown" layoutX="26.0" layoutY="139.0" prefHeight="25.0" prefWidth="180.0" promptText="Trout/Salmon Location" />
+                                                <ComboBox disable="true" layoutX="362.0" layoutY="74.0" prefWidth="150.0" promptText="Item 1" />
+                                                <Label layoutX="362.0" layoutY="14.0" text="Cooking">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <CheckBox fx:id="getBarbarianRodCheckBox" layoutX="25.0" layoutY="41.0" mnemonicParsing="false" text="Get Barbarian Rod at level 58" />
+                                                <ComboBox fx:id="shrimpLocationsDropDown" layoutX="26.0" layoutY="104.0" prefHeight="25.0" prefWidth="180.0" promptText="Shrimp Location" />
+                                                <ComboBox disable="true" layoutX="26.0" layoutY="176.0" prefHeight="25.0" prefWidth="180.0" promptText="Lobster Location" />
+                                                <ComboBox disable="true" layoutX="26.0" layoutY="215.0" prefHeight="25.0" prefWidth="180.0" promptText="Harpoon Location" />
+                                                <CheckBox disable="true" layoutX="362.0" layoutY="41.0" mnemonicParsing="false" text="Space Holder" />
+                                                <ComboBox disable="true" layoutX="362.0" layoutY="109.0" prefWidth="150.0" promptText="Item 2" />
+                                                <ComboBox disable="true" layoutX="362.0" layoutY="146.0" prefWidth="150.0" promptText="Item 3" />
+                                                <ComboBox disable="true" layoutX="362.0" layoutY="185.0" prefWidth="150.0" promptText="Item 4" />
+                                                <TextField disable="true" layoutX="540.0" layoutY="74.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
+                                                <TextField disable="true" layoutX="540.0" layoutY="109.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
+                                                <TextField disable="true" layoutX="540.0" layoutY="146.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
+                                                <TextField disable="true" layoutX="540.0" layoutY="185.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
+                                                <CheckBox fx:id="growKittenDuringFishingBox" disable="true" layoutX="26.0" layoutY="74.0" mnemonicParsing="false" text="Grow Kitten During Fishing" />
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
                                   <Tab text="Slayer ">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
@@ -436,58 +496,6 @@
                                              </children></AnchorPane>
                                     </content>
                                   </Tab>
-                                    <Tab text="Fishing  |  Cooking">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <Label layoutX="25.0" layoutY="14.0" text="Fishing">
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <ComboBox fx:id="troutLocationsDropDown" layoutX="25.0" layoutY="109.0" prefHeight="25.0" prefWidth="180.0" promptText="Trout/Salmon Location" />
-                                                <ComboBox disable="true" layoutX="362.0" layoutY="74.0" prefWidth="150.0" promptText="Item 1" />
-                                                <Label layoutX="362.0" layoutY="14.0" text="Cooking">
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <CheckBox fx:id="getBarbarianRodCheckBox" layoutX="25.0" layoutY="41.0" mnemonicParsing="false" text="Get Barbarian Rod at level 58" />
-                                                <ComboBox fx:id="shrimpLocationsDropDown" layoutX="25.0" layoutY="74.0" prefHeight="25.0" prefWidth="180.0" promptText="Shrimp Location" />
-                                                <ComboBox disable="true" layoutX="25.0" layoutY="146.0" prefHeight="25.0" prefWidth="180.0" promptText="Lobster Location" />
-                                                <ComboBox disable="true" layoutX="25.0" layoutY="185.0" prefHeight="25.0" prefWidth="180.0" promptText="Harpoon Location" />
-                                                <CheckBox disable="true" layoutX="362.0" layoutY="41.0" mnemonicParsing="false" text="Space Holder" />
-                                                <ComboBox disable="true" layoutX="362.0" layoutY="109.0" prefWidth="150.0" promptText="Item 2" />
-                                                <ComboBox disable="true" layoutX="362.0" layoutY="146.0" prefWidth="150.0" promptText="Item 3" />
-                                                <ComboBox disable="true" layoutX="362.0" layoutY="185.0" prefWidth="150.0" promptText="Item 4" />
-                                                <TextField disable="true" layoutX="540.0" layoutY="74.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
-                                                <TextField disable="true" layoutX="540.0" layoutY="109.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
-                                                <TextField disable="true" layoutX="540.0" layoutY="146.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
-                                                <TextField disable="true" layoutX="540.0" layoutY="185.0" prefHeight="25.0" prefWidth="67.0" text="End Lvl" />
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </Tab>
-                                    <Tab text="Crafting  |  Herb">
-                                       <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <Label layoutX="25.0" layoutY="14.0" text="Crafting">
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <ComboBox fx:id="craftingMethodsDropDown" layoutX="25.0" layoutY="49.0" prefWidth="150.0" promptText="Crafting Method" />
-                                                <CheckBox layoutX="25.0" layoutY="131.0" mnemonicParsing="false" text="Make Tar?" />
-                                                <Label layoutX="25.0" layoutY="103.0" text="Herblore">
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
-                                                </Label>
-                                             </children>
-                                          </AnchorPane>
-                                       </content>
-                                    </Tab>
                                     <Tab text="Magic  |  Thieving">
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">

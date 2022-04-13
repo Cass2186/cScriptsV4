@@ -6,6 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
@@ -39,13 +40,11 @@ public class Vars {
 
 
     public SkillTasks currentTask, prevTask;
-    public int skillSwitchMin = 12000000; //45min //1600000;// ~26m
-    public int skillSwitchMax = 24000000;
-    public Timer skillSwitchTimer = new Timer(General.random(skillSwitchMin, skillSwitchMax)); //~26-45m //General.random(2400000, 4200000)
-    public long startTime = System.currentTimeMillis();
+
 
     public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
 
+    //TODO replace all that references these with the values in Const
     public int startAgilityXp = Skills.getXP(Skills.SKILLS.AGILITY);
     public int startCraftingXp = Skills.getXP(Skills.SKILLS.CRAFTING);
     public int startConstructionXp = Skills.getXP(Skills.SKILLS.CONSTRUCTION);
@@ -58,30 +57,77 @@ public class Vars {
     public int startWoodcuttingXp = Skills.getXP(Skills.SKILLS.WOODCUTTING);
     public int startHunterXp = Skills.getXP(Skills.SKILLS.HUNTER);
 
+    // Numbers
     public int abc2Chance = General.random(0, 25);
     public int mouseSpeed = General.random(120, 140);
     public long currentTime = System.currentTimeMillis();
-    public boolean isOnBreak = false;
     public long breakLength = 0;
+    public int skillSwitchMin = 12000000; //45min //1600000;// ~26m
+    public int skillSwitchMax = 24000000;
+    public Timer skillSwitchTimer = new Timer(General.random(skillSwitchMin, skillSwitchMax)); //~26-45m //General.random(2400000, 4200000)
+    public long startTime = System.currentTimeMillis();
+
+    //booleans
+    public boolean isOnBreak = false;
+    public boolean switchingTasks = false;
+
+    public boolean shouldShowGUI = true;
+
+
+    //afk stuff
+    public int afkDurationAvg = General.random(20000, 40000); //30-40s
+    public int afkDurationSD = 20000; //20s SD
+    public int afkFrequencyAvg = 1200000; //every 20 min
+    public int afkFrequencySD = 180000; //3m SD
+    public boolean moveMouseOffScreenAfk = true;
+    public Timer afkTimer = new Timer(General.randomSD(afkFrequencyAvg, afkFrequencySD));
+    public boolean doGarden = false;
+
+    //Minibreak vars IN SECONDS
+    public int miniBreakDurationAvg = 480; //8m
+    public int miniBreakDurationSD = 210; //3.5m
+    public int miniBreakDurationMin = 120; //2m
+    public int miniBreakDurationMax = 1200;//20
+
+
+    public int eatAt = General.random(30, 65);
+
+    public int miniBreakFrequencyAvg = 2700; //45m
+    public int miniBreakFrequencySD = 3600; //60m
+    public Timer miniBreakTimer = new Timer(General.randomSD(miniBreakFrequencyAvg * 1000, miniBreakFrequencySD * 1000));
+
+
+    public boolean afkMode = false;
+
 
     //agility
     public boolean useWildernessAgility = true; //TODO currently only goes if you start at the course and <70
     public int useWildernessAgilityUntilLevel = 70;
     public boolean useSummerPieBoost = false;
     public int useSummerPieBoostWithinXLevels = 5;
+    public int marksCollected = 0;
+    public boolean donePriestInPeril = GameState.getSetting(302) >= 61;
+    public boolean shouldAlchAgil = false;
+    public boolean overridingCourse = false;
+    public boolean growKittenDuringAgility = false;
 
     //firemaking
     public int firemakingTargetLevel = 30;
     public boolean shouldResetFireMaking = true;
 
+
+    //MINING
     public boolean useMLM = false;
+
+
+    //SMITHING
     public boolean smeltCannonballs = true;
 
-    public boolean switchingTasks = false;
 
     //fishing
     public boolean getBarbarianRod = false; //TODO implement this in fishing tasks
     public FishingLocation fishingLocation;
+    public boolean growKittenDuringFishing = false;
 
     //cooking
     public boolean doingWines = Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35;
@@ -104,39 +150,14 @@ public class Vars {
             WcLocations.SEERS_MAPLES
     ));
 
-    //afk stuff
-    public int afkDurationAvg = General.random(20000, 40000); //30-40s
-    public int afkDurationSD = 20000; //20s SD
-    public int afkFrequencyAvg = 1200000; //every 20 min
-    public int afkFrequencySD = 180000; //3m SD
-    public boolean moveMouseOffScreenAfk = true;
-    public Timer afkTimer = new Timer(General.randomSD(afkFrequencyAvg, afkFrequencySD));
-    public boolean doGarden = false;
-
-    //Minibreak vars IN SECONDS
-    public int miniBreakDurationAvg = 480; //8m
-    public int miniBreakDurationSD = 210; //3.5m
-    public int miniBreakDurationMin = 120; //2m
-    public int miniBreakDurationMax = 1200;//20
-
-    public int marksCollected = 0;
-    public int eatAt = General.random(30, 65);
-
-    public int miniBreakFrequencyAvg = 2700; //45m
-    public int miniBreakFrequencySD = 3600; //60m
-    public Timer miniBreakTimer = new Timer(General.randomSD(miniBreakFrequencyAvg * 1000, miniBreakFrequencySD * 1000));
-
     public DaxTracker daxTracker;
 
 
-    public boolean shouldShowGUI = true;
 
-    public boolean donePriestInPeril = Game.getSetting(302) >= 61;
-    public boolean afkMode = false;
-    public boolean shouldAlchAgil = false;
-    public boolean overridingCourse = false;
+    // PAINT
     public boolean showTimers = false;
     public boolean showSlayerInfo = false;
+    public boolean showExperienceGained = true;
 
     public Alch.AlchItems alchItem = Alch.AlchItems.AIR_BATTLESTAFF;
 

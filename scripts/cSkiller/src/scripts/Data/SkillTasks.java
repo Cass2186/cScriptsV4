@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Log;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -88,20 +89,20 @@ public enum SkillTasks {
     public boolean isWithinLevelRange() {
         int currentLevel = Skills.getActualLevel(this.skill);
         boolean b = (currentLevel >= this.startLevel) && (currentLevel < this.endLevel);
-        System.out.println("[SkillTasks]: Are we within level range of " + this.getSkillName() + ": " + b);
+    //    System.out.println("[SkillTasks]: Are we within level range of " + this.getSkillName() + ": " + b);
         return b;
     }
 
     public static List<SkillTasks> generateList() {
         List<SkillTasks> list = new ArrayList<>();
-        General.println("[Debug]: Creating task list");
+        Log.info("[SkillTasks]: Creating task list");
         for (SkillTasks tsk : SkillTasks.values()) {
             if (tsk.isWithinLevelRange()) {
-                General.println("[Debug]: Added " + tsk.getSkillName() + " to task list");
+                Log.info("[SkillTasks]: Added " + tsk.getSkillName() + " to task list");
                 list.add(tsk);
             }
         }
-        General.println("[Debug]: Generated a task list " + list.size() + " tasks long");
+        Log.info("[SkillTasks]: Generated a task list " + list.size() + " tasks long");
         return list;
     }
 
@@ -109,13 +110,13 @@ public enum SkillTasks {
 
         List<SkillTasks> list = generateList();
         if (Vars.get().prevTask != null && list.contains(Vars.get().prevTask)) {
-            General.println("[Debug]: removing prev task from list");
+            Log.info("[Debug]: removing prev task from list");
             list.remove(Vars.get().prevTask);
         }
         if (list.size() == 0)
             return null;
         int seed = General.random(1, list.size()) - 1;
-        General.println("[Debug]: Task is: " + list.get(seed).getSkillName(), Color.GREEN);
+        Log.info("[SkillTasks]: Task is: " + list.get(seed).getSkillName());
         return list.get(seed); //avoids use of designated seeds
     }
 

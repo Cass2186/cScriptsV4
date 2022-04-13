@@ -7,6 +7,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.query.Query;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
@@ -69,7 +70,9 @@ public class WoodcuttingBank implements Task {
     public boolean validate() {
         RSItem[] invAxe = Inventory.find(getBestAxe());
 
-        boolean equippedAxe = Equipment.isEquipped(Filters.Items.nameContains("axe"));
+        boolean equippedAxe = Query.equipment()
+                .idEquals(getBestAxe())
+                .isAny();
 
 
         return Vars.get().currentTask != null &&

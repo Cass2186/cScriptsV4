@@ -1,6 +1,5 @@
 package scripts.Data;
 
-import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Skill;
@@ -14,7 +13,6 @@ public class Const {
         FLETCH_ARROW_SHAFTS,
         FLETCH_BOW_DROP,
         LIGHT_FIRES
-
     }
 
     public static final long startTime = System.currentTimeMillis();
@@ -81,43 +79,43 @@ public class Const {
     public static RSArea BARBARIAN_VILLAGE_FISHING_AREA = new RSArea(new RSTile(3100, 3435, 0), new RSTile(3110, 3422, 0));
     public static RSArea CATHERBY_BANK_AND_COOK_AREA = new RSArea(new RSTile(2820, 3437, 0), new RSTile(2804, 3446, 0));
 
-    public static int startAgilityXP = Skill.AGILITY.getXp();
-    public static int startAttXp = Skills.getXP(Skills.SKILLS.ATTACK);
-    public static int startConstructionXP = Skill.CONSTRUCTION.getXp();
-    public static int startCoookingXP = Skill.COOKING.getXp();
-    public static int startCraftingXP = Skill.CRAFTING.getXp();
-    public static int startDefXp = Skills.getXP(Skills.SKILLS.DEFENCE);
-    public static int startFiremakingXP = Skill.FIREMAKING.getXp();
-    public static int startFishingXP = Skill.FISHING.getXp();
-    public static int startHPXP = Skills.getXP(Skills.SKILLS.HITPOINTS);
-    public static int startHerbloreXP = Skill.HERBLORE.getXp();
-    public static int startHunterXP = Skill.HUNTER.getXp();
-    public static int startMagicXp = Skills.getXP(Skills.SKILLS.MAGIC);
-    public static int startMiningXP = Skill.MINING.getXp();
-    public static int startPrayerXP = Skill.PRAYER.getXp();
-    public static int startRangeXp = Skills.getXP(Skills.SKILLS.RANGED);
-    public static int startStrXp = Skills.getXP(Skills.SKILLS.STRENGTH);
-    public static int startWoodcuttingXP = Skill.PRAYER.getXp();
-    public static int startSlayerXP = Skills.getXP(Skills.SKILLS.SLAYER);
+    public static final int startAgilityXP = Skill.AGILITY.getXp();
+    public static final int startAttXp = Skill.ATTACK.getXp();
+    public static final int startConstructionXP = Skill.CONSTRUCTION.getXp();
+    public static final int startCoookingXP = Skill.COOKING.getXp();
+    public static final int startCraftingXP = Skill.CRAFTING.getXp();
+    public static final int startDefXp = Skill.DEFENCE.getXp();
+    public static final int startFiremakingXP = Skill.FIREMAKING.getXp();
+    public static final int startFishingXP = Skill.FISHING.getXp();
+    public static final int startHPXP = Skill.HITPOINTS.getXp();
+    public static final int startHerbloreXP = Skill.HERBLORE.getXp();
+    public static final int startHunterXP = Skill.HUNTER.getXp();
+    public static final int startMagicXp = Skill.MAGIC.getXp();
+    public static final int startMiningXP = Skill.MINING.getXp();
+    public static final int startPrayerXP = Skill.PRAYER.getXp();
+    public static final int startRangeXp = Skill.RANGED.getXp();
+    public static final int startSlayerXP = Skill.SLAYER.getXp();
+    public static final int startStrXp = Skill.STRENGTH.getXp();
+    public static final int startWoodcuttingXP = Skill.WOODCUTTING.getXp();
 
 
-    public final static int startAttLvl = Skill.ATTACK.getActualLevel();
-    public final static int startDefLvl = Skill.DEFENCE.getActualLevel();
-    public final static int startHPLvl = Skill.HITPOINTS.getActualLevel();
-    public final static int startMageLvl = Skill.MAGIC.getActualLevel();
-    public final static int startRangeLvl = Skill.RANGED.getActualLevel();
-    public final static int startSlayerLvl = Skill.SLAYER.getActualLevel();
-    public final static int startStrLvl = Skill.STRENGTH.getActualLevel();
     public static final int startAgilityLvl = Skill.AGILITY.getActualLevel();
-    public static final int startConstructionLvl = Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION);
-    public static final int startCoookingLvl = Skills.getActualLevel(Skills.SKILLS.COOKING);
-    public static final int startCraftingLvl = Skills.getActualLevel(Skills.SKILLS.CRAFTING);
-    public static final int startFiremakingLvl = Skills.getActualLevel(Skills.SKILLS.FIREMAKING);
-    public static final int startFishingLvl = Skills.getActualLevel(Skills.SKILLS.FISHING);
-    public static final int startHerbloreLvl = Skills.getActualLevel(Skills.SKILLS.HERBLORE);
-    public static final int startHunterLvl = Skills.getActualLevel(Skills.SKILLS.HUNTER);
-    public static final int startMagicLvl = Skills.getActualLevel(Skills.SKILLS.MAGIC);
-    public static final int startMiningLvl = Skills.getActualLevel(Skills.SKILLS.MINING);
-    public static final int startPrayerLvl = Skills.getActualLevel(Skills.SKILLS.PRAYER);
-    public static final int startWoodcuttingLvl = Skills.getActualLevel(Skills.SKILLS.WOODCUTTING);
+    public static final int startAttLvl = Skill.ATTACK.getActualLevel();
+    public static final int startConstructionLvl = Skill.CONSTRUCTION.getActualLevel();
+    public static final int startCoookingLvl = Skill.COOKING.getActualLevel();
+    public static final int startCraftingLvl = Skill.CRAFTING.getActualLevel();
+    public static final int startDefLvl = Skill.DEFENCE.getActualLevel();
+    public static final int startFiremakingLvl = Skill.FIREMAKING.getActualLevel();
+    public static final int startFishingLvl = Skill.FISHING.getActualLevel();
+    public static final int startHPLvl = Skill.HITPOINTS.getActualLevel();
+    public static final int startHerbloreLvl = Skill.HERBLORE.getActualLevel();
+    public static final int startHunterLvl = Skill.HUNTER.getActualLevel();
+    public static final int startMageLvl = Skill.MAGIC.getActualLevel();
+    public static final int startMagicLvl = Skill.MAGIC.getActualLevel();
+    public static final int startMiningLvl = Skill.MINING.getActualLevel();
+    public static final int startPrayerLvl = Skill.PRAYER.getActualLevel();
+    public static final int startRangeLvl = Skill.RANGED.getActualLevel();
+    public static final int startSlayerLvl = Skill.SLAYER.getActualLevel();
+    public static final int startStrLvl = Skill.STRENGTH.getActualLevel();
+    public static final int startWoodcuttingLvl = Skill.WOODCUTTING.getActualLevel();
 }

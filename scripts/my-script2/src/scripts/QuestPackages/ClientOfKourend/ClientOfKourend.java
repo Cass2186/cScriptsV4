@@ -7,6 +7,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
@@ -49,9 +50,9 @@ public class ClientOfKourend implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(FEATHER, 1, 300),
+                    new GEItem(FEATHER, 1, 30),
                     new GEItem(ItemID.LOBSTER, 10, 60),
-
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 25),
                     new GEItem(ItemID.GAMES_NECKLACE[0], 2, 30),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 30),
                     new GEItem(ItemID.RING_OF_DUELING[0], 2, 30),
@@ -80,6 +81,7 @@ public class ClientOfKourend implements QuestTask {
         BankManager.withdraw(1, true, ItemID.GAMES_NECKLACE[0]);
         BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[0]);
         BankManager.withdraw(1, true, FEATHER);
+        BankManager.withdraw(1, true, ItemID.ANTIDOTE_PLUS_PLUS[0]);
         BankManager.withdraw(10, true, ItemID.LOBSTER);
         BankManager.withdraw(1, true, ItemID.RING_OF_DUELING[0]);
         BankManager.withdraw(2, true, BankManager.STAMINA_POTION[0]);
@@ -104,7 +106,7 @@ public class ClientOfKourend implements QuestTask {
 
     public void makeQuill() {
         if (Utils.useItemOnItem(SCROLL, FEATHER))
-            Timer.abc2WaitCondition(() -> Inventory.find(ENCHANTED_QUILL).length > 0, 6000, 9000);
+            Timer.waitCondition(() -> Inventory.find(ENCHANTED_QUILL).length > 0, 6000, 9000);
     }
 
 
@@ -132,8 +134,8 @@ public class ClientOfKourend implements QuestTask {
             NPCInteraction.handleConversation("Can I ask you about Arceuus?");
             NPCInteraction.handleConversation("Why should I gain favour with Arceuus?");
             NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation();
-            Utils.continuingChat();
+            ChatScreen.handle();
+            //Utils.handlingChat();
             NPCInteraction.handleConversation();
             NPCInteraction.handleConversation();
         }

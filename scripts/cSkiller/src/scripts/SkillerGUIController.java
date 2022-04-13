@@ -35,7 +35,6 @@ import java.util.ResourceBundle;
 public class SkillerGUIController extends SkillerAbstractGUIController {
 
 
-
     @FXML
     @DoNotRename
     private Button atkAddButton, defAddButton, rangedAddButton, strAddButton, resetSkillsButton;
@@ -57,49 +56,9 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private TextField woodcuttingGoalLevelBox;
-
-
-    @FXML
-    @DoNotRename
-    private TextField cookingGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField fishingGoalLevel;
-
-    @FXML
-    @DoNotRename
-    private TextField prayerGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField magicGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField thievingGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField smithingGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField runecraftingGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField constructionGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField hunterGoalLevelBox;
-
-    @FXML
-    @DoNotRename
-    private TextField slayerGoalLevelBox;
-
+    private TextField fishingGoalLevel, cookingGoalLevelBox, woodcuttingGoalLevelBox,
+            prayerGoalLevelBox, thievingGoalLevelBox, smithingGoalLevelBox, magicGoalLevelBox,
+            runecraftingGoalLevelBox, constructionGoalLevelBox, hunterGoalLevelBox, slayerGoalLevelBox;
 
     @FXML
     @DoNotRename
@@ -119,15 +78,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private TextField afkForAverage;
-
-    @FXML
-    @DoNotRename
-    private TextField afkForSD;
-
-    @FXML
-    @DoNotRename
-    private TextField mouseSpeedBox;
+    private TextField afkForAverage, afkForSD, mouseSpeedBox;
 
     @FXML
     @DoNotRename
@@ -135,26 +86,20 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private ComboBox<String> startingSkillDropDown;
-
-
-    @FXML
-    @DoNotRename
     private ComboBox<String> logActionBox;
 
     @FXML
     @DoNotRename
-    private ComboBox<String> magicAlchItemBox, craftingMethodsDropDown, slayerCombatPotionBox,
+    private ComboBox<String> startingSkillDropDown, magicAlchItemBox, craftingMethodsDropDown, slayerCombatPotionBox,
             shrimpLocationsDropDown, troutLocationsDropDown, regularTreeAreaBox, oakTreeAreaBox,
             mapleTreeAreaBox, willowTreeAreaBox;
 
     @FXML
     @DoNotRename
-    private CheckBox useMlmBox1, useFruitStallButton, pointBoosingBox, getBarbarianRodCheckBox;
-
-    @FXML
-    @DoNotRename
-    private CheckBox useBlastFurnaceBox, preferJewleryOverTeleportsCheckBox;
+    private CheckBox useMlmBox1, useFruitStallButton, pointBoosingBox, getBarbarianRodCheckBox,
+            moveMouseOffScreenWhileAfkBox, useBlastFurnaceBox, preferJewleryOverTeleportsCheckBox,
+            growKittenDuringFishingBox, growKittenDuringAgilityBox, enableSummerPieBoostingBox,
+            enableAlchingAgilityBox, enableWildernessCourseBox;
 
     @FXML
     @DoNotRename
@@ -168,42 +113,6 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    void startButtonPressed(ActionEvent event) {
-        General.println("[GUIController]: Start button pressed");
-
-        updateSkillEndLevel(event);
-        updateSkillSwitchTimer(event);
-        updateAfkDuration(event);
-        updateAFKFrequency(event);
-        //updateABC2Modifier(event);
-
-        handleCheckBoxes();
-        updateFishingLocations();
-
-        SlayerVars.get().minLootValue = lootOverGpText.getText() != null ?
-                Integer.parseInt(lootOverGpText.getText()) : 1500;
-        SlayerVars.get().restockNumber = restockMultiplierBox.getText() != null ?
-                Integer.parseInt(restockMultiplierBox.getText()) : 6;
-        // SlayerVars.get().potionToUse =
-        SlayerVars.get().pointBoosting = pointBoosingBox.isSelected();
-        updateSlayerPotion();
-        SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() + 1; // adding 1 in case it's set to 0
-        //  setUseCBalls(event);
-        ScriptSettings settingsHandler = ScriptSettings.getDefault();
-        //update slayer vars object in vars
-        Vars.get().slayVars = SlayerVars.get();
-        val settings = new SkillerSettings();
-        settings.setTest("wee");
-
-        Log.info("Settings dir: " + settingsHandler.getDirectory());
-        if(settingsHandler.save("lastTes", settings)){
-            Log.info("Saved settings as last");
-        } else {
-            Log.error("FAILED to Save settings as last");
-        }
-        this.getGUI().close();
-    }
-
     private void handleCheckBoxes() {
         String s = chancetoClickJewleryBox.getText();
         Vars.get().clickAllJeweleryChance = !s.equals("") ?
@@ -211,26 +120,12 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         Vars.get().useFruitStalls = useFruitStallButton.isSelected();
         Vars.get().preferJeweleryOverTeleports = preferJewleryOverTeleportsCheckBox.isSelected();
         Vars.get().getBarbarianRod = getBarbarianRodCheckBox.isSelected();
-    }
-
-
- /*   @FXML
-    @DoNotRename
-    void setUseCBalls(ActionEvent event) {
-        Vars.get().smeltCannonballs = smithCannonballsBox.isSelected();
-        if (smithCannonballsBox.isSelected())
-            useBlastFurnaceBox.setSelected(false);
-    }*/
-
-
-    @FXML
-    @DoNotRename
-    void setUseMlmBox(ActionEvent event) {
-        General.println("[GUIController]: Updated useMLM Boolean to: " + useMlmBox1.isSelected());
-        if (useMlmBox1.isSelected())
-            Vars.get().useMLM = true;
-        else
-            Vars.get().useMLM = false;
+        Vars.get().moveMouseOffScreenAfk = moveMouseOffScreenWhileAfkBox.isSelected();
+        Vars.get().growKittenDuringFishing = growKittenDuringFishingBox.isSelected();
+        Vars.get().growKittenDuringAgility =  growKittenDuringAgilityBox.isSelected();
+        Vars.get().useSummerPieBoost =  enableSummerPieBoostingBox.isSelected();
+        Vars.get().shouldAlchAgil = enableAlchingAgilityBox.isSelected();
+        Vars.get().useWildernessAgility = enableWildernessCourseBox.isSelected();
     }
 
     @FXML
@@ -424,7 +319,6 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         }
     }
 
-
     @FXML
     @DoNotRename
     void updateAlchItem(ActionEvent event) {
@@ -473,7 +367,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    void addWCAreaToLists(){
+    void addWCAreaToLists() {
         mapleTreeAreaBox.getItems().add(WcLocations.SEERS_MAPLES.toString());
         willowTreeAreaBox.getItems().add(WcLocations.PORT_SARIM_WILLOWS.toString());
         willowTreeAreaBox.getItems().add(WcLocations.DRAYNOR_WILLOWS.toString());
@@ -485,13 +379,13 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    void resetSkillsButtonPressed(ActionEvent event){
+    void resetSkillsButtonPressed(ActionEvent event) {
         addCurrentLevels();
     }
 
     @FXML
     @DoNotRename
-    void addCurrentLevels(){
+    void addCurrentLevels() {
         agilityGoalLevelBox.setText(String.valueOf(Skills.SKILLS.AGILITY.getActualLevel()));
         herbloreGoalLevelBox.setText(String.valueOf(Skills.SKILLS.HERBLORE.getActualLevel()));
         craftingGoalLevelBox.setText(String.valueOf(Skills.SKILLS.CRAFTING.getActualLevel()));
@@ -553,28 +447,46 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         }
         // populate trees
         addWCAreaToLists();
-
-        for (Methods.HERBLORE meth : Methods.HERBLORE.values()) {
-
-        }
-        for (Methods.COOKING meth : Methods.COOKING.values()) {
-
-        }
-        for (Methods.CRAFTING meth : Methods.CRAFTING.values()) {
-
-        }
-        for (Methods.FISHING meth : Methods.FISHING.values()) {
-
-        }
-        for (Methods.FLETCHING meth : Methods.FLETCHING.values()) {
-
-        }
-        for (Methods.HUNTER meth : Methods.HUNTER.values()) {
-
-        }
-        for (Methods.MINING meth : Methods.MINING.values()) {
-
-        }
     }
+
+
+    @FXML
+    @DoNotRename
+    void startButtonPressed(ActionEvent event) {
+        General.println("[GUIController]: Start button pressed");
+
+        updateSkillEndLevel(event);
+        updateSkillSwitchTimer(event);
+        updateAfkDuration(event);
+        updateAFKFrequency(event);
+        //updateABC2Modifier(event);
+
+        handleCheckBoxes();
+
+        updateFishingLocations();
+        SlayerVars.get().minLootValue = lootOverGpText.getText() != null ?
+                Integer.parseInt(lootOverGpText.getText()) : 1500;
+        SlayerVars.get().restockNumber = restockMultiplierBox.getText() != null ?
+                Integer.parseInt(restockMultiplierBox.getText()) : 6;
+        // SlayerVars.get().potionToUse =
+        SlayerVars.get().pointBoosting = pointBoosingBox.isSelected();
+        updateSlayerPotion();
+        SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() + 1; // adding 1 in case it's set to 0
+        //  setUseCBalls(event);
+        ScriptSettings settingsHandler = ScriptSettings.getDefault();
+        //update slayer vars object in vars
+        Vars.get().slayVars = SlayerVars.get();
+        val settings = new SkillerSettings();
+        settings.setTest("wee");
+
+        Log.info("Settings dir: " + settingsHandler.getDirectory());
+        if (settingsHandler.save("lastTes", settings)) {
+            Log.info("Saved settings as last");
+        } else {
+            Log.error("FAILED to Save settings as last");
+        }
+        this.getGUI().close();
+    }
+
 
 }
