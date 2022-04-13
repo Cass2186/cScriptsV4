@@ -1,17 +1,21 @@
 package scripts.Tasks.Agility.Tasks.Wilderness;
 
+import org.tribot.api.input.Mouse;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.World;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.AgilityAreas;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Listeners.PkListener;
 import scripts.Tasks.Agility.AgilityAPI.AgilUtils;
 import scripts.Tasks.Agility.AgilityAPI.Obstacle;
+import scripts.Tasks.Slayer.Tasks.WorldHop;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -48,6 +52,26 @@ public class WildernessAgility implements Task {
 
     String message = "";
 
+    private void pkObserver(){
+        int maxLevel = MyPlayer.getCombatLevel() + Combat.getWildernessLevel();
+        int minLevel = MyPlayer.getCombatLevel() - Combat.getWildernessLevel();
+
+        List<org.tribot.script.sdk.types.Player> nearbyPlayers = Query.players()
+                .hasSkullIcon()
+                .maxLevel(maxLevel)
+                .minLevel(minLevel)
+                .toList();
+
+        if (nearbyPlayers.size() > 0){
+            Mouse.setSpeed(250);
+            Log.info("Hopping worlds");
+            WorldHopper.hop(org.tribot.api2007.WorldHopper.getRandomWorld(true, false));
+        }
+
+    }
+
+
+
     @Override
     public String toString() {
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
@@ -80,6 +104,7 @@ public class WildernessAgility implements Task {
             } else
                 Log.error("Climbing Ladder FAILED");
         }
+        pkObserver();
         allObstacles.get(0).setTimeOutMin(12000); //pipe
         allObstacles.get(2).setTimeOutMin(10000); //stepping stones
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);

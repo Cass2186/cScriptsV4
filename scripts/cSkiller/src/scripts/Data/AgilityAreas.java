@@ -344,8 +344,8 @@ public class AgilityAreas {
                     new RSTile(2996, 3949, 0),
                     new RSTile(2996, 3943, 0),
                     new RSTile(3002, 3943, 0),
-                    new RSTile(3003, 3939, 0),
-                    new RSTile(2988, 3939, 0),
+                    new RSTile(3003, 3936, 0),
+                    new RSTile(2988, 3936, 0),
                     new RSTile(2988, 3946, 0),
                     new RSTile(2991, 3946, 0),
                     new RSTile(2993, 3949, 0)

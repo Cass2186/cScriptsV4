@@ -22,7 +22,7 @@ public class GoToRcAltar implements Task {
     private boolean goToAltar(int tiaraId, Area altarArea) {
         if (Inventory.contains(ItemID.PURE_ESSENCE) && Equipment.contains(tiaraId) &&
                 !CraftRunes.atAltar()) {
-
+            Log.info("Going to altar");
             PathingUtil.walkToArea(altarArea, false);
 
             if (RcUtils.getRuins().map(ruins -> ruins.interact("Enter")).orElse(false)) {
@@ -45,7 +45,7 @@ public class GoToRcAltar implements Task {
             goToAltar(ItemID.FIRE_TIARA, Const.FIRE_ALTAR_AREA);
             return;
         }
-
+        Log.info("Going to altar");
         // Not using Ring of elements and still at bank, tele to Duel Arena
         if (!Vars.get().useRingOfElements && Bank.isNearby() && rodTele("Duel Arena")) {
             Waiting.waitUntil(4500, 250, () -> !Bank.isNearby());
@@ -102,15 +102,15 @@ public class GoToRcAltar implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.MEDIUM;
+        return Priority.HIGH;
     }
 
     @Override
     public boolean validate() {
-
-        if (CraftRunes.atAltar())
+        if (RcUtils.getAltar().isPresent()) {
+            Log.debug("Already at altar");
             return false;
-
+        }
         //TODO add support for RC Abyss
         if (Vars.get().abyssCrafting)
             return false;

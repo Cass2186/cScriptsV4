@@ -176,7 +176,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         updateAfkDuration(event);
         updateAFKFrequency(event);
         //updateABC2Modifier(event);
-        setUseMlmBox(event);
+
         handleCheckBoxes();
         updateFishingLocations();
 
@@ -545,7 +545,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
             startingSkillDropDown.getItems().add(s.getSkillName());
         }
         for (Const.LOG_ACTIONS action : Const.LOG_ACTIONS.values()) {
-            logActionBox.getItems().add(StringUtils.capitalize(action.toString().toLowerCase()));
+            //logActionBox.getItems().add(StringUtils.capitalize(action.toString().toLowerCase()));
         }
         for (Alch.AlchItems item : Alch.AlchItems.values()) {
             magicAlchItemBox.getItems().add(item.toString().replace("_", " ")

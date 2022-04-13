@@ -166,7 +166,7 @@ public class CraftRunes implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.HIGH;
+        return Priority.LOW;
     }
 
     @Override
@@ -187,21 +187,20 @@ public class CraftRunes implements Task {
         if (!Vars.get().lava && !Vars.get().usingLunarImbue
                 && !Vars.get().abyssCrafting && !Vars.get().zanarisCrafting &&
                 Skill.RUNECRAFT.getActualLevel() >= 19) {
-
-            return atAltar() && Inventory.contains(ItemID.PURE_ESSENCE, ItemID.WATER_TALISMAN)
-                    && !Vars.get().collectPouches;
-
+            Log.info("HERE");
+            return RcUtils.getAltar().isPresent() && Inventory.contains(ItemID.PURE_ESSENCE, ItemID.WATER_TALISMAN)
+                    && !Vars.get().collectPouches ;
         }
         //doing steam WITH Imbue
         if (!Vars.get().lava
                 && !Vars.get().abyssCrafting && !Vars.get().zanarisCrafting && Skill.RUNECRAFT.getActualLevel() >= 19) {
 
-            return atAltar() && Inventory.contains(ItemID.PURE_ESSENCE)
+            return RcUtils.getAltar().isPresent() && Inventory.contains(ItemID.PURE_ESSENCE)
                     && !Vars.get().collectPouches;
         }
 
         // mostly redundant with the previous one
-        return atAltar() && Inventory.contains(ItemID.PURE_ESSENCE) && !Vars.get().collectPouches;
+        return !Bank.isNearby() &&  atAltar() && Inventory.contains(ItemID.PURE_ESSENCE) && !Vars.get().collectPouches;
     }
 
     @Override
