@@ -85,11 +85,8 @@ public class Paint {
 
     public static void setExperiencePaint() {
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
-                .row(template.toBuilder().label("Toggle Experience Display " + Vars.get().showExperienceGained)
-                        .onClick(() ->
-                                Vars.get().showExperienceGained =
-                                !Vars.get().showExperienceGained )
-
+                .row(template.toBuilder().label("Toggle Experience Display")
+                        .onClick(() -> Vars.get().showExperienceGained = !Vars.get().showExperienceGained)
                         .build())
                 .row(template.toBuilder().condition(() -> Skill.AGILITY.getXp() > Const.startAgilityXP &&
                                 Vars.get().showExperienceGained)
