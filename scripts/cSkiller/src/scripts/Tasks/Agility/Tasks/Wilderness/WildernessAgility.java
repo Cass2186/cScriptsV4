@@ -57,14 +57,15 @@ public class WildernessAgility implements Task {
         int minLevel = MyPlayer.getCombatLevel() - Combat.getWildernessLevel();
 
         List<org.tribot.script.sdk.types.Player> nearbyPlayers = Query.players()
-                .hasSkullIcon()
+                //.hasSkullIcon()
+                .maxDistance(25)
                 .maxLevel(maxLevel)
                 .minLevel(minLevel)
                 .toList();
 
         if (nearbyPlayers.size() > 0){
             Mouse.setSpeed(250);
-            Log.info("Hopping worlds");
+            Log.warn("Hopping worlds");
             WorldHopper.hop(org.tribot.api2007.WorldHopper.getRandomWorld(true, false));
         }
 

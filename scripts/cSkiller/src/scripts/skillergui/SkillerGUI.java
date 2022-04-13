@@ -12,6 +12,7 @@ import javafx.stage.StageStyle;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.script.Script;
+import scripts.cSkiller;
 
 import javax.swing.*;
 import java.io.ByteArrayInputStream;
@@ -81,6 +82,10 @@ public class SkillerGUI extends Application {
         });
 
         waitForInit();
+        stage.setOnCloseRequest((ignored) -> {
+            cSkiller.isRunning.set(false);
+            this.close();
+        });
     }
 
 

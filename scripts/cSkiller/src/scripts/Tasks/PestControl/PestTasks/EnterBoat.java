@@ -20,7 +20,8 @@ public class EnterBoat implements Task {
 
     public void enterBoat() {
         if (!PestUtils.INTERMEDIATE_BOAT_AREA.contains(Player.getPosition())) {
-            Waiting.waitNormal(1000, 50);
+            Waiting.waitUntil(1000, 150,()-> !Game.isInInstance());
+            Waiting.waitNormal(1200, 50); // waits in case gam e just finished
             if (!PestUtils.INTERMEDIATE_BOAT_AREA.contains(Player.getPosition())
                     && PathingUtil.walkToTile(new RSTile(2644, 2644, 0), 1, false)) {
                 if (Utils.clickObject("Gangplank", "Cross", false)) {

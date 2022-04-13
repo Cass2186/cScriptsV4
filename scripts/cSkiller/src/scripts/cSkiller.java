@@ -125,7 +125,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
-@ScriptManifest(name = "cSkiller", authors = {"Cass2186"}, category = "Testing", description = "Current Version v0.1")
+@ScriptManifest(name = "cSkiller", authors = {"Cass2186"}, category = "Testing", description = "Current Version v0.1", version = 0.1)
 public class cSkiller extends Script implements Starting, Ending, Arguments, Breaking, MessageListening07 {
 
     private boolean shouldEnd = false;

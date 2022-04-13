@@ -18,6 +18,7 @@ import org.tribot.api2007.util.DPathNavigator;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
@@ -157,29 +158,37 @@ public class PathingUtil {
     }
 
     public static boolean walkToTile(WorldTile destination) {
-        Log.log("[PathingUtil] Local walking V2 - Worldtile");
+        Log.info("[PathingUtil] Local walking V2 - Worldtile");
         return GlobalWalking.walkTo(destination);
     }
 
 
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
-        Log.log("[PathingUtil] Local walking V2 - Worldtile");
+        Log.info("[PathingUtil] Local walking V2 - Worldtile");
         return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination), state);
     }
 
     public static boolean localNav(WorldTile destination) {
-        Log.log("[PathingUtil] Local walking V2 - Worldtile");
-        return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination));
+        return localNav(destination);
     }
 
     public static boolean localNav(LocalTile destination, Supplier<WalkState> state) {
-        Log.log("[PathingUtil] Local walking V2 - LocalTile");
-        return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination), state);
+        var path = LocalWalking.Map.builder().travelThroughDoors(true)
+                .build().getPath(destination);
+        Log.info("[PathingUtil] Local walking V2 - LocalTile");
+        return LocalWalking.walkPath(path, state);
+    }
+
+    public static boolean localNav(LocalTile destination, boolean travelThroughDoors) {
+        var path = LocalWalking.Map.builder()
+                .travelThroughDoors(travelThroughDoors)
+                .build().getPath(destination);
+        Log.info("[PathingUtil] Local walking V2 - LocalTile (doors = " + travelThroughDoors + ")");
+        return LocalWalking.walkPath(path);
     }
 
     public static boolean localNav(LocalTile destination) {
-        Log.log("[PathingUtil] Local walking V2 - LocalTile");
-        return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination));
+        return localNav(destination, true);
     }
 
     public static boolean movementIdle() {
@@ -557,6 +566,12 @@ public class PathingUtil {
             return largeArea.contains(Player.getPosition());
 
         return false;
+    }
+
+    public static void getLocalMapPathToTarget(Positionable target) {
+        var path = LocalWalking.Map.builder().travelThroughDoors(true)
+                .build().getPath(target);
+        // LocalWalking.walkPath(path);
     }
 
     public static boolean walkToArea(Area area, boolean abc2Sleep) {

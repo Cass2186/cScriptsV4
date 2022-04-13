@@ -4,12 +4,17 @@ import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Options;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.FightArena.FightArena;
@@ -447,63 +452,96 @@ public class TreeGnomeVillage implements QuestTask {
         }
     }
 
+    RSArea WHOLE_TOWER_BOTTOM_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2500, 3260, 0),
+                    new RSTile(2500, 3252, 0),
+                    new RSTile(2501, 3251, 0),
+                    new RSTile(2504, 3251, 0),
+                    new RSTile(2507, 3254, 0),
+                    new RSTile(2512, 3254, 0),
+                    new RSTile(2513, 3255, 0),
+                    new RSTile(2513, 3259, 0),
+                    new RSTile(2512, 3260, 0)
+            }
+    );
+
     public void getOrb1() {
-        cQuesterV2.status = "Getting Orb 1";
-        PathingUtil.walkToArea(orb1Outside);
-
-        if (orb1Outside.contains(Player.getPosition())) {
-            if (Utils.clickObj(2185, "Climb-over")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> AFTER_CRUMBLED_WALL.contains(Player.getPosition()), 10000, 12000);
-                General.sleep(General.random(5000, 6000));
-            }
-        }
-        eatOrb1();
-        if (AFTER_CRUMBLED_WALL.contains(Player.getPosition())) {
-            if (org.tribot.api2007.Objects.findNearest(20, 1535).length > 0) {
-                Doors.handleDoor(org.tribot.api2007.Objects.findNearest(20, 1535)[0], true);
-                General.sleep(General.random(3000, 4000));
-            }
-            Walking.blindWalkTo(BOTTOM_OF_ORB_1_AREA.getRandomTile());
-            Timer.waitCondition(() -> BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition()), 10000, 13000);
-        }
-        eatOrb1();
-        if (BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition())) {
-            Utils.clickObj(16683, "Climb-up");
-            if (Timer.waitCondition(() -> orb1Upper.contains(Player.getPosition()), 6000, 8000))
-                General.sleep(General.random(200, 600));
-        }
-        eatOrb1();
-        if (orb1Upper.contains(Player.getPosition())) {
-            if (Utils.clickObj(2183, "Open"))
-                Timer.waitCondition(() -> org.tribot.api2007.Objects.findNearest(20, 2812).length > 0, 5000, 7000);
-
-            if (Utils.clickObj(2182, "Search"))
-                if (Timer.waitCondition(() -> Inventory.find(orb1).length > 0, 7000, 9000))
-                    General.sleep(General.random(200, 600));
-        }
-        if (Inventory.find(orb1).length > 0) {
-
+        for (int i = 0; i < 50; i++) {
+            Waiting.waitUniform(20, 40);
             eatOrb1();
 
-            if (Utils.clickObj(16679, "Climb-down"))
-                Timer.waitCondition(() -> BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition()), 8000, 10000);
+            cQuesterV2.status = "Getting Orb 1";
+            if (!WHOLE_TOWER_BOTTOM_AREA.contains(Player.getPosition()) &&
+                    MyPlayer.getTile().getPlane() != 1 && !orb1Outside.contains(Player.getPosition()))
+                PathingUtil.walkToArea(orb1Outside);
 
-            if (BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition())) {
+            else if (orb1Outside.contains(Player.getPosition())) {
+                Log.info("Climbing over");
+                if (Utils.clickObj(2185, "Climb-over")) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation();
+                    Timer.waitCondition(() -> AFTER_CRUMBLED_WALL.contains(Player.getPosition()), 10000, 12000);
+                    Waiting.waitUntil(4000, () -> Combat.getHPRatio() < 40 ||
+                            MyPlayer.isHealthBarVisible()); //serves as a sleep otherwise
+                }
+            } else if (AFTER_CRUMBLED_WALL.contains(Player.getPosition())) {
+                Log.info("After wall");
+          /*  if (org.tribot.api2007.Objects.findNearest(20, 1535).length > 0) {
+                Doors.handleDoor(org.tribot.api2007.Objects.findNearest(20, 1535)[0], true);
+                General.sleep(General.random(3000, 4000));
+            }*/
+                Optional<GameObject> door = Query.gameObjects()
+                        .isInteractive()
+                        .actionEquals("Open")
+                        .tileEquals(new WorldTile(2505, 3256, 0))
+                        .findFirst();
+                if (door.map(d -> d.interact("Open")).orElse(false))
+                    Waiting.waitUntil(4500, 100, () -> Query.gameObjects()
+                            .isInteractive()
+                            .actionEquals("Open")
+                            .tileEquals(new WorldTile(2505, 3256, 0))
+                            .findFirst().isEmpty());
+                if (PathingUtil.localNavigation(new RSTile(2503, 3253, 0)))
+                    Timer.waitCondition(() -> BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition()), 10000, 13000);
+            } else if (BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition()) &&
+                    Utils.clickObj(ObjectID.LADDER_16683, "Climb-up")) {
+                Timer.waitCondition(() -> orb1Upper.contains(Player.getPosition()), 6000, 8000);
+            } else if (orb1Upper.contains(Player.getPosition()) && Inventory.find(orb1).length == 0) {
+                if (Utils.clickObj(ObjectID.CLOSED_CHEST_2183, "Open"))
+                    Timer.waitCondition(() -> Query.gameObjects()
+                            .idEquals(ObjectID.OPEN_CHEST_2182).isAny(), 5000, 7000);
+
+                eatOrb1();
+                if (Utils.clickObj(ObjectID.OPEN_CHEST_2182, "Search"))
+                    if (Timer.waitCondition(() -> Inventory.find(orb1).length > 0, 7000, 9000))
+                        General.sleep(General.random(200, 600));
+            } else if (Inventory.find(orb1).length > 0) {
                 eatOrb1();
 
-                if (Utils.clickObj(1535, "Open"))
-                    Utils.idle(3000, 5000);
+                if (MyPlayer.getTile().getPlane() == 1 &&
+                        Utils.clickObj(ObjectID.LADDER_16679, "Climb-down"))
+                    Timer.waitCondition(() -> BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition()), 8000, 10000);
 
-                if (Utils.clickObj(2184, "Open"))
-                    Utils.idle(3000, 5000);
+                else if (BOTTOM_OF_ORB_1_AREA.contains(Player.getPosition())) {
+                    eatOrb1();
+
+                    if (Utils.clickObj(ObjectID.DOOR_2184, "Open") &&
+                            Waiting.waitUntil(5000,
+                                    75, () -> !WHOLE_TOWER_BOTTOM_AREA.contains(Player.getPosition())))
+                        break;
+                }
+            }
+            if (!WHOLE_TOWER_BOTTOM_AREA.contains(Player.getPosition()) && MyPlayer.getTile().getPlane() != 1 &&
+                    Inventory.find(orb1).length > 0) {
+                break;
             }
         }
     }
 
     public void eatOrb1() {
-        EatUtil.eatFood();
+        if (Combat.getHPRatio() < 40)
+            EatUtil.eatFood();
     }
 
     public void talkKing2() {
@@ -567,7 +605,7 @@ public class TreeGnomeVillage implements QuestTask {
                     //walk to safetile by trees, then attack
                     if (Walking.blindWalkTo(SAFE_TILE) &&
                             Timer.waitCondition(() ->
-                                            SAFE_AREA_WARLORD.contains(Player.getPosition()), 6000, 8000)) {
+                                    SAFE_AREA_WARLORD.contains(Player.getPosition()), 6000, 8000)) {
                         if (Utils.clickNPC(7622, "Attack"))
                             Utils.idle(1200, 3600);
                     }

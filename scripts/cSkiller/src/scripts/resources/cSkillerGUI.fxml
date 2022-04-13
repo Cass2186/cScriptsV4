@@ -197,7 +197,7 @@
                                     <AnchorPane id="startingSkillBox" layoutX="352.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="489.0" prefWidth="313.0">
                                        <children>
                                           <ComboBox fx:id="startingSkillDropDown" layoutX="28.0" layoutY="62.0" onAction="#skillSelected" prefHeight="26.0" prefWidth="216.0" promptText="Starting Skill" />
-                                          <TextField id="minTimeBettwenSkillsBox" fx:id="switchSkillMinTime" layoutX="134.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="43.0" text="40" />
+                                          <TextField id="minTimeBettwenSkillsBox" fx:id="switchSkillMinTime" layoutX="131.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="46.0" text="40" />
                                           <TextField id="maxTimeBetweenSkillsBox" fx:id="switchSkillMaxTime" layoutX="202.0" layoutY="115.0" onAction="#updateSkillSwitchTimer" prefHeight="26.0" prefWidth="43.0" text="60" />
                                           <Label layoutX="23.0" layoutY="118.0" text="Switch skill every:">
                                              <font>
@@ -214,7 +214,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField id="minTimeBettwenSkillsBox" fx:id="afkEveryAverage" layoutX="137.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="43.0" text="600" />
+                                          <TextField id="minTimeBettwenSkillsBox" fx:id="afkEveryAverage" layoutX="131.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="49.0" text="600" />
                                           <TextField id="maxTimeBetweenSkillsBox" fx:id="afkEverySD" layoutX="227.0" layoutY="165.0" onAction="#updateAFKFrequency" prefHeight="26.0" prefWidth="43.0" text="240" />
                                           <Label alignment="CENTER_RIGHT" layoutX="62.0" layoutY="168.0" text="AFK every:">
                                              <font>
@@ -231,7 +231,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <TextField id="minTimeBettwenSkillsBox" fx:id="afkForAverage" layoutX="137.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="43.0" text="35" />
+                                          <TextField id="minTimeBettwenSkillsBox" fx:id="afkForAverage" layoutX="131.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="49.0" text="35" />
                                           <TextField id="maxTimeBetweenSkillsBox" fx:id="afkForSD" layoutX="227.0" layoutY="201.0" onAction="#updateAfkDuration" prefHeight="26.0" prefWidth="43.0" text="20" />
                                           <Label alignment="CENTER_RIGHT" layoutX="76.0" layoutY="204.0" text="AFK for:">
                                              <font>
