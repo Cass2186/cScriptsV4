@@ -1785,9 +1785,8 @@ public class Utils {
     }
 
     public static int getPlayerCountInRadius(int rad) {
-        RSArea area = new RSArea(Player.getPosition(), rad);
-        RSPlayer[] p = Players.getAll(Filters.Players.inArea(area).and(Filters.Players.nameNotContains(Player.getRSPlayer().getName())));
-        return p.length;
+        Area area = Area.fromRadius(MyPlayer.getTile(), rad);
+        return Query.players().inArea(area).nameNotContains(MyPlayer.getUsername()).count();
     }
 
     public static String getRuntimeString(long runtime) {

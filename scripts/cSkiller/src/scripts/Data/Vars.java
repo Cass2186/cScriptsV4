@@ -12,6 +12,7 @@ import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.AntiBan;
 import scripts.ItemID;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.Fishing.Locations.FishingLocation;
 import scripts.Tasks.Magic.Alch;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
@@ -38,9 +39,36 @@ public class Vars {
     }
 
 
-
     public SkillTasks currentTask, prevTask;
 
+
+    public boolean onBreak = false;
+    public int breakNumber = 0;
+    public long totalBreakLength = 0;
+    public long currentBreakLength = 0;
+
+    // gets updated on break start
+    // only displayed as a static number when we are breaking
+    public long runningTimeWithBreaks = -1;
+    public Timer breakTimer = new Timer(0);
+    public Timer scriptTimer = new Timer(Long.MAX_VALUE);
+
+    public ScriptTimer scriptTimerNew = new ScriptTimer();
+
+    // returns runtime with breaks factored in
+    // if we haven't breaked before, it will just return the difference between current and start time
+    // if we have had a break (and therefore cached a time), it will return that;
+    public long getRunningTime() {
+        if (onBreak) {
+            // Log.info("On break MS: "  +(System.currentTimeMillis() - (startTime + totalBreakLength)));
+            //   Log.info("Run timewith breaks" + runningTimeWithBreaks);
+            return runningTimeWithBreaks != -1 ? runningTimeWithBreaks :
+                    (System.currentTimeMillis() - (startTime + (breakTimer.getElapsed())));
+        }
+        return
+                (System.currentTimeMillis() - startTime - totalBreakLength);
+
+    }
 
     public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
 
@@ -151,7 +179,6 @@ public class Vars {
     ));
 
     public DaxTracker daxTracker;
-
 
 
     // PAINT

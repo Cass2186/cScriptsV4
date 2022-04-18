@@ -28,6 +28,21 @@ public class CassScript {
         }
     }
 
+    public long getRunningTimeMs(long startTime){
+        return  System.currentTimeMillis() - startTime;
+    }
+
+    /**
+     * Assign this to variable called running time
+     * @param startTime is a var represeting start time
+     * @return
+     */
+    public long updateRunTimeOnBreakStart(long startTime){
+
+        return  System.currentTimeMillis() - startTime;
+    }
+
+
     public void initializeDax() {
         Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA);
 

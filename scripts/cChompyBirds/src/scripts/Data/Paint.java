@@ -6,6 +6,7 @@ import org.tribot.script.sdk.painting.template.basic.PaintLocation;
 import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
 import scripts.PaintUtil;
+import scripts.Utils;
 
 import java.awt.*;
 

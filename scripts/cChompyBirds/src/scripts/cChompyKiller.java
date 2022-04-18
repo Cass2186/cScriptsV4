@@ -1,6 +1,7 @@
 package scripts;
 
 import org.jetbrains.annotations.NotNull;
+import org.tribot.api.General;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.input.Mouse;
@@ -38,11 +39,17 @@ public class cChompyKiller extends CassScript implements TribotScript {
         MessageListening.addServerMessageListener(message -> {
             if (message.toLowerCase().contains("you scratch a notch")) {
                 Vars.get().kills++;
+            } else if (message.toLowerCase().contains("out of ammo")) {
+                Log.info("out of ammo");
+                super.isRunning.set(false);
+                throw new NullPointerException();
             }
         });
         ScriptListening.addEndingListener(() -> {
             Log.info(String.format("Kills %s | %s /hr", Vars.get().kills, Vars.get().getKillsHr()));
         });
+
+
         while (super.isRunning.get()) {
             Waiting.waitNormal(75, 10);
             if (!super.checkBasicShouldRunChecks())

@@ -191,8 +191,6 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 //return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
             }
         });
-        Utils.setNPCAttackPreference();
-        // addPaint();
 
     }
 
@@ -244,6 +242,8 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         skillTracker.start();
         Options.setShiftClickDrop(true);
         Widgets.closeAll();
+
+        initializeMessageListeners();
 
         TaskSet tasks = new TaskSet(
                 new SwitchTask(),
@@ -343,10 +343,16 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         Paint.setMainPaint();
         Paint.setExperiencePaint();
         Paint.addSorceressPaint();
+
+        Utils.setNPCAttackPreference();
+
         HashMap<Skills.SKILLS, Integer> startHashMap = Utils.getXpForAllSkills();
         isRunning.set(true);
 
         while (isRunning.get()) {
+
+            Waiting.waitUniform(40,80);
+
             if (shouldEnd)
                 break;
 
@@ -380,7 +386,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 currentSkill = Vars.get().currentTask.getSkill();
             }
 
-            General.sleep(10, 40);
+
             Task task = tasks.getValidTask();
             if (task != null) {
                 if (task.equals(MiniBreak.get())) {
@@ -481,8 +487,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
             General.println("[MessageListener]: Message triggering script end: " + serverMessage, Color.RED);
             isRunning.set(false);
             shouldEnd = true;
-            throw
-                    new NullPointerException();
+            throw new NullPointerException();
         }
     }
 
@@ -556,6 +561,47 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         endOnMessage(message, "green dragon");
         endOnMessage(message, "earth warrior");
         endOnDeath(message);
+    }
+
+    private void initializeMessageListeners() {
+        MessageListening.addServerMessageListener(message -> {
+        if (Vars.get().currentTask != null &&
+                    Vars.get().currentTask.equals(SkillTasks.FIREMAKING) &&
+                    message.contains("You can't light a fire")) {
+                Vars.get().shouldResetFireMaking = true;
+            }
+            if (Vars.get().currentTask != null &&
+                    Vars.get().currentTask.equals(SkillTasks.SLAYER)) {
+                endOnMessage(message, "bronze dragon");
+                endOnMessage(message, "steel dragon");
+                endOnMessage(message, "iron dragon");
+                endOnMessage(message, "green dragon");
+                endOnMessage(message, "earth warrior");
+                GetTask.handleNewTaskMessage(message);
+                GetTask.handleTaskMessage(message);
+                GetTask.handleCompleteMessage(message);
+                AttackNpc.expeditiousMessage(message);
+                MoveToArea.handleCandleMessage(message);
+                checkExpCharges(message);
+            }
+            if (Vars.get().currentTask != null &&
+                    Vars.get().currentTask.equals(SkillTasks.SMITHING)) {
+                BlastFurnaceBank.coalBagMessaageHandler(message);
+            }
+            if (message.equals("You don't find anything useful here.")) {
+                State.get().getLastBookcaseTile().ifPresent(tile -> {
+
+                    if (Utils.isLookingTowards(Player.getRSPlayer(), tile, 1)) {
+                        State.get().getLibrary().mark(tile, null);
+                        State.get().setLastBookcaseTile(null);
+                    } else {
+                        Log.warn("Misclicked bookcase");
+                        State.get().setLastBookcaseTile(null);
+                    }
+                });
+            }
+            endOnDeath(message);
+        });
     }
 
     @Override

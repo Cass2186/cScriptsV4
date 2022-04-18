@@ -16,6 +16,7 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.Npc;
 import scripts.PaintUtil;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
 import scripts.Utils;
 import scripts.cSkiller;
@@ -75,7 +76,9 @@ public class Paint {
     public static void setMainPaint() {
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
                 .row(PaintRows.versionedScriptName(template.toBuilder()))
-                .row(PaintRows.runtime(template.toBuilder()))
+                .row(template.toBuilder().label("Runtime")
+                        .value(() -> ScriptTimer.getRuntimeString())
+                        .build())
                 .row(template.toBuilder().label("Current Task").value(() -> cSkiller.currentSkillName).build())
                 .row(template.toBuilder().label("Action").value(() -> cSkiller.status).build())
                 /*.row(template.toBuilder().condition(() -> Skill.FARMING.getXp() > Const.START_FARM_XP)

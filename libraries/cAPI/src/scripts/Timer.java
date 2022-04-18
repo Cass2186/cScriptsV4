@@ -35,6 +35,17 @@ public class Timer {
         end = start + period;
     }
 
+    /**
+     * Instantiates a new Timer with a given time period in milliseconds.
+     *
+     * @param period Time period in milliseconds.
+     */
+    public Timer(final long period, long startMod) {
+        this.period = period;
+        start = System.currentTimeMillis() - startMod;
+        end = start + period;
+    }
+
     private static boolean isLvlUpInterfaceOpen() {
         return Widgets.get(233, 2).isPresent();
     }
@@ -66,6 +77,15 @@ public class Timer {
         }
         return 0;
     }
+
+
+    public long getElapsed() {
+        if (isRunning()) {
+            return this.period - getRemaining();
+        }
+        return 0;
+    }
+
 
     /**
      * Returns <tt>true</tt> if this timer's time period has not yet elapsed.

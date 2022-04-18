@@ -21,15 +21,32 @@ public class Vars {
     public Timer safetyTimer = new Timer(450000);
     public int lastIterRangedXp = 0;
     public int gainedRangedXp = 0;
+
     public int getGainedRangedXp() {
         return Skill.RANGED.getXp() - Const.START_RANGED_XP;
     }
 
-    public long getRunningTime(){
-        return System.currentTimeMillis() - startTime;
+    public boolean onBreak = false;
+    public int breakNumber = 0;
+    public long totalBreakLength = 0;
+
+    // gets updated on break start
+    // only displayed as a static number when we are breaking
+    public long runningTimeWithBreaks = -1;
+
+
+    // returns runtime with breaks factored in
+    // if we haven't breaked before, it will just return the difference between current and start time
+    // if we have had a break (and therefore cached a time), it will return that;
+    public long getRunningTime() {
+        if (breakNumber > 1) {
+            return onBreak ? runningTimeWithBreaks :
+                    (System.currentTimeMillis() - (startTime + totalBreakLength));
+        }
+        return onBreak ? runningTimeWithBreaks : (System.currentTimeMillis() - startTime);
     }
 
-    public int getKillsHr(){
+    public int getKillsHr() {
         return (int) (kills
                 / ((double) (getRunningTime() / 3600000)));
     }
