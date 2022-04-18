@@ -35,8 +35,8 @@ public class Timer {
         end = start + period;
     }
 
-    private static boolean isLvlUpInterfaceOpen(){
-        return  Widgets.get(233, 2).isPresent();
+    private static boolean isLvlUpInterfaceOpen() {
+        return Widgets.get(233, 2).isPresent();
     }
 
 
@@ -143,7 +143,8 @@ public class Timer {
 
     public static boolean agilityWaitCondition(BooleanSupplier condition, int min, int max) {
         return Waiting.waitUntil(Utils.random(min, max),
-                Utils.random(1200, 2800), () -> {
+                General.random(1200, 2400), () -> {
+                    Utils.idleNormalAction();
                     return (condition.getAsBoolean() || isLvlUpInterfaceOpen());
                 }
         );
@@ -151,19 +152,18 @@ public class Timer {
 
     public static boolean abc2SkillingWaitCondition(BooleanSupplier condition, RSObject nextClickObj, int min, int max) {
         currentTime = System.currentTimeMillis();
-        boolean cond = Timing.waitCondition(() -> {
-            Waiting.waitUniform(350, 1100);
+        boolean cond = Waiting.waitUntil(General.random(min, max), General.random(350, 1100),
+                () -> {
+                    AntiBan.timedActions();
 
-            AntiBan.timedActions();
+                    if (AntiBan.getShouldHover() && Mouse.isInBounds()) {
+                        General.println("[ABC2]: Hovering next object");
+                        AntiBan.hoverEntityObject(nextClickObj);
+                        AntiBan.resetShouldHover();
+                    }
 
-            if (AntiBan.getShouldHover() && Mouse.isInBounds()) {
-                General.println("[ABC2]: Hovering next object");
-                AntiBan.hoverEntityObject(nextClickObj);
-                AntiBan.resetShouldHover();
-            }
-
-            return (condition.getAsBoolean() || isLvlUpInterfaceOpen());
-        }, General.random(min, max));
+                    return (condition.getAsBoolean() || isLvlUpInterfaceOpen());
+                });
 
         AntiBan.resetShouldOpenMenu();
         Utils.abc2ReactionSleep(currentTime);

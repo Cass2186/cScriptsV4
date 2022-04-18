@@ -11,6 +11,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.GrandExchange;
+import org.tribot.script.sdk.query.GrandExchangeOfferQuery;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.GrandExchangeOffer;
@@ -123,9 +124,9 @@ public class Exchange {
                 .actionContains("Exchange")
                 .maxDistance(20).findBestInteractable();
         if (!org.tribot.script.sdk.GrandExchange.isOpen() &&
-                geBooth.map(b->b.interact("Exchange ")).orElse(false) &&
+                geBooth.map(b -> b.interact("Exchange ")).orElse(false) &&
                 Timer.waitCondition(() -> org.tribot.script.sdk.GrandExchange.open() ||
-                        NPCInteraction.isConversationWindowUp(), 5000, 7000)){
+                        NPCInteraction.isConversationWindowUp(), 5000, 7000)) {
 
             if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation("I'd like to set up trade offers please.");
@@ -404,11 +405,23 @@ public class Exchange {
     public static void collectItems() {
         // waitForOfferToCompleteAndRelist();
         boolean shouldWait = true;
+        SHOULD_WAIT = true;
         long currentTime = System.currentTimeMillis();
         long timeoutTime = System.currentTimeMillis() + 450000; //7.5min
-        while (SHOULD_WAIT ||
-                (System.currentTimeMillis() > timeoutTime)) {
-            General.sleep(50);
+        while (SHOULD_WAIT || (System.currentTimeMillis() > timeoutTime)) {
+            Waiting.waitUniform(125, 250);
+
+            if (org.tribot.api2007.GrandExchange.getWindowState() !=
+                    org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW) {
+                if (!GrandExchange.isOpen())
+                    break;
+                Log.info("Not at selection window, waiting briefly");
+                if (Waiting.waitUntil(5000, 150, () ->
+                        org.tribot.api2007.GrandExchange.getWindowState() ==
+                                org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW))
+                    Log.info("After selection window");
+                continue;
+            }
             INCOMPLETED_OFFER = 0;
             COMPLETED_OFFER = 0;
             RSGEOffer[] offers = org.tribot.api2007.GrandExchange.getOffers();
@@ -421,6 +434,9 @@ public class Exchange {
                     checkRelist();
                 }
             }
+
+
+            Log.info("IN waiting loop for collection");
             List<GrandExchangeOffer> completedOfferList = Query
                     .grandExchangeOffers()
                     .statusEquals(GrandExchangeOffer.Status.COMPLETED)
@@ -430,15 +446,23 @@ public class Exchange {
                     .grandExchangeOffers()
                     .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
                     .toList();
-
+            if (inProgressOfferList.size() > 0) {
+                Log.info("at least 1 in progess");
+                if (Waiting.waitUntil(30000, 400, () ->
+                        Query.grandExchangeOffers()
+                                .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
+                                .toList().size() == 0))
+                    Log.info("No more offers in progress");
+                continue;
+            }
             if (completedOfferList.size() > 0 && inProgressOfferList.size() > 0) {
-                int b = General.randomSD(4500, 400);
+                int b = General.randomSD(4500, 280);
                 Log.info(String.format("We have %s completed, and %s offers in progress",
                         completedOfferList.size(), inProgressOfferList.size()));
 
                 clickCollect();
                 SHOULD_WAIT = true; // will cause loop to continue
-                Waiting.waitUntil(30000, 200, () ->
+                Waiting.waitUntil(30000, 400, () ->
                         Query.grandExchangeOffers()
                                 .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
                                 .toList().size() == 0);
@@ -450,16 +474,17 @@ public class Exchange {
                         inProgressOfferList.size()));
                 SHOULD_WAIT = true; // will cause loop to continue
                 checkRelist();
-                Waiting.waitUntil(30000, 200, () ->
+                Waiting.waitUntil(30000, 400, () ->
                         Query.grandExchangeOffers()
                                 .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
                                 .toList().size() == 0);
-                Waiting.waitNormal(300, 65);
+                Waiting.waitNormal(600, 65);
             } else if (completedOfferList.size() > 0) {
                 Log.info(String.format("We have %s completed, and 0 offers in progress",
                         completedOfferList.size()));
-                //Utils.abc2ReactionSleep(currentTime);
+                Utils.idleNormalAction();
                 clickCollect();
+
                 SHOULD_WAIT = false;
                 break;
             } else { // no offers placed, will break the loop
@@ -467,7 +492,17 @@ public class Exchange {
                 SHOULD_WAIT = false;
                 break;
             }
-
+            if (System.currentTimeMillis() > timeoutTime) {
+                Log.warn("Breaking loop based on time out");
+                break;
+            }
+        }
+        Log.info("[Exchange] finished while loop");
+        Optional<Widget> collectButton = Query.widgets().inIndexPath(465)
+                .textContains("Collect").isVisible().findFirst();
+        if (collectButton.map(Widget::click).orElse(false)) {
+            General.println("[GEManager]: Collecting Failsafe");
+            Timer.waitCondition(() -> BankManager.inventoryChange(true), 3000, 5000);
         }
     }
 
@@ -597,20 +632,26 @@ public class Exchange {
         }
     }
 
-    public static boolean clickCollect() {
-        if (Interfaces.isInterfaceSubstantiated(465, 6, 1)) {
-            General.println("[GEManager]: Collecting");
-            if (!Interfaces.get(465, 6, 1).isHidden()) { // this is the collect button, it's never null, so we check if it's hidden
-                Interfaces.get(465, 6, 1).click();
-                General.sleep(General.random(300, 1000));
-                Timing.waitCondition(() -> BankManager.inventoryChange(true), General.random(3000, 5000));
-                if (Interfaces.isInterfaceSubstantiated(465, 6, 1)) {
-                    General.println("[Debug]: Still have a valid collect bar, trying to collect again.");
-                    return Interfaces.get(465, 6, 1).click();
-
-                } else {
-                    return true;
-                }
+    private static boolean clickCollect() {
+        if (GrandExchange.collectAll()) {
+            Log.info("[Exchange]: SDK Collection");
+            Waiting.waitUntil(30000, 400, () ->
+                    Query.grandExchangeOffers()
+                            .statusNotEquals(GrandExchangeOffer.Status.EMPTY)
+                            .toList().size() == 0);
+            return true;
+        }
+        Log.error("[Exchange]: SDK Collection FAILED");
+        Optional<Widget> collectButton = Query.widgets().inIndexPath(465)
+                .textContains("Collect").findFirst();
+        for (int i = 0; i < 3; i++) {
+            if (collectButton.map(Widget::click).orElse(false)) {
+                General.println("[GEManager]: Collecting");
+                if (Timer.waitCondition(() -> BankManager.inventoryChange(true), 3000, 5000))
+                    break;
+            } else {
+                Log.info("[GEManager]: Collecting loop ");
+                Waiting.waitUniform(500, 900);
             }
         }
         return false;

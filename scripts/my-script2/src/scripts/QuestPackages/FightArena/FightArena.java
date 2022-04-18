@@ -11,7 +11,11 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
@@ -226,33 +230,33 @@ public class FightArena implements QuestTask {
     RSArea BEFORE_THIRSTY_GUARD_AREA = new RSArea(new RSTile(2618, 3147, 0), new RSTile(2614, 3148, 0));
     ArrayList<RSTile> tilePathToBar = new ArrayList<RSTile>(Arrays.asList(PATH_TO_BAR));
     RSArea LARGER_OUTSIDE_WEST_EXIT = new RSArea(new RSTile(2584, 3138, 0), new RSTile(2582, 3144, 0));
-
+    RSArea SOUTH_AND_WEST_SIDE_OF_BUILDING = new RSArea(
+            new RSTile[]{
+                    new RSTile(2585, 3145, 0),
+                    new RSTile(2585, 3139, 0),
+                    new RSTile(2620, 3139, 0),
+                    new RSTile(2620, 3152, 0),
+                    new RSTile(2610, 3152, 0),
+                    new RSTile(2608, 3154, 0),
+                    new RSTile(2605, 3151, 0),
+                    new RSTile(2607, 3149, 0),
+                    new RSTile(2607, 3143, 0),
+                    new RSTile(2604, 3143, 0),
+                    new RSTile(2604, 3145, 0)
+            }
+    );
+    WorldTile BAR_TILE = new WorldTile(2566, 3143, 0);
 
     public void step4() {
         cQuesterV2.status = "Going to Bar";
         General.println("[Debug]: " + cQuesterV2.status);
         if (!BAR_AREA.contains(Player.getPosition()) && Inventory.find(khaliBrew).length < 1) {
-            if (THIRSY_GUARD_AREA.contains(Player.getPosition())) {
-                Walking.blindWalkTo(new RSTile(2610, 3143, 0));
-                Timer.waitCondition(() -> BEFORE_DOOR_1.contains(Player.getPosition()), 9000);
-                door = Objects.findNearest(10, 1535);
-                if (door.length > 0) {
-                    AccurateMouse.click(door[0], "Open");
-                    Timer.waitCondition(() -> Objects.findNearest(5, 1535).length < 1, 7000);
-                    Walking.blindWalkTo(OUTSIDE_DOOR_1.getRandomTile());
-                    Timer.waitCondition(() -> OUTSIDE_DOOR_1.contains(Player.getPosition()), 9000);
-                    General.sleep(General.randomSD(250, 1000, 600, 200));
-                }
-            }
-            if (OUTSIDE_DOOR_1.contains(Player.getPosition()) || WEST_EXIT_DOOR.contains(Player.getPosition())) {
-                Walking.blindWalkTo(new RSTile(2585, 3141, 0));
-                Timer.waitCondition(() -> WEST_EXIT_DOOR.contains(Player.getPosition()), 9000);
-                door = Objects.findNearest(10, 81);
-                if (door.length > 0) {
-                    AccurateMouse.click(door[0], "Open");
-                    Timer.waitCondition(() -> OUTSIDE_WEST_EXIT.contains(Player.getPosition()), 7000);
-                    General.sleep(General.randomSD(250, 1000, 600, 200));
-                }
+            if (SOUTH_AND_WEST_SIDE_OF_BUILDING.contains(Player.getPosition())) {
+                PathingUtil.localNav(Utils.getWorldTileFromRSTile(OUTSIDE_WEST_EXIT.getRandomTile()));
+            } else if (PathingUtil.localNav(BAR_TILE)) {
+                Waiting.waitUntil(6000, 150, () ->
+                        BAR_TILE.distanceTo(MyPlayer.getTile()) < 5);
+
             }
             if (OUTSIDE_WEST_EXIT.contains(Player.getPosition())) {
                 WalkerEngine.getInstance().walkPath(tilePathToBar);
@@ -271,7 +275,6 @@ public class FightArena implements QuestTask {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation("I'd like a Khali brew please.");
                 NPCInteraction.handleConversation();
-                General.sleep(General.randomSD(250, 1000, 600, 200));
             }
         }
         if (INSIDE_BAR_DOOR.contains(Player.getPosition()) || BAR_AREA.contains(Player.getPosition()) && Inventory.find(khaliBrew).length > 0) {
@@ -330,7 +333,6 @@ public class FightArena implements QuestTask {
         if (THIRSY_GUARD_AREA.contains(Player.getPosition())) {
             if (NpcChat.talkToNPC(1209)) {
                 NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
                 NPCInteraction.handleConversation();
             }
         }
@@ -452,7 +454,7 @@ public class FightArena implements QuestTask {
         if (!SAFE_AREA1.contains(Player.getPosition()) && !SAFE_AREA2.contains(Player.getPosition())
                 && !safeTile.equals(Player.getPosition())) {
             Walking.blindWalkTo(safeTile);
-            Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 6000,7000);
+            Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 6000, 7000);
         }
 
         if (SAFE_AREA1.contains(Player.getPosition()) || SAFE_AREA2.contains(Player.getPosition())) {
@@ -462,7 +464,7 @@ public class FightArena implements QuestTask {
                     .inArea(FIGHT_AREA)
                     .getResults();
 
-            if (npc.length == 0){
+            if (npc.length == 0) {
                 // there's no npc in the fight area, talk to the kid to initiate the cut scene
                 // usually only happens on bouncer
                 if (Utils.clickNPC("Sammy Servil", "Talk-to")) {
@@ -562,8 +564,9 @@ public class FightArena implements QuestTask {
         if (COMBAT_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Killing Scorpion";
             General.println("[Debug]: " + cQuesterV2.status);
-            NPCInteraction.handleConversation();
-            General.sleep(1500, 3000);
+            if (ChatScreen.isOpen())
+                NPCInteraction.handleConversation();
+            General.sleep(1500, 2500);
             Walking.blindWalkTo(safeTile2);
             Timer.waitCondition(() -> Player.getPosition().equals(safeTile2), 8000);
         }

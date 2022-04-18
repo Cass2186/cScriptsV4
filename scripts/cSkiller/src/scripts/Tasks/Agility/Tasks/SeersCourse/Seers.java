@@ -21,22 +21,22 @@ import java.util.Optional;
 
 public class Seers implements Task {
 
-     Obstacle WALL = new Obstacle(14927, "Climb-up",
+    Obstacle WALL = new Obstacle(14927, "Climb-up",
             AgilityAreas.SEERS_LARGE_WALL_AREA,
             AgilityAreas.SEERS_GAP_ONE_AREA);
-     Obstacle GAP_ONE = new Obstacle(14928, "Jump",
+    Obstacle GAP_ONE = new Obstacle(14928, "Jump",
             AgilityAreas.SEERS_GAP_ONE_AREA,
             AgilityAreas.SEERS_TIGHT_ROPE_AREA);
-     Obstacle TIGHT_ROPE = new Obstacle(14932, "Cross",
+    Obstacle TIGHT_ROPE = new Obstacle(14932, "Cross",
             AgilityAreas.SEERS_TIGHT_ROPE_AREA,
             AgilityAreas.SEERS_GAP_TWO_AREA);
-     Obstacle GAP_TWO = new Obstacle(14929, "Jump",
+    Obstacle GAP_TWO = new Obstacle(14929, "Jump",
             AgilityAreas.SEERS_GAP_TWO_AREA,
             AgilityAreas.SEERS_GAP_THREE_AREA);
-     Obstacle GAP_THREE = new Obstacle(14930, "Jump",
+    Obstacle GAP_THREE = new Obstacle(14930, "Jump",
             AgilityAreas.SEERS_GAP_THREE_AREA,
             AgilityAreas.SEERS_EDGE_AREA);
-     Obstacle EDGE = new Obstacle(14931, "Jump",
+    Obstacle EDGE = new Obstacle(14931, "Jump",
             AgilityAreas.SEERS_EDGE_AREA,
             AgilityAreas.SEERS_END_AREA);
 
@@ -74,19 +74,17 @@ public class Seers implements Task {
 
     @Override
     public void execute() {
-        AgilUtils.eatSummerPie(60,0);
+        AgilUtils.eatSummerPie(60, 0);
         WALL.setTimeOutMin(10000);
         allObstacles.get(0).setTimeOutMin(10000);
 
+        if (AgilityAreas.UPSTAIRS_SEERS_BANK.contains(Player.getPosition()) &&
+                Utils.clickObject(Filters.Objects.actionsContains("Climb-down"), "Climb-down"))
+            Timer.waitCondition(() -> Player.getPosition().getPlane() == 0, 5000, 7000);
 
-        if (AgilityAreas.UPSTAIRS_SEERS_BANK.contains(Player.getPosition())) {
-            if (Utils.clickObject(Filters.Objects.actionsContains("Climb-down"), "Climb-down"))
-                Timer.waitCondition(() -> Player.getPosition().getPlane() == 0, 5000, 7000);
-        }
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
-        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
-                obstacle.getObstacleName());
         obs.ifPresent(Obstacle::navigateObstacle);
+        Utils.idleNormalAction();
     }
 
     @Override

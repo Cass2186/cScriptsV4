@@ -288,7 +288,7 @@ public class WaterfallQuest implements QuestTask {
     public void buyItems() {
         if (Inventory.find(ItemID.LOBSTER).length < 7 || Inventory.find(ItemID.ROPE).length < 1) {
             buyInitial.buyItems();
-            Exchange.clickCollect();
+            Exchange.collectItems();
             startInventory.withdrawItems();
         }
     }

@@ -11,6 +11,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
 import scripts.Data.AgilityAreas;
 import scripts.Data.Vars;
@@ -50,14 +51,15 @@ public class AgilUtils {
 
     public static void getMark(RSArea area) {
         RSGroundItem[] mark = GroundItems.findNearest(Const.MARK_OF_GRACE_ID);
-        if (mark.length > 0 && area.contains(mark[0].getPosition()) && area.contains(Player.getPosition())) {
+        if (mark.length > 0 && area.contains(mark[0].getPosition()) &&
+                area.contains(Player.getPosition())) {
             if (Player.isMoving())
                 Timer.waitCondition(() -> !Player.isMoving(), 5000, 7000);
 
             if (!mark[0].isClickable())
                 DaxCamera.focus(mark[0]);
 
-            General.println("[Debug]: Getting Mark of Grace", Color.RED);
+            Log.info("Getting Mark of Grace");
             if (clickGroundItem(Const.MARK_OF_GRACE_ID))
                 Vars.get().marksCollected++;
         }

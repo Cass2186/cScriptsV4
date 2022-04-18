@@ -62,8 +62,9 @@ public class ResetAggro implements Task {
 
         nav.setAcceptAdjacent(true);
 
-        if (!Combat.isUnderAttack() && Player.getAnimation() == -1 &&
-                Player.getRSPlayer().getInteractingCharacter() == null) { // double checks to make sure you're actually not in combat
+        if ((!Combat.isUnderAttack() && Player.getAnimation() == -1 &&
+                Player.getRSPlayer().getInteractingCharacter() == null )||
+                Vars.get().shouldResetAggro) { // double checks to make sure you're actually not in combat
             Vars.get().task = "Resetting Aggression";
             General.println("[Reset Aggro]: Resetting Aggression");
             //attempt to feed a path to dax before trying to us dax to generate the path

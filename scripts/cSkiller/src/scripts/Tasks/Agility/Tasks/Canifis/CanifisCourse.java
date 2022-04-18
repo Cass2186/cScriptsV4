@@ -61,6 +61,9 @@ public class CanifisCourse implements Task {
 
     @Override
     public String toString() {
+        Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
+        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
+                obstacle.getObstacleName());
         return message;
     }
 
@@ -80,8 +83,6 @@ public class CanifisCourse implements Task {
     @Override
     public void execute() {
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
-        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
-                obstacle.getObstacleName());
         obs.ifPresent(Obstacle::navigateObstacle);
     }
 

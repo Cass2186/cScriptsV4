@@ -126,7 +126,8 @@ import java.util.stream.Collectors;
 
 
 @ScriptManifest(name = "cSkiller", authors = {"Cass2186"}, category = "Testing", description = "Current Version v0.1", version = 0.1)
-public class cSkiller extends Script implements Starting, Ending, Arguments, Breaking, MessageListening07 {
+public class cSkiller extends Script implements Starting, Ending, Painting,
+        Arguments, Breaking, MessageListening07 {
 
     private boolean shouldEnd = false;
 
@@ -191,7 +192,7 @@ public class cSkiller extends Script implements Starting, Ending, Arguments, Bre
             }
         });
         Utils.setNPCAttackPreference();
-       // addPaint();
+        // addPaint();
 
     }
 
@@ -217,11 +218,11 @@ public class cSkiller extends Script implements Starting, Ending, Arguments, Bre
 
         InputStream stream = getClass().getClassLoader()
                 .getResourceAsStream("scripts/resources/cSkillerGUI.fxml");
-       // BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        // BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
         //SkillerGUI gui = new SkillerGUI(reader.lines().collect(Collectors.joining(System.lineSeparator())));
         lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cSkiller/src/scripts/resources/cSkillerGUI.fxml");
-                //"https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
+        //"https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
         GUI gui = new GUI(lcn);
 
         if (Vars.get().shouldShowGUI) {
@@ -257,7 +258,7 @@ public class cSkiller extends Script implements Starting, Ending, Arguments, Bre
                 new DropLogs(),
                 new HerbloreBank(),
                 new MixItemsHerblore(),
-                 new MixTar(),
+                new MixTar(),
                 new BuyItems(),
                 new CollectOre(),
                 new DepositPayDirt(),
@@ -317,31 +318,31 @@ public class cSkiller extends Script implements Starting, Ending, Arguments, Bre
                 new SlayerRestock(),
                 new GetTask(),
                 new Loot(),
-               // new SmithBars(),
+                // new SmithBars(),
                 new BuyHouse(),
                 new EatDrink(),
                 new Fight(),
                 new MoveToCrabTile(),
                 new ResetAggro(),
-              new BlastFurnaceBank(),
-                   new CollectBars(),
-                  new DepositOre(),
-                 new MoveToBF(),
-                 new PayForeman(),
-                  new RefillCoffer(),
-                  new Stamina(),
-                 new StartQuest(),
+                new BlastFurnaceBank(),
+                new CollectBars(),
+                new DepositOre(),
+                new MoveToBF(),
+                new PayForeman(),
+                new RefillCoffer(),
+                new Stamina(),
+                new StartQuest(),
                 new PrayerBank(),
                 new SpringRun()
                 //MiniBreak.get(),
-               // new MakeCannonballs()
+                // new MakeCannonballs()
 
         );
         Paint.setToggleablePaint();
         Paint.setSlayerPaint();
         Paint.setMainPaint();
         Paint.setExperiencePaint();
-
+        Paint.addSorceressPaint();
         HashMap<Skills.SKILLS, Integer> startHashMap = Utils.getXpForAllSkills();
         isRunning.set(true);
 
@@ -349,6 +350,10 @@ public class cSkiller extends Script implements Starting, Ending, Arguments, Bre
             if (shouldEnd)
                 break;
 
+            if (!MyPlayer.isMember()) {
+                Log.error("Ran out of membership");
+                break;
+            }
             if (Utils.hasTotalXpIncreased(startHashMap)) {
                 safetyTimer.reset();
                 startHashMap = Utils.getXpForAllSkills();
@@ -551,5 +556,22 @@ public class cSkiller extends Script implements Starting, Ending, Arguments, Bre
         endOnMessage(message, "green dragon");
         endOnMessage(message, "earth warrior");
         endOnDeath(message);
+    }
+
+    @Override
+    public void onPaint(Graphics graphics) {
+        List<Npc> elementals = Query.npcs()
+                .nameContains("Spring Elemental")
+                .sortedByDistance()
+                .toList();
+        graphics.setColor(Color.WHITE);
+        for (Npc n : elementals) {
+            Polygon pp = Projection.getTileBoundsPoly(
+                    Utils.getRSTileFromWorldTile(n.getTile()), 0);
+            int orientation = n.getOrientation().getAngle();
+            graphics.drawString("Or: " + orientation + " | Y: " +
+                            n.getTile().getY(), (int) pp.getBounds().getX(),
+                    (int) pp.getBounds().getY());
+        }
     }
 }

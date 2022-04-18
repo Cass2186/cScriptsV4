@@ -43,7 +43,7 @@ public enum SpellInfo {
 
     HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemID.NATURE_RUNE,
             Utils.getNotedItemID(Vars.get().alchItem.getId())),
-            ItemID.STAFF_OF_FIRE, 55, 66),
+            ItemID.STAFF_OF_FIRE, 55, 75),
 
 
     TELE_ALCH("High Level Alchemy", SPELL_TYPE.TELE_ALCH, 110,
@@ -53,7 +53,7 @@ public enum SpellInfo {
                 put(ItemID.NATURE_RUNE, 1);
                // put(ItemID.YEW_LONGBOW, 1);
             }},
-            ItemID.STAFF_OF_AIR, 66, 99),
+            ItemID.STAFF_OF_AIR, 75, 99),
 
     DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemID.COSMIC_RUNE,
             ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());

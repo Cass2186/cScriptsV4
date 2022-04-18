@@ -3,6 +3,7 @@ package scripts.Tasks.SorceressGarden;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.input.Mouse;
@@ -74,15 +75,16 @@ public class SpringRun implements Task {
     Area customTrigger1 = Area.fromRectangle(new WorldTile(2925, 5464, 0), new WorldTile(2925, 5463, 0));
 
     public boolean collectFruit(WorldTile startTile) {
-        Optional<GameObject> tree = Query.gameObjects().actionContains("Pick-Fruit")
+        Optional<GameObject> tree = Query.gameObjects()
+                .actionContains("Pick-Fruit")
                 .sortedByDistance()
                 .findClosest();
 
         if (tree.isEmpty()) return false;
-        if (startTile.equals(MyPlayer.getPosition()) && Waiting.waitUntil(() -> {
-            Waiting.waitUniform(15, 30);
+
+        if (startTile.equals(MyPlayer.getTile()) && Waiting.waitUntil(15000, 25, () -> {
             if (!tree.get().getModel().get().getBounds().get().contains(org.tribot.api.input.Mouse.getPos()))
-            tree.get().hover();
+                tree.get().hover();
             return collisionDetector.correctPosition(
                     Query.npcs()
                             .stream()
@@ -90,7 +92,7 @@ public class SpringRun implements Task {
                             .collect(Collectors.toList()), 5);
         })) {
             if (tree.map(t -> t.interact("Pick-Fruit")).orElse(false)) {
-                return Timer.waitCondition(()-> CENTRE_OF_GARDEN.contains(Player.getPosition()), 5500, 7000);
+                return Timer.waitCondition(() -> CENTRE_OF_GARDEN.contains(Player.getPosition()), 5500, 7000);
             }
         }
         return false;
@@ -99,34 +101,41 @@ public class SpringRun implements Task {
     public boolean moveToTileAndHoverNext(WorldTile startTile, int index, WorldTile moveTo) {
         Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
 
-        if (startTile.equals(MyPlayer.getPosition()) && Waiting.waitUntil(() -> {
-            Waiting.waitUniform(15, 30);
-            if (!moveTo.getBounds().get().contains(org.tribot.api.input.Mouse.getPos()))
-                moveTo.hover();
-            return collisionDetector.correctPosition(
-                    Query.npcs()
-                            .stream()
-                            .filter(ElementalCollisionDetector::isSpringElemental)
-                            .collect(Collectors.toList()), index);
-        })) {
-            if (moveTo.click()) {
-                return Timer.waitCondition(()-> !startTile.equals(MyPlayer.getPosition()), 1500, 2200);
+        if (startTile.equals(MyPlayer.getTile()) &&
+                Waiting.waitUntil(10000, 25, () -> {
+                            if (moveTo.getBounds().map(m ->
+                                    !m.contains(org.tribot.api.input.Mouse.getPos())).orElse(false)) {
+                                moveTo.hover();
+                            }
+                            return collisionDetector.correctPosition(
+                                    Query.npcs()
+                                            .stream()
+                                            .filter(ElementalCollisionDetector::isSpringElemental)
+                                            .collect(Collectors.toList()), index);
+                        }
+                )) {
+            Log.info("Returned true");
+            if (moveTo.interact("Walk here") &&
+                    Timer.waitCondition(() -> !startTile.equals(MyPlayer.getTile()), 1500, 2200)) {
+                return Waiting.waitUntil(5000, 80, () -> moveTo.equals(MyPlayer.getTile()));
             }
+
         }
+            Log.info("Returned false");
         return false;
     }
 
     public boolean moveToTileAndHoverNext(WorldTile startTile, Area triggerArea,
                                           WorldTile moveTo, boolean customCond) {
         Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
-        if (startTile.equals(MyPlayer.getPosition()) && Waiting.waitUntil(45000, () -> {
+        if (startTile.equals(MyPlayer.getTile()) && Waiting.waitUntil(45000, () -> {
             Waiting.waitUniform(20, 50);
             if (!moveTo.getBounds().get().contains(org.tribot.api.input.Mouse.getPos()))
                 moveTo.hover();
             return Query.npcs().inArea(triggerArea).stream().findAny().isEmpty() && customCond;
         })) {
             if (moveTo.click()) {
-                return Timer.waitCondition(()-> !startTile.equals(MyPlayer.getPosition()), 1500, 2200);
+                return Timer.waitCondition(() -> !startTile.equals(MyPlayer.getTile()), 1500, 2200);
             }
         }
 
@@ -146,12 +155,15 @@ public class SpringRun implements Task {
 
     @Override
     public void execute() {
+        Log.info("loop");
         Mouse.setSpeed(165);
+        Waiting.waitUniform(20, 40);
         if (CENTRE_OF_GARDEN.contains(Player.getPosition())) {
-           Waiting.waitNormal(1250,250);
+            Waiting.waitNormal(1250, 250);
             if (Utils.clickObj(12719, "Open")) {
                 Timer.waitCondition(() -> !CENTRE_OF_GARDEN.contains(Player.getPosition()), 6500, 8500);
-                tile1.interact("Walk here");
+                if(tile1.interact("Walk here"))
+                Waiting.waitUntil(4500, 50, ()-> tile1.equals(MyPlayer.getTile()) );
             }
         }
         //moveToTileAndHoverNext(intialTile, tile2Trigger, tile1);
@@ -161,10 +173,14 @@ public class SpringRun implements Task {
         moveToTileAndHoverNext(tile4, 3, tile5);
         moveToTileAndHoverNext(tile5, 4, tile6);
         collectFruit(tile6);
-        //moveToTileAndHoverNext(tile3, tile4Trigger, tile4,
-        //        Query.npcs().inArea(customTrigger1).stream().findAny().isEmpty());
+        //  moveToTileAndHoverNext(tile3, tile4Trigger, tile4,
+        ///       Query.npcs().inArea(customTrigger1).stream().findAny().isEmpty());
     }
 
+    @Override
+    public String toString() {
+        return "Spring Garden";
+    }
     @Override
     public String taskName() {
         return "Spring Garden";

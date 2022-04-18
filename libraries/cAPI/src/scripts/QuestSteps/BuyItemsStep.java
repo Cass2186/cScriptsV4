@@ -8,6 +8,9 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GrandExchangeOffer;
 import scripts.BankManager;
 import scripts.GEManager.Exchange;
 import scripts.GEManager.GEItem;
@@ -41,6 +44,18 @@ public class BuyItemsStep {
             // buy each items
         }
         Utils.shortSleep();
+        for (int i = 0; i < 6; i++) {
+            Exchange.collectItems();
+            if (Waiting.waitUntil(1500, 150, ()->
+                    !Query.grandExchangeOffers()
+                            .statusNotEquals(GrandExchangeOffer.Status.EMPTY).isAny())) {
+                Log.info("[BuyItemStep]: Collected successfully");
+                break;
+            }
+            if (i == 5)
+                Log.error("[BuyItemStep]: Failed to collect");
+            Waiting.waitUniform(900,1200);
+        }
         Exchange.collectItems();
         GrandExchange.close(true);
     }

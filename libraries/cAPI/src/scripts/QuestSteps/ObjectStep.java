@@ -265,7 +265,7 @@ public class ObjectStep extends QuestStep {
             if (!objArea.contains(Player.getPosition())) {
                 Log.debug("[ObjectStep]: Navigating to object area: ID " + this.objectId);
                 LocalTile tile =
-                        new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getPosition().getPlane());
+                        new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getTile().getPlane());
 
                 Optional<LocalTile> bestInteractable = Query.tiles()
                         .isReachable()
@@ -278,16 +278,10 @@ public class ObjectStep extends QuestStep {
                 if (bestInteractable.map(LocalWalking::walkTo).orElse(false)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK (walkable)");
                     humanWalkIdle(tile.toWorldTile());
-                }/* else if (tile.isRendered() && LocalWalking.walkTo(tile)) {
-                    Log.debug("[ObjectStep]: Navigating to object area - local SDK");
-                    humanWalkIdle(tile.toWorldTile());
-                } */ else if (!useLocalNav && !PathingUtil.localNavigation(this.tile) &&
-
-                        walkable.map(GlobalWalking::walkTo).orElse(false) ){
-                       // PathingUtil.walkToTile(this.tile, tileRadius, false)) {
-                    humanWalkIdle(this.tile);
                 } else if (PathingUtil.localNavigation(this.tile)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local");
+                    humanWalkIdle(this.tile);
+                } else if (PathingUtil.walkToTile(this.tile)) {
                     humanWalkIdle(this.tile);
                 }
             }

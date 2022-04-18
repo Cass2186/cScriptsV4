@@ -135,8 +135,8 @@ public class EatDrink implements Task {
                     .nameContains("rang")
                     .findClosestToMouse();
             if (pot.isPresent()) {
-                return (Skills.SKILLS.RANGED.getActualLevel() == Skills.SKILLS.RANGED.getCurrentLevel()) ||
-                        checkSkill(Skills.SKILLS.RANGED) || Vars.get().shouldEat || checkPrayer()
+                return (Skills.SKILLS.RANGED.getActualLevel() == Skills.SKILLS.RANGED.getCurrentLevel())
+                        || Vars.get().shouldEat || checkPrayer()
                         || Vars.get().shouldDrink || Combat.getHPRatio() < Vars.get().eatAt;
             }
             if (Inventory.find(Const.RANGING_POTION).length > 0) {

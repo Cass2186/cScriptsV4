@@ -1220,23 +1220,31 @@ public class Utils {
     public static void idlePredictableAction() {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(30, 10, 0.02, 0.1,
                 30, 500);
-        System.out.println("[Debug]: Sleeping (predictable rxn) for: " + sleep);
+        //System.out.println("[Debug]: Sleeping (predictable rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
 
     public static void idleNormalAction() {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(200, 50, 0.007, 0.2,
                 100, 2000);
-        Log.log("[Debug]: Sleeping (normal rxn) for: " + sleep);
+       // Log.log("[Debug]: Sleeping (normal rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
 
     public static void idleAfkAction() {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(5000, 2000, 5, 0.1,
                 200, 10000);
-        Log.log("[Debug]: Sleeping (afk rxn) for: " + sleep);
+        Log.info("[Utils]: Sleeping (afk rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
+
+    public static void afkSleepWithBreak(BooleanSupplier supplier) {
+        int sleep = (int) ReactionGenerator.get().nextReactionTime(5000, 2000, 5, 0.1,
+                200, 10000);
+        Log.info("[Utils]: Sleeping (afk rxn) for: " + sleep);
+        Waiting.waitUntil(sleep, 75 , supplier);
+    }
+
 
 
     public static void idle(int low, int high) {

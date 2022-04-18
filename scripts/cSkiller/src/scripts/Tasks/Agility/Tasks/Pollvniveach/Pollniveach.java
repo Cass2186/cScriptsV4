@@ -9,6 +9,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Agility.AgilityAPI.AgilUtils;
 import scripts.Tasks.Agility.AgilityAPI.Obstacle;
+import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,9 @@ public class Pollniveach implements Task {
 
     @Override
     public String toString(){
+        Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
+        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
+                obstacle.getObstacleName());
         return message;
     }
 
@@ -83,9 +87,8 @@ public class Pollniveach implements Task {
     @Override
     public void execute() {
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
-        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
-                obstacle.getObstacleName());
         obs.ifPresent(Obstacle::navigateObstacle);
+        Utils.idleNormalAction();
     }
 
     @Override

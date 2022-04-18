@@ -1,15 +1,13 @@
 package scripts.Data;
 
 import lombok.val;
-import org.tribot.api.General;
+
 import org.tribot.api2007.Banking;
-import org.tribot.api2007.Equipment;
-import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
-import org.tribot.script.sdk.Bank;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.cache.BankCache;
+import org.tribot.script.sdk.interfaces.Item;
+import org.tribot.script.sdk.query.Query;
 import scripts.BankManager;
 import scripts.Data.Enums.CookItems;
 import scripts.Data.Enums.Crafting.CraftItems;
@@ -20,7 +18,7 @@ import scripts.Requirements.ItemReq;
 import scripts.Timer;
 import scripts.Utils;
 
-import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +27,9 @@ import java.util.Optional;
 public class SkillBank {
 
     public static List<ItemReq> withdraw(List<ItemReq> list) {
-        Log.log("[SkillBank]: Withdrawing Items");
+        Log.info("[SkillBank]: Withdrawing Items");
         if (list.size() == 0) {
-            Log.log("[SkillBank]: List size is zero");
+            Log.info("[SkillBank]: List size is zero");
             return null;
         }
         List<ItemReq> itemList = new ArrayList<>();
@@ -41,53 +39,56 @@ public class SkillBank {
         if (specialItems != null) // add tinderbox or blowingglass pipe if needed
             itemList.add(specialItems);
 
+
         for (ItemReq i : list) {
 
             if (i.getId() == 0)
                 continue;
 
-            if (i.isAcceptEquipped() && Equipment.isEquipped(i.getId()))
+            if (i.isAcceptEquipped() && Equipment.contains(i.getId()))
                 continue;
 
-
-            RSItem[] it = Inventory.find(i.getId());
+            int itAmount = Inventory.getCount(i.getId());
             int minAmount = i.getAmount() > 0 ? i.getAmount() : 1;
-            if (it.length > 0 && it[0].getStack() >= minAmount) {
-                Log.log("[SkillBank]: We already have enough of item ID: " + i.getId());
+
+            if (itAmount >= minAmount) {
+                Log.info("[SkillBank]: We already have enough of item ID: " + i.getId());
                 continue;
             }
 
-            if (!Banking.isBankScreenOpen())
+            if (!Bank.isOpen())
                 BankManager.open(true);
 
             if (!BankCache.isInitialized())
                 BankCache.update();
 
-            RSItem[] item = Banking.find(i.getId());
-            Log.log("[SkillBank]: itemInBank[].length: " + item.length + " of item ID: " + i.getId());
+            Optional<Item> item = Query.bank().idEquals(i.getId()).findFirst();
+            item.ifPresent(itm ->
+                    Log.info("[SkillBank]: item.size() " + itm.getStack() + " of item ID: " + i.getId()));
 
             if (specialItems != null) // add tinderbox or blowingglass pipe if needed
                 itemList.add(specialItems);
 
             var skip = false;
-            if (item.length < 1 && Inventory.find(i.getId()).length < 1 && !Equipment.isEquipped(i.getId())) { // no item in bank or inv
-                General.println("[SkillBank]: Missing the item in bank and inv with ID: " + i.getId(), Color.CYAN);
+            if (item.isEmpty() && !Inventory.contains(i.getId()) && !Equipment.contains(i.getId())) { // no item in bank or inv
+                Log.warn("[SkillBank]: Missing the item in bank and inv with ID: " + i.getId());
                 if (i.getAlternateItemIDs() != null && i.getAlternateItemIDs().size() > 0) {
-                    for (Integer alt : i.getAlternateItemIDs()) {
-                        var amount = i.getAmount() <= 0 ? 1 : i.getAmount();
 
-                        if (Inventory.find(alt).length >= amount) {
+                    for (Integer alt : i.getAlternateItemIDs()) {
+
+                        var amount = i.getAmount() <= 0 ? 1 : i.getAmount();
+                        if (Inventory.getCount(alt) >= amount) {
                             Log.info("[ItemRequirement]: Accepted an alternative id of " + alt +
                                     " for ItemID of:  " + i.getId());
                             break;
+
                         } else if (BankCache.getStack(alt) >= amount) {
                             Log.info("[ItemReq]: Accepted an alternative id of " + alt +
                                     " for ItemID of:  " + i.getId());
-                            item = Banking.find(alt);
+                            Query.bank().idEquals(alt).findFirst();
                             skip = true;
                             break;
                         }
-
                     }
                 }
                 if (!skip) {
@@ -109,21 +110,20 @@ public class SkillBank {
 
             }
 
-            if (item.length > 0 && item[0].getStack() < i.getAmount()) {
+            if (item.map(itm -> itm.getStack() < i.getAmount()).orElse(false)) {
                 if (!itemList.contains(i)) // adds item if it's not in the list already
                     itemList.add(i);
-                Log.log("[SkillBank]: Missing ENOUGH of Item -> itemList size: " + itemList.size());
+                Log.warn("[SkillBank]: Missing ENOUGH of Item -> itemList size: " + itemList.size());
                 continue;
             }
-            Log.debug("Is Item Noted? " + i.isItemNoted());
+            Log.info("Is Item Noted? " + i.isItemNoted());
             if (i.isItemNoted() && !BankManager.areNotesOn()) {
                 BankManager.toggleNoted(true);
-
             }
             if (!i.isItemNoted() && BankManager.areNotesOn())
                 BankManager.toggleNoted(false);
 
-            if (i.isAcceptEquipped() && Equipment.isEquipped(i.getId()))
+            if (i.isAcceptEquipped() && Equipment.contains(i.getId()))
                 continue;
             // we will try up to 5 times to withdraw the item (remember we are still in the for loop above)
 
@@ -137,12 +137,12 @@ public class SkillBank {
                 } else
                     itemList.add(i);
 
-                Log.log("[SkillBank]: Failed with withdraw ItemID: " + i.getId() + " -> Missing itemList size: " +
+                Log.warn("[SkillBank]: Failed with withdraw ItemID: " + i.getId() + " -> Missing itemList size: " +
                         itemList.size());
             }
 
         }
-        Log.log("[SkillBank]: returning itemList of size: " + itemList.size());
+        Log.info("[SkillBank]: returning itemList of size: " + itemList.size());
         return itemList;
     }
 
@@ -153,22 +153,28 @@ public class SkillBank {
             Waiting.waitUniform(40, 60);
             Log.info("[SkillBank]: Attempting to withdraw item: " + i.getId() +
                     " x " + i.getAmount());
-            var invSize = Inventory.getAll().length;
+            var invSize = Inventory.getAll().size();
             val itemIdFinal = itemId;
 
-            if (i.isItemNoted() && Bank.withdraw(i.getAmount(), itemId)) {
-                if (Timer.waitCondition(() -> Inventory.getAll().length > invSize ||
-                        Inventory.find(Utils.getNotedItemID(itemIdFinal)).length > 0, 3600, 6400))
+            if (i.isItemNoted() && BankManager.withdraw(i.getAmount(), false, itemId)) {
+                Log.info("[SkillBank]: Successfully withdraw item: " + i.getId());
+                if (Timer.waitCondition(() -> Inventory.getAll().size() > invSize ||
+                        Inventory.contains(Utils.getNotedItemID(itemIdFinal)), 3600, 5400)) {
+                    Log.info("Withdrew noted item successfully");
                     return true;
+                } else {
+                    Log.error("[SkillBank]: Failed to Successfully withdraw noted item: " + i.getId());
+                }
             }
             if (BankManager.withdraw(i.getAmount(), true, itemId)) {//if (Banking.withdraw(i.getAmount(), i.getId())) {
-                Log.log("[SkillBank]: Successfully withdraw item: " + i.getId());
-                if (Timer.waitCondition(() -> Inventory.getAll().length > invSize ||
-                        Inventory.find(itemIdFinal).length > 0, 3600, 6400))
+                Log.info("[SkillBank]: Successfully withdraw item: " + i.getId());
+                if (Timer.waitCondition(() -> Inventory.getAll().size() > invSize ||
+                        Inventory.contains(itemIdFinal) || (i.isItemNoted() &&
+                        Inventory.contains(Utils.getNotedItemID(itemIdFinal))), 3600, 5400))
                     return true;
-            } else if (Bank.withdraw(i.getAmount(), itemId)) {
-                if (Timer.waitCondition(() -> Inventory.getAll().length > invSize ||
-                        Inventory.find(Utils.getNotedItemID(itemIdFinal)).length > 0, 3600, 6400))
+            } else if (BankManager.withdraw(i.getAmount(), false, itemId)) {
+                if (Timer.waitCondition(() -> Inventory.getAll().size() > invSize ||
+                        Inventory.contains(Utils.getNotedItemID(itemIdFinal)), 3600, 5400))
                     return true;
 
             } else {
@@ -178,7 +184,7 @@ public class SkillBank {
                     for (Integer alt : i.getAlternateItemIDs()) {
                         var amount = i.getAmount() <= 0 ? 1 : i.getAmount();
 
-                        if (Inventory.find(alt).length >= amount) {
+                        if (Inventory.getCount(alt) >= amount) {
                             Log.info("[ItemRequirement]: Accepted an alternative id of " + alt +
                                     " for ItemID of:  " + i.getId());
                             break;
@@ -203,14 +209,14 @@ public class SkillBank {
         if (Vars.get().currentTask != null && bankCache != null) {
             if (Vars.get().currentTask.equals(SkillTasks.CRAFTING) && Arrays.stream(bankCache)
                     .noneMatch(a -> a.getID() == ItemID.GLASSBLOWING_PIPE) &&
-                    Inventory.find(ItemID.GLASSBLOWING_PIPE).length == 0) {
-                Log.log("[SkillBank]: Adding Glass blowing pipe to purchase list");
+                    !Inventory.contains(ItemID.GLASSBLOWING_PIPE)) {
+                Log.info("[SkillBank]: Adding Glass blowing pipe to purchase list");
                 return new ItemReq(ItemID.GLASSBLOWING_PIPE, 1);
 
             } else if (Vars.get().currentTask.equals(SkillTasks.FIREMAKING) && Arrays.stream(bankCache)
                     .noneMatch(a -> a.getID() == ItemID.TINDERBOX) &&
-                    Inventory.find(ItemID.TINDERBOX).length == 0) {
-                Log.log("[SkillBank]: Adding Tinderbox to purchase list");
+                    !Inventory.contains(ItemID.TINDERBOX)) {
+                Log.info("[SkillBank]: Adding Tinderbox to purchase list");
                 return new ItemReq(ItemID.TINDERBOX, 1);
             }
 
@@ -221,7 +227,7 @@ public class SkillBank {
 
     public static List<ItemReq> getSkillItemList() {
         if (Vars.get().currentTask != null) {
-            General.println("[SkillBank]: Getting skill item list; Current task is " + Vars.get().currentTask.toString());
+            Log.info("[SkillBank]: Getting skill item list; Current task is " + Vars.get().currentTask.toString());
             if (Vars.get().currentTask.equals(SkillTasks.COOKING)) {
                 return CookItems.getRequiredRawFood();
             } else if (Vars.get().currentTask.equals(SkillTasks.CRAFTING)) {
@@ -231,7 +237,7 @@ public class SkillBank {
                 return FiremakingItems.getRequiredLogList();
 
             } else if (Vars.get().currentTask.equals(SkillTasks.HERBLORE)) {
-                General.println("[SkillBank]: getSkillItemList is called");
+                Log.info("[SkillBank]: getSkillItemList is called");
                 return HerbloreItems.getRequiredItemList();
 
             } else if (Vars.get().currentTask.equals(SkillTasks.WOODCUTTING)) {

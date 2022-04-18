@@ -138,7 +138,7 @@ public class SlayerVars {
 
     public boolean drinkPotions = true;
 
-    public boolean needDustyKey;
+    public boolean needDustyKey = false;
 
     public boolean shouldWorldHop = false;
 
@@ -159,7 +159,7 @@ public class SlayerVars {
     public boolean wallbeastTask = false;
 
 
-    public boolean alchItems = Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55;
+    public boolean shouldAlchItems = Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55;
 
     /**
      * Other

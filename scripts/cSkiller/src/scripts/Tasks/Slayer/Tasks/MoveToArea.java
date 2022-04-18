@@ -8,6 +8,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.LocalTile;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -367,12 +368,12 @@ public class MoveToArea implements Task {
 
 
     public void getDustyKey() {
-        if (SlayerVars.get().needDustyKey) {
+        if (SlayerVars.get().needDustyKey && Inventory.find(ItemID.DUSTY_KEY).length < 1) {
             SlayerVars.get().status = "Getting Dusty Key";
-            General.println("[Debug]: Getting a dusty key");
-            if (Inventory.find(ItemID.DUSTY_KEY).length < 1) {
+            Log.info("Getting a dusty key");
+            if (Inventory.find(ItemID.JAIL_KEY).length < 1) {
                 SlayerVars.get().status = "Getting Dusty Key";
-
+                Log.info("Going to Jailer");
                 PathingUtil.walkToArea(Areas.JAILER_AREA);
                 RSNPC[] jailer = NPCs.findNearest("Jailer");
                 if (jailer.length > 0 && CombatUtil.clickTarget(jailer[0]))
@@ -391,35 +392,38 @@ public class MoveToArea implements Task {
                     if (AccurateMouse.click(GroundItems.find(ItemID.JAIL_KEY)[0], "Take"))
                         Timer.waitCondition(() -> Inventory.find(ItemID.JAIL_KEY).length > 0, 9000, 12000);
                 }
-
-                if (Inventory.find(ItemID.JAIL_KEY).length > 0 && Areas.JAILER_AREA.contains(Player.getPosition())) {
-                    if (PathingUtil.localNavigation(new RSTile(2931, 9690, 0)))
-                        Utils.shortSleep();
-                    if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
-                        Timer.waitCondition(() -> Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
-                }
-                if (Areas.JAIL_CELL.contains(Player.getPosition())) {
-                    if (Inventory.isFull() && Inventory.find(ItemID.FOOD_IDS).length > 0)
-                        if (EatUtil.eatFood(false))
-                            Utils.microSleep();
-
-                    if (NpcChat.talkToNPC("Velrak")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation("So... do you know anywhere good to explore?");
-                        NPCInteraction.handleConversation("Yes please!");
-                        NPCInteraction.handleConversation();
-                        Utils.shortSleep();
-                    }
-                    if (Inventory.find(ItemID.DUSTY_KEY).length > 0) {
-                        SlayerVars.get().needDustyKey = false;
-                        if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
-                            Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
-                    }
-                }
-            } else {
-                SlayerVars.get().needDustyKey = false;
             }
+            if (Inventory.find(ItemID.JAIL_KEY).length > 0 && Areas.JAILER_AREA.contains(Player.getPosition())) {
+                Log.info("Going to cell");
+                if (PathingUtil.localNav(new LocalTile(2931, 9690, 0)))
+                    PathingUtil.movementIdle();
+                if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
+                    Timer.waitCondition(() -> Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
+            }
+            if (Areas.JAIL_CELL.contains(Player.getPosition())) {
+                Log.info("In cell");
+                if (Inventory.isFull() && EatUtil.eatFood(false))
+                    Utils.microSleep();
+
+                if (Utils.clickNPC("Velrak", "Talk-to") &&
+                        NPCInteraction.waitForConversationWindow()) {
+                    NPCInteraction.handleConversation("So... do you know anywhere good to explore?");
+                    NPCInteraction.handleConversation("Yes please!");
+                    NPCInteraction.handleConversation();
+                }
+                if (Inventory.find(ItemID.DUSTY_KEY).length > 0) {
+                    SlayerVars.get().needDustyKey = false;
+                    if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
+                        Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
+                }
+            }
+        } else if (Inventory.find(ItemID.DUSTY_KEY).length > 0) {
+            SlayerVars.get().needDustyKey = false;
+            if (Areas.JAIL_CELL.contains(Player.getPosition()) && Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
+                Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
+
         }
+
     }
 
     RSArea area = new RSArea(new RSTile(2882, 9817, 1), new RSTile(2872, 9835, 1));

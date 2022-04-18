@@ -5,8 +5,10 @@ import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.tasks.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -42,48 +44,22 @@ public class MagicBank implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
                 SpellInfo.getCurrentSpell().map(sp -> !sp.hasRequiredItems()).orElse(false);
-
-       /* if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 27) {
-            return !saphRingTask.isSatisfied();
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 37) {
-            return Vars.get().currentTask != null &&
-                    Vars.get().currentTask.equals(SkillTasks.MAGIC) && !emeraldRingTask.isSatisfied();
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 45) {
-            return Vars.get().currentTask != null &&
-                    Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
-                    SpellInfo.getCurrentSpell().map(SpellInfo::hasRequiredItems).orElse(false);
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55) {
-            return Vars.get().currentTask != null &&
-                    Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
-                    (Inventory.find(ItemID.AIR_BATTLESTAFF + 1).length == 0 ||
-                            Inventory.find(ItemID.NATURE_RUNE).length == 0);
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 45) {
-            return Vars.get().currentTask != null &&
-                    Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
-                    SpellInfo.getCurrentSpell().map(SpellInfo::hasRequiredItems).orElse(false);
-        }
-        return Vars.get().currentTask != null &&
-                Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
-                (Inventory.find(ItemID.AIR_BATTLESTAFF + 1).length == 0 ||
-                        Inventory.find(ItemID.NATURE_RUNE).length == 0);*/
     }
 
     @Override
     public void execute() {
         if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 27) {
             myEnchBank2(saphRingTask);
-            // myEnchBank(saphList, ItemID.STAFF_OF_WATER);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 37) {
             myEnchBank(emList, ItemID.STAFF_OF_AIR);
-            //enchantBank(emeraldRingTask);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 45) {
             teleItems();
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 55) {
             teleBank(-1);// teleItems();
-        }  else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 66) {
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75) {
             alchBank(Vars.get().alchItem.getId());
-        }else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 99) {
-            teleAlchBank(ItemID.YEW_LONGBOW);
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 99) {
+            teleAlchBank(Vars.get().alchItem.getId());
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) { //wont execute on purpose
             myEnchBank2(diamondBraceletTAsk);
         }
@@ -230,12 +206,12 @@ public class MagicBank implements Task {
     }
 
     public int determineAmountOfAlchItem() {
-        if (Banking.isBankLoaded()) {
+        if (Bank.isOpen()) {
             RSItem[] coins = Banking.find(995);
             if (coins.length > 0) {
                 int num = coins[0].getStack();
                 int b = (int) (num / (Vars.get().alchItem.getAlchValue() * 1.40));
-                General.println("[Debug]: Can buy " + b + " Alch items @ " + b);
+                Log.info("We Can buy " + b + " Alch items @ " + b);
                 return b;
             }
         }
@@ -248,7 +224,7 @@ public class MagicBank implements Task {
             if (coins.length > 0) {
                 int num = coins[0].getStack();
                 int b = num / 13000;
-                General.println("[Debug]: Can buy " + b + " battlestaves");
+                Log.info("[Debug]: Can buy " + b + " battlestaves");
                 return b;
             }
         }
@@ -287,10 +263,9 @@ public class MagicBank implements Task {
 
     public void teleAlchBank(int alchItemID) {
         cSkiller.status = "Banking";
-        int staffId = SpellInfo.getCurrentSpell().map(sp -> sp.getStaffId()).orElse(-1);
+        int staffId = SpellInfo.getCurrentSpell().map(SpellInfo::getStaffId).orElse(-1);
 
         cSkiller.status = "Banking";
-
 
         BankManager.open(true);
         BankManager.depositAll(true);
@@ -300,42 +275,30 @@ public class MagicBank implements Task {
             BankManager.withdraw(1, true, staffId);
             Utils.equipItem(staffId);
         }
+        List<ItemReq> itemReqs = SpellInfo.getRequiredItemList();
+        itemReqs.add(new ItemReq(ItemID.NATURE_RUNE, 0, 1));
+        itemReqs.add(new ItemReq.Builder().id(alchItemID).isItemNoted(true)
+                .amount(0)
+                .build()
+        );
+        List<ItemReq> inv = SkillBank.withdraw(itemReqs);
 
-        List<ItemReq> inv = SkillBank.withdraw(SpellInfo.getRequiredItemList());
 
+        if (Inventory.find(ItemID.getNotedId(alchItemID)).length == 0) {
+            Log.info("[Magic Bank]: Adding items to buy list : " + alchItemID);
+            if (inv == null)
+                inv = new ArrayList<>();
+
+            inv.add(new ItemReq(alchItemID, determineAmountOfAlchItem()));
+            inv.add(new ItemReq(ItemID.NATURE_RUNE, determineAmountOfAlchItem()));
+        }
         if (inv != null && inv.size() > 0) {
-            General.println("[Magic Bank]: Creating buy list");
+            Log.info("[Magic Bank]: Creating buy list");
             BuyItems.itemsToBuy = BuyItems.populateBuyList(SpellInfo.getRequiredItemList());
+            BuyItems.itemsToBuy.addAll(BuyItems.populateBuyList(inv));
             return;
         }
-        /** alch stuff
-         */
-        if (Inventory.find(ItemID.getNotedId(alchItemID)).length ==0
-                || Inventory.find(ItemID.NATURE_RUNE).length  ==0) {
-
-            BankManager.open(true);
-            BankManager.depositAll(true);
-
-            List<ItemReq> newInv = SkillBank.withdraw(inv);
-            BankManager.turnNotesOn();
-            BankManager.withdraw(0, true, alchItemID);
-
-            if (Inventory.find(ItemID.getNotedId(alchItemID)).length == 0) {
-                General.println("[Magic Training]: Adding items to buy list : " + alchItemID);
-                if (newInv == null)
-                    newInv = new ArrayList<>();
-
-                newInv.add(new ItemReq(alchItemID, determineAmountOfAlchItem()));
-                newInv.add(new ItemReq(ItemID.NATURE_RUNE, determineAmountOfAlchItem()));
-            }
-            if (newInv != null && newInv.size() > 0) {
-                General.println("[Magic Training]: Creating buy list");
-                BuyItems.itemsToBuy = BuyItems.populateBuyList(newInv);
-                return;
-            }
-
-            BankManager.close(true);
-        }
+        BankManager.close(true);
     }
 
     public void alchBank(int alchItemID) {
@@ -343,27 +306,32 @@ public class MagicBank implements Task {
         if (Inventory.find(ItemID.getNotedId(alchItemID)).length < 1 || Inventory.find(ItemID.NATURE_RUNE).length < 1) {
 
             List<ItemReq> inv = new ArrayList<>(Arrays.asList(
-                    new ItemReq(ItemID.NATURE_RUNE, 0, 1)));
+                    new ItemReq(ItemID.NATURE_RUNE, 0, 1),
+                    new ItemReq(ItemID.STAFF_OF_FIRE, 1, 1, true, true),
+                    new ItemReq.Builder().id(alchItemID).isItemNoted(true)
+                            .amount(0)
+                            .build()
+            ));
 
             BankManager.open(true);
             BankManager.depositAll(true);
 
-            if (org.tribot.api2007.Equipment.find(ItemID.STAFF_OF_FIRE).length < 1) {
+          /*  if (org.tribot.api2007.Equipment.find(ItemID.STAFF_OF_FIRE).length < 1) {
                 General.println("[Magic Training]: Getting staff of fire");
                 BankManager.withdraw(1, true, ItemID.STAFF_OF_FIRE);
                 Utils.equipItem(ItemID.STAFF_OF_FIRE, "Wield");
-            }
+            }*/
 
             List<ItemReq> newInv = SkillBank.withdraw(inv);
-            BankManager.turnNotesOn();
-            BankManager.withdraw(0, true, alchItemID);
-
-            if (Inventory.find(ItemID.getNotedId(alchItemID)).length == 0) {
+            if (newInv.size() > 0 ||
+                    Inventory.find(ItemID.getNotedId(alchItemID)).length == 0 ||
+                    Inventory.find(ItemID.NATURE_RUNE).length ==0) {
                 General.println("[Magic Training]: Adding items to buy list : " + alchItemID);
                 if (newInv == null)
                     newInv = new ArrayList<>();
 
                 newInv.add(new ItemReq(alchItemID, determineAmountOfAlchItem()));
+                newInv.add(new ItemReq(ItemID.STAFF_OF_FIRE, 1));
                 newInv.add(new ItemReq(ItemID.NATURE_RUNE, determineAmountOfAlchItem()));
             }
             if (newInv != null && newInv.size() > 0) {

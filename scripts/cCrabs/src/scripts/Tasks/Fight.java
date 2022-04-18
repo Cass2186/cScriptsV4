@@ -167,7 +167,6 @@ public class Fight implements Task {
         }
 
         if (Combat.isUnderAttack() || Combat.getAttackingEntities().length > 0) {
-
             if (Vars.get().usingPrayer) {
                 if (!Prayer.isPrayerEnabled(Prayer.PRAYERS.HAWK_EYE))
                     Prayer.enable(Prayer.PRAYERS.HAWK_EYE);

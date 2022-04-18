@@ -10,6 +10,7 @@
         <module name="myScripts.scripts.cCombat.test" />
         <module name="myScripts.libraries.cAPI.test" />
         <module name="myScripts.scripts.TemplateScript.main" />
+        <module name="myScripts.scripts.cChompyBirds.test" />
         <module name="myScripts.scripts.cFarming.test" />
         <module name="myScripts.scripts.cOrbCharger.test" />
         <module name="myScripts.scripts.cSkiller.test" />
@@ -31,6 +32,7 @@
         <module name="myScripts.scripts.cVorkath.main" />
         <module name="myScripts.scripts.cAutoClicker.main" />
         <module name="myScripts.scripts.cZulrah.test" />
+        <module name="myScripts.scripts.cChompyBirds.main" />
         <module name="myScripts.scripts.cTutorialIsland.test" />
         <module name="myScripts.scripts.cRunecrafting.main" />
         <module name="myScripts.scripts.cNMZ.main" />

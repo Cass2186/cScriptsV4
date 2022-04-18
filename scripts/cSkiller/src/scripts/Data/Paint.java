@@ -1,13 +1,20 @@
 package scripts.Data;
 
+import org.jfree.chart.util.StringUtils;
 import org.tribot.api.Timing;
+import org.tribot.api2007.Projection;
+import org.tribot.api2007.types.RSObject;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.painting.Painting;
 import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
 import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.Npc;
 import scripts.PaintUtil;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
 import scripts.Utils;
@@ -17,6 +24,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Paint {
 
@@ -218,5 +226,22 @@ public class Paint {
                 .location(PaintLocation.BOTTOM_RIGHT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));
+    }
+
+    public static void addSorceressPaint() {
+        List<Npc> elementals = Query.npcs()
+                .nameContains("Spring Elemental")
+                .sortedByDistance()
+                .toList();
+        for (Npc n : elementals) {
+            Polygon pp = Projection.getTileBoundsPoly(Utils.getRSTileFromWorldTile(n.getTile()), 0);
+            int orientation = n.getOrientation().getAngle();
+            Painting.addPaint(g -> g.drawString(String.format(" O: %s | Y: ",
+                            orientation, n.getTile().getY()), n.getTile().getX(),
+                    n.getTile().getY()));
+          //  g.drawPolygon(pp);
+        }
+
+
     }
 }

@@ -4,7 +4,10 @@ import obf.G;
 import org.tribot.api.General;
 import org.tribot.api2007.Inventory;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.BankTaskError;
+import org.tribot.script.sdk.types.GrandExchangeOffer;
 import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -24,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class BuyItems implements Task {
+
+    int[] FIVE_INCREMENTS = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50};
 
     public BuyItems(ArrayList<GEItem> list) {
         this.itemList = list;
@@ -58,9 +63,10 @@ public class BuyItems implements Task {
                 General.println("[BuyItems]: Adding buy item x" + i.getAmount(), Color.green);
                 if (GrandExchange.getPrice(i.getId()) < 1000 && i.getAmount() < 10) {
                     listToBuy.add(new GEItem(i.getId(), i.getAmount(), 350));
+                } else if (GrandExchange.getPrice(i.getId()) > 8000) {
+                    listToBuy.add(new GEItem(i.getId(), i.getAmount(), 15));
                 } else
                     listToBuy.add(new GEItem(i.getId(), i.getAmount(), 35));
-
                 General.println("[BuyItems]: Items to buy size: " + listToBuy.size());
             }
 
@@ -86,12 +92,13 @@ public class BuyItems implements Task {
      *
      */
     public static void getMissingAndBuyAllQuestItems(List<ItemReq> itemReqList, ArrayList<GEItem> questBuyList) {
-        if (handleMissingItems(itemReqList).size() > 0){
+        if (handleMissingItems(itemReqList).size() > 0) {
             Log.info("We're missing item(s), going to buy all required quest items as a fail safe");
             BuyItemsStep buy = new BuyItemsStep(questBuyList);
             buy.buyItems();
         }
     }
+
     /**
      * @param itemReqList required inventory item list
      * @return a list of missing inventory items from the list passed
@@ -158,11 +165,20 @@ public class BuyItems implements Task {
             Log.info("[BuyItemsStep]: Need RoW, not at GE");
             BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
         }
-        // if (!org.tribot.script.sdk.GrandExchange.isNearby())
-        //    BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
-        // BankManager.withdrawArray(ItemID.AMULET_OF_GLORY, 1);
+
         buy.buyItems();
-        Exchange.clickCollect();
+        for (int i = 0; i < 3; i++) {
+            Exchange.collectItems();
+            if (Waiting.waitUntil(1500, 150, ()->
+                    !Query.grandExchangeOffers().statusNotEquals(GrandExchangeOffer.Status.EMPTY).isAny())) {
+                Log.info("[BuyItemStep]: Collected successfully");
+                break;
+            }
+            if (i == 2){
+                Log.error("[BuyItemStep]: Failed to collect");
+            }
+            Waiting.waitUniform(400,600);
+        }
         itemList.clear();
         BankManager.open(true);
         BankManager.depositAll(true);
@@ -190,7 +206,8 @@ public class BuyItems implements Task {
 
         buy.buyItems();
         itemsToBuy.clear();
-        Exchange.clickCollect();
+        Exchange.collectItems();
+        Log.warn("Collection passed");
         BankManager.open(true);
         BankManager.depositAll(true);
     }

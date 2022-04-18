@@ -165,11 +165,11 @@ public class PathingUtil {
 
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
         Log.info("[PathingUtil] Local walking V2 - Worldtile");
-        return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination), state);
+        return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination.toLocalTile()), state);
     }
 
-    public static boolean localNav(WorldTile destination) {
-        return localNav(destination);
+    public static boolean localNav(WorldTile dest) {
+        return localNav(dest.toLocalTile());
     }
 
     public static boolean localNav(LocalTile destination, Supplier<WalkState> state) {

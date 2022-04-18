@@ -118,7 +118,7 @@ public class Obstacle {
                     .actionContains(this.obstacleAction)
                     .idEquals(this.obstacleId)
                     .sortedByDistance()
-                    .isReachable() //TODO confirm this doens't mess it up
+                    //.isReachable() //TODO confirm this doens't mess it up
                     .findBestInteractable();
 
             RSObject[] obj = Objects.findNearest(40,
@@ -151,7 +151,7 @@ public class Obstacle {
                 } else
                     return clickObject(object, this.obstacleAction, false, false);
 
-            } else if (object.isPresent())
+            } else if (object.isPresent()) {
                 return object.map(o -> o.interact(this.obstacleAction)).orElse(false)
                         && Timer.agilityWaitCondition(() ->
                                 (!MyPlayer.isMoving()
@@ -159,26 +159,19 @@ public class Obstacle {
                                         Player.getPosition().getPlane() == 0),
                         3500, 5500);
 
-         /*   if (this.nextObstacleArea != null && obj.length > 0) {
-                int chance = General.random(0, 100);
-                if (chance <= Vars.get().abc2Chance) {
-                    if (MyPlayer.isMoving())
-                        return clickObject(obj[0], this.obstacleAction, true, true);
+            } else if (obj.length > 0) {
+                //need this for Canifis when you're floating and stuck
+                Log.info("API Dynamic clicking failsafe");
+                if (!obj[0].isClickable())
+                    DaxCamera.focus(obj[0]);
 
-                    else
-                        return clickObject(obj[0], this.obstacleAction, false, true);
-
-
-                } else
-                    return clickObject(obj[0], this.obstacleAction, false, false);
-
-            } else if (obj.length > 0)
                 return DynamicClicking.clickRSObject(obj[0], this.obstacleAction)
                         && Timer.agilityWaitCondition(() ->
                                 (!MyPlayer.isMoving()
                                         && !this.obstacleArea.contains(Player.getPosition()) ||
                                         Player.getPosition().getPlane() == 0),
-                        3500, 5500);*/
+                        3500, 5500);
+            }
         }
         return false;
     }
