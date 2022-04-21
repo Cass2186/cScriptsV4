@@ -2,9 +2,9 @@ package scripts.Tasks.Slayer.SlayerConst;
 
 import lombok.Getter;
 import org.tribot.api.General;
-import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.Area;
 import scripts.ItemID;
 import scripts.PrayerType;
 
@@ -188,6 +188,7 @@ public enum Assign {
             .inArea(Areas.ELF_AREA)
             .usingCannon(true)
             .useCannonTile(Areas.ELF_CANNON_TILE)
+            .nameContains("Elves")
             .nameContains("Iorwerth Archer")
             .nameContains("Iorwerth Warrior")
             .useGearType(GearType.MELEE)),
@@ -497,7 +498,7 @@ public enum Assign {
             .nameContains("Zombie")
             .useGearType(GearType.MELEE));
     @Getter
-    private RSArea area;
+    private Area area;
 
     @Getter
     private boolean useCannon = false;
@@ -508,7 +509,7 @@ public enum Assign {
     @Getter
     private boolean useSpecialItem = false;
     @Getter
-    private RSTile cannonTile = null;
+    private WorldTile cannonTile = null;
 
     @Getter
     private List<String> nameList;
@@ -532,7 +533,7 @@ public enum Assign {
     private GearType gearType = GearType.MELEE;
 
     @Getter
-    private RSTile hopTile;
+    private WorldTile hopTile;
 
     private Assign(Builder builder) {
         this.area = builder.area;
@@ -551,11 +552,11 @@ public enum Assign {
 
 
     public static class Builder {
-        private RSArea area;
+        private Area area;
         private boolean useCannon = false;
         private PrayerType prayerType = PrayerType.NONE;
         private boolean useSpecialItem = false;
-        private RSTile cannonTile;
+        private WorldTile cannonTile;
         private List<String> nameList;
         private List<String> nameNotContainsList;
         private int specialItemID;
@@ -563,10 +564,10 @@ public enum Assign {
         public List<String> specialItemsList;
 
         private GearType gearType;
-        private RSTile hopTile;
+        private WorldTile hopTile;
         private List<Integer> customGearList;
 
-        public Builder inArea(RSArea area) {
+        public Builder inArea(Area area) {
             this.area = area;
             return this;
         }
@@ -601,7 +602,7 @@ public enum Assign {
             this.specialItemArray = specialItemArray;
             return this;
         }
-        public Builder useCannonTile(RSTile tile) {
+        public Builder useCannonTile(WorldTile tile) {
             this.cannonTile = tile;
             return this;
         }
@@ -625,7 +626,7 @@ public enum Assign {
         }
 
 
-        public Builder useHopTile(RSTile tile) {
+        public Builder useHopTile(WorldTile tile) {
             this.hopTile = tile;
             return this;
         }

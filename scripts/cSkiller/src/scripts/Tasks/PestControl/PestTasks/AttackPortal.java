@@ -8,6 +8,8 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.types.Area;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -57,7 +59,7 @@ public class AttackPortal implements Task {
     @Override
     public void execute() {
         if (!moveToPortal()) {
-            RSArea area = PestUtils.getCenterArea();
+            Area area = PestUtils.getCenterArea();
             RSNPC[] knight = Entities.find(NpcEntity::new)
                     .nameContains("Void Knight")
                     .idEquals(PestUtils.KNIGHT_ID)
@@ -68,7 +70,7 @@ public class AttackPortal implements Task {
                     .getResults();
             if (area != null) {
                 Log.log("[Debug]: Moving to center");
-                PathingUtil.localNavigation(area.getRandomTile().translate(0, -13));
+                PathingUtil.localNav(area.getCenter().translate(0, -13));
                 PathingUtil.movementIdle();
             } else if (knight.length > 0) {
                 Log.log("[Debug]: Failed to move to center, found knight");
@@ -77,8 +79,8 @@ public class AttackPortal implements Task {
             } else if (sq.length >0){
                 Log.log("[Debug]: Failed to move to center & find knight, using squire anchor");
                 if (PathingUtil.localNavigation(sq[0].getPosition().translate(0, General.random(-15,-13))) &&
-                    Timer.waitCondition(()-> Player.isMoving(), 2500,4000)){
-                    Timer.waitCondition(()-> !Player.isMoving(), 3500,5500);
+                    Timer.waitCondition(()-> MyPlayer.isMoving(), 2500,4000)){
+                    Timer.waitCondition(()-> !MyPlayer.isMoving(), 3500,5500);
                 }
             }
         }

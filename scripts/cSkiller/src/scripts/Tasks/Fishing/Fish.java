@@ -34,13 +34,13 @@ public class Fish implements Task {
         if (isBarbFishing()) {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemID.FEATHER, (Utils.random(3,7)*1000), 50),
+                            new ItemReq(ItemID.FEATHER, (Utils.random(3, 7) * 1000), 50),
                             new ItemReq(BARBARIAN_ROD, 1)
                     )));
         } else {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemID.FEATHER, (Utils.random(3,7)*1000), 50),
+                            new ItemReq(ItemID.FEATHER, (Utils.random(3, 7) * 1000), 50),
                             new ItemReq(ItemID.FLY_FISHING_ROD, 1)
                     ))
             );
@@ -74,8 +74,8 @@ public class Fish implements Task {
 
     public boolean goToFishingSpot() {
         if (Vars.get().fishingLocation != null &&
-                Vars.get().fishingLocation.getRequiredLevel() <= Skill.FISHING.getActualLevel()){
-            if (!Vars.get().fishingLocation.getArea().contains(Player.getPosition())){
+                Vars.get().fishingLocation.getRequiredLevel() <= Skill.FISHING.getActualLevel()) {
+            if (!Vars.get().fishingLocation.getArea().contains(Player.getPosition())) {
                 message = "Going to fishing spot - " + Vars.get().fishingLocation.toString();
                 PathingUtil.walkToArea(Vars.get().fishingLocation.getArea(), false);
                 return Vars.get().fishingLocation.getArea().contains(Player.getPosition());
@@ -121,11 +121,13 @@ public class Fish implements Task {
                     Timer.abc2SkillingWaitCondition(() -> (Interfaces.get(233, 2) != null ||
                             Inventory.isFull() ||
                             Const.FISHING_ANIMATION.stream()
-                                    .noneMatch(a -> MyPlayer.getAnimation() == a)), 65000, 75000);
+                                    .noneMatch(a -> MyPlayer.getAnimation() == a) ||
+                            !Vars.get().afkTimer.isRunning()), 65000, 75000);
                 else {
                     Timer.waitCondition(() -> (Interfaces.get(233, 2) != null ||
                             Inventory.isFull() || Const.FISHING_ANIMATION.stream()
-                            .noneMatch(a -> MyPlayer.getAnimation() == a)), 65000, 75000);
+                            .noneMatch(a -> MyPlayer.getAnimation() == a)||
+                            !Vars.get().afkTimer.isRunning()), 65000, 75000);
                     Utils.idleAfkAction();
                 }
             }

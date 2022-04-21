@@ -3,6 +3,7 @@ package scripts.Tasks.SorceressGarden;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
@@ -15,6 +16,7 @@ import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.ItemID;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -29,7 +31,7 @@ public class SpringRun implements Task {
     RSArea WHOLE_SPRING_GARDEN = new RSArea(new RSTile(2922, 5477, 0), new RSTile(2935, 5458, 0));
     RSArea CENTRE_OF_GARDEN = new RSArea(new RSTile(2903, 5480, 0), new RSTile(2920, 5463, 0));
     ElementalCollisionDetector collisionDetector = new ElementalCollisionDetector();
-
+    double EXP_PER_FRUIT = 337.5;
 
     public void moveToTile() {
 
@@ -114,14 +116,12 @@ public class SpringRun implements Task {
                                             .collect(Collectors.toList()), index);
                         }
                 )) {
-            Log.info("Returned true");
             if (moveTo.interact("Walk here") &&
                     Timer.waitCondition(() -> !startTile.equals(MyPlayer.getTile()), 1500, 2200)) {
                 return Waiting.waitUntil(5000, 80, () -> moveTo.equals(MyPlayer.getTile()));
             }
 
         }
-            Log.info("Returned false");
         return false;
     }
 
@@ -155,34 +155,42 @@ public class SpringRun implements Task {
 
     @Override
     public void execute() {
-        Log.info("loop");
-        Mouse.setSpeed(165);
-        Waiting.waitUniform(20, 40);
+        Mouse.setSpeed(175);
+        if (Inventory.getCount(ItemID.SPRING_SQIRK) >= 4 &&
+                Utils.useItemOnItem(ItemID.PESTLE_AND_MORTAR, ItemID.SPRING_SQIRK)) {
+            Utils.idleNormalAction();
+        }
         if (CENTRE_OF_GARDEN.contains(Player.getPosition())) {
             Waiting.waitNormal(1250, 250);
             if (Utils.clickObj(12719, "Open")) {
                 Timer.waitCondition(() -> !CENTRE_OF_GARDEN.contains(Player.getPosition()), 6500, 8500);
-                if(tile1.interact("Walk here"))
-                Waiting.waitUntil(4500, 50, ()-> tile1.equals(MyPlayer.getTile()) );
+                if (tile1.interact("Walk here"))
+                    Waiting.waitUntil(4500, 50, () -> tile1.equals(MyPlayer.getTile()));
             }
         }
         //moveToTileAndHoverNext(intialTile, tile2Trigger, tile1);
-        moveToTileAndHoverNext(tile1, 0, tile2);
-        moveToTileAndHoverNext(tile2, 1, tile3);
-        moveToTileAndHoverNext(tile3, 2, tile4);
-        moveToTileAndHoverNext(tile4, 3, tile5);
-        moveToTileAndHoverNext(tile5, 4, tile6);
+        Utils.forceDownwardCameraAngle();
+        if (moveToTileAndHoverNext(tile1, 0, tile2))
+            Utils.idleNormalAction();
+        else if (moveToTileAndHoverNext(tile2, 1, tile3))
+            Utils.idleNormalAction();
+        else if (moveToTileAndHoverNext(tile3, 2, tile4))
+            Utils.idleNormalAction();
+        else if (moveToTileAndHoverNext(tile4, 3, tile5))
+            Utils.idleNormalAction();
+        else if (moveToTileAndHoverNext(tile5, 4, tile6))
+            Utils.idleNormalAction();
         collectFruit(tile6);
-        //  moveToTileAndHoverNext(tile3, tile4Trigger, tile4,
-        ///       Query.npcs().inArea(customTrigger1).stream().findAny().isEmpty());
+        Waiting.waitUniform(40, 90);
     }
 
     @Override
     public String toString() {
         return "Spring Garden";
     }
+
     @Override
     public String taskName() {
-        return "Spring Garden";
+        return "Sorceress Garden";
     }
 }

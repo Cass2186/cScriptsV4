@@ -6,34 +6,28 @@ import dax.api_lib.models.DaxCredentialsProvider;
 import dax.api_lib.models.RunescapeBank;
 import dax.teleports.Teleport;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.K;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
-import org.tribot.api2007.Game;
-import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Projection;
 import org.tribot.api2007.Skills;
-import org.tribot.api2007.types.RSGroundItem;
-import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Options;
-import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.WorldHopper;
 import org.tribot.script.sdk.painting.template.basic.*;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GroundItem;
-import scripts.API.AntiPKThread;
+import org.tribot.script.sdk.types.Npc;
+import scripts.Data.Paint;
 import scripts.Data.Vars;
-import scripts.Listeners.InterfaceObserver;
-import scripts.Listeners.PkListener;
 import scripts.Listeners.PkObserver;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.*;
 import scripts.Tasks.Spidines.KillSpidine;
 import scripts.Tasks.Spidines.SpawnSpidine;
-import scripts.rsitem_services.GrandExchange;
 
 
 import java.awt.*;
@@ -43,7 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @ScriptManifest(name = "cCombat v1.5", authors = {"Cass2186"}, category = "Testing")
 
-public class cCombat extends Script implements Painting, Starting, Ending, Arguments, MessageListening07, Breaking {
+public class cCombat extends Script implements Starting, Ending, Arguments, MessageListening07, Breaking {
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
@@ -64,10 +58,13 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 new MoveToArea(),
                 new WorldHop(),
                 new EatDrink(),
-                new Bank()
+                new Bank(),
+                new AlchItems()
 
 
         );
+        Paint.setPaint();
+
         if (Vars.get().killingSpidines){
             tasks = new TaskSet(
                     new SpawnSpidine(),
@@ -76,14 +73,14 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         }
         //  AntiPKThread pkObj = new AntiPKThread("Pk thread");
         //    pkObj.start();
-        Mouse.setSpeed(250);
+        Mouse.setSpeed(Utils.random(140,180));
         //  AntiPKThread.scrollToWorld(AntiPKThread.nextWorld);
         isRunning.set(true);
         initializeListeners();
         Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
 
         while (isRunning.get()) {
-            General.sleep(20, 40);
+            General.sleep(40, 60);
 
             if (!WorldHopper.isInMembersWorld())
                 break;
@@ -160,81 +157,23 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         return map;
     }
 
-    public void addPaint() {
-        double timeRan = getRunningTime();
-        double timeRanMin = (timeRan / 3600000);
-
-
-        // Create the template
-        PaintTextRow template = PaintTextRow.builder().background(Color.CYAN.darker()).build();
-
-        Collection<PaintRow> rows = new ArrayList<>();
-
-
-        HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
-        for (Skills.SKILLS s : xpMap.keySet()) {
-            int startLvl = Skills.getLevelByXP(Vars.get().skillStartXpMap.get(s));
-            int xpHr = (int) (xpMap.get(s) / timeRanMin);
-            long xpToLevel1 = Skills.getXPToLevel(s, s.getActualLevel() + 1);
-            long ttl = (long) (xpToLevel1 / ((xpMap.get(s) / timeRan)));
-            int gained = s.getActualLevel() - startLvl;
-            if (gained > 0) {
-                String txt =
-                        // myString.add(
-                        StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
-                                + " [" + s.getActualLevel() + " (+" + gained + ")]: "
-                                + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                                "|| TNL: "
-                                + Timing.msToString(ttl);
-                // );
-                rows.add(template.toBuilder().label(txt).build());
-            } else {
-                String txt =
-                        //myString.add(
-                        StringUtils.capitalize(s.toString().toLowerCase(Locale.ROOT))
-                                + " [" + s.getActualLevel() + "]: "
-                                + Utils.addCommaToNum(xpMap.get(s)) + "xp (" + Utils.addCommaToNum(xpHr) + "/hr) " +
-                                "|| TNL: "
-                                + Timing.msToString(ttl);
-                // );
-                rows.add(template.toBuilder().label(txt).build());
-            }
-        }
-        BasicPaintTemplate paint = BasicPaintTemplate.builder()
-                .row(PaintRows.scriptName(template.toBuilder()))
-                .row(PaintRows.runtime(template.toBuilder()))
-                .row(template.toBuilder().label("Task").value(() -> status).build())
-                .row(template.toBuilder().label("Loot Value").value(() -> Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
-                        Utils.addCommaToNum(Math.round(Vars.get().lootValue / (getRunningTime() / 3600000)))).build())
-                .rows(rows)
-                // .row(template.toBuilder().label("Solved State").condition(() -> Vars.get().getRunningProfile().getArceuus().get() && Calculations.get().getBooksFound() > 0).value(() -> Vars.get().getLibrary().getState()).build())
-                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
-                .build();
-        org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
-    }
-
+   /*
     @Override
     public void onPaint(Graphics g) {
-        double timeRan = getRunningTime();
+        double timeRan = ScriptTimer.getRuntime();
         double timeRanMin = (timeRan / 3600000);
         List<String>
                 myString = new ArrayList<>(Arrays.asList(
                 "cCombat v2",
-                "Running For: " + Timing.msToString(getRunningTime()),
+                "Running For: " + ScriptTimer.getRuntimeString(),
                 "Task: " + status,
                 "Loot Value: " + Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
                         Utils.addCommaToNum(Math.round(Vars.get().lootValue / timeRanMin))
         ));
-        Optional<GroundItem> item = LootItems.getLootItem();
-        if (item.isPresent()) {
-            Polygon p = Projection.getTileBoundsPoly(item.get().getLegacyRSGroundItem().getPosition(), 0);
-            g.drawPolygon(p);
-        }
-        // Create the template
-        PaintTextRow template = PaintTextRow.builder().background(Color.CYAN.darker()).build();
+
+
 
         Collection<PaintRow> rows = new ArrayList<>();
-
 
         HashMap<Skills.SKILLS, Integer> xpMap = getXpMap();
         for (Skills.SKILLS s : xpMap.keySet()) {
@@ -265,19 +204,11 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
                 //  rows.add(template.toBuilder().label(txt).build());
             }
         }
-        BasicPaintTemplate paint = BasicPaintTemplate.builder()
-                .row(PaintRows.scriptName(template.toBuilder()))
-                .row(PaintRows.runtime(template.toBuilder()))
-                .row(template.toBuilder().label("Task").value(() -> status).build())
-                .row(template.toBuilder().label("Loot Value").value(() -> Utils.addCommaToNum(Vars.get().lootValue) + " || hr: " +
-                        Utils.addCommaToNum(Math.round(Vars.get().lootValue / timeRanMin))).build())
-                .rows(rows)
-                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
-                .build();
-        //org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
+
+        //
 
         PaintUtil.createPaint(g, myString.toArray(String[]::new));
-    }
+    }*/
 
     @Override
     public void onStart() {
@@ -305,11 +236,10 @@ public class cCombat extends Script implements Painting, Starting, Ending, Argum
         for (Skills.SKILLS s : Skills.SKILLS.values()) {
             int startXp = Vars.get().skillStartXpMap.get(s);
             if (s.getXP() > startXp) {
-                Log.debug("[Ending]: Gained " + (s.getXP() - startXp) + " " + s + " exp");
+                Log.info("[Ending]: Gained " + (s.getXP() - startXp) + " " + s + " exp");
             }
         }
-        Log.debug("[Ending]: XP Gained: " + Vars.get().lootValue);
-        Log.debug("[Ending]: Loot Value: " + Utils.addCommaToNum(Vars.get().lootValue));
+        Log.info("[Ending]: Loot Value: " + Utils.addCommaToNum(Vars.get().lootValue));
     }
 
 

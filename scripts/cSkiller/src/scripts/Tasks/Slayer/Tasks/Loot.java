@@ -60,102 +60,11 @@ public class Loot implements Task {
         return itemDef.isTradeableOnGrandExchange();
     }
 
-    public RSGroundItem getLootItemOld() {
 
-        RSGroundItem[] groundItems = GroundItems.getAll();
-
-        if (groundItems.length > 0) {
-            for (int i = 0; i < groundItems.length; i++) {
-                RSItemDefinition def = groundItems[i].getDefinition();
-                int id = groundItems[i].getID();
-
-                if (def == null)
-                    return null;
-
-                if (!canTrade(def) && !def.isNoted() && id != 995 && SlayerVars.get().fightArea.contains(groundItems[i]))
-                    return groundItems[i];
-
-                if (def.isNoted())
-                    id = def.getID() - 1;
-
-                for (int cust : customLootIds)
-                    if (id == cust && SlayerVars.get().fightArea.contains(groundItems[i]))
-                        return groundItems[i];
-
-                if (GrandExchange.getPrice(id) > SlayerVars.get().minLootValue) {
-
-                    if (SlayerVars.get().fightArea.contains(groundItems[i])) {
-                        Log.log("[Debug]: Looting " + def.getName());
-                        return groundItems[i];
-                    }
-
-
-                    if (SlayerVars.get().fightArea.contains(groundItems[i]) &&
-                            !def.getName().contains("Burnt bones")
-                            && !def.getName().contains("ashes")) {
-                        General.println("[Loot]: returning item line 96");
-                        return groundItems[i];
-
-                    }
-                } else if (def.isStackable() || def.isNoted()) {
-
-                    int individualPrice = GrandExchange.getPrice(id);
-                    int amount = groundItems[i].getStack();
-                    int value = individualPrice * amount;
-
-                    if (value > SlayerVars.get().minLootValue) {
-
-                        if (SlayerVars.get().fightArea.contains(groundItems[i])) {
-                            Log.log("[Debug]: Looting " + def.getName());
-                            return groundItems[i];
-                        }
-
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public void getLoot() {
-        RSGroundItem loot = getLootItemOld();
-        if (loot != null) {
-            int inv = Inventory.getAll().length;
-
-            if (SlayerVars.get().fightArea.contains(loot)) {
-                String name = "";
-                int id = loot.getID();
-
-
-                int value = GrandExchange.getPrice(id);
-
-                General.println("[Loot]: Looting " + name);
-
-                if (Inventory.isFull()) //&& !itemIsStackableAndInInventory(loot))
-                    eatForSpace();
-
-                if (loot.getPosition().distanceTo(Player.getPosition()) > 8 && !loot.isClickable()) {
-                    PathingUtil.localNavigation(loot.getPosition());
-                    Timer.waitCondition(loot::isClickable, 4500, 7000);
-                }
-
-                if (!loot.isClickable())
-                    DaxCamera.focus(loot);
-
-                if (DynamicClicking.clickRSGroundItem(loot, "Take")) {
-                    Timer.slowWaitCondition(() -> Inventory.getAll().length > inv ||
-                            Player.getPosition().equals(loot.getPosition()), 5000, 7000);
-                    General.println("[Debug]: Done looting");
-                    SlayerVars.get().lootValue = SlayerVars.get().lootValue + value;
-                }
-            }
-        }
-    }
 
     public static Optional<GroundItem> getLootItem() {
         List<GroundItem> groundItemList = Query.groundItems()
-                .inArea(Utils.getAreaFromRSArea(SlayerVars.get().fightArea))
+                .inArea(SlayerVars.get().fightArea)
                 .nameNotContains("Burnt bones", "Ashes", "ashes")
                 .toList();
 
@@ -255,7 +164,7 @@ public class Loot implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.SLAYER) &&
                 SlayerVars.get().fightArea != null &&
-                SlayerVars.get().fightArea.contains(Player.getPosition()) && getLootItem().isPresent();//&& shouldLoot();
+                SlayerVars.get().fightArea.contains(MyPlayer.getTile()) && getLootItem().isPresent();//&& shouldLoot();
     }
 
 

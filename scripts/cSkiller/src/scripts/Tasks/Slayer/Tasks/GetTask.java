@@ -12,6 +12,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.EquipmentItem;
@@ -284,16 +285,16 @@ public class GetTask implements Task {
     public void getTaskChaeldar() {
         if (SlayerVars.get().getTask) {
             getDramenStaff();
-            if (!Areas.WHOLE_ZANARIS.contains(Player.getPosition())) {
+            if (!Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile())) {
                 General.println("[Debug]: Getting Task.");
-                PathingUtil.walkToArea(Areas.SWAMP_AREA);
+                PathingUtil.walkToArea(Areas.SWAMP_AREA, false);
                 if (Utils.clickObject(2406, "Open", false)) {
-                    Timer.waitCondition(() -> Areas.WHOLE_ZANARIS.contains(Player.getPosition()), 7000, 12000);
+                    Timer.waitCondition(() -> Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile()), 7000, 12000);
                     Utils.modSleep();
                 }
             }
-            if (Areas.WHOLE_ZANARIS.contains(Player.getPosition())) {
-                PathingUtil.walkToArea(Areas.CHAELDAR_AREA);
+            if (Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile())) {
+                PathingUtil.walkToArea(Areas.CHAELDAR_AREA, false);
 
                 RSNPC[] chaeldar = NPCs.findNearest("Chaeldar");
                 if (chaeldar.length > 0) {
@@ -328,7 +329,7 @@ public class GetTask implements Task {
         if (SlayerVars.get().getTask) {
             RSItem[] invitem = Inventory.find(ItemID.GAMES_NECKLACE);
             if (invitem.length < 1) {
-                if (!Areas.TURAEL_AREA.contains(Player.getPosition())) {
+                if (!Areas.TURAEL_AREA.contains(MyPlayer.getTile())) {
                     BankManager.open(true);
 
                     if (Inventory.getAll().length > 25)
@@ -344,7 +345,7 @@ public class GetTask implements Task {
                 }
             }
             if (Inventory.find(ItemID.GAMES_NECKLACE).length > 0) {
-                PathingUtil.walkToArea(Areas.TURAEL_AREA);
+                PathingUtil.walkToArea(Areas.TURAEL_AREA, false);
                 RSNPC[] turael = NPCs.findNearest("Turael");
                 if (turael.length > 0) {
 
@@ -373,8 +374,8 @@ public class GetTask implements Task {
         if (SlayerVars.get().getTask) {
             General.println("[Debug]: Going to get task (Vannaka).");
 
-            if (!Areas.VANNAKA_AREA.contains(Player.getPosition()))
-                PathingUtil.walkToArea(Areas.VANNAKA_AREA);
+            if (!Areas.VANNAKA_AREA.contains(MyPlayer.getTile()))
+                PathingUtil.walkToArea(Areas.VANNAKA_AREA, false);
 
 
             RSNPC[] vannaka = NPCs.findNearest("Vannaka");

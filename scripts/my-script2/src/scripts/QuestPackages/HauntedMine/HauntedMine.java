@@ -381,7 +381,7 @@ public class HauntedMine implements QuestTask {
             "Walk-up");
 
     ObjectStep cutCrystal = new ObjectStep(ObjectID.CRYSTAL_OUTCROP, new RSTile(2787, 4428, 0),
-            "Cut", chisel);
+            "Cut", Inventory.contains(ItemID.GLOWING_FUNGUS), chisel);
 
     ObjectStep leaveCrystalRoom = new ObjectStep(4973, new RSTile(2756, 4454, 0),
             "Go back up to the flooded area.");
@@ -605,7 +605,7 @@ public class HauntedMine implements QuestTask {
             cQuesterV2.status = "Enter Boss Room";
             Log.debug("[Debug]: Enter Boss Room Manualy");
             Waiting.waitNormal(5000, 200);
-        } else if (new Conditions(glowingFungus, inFloodedRoom).check()) {
+        } else if (new Conditions(glowingFungus, inFloodedRoom).check() && !crystalMineKey.check()) {
             Log.debug("[Debug]: goDownToDayth");
             goDownToDayth.execute();
         } else if (new Conditions(inCrystalEntrance).check()) {
@@ -615,7 +615,7 @@ public class HauntedMine implements QuestTask {
             Log.debug("[Debug]: goDownLift");
             goDownLift.execute();
         } else if (new Conditions(glowingFungus, inLiftRoom, valveOpened, chisel).check()) {
-            Log.debug("[Debug]:             openValve.execute();\n");
+            Log.debug("[Debug]:openValve.execute();");
             openValve.execute();
         } else if (new Conditions(glowingFungus, inLiftRoom, zealotsKey, chisel).check()) {
             Log.debug("[Debug]: useKeyOnValve");

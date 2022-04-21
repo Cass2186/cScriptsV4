@@ -7,6 +7,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.WorldHopper;
+import org.tribot.script.sdk.types.Area;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -36,9 +37,9 @@ public class EnterBoat implements Task {
                 Waiting.waitNormal(1000,100);
             if (Game.isInInstance()) {
                 Waiting.waitNormal(2200, 220);
-                RSArea area = PestUtils.getCenterArea();
+                Area area = PestUtils.getCenterArea();
                 if (area != null &&
-                        PathingUtil.localNavigation(area.getRandomTile()))
+                        PathingUtil.localNav(area.getCenter()))
                     Waiting.waitNormal(1550, 220);
             }
 

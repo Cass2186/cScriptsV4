@@ -2,6 +2,7 @@ package scripts.Tasks.Slayer.Tasks;
 
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.MyPlayer;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -29,7 +30,7 @@ public class DrinkPotion implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.SLAYER) &&
                 SlayerVars.get().fightArea != null &&
-                SlayerVars.get().fightArea.contains(Player.getPosition());
+                SlayerVars.get().fightArea.contains(MyPlayer.getTile());
     }
 
     @Override

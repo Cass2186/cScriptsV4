@@ -10,7 +10,11 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.AntiBan;
@@ -19,58 +23,30 @@ import scripts.Data.Vars;
 import scripts.PathingUtil;
 import scripts.Tasks.PestControl.PestUtils.PestUtils;
 import scripts.Timer;
+import scripts.Utils;
 
 import java.util.Optional;
 
 public class DefendKnight implements Task {
 
-    public static boolean killTargets() {
-        Optional<RSNPC> targ = PestUtils.getTarget();
-        if (Combat.isUnderAttack()) {
-            Log.log("[Debug]: Waiting to finish combat");
-            return Timer.waitCondition(() -> {
-                AntiBan.timedActions();
-                Waiting.waitNormal(700, 150);
-                return !Combat.isUnderAttack();
-            }, 3000, 45000);
-        } else if (targ.isPresent()) {
-            Log.log("[Debug]: Attacking Target");
-            if (targ.get().getHealthPercent() == 0)
-                Waiting.waitNormal(300, 50);
-
-
-            if (targ.get().getPosition().distanceTo(Player.getPosition()) > General.random(6, 8)) {
-                PathingUtil.localNavigation(targ.get().getPosition().translate(-1, -1));
-                Timer.waitCondition(() -> targ.get().isClickable(), 5000, 7000);
-            }
-            if (!targ.get().isClickable())
-                DaxCamera.focus(targ.get());
-
-            if (DynamicClicking.clickRSNPC(targ.get(), "Attack")) {
-                return Timer.waitCondition(Combat::isUnderAttack, 3500, 4500);
-            }
-
-        }
-        return false;
-    }
 
     public boolean recenter() {
-        RSArea center = PestUtils.getCenterArea();
-        if (center != null && !center.contains(Player.getPosition())) {
-            Log.log("[Debug]: Moving to center");
-            if (PathingUtil.localNavigation(center.getRandomTile()))
-                return Timer.waitCondition(() -> center.contains(Player.getPosition()), 5000, 7000);
+        Area center = PestUtils.getCenterArea();
+        if (center != null && !center.contains(MyPlayer.getTile())) {
+            Log.info("[Debug]: Moving to center");
+            if (PathingUtil.localNav(Area.fromRadius(center.getCenter(), 1).getRandomTile()))
+                return Timer.waitCondition(() -> center.contains(MyPlayer.getTile()), 5000, 7000);
         }
         if (center == null) {
-            RSNPC knight = PestUtils.getLeaveKnight();
+            Npc knight = PestUtils.getLeaveKnight();
             if (knight != null) {
-                Log.log("[Debug]: Moving to translated tile");
-                PathingUtil.localNavigation(knight.getPosition().translate(0, -12));
-                Waiting.waitNormal(750, 125);
-            }
-            Log.log("[Debug]: Cannot move to center");
+                Log.info("[Debug]: Moving to translated tile");
+                PathingUtil.localNav(knight.getTile().translate(Utils.random(0, 3), -12));
+                Waiting.waitNormal(1250, 215);
+            } else
+                Log.info("[Debug]: Cannot move to center");
         }
-        return center != null && !center.contains(Player.getPosition());
+        return center != null && !center.contains(MyPlayer.getTile());
     }
 
 
@@ -98,7 +74,8 @@ public class DefendKnight implements Task {
         recenter();
         PestUtils.getActivityPercent();
         if (!PestUtils.killTargets() && recenter()) {
-            PestUtils.waitForTarget();
+            if (PestUtils.waitForTarget())
+                Utils.idleNormalAction();
         }
 
     }

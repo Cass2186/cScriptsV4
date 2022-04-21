@@ -17,6 +17,7 @@ import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.Npc;
 import scripts.AntiBan;
 import scripts.EntitySelector.Entities;
@@ -25,6 +26,8 @@ import scripts.PathingUtil;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class PestUtils {
@@ -75,7 +78,42 @@ public class PestUtils {
 
     public static Reachable reach = new Reachable();
 
-    public static Optional<RSNPC> getTarget() {
+    public static Optional<Npc> getTarget() {
+        Optional<Npc> interactingWith = Query.npcs().actionContains("Attack")
+                .inArea(Area.fromRadius(MyPlayer.getTile(), 5))
+                .sortedByPathDistance()
+                .isMyPlayerInteractingWith()
+                .isReachable()
+                .findBestInteractable();
+
+        if (interactingWith.isPresent())
+            return interactingWith;
+
+        List<Npc> target = new ArrayList<>();
+        if (ATTACK_PORTALS) {
+            target = Query.npcs().actionContains("Attack")
+                    .inArea(Area.fromRadius(MyPlayer.getTile(), 8))
+                    .sortedByPathDistance()
+                    .isReachable()
+                    .toList();
+        } else {
+            target = Query.npcs().actionContains("Attack")
+                    .inArea(Area.fromRadius(MyPlayer.getTile(), 5))
+                    .sortedByPathDistance()
+                    .isReachable()
+                    .toList();
+        }
+
+        for (Npc npc : target) {
+            if (npc.getHealthBarPercent() == 0)
+                continue;
+
+            return Optional.of(npc);
+        }
+        return Optional.empty();
+    }
+
+    /*public static Optional<RSNPC> getTarget() {
         RSNPC[] target;
         if (ATTACK_PORTALS) {
             target = Entities.find(NpcEntity::new)
@@ -101,7 +139,7 @@ public class PestUtils {
         }
         return Optional.empty();
 
-    }
+    }*/
 
     public static Optional<RSNPC> getNearestPortal() {
         RSNPC portal = Entities.find(NpcEntity::new)
@@ -112,32 +150,31 @@ public class PestUtils {
     }
 
     public static boolean killTargets() {
-        Optional<RSNPC> targ = PestUtils.getTarget();
+        Optional<Npc> targ = PestUtils.getTarget();
         Optional<Character> interactingCharacter = MyPlayer.get().get().getInteractingCharacter();
         Optional<Npc> sdkTarg = Query.npcs().isInteractingWith(MyPlayer.get().get())
-                        .isHealthBarVisible().findBestInteractable();
-        if (Combat.isUnderAttack() || interactingCharacter.isPresent()) {
-            Log.log("[Debug]: Waiting to finish combat");
+                .isHealthBarVisible().findBestInteractable();
+        if (MyPlayer.isHealthBarVisible() || interactingCharacter.isPresent()) {
+            Log.info("[Debug]: Waiting to finish combat");
             return Timer.waitCondition(() -> {
                 AntiBan.timedActions();
                 Waiting.waitNormal(700, 150);
-                return  MyPlayer.get().get().getInteractingCharacter().isEmpty();
+                return MyPlayer.get().get().getInteractingCharacter().isEmpty();
             }, 3000, 45000);
         } else if (targ.isPresent()) {
-            Log.log("[Debug]: Attacking Target");
-            if (targ.get().getHealthPercent() == 0)
+            Log.info("[Debug]: Attacking Target");
+            if (targ.get().getHealthBarPercent() == 0)
                 Waiting.waitNormal(300, 50);
 
-
-            if (targ.get().getPosition().distanceTo(Player.getPosition()) > General.random(6, 8)) {
-                PathingUtil.localNavigation(targ.get().getPosition().translate(-1, -1));
-                Timer.waitCondition(() -> targ.get().isClickable(), 5000, 7000);
+            if (targ.map(npc -> npc.getTile().distanceTo(MyPlayer.getTile()) > General.random(6, 8)).orElse(false) &&
+                    targ.map(npc -> PathingUtil.localNav(npc.getTile())).orElse(false)) {
+                Timer.waitCondition(() -> targ.get().isVisible(), 5000, 7000);
             }
-            if (!targ.get().isClickable())
-                DaxCamera.focus(targ.get());
 
-            if (DynamicClicking.clickRSNPC(targ.get(), "Attack")) {
-                return Timer.waitCondition(() -> Player.getAnimation() != -1, 3500, 4500);
+            if (targ.map(t -> t.interact("Attack")).orElse(false)) {
+                return Waiting.waitUntil(Utils.random(4000, 5000), 150,
+                        () -> Player.getAnimation() != -1 || targ.get().isInteractingWithMe() ||
+                                !targ.get().isValid());
             }
             Waiting.waitNormal(300, 50);
 
@@ -145,42 +182,38 @@ public class PestUtils {
         return false;
     }
 
-    public static void waitForTarget() {
+    public static boolean waitForTarget() {
         if (!Game.isInInstance())
-            return;
+            return false;
 
-        if (Player.isMoving())
-            Timer.waitCondition(() -> !Player.isMoving(), 5000);
+        if (MyPlayer.isMoving())
+            Timer.waitCondition(() -> !MyPlayer.isMoving(), 5000);
 
-        Log.log("[Debug]: Waiting for target");
-        Timer.waitCondition(() -> {
+        Log.info("[Debug]: Waiting for target");
+        return Timer.waitCondition(() -> {
             AntiBan.timedActions();
             return PestUtils.getTarget().isPresent() || !Game.isInInstance();
         }, 10000, 15000);
 
     }
 
-    public static RSArea getCenterArea() {
-        RSNPC[] knight = Entities.find(NpcEntity::new)
+    public static Area getCenterArea() {
+        Optional<Npc> knight = Query.npcs()
                 .nameContains("Void Knight")
                 .idEquals(PestUtils.KNIGHT_ID)
-                .getResults();
+                .maxDistance(40)
+                .findBestInteractable();
 
-        if (knight.length > 0) {
-            return new RSArea(knight[0].getPosition().translate(3, -2),
-                    knight[0].getPosition().translate(-2, 3));
-        }
-        return null;
+        return knight.map(npc -> Area.fromRectangle(npc.getTile().translate(3, -2),
+                npc.getTile().translate(-2, 3))).orElse(null);
     }
 
-    public static RSNPC getLeaveKnight() {
-        RSNPC[] knight = Entities.find(NpcEntity::new)
+    public static Npc getLeaveKnight() {
+        Optional<Npc> knight = Query.npcs()
                 .nameContains("Squire")
-                .actionsContains("Leave")
-                .getResults();
+                .actionContains("Leave")
+                .findBestInteractable();
 
-        if (knight.length > 0)
-            return knight[0];
-        return null;
+        return knight.orElse(null);
     }
 }

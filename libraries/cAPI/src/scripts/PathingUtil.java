@@ -192,8 +192,21 @@ public class PathingUtil {
     }
 
     public static boolean movementIdle() {
-        Waiting.waitUntil(2000, Player::isMoving);
-        return Timer.waitCondition(() -> !Player.isMoving(), 9000, 12000);
+        int timeout = Game.isRunOn() ? 10000 : 15000;
+        if (Waiting.waitUntil(1750, 75, MyPlayer::isMoving))
+            return Waiting.waitUntil(timeout, 200, () -> !MyPlayer.isMoving());
+        return false;
+    }
+
+    public static boolean humanMovementIdle(WorldTile destination) {
+        int timeout = Game.isRunOn() ? 10000 : 15000;
+
+        if (Waiting.waitUntil(1750, 75, MyPlayer::isMoving))
+            return Waiting.waitUntil(timeout, 175, () -> !MyPlayer.isMoving() ||
+                    destination.distanceTo(MyPlayer.getTile()) < 5);
+        else return
+                destination.distanceTo(MyPlayer.getTile()) < 5;
+
     }
 
 
@@ -581,7 +594,7 @@ public class PathingUtil {
         long currentTime = System.currentTimeMillis();
 
         setDaxPref();
-        if (!area.contains(MyPlayer.getPosition())) {
+        if (!area.contains(MyPlayer.getTile())) {
             Log.debug("[PathingUtil]: Walking to area. ABC2 Sleep? " + abc2Sleep);
             for (int i = 0; i < 3; i++) {
                 Optional<LocalTile> targetTile = Query.tiles().inArea(area).isReachable()
@@ -589,19 +602,23 @@ public class PathingUtil {
                         .findClosest();
 
                 // try walking to center tile first, if it fails, use a random tile
-                if (i == 0)
+                if (i == 0) {
+                    Log.info("Using centre of area");
                     targetTile = Optional.of(area.getCenter().toLocalTile());
+                }
 
-                if (targetTile.map(GlobalWalking::walkTo).orElse(false)) {
+                if (targetTile.map(PathingUtil::localNav).orElse(false) ||
+                        GlobalWalking.walkTo(area.getCenter()) ||
+                        GlobalWalking.walkTo(area.getRandomTile())) {
                     val finalTargetTile = targetTile;
                     currentTime = System.currentTimeMillis();
                     if (Waiting.waitUntil(1500, 25, MyPlayer::isMoving) &&
                             Waiting.waitUntil(Utils.random(sleepMin, sleepMax), 250, () ->
-                                    finalTargetTile.get().distanceTo(MyPlayer.getPosition()) < Utils.random(4, 6) ||
-                                            area.contains(MyPlayer.getPosition()) || !MyPlayer.isMoving()))
+                                    finalTargetTile.get().distanceTo(MyPlayer.getTile()) < Utils.random(4, 6) ||
+                                            area.contains(MyPlayer.getTile()) || !MyPlayer.isMoving()))
                         return true;
 
-                    if (abc2Sleep && area.contains(MyPlayer.getPosition()))
+                    if (abc2Sleep && area.contains(MyPlayer.getTile()))
                         Utils.abc2ReactionSleep(currentTime);
 
                 } else {
@@ -611,7 +628,7 @@ public class PathingUtil {
             }
 
         } else // already in area
-            return area.contains(MyPlayer.getPosition());
+            return area.contains(MyPlayer.getTile());
 
         return false;
     }

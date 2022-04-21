@@ -8,10 +8,7 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
-import org.tribot.script.sdk.Bank;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
@@ -36,7 +33,7 @@ public class BankCook implements Task {
 
     public void bank() {
         List<ItemReq> inv;
-        if (Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35) {
+        if (Skill.COOKING.getActualLevel() >= 35) {
             inv = new ArrayList<>(
                     Arrays.asList(
                             new ItemReq(ItemID.GRAPES, 14),
@@ -48,19 +45,20 @@ public class BankCook implements Task {
                     Arrays.asList(new ItemReq(CookItems.getCookingRawFoodId(), 0)));
         }
 
-        if(goToCatherbyBank(inv)) {
+        if (goToCatherbyBank(inv)) {
+            Log.info("Arrived at Catherby");
             if (Utils.clickObject("Bank chest", "Use", true))
                 Timer.waitCondition(Banking::isBankScreenOpen, 5000, 7500);
             else if (Utils.clickObject("Bank booth", "Bank", false))
                 Timer.waitCondition(Banking::isBankScreenOpen, 6500, 7500);
-            else if (GlobalWalking.walkTo(CATHERBY_BANK_TILE)) {
-                Log.info("Going to catherby bank");
-                Waiting.waitUntil(6000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 3);
-                BankManager.open(true);
-            } else {
-                Log.info("Going to bank");
-                BankManager.open(true);
-            }
+        } else if (Skill.COOKING.getActualLevel() < 35 && GlobalWalking.walkTo(CATHERBY_BANK_TILE) &&
+                PathingUtil.humanMovementIdle(CATHERBY_BANK_TILE)) {
+            Log.info("Going to catherby bank");
+            Waiting.waitUntil(6000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 3);
+            BankManager.open(true);
+
+        } else {
+            BankManager.open(true);
         }
         BankManager.depositAll(true);
 
@@ -90,7 +88,7 @@ public class BankCook implements Task {
             for (ItemReq i : inv) {
                 int reqAmount = i.getAmount() <= 0 ? 1 : i.getAmount();
                 if (BankCache.getStack(i.getId()) < reqAmount) {
-                    Log.error("Missing Bank item " + i.getId() + " in amount of at least " + reqAmount);
+                    Log.warn("Missing Bank item " + i.getId() + " in amount of at least " + reqAmount);
                     return false;
                 } else
                     Log.info("We have Bank item " + i.getId() + " in amount of at least " + reqAmount);
@@ -103,7 +101,7 @@ public class BankCook implements Task {
 
     private boolean goToCatherbyBank(List<ItemReq> inv) {
         if (checkBankCache(inv) &&
-                CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) > 20
+                CATHERBY_BANK_TILE.distanceTo(MyPlayer.getTile()) > 20
                 && Skills.getActualLevel(Skills.SKILLS.COOKING) < 35) {
             General.println("[BankCook]: Going to Catherby Bank");
             BankManager.open(true);
@@ -118,9 +116,9 @@ public class BankCook implements Task {
 
             if (GlobalWalking.walkTo(CATHERBY_BANK_TILE))
                 Waiting.waitUntil(5000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 10);
-            return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 20;
+            return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getTile()) < 20;
         }
-        return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 20;
+        return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getTile()) < 20;
     }
 
     @Override

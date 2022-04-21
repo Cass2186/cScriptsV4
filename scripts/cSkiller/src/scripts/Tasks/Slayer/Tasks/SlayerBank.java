@@ -3,11 +3,11 @@ package scripts.Tasks.Slayer.Tasks;
 import dax.api_lib.models.RunescapeBank;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
 import org.tribot.api2007.ext.Filters;
-import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.interfaces.Item;
 import org.tribot.script.sdk.query.Query;
@@ -126,13 +126,13 @@ public class SlayerBank implements Task {
                                 .minimumDosesNeeded(1)
                                 .amount(1)
                                 .alternateItemIDs(List.of(ItemID.STAMINA_POTION[1]
-                                        ,ItemID.STAMINA_POTION[2],ItemID.STAMINA_POTION[3])).build(),
+                                        , ItemID.STAMINA_POTION[2], ItemID.STAMINA_POTION[3])).build(),
                         new ItemReq.Builder()
                                 .id(SlayerVars.get().potionToUse[0])
                                 .minimumDosesNeeded(1)
                                 .amount(1)
                                 .alternateItemIDs(List.of(SlayerVars.get().potionToUse[1]
-                                        ,SlayerVars.get().potionToUse[2],SlayerVars.get().potionToUse[3])).build()
+                                        , SlayerVars.get().potionToUse[2], SlayerVars.get().potionToUse[3])).build()
                 )
         );
 
@@ -443,7 +443,7 @@ public class SlayerBank implements Task {
         if (itemToEquip != -1 && !Equipment.contains(itemToEquip)) {
             if (BankManager.withdraw(1, true, itemToEquip)) {
                 Optional<InventoryItem> item = Query.inventory().idEquals(itemToEquip).findClosestToMouse();
-                if (item.isPresent() ) {
+                if (item.isPresent()) {
                     BankManager.close(true);
                     if (item.get().click())
                         Timer.waitCondition(() -> Equipment.contains(itemToEquip), 2500, 5000);
@@ -1050,7 +1050,7 @@ public class SlayerBank implements Task {
                 Log.debug("[Debug]: Need to bank for gargoyle item");
                 SlayerVars.get().shouldBank = true;
 
-            } else if (NPC.contains("elves") &&
+            } else if (NPC.contains("elve") &&
                     !Inventory.contains(ItemID.IORWERTH_CAMP_TELEPORT)) {
                 Log.debug("[Debug]: Need to bank for elf item");
                 SlayerVars.get().shouldBank = true;
@@ -1067,7 +1067,7 @@ public class SlayerBank implements Task {
                 SlayerVars.get().usingSpecialItem = true;
 
             } else if (NPC.contains("kalphite") && !Inventory.contains(ItemID.SHANTAY_PASS)
-                    && !Areas.KALPHITE_AREA.contains(Player.getPosition())) {
+                    && !Areas.KALPHITE_AREA.contains(MyPlayer.getTile())) {
                 Log.debug("[Debug]: Need to bank for Kalphite item");
                 SlayerVars.get().shouldBank = true;
 
@@ -1396,6 +1396,7 @@ public class SlayerBank implements Task {
 
             else if (NPC.contains("elves"))
                 generalInventorySetup(ItemID.IORWERTH_CAMP_TELEPORT);
+
             else if (NPC.contains("suqah")) {
                 suqahInventory();
                 SlayerVars.get().shouldPrayMagic = true;
@@ -1416,6 +1417,14 @@ public class SlayerBank implements Task {
             return false;
         }
         return true;
+    }
+
+    private boolean handleGlory() {
+        if (Equipment.contains(ItemID.AMULET_OF_FURY)) {
+            BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY);
+            return Inventory.contains(ItemID.AMULET_OF_GLORY);
+        }
+        return Equipment.contains(ItemID.AMULET_OF_GLORY);
     }
 
     public boolean checkForDScim() {

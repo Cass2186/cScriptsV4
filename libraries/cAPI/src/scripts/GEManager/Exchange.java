@@ -3,15 +3,12 @@ package scripts.GEManager;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
-import org.tribot.api.Timing;
 import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.*;
 import org.tribot.api2007.Inventory;
-import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.GrandExchange;
-import org.tribot.script.sdk.query.GrandExchangeOfferQuery;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.GrandExchangeOffer;
@@ -167,8 +164,8 @@ public class Exchange {
     private static String determineShortName(String fullName) {
         int stringLength = fullName.length();
         try {
-            if (stringLength > 11) {
-                int firstInt = General.random(6, 10);
+            if (stringLength > General.random(10, 12)) {
+                int firstInt = General.random(7, 10);
                 int secondInt = firstInt + 1;
                 char firstChar = fullName.charAt(firstInt);
                 String splitHere = firstChar + Character.toString(fullName.charAt(secondInt));
@@ -214,31 +211,43 @@ public class Exchange {
             Timer.slowWaitCondition(() -> typeBoxInterface.getChildren() != null, 5000, 6000);
         }
 
+        Optional<Widget> widgetParent = Widgets.get(ITEM_SELECTION_BOX_PARENT, SMALL_ITEM_SELECTION_BOX_COMP);
         // select item
         RSInterface parent = Interfaces.get(ITEM_SELECTION_BOX_PARENT, SMALL_ITEM_SELECTION_BOX_COMP);
-        if (parent != null) {
+        if (widgetParent.isPresent()) {
+            List<Widget> childrenList = widgetParent.get().getChildren();
+
+            if (childrenList.isEmpty())
+                return false;
+
             interfaceChildren = parent.getChildren();
             if (interfaceChildren == null)
                 return false;
 
-            for (int i = 0; i < interfaceChildren.length; i++) {
+            //used to be interfaceChildren.length
+            for (int i = 0; i < childrenList.size(); i++) {
                 RSInterface compItemInter = Interfaces.get(ITEM_SELECTION_BOX_PARENT,
                         SMALL_ITEM_SELECTION_BOX_COMP, i);
 
                 Optional<Widget> compItemWidget = Query.widgets().inIndexPath(ITEM_SELECTION_BOX_PARENT,
                         SMALL_ITEM_SELECTION_BOX_COMP, i).findFirst();
 
-                Optional<Widget> compItemInterWidget = Query.widgets().inIndexPath(ITEM_SELECTION_BOX_PARENT,
-                        SMALL_ITEM_SELECTION_BOX_COMP, i).findFirst();
-                if (compItemWidget.map(widg -> widg.toWidgetItem().map(it -> it.getId() ==
-                        item.getItemID()).orElse(false)).orElse(false) &&
-                        scrollToAndSelect(compItemInterWidget)) {
-                    Log.info("Used new itemSelection method");
-                    return Waiting.waitUntil(3500, 50, () ->
-                            Query.widgets().inIndexPath(465, 25, 21)
-                                    .stream().map(q -> q.toItemDefinition().map(
-                                                    def -> def.getId() == item.getItemID())
-                                            .orElse(false)).findAny().isPresent());
+                Optional<Widget> compItemInterWidget = Query.widgets()
+                        .inIndexPath(ITEM_SELECTION_BOX_PARENT, SMALL_ITEM_SELECTION_BOX_COMP, i)
+                        .findFirst();
+                // this gives us 3 attempts to select the right item, sometimes it fails to click it with the scroll methods
+                for (int iter = 0; iter < 3; iter++) {
+                    if (compItemWidget.map(widg -> widg.toWidgetItem().map(it -> it.getId() ==
+                            item.getItemID()).orElse(false)).orElse(false) &&
+                            scrollToAndSelect(compItemInterWidget)) {
+                        Log.info("Used new itemSelection method");
+                        if (Waiting.waitUntil(3500, 50, () ->
+                                Query.widgets().inIndexPath(465, 25, 21)
+                                        .stream().map(q -> q.toItemDefinition().map(
+                                                        def -> def.getId() == item.getItemID())
+                                                .orElse(false)).findAny().isPresent()))
+                            return true;
+                    }
                 }
             }
         }

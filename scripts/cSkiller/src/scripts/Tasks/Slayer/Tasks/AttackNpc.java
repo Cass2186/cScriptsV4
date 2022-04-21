@@ -9,6 +9,7 @@ import org.tribot.api2007.Combat;
 import org.tribot.api2007.types.RSCharacter;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
@@ -68,6 +69,13 @@ public class AttackNpc implements Task {
         }
     }
 
+    private static void equipExpeditiousIfNeeded() {
+        if (Equipment.Slot.HANDS.getItem().isEmpty()) {
+            Utils.idleNormalAction();
+            Utils.equipItem(ItemID.EXPEDITIOUS_BRACELET);
+        }
+    }
+
     private Optional<Npc> setCurrentTargetSDK(String[] monsterStrings) {
         if (SlayerVars.get().fightArea == null) {
             Log.info("[AttackNPC]: Fight area is null");
@@ -91,13 +99,12 @@ public class AttackNpc implements Task {
                     .actionContains("Attack")
                     .isReachable()
                     .sortedByInteractionCost()
-                    // .sortedByDistance() // not sure if this is better than interaction or not
                     .toList();
 
             for (Npc targ : potentialTargets) {
                 i++;
                 // we're close to the target
-                if (targ.getTile().distanceTo(MyPlayer.getPosition()) < General.random(5, 7) &&
+                if (targ.getTile().distanceTo(MyPlayer.getTile()) <= General.random(5, 7) &&
                         targ.getHealthBarPercent() != 0) {
                     //Log.info("returning target at index " + i);
                     return Optional.of(targ);
@@ -120,98 +127,29 @@ public class AttackNpc implements Task {
                         .sortedByDistance()
                         // .inArea(SlayerVars.get().fightArea)
                         .toList();
-                if (potentialTargets.size() > 0) {
-                    //  Log.info("[AttackNPC]: Current target is dead, getting next target");
+                if (potentialTargets.size() > 0)
                     return Optional.ofNullable(potentialTargets.get(0));
-                }
-            } else {
-                //Log.info("Returning interacting target");
+
+            } else
                 return Optional.of((Npc) target.get());
-            }
-
 
         return Optional.empty();
     }
 
-    public Optional<RSNPC> setCurrentTarget(String[] monsterStrings) {
-        if (SlayerVars.get().fightArea == null) {
-            Log.info("[AttackNPC]: Fight area is null");
-            return Optional.empty();
-        }
-        if (MyPlayer.isHealthBarVisible()) {
-            RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
-
-            if (target != null && target.getHealthPercent() == 0) {
-                RSNPC[] potentialTargets = NPCs.findNearest(monsterStrings);
-                if (potentialTargets.length > 1) {
-                    Log.info("[AttackNPC]: Current target is dead, getting next target");
-                    return Optional.ofNullable(potentialTargets[1]);
-                }
-            } else {
-                Optional<String> name = Optional.ofNullable(org.tribot.api2007.Combat.getTargetEntity())
-                        .map(RSCharacter::getName);
-
-                if (name.isPresent()) {
-                    RSNPC[] npc = NPCs.findNearest(name.get());
-                    // name.ifPresent(n -> Log.info("[AttackNPC] Target Name: " + n));
-                    if (npc.length > 0)
-                        return Optional.ofNullable(npc[0]);
-                }
-
-            }
-        } else {
-            if (monsterStrings != null) {
-                int i = 0;
-
-                RSNPC[] potentialTargets = Entities.find(NpcEntity::new)
-                        .nameContains(monsterStrings)
-                        .inArea(SlayerVars.get().fightArea)
-                        .sortByDistance()
-                        .actionsContains("Attack") //needed
-                        .getResults();
-
-                for (RSNPC targ : potentialTargets) {
-                    i++;
-                    if (PathFinding.canReach(targ.getPosition(), false) &&
-                            targ.getPosition().distanceTo(Player.getPosition()) < 6 &&
-                            targ.getHealthPercent() != 0
-                            && (!targ.isInCombat() || targ.isInteractingWithMe())) {
-                        return Optional.ofNullable(targ);
-
-                    } else if (PathFinding.canReach(targ.getPosition(), false)) {
-                        if (targ.getHealthPercent() != 0 && (!targ.isInCombat() || targ.isInteractingWithMe())) {
-                            Log.info("[AttackNPC]: Got a target at index: " + i);
-                            return Optional.ofNullable(targ);
-                        }
-
-                    } else if (PathingUtil.walkToArea(PathingUtil.makeLargerArea(targ.getPosition()), false)) { //will see if we can get a Dax path to walk to
-                        if (PathFinding.canReach(targ.getPosition(), false)) {
-                            if (targ.getHealthPercent() != 0 && (!targ.isInCombat() || targ.isInteractingWithMe())) {
-                                Log.info("[AttackNPC]: Got a target at index: " + i + "(Dax)");
-                                return Optional.ofNullable(targ);
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        return Optional.empty();
-    }
 
     private void wallBeastTask() {
 
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
-        if (Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE.contains(Player.getPosition()))
+        if (Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE.contains(MyPlayer.getTile()))
             if (Utils.clickObj("Dark hole", "Climb-down"))
-                Timer.slowWaitCondition(() -> !Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE.contains(Player.getPosition()), 7000, 10000);
+                Timer.slowWaitCondition(() -> !Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE.contains(MyPlayer.getTile()), 7000, 10000);
 
-        if (Areas.WALL_BEAST_AREA.contains(Player.getPosition()) &&
-                !Player.getPosition().equals(Areas.WALL_BEAST_TILE)) {
+        if (Areas.WALL_BEAST_AREA.contains(MyPlayer.getTile()) &&
+                !MyPlayer.getTile().equals(Areas.WALL_BEAST_TILE)) {
             Log.info("Going to wall beast tile");
-            if (PathingUtil.clickScreenWalk(Areas.WALL_BEAST_TILE)) {
+            if (Areas.WALL_BEAST_TILE.interact("Walk here")) {
                 PathingUtil.movementIdle();
                 Timer.slowWaitCondition(()
                         -> MyPlayer.isHealthBarVisible(), 12000, 15000);
@@ -224,11 +162,11 @@ public class AttackNpc implements Task {
 
         }
 
-        if (Areas.WALL_BEAST_AREA.contains(Player.getPosition()) && !MyPlayer.isHealthBarVisible()
-                && Player.getPosition().equals(Areas.WALL_BEAST_TILE)) {
+        if (Areas.WALL_BEAST_AREA.contains(MyPlayer.getTile()) && !MyPlayer.isHealthBarVisible()
+                && MyPlayer.getTile().equals(Areas.WALL_BEAST_TILE)) {
             Log.info("Resetting Wall beast");
             if (Utils.clickObj("Climbing rope", "Climb"))
-                Timer.waitCondition(() -> Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE.contains(Player.getPosition()), 9000, 15000);
+                Timer.waitCondition(() -> Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE.contains(MyPlayer.getTile()), 9000, 15000);
         }
 
     }
@@ -245,7 +183,7 @@ public class AttackNpc implements Task {
             Log.info("[Fight]: Unable to set target");
             Waiting.waitNormal(200, 50);
             i++;
-            if (i >= 10 && !SlayerVars.get().fightArea.contains(Player.getPosition()) &&
+            if (i >= 10 && !SlayerVars.get().fightArea.contains(MyPlayer.getTile()) &&
                     PathingUtil.walkToTile(SlayerVars.get().fightArea.getRandomTile())) {
                 Log.info("[Fight]: Walking to area");
                 i = 0;
@@ -293,58 +231,6 @@ public class AttackNpc implements Task {
 
     }
 
-    private void fight() {
-        if (!Combat.isAutoRetaliateOn())
-            Combat.setAutoRetaliate(true);
-
-        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
-        Optional<RSNPC> targ = setCurrentTarget(SlayerVars.get().targets);
-
-        if (targ.isPresent()) {
-            if (!MyPlayer.isHealthBarVisible() && CombatUtil.clickTarget(targ.get())) {
-                SlayerVars.get().status = "Attacking Target";
-                SlayerVars.get().currentTime = System.currentTimeMillis();
-
-            } else if (MyPlayer.isHealthBarVisible() && target != null) {
-                SlayerVars.get().status = "Fighting Target";
-                SlayerVars.get().currentTime = System.currentTimeMillis();
-            }
-
-            if (SlayerVars.get().drinkPotions)
-                Utils.drinkPotion(SlayerVars.get().potionNames);
-
-            if (MyPlayer.isPoisoned())
-                Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
-
-            if (Skills.SKILLS.STRENGTH.getCurrentLevel() <= SlayerVars.get().drinkCombatPotion) {
-                if (Utils.drinkPotion(ItemID.SUPER_COMBAT_POTION)) {
-                    SlayerVars.get().drinkCombatPotion = Skills.SKILLS.STRENGTH.getActualLevel() + General.random(3, 6);
-                    Log.info("Next drinking potion at Strength lvl " + SlayerVars.get().drinkCombatPotion);
-                }
-            }
-
-            if (SlayerVars.get().shouldPrayMelee) {
-                Log.info("[Fight]: Using long timeout on fight b/c prayer is being used");
-                if (CombatUtil.waitUntilOutOfCombat(targ.get(), AntiBan.getEatAt(), 65000)) {
-                    sleep(targ.get());
-                }
-            } else if (waitUntilOutOfCombat(targ.get(), AntiBan.getEatAt(), 45000)) {
-                sleep(targ.get());
-
-            } else
-                Waiting.waitNormal(1300, 430);
-
-        } else if (!MyPlayer.isHealthBarVisible()) {
-            Log.info("[Fight]: Unable to set target");
-            Waiting.waitNormal(200, 50);
-            i++;
-            if (i >= 10 &&
-                    PathingUtil.walkToTile(SlayerVars.get().fightArea.getRandomTile())) {
-                Log.info("[Fight]: Walking to area");
-                i = 0;
-            }
-        }
-    }
 
     public static boolean waitUntilOutOfCombatNew(Optional<Npc> npcOptional, int eatAt, int longTimeOut) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
@@ -360,6 +246,7 @@ public class AttackNpc implements Task {
             if (MyPlayer.isPoisoned())
                 Utils.drinkPotion(ItemID.ANTIDOTE_PLUS_PLUS);
 
+            equipExpeditiousIfNeeded();
 
             if ((Prayer.getActivePrayers().size() > 0 || SlayerVars.get().shouldPrayMelee) &&
                     org.tribot.script.sdk.Prayer.getPrayerPoints() <
@@ -511,7 +398,7 @@ public class AttackNpc implements Task {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.SLAYER) &&
                 SlayerVars.get().fightArea != null &&
-                SlayerVars.get().fightArea.contains(Player.getPosition()) &&
+                SlayerVars.get().fightArea.contains(MyPlayer.getTile()) &&
                 !SlayerShop.shouldSlayerShop();
     }
 

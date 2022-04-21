@@ -1,11 +1,10 @@
 package scripts.Tasks;
 
-import javafx.print.PageLayout;
-import org.apache.commons.lang3.ArrayUtils;
 import org.tribot.api.General;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.query.Query;
@@ -16,16 +15,16 @@ import scripts.ItemID;
 import scripts.Timer;
 import scripts.Utils;
 
-import java.util.Optional;
+import java.util.List;
 
 public class RechargePrayer implements Task {
 
     public boolean prayAtAltar() {
         int p = Prayer.getPrayerPoints();
 
-        int maxLevel =  Skill.RANGED.getActualLevel() + (int) Utils.getLevelBoost(Skills.SKILLS.RANGED);
-        if (Skill.RANGED.getCurrentLevel() <= (maxLevel - General.random(4,6)) ||
-                Skill.RANGED.getCurrentLevel() == Skill.RANGED.getActualLevel()){
+        int maxLevel = Skill.RANGED.getActualLevel() + (int) Utils.getLevelBoost(Skills.SKILLS.RANGED);
+        if (Skill.RANGED.getCurrentLevel() <= (maxLevel - General.random(4, 6)) ||
+                Skill.RANGED.getCurrentLevel() == Skill.RANGED.getActualLevel()) {
             Utils.drinkPotion(ItemID.RANGING_POTION_INVERSE);
 
         }
@@ -37,17 +36,17 @@ public class RechargePrayer implements Task {
     }
 
 
-    public void reengageTarget(){
-        Optional<Npc> attackingMe = Query.npcs()
+    public void reengageTarget() {
+        List<Npc> attackingMe = Query.npcs()
                 .nameContains(Vars.get().targets)
                 .isInteractingWithMe()
-                .findBestInteractable();
+                .toList();
 
-        if (attackingMe.isPresent() && !attackingMe.get().isHealthBarVisible()){
-            Log.debug("Attacking NPC");
-            attackingMe.map(n -> n.interact("Attack"));
+        for (Npc atk : attackingMe) {
+            if (atk.interact("attack")) {
+                return;
+            }
         }
-
     }
 
     @Override
@@ -58,13 +57,13 @@ public class RechargePrayer implements Task {
     @Override
     public boolean validate() {
         return Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()) &&
-                Prayer.getPrayerPoints() < General.random(10,17);
+                Prayer.getPrayerPoints() < General.random(10, 17);
     }
 
     @Override
     public void execute() {
         Log.debug("Praying at altar");
-        if(prayAtAltar())
+        if (prayAtAltar())
             reengageTarget();
     }
 }

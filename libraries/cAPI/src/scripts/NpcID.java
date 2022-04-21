@@ -1,6 +1,25 @@
 package scripts;
 
 public class NpcID {
+    public static final int MARLO = 10408;
+    public static final int MARLO_10409 = 10409;
+    public static final int ELLIE = 10410;
+    public static final int ELLIE_10411 = 10411;
+    public static final int ANGELO = 10412;
+    public static final int ANGELO_10413 = 10413;
+    public static final int BOB_10414 = 10414;
+    public static final int JEFF_10415 = 10415;
+    public static final int SARAH_10416 = 10416;
+    public static final int TAU = 10417;
+    public static final int LARRY_10418 = 10418;
+    public static final int NOELLA = 10419;
+    public static final int ROSS = 10420;
+    public static final int JESS = 10421;
+    public static final int MARIAH = 10422;
+    public static final int LEELA_10423 = 10423;
+    public static final int BARBARA = 10424;
+    public static final int NORMAN = 3266;
+    public static final int CECILIA = 3267;
     public static final int MERLIN = 3529;
     public static final int THE_LADY_OF_THE_LAKE = 3530;
     public static final int KING_ARTHUR = 3531;

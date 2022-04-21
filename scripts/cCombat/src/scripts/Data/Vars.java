@@ -7,6 +7,7 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Skill;
 import scripts.ItemID;
 import scripts.Timer;
 
@@ -103,16 +104,6 @@ public class Vars {
 
     public int profit = 0;
 
-    public int startSlayerXP = Skills.getXP(Skills.SKILLS.SLAYER);
-    public int startAttXp = Skills.getXP(Skills.SKILLS.ATTACK);
-    public int startStrXp = Skills.getXP(Skills.SKILLS.STRENGTH);
-    public int startDefXp = Skills.getXP(Skills.SKILLS.DEFENCE);
-    public int startRangeXp = Skills.getXP(Skills.SKILLS.RANGED);
-    public int startMageXp = Skills.getXP(Skills.SKILLS.MAGIC);
-    public int startHPXP = Skills.getXP(Skills.SKILLS.HITPOINTS);
-    public int startRcXp = Skills.getXP(Skills.SKILLS.RUNECRAFTING);
-
-
     /**
      * Booleans
      */
@@ -186,7 +177,8 @@ public class Vars {
      * Other
      */
     public Timer antifireTimer = new Timer(0);
-    public long currentTime, startTime;
+    public long currentTime;
+    public long  startTime = System.currentTimeMillis();
 
     // public Tabs tab = Paint.Tabs.INFO;
 
@@ -223,5 +215,25 @@ public class Vars {
     public int fill_cannon_at = General.random(0, 20);
 
     public RSTile cannon_location;
+
+
+    public int startSlayerXP = Skill.SLAYER.getXp();
+    public int startAttXp = Skill.ATTACK.getXp();
+    public int startStrXp = Skills.getXP(Skills.SKILLS.STRENGTH);
+    public int startDefXp = Skills.getXP(Skills.SKILLS.DEFENCE);
+    public int startRangeXp = Skills.getXP(Skills.SKILLS.RANGED);
+    public int startMageXp = Skills.getXP(Skills.SKILLS.MAGIC);
+    public int startHPXP = Skills.getXP(Skills.SKILLS.HITPOINTS);
+    public int startRcXp = Skills.getXP(Skills.SKILLS.RUNECRAFTING);
+
+
+
+    public int gainedAtkLvl = Skill.ATTACK.getActualLevel() - Const.startAttLvl;
+    public int gainedStrLvl = Skill.STRENGTH.getActualLevel() - Const.startStrLvl;
+    public int gainedDefLvl = Skill.DEFENCE.getActualLevel() - Const.startDefLvl;
+    public int gainedHPLvl = Skill.HITPOINTS.getActualLevel() - Const.startHPLvl;
+    public int gainedRangedLvl = Skill.RANGED.getActualLevel() - Const.startRangeLvl;
+    public int gainedMagicLvl = Skill.MAGIC.getActualLevel() - Const.startMageLvl;
+    public int gainedSlayerLvl = Skill.SLAYER.getActualLevel() - Const.startSlayerLvl;
 
 }

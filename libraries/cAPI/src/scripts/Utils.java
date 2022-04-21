@@ -15,7 +15,6 @@ import org.tribot.api.input.Mouse;
 import org.tribot.api.interfaces.Clickable;
 import org.tribot.api.interfaces.Positionable;
 import org.tribot.api.types.generic.CustomRet_2P;
-import org.tribot.api2007.Camera;
 import org.tribot.api2007.Combat;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.GameTab;
@@ -31,6 +30,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.Script;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Camera;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.interfaces.Tile;
 import org.tribot.script.sdk.query.Query;
@@ -78,9 +78,6 @@ public class Utils {
     }
 
 
-
-
-
     public static RSArea getObjectRSArea(RSObject object) {
 
         RSObjectDefinition objectDefinition = object.getDefinition();
@@ -111,21 +108,25 @@ public class Utils {
     }
 
     public static WorldTile getWorldTileFromRSTile(RSTile tile) {
-
         return new WorldTile(tile.getX(), tile.getY(), tile.getPlane());
     }
 
     public static RSTile getRSTileFromWorldTile(WorldTile tile) {
-
         return new RSTile(tile.getX(), tile.getY(), tile.getPlane());
     }
 
     public static Area getAreaFromRSArea(RSArea area) {
-        List<Tile> wolrdTiles = new ArrayList<>();
-        for (RSTile t : area.getAllTiles()) {
-            wolrdTiles.add(getWorldTileFromRSTile(t));
+        List<RSTile> sortedTileList =
+                Arrays.stream(area.getAllTiles())
+                        .sorted(Comparator.comparingInt(RSTile::getX))
+                        .sorted(Comparator.comparingInt(RSTile::getY))
+                        .collect(Collectors.toList());
+
+        List<Tile> worldTiles = new ArrayList<>();
+        for (RSTile t : sortedTileList) {
+            worldTiles.add(getWorldTileFromRSTile(t));
         }
-        return Area.fromPolygon(wolrdTiles);
+        return Area.fromPolygon(worldTiles);
     }
 
     public static double random(double min, double max) {
@@ -154,7 +155,7 @@ public class Utils {
 
     public static void cutScene() {
         while (inCutScene()) {
-            Log.log("[Debug]: Cutscene Idle");
+            Log.info("[Debug]: Cutscene Idle");
             Waiting.waitUniform(500, 2500);
             if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation();
@@ -179,7 +180,7 @@ public class Utils {
                 General.sleep(General.randomSD(20, 250, 120, 50));
 
             if (i == 3) { // force camera adjustment if it's failed 2x prior to click
-                Log.log("[Utils]: Force focusing camera on NPC");
+                Log.info("[Utils]: Force focusing camera on NPC");
                 npc.get().adjustCameraTo();
             }
 
@@ -209,7 +210,7 @@ public class Utils {
             int num = General.random(5, 7);
             for (int i = 0; i < num; i++) {
                 if (i == 2) { // force camera adjustment if it's failed 2x prior to click
-                    Log.log("[Utils]: Force focusing camera on NPC");
+                    Log.info("[Utils]: Force focusing camera on NPC");
                     DaxCamera.focus(npc);
                 }
                 if (Utils.unselectItem())
@@ -236,7 +237,7 @@ public class Utils {
         int num = General.random(4, 6);
         for (int i = 0; i < num; i++) {
             if (i == 2) { // force camera adjustment if it's failed 2x prior to click
-                Log.log("[Utils]: Force focusing camera on GameObject");
+                Log.info("[Utils]: Force focusing camera on GameObject");
                 obj.get().adjustCameraTo();
             }
             if (Utils.unselectItem())
@@ -381,7 +382,7 @@ public class Utils {
             int num = General.random(5, 7);
             for (int i = 0; i < num; i++) {
                 if (i == 2) { // force camera adjustment if it's failed 2x prior to click
-                    Log.log("[Utils]: Force focusing camera on RSObject");
+                    Log.info("[Utils]: Force focusing camera on RSObject");
                     DaxCamera.focus(obj);
                 }
                 if (Utils.unselectItem())
@@ -402,7 +403,7 @@ public class Utils {
     public static boolean handleUnclickableNpc(Npc obj) {
         if (!obj.isVisible()) {
             if (obj.getTile().distanceTo(MyPlayer.getPosition()) > General.random(9, 12)) {
-                Log.log("[Utilities]: NPC is far away, walking to it");
+                Log.info("[Utilities]: NPC is far away, walking to it");
 
                 if (!LocalWalking.walkTo(obj.getTile()))
                     GlobalWalking.walkTo(obj.getTile());
@@ -425,7 +426,7 @@ public class Utils {
     public static boolean handleUnclickableNpc(RSNPC obj) {
         if (!obj.isClickable()) {
             if (obj.getPosition().distanceTo(Player.getPosition()) > 12) {
-                Log.log("[Utilities]: NPC is far away, walking to obj");
+                Log.info("[Utilities]: NPC is far away, walking to obj");
 
                 if (!PathingUtil.localNavigation(obj.getPosition()))
                     Walking.blindWalkTo(obj.getPosition());
@@ -445,7 +446,7 @@ public class Utils {
     public static boolean handleUnclickableObj(RSObject obj) {
         if (!obj.isClickable()) {
             if (obj.getPosition().distanceTo(Player.getPosition()) > General.random(10, 12)) {
-                Log.log("[Utilities]: Object is far away, walking to obj");
+                Log.info("[Utilities]: Object is far away, walking to obj");
                 RSTile tile = obj.getPosition();
                 LocalTile localTile = new LocalTile(tile.getX(), tile.getY(), MyPlayer.getPosition().getPlane());
                 Optional<LocalTile> walkable = getWalkableTile(localTile);
@@ -630,10 +631,10 @@ public class Utils {
         Optional<InventoryItem> item1 = Query.inventory().idEquals(ItemID).findClosestToMouse();
         Optional<InventoryItem> item2 = Query.inventory().idEquals(ItemID2).findFirst();
         if (item1.isEmpty() || item2.isEmpty()) {
-            Log.log("[Utils]: Missing item with either id: " + ItemID + " or ID: " + ItemID2);
+            Log.info("[Utils]: Missing item with either id: " + ItemID + " or ID: " + ItemID2);
             return false;
         }
-        Log.log("[Utils]: Using " + getItemName(ItemID) + " on " + getItemName(ItemID2));
+        Log.info("[Utils]: Using " + getItemName(ItemID) + " on " + getItemName(ItemID2));
         return item1.map(i -> i.useOn(item2.get())).orElse(false);
     }
 
@@ -643,14 +644,14 @@ public class Utils {
         if (Interfaces.get(116, 7, 4) != null) { // don't use is substantiated
 
             if (!hidden && Interfaces.get(116, 7, 4).getText().contains("Left-click where available")) {
-                    Log.log("[Utils]: Attack preferences already set");
+                    Log.info("[Utils]: Attack preferences already set");
                 return;
             } else if (hidden && Interfaces.get(116, 7, 4).getText().contains("Hidden")) {
-                    Log.log("[Utils]: Attack preferences already set to Hidden");
+                    Log.info("[Utils]: Attack preferences already set to Hidden");
                 return;
             }
         }
-            Log.log("[Utils]: Setting NPC Attach preferences");
+            Log.info("[Utils]: Setting NPC Attach preferences");
         if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
             GameTab.open(GameTab.TABS.OPTIONS);
             General.sleep(General.randomSD(100, 750, 400, 150));
@@ -683,17 +684,17 @@ public class Utils {
 
         RSTile cornerTile = allTiles[0];
 
-        Log.log("[Debug]: Corner tile is: " + allTiles[0]);
+        Log.info("[Debug]: Corner tile is: " + allTiles[0]);
         return cornerTile;
 
     }
 
     public static void debug(String words) {
-        Log.log("[Debug]: " + words);
+        Log.info("[Debug]: " + words);
     }
 
     public static void debug(String words, String stageVar) {
-        Log.log("[Debug]: " + words);
+        Log.info("[Debug]: " + words);
         stageVar = words;
     }
 
@@ -763,12 +764,12 @@ public class Utils {
         String num = String.valueOf(id);
         String whole = base + num + ".png";
         if (Interfaces.get(122) != null) {
-            //     Log.log(whole);
+            //     Log.info(whole);
             Image img = getItemImage(whole);
             if (img != null)
                 return img;
         }
-        Log.log("[Utils]: null error getting npc image");
+        Log.info("[Utils]: null error getting npc image");
         return null;
     }
 
@@ -834,10 +835,10 @@ public class Utils {
     }
 
     public static void setCameraAngle() {
-        if (Camera.getCameraAngle() < 45) {
+        if (Camera.getAngle() < 45) {
             int angle = General.random(90, 100);
-            Log.log("[Utils]: Setting Camera Angle to " + angle);
-            Camera.setCameraAngle(angle);
+            Log.info("[Utils]: Setting Camera Angle to " + angle);
+            Camera.setAngle(angle);
         }
     }
 
@@ -852,7 +853,7 @@ public class Utils {
     public static boolean adjustCameraToObj(RSObject obj) {
         if (!obj.isClickable()) {
             if (obj.getPosition().distanceTo(Player.getPosition()) > General.random(8, 12)) {
-                Log.log("[Utils]: Object is far away, walking closer");
+                Log.info("[Utils]: Object is far away, walking closer");
                 RSTile tile = obj.getPosition();
                 PathingUtil.walkToArea(getObjectRSArea(obj));
             }
@@ -868,7 +869,7 @@ public class Utils {
 
             if (shouldWalk &&
                     obj.getPosition().distanceTo(Player.getPosition()) > General.random(8, 12)) {
-                Log.log("[Utils]: Object is far away, walking closer");
+                Log.info("[Utils]: Object is far away, walking closer");
                 PathingUtil.walkToArea(getObjectRSArea(obj), false);
             }
 
@@ -894,7 +895,7 @@ public class Utils {
     public static boolean afk(Timer timer, int lengthMS) {
         if (!timer.isRunning()) {
             int lengthSec = lengthMS / 1000;
-            Log.log("[Utils]: AFKing for " + lengthSec + "s");
+            Log.info("[Utils]: AFKing for " + lengthSec + "s");
             Mouse.leaveGame();
             Timer.waitCondition(() -> Combat.isUnderAttack(), lengthMS, lengthMS + 1);
             return true;
@@ -904,20 +905,20 @@ public class Utils {
 
     public static void afk(int lengthMS) {
         int lengthSec = lengthMS / 1000;
-        Log.log("[Utils]: AFKing for " + lengthSec + "s");
+        Log.info("[Utils]: AFKing for " + lengthSec + "s");
         Mouse.leaveGame();
         Timer.waitCondition(() -> Combat.isUnderAttack(), lengthMS, lengthMS + 1);
     }
 
     public static void dropItem(int item) {
-        Log.log("[Utils]: Dropping item(s)");
+        Log.info("[Utils]: Dropping item(s)");
         Inventory.drop(item);
         unselectItem();
     }
 
 
     public static void dropItem(int[] item) {
-        Log.log("[Utils]: Dropping items");
+        Log.info("[Utils]: Dropping items");
         Inventory.drop(item);
         unselectItem();
     }
@@ -929,7 +930,7 @@ public class Utils {
         if (Game.getItemSelectionState() == 1) {
 
             String itemName = Game.getSelectedItemName();
-            Log.log("[Utils]: Un-select item failsafe activated, clicking item to unselect");
+            Log.info("[Utils]: Un-select item failsafe activated, clicking item to unselect");
             if (itemName != null) {
                 RSItem[] invItem = Inventory.find(itemName);
                 if (invItem.length > 0 && invItem[0].click())
@@ -944,7 +945,7 @@ public class Utils {
     public static boolean hoverXp(Skills.SKILLS skill, int chance) {
         int num = General.random(0, 100);
         if (chance > num) {
-            Log.log("[Antiban]: Hovering XP");
+            Log.info("[Antiban]: Hovering XP");
             skill.hover();
             General.sleep(300, 1200);
             return true;
@@ -958,24 +959,24 @@ public class Utils {
     }
 
     public static void setCamera(int angle, int angleAllowance, int rotation, int rotnAllowance) {
-        int a = Camera.getCameraAngle();
-        Log.log("Angle is " + a);
-        if (Camera.getCameraRotation() > (rotation + rotnAllowance) ||
-                Camera.getCameraRotation() < (rotation - rotnAllowance)) {
+        int a = Camera.getAngle();
+        Log.info("Angle is " + a);
+        if (Camera.getRotation() > (rotation + rotnAllowance) ||
+                Camera.getRotation() < (rotation - rotnAllowance)) {
             int half = rotnAllowance / 2;
             int i = General.random(rotation - half, rotation + half);
-            Log.log("[Camera]: Setting camera rotation to " + i);
-            Camera.setCameraRotation(i);
+            Log.info("[Camera]: Setting camera rotation to " + i);
+            Camera.setRotation(i);
         }
         if (a > (angle + angleAllowance) ||
                 a < (angle - angleAllowance)) {
             if (a < (angle - angleAllowance)) {
-                Log.log("Debug]: Angle is less than " + (angle - angleAllowance));
+                Log.info("Debug]: Angle is less than " + (angle - angleAllowance));
             }
             int half = angleAllowance / 2;
             int i = General.random(angle - half, angle + half);
-            Log.log("[Camera]: Setting camera angle to " + i);
-            Camera.setCameraAngle(i);
+            Log.info("[Camera]: Setting camera angle to " + i);
+            Camera.setAngle(i);
         }
     }
 
@@ -987,11 +988,11 @@ public class Utils {
                 adjustCameraToObj(doorTarget[0]);
 
                 if (Doors.handleDoor(doorTarget[0], open)) {
-                    Log.log("[Utils]: Door handled");
+                    Log.info("[Utils]: Door handled");
                     return true;
 
                 } else {
-                    Log.log("[Utils]: Failed to handle door, waiting up to 2s and trying again");
+                    Log.info("[Utils]: Failed to handle door, waiting up to 2s and trying again");
                     General.sleep(General.random(500, 2500));
                 }
             }
@@ -1047,7 +1048,7 @@ public class Utils {
             if (GameState.getSetting(1306) == 2)
                 return;
 
-            Log.log("[Utils]: Setting NPC Attach preferences");
+            Log.info("[Utils]: Setting NPC Attach preferences");
             if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
                 GameTab.open(GameTab.TABS.OPTIONS);
                 General.sleep(General.randomSD(100, 750, 400, 150));
@@ -1087,31 +1088,31 @@ public class Utils {
 
     public static void microSleep() {
         int sleepTime = General.randomSD(100, 1000, 500, 200);
-        Log.log("[Debug]: Sleeping for " + sleepTime + "ms");
+        Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
         General.sleep(sleepTime);
     }
 
     public static void shortSleep() {
         int sleepTime = General.randomSD(1000, 3200, 1600, 200);
-        Log.log("[Debug]: Sleeping for " + sleepTime + "ms");
+        Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
         General.sleep(sleepTime);
     }
 
     public static void modSleep() {
         int sleepTime = General.randomSD(2500, 8000, 5000, 600);
-        Log.log("[Debug]: Sleeping for " + sleepTime + "ms");
+        Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
         General.sleep(sleepTime);
     }
 
     public static void longSleep() {
         int sleepTime = General.randomSD(8000, 20000, 14000, 2500);
-        Log.log("[Debug]: Sleeping for " + sleepTime + "ms");
+        Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
         General.sleep(sleepTime);
     }
 
     public static boolean handleRecoilMessage(String message) {
         if (message.contains("Your Ring of Recoil has shattered.")) {
-            Log.log("[Message Listener]: Ring of recoil shattered message received.");
+            Log.info("[Message Listener]: Ring of recoil shattered message received.");
             //  if (Inventory.find(Constants.RING_OF_RECOIL).length > 0)
             //      return AccurateMouse.click(Inventory.find(Constants.RING_OF_RECOIL)[0], "Wear");
 
@@ -1120,7 +1121,6 @@ public class Utils {
     }
 
     public static String removeWord(String string, String word) {
-
         if (string.contains(word)) {
             String tempWord = word + " ";
             string = string.replaceAll(tempWord, "");
@@ -1170,13 +1170,14 @@ public class Utils {
     public static double getLevelBoost(Skill skill) {
         int lvl = skill.getActualLevel();
         double boost = Math.floor(lvl * .10 + 4);
-        //        Log.log("[Utils]: Boost is " + Math.round(boost));
+        //        Log.info("[Utils]: Boost is " + Math.round(boost));
         return Math.round(boost);
     }
+
     public static double getLevelBoost(Skills.SKILLS skill) {
         int lvl = skill.getActualLevel();
         double boost = Math.floor(lvl * .10 + 4);
-        //        Log.log("[Utils]: Boost is " + Math.round(boost));
+        //        Log.info("[Utils]: Boost is " + Math.round(boost));
         return Math.round(boost);
     }
 
@@ -1227,7 +1228,7 @@ public class Utils {
     public static void idleNormalAction() {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(200, 50, 0.007, 0.2,
                 100, 2000);
-       // Log.log("[Debug]: Sleeping (normal rxn) for: " + sleep);
+        // Log.info("[Debug]: Sleeping (normal rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
 
@@ -1242,14 +1243,13 @@ public class Utils {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(5000, 2000, 5, 0.1,
                 200, 10000);
         Log.info("[Utils]: Sleeping (afk rxn) for: " + sleep);
-        Waiting.waitUntil(sleep, 75 , supplier);
+        Waiting.waitUntil(sleep, 75, supplier);
     }
-
 
 
     public static void idle(int low, int high) {
         int sleep = General.random(low, high);
-        Log.log("[Debug]: Sleeping for: " + sleep);
+        Log.info("[Debug]: Sleeping for: " + sleep);
         General.sleep(sleep);
     }
 
@@ -1259,11 +1259,11 @@ public class Utils {
             int length = General.random(600000, 1200000);
             int min = length / 60000;
             script.setLoginBotState(false);
-            Log.log("[Debug]: Breaking for ~" + min + "min");
+            Log.info("[Debug]: Breaking for ~" + min + "min");
             General.sleep(length);
             timer.reset();
 
-            Log.log("[Debug]: Resuming from break");
+            Log.info("[Debug]: Resuming from break");
             script.setLoginBotState(true);
             Login.login();
 
@@ -1274,10 +1274,10 @@ public class Utils {
         if (!timer.isRunning()) {
             int length = General.random(600000, 1200000);
             int min = length / 60000;
-            Log.log("[Debug]: Breaking for ~" + min + "min");
+            Log.info("[Debug]: Breaking for ~" + min + "min");
             General.sleep(length);
             timer.reset();
-            Log.log("[Debug]: Resuming from break");
+            Log.info("[Debug]: Resuming from break");
             Login.login();
 
         }
@@ -1336,7 +1336,7 @@ public class Utils {
 
         final int reactionTime = (int) (AntiBan.getReactionTime() * FACTOR);
         waitTimes.add(reactionTime);
-        Log.log("[ABC2 Delay]: Sleeping for " + reactionTime + "ms");
+        Log.info("[ABC2 Delay]: Sleeping for " + reactionTime + "ms");
         AntiBan.sleepReactionTime(reactionTime);
         return waitTimes;
 
@@ -1404,12 +1404,12 @@ public class Utils {
         }
         RSCharacter target = Combat.getTargetEntity();
         if (target != null && target.getHealthPercent() != 0) {
-            Log.log("[ABC2]: Skipping sleep as we are still in combat");
+            Log.info("[ABC2]: Skipping sleep as we are still in combat");
             Utils.shortSleep();
             return;
         }
        /* if (Combat.isUnderAttack()) {
-                Log.log("[ABC2]: Skipping sleep as we are still in combat");
+                Log.info("[ABC2]: Skipping sleep as we are still in combat");
             Utils.microSleep();
             return;
         } */
@@ -1521,14 +1521,14 @@ public class Utils {
     public static double getSuperLevelBoost(Skills.SKILLS skill) {
         int lvl = skill.getActualLevel();
         double boost = Math.floor(lvl * 0.15 + 5);
-        //        Log.log("[Utils]: Boost is " + Math.round(boost));
+        //        Log.info("[Utils]: Boost is " + Math.round(boost));
         return Math.round(boost);
     }
 
     public static double getSuperLevelBoost(Skill skill) {
         int lvl = skill.getActualLevel();
         double boost = Math.floor(lvl * 0.15 + 5);
-        //        Log.log("[Utils]: Boost is " + Math.round(boost));
+        //        Log.info("[Utils]: Boost is " + Math.round(boost));
         return Math.round(boost);
     }
 
@@ -1617,61 +1617,47 @@ public class Utils {
             if (Inventory.find(i).length == 0) {
                 RSItemDefinition def = RSItemDefinition.get(i);
                 if (def != null) {
-                    Log.log("[Utils]: Missing and item: " + def.getName());
+                    Log.info("[Utils]: Missing and item: " + def.getName());
                     return false;
                 }
                 return false;
             }
         }
-        Log.log("[Utils]: We have all items in ArrayList (x1)");
+        Log.info("[Utils]: We have all items in ArrayList (x1)");
         return true;
     }
 
     public static void forceDownwardCameraAngle() {
-        if (org.tribot.script.sdk.Camera.getAngle() < 80) {
-            Log.debug("[Utils]: Adjusting camera angle");
-            org.tribot.script.sdk.Camera.setAngle(General.random(80, 100));
+        if (Camera.getAngle() < 80) {
+            Log.info("[Utils]: Adjusting camera angle");
+            Camera.setAngle(General.random(80, 100));
         }
     }
 
+    public static boolean setCameraZoom(double zoomLevel) {
+        Camera.setZoomMethod(Camera.ZoomMethod.MOUSE_SCROLL);
+        if (Camera.getZoomPercent() < zoomLevel) {
+            Log.info("[Utils]: Adjusting camera zoom to " + zoomLevel);
+            return Camera.setZoomPercent(zoomLevel);
+        }
+        return Camera.getZoomPercent() >= zoomLevel;
+    }
 
 
     public static boolean setCameraZoomAboveDefault() {
-        int setTo = General.random(285, 320);
-        if (Game.getViewportScale() > setTo) {
-            Log.log("[Utils]: Setting camera zoom");
-            RSInterface middle = Interfaces.get(163);
-            if (!Game.hasFocus()) {
-                Mouse.randomRightClick();
-                General.sleep(100, 400);
-            }
-
-            if (middle != null && !middle.getAbsoluteBounds().contains(Mouse.getPos())) {
-                int x = (Game.getViewportWidth() / 2) + General.random(0, 100);
-                int y = (Game.getViewportHeight() / 2) + General.random(0, 100);
-                Log.log("Width is " + Game.getViewportWidth());
-                Point p = middle.getAbsolutePosition();
-                p.translate(x, y);
-                Mouse.move(p);
-                General.sleep(100, 400);
-            }
-
-
-            for (int i = 0; i < 15; i++) {
-                Mouse.scroll(false);
-                Waiting.waitNormal(90, 35);
-                if (Game.getViewportScale() <= setTo) {
-                    return true;
-                }
-            }
+        Camera.setZoomMethod(Camera.ZoomMethod.MOUSE_SCROLL);
+        if (Camera.getZoomPercent() > 65) {
+            double setTo = General.randomDouble(0, 35);
+            Log.info("[Utils]: Adjusting camera zoom to " + setTo);
+            return Camera.setZoomPercent(setTo);
         }
-        return Game.getViewportScale() <= setTo;
+        return Camera.getZoomPercent() <= 65;
     }
 
     public static boolean useItemOnObject(Optional<InventoryItem> invItem, Optional<GameObject> obj) {
         if (invItem.isPresent() && obj.isPresent()) {
             for (int i = 0; i < 3; i++) {
-                Log.log("[Debug]: Using: " + invItem.get().getName());
+                Log.info("[Debug]: Using: " + invItem.get().getName());
 
                 if (!GameState.isAnyItemSelected()) {
                     if (!obj.get().isVisible() || i == 2)
@@ -1680,7 +1666,7 @@ public class Utils {
                         return true;
 
                 } else if (isItemSelected(invItem.get().getId())) {
-                    Log.log("[Utils]: Item is already selected");
+                    Log.info("[Utils]: Item is already selected");
                     if (!obj.get().isVisible() || i == 2)
                         obj.get().adjustCameraTo();
 
@@ -1690,7 +1676,7 @@ public class Utils {
 
             }
         }
-        Log.log("[Utils]: failed to use item on object 3x");
+        Log.info("[Utils]: failed to use item on object 3x");
         return false;
     }
 
@@ -1703,7 +1689,7 @@ public class Utils {
         Optional<InventoryItem> invItem = Query.inventory().idEquals(ItemID).findClosestToMouse();
         Optional<GameObject> gameObj = Query.gameObjects().idEquals(objID).sortedByDistance().findBestInteractable();
         if (gameObj.isEmpty() || invItem.isEmpty()) {
-            Log.log("[Utils]: Cannot find ItemID: " + ItemID + " || or ObjId: " + objID);
+            Log.info("[Utils]: Cannot find ItemID: " + ItemID + " || or ObjId: " + objID);
             return false;
         }
         return useItemOnObject(invItem, gameObj);
@@ -1713,7 +1699,7 @@ public class Utils {
         RSItem[] invItem = Inventory.find(ItemID);
         for (int i = 0; i < 3; i++) {
             if (invItem.length > 0 && obj != null) {
-                Log.log("[Debug]: Using: " + ItemID);
+                Log.info("[Debug]: Using: " + ItemID);
 
                 if (!isItemSelected(ItemID)) {
 
@@ -1789,6 +1775,16 @@ public class Utils {
         return Query.players().inArea(area).nameNotContains(MyPlayer.getUsername()).count();
     }
 
+    public static void sleepAfkOrNormal(int chanceAfk) {
+        int chance = Utils.random(0, 100);
+        //Log.info("chance is " + chance);
+        if (chanceAfk >= chance) {
+            Utils.idleAfkAction();
+        } else {
+            Utils.idleNormalAction();
+        }
+    }
+
     public static String getRuntimeString(long runtime) {
         long millis = runtime;
         long second = (millis / 1000) % 60;
@@ -1796,6 +1792,22 @@ public class Utils {
         long hour = (millis / (1000 * 60 * 60)); //% 24;
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
+
+
+    public static int roundToNearestThousand(int initial) {
+        return (int) (Math.round(initial / 1000.0) * 1000);
+    }
+
+    public static int roundToNearest(int initial, int roundTo) {
+
+        return (int) Math.round(initial / roundTo) * roundTo;
+    }
+
+    public static int roundToNearest(double initial, int roundTo) {
+        return (int) ((Math.round(initial) / roundTo) * roundTo);
+        //  return (int) Math.round(initial/roundTo) * roundTo;
+    }
+
 
     public static boolean isItemSelected(int ItemID) {
         RSItemDefinition itemDef = RSItemDefinition.get(ItemID);
@@ -1825,7 +1837,7 @@ public class Utils {
         RSNPC[] npc = NPCs.findNearest(NPCName);
 
         if (invItem.length > 0 && npc.length > 0) {
-            Log.log("[Debug]: Using: " + itemString);
+            Log.info("[Debug]: Using: " + itemString);
 
 
             if (selectInvItem(invItem[0].getID()))
@@ -1851,7 +1863,7 @@ public class Utils {
 
 
         if (invItem.length > 0 && rsnpc != null) {
-            Log.log("[Debug]: Using: " + itemString);
+            Log.info("[Debug]: Using: " + itemString);
 
             if (selectInvItem(invItem[0].getID()))
                 AntiBan.waitItemInteractionDelay();
@@ -1888,7 +1900,7 @@ public class Utils {
         RSNPC[] npc = NPCs.findNearest(NPCName);
 
         if (invItem.length > 0) {
-            Log.log("[Debug]: Using: " + itemName);
+            Log.info("[Debug]: Using: " + itemName);
             if (selectInvItem(invItem[0].getID())) {
                 AntiBan.waitItemInteractionDelay();
 
@@ -1909,7 +1921,7 @@ public class Utils {
         RSNPC[] npc = NPCs.findNearest(NPCNames);
 
         if (invItem.length > 0) {
-            Log.log("[Debug]: Using: " + ItemID);
+            Log.info("[Debug]: Using: " + ItemID);
 
             if (selectInvItem(ItemID)) {
                 AntiBan.waitItemInteractionDelay();
@@ -1932,7 +1944,7 @@ public class Utils {
                 .findBestInteractable();
 
         if (npc.isEmpty() || item.isEmpty()) {
-            Log.log("[Utils]: Cannot find ItemID: " + ItemID + " || or NpcID: " + npcId);
+            Log.info("[Utils]: Cannot find ItemID: " + ItemID + " || or NpcID: " + npcId);
             return false;
         }
         //adjust camera if needed
@@ -1973,7 +1985,7 @@ public class Utils {
         for (Skills.SKILLS s : startHashMap.keySet()) {
             int currentXp = currentHashMap.get(s);
             if (startHashMap.get(s) < currentXp) {
-                //     Log.log("[Debug]: " + s.toString() + " has increased experience since start: " +currentXp );
+                //     Log.info("[Debug]: " + s.toString() + " has increased experience since start: " +currentXp );
                 return true;
             }
         }
@@ -1981,21 +1993,21 @@ public class Utils {
     }
 
 
-    public static boolean shouldDecantPotion(String potionNameBase){
+    public static boolean shouldDecantPotion(String potionNameBase) {
         int oneDose = 0;
         int twoDose = 0;
         int threeDose = 0;
         int totalDoses = 0;
 
-        if (!BankCache.isInitialized()){
+        if (!BankCache.isInitialized()) {
 
         }
 
-        if (potionNameBase.toLowerCase().contains("stamina")){
-            oneDose =  BankCache.getStack(ItemID.STAMINA_POTION[3]);
-            twoDose =  BankCache.getStack(ItemID.STAMINA_POTION[2]);
-            threeDose =  BankCache.getStack(ItemID.STAMINA_POTION[1]);
-            totalDoses = (oneDose) + (twoDose*2) + (threeDose *3);
+        if (potionNameBase.toLowerCase().contains("stamina")) {
+            oneDose = BankCache.getStack(ItemID.STAMINA_POTION[3]);
+            twoDose = BankCache.getStack(ItemID.STAMINA_POTION[2]);
+            threeDose = BankCache.getStack(ItemID.STAMINA_POTION[1]);
+            totalDoses = (oneDose) + (twoDose * 2) + (threeDose * 3);
             Log.debug("We have " + totalDoses + " total doses of stamina potions");
             return totalDoses >= 4;
         }

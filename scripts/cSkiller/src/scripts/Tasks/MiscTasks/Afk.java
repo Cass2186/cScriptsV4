@@ -34,14 +34,14 @@ public class Afk implements Task {
     @Override
     public void execute() {
         int length = General.randomSD(Vars.get().afkDurationAvg, Vars.get().afkDurationSD);
-        Log.log("[Debug]: AFKing for: " + Timing.msToString(length));
-        Timer.waitCondition(()-> {
+        Log.info("AFKing for: " + Timing.msToString(length));
+        Waiting.waitUntil(length,600, ()-> {
             Waiting.waitNormal(500,150);
             if (Mouse.isInBounds() && Vars.get().moveMouseOffScreenAfk){
                 Mouse.leaveGame();
             }
             return Combat.isUnderAttack();
-        },length);
+        });
         Vars.get().afkTimer = new Timer(General.randomSD(Vars.get().afkFrequencyAvg, Vars.get().afkFrequencySD));
     }
 

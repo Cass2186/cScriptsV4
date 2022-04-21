@@ -46,7 +46,7 @@ public class Timer {
         end = start + period;
     }
 
-    private static boolean isLvlUpInterfaceOpen() {
+    public static boolean isLvlUpInterfaceOpen() {
         return Widgets.get(233, 2).isPresent();
     }
 

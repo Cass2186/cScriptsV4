@@ -7,7 +7,9 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.EquipmentItem;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.ItemID;
 import scripts.Tasks.Slayer.SlayerConst.Assign;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
@@ -48,7 +50,7 @@ public class SlayerVars {
      */
     public RSTile combatTile, bankTile;
 
-    public RSArea fightArea = null;
+    public Area fightArea = null;
 
     public boolean needBootsOfStone = false;
 
@@ -199,6 +201,6 @@ public class SlayerVars {
 
     public int fill_cannon_at = General.random(0, 24);
 
-    public RSTile cannon_location;
+    public WorldTile cannon_location;
 
 }

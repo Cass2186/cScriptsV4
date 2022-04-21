@@ -5,6 +5,7 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
@@ -22,7 +23,7 @@ public class SlayerShop implements Task {
     private void goToTurael() {
         RSItem[] invitem = Inventory.find(ItemID.GAMES_NECKLACE);
         if (invitem.length < 1) {
-            if (!Areas.TURAEL_AREA.contains(Player.getPosition())) {
+            if (!Areas.TURAEL_AREA.contains(MyPlayer.getTile())) {
                 BankManager.open(true);
 
                 if (Inventory.getAll().length > 20)
@@ -41,7 +42,7 @@ public class SlayerShop implements Task {
         }
 
         if (Inventory.find(ItemID.GAMES_NECKLACE).length > 0)
-            PathingUtil.walkToArea(Areas.TURAEL_AREA);
+            PathingUtil.walkToArea(Areas.TURAEL_AREA, false);
     }
 
     public void getCoinsForShop() {
@@ -62,7 +63,7 @@ public class SlayerShop implements Task {
 
     public boolean openShop() {
         getCoinsForShop();
-        PathingUtil.walkToArea(Areas.NIEVE_AREA);
+        PathingUtil.walkToArea(Areas.NIEVE_AREA, false);
         General.println("[SlayerRestock]: Opening shop");
         if (Utils.clickNPC("Nieve", "Trade")) {
             return Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_SHOP_INTERFACE), 10000, 15000);

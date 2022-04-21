@@ -8,7 +8,12 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -17,8 +22,12 @@ import scripts.Data.Vars;
 import scripts.Tasks.Slayer.SlayerConst.Areas;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 
+import java.util.List;
+import java.util.Optional;
+
 
 public class MoveToArea implements Task {
+
     public int DOOR_ID = 2631;
     int LUMBRIDGE_SWAMP_ROPE_VARBIT = 279; // this varbit changes from 0-> 1 upon placing a rope in the lumbridge swamp caves.
 
@@ -314,11 +323,11 @@ public class MoveToArea implements Task {
     }
 
     public void goToEarthWarriors() {
-        if (!Areas.EARTH_WARRIOR_AREA.contains(Player.getPosition()))
-            PathingUtil.walkToArea(Areas.PRE_EARTH_WARRIOR_AREA);
+        if (!Areas.EARTH_WARRIOR_AREA.contains(MyPlayer.getTile()))
+            PathingUtil.walkToArea(Areas.PRE_EARTH_WARRIOR_AREA, false);
 
         if (Utils.clickObject("Monkeybars", "Swing across", false))
-            Timer.waitCondition(() -> Areas.EARTH_WARRIOR_AREA.contains(Player.getPosition()), 15000);
+            Timer.waitCondition(() -> Areas.EARTH_WARRIOR_AREA.contains(MyPlayer.getTile()), 15000);
     }
 
     public void setupLumbridgeSwamp() {
@@ -329,7 +338,7 @@ public class MoveToArea implements Task {
                 BankManager.withdraw(1, true, ItemID.ROPE);
                 BankManager.close(true);
             }
-            PathingUtil.walkToArea(Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE);
+            PathingUtil.walkToArea(Areas.ABOVE_LUMBRIDGE_SWAMP_ENTRANCE, false);
             if (Utils.useItemOnObject(ItemID.ROPE, "Dark hole")) {
                 Timer.waitCondition(() -> Inventory.find(ItemID.ROPE).length < 1, 6000, 9000);
                 NPCInteraction.handleConversation();
@@ -347,12 +356,12 @@ public class MoveToArea implements Task {
             General.println("[Debug]: Moving to Fight Area: " + SlayerVars.get().fightArea.toString());
             if (SlayerVars.get().fightArea == Areas.BLACK_DEMON_AREA && Prayer.getPrayerPoints() > 0) {
                 General.println("Prayer walk");
-                if (PathingUtil.walkToArea(SlayerVars.get().fightArea, false, "Black demon walk"))
+                if (PathingUtil.walkToArea(SlayerVars.get().fightArea, false))
                     PrayerUtil.setPrayer(PrayerType.MELEE);
             } else
                 PathingUtil.walkToArea(SlayerVars.get().fightArea, false);
 
-            if (SlayerVars.get().fightArea.contains(Player.getPosition()) && SlayerVars.get().shouldPrayMelee)
+            if (SlayerVars.get().fightArea.contains(MyPlayer.getTile()) && SlayerVars.get().shouldPrayMelee)
                 Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
         }
     }
@@ -374,7 +383,7 @@ public class MoveToArea implements Task {
             if (Inventory.find(ItemID.JAIL_KEY).length < 1) {
                 SlayerVars.get().status = "Getting Dusty Key";
                 Log.info("Going to Jailer");
-                PathingUtil.walkToArea(Areas.JAILER_AREA);
+                PathingUtil.walkToArea(Areas.JAILER_AREA, false);
                 RSNPC[] jailer = NPCs.findNearest("Jailer");
                 if (jailer.length > 0 && CombatUtil.clickTarget(jailer[0]))
                     Timer.waitCondition(() -> GroundItems.find(ItemID.JAIL_KEY).length > 0
@@ -393,14 +402,14 @@ public class MoveToArea implements Task {
                         Timer.waitCondition(() -> Inventory.find(ItemID.JAIL_KEY).length > 0, 9000, 12000);
                 }
             }
-            if (Inventory.find(ItemID.JAIL_KEY).length > 0 && Areas.JAILER_AREA.contains(Player.getPosition())) {
+            if (Inventory.find(ItemID.JAIL_KEY).length > 0 && Areas.JAILER_AREA.contains(MyPlayer.getTile())) {
                 Log.info("Going to cell");
                 if (PathingUtil.localNav(new LocalTile(2931, 9690, 0)))
                     PathingUtil.movementIdle();
                 if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
-                    Timer.waitCondition(() -> Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
+                    Timer.waitCondition(() -> Areas.JAIL_CELL.contains(MyPlayer.getTile()), 8000, 12000);
             }
-            if (Areas.JAIL_CELL.contains(Player.getPosition())) {
+            if (Areas.JAIL_CELL.contains(MyPlayer.getTile())) {
                 Log.info("In cell");
                 if (Inventory.isFull() && EatUtil.eatFood(false))
                     Utils.microSleep();
@@ -414,66 +423,58 @@ public class MoveToArea implements Task {
                 if (Inventory.find(ItemID.DUSTY_KEY).length > 0) {
                     SlayerVars.get().needDustyKey = false;
                     if (Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
-                        Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
+                        Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(MyPlayer.getTile()), 8000, 12000);
                 }
             }
         } else if (Inventory.find(ItemID.DUSTY_KEY).length > 0) {
             SlayerVars.get().needDustyKey = false;
-            if (Areas.JAIL_CELL.contains(Player.getPosition()) && Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
-                Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(Player.getPosition()), 8000, 12000);
+            if (Areas.JAIL_CELL.contains(MyPlayer.getTile()) && Utils.useItemOnObject(ItemID.JAIL_KEY, DOOR_ID))
+                Timer.waitCondition(() -> !Areas.JAIL_CELL.contains(MyPlayer.getTile()), 8000, 12000);
 
         }
 
     }
 
-    RSArea area = new RSArea(new RSTile(2882, 9817, 1), new RSTile(2872, 9835, 1));
+    Area babyBlackPreArea = Area.fromRectangle(new WorldTile(2882, 9817, 1), new WorldTile(2872, 9835, 1));
 
     public boolean goToBabyBlackDragons() {
         RSNPC[] npc = NPCs.find(Filters.NPCs.nameContains("Baby black"));
-        if (npc.length == 0 && !Areas.BABY_BLACK_DRAGON_AREA.contains(Player.getPosition()) &&
-                !area.contains(Player.getPosition())) {
+        if (npc.length == 0 && !Areas.BABY_BLACK_DRAGON_AREA.contains(MyPlayer.getTile()) &&
+                !babyBlackPreArea.contains(MyPlayer.getTile())) {
             General.println("Going to Baby Black Dragons");
             PathingUtil.walkToArea(Areas.BEFORE_BABY_BLACK_DRAG_AREA, true);
 
             if (Utils.clickObject("Steps", "Climb", false)) {
-                Timer.waitCondition(() -> area.contains(Player.getPosition()), 5000, 7000);
+                Timer.waitCondition(() -> babyBlackPreArea.contains(MyPlayer.getTile()), 5000, 7000);
             }
 
         }
-        if (area.contains(Player.getPosition())) {
-            PathingUtil.webWalkToArea(Areas.BABY_BLACK_DRAGON_AREA);
+        if (babyBlackPreArea.contains(MyPlayer.getTile())) {
+            PathingUtil.walkToArea(Areas.BABY_BLACK_DRAGON_AREA, false);
         }
         return true;
     }
 
-    public static boolean areWeCloseToArea(RSArea area) {
-        RSTile[] areaTiles = SlayerVars.get().fightArea.getAllTiles();
-        int lastIndex = areaTiles.length - 1;
-
-        if (areaTiles[0].distanceTo(Player.getPosition()) < 30) {
-            return true;
-
-        } else if (areaTiles[lastIndex].distanceTo(Player.getPosition()) < 30) {
-            return true;
-
-        } else
-            return false;
+    public static boolean areWeCloseToArea() {
+        List<LocalTile> areaTiles = Query.tiles().inArea(SlayerVars.get().fightArea)
+                .isReachable().sortedByInteractionCost().toList();
+        return areaTiles.stream().anyMatch(t -> t.isWalkable() && t.distance() < 25);
     }
 
     public void goToSourhogs() {
-        if (!Areas.SOURHOG_AREA.contains(Player.getPosition()) &&
-                !Areas.WHOLE_SOURHOG_CAVE.contains(Player.getPosition())) {
+        if (!Areas.SOURHOG_AREA.contains(MyPlayer.getTile()) &&
+                !Areas.WHOLE_SOURHOG_CAVE.contains(MyPlayer.getTile())) {
             PathingUtil.walkToArea(Areas.SOURHOG_ENTRANCE_AREA, false);
             if (Utils.clickObject("Strange hole", "Climb-down", false)) {
-                Timer.waitCondition(() -> Areas.WHOLE_SOURHOG_CAVE.contains(Player.getPosition()),
+                Timer.waitCondition(() -> Areas.WHOLE_SOURHOG_CAVE.contains(MyPlayer.getTile()),
                         9000, 11000);
             }
         }
-        if (Areas.WHOLE_SOURHOG_CAVE.contains(Player.getPosition()) &&
-                !Areas.SOURHOG_AREA.contains(Player.getPosition())) {
+        if (Areas.WHOLE_SOURHOG_CAVE.contains(MyPlayer.getTile()) &&
+                !Areas.SOURHOG_AREA.contains(MyPlayer.getTile())) {
             // in area, but not fight area
             if (Utils.clickObject("Blockage", "Climb-over", false)) {
-                Timer.waitCondition(() -> Areas.SOURHOG_AREA.contains(Player.getPosition()),
+                Timer.waitCondition(() -> Areas.SOURHOG_AREA.contains(MyPlayer.getTile()),
                         8000, 9000);
             }
 
@@ -484,16 +485,16 @@ public class MoveToArea implements Task {
     public void goToBrineRats() {
         RSItem[] spade = Inventory.find(ItemID.SPADE);
         if (spade.length > 0) {
-            if (!Areas.BRINE_RAT_AREA.contains(Player.getPosition()) &&
-                    !Areas.WHOLE_BRINE_RAT_CAVE.contains(Player.getPosition())) {
+            if (!Areas.BRINE_RAT_AREA.contains(MyPlayer.getTile()) &&
+                    !Areas.WHOLE_BRINE_RAT_CAVE.contains(MyPlayer.getTile())) {
                 PathingUtil.walkToTile(new RSTile(2745, 3732, 0), 1, false);
                 if (spade[0].click("Dig")) {
-                    Timer.waitCondition(() -> Areas.WHOLE_BRINE_RAT_CAVE.contains(Player.getPosition()),
+                    Timer.waitCondition(() -> Areas.WHOLE_BRINE_RAT_CAVE.contains(MyPlayer.getTile()),
                             9000, 11000);
                 }
             }
-            if (Areas.WHOLE_BRINE_RAT_CAVE.contains(Player.getPosition()) &&
-                    !Areas.BRINE_RAT_AREA.contains(Player.getPosition())) {
+            if (Areas.WHOLE_BRINE_RAT_CAVE.contains(MyPlayer.getTile()) &&
+                    !Areas.BRINE_RAT_AREA.contains(MyPlayer.getTile())) {
                 // in area, but not fight area
                 PathingUtil.walkToArea(Areas.BRINE_RAT_AREA, false);
             }
@@ -504,42 +505,42 @@ public class MoveToArea implements Task {
     public void goToZygomites() {
         RSItem weapon = Equipment.getItem(Equipment.SLOTS.WEAPON);
 
-        if (!Areas.WHOLE_ZANARIS.contains(Player.getPosition())) {
+        if (!Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile())) {
             General.println("[MoveToArea]: Going to zanaris");
             Utils.equipItem(ItemID.DRAMEN_STAFF);
             shouldMoveDoubleCheck(Areas.MUTATED_ZYGOMITE_AREA);
 
         }
         RSItem[] i = Inventory.find(weapon.getID());
-        if (Areas.WHOLE_ZANARIS.contains(Player.getPosition()) && i.length > 0) {
+        if (Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile()) && i.length > 0) {
             General.println("[MoveToArea]: Re-equipping weapon");
             if (i[0].click())
                 Timer.waitCondition(() -> Equipment.isEquipped(weapon.getID()), 3500, 5000);
         }
     }
 
-    public static boolean clickScreenWalkArea(RSArea area) {
-        for (RSTile t : area.getAllTiles()) {
-            if (t.isClickable())
-                return DynamicClicking.clickRSTile(t, "Walk here");
+    public static boolean clickScreenWalkArea(Area area) {
+        List<LocalTile> localTiles = Query.tiles().inArea(area).isReachable().sortedByInteractionCost().toList();
+        for (LocalTile t : localTiles) {
+            if (t.isVisible() && t.isWalkable())
+                return t.interact("Walk here");
         }
         return false;
     }
 
 
-    public boolean shouldMoveDoubleCheck(RSArea area) {
-        RSTile[] areaTiles = SlayerVars.get().fightArea.getAllTiles();
-        int lastIndex = areaTiles.length - 1;
+    public boolean shouldMoveDoubleCheck(Area area) {
+        List<WorldTile> areaTiles = SlayerVars.get().fightArea.getAllTiles();
+        int lastIndex = areaTiles.size() - 1;
         if (!clickScreenWalkArea(area)) {
-            if (areWeCloseToArea(area) && PathFinding.canReach(areaTiles[0], false)) {
+            if (areWeCloseToArea()) {
                 General.println("[Debug]: We are close to our area, don't need to move with Dax");
-                if (!PathingUtil.localNavigation(area.getRandomTile()))
+                if (!PathingUtil.localNav(area.getCenter()))
                     return false;
-
                 return true;
-            } else if (areaTiles[lastIndex].distanceTo(Player.getPosition()) < 25) {
+            } else if (areaTiles.get(lastIndex).distanceTo(MyPlayer.getTile()) < 25) {
                 General.println("[Debug]: We are close to our area, don't need to move with Dax");
-                if (!PathingUtil.localNavigation(area.getRandomTile())) {
+                if (!PathingUtil.localNav(area.getCenter())) {
                     return false;
 
                 } else
@@ -553,19 +554,20 @@ public class MoveToArea implements Task {
     public void goToElves() {
         RSItem[] i = Inventory.find(ItemID.IORWERTH_CAMP_TELEPORT);
         if (Banking.isInBank() && i.length > 0) {
-            RSTile current = Player.getPosition();
+            WorldTile current = MyPlayer.getTile();
             if (i[0].click())
-                Timer.abc2WaitCondition(() -> !current.equals(Player.getPosition()), 7000, 10000);
+                Timer.abc2WaitCondition(() -> !current.equals(MyPlayer.getTile()), 7000, 10000);
         }
     }
 
 
     public static boolean checkForOtherCannon() {
         if (SlayerVars.get().use_cannon && SlayerVars.get().fightArea != null) {
-            if (SlayerVars.get().fightArea.getRandomTile().distanceTo(Player.getPosition()) < 35) {
-                RSObject[] cannon = Objects.findNearest(30, Filters.Objects.inArea(SlayerVars.get().fightArea));
+            if (SlayerVars.get().fightArea.getRandomTile().distanceTo(MyPlayer.getTile()) < 35) {
+                Optional<GameObject> gameObjectQuery = Query.gameObjects().maxDistance(25).inArea(SlayerVars.get().fightArea)
+                        .idEquals(ObjectID.DWARF_MULTICANNON).findFirst();
                 RSItem[] inv = Inventory.find(ItemID.CANNON_IDS);
-                if (cannon.length > 0 && inv.length == 4) {
+                if (gameObjectQuery.isPresent() && inv.length == 4) {
                     General.println("[MoveToArea] There appears to be a cannon that is not ours in our fight area.");
                     return SlayerVars.get().otherCannonInOurArea = true;
                 }
@@ -595,7 +597,7 @@ public class MoveToArea implements Task {
                 Vars.get().currentTask.equals(SkillTasks.SLAYER) &&
                 SlayerVars.get().fightArea != null &&
                 !SlayerVars.get().shouldBank &&
-                !SlayerVars.get().fightArea.contains(Player.getPosition()) &&
+                !SlayerVars.get().fightArea.contains(MyPlayer.getTile()) &&
                 !SlayerShop.shouldSlayerShop();
     }
 

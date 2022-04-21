@@ -164,14 +164,16 @@ public class AttackNpc implements Task {
                 .nameContains(Vars.get().targets)
                 .inArea(area)
                 .isInteractingWithMe()
-                .findBestInteractable();
+                .findClosestByPathDistance();
 
 
-        if (attackingMe.isPresent() && attackingMe.get().isHealthBarVisible() &&
-                attackingMe.get().getHealthBarPercent() != 0) return attackingMe;
+        if (attackingMe.isPresent())
+            return attackingMe;
+        /* && attackingMe.get().isHealthBarVisible() &&
+                attackingMe.get().getHealthBarPercent() != 0) return attackingMe;*/
 
         else if (bestIntractable.isPresent()) {
-            Log.debug("Returning best Interactable NPC");
+            Log.info("Returning best Interactable NPC");
             return bestIntractable;
         }
 
@@ -226,7 +228,7 @@ public class AttackNpc implements Task {
                 Utils.idleNormalAction();
 
         } else {
-            Log.debug("Waiting");
+            Log.info("Waiting");
             if (!MyPlayer.isHealthBarVisible())
                 Prayer.disableQuickPrayer();
             else {
@@ -387,7 +389,7 @@ public class AttackNpc implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.MEDIUM;
+        return Priority.LOW;
     }
 
     @Override

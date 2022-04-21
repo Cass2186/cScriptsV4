@@ -30,30 +30,32 @@ public class UnnoteBones implements Task {
     }
 
     public void unnoteBones() {
-        Optional<InventoryItem> item = Query.inventory().nameContains("bones").isNoted().findFirst();
-        Optional<Npc> phials = Query.npcs().nameContains("Phials").stream().findFirst();
-        if (phials.isPresent() && item.isPresent()) {
-            if (!phials.get().isVisible()){
-                LocalWalking.walkTo(phials.get().getTile().translate(0,1));
-                Waiting.waitNormal(750,220);
-            }
-            if(Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
-                    Timer.waitCondition(Player::isMoving, 1200, 1800)) {
-                    Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
+        Optional<InventoryItem> item = Query.inventory()
+                .nameContains("bones").isNoted().findFirst();
+        Optional<Npc> phials = Query.npcs()
+                .nameContains("Phials").stream().findFirst();
 
-            }
+        if (phials.map(p -> !p.isVisible()).orElse(false)) {
+            LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
+            Waiting.waitNormal(850, 220);
+        }
+        if (phials.map(p -> item.map(b -> b.useOn(p)).orElse(false)).orElse(false) &&
+                Timer.waitCondition(Player::isMoving, 1200, 1800)) {
+            Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
         }
         if (NPCInteraction.isConversationWindowUp()) {
-            InterfaceUtil.clickInterfaceText(219,1, "Exchange All");
-            Timer.waitCondition(()-> Query.inventory().nameContains("bones").isNotNoted().findFirst().isPresent(),
-                    2000,4000);
+            if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All") &&
+                    Timer.waitCondition(() -> Query.inventory().nameContains("bones").isNotNoted().findFirst().isPresent(),
+                            2000, 4000))
+                Utils.idlePredictableAction();
         }
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Unnoting bones";
     }
+
     @Override
     public Priority priority() {
         return Priority.MEDIUM;

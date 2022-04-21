@@ -84,6 +84,8 @@ public class Bank implements Task {
         BankManager.withdrawArray(ItemID.SKILLS_NECKLACE, 1);
         BankManager.withdrawArray(ItemID.STAMINA_POTION, 1);
         BankManager.withdrawArray(ItemID.RANGING_POTION, 3);
+        BankManager.withdraw(50, true, ItemID.NATURE_RUNE);
+        BankManager.withdraw(250, true, ItemID.FIRE_RUNE);
         BankManager.withdraw(6, true, ItemID.SHARK);
         BankManager.withdraw(1, true, ItemID.KNIFE);
         BankManager.withdraw(5, true, ItemID.VARROCK_TELEPORT);

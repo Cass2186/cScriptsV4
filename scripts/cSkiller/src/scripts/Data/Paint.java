@@ -37,16 +37,8 @@ public class Paint {
     public static void setToggleablePaint() {
 
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
-                .row(template.toBuilder().label("Toggle Slayer Info")
-                        .onClick(() ->
-                                Vars.get().showSlayerInfo = !Vars.get().showSlayerInfo)
-                        .condition(() ->
-                                Vars.get().currentTask != null &&
-                                        Vars.get().currentTask.equals(SkillTasks.SLAYER))
-                        .build())
-                .row(template.toBuilder().label("Toggle Timers").onClick(() ->
-                        Vars.get().showTimers = !Vars.get().showTimers).build())
-                .location(PaintLocation.TOP_LEFT_CHATBOX)
+
+                .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));
     }
@@ -87,7 +79,15 @@ public class Paint {
                                  Vars.get().getGainedFarmXp(),
                                  PaintUtil.getXpHr(Skill.FARMING, Const.START_FARM_XP, Vars.get().startTime)))
                          .build())*/
-
+                .row(template.toBuilder().label("Toggle Slayer Info")
+                        .onClick(() ->
+                                Vars.get().showSlayerInfo = !Vars.get().showSlayerInfo)
+                        .condition(() ->
+                                Vars.get().currentTask != null &&
+                                        Vars.get().currentTask.equals(SkillTasks.SLAYER))
+                        .build())
+                .row(template.toBuilder().label("Toggle Timers").onClick(() ->
+                        Vars.get().showTimers = !Vars.get().showTimers).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));

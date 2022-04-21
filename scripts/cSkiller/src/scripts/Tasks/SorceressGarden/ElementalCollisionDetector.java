@@ -89,8 +89,8 @@ public class ElementalCollisionDetector {
                                     npcs[7].getOrientation().getAngle()  == 1024)) */return true;
                     break;
                 case 5:
-                    if (((npcs[5].getOrientation().getAngle()  == 1536 && (npcs[5].getTile().getX() < 2930 || npcs[5].getTile().getX() > 2932)) ||
-                            npcs[5].getOrientation().getAngle()  == 512 && npcs[5].getTile().getX() < 2930) &&
+                    if (((npcs[5].getOrientation().getAngle()  == 1536 && (npcs[5].getTile().getX() < 2930 || npcs[5].getTile().getX() > 2933)) ||
+                            npcs[5].getOrientation().getAngle()  == 512 && npcs[5].getTile().getX() < 2931) &&
                             ((npcs[7].getOrientation().getAngle()  == 0 && npcs[7].getTile().getY() > 5472) || npcs[7].getOrientation().getAngle()  == 1024)) return true;
                     break;
             }

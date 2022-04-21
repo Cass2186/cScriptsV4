@@ -5,6 +5,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Skill;
 import scripts.Data.Enums.HerbloreItems;
 import scripts.Data.SkillTasks;
 import scripts.ItemID;
@@ -58,6 +59,7 @@ public enum FURNITURE {
     private Room room;
 
 
+
     private static Skills.SKILLS skill = Skills.SKILLS.CONSTRUCTION;
 
     public int determineResourcesToNextItem() {
@@ -68,8 +70,8 @@ public enum FURNITURE {
         if (max < SkillTasks.CONSTRUCTION.getEndLevel()) {
             xpTillMax = Skills.getXPToLevel(skill, this.maxLevel);
         }
-        General.println("[Construction] DetermineResourcesToNextItem: " + ((xpTillMax / this.xpPer)*this.plankNum));
-        return (int) ((xpTillMax / this.xpPer)*this.plankNum) + 10;
+        General.println("[Construction] DetermineResourcesToNextItem: " + ((xpTillMax / this.xpPer) * this.plankNum));
+        return (int) ((xpTillMax / this.xpPer) * this.plankNum) + 10;
     }
 
     public static Optional<FURNITURE> getCurrentItem() {
@@ -88,14 +90,14 @@ public enum FURNITURE {
         for (FURNITURE furn : FURNITURE.values()) {
 
             // skip the furniture piece if we're past it's max level
-            if (Skills.getActualLevel(skill) >= furn.maxLevel)//||
-                  //  SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
+            if (Skill.CONSTRUCTION.getActualLevel()  >= furn.maxLevel )// ||
+                //  SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
                 continue;
 
             Log.debug("[Debug]: Item is " + furn.toString());
             int plankNum = furn.determineResourcesToNextItem();
             // add planks
-            if (furn.getMaxLevel() < 23) {
+            if (furn.getMaxLevel() < 23 && Skill.CONSTRUCTION.getActualLevel() < 22) {
                 numOfRegPlanks = numOfRegPlanks + plankNum;
                 General.println("[Construction Items]: We need " + numOfRegPlanks + " regular planks");
             } else {
@@ -103,16 +105,14 @@ public enum FURNITURE {
                 General.println("[Construction Items]: We need " + numOfRegPlanks + " Oak planks");
             }
         }
-        //make req for planks items
-        i.add(new ItemReq.Builder()
-                .id(ItemID.PLANK)
-                .isItemNoted(true)
-                .amount(numOfRegPlanks).build());
-
-        /*i.add(new ItemReq.Builder()
-                .idEquals(ItemID.PLANK)
-                .isItemNoted(false)
-                .amount(10).build());*/
+        if (Skill.CONSTRUCTION.getActualLevel() < 22) {
+            //make req for planks items only if we are less than level 22
+            i.add(new ItemReq.Builder()
+                    .id(ItemID.PLANK)
+                    .isItemNoted(true)
+                    .amount(numOfRegPlanks).build());
+            i.add(new ItemReq(ItemID.STEEL_NAILS, numOfRegPlanks * 5));
+        }
 
         //make req for oak planks items
         i.add(new ItemReq.Builder()
@@ -121,8 +121,9 @@ public enum FURNITURE {
                 .amount(numOfOakPlanks).build());
 
 
+
         // ADD Hammer and saw
-        i.add(new ItemReq(ItemID.STEEL_NAILS, numOfRegPlanks * 5));
+
         i.add(new ItemReq(ItemID.HAMMER, 1));
         i.add(new ItemReq(ItemID.SAW, 1));
         i.add(new ItemReq(ItemID.TELEPORT_TO_HOUSE, 1));

@@ -32,6 +32,7 @@ import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.Agility.Tasks.Wilderness.WildernessAgility;
 import scripts.Tasks.Combat.CrabTasks.EatDrink;
 import scripts.Tasks.Combat.CrabTasks.Fight;
@@ -229,16 +230,18 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
             while (gui.isOpen())
                 sleep(500);
         }
-
+        ScriptTimer.resetRuntime();
         Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
 
         Utils.setCameraZoomAboveDefault();
         Mouse.setSpeed(Vars.get().mouseSpeed);
-        Log.log("Mouse speed is " + Vars.get().mouseSpeed);
+        Log.info("Mouse speed is " + Vars.get().mouseSpeed);
+
         if (Vars.get().currentTask == null) {
-            General.println("[Debug]: Vars.get().currentTask is null, generating a task");
+            Log.info("CurrentTask is null -> generating a task");
             Vars.get().currentTask = SkillTasks.getSkillTask();
         }
+
         skillTracker.start();
         Options.setShiftClickDrop(true);
         Widgets.closeAll();
@@ -351,7 +354,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
 
         while (isRunning.get()) {
 
-            Waiting.waitUniform(40,80);
+            Waiting.waitUniform(40, 80);
 
             if (shouldEnd)
                 break;
@@ -513,8 +516,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
             if (message.toLowerCase().contains("you are dead") || message.toLowerCase().contains("you died")) {
                 General.println("[Message Listner]: Death Message received, ending script");
                 isRunning.set(false);
-                throw
-                        new NullPointerException();
+                throw new NullPointerException();
             }
         }
     }
@@ -565,7 +567,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
 
     private void initializeMessageListeners() {
         MessageListening.addServerMessageListener(message -> {
-        if (Vars.get().currentTask != null &&
+            if (Vars.get().currentTask != null &&
                     Vars.get().currentTask.equals(SkillTasks.FIREMAKING) &&
                     message.contains("You can't light a fire")) {
                 Vars.get().shouldResetFireMaking = true;
