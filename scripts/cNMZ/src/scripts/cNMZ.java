@@ -5,6 +5,7 @@ import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.Combat;
@@ -14,9 +15,13 @@ import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.script.ScriptRuntimeInfo;
+import org.tribot.script.sdk.script.TribotScript;
 import scripts.NmzData.Const;
 import scripts.NmzData.Paint;
 import scripts.NmzData.Vars;
+import scripts.ScriptUtils.CassScript;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.*;
 
 import java.awt.*;
@@ -26,13 +31,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @ScriptManifest(name = "cNMZ v2.1", authors = {"Cass2186"}, category = "Testing")
-public class cNMZ extends Script implements Starting, Ending, MessageListening07 {
-
-    public static AtomicBoolean isRunning = new AtomicBoolean(true);
+public class cNMZ extends CassScript implements TribotScript {
 
 
     @Override
-    public void run() {
+    public void execute(@NotNull String args) {
+        AntiBan.create();
+        super.initializeDax();
+
+        if (!Combat.isAutoRetaliateOn())
+            Combat.setAutoRetaliate(true);
+
+        DrinkPotion.determinePotion();
+        Paint.initializeDetailedPaint();
+        Paint.addPaint();
+
+        initializeMessageListeners();
+
 
         TaskSet tasks;
         tasks = new TaskSet(
@@ -41,14 +56,20 @@ public class cNMZ extends Script implements Starting, Ending, MessageListening07
                 new DrinkPotion(),
                 new EnterDream()
         );
-        Paint.initializeDetailedPaint();
-        Paint.addPaint();
-
+        Vars.get().endDreamNumber = getGameNumberFromArgs(args);
         isRunning.set(true);
+        int dreams = 0;
         while (isRunning.get()) {
-            General.sleep(50, 150);
+            Waiting.waitUniform(50, 100);
 
-            if (!Game.isInInstance() || !MyPlayer.isMember() ||!Login.isLoggedIn() )
+            if (!GameState.isInInstance()) {
+                Log.warn("dream number = " + dreams);
+                dreams++;
+
+            }
+
+
+            if (!MyPlayer.isMember() || !Login.isLoggedIn())
                 break;
 
             if (!Combat.isAutoRetaliateOn())
@@ -59,34 +80,25 @@ public class cNMZ extends Script implements Starting, Ending, MessageListening07
                 Vars.get().status = task.toString();
                 task.execute();
             }
+            if (Vars.get().endDreamNumber < dreams) {
+                Log.warn("exceeding dream number");
+                break;
+            }
         }
 
     }
 
-
-    @Override
-    public void onStart() {
-        AntiBan.create();
-        Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA, Teleport.RING_OF_WEALTH_MISCELLANIA,
-                Teleport.RING_OF_DUELING_FEROX_ENCLAVE);
-
-        WebWalkerServerApi.getInstance().setDaxCredentialsProvider(new DaxCredentialsProvider() {
-            @Override
-            public DaxCredentials getDaxCredentials() {
-                return new DaxCredentials("sub_DPjXXzL5DeSiPf", " PUBLIC-KEY");
-            }
-        });
-
-        if (!Combat.isAutoRetaliateOn())
-            Combat.setAutoRetaliate(true);
-
-        DrinkPotion.determinePotion();
+    private int getGameNumberFromArgs(String args) {
+        int i = 0;
+        try {
+            i = Integer.parseInt(args);
+        } catch (IllegalArgumentException e) {
+            Log.error("Illegal args, use a number without spaces from 1-10");
+            Log.error(e.getMessage());
+        }
+        return i;
     }
 
-    @Override
-    public void onEnd() {
-        General.println("[Ending]: Runtime " + Timing.msToString(getRunningTime()));
-    }
 
     private void initializeMessageListeners() {
         MessageListening.addServerMessageListener((message) -> {
@@ -95,22 +107,20 @@ public class cNMZ extends Script implements Starting, Ending, MessageListening07
                         Vars.get().overloadTimer.reset();
                     }
                     if (message.toLowerCase().contains("overload have worn off")) {
-                        General.println("[Debug]: Overload finished message recieved");
+                        Log.info("Overload finished message recieved");
+                        Vars.get().overloadTimer.setEndIn(1);
+                    }
+                    if (message.toLowerCase().contains("quiver")) {
+                        Log.error("Ran out of ammo");
                         Vars.get().overloadTimer.setEndIn(1);
                     }
                 }
         );
+        ScriptListening.addEndingListener(() ->
+                Log.info("[Ending]: Runtime " + ScriptTimer.getRuntimeString()));
+
+
     }
 
-    @Override
-    public void serverMessageReceived(String message) {
-        if (message.toLowerCase().contains("you drink some of your overload")) {
-            General.println("[Debug]: Overload message recieved");
-            Vars.get().overloadTimer.reset();
-        }
-        if (message.toLowerCase().contains("overload have worn off")) {
-            General.println("[Debug]: Overload finished message recieved");
-            Vars.get().overloadTimer.setEndIn(1);
-        }
-    }
+
 }

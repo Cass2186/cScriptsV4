@@ -7,7 +7,9 @@ import org.tribot.api2007.Banking;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
@@ -39,9 +41,11 @@ public class RuneMysteries implements QuestTask {
     ItemReq notes = new ItemReq(ItemID.NOTES);
 
     NPCStep talkToHoracio = new NPCStep("Duke Horacio", new RSTile(3210, 3220, 1),
-            new String[]{"Have you any quests for me?", "Have you any quests for me?", "Yes."});
+            new String[]{"Have you any quests for me?",
+                    "Have you any quests for me?", "Yes."});
     NPCStep talkToSedridor = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0),
-            new String[]{"I'm looking for the head wizard.", "Okay, here you are.", "Yes, certainly."}, airTalisman);
+            new String[]{"I'm looking for the head wizard.", "Okay, here you are.","Go ahead.",
+                    "Yes, certainly."}, airTalisman);
     NPCStep finishTalkingToSedridor = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0),
             new String[]{"Yes, certainly."});
     NPCStep talkToAubury = new NPCStep(NpcID.AUBURY, new RSTile(3253, 3401, 0),
@@ -125,11 +129,13 @@ public class RuneMysteries implements QuestTask {
         talkToSedridor2.execute();
 
         // might need Utils.continuingChat() here due to a weird interface, trying typing a space instead (untested)=
-        Keyboard.typeString(" ");
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
     }
 
     @Override
     public void execute() {
+        Waiting.waitUniform(40,80);
         if (!checkRequirements())
             cQuesterV2.taskList.remove(this);
 
@@ -145,7 +151,7 @@ public class RuneMysteries implements QuestTask {
             talkToAudburyAgain.execute();
         } else if (Game.getSetting(63) == 5) {
             step4();
-        } else if (Game.getSetting(63) == 6) {
+        } else if (Quest.RUNE_MYSTERIES.getState().equals(Quest.State.COMPLETE)) {
             cQuesterV2.taskList.remove(this);
         }
 

@@ -79,6 +79,7 @@ public class FixCrane implements QuestTask {
     public void execute() {
         checkWorld();
         fixCrane();
+        UnnotePlanks.get().execute();
     }
 
     @Override

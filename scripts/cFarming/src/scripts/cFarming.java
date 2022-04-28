@@ -79,6 +79,18 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
 
         );
 
+        if (Vars.get().doingTrees)
+            FarmingUtils.populateTreePatches();
+
+        else if (Vars.get().doingFruitTrees)
+            FarmingUtils.populateFruitTreePatches();
+
+        else if (Vars.get().doingAllotments)
+            FarmingUtils.populateAllotmentPatches();
+
+        else
+            FarmingUtils.populatePatchesToVisit();
+
         isRunning.set(true);
         while (isRunning.get()) {
             General.sleep(50, 150);
@@ -184,17 +196,6 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
         Vars.get().currentTime = Timing.currentTimeMillis();
         this.setLoginBotState(false);
 
-        if (Vars.get().doingTrees)
-            FarmingUtils.populateTreePatches();
-
-        else if (Vars.get().doingFruitTrees)
-            FarmingUtils.populateFruitTreePatches();
-
-        else if (Vars.get().doingAllotments)
-            FarmingUtils.populateAllotmentPatches();
-
-        else
-            FarmingUtils.populatePatchesToVisit();
 
     }
 }

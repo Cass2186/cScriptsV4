@@ -3,8 +3,6 @@ package scripts.Data.Enums;
 import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
-import org.tribot.script.sdk.Waiting;
-import org.tribot.script.sdk.types.InventoryItem;
 import scripts.Data.SkillTasks;
 import scripts.ItemID;
 import scripts.Requirements.ItemReq;
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public enum SMITH_ITEMS {
+public enum SmithItems {
 
 
 
@@ -71,7 +69,7 @@ public enum SMITH_ITEMS {
     }
 
 
-    SMITH_ITEMS(String itemName, int numBars, int barId, int interfaceChild , int minLevel, int maxLevel) {
+    SmithItems(String itemName, int numBars, int barId, int interfaceChild , int minLevel, int maxLevel) {
         this.itemName = itemName;
         this.numBars = numBars;
         this.barId = barId;
@@ -109,8 +107,8 @@ public enum SMITH_ITEMS {
         return (int) (xpTillMax / this.getXpFromBarId()) + 14;
     }
 
-    public static Optional<SMITH_ITEMS> getCurrentItem() {
-        for (SMITH_ITEMS i : values()) {
+    public static Optional<SmithItems> getCurrentItem() {
+        for (SmithItems i : values()) {
             if (Skills.getActualLevel(skill) < i.maxLevel) {
                 return Optional.of(i);
             }

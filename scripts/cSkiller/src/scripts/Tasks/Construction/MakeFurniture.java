@@ -12,6 +12,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import scripts.*;
@@ -132,12 +133,11 @@ public class MakeFurniture implements Task {
     }
 
     public void buildFurniture(FURNITURE furniture) {
-
         // extremely short wait in case we are still animating,
         // but briefly went -1 on the previous itteration
         if (Waiting.waitUntil(120,()-> MyPlayer.getAnimation() != -1)){
             Log.debug("Still animating, waiting");
-            Waiting.waitUntil(1500,()-> MyPlayer.getAnimation() == -1);
+            Waiting.waitUntil(1800,()-> MyPlayer.getAnimation() == -1);
             return;
         }
         RSObject[] furnitureObject =
@@ -147,7 +147,7 @@ public class MakeFurniture implements Task {
                 org.tribot.api2007.Objects.findNearest(30, furniture.getSpaceId());
 
         if (furnitureObject.length > 0){
-            Log.debug("Removing furniture");
+          //  Log.info("Removing furniture");
             removeFurniture(furniture.getObjectName());
         }
 
@@ -210,6 +210,12 @@ public class MakeFurniture implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION)) {
+            Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
+
+            if (currentItem.isPresent())
+                return currentItem.map(c -> Inventory.find(c.getPlankId()).length >=
+                        c.getPlankNum()).orElse(false);
+
             if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
                 return Inventory.find(FURNITURE.CRUDE_CHAIR.getPlankId()).length >= FURNITURE.CRUDE_CHAIR.getPlankNum();
 
@@ -232,8 +238,12 @@ public class MakeFurniture implements Task {
     @Override
     public void execute() {
         enterHouse();
+        Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
 
-        if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
+        if (currentItem.isPresent())
+            currentItem.ifPresent(c -> buildFurniture(c));
+
+       else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
             buildFurniture(FURNITURE.CRUDE_CHAIR);
 
         } else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.BOOKCASE.getReqLevl()) {

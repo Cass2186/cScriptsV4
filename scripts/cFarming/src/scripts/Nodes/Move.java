@@ -330,7 +330,7 @@ public class Move implements Task {
                 /**
                  * ALLOTMENTS
                  */
-            } else if (Vars.get().doingFruitTrees && ptch != null) {
+            } else if (Vars.get().doingFruitTrees) {
                 if (ptch.getPatchIds().get(0) == Const.STRONGHOLD_FRUIT_TREE_ID) {
                     Vars.get().status = "Going to Stronghold fruit Tree Patch";
                     PathingUtil.walkToArea(Areas.STRONGHOLD_FRUIT_TREE_AREA);

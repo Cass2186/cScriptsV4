@@ -100,6 +100,10 @@ public class Paint {
                         .value(() -> Vars.get().usingSuperCombat)
                         .condition(() -> Vars.get().showDetailedPaint)
                         .build())
+                .row(template.toBuilder().label("Using Locator Orb")
+                        .value(() -> Vars.get().usingLocatorOrb)
+                        .condition(() -> Vars.get().showDetailedPaint)
+                        .build())
                 .row(template.toBuilder().label("Eat Rockcake at")
                         .value(() -> Vars.get().eatRockCakeAt)
                         .condition(() -> Vars.get().showDetailedPaint &&

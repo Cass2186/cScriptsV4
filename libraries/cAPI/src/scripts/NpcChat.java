@@ -2,19 +2,26 @@ package scripts;
 
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
+import dax.walker_engine.WaitFor;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import dax.walker_engine.local_pathfinding.Reachable;
+import org.tribot.api.General;
+import org.tribot.api.input.Keyboard;
+import org.tribot.api2007.Game;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
 import org.tribot.api2007.Player;
+import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class NpcChat extends NPCChat {
@@ -30,6 +37,72 @@ public class NpcChat extends NPCChat {
         return talkToNPC(npc, "Talk-to");
     }
 
+    public static void handleChat(List<String> options) {
+        Log.info("Handling... " + List.of(options));
+        List<String> blackList = new ArrayList();
+        int limit = 0;
+        ChatScreen.setConfig(ChatScreen.Config.builder()
+                .holdSpaceForContinue(true)
+                .useKeysForOptions(true)
+                .build());
+        while (limit++ < 50) {
+            if (WaitFor.condition(General.random(650, 800), () -> {
+                return ChatScreen.isOpen() ? WaitFor.Return.SUCCESS : WaitFor.Return.IGNORE;
+            }) != WaitFor.Return.SUCCESS) {
+                Log.info("Conversation window not up.");
+                break;
+            }
+
+            if (ChatScreen.isClickContinueOpen()) {
+                ChatScreen.clickContinue();
+                limit = 0;
+            } else {
+                List<String> selectableOptions = ChatScreen.getOptions();
+                //List<RSInterface> selectableOptions = getAllOptions(options);
+                if (selectableOptions != null && selectableOptions.size() != 0) {
+                    Iterator var4 = selectableOptions.iterator();
+
+                    while (var4.hasNext()) {
+                        String selected = (String) var4.next();
+                        if (!blackList.contains(selected)) {
+                            General.sleep(General.randomSD(150, 1500,
+                                    425, 130));
+                            Log.info("Replying with option: " + selected);
+                            blackList.add(selected);
+                            ChatScreen.selectOption(selected);
+                            waitForNextOption();
+                            limit = 0;
+                            break;
+                        }
+                    }
+
+                    General.sleep(20, 40);
+                } else {
+                    Waiting.wait(150);
+                }
+            }
+        }
+
+        if (limit > 50) {
+            Log.warn("Reached conversation limit.");
+        }
+
+    }
+
+    private static void waitForNextOption() {
+        Optional<String> message = ChatScreen.getMessage();
+        if (message.isPresent()) {
+            Waiting.waitUntil(5000, 50, () ->
+                    ChatScreen.getMessage().map(m -> !m.equals(message.get())).orElse(false));
+        } else { //assumes we were currently on an option page
+            Waiting.waitUntil(5000, 50, () -> ChatScreen.isClickContinueOpen());
+        }
+    }
+
+    public static boolean waitForChatScreen() {
+        int timeout = Game.isRunOn() ? 8000 : 13000;
+        return Waiting.waitUntil(timeout, 325, () -> ChatScreen.isOpen());
+    }
 
     /**
      * MAIN METHOD

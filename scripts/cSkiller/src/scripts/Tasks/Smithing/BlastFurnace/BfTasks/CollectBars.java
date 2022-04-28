@@ -10,6 +10,7 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Waiting;
 import scripts.*;
 import scripts.API.Priority;
@@ -101,11 +102,10 @@ public class CollectBars implements Task {
                 Keyboard.pressKeys(KeyEvent.VK_SPACE);
                 Timer.waitCondition(() -> Inventory.find(Filters.Items.nameContains("bar")).length > 5,
                         3500, 5000);
-                Keyboard.pressKeys(KeyEvent.VK_SPACE);
+               // Keyboard.pressKeys(KeyEvent.VK_SPACE);
                 //wait to see if this influences recognizing the chat upon leveling
-                Utils.continuingChat();
-                if (NPCInteraction.isConversationWindowUp())
-                    NPCInteraction.handleConversation();
+                if (ChatScreen.isOpen())
+                    ChatScreen.handle();
 
                 break;
             }

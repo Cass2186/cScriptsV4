@@ -239,13 +239,10 @@ public class Exchange {
                 for (int iter = 0; iter < 3; iter++) {
                     if (compItemWidget.map(widg -> widg.toWidgetItem().map(it -> it.getId() ==
                             item.getItemID()).orElse(false)).orElse(false) &&
-                            scrollToAndSelect(compItemInterWidget)) {
+                            scrollToAndSelect(compItemInterWidget, item.getItemID())) {
                         Log.info("Used new itemSelection method");
-                        if (Waiting.waitUntil(3500, 50, () ->
-                                Query.widgets().inIndexPath(465, 25, 21)
-                                        .stream().map(q -> q.toItemDefinition().map(
-                                                        def -> def.getId() == item.getItemID())
-                                                .orElse(false)).findAny().isPresent()))
+                        if (Waiting.waitUntil(3500, 125, () ->
+                                isItemSelected(item.getItemID())))
                             return true;
                     }
                 }
@@ -254,8 +251,37 @@ public class Exchange {
         return false;
     }
 
+    private static boolean isItemSelected(int itemId) {
+        return Query.widgets().inIndexPath(465, 25, 21)
+                .toItemQuery().idEquals(itemId).isAny();
+
+    }
+
+    private static boolean scrollToAndSelect(Optional<Widget> widget, int itemId) {
+        for (int i = 0; i < 5; i++) {
+            if (widget.map(w -> w.scrollTo() && w.click()).orElse(false) &&
+                    Waiting.waitUntil(2500, 225, () ->
+                            isItemSelected(itemId))) {
+                Log.info("[Exchange]: Successfully scrolled");
+                Utils.idlePredictableAction();
+                return true;
+            } else if (widget.map(w -> w.isVisible() && w.click()).orElse(false) &&
+                    Waiting.waitUntil(2500, 225, () ->
+                            isItemSelected(itemId))) {
+                Log.info("[Exchange]: Successfully clicked");
+                Utils.idlePredictableAction();
+                return true;
+            }
+            Waiting.waitUniform(30, 60);
+        }
+        Log.warn("[Exchange]: Failed scroll");
+
+        return false;
+    }
+
+
     private static boolean scrollToAndSelect(Optional<Widget> widget) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             if (widget.map(w -> w.scrollTo() && w.click()).orElse(false)) {
                 Log.debug("[Exchange]: Successfully scrolled");
                 Waiting.waitNormal(400, 60);
@@ -265,7 +291,7 @@ public class Exchange {
                 Waiting.waitNormal(400, 60);
                 return true;
             }
-            Waiting.waitNormal(50, 20);
+            Waiting.waitNormal(60, 20);
         }
         Log.debug("[Exchange]: Failed scroll");
 

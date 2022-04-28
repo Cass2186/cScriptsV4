@@ -3,6 +3,7 @@ package scripts.Data;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import scripts.Data.Enums.Patches;
@@ -159,8 +160,7 @@ public class FarmingUtils {
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
                 && Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 600)
             Vars.get().patchesLeftToVisit.add(Patches.FARMING_GUILD_TREE_PATCH);
-
-        General.println("[Move]: Populating tree patches - Number: " + Vars.get().patchesLeftToVisit.size());
+        Log.info("[FarmUtils]: Populating tree patches - Number: " + Vars.get().patchesLeftToVisit.size());
     }
 
 

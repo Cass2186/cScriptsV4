@@ -9,6 +9,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
@@ -508,7 +509,7 @@ public class MoveToArea implements Task {
         if (!Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile())) {
             General.println("[MoveToArea]: Going to zanaris");
             Utils.equipItem(ItemID.DRAMEN_STAFF);
-            shouldMoveDoubleCheck(Areas.MUTATED_ZYGOMITE_AREA);
+            shouldMoveDoubleCheck();
 
         }
         RSItem[] i = Inventory.find(weapon.getID());
@@ -529,25 +530,19 @@ public class MoveToArea implements Task {
     }
 
 
-    public boolean shouldMoveDoubleCheck(Area area) {
-        List<WorldTile> areaTiles = SlayerVars.get().fightArea.getAllTiles();
-        int lastIndex = areaTiles.size() - 1;
-        if (!clickScreenWalkArea(area)) {
-            if (areWeCloseToArea()) {
-                General.println("[Debug]: We are close to our area, don't need to move with Dax");
-                if (!PathingUtil.localNav(area.getCenter()))
-                    return false;
-                return true;
-            } else if (areaTiles.get(lastIndex).distanceTo(MyPlayer.getTile()) < 25) {
-                General.println("[Debug]: We are close to our area, don't need to move with Dax");
-                if (!PathingUtil.localNav(area.getCenter())) {
-                    return false;
+    public boolean shouldMoveDoubleCheck() {
+        Area area = SlayerVars.get().fightArea;
+        if (area == null)
+            return false;
 
-                } else
-                    return true;
-            }
+        Optional<LocalTile> closest = Query.tiles().inArea(SlayerVars.get().fightArea)
+                .isReachable()
+                .findClosestByPathDistance();
+
+        if (closest.map(t->t.interact("Walk here")).orElse(false)){
+            Log.info("Walking to closest area tile");
+            return Waiting.waitUntil(4500, 100, ()-> area.contains(MyPlayer.getTile()) );
         }
-
         return false;
     }
 
@@ -590,11 +585,14 @@ public class MoveToArea implements Task {
 
     @Override
     public boolean validate() {
-        if (SlayerVars.get().fightArea == null) {
+        SkillTasks task = Vars.get().currentTask;
+        if (task != null &&
+                task.equals(SkillTasks.SLAYER) &&
+                SlayerVars.get().fightArea == null) {
             setFightArea();
         }
-        return Vars.get().currentTask != null &&
-                Vars.get().currentTask.equals(SkillTasks.SLAYER) &&
+        return task != null &&
+                task.equals(SkillTasks.SLAYER) &&
                 SlayerVars.get().fightArea != null &&
                 !SlayerVars.get().shouldBank &&
                 !SlayerVars.get().fightArea.contains(MyPlayer.getTile()) &&
@@ -616,8 +614,12 @@ public class MoveToArea implements Task {
             goToSourhogs();
             return;
         }
-
+        if (SlayerVars.get().fightArea.equals(Areas.ELF_AREA)) {
+            goToElves();
+            return;
+        }
         PathingUtil.walkToArea(SlayerVars.get().fightArea, false);
+        shouldMoveDoubleCheck();
     }
 
     @Override

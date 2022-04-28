@@ -335,7 +335,7 @@ public class WaterfallQuest implements QuestTask {
             getInBarrel.execute();
             Timer.slowWaitCondition(() -> !onLedge.check(), 5000, 7000);
         }
-        if (Player.getPosition().getPlane() == 0) {
+        if (Player.getPosition().getPlane() == 0 && !book.check()) {
             cQuesterV2.status = "Going upstairs, hadley";
             goUpstairsHadley.execute();
         }

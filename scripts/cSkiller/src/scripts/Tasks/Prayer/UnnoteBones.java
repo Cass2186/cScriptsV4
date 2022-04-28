@@ -3,6 +3,8 @@ package scripts.Tasks.Prayer;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Player;
+import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
@@ -23,7 +25,7 @@ public class UnnoteBones implements Task {
     public void leaveHouse() {
         if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
             Timer.waitCondition(() -> !Game.isInInstance() &&
-                            Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),
+                            Query.npcs().nameContains("Phials").isAny(),
                     7000, 9000);
 
         }
@@ -35,19 +37,21 @@ public class UnnoteBones implements Task {
         Optional<Npc> phials = Query.npcs()
                 .nameContains("Phials").stream().findFirst();
 
-        if (phials.map(p -> !p.isVisible()).orElse(false)) {
-            LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
-            Waiting.waitNormal(850, 220);
+        if (phials.map(p -> !p.isVisible() && LocalWalking.walkTo(p.getTile().translate(0, -2))).orElse(false)) {
+            if (Waiting.waitUntil(1500, 450, MyPlayer::isMoving)) {
+                Waiting.waitUntil(2500, 650, () ->
+                        phials.map(p -> p.isVisible()).orElse(false));
+                Utils.idleNormalAction();
+            }
         }
-        if (phials.map(p -> item.map(b -> b.useOn(p)).orElse(false)).orElse(false) &&
-                Timer.waitCondition(Player::isMoving, 1200, 1800)) {
-            Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
+        if (phials.map(p -> item.map(b -> b.useOn(p)).orElse(false)).orElse(false)) {
+            Waiting.waitUntil(4500, 350, ChatScreen::isOpen);
         }
-        if (NPCInteraction.isConversationWindowUp()) {
-            if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All") &&
-                    Timer.waitCondition(() -> Query.inventory().nameContains("bones").isNotNoted().findFirst().isPresent(),
-                            2000, 4000))
-                Utils.idlePredictableAction();
+        if (ChatScreen.isOpen() && ChatScreen.handle("Exchange all") &&
+                Timer.waitCondition(() -> Query.inventory()
+                                .nameContains("bones").isNotNoted().isAny(),
+                        2000, 4000)) {
+            Utils.idlePredictableAction();
         }
     }
 

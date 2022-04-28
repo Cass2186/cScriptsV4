@@ -23,8 +23,10 @@ public class PlaceBones implements Task {
 
     public void placeBones() {
         Optional<InventoryItem> item = Query.inventory().nameContains("bones").isNotNoted().findFirst();
-        Optional<GameObject> altar = Query.gameObjects().nameContains("Altar").actionContains("Pray").
-                stream().findFirst();
+        Optional<GameObject> altar = Query.gameObjects()
+                .nameContains("Altar")
+                .actionContains("Pray")
+                        .findClosest();
 
         if (Player.getAnimation() == -1 && item.isPresent() && altar.isPresent()) {
             Log.info("Placing bones");
@@ -35,7 +37,9 @@ public class PlaceBones implements Task {
                             65000, 75000)) {
                 Utils.sleepAfkOrNormal(Utils.random(70, 85));
 
-            } else if (Utils.useItemOnObject(item.get().getId(), altar.get().getId()) &&
+            } else if (altar.map(a-> item.map(i->i.useOn(a))
+                    .orElse(false)).orElse(false) &&
+              //  if (Utils.useItemOnObject(item.get().getId(), altar.get().getId()) &&
                     Timer.waitCondition(() -> Player.getAnimation() != -1, 4600, 6200)) {
                 Log.info("Idling");
 
@@ -45,8 +49,8 @@ public class PlaceBones implements Task {
 
             }
         } else {
-            General.println("[Debug]: Sleeping 2-5s for altar to load");
-            Waiting.waitNormal(2500, 200);
+            General.println("[Debug]: Sleeping ~3s for altar to load");
+            Waiting.waitNormal(2800, 200);
         }
     }
 

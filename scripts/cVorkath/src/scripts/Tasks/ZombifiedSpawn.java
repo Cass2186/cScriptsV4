@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSProjectile;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.query.Query;
 import scripts.Utils;
 import scripts.VorkUtils.VorkthUtil;
 
@@ -21,7 +22,7 @@ public class ZombifiedSpawn implements Task {
 
 
         if (whiteFlame.length > 0) {
-            Log.log("[Debug]: Spawn pre-attack detected");
+            Log.info("Spawn pre-attack detected");
             // click our tile to stop attacking
             RSTile myTile = Player.getPosition();
             if (myTile.click())
@@ -29,9 +30,10 @@ public class ZombifiedSpawn implements Task {
 
             if (org.tribot.script.sdk.Prayer.isQuickPrayerEnabled())
                 org.tribot.script.sdk.Prayer.disableQuickPrayer();
+
             //wait for spawn projectile
-            VorkthUtil.waitCond(() -> Projectiles.getAll(p ->
-                    p.getGraphicID() == VorkthUtil.SPAWN_PROJECTILE).length > 0, 5000);
+            VorkthUtil.waitCond(() -> Query.projectiles()
+                    .graphicIdEquals(VorkthUtil.SPAWN_PROJECTILE).isAny(), 5000);
 
         }
         RSProjectile[] spawnProjectile = Projectiles.getAll(p ->
@@ -39,17 +41,17 @@ public class ZombifiedSpawn implements Task {
 
         //optionally disable prayer
         if (spawnProjectile.length > 0) {
-            Log.log("[Debug]: Spawn projectile detected");
+            Log.info("Spawn projectile detected");
             RSTile destination = spawnProjectile[0].getDestination();
             // select spell
             if (Magic.selectSpell("Crumble undead")) {
-                Log.log("[Debug]: Selected Spell, waiting for spawn");
+                Log.info("Selected Spell, waiting for spawn");
                 VorkthUtil.waitCond(() -> NPCs.findNearest(VorkthUtil.ZOMBIFIED_SPAWN).length > 0, destination, 5000);
             }
 
             RSNPC[] spawn = NPCs.findNearest(VorkthUtil.ZOMBIFIED_SPAWN);
             if (spawn.length > 0 && Utils.clickNPC(spawn[0], "Cast", true)) {
-                Log.log("[Debug]: Clicked Spawn");
+                Log.info("Clicked Spawn");
 
 
                 if (VorkthUtil.waitCond(() -> spawn[0].getHealthPercent() == 0 ||
@@ -79,8 +81,8 @@ public class ZombifiedSpawn implements Task {
 
     @Override
     public boolean validate() {
-        return Projectiles.getAll(p ->
-                p.getGraphicID() == VorkthUtil.WHITE_SPAWN_FLAME).length > 0 ||
+        return Query.projectiles()
+                .graphicIdEquals(VorkthUtil.WHITE_SPAWN_FLAME).isAny() ||
                 NPCs.findNearest(VorkthUtil.ZOMBIFIED_SPAWN).length > 0;
     }
 

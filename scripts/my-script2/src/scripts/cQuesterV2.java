@@ -64,6 +64,7 @@ import scripts.QuestPackages.KnightsSword.KnightsSword;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.ArceuusLibrary;
 import scripts.QuestPackages.KourendFavour.ArceuusLibrary.State;
 import scripts.QuestPackages.KourendFavour.MakeCompost;
+import scripts.QuestPackages.KourendFavour.Piscarlilius.PiscarililusFavour;
 import scripts.QuestPackages.LegendsQuest.LegendsQuest;
 import scripts.QuestPackages.LostCity.LostCity;
 import scripts.QuestPackages.LostTribe.LostTribe;
@@ -79,6 +80,7 @@ import scripts.QuestPackages.OneSmallFavour.OneSmallFavour;
 import scripts.QuestPackages.PlagueCity.PlagueCity;
 import scripts.QuestPackages.PriestInPeril.PriestInPeril;
 import scripts.QuestPackages.PrinceAliRescue.PrinceAliRescue;
+import scripts.QuestPackages.QueenOfThieves.QueenOfThieves;
 import scripts.QuestPackages.RestlessGhost.RestlessGhost;
 import scripts.QuestPackages.RfdCook.RfdCook;
 import scripts.QuestPackages.RfdEvilDave.RfdEvilDave;
@@ -92,6 +94,7 @@ import scripts.QuestPackages.RuneMysteries.RuneMysteries;
 import scripts.QuestPackages.SeaSlug.SeaSlug;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
 import scripts.QuestPackages.SheepShearer.SheepShearer;
+import scripts.QuestPackages.ShiloVillage.ShilloVillage;
 import scripts.QuestPackages.TearsOfGuthix.TearsOfGuthix;
 import scripts.QuestPackages.TempleOfIkov.TempleOfIkov;
 import scripts.QuestPackages.TheFeud.TheFeud;
@@ -206,7 +209,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             General.sleep(50);
             QuestTask task = tasks.getValidTask();
             if (cQuesterV2.taskList.size() == 0) {
-                Log.debug("[Debug]: Finished all quests");
+                Log.info("Finished all quests");
                 break;
             }
             if (DeathsOffice.shouldHandleDeath()) {
@@ -217,13 +220,13 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                 Vars.get().questName = task.questName();
                 task.execute();
             } else {
-                Log.debug("[Debug]: Task is null");
+                Log.warn("Task is null");
             }
             if (taskList.isEmpty())
                 break;
             else {
-                Log.debug("[Debug]: Task list size is: " + taskList.size());
-                Log.debug("[Debug]: Task Quest is: " + taskList.get(0).questName());
+                Log.info("Task list size is: " + taskList.size());
+                Log.info("Task Quest is: " + taskList.get(0).questName());
             }
 
         }
@@ -369,6 +372,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             taskList.addAll(Arrays.asList(HeroesQuestBlackArmsGang.get()));
         } else if (arg.toLowerCase().contains("lunardiplomacy")) {
             General.println("[Args]: Added Lunar Diplomacy");
+            taskList.add(LunarDiplomacy.get());
             taskList.addAll(Arrays.asList(new ChanceChallenge(),
                     new MemoryChallenge(),
                     new MimicChallenge(),
@@ -380,6 +384,14 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         } else if (arg.toLowerCase().contains("pheonix")) {
             General.println("[Args]: Added Shield of Arav Pheonix Gang");
             taskList.addAll(Arrays.asList(PheonixGang.get()));
+        }
+        if (arg.toLowerCase().contains("piscfavour")) {
+            General.println("[Args]: Added Piscarilius Favour");
+            taskList.addAll(List.of(PiscarililusFavour.get()));
+        }
+        if (arg.toLowerCase().contains("queenofthieves")) {
+            General.println("[Args]: Added Queen Of Thieves");
+            taskList.addAll(List.of(QueenOfThieves.get()));
         }
         if (arg.toLowerCase().contains("blackarm")) {
             General.println("[Args]: Added Shield of Arav Black arms Gang");
@@ -681,6 +693,9 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         } else if (arg.toLowerCase().contains("sheepshearer")) {
             General.println("[Args]: Added Sheep Shearer");
             taskList.add(SheepShearer.get());
+        }else if (arg.toLowerCase().contains("shilovillage")) {
+            General.println("[Args]: Added Shilo Village ");
+            taskList.add(ShilloVillage.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

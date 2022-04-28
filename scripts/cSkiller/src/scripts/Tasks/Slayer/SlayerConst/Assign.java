@@ -2,6 +2,7 @@ package scripts.Tasks.Slayer.SlayerConst;
 
 import lombok.Getter;
 import org.tribot.api.General;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.types.Area;
@@ -85,6 +86,8 @@ public enum Assign {
     BLACK_DEMON(new Builder()
             .inArea(Areas.BLACK_DEMON_AREA)
             .nameContains("Black demon")
+            .useHopTile(Areas.BLACK_DEMON_HOP_TILE)
+            .setHopPlayerThreshold(3)
             .usePrayerType(PrayerType.MELEE)
             .useGearType(GearType.MELEE)),
 
@@ -101,6 +104,7 @@ public enum Assign {
             .useCannonTile(Areas.BLUE_DRAGON_CANNON_TILE)
             .nameContains("Baby blue dragon")
             .useSpecialItem(true)
+            .setHopPlayerThreshold(3)
             .specialItemID(ItemID.ANTIDRAGON_SHIELD)
             .useGearType(GearType.MELEE)),
 
@@ -122,6 +126,7 @@ public enum Assign {
     CRAWLING_HAND(new Builder()
             .inArea(Areas.CRAWLING_HANDS_AREA)
             .nameContains("Crawling hand")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     CAVE_SLIME(new Builder()
@@ -141,6 +146,7 @@ public enum Assign {
     COCKATRICE(new Builder()
             .inArea(Areas.COCKATRICE_AREA)
             .useSpecialItem(true)
+            .setHopPlayerThreshold(2)
             .specialItemID(ItemID.MIRROR_SHIELD)
             .nameContains("Cockatrice")
             .useGearType(GearType.MELEE)),
@@ -148,6 +154,7 @@ public enum Assign {
     COW(new Builder()
             .inArea(Areas.COW_AREA)
             .nameContains("Cow")
+            .setHopPlayerThreshold(4)
             .useGearType(GearType.MELEE)),
 
 
@@ -191,6 +198,7 @@ public enum Assign {
             .nameContains("Elves")
             .nameContains("Iorwerth Archer")
             .nameContains("Iorwerth Warrior")
+            .setHopPlayerThreshold(2)
             .useGearType(GearType.MELEE)),
 
     FIRE_GIANT(new Builder()
@@ -206,6 +214,7 @@ public enum Assign {
             .useSpecialItem(true)
             .specialItemID(ItemID.ROCK_HAMMER)
             .nameContains("Gargoyle")
+            .setHopPlayerThreshold(4)
             .useGearType(GearType.MELEE)),
 
     GREATER_DEMON(new Builder()
@@ -235,6 +244,7 @@ public enum Assign {
     GOBLIN(new Builder()
             .inArea(Areas.GOBLIN_AREA)
             .nameContains("Goblin")
+            .setHopPlayerThreshold(3)
             .nameNotContains("Hobgoblin")
             .useGearType(GearType.MELEE)),
 
@@ -247,6 +257,7 @@ public enum Assign {
             .inArea(Areas.HARPIE_BUG_SWARM_AREA)
             .nameContains("Harpie Bug Swarm")
             .useSpecialItem(true)
+            .setHopPlayerThreshold(2)
             .specialItemID(ItemID.LIT_BUG_LANTERN)
             .useGearType(GearType.MELEE)),
 
@@ -260,11 +271,13 @@ public enum Assign {
     HILL_GIANT(new Builder()
             .inArea(Areas.HILL_GIANT_AREA)
             .nameContains("Hill giant")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     ICE_WARRIOR(new Builder()
             .inArea(Areas.ICE_WARRIOR_AREA)
             .nameContains("Ice warrior")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     ICE_GIANT(new Builder()
@@ -281,6 +294,7 @@ public enum Assign {
             .inArea(Areas.JELLY_AREA)
             .nameContains("Jellie")
             .nameContains("Jelly")
+            .setHopPlayerThreshold(2)
             .useGearType(GearType.MELEE)),
 
 
@@ -291,13 +305,15 @@ public enum Assign {
 
     KALPHITE(new Builder()
             .inArea(Areas.KALPHITE_AREA)
+            .setHopPlayerThreshold(2)
            // .usingCannon(true)
             //.useCannonTile(Areas.KALPHITE_CANNON_TILE)
-            .nameContains("Kalphite Worker") //TODO CHECK
+            .nameContains("Kalphite Worker")
             .useGearType(GearType.MELEE)),
 
     KURASK(new Builder()
             .inArea(Areas.KURASK_AREA)
+            .setHopPlayerThreshold(3)
             .nameContains("Kurask")
             .useGearType(GearType.MELEE)),
 
@@ -327,6 +343,7 @@ public enum Assign {
             .nameContains("Shade")
             .nameContains("Loar Shade")
             .nameContains("Loar Shadow")
+            .setHopPlayerThreshold(2)
             .useGearType(GearType.MELEE)),
 
     MONKEY(new Builder()
@@ -338,6 +355,7 @@ public enum Assign {
     MOSS_GIANT(new Builder()
             .inArea(Areas.MOSS_GIANT_AREA)
             .nameContains("Moss giant")
+            .setHopPlayerThreshold(2)
             .useGearType(GearType.MELEE)),
 
     MOSS_GIANT_FISHING_GUILD(new Builder()
@@ -367,11 +385,13 @@ public enum Assign {
             .inArea(Areas.OTHERWORLDLY_BEING_AREA)
             .nameContains("Otherworldly being")
             .specialItemID(ItemID.DRAMEN_STAFF)
+            .setHopPlayerThreshold(2)
             .useGearType(GearType.MELEE)),
 
     NECHRYAEL(new Builder()
             //  .inArea(Areas.) //TODO Add this area
             .nameContains("Nechryael")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     RATS(new Builder()
@@ -394,6 +414,7 @@ public enum Assign {
             .inArea(Areas.ROCKSLUG_AREA)
             .nameContains("Rockslug")
             .useSpecialItem(true)
+            .setHopPlayerThreshold(2)
             .specialItemID(ItemID.BAG_OF_SALT)
             .useGearType(GearType.MELEE)),
 
@@ -414,6 +435,7 @@ public enum Assign {
     SCORPIONS(new Builder()
             .inArea(Areas.SCORPION_AREA)
             .nameContains("Scorpion")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     SKELETONS(new Builder()
@@ -429,6 +451,7 @@ public enum Assign {
     SPIDERS(new Builder()
             .inArea(Areas.SPIDER_AREA)
             .nameContains("Spider")
+            .setHopPlayerThreshold(3)
             .nameContains("Giant spider")
             .useGearType(GearType.MELEE)),
 
@@ -443,7 +466,7 @@ public enum Assign {
             .useGearType(GearType.MELEE)),
 
     STEEL_DRAGON(new Builder()
-            //  .inArea(Areas.)
+            //  .inArea(Areas.) //TODO add area
             .nameContains("Steel dragon")
             .useGearType(GearType.MAGIC)),
 
@@ -459,6 +482,8 @@ public enum Assign {
             .nameContains("Guard dog") // need this to identify task from name
             .nameContains("Jackal")
             .useGearType(GearType.MELEE)),
+
+
     WOLVES(new Builder()
             .inArea(Areas.WOLF_AREA)
             .nameContains("Wolves") // need this to identify task from name
@@ -474,25 +499,33 @@ public enum Assign {
     TROLL(new Builder()
             .inArea(Areas.TROLL_AREA)
             .nameContains("Mountain troll")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     TUROTH(new Builder()
             .inArea(Areas.TUROTH_AREA)
-            .nameContains("Turoth") //TODO CHECK
+            .nameContains("Turoth")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
+
     ORGRE(new Builder()
             .inArea(Areas.OGRE_AREA)
             .nameContains("Ogre")
             .useGearType(GearType.MELEE)),
+
     PYREFIEND(new Builder()
             .inArea(Areas.PYREFIEND_AREA)
             .nameContains("Pyrefiend")
+            .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 
     WYRM(new Builder()
             .inArea(Areas.WYRM_AREA)
             .nameContains("Wyrm") //TODO CHECK
+            .setHopPlayerThreshold(3)
+            .useHopTile(Areas.WYRM_HOP_TILE)
             .useGearType(GearType.MELEE)),
+
     ZOMBIE(new Builder()
             .inArea(Areas.ZOMBIE_AREA)
             .nameContains("Zombie")
@@ -533,7 +566,10 @@ public enum Assign {
     private GearType gearType = GearType.MELEE;
 
     @Getter
-    private WorldTile hopTile;
+    private WorldTile hopTile = MyPlayer.getTile();
+
+    @Getter
+    private int hopPlayerThreshold = 1;
 
     private Assign(Builder builder) {
         this.area = builder.area;
@@ -548,6 +584,7 @@ public enum Assign {
         this.hopTile = builder.hopTile;
         this.customGearList = builder.customGearList;
         this.nameNotContainsList = builder.nameNotContainsList;
+        this.hopPlayerThreshold = builder.hopPlayerThreshold;
     }
 
 
@@ -562,9 +599,10 @@ public enum Assign {
         private int specialItemID;
         private int[] specialItemArray = {-1};
         public List<String> specialItemsList;
+        private int hopPlayerThreshold = 1;
 
         private GearType gearType;
-        private WorldTile hopTile;
+        private WorldTile hopTile = MyPlayer.getTile();
         private List<Integer> customGearList;
 
         public Builder inArea(Area area) {
@@ -630,7 +668,10 @@ public enum Assign {
             this.hopTile = tile;
             return this;
         }
-
+        public Builder setHopPlayerThreshold(int players) {
+            this.hopPlayerThreshold = players;
+            return this;
+        }
         public Builder useGearType(GearType gearType) {
             this.gearType = gearType;
             return this;

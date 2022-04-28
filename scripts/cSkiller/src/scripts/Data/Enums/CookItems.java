@@ -3,6 +3,7 @@ package scripts.Data.Enums;
 import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.Log;
 import scripts.Data.SkillTasks;
 import scripts.ItemID;
 import scripts.Requirements.ItemReq;
@@ -41,11 +42,11 @@ public enum CookItems {
             return 0;
 
         int xpLeft = Skills.getXPToLevel(Skills.SKILLS.COOKING, this.maxLevel);
-        General.println("[CookItem]: We have " + xpLeft + "xp left to get to the end level of " + this.maxLevel);
+        Log.info("[CookItem]: We have " + xpLeft + "xp left to get to the end level of " + this.maxLevel);
         int successfulCooks = xpLeft / this.xpPer + 1;
 
-        int withBurns = (int) (successfulCooks * 1.40) + 5;
-        General.println("[CookItem]: We need to buy " + withBurns + " raw food to get to the end level of " + this.maxLevel);
+        int withBurns = (int) (successfulCooks * 1.45) + 14;
+        Log.info("[CookItem]: We need to buy " + withBurns + " raw food to get to the end level of " + this.maxLevel);
         return withBurns;
     }
 
@@ -54,7 +55,7 @@ public enum CookItems {
         for (CookItems b : values()) {
             if (b.maxLevel > lvl && b.minLevel <= lvl){
 
-               // General.println("[CookItems]: Raw food id is: " + b.getId());
+               // Log.info();("[CookItems]: Raw food id is: " + b.getId());
                 return b.getId();
             }
         }
@@ -72,7 +73,7 @@ public enum CookItems {
             }
 
         }
-        General.println("[CookItems]: getRequiredRawFood ListSize is " + i.size());
+        Log.info("[CookItems]: getRequiredRawFood ListSize is " + i.size());
         return i;
     }
 }

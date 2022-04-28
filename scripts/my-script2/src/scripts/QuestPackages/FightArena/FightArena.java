@@ -6,15 +6,16 @@ import dax.walker_engine.WalkerEngine;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Options;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -463,7 +464,9 @@ public class FightArena implements QuestTask {
                     .nameContains(NPCName)
                     .inArea(FIGHT_AREA)
                     .getResults();
-
+            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)){
+                Autocast.enableAutocast(Autocast.FIRE_STRIKE);
+            }
             if (npc.length == 0) {
                 // there's no npc in the fight area, talk to the kid to initiate the cut scene
                 // usually only happens on bouncer
@@ -494,7 +497,9 @@ public class FightArena implements QuestTask {
 
             while (NPC.length > 0 && FIGHT_AREA.contains(NPC[0].getPosition())) {
                 General.sleep(50);
-
+                if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)){
+                    Autocast.enableAutocast(Autocast.FIRE_STRIKE);
+                }
                 if (!NPC[0].isInCombat()) {
                     General.println("Attacking");
                     Utils.shortSleep();
@@ -594,6 +599,9 @@ public class FightArena implements QuestTask {
         }
 
         if (COMBAT_AREA.contains(Player.getPosition())) {
+            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)){
+                Autocast.enableAutocast(Autocast.FIRE_STRIKE);
+            }
             cQuesterV2.status = "Killing Bouncer";
             General.println("[Debug]: " + cQuesterV2.status);
             if (NPCInteraction.isConversationWindowUp())
@@ -601,7 +609,10 @@ public class FightArena implements QuestTask {
             //General.sleep(2500, 4000);
             if (!Player.getPosition().equals(safeTile))
                 Walking.blindWalkTo(safeTile);
-            Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 8000);
+            if (Skill.PRAYER.getActualLevel() >= 43 && Prayer.getPrayerPoints() >0){
+                Prayer.enableAll(Prayer.PROTECT_FROM_MELEE);
+            }
+            Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 4000);
         }
         killNPC("Bouncer");
     }

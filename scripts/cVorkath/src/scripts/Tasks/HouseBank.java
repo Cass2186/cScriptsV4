@@ -5,8 +5,12 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.BankTaskError;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.BankManager;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -59,7 +63,7 @@ public class HouseBank implements Task {
                     .actionsContains("Pray")
                     .getFirstResult());
             return altar.map(a -> {
-                return Utils.clickObj(a.getID(),"Pray") &&
+                return Utils.clickObj(a.getID(), "Pray") &&
                         Timer.waitCondition(() -> Prayer.getPrayerPoints() ==
                                 Skills.getActualLevel(Skills.SKILLS.PRAYER), 8000, 10000);
             }).orElse(false);
@@ -69,16 +73,15 @@ public class HouseBank implements Task {
     }
 
     public boolean leaveViaPortal() {
-        Optional<RSObject> p = Optional.ofNullable(Entities.find(ObjectEntity::new)
+        Optional<GameObject> p = Query.gameObjects().actionContains("Enter")
                 .nameContains("Lunar Isle Portal")
-                .actionsContains("Enter")
-                .getFirstResult());
+                .findBestInteractable();
 
-        return p.map(port -> {
-            return Utils.clickObj(port.getID(), "Enter") &&
-                    Timer.waitCondition(() -> VorkthUtil.LUNAR_ISLE_AREA.contains(Player.getPosition()),
-                            8000, 10000);
-        }).orElse(false);
+        return p.map(port -> port.interact("Enter") &&
+                Timer.waitCondition(() ->
+                                VorkthUtil.LUNAR_ISLE_AREA.contains(Player.getPosition()),
+                        8000, 10000)
+        ).orElse(false);
 
     }
 
@@ -113,7 +116,10 @@ public class HouseBank implements Task {
         BankManager.close(true);
         if (booth != null && Utils.clickObject(booth, "Bank")) {
             NPCInteraction.waitForConversationWindow();
+            WorldTile t = MyPlayer.getTile();
             NPCInteraction.handleConversation();
+            Waiting.waitUntil(3000, 300,
+                    () -> !MyPlayer.getTile().equals(t));
         }
     }
 

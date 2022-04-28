@@ -20,6 +20,7 @@ import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
+import scripts.Requirements.Util.Operation;
 import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
@@ -44,7 +45,7 @@ public class RaceChallenge implements QuestTask {
     }
 
     VarbitRequirement startedRaceChallenge = new VarbitRequirement(2424, 1);
-
+    VarbitRequirement finishedRace = new VarbitRequirement(2409, 1,Operation.GREATER_EQUAL);
 
     NPCStep startRace = new NPCStep(NpcID.ETHEREAL_EXPERT, Player.getPosition(),
             new String[]{"Ok."});
@@ -114,7 +115,10 @@ public class RaceChallenge implements QuestTask {
     @Override
     public boolean validate() {
         RSNPC[] mimic = NPCs.findNearest(NpcID.ETHEREAL_EXPERT);
-        return Game.isInInstance() && mimic.length > 0;//&& PathingUtil.canReach(mimic[0].getPosition());
+
+        return Game.isInInstance() &&
+                !finishedRace.check() &&
+                Query.npcs().idEquals(NpcID.ETHEREAL_EXPERT).isReachable().isAny();//&& PathingUtil.canReach(mimic[0].getPosition());
     }
 
     @Override

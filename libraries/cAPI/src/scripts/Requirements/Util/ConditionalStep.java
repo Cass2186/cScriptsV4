@@ -69,7 +69,7 @@ public class ConditionalStep extends QuestStep {
 
     }
 
-    public Collection<Requirement> getConditions(){
+    public Collection<Requirement> getConditions() {
         return steps.keySet();
     }
 
@@ -87,35 +87,27 @@ public class ConditionalStep extends QuestStep {
         startUpStep(steps.get(null));
     }*/
 
-    protected void updateSteps()
-    {
+    protected void updateSteps() {
         Requirement lastPossibleCondition = null;
 
-        for (Requirement conditions : steps.keySet())
-        {
+        for (Requirement conditions : steps.keySet()) {
+            if (steps.get(conditions) == null)
+                continue;
             boolean stepIsLocked = steps.get(conditions).isLocked();
-            if (conditions != null && conditions.check() && !stepIsLocked)
-            {
+            if (conditions != null && conditions.check() && !stepIsLocked) {
                 startUpStep(steps.get(conditions));
                 return;
-            }
-            else if (steps.get(conditions).isBlocker() && stepIsLocked)
-            {
+            } else if (steps.get(conditions).isBlocker() && stepIsLocked) {
                 startUpStep(steps.get(lastPossibleCondition));
                 return;
-            }
-            else if (conditions != null && !stepIsLocked)
-            {
+            } else if (conditions != null && !stepIsLocked) {
                 lastPossibleCondition = conditions;
             }
         }
 
-        if (!steps.get(null).isLocked())
-        {
+        if (!steps.get(null).isLocked()) {
             startUpStep(steps.get(null));
-        }
-        else
-        {
+        } else {
             startUpStep(steps.get(lastPossibleCondition));
         }
     }
@@ -161,18 +153,18 @@ public class ConditionalStep extends QuestStep {
 
     @Override
     public void addDialogStep(String... dialog) {
-        Log.error("Attempting to add Dialog step to Requirements.Util.ConditionalStep. This method isn't defined" );
+        Log.error("Attempting to add Dialog step to Requirements.Util.ConditionalStep. This method isn't defined");
 
     }
 
     @Override
     public void addSubSteps(QuestStep... substep) {
-        Log.error("Attempting to add substeps to Requirements.Util.ConditionalStep. This method isn't defined" );
+        Log.error("Attempting to add substeps to Requirements.Util.ConditionalStep. This method isn't defined");
     }
 
     @Override
     public void addSubSteps(Collection<QuestStep> substeps) {
-        Log.error("Attempting to add substeps to Requirements.Util.ConditionalStep. This method isn't defined" );
+        Log.error("Attempting to add substeps to Requirements.Util.ConditionalStep. This method isn't defined");
 
     }
 

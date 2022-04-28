@@ -9,6 +9,7 @@ import scripts.Timer;
 import scripts.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class Vars {
         return Utils.addCommaToNum(getProfit()) + " | " + Utils.addCommaToNum(getProfitHr()) + "/hr";
     }
 
-    public List<String> houseBlackListNames = new ArrayList<>();
+    public List<String> houseBlackListNames = new ArrayList<>(Arrays.asList("V 3"));
 
     /**
      * Integers

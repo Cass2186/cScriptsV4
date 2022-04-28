@@ -6,6 +6,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
@@ -37,7 +38,7 @@ public class UnnotePlanks implements Task {
     public static void unnotePlanks(int plankId) {
         Optional<InventoryItem> item = Query.inventory()
                 .nameContains("plank")
-                .idEquals(plankId+1)
+                .idEquals(plankId + 1)
                 .isNoted()
                 .findFirst();
         Optional<Npc> phials = Query.npcs().nameContains("Phials").stream().findFirst();
@@ -84,8 +85,13 @@ public class UnnotePlanks implements Task {
             Optional<InventoryItem> item = Query.inventory().nameContains("plank").isNoted().findFirst();
             if (item.isEmpty())
                 return false;
+            Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
 
-            if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
+            if (currentItem.isPresent())
+            return currentItem.map(c -> Inventory.find(c.getPlankId()).length <
+                    c.getPlankNum()).orElse(false);
+
+             if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
                 return Inventory.find(FURNITURE.CRUDE_CHAIR.getPlankId()).length < FURNITURE.CRUDE_CHAIR.getPlankNum();
 
             } else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.BOOKCASE.getReqLevl()) {
@@ -111,7 +117,7 @@ public class UnnotePlanks implements Task {
             PathingUtil.walkToArea(Construction.RIMMINGTON);
         }
         Optional<FURNITURE> furn = FURNITURE.getCurrentItem();
-        furn.ifPresent(f ->unnotePlanks(f.getPlankId()));
+        furn.ifPresent(f -> unnotePlanks(f.getPlankId()));
     }
 
     @Override

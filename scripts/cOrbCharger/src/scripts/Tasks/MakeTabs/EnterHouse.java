@@ -55,7 +55,7 @@ public class EnterHouse implements Task {
     private boolean clickAdvertisement() {
         if (!Widgets.isVisible(Const.HOUSE_AD_WIDGET_PARENT)) {
             Log.debug("[Debug]: Opening host advertisements");
-            if (OUTSIDE_RIMMINGTON_PORTAL.distanceTo(MyPlayer.getPosition()) > 20)
+            if (OUTSIDE_RIMMINGTON_PORTAL.distanceTo(MyPlayer.getTile()) > 20)
                 PathingUtil.walkToTile(OUTSIDE_RIMMINGTON_PORTAL);
 
 
@@ -88,14 +88,15 @@ public class EnterHouse implements Task {
 
             Log.debug("Entering host");
             for (Widget w : button) {
-
                 Optional<String> name = getHostNameFromButtonWidget(w);
-                if (name.isPresent() && Vars.get().houseBlackListNames.contains(name.get())) {
-                    Log.debug("Blacklisted host detected, continuing");
+                name.ifPresent(n-> Log.info("name is " + n));
+                if (name.map(n->Vars.get().houseBlackListNames.contains(n)).orElse(false)){
+                    Log.warn("Blacklisted host detected, continuing");
                     continue;
                 }
 
-                if (w.click("Enter House") && Timer.waitCondition(GameState::isInInstance, 3000, 4500)) {
+                if (w.click("Enter House") &&
+                        Timer.waitCondition(GameState::isInInstance, 3000, 4500)) {
                     name.ifPresent(n -> Vars.get().mostRecentHouse = n);
                     Waiting.waitNormal(2500, 125); //wait after arriving in instance for house screen to disapear
                     blacklistFailedHouseAndLeave();
@@ -121,7 +122,7 @@ public class EnterHouse implements Task {
                 .isReachable()
                 .maxDistance(30)
                 .findBestInteractable();
-        if (lectern.isPresent() && reachable.isEmpty()) {
+        if (lectern.isEmpty() || reachable.isEmpty()) {
             Log.error("Cannot raech lecturn, blacklisting house");
             Vars.get().houseBlackListNames.add(Vars.get().mostRecentHouse);
             UnnoteClay.leaveHouse();

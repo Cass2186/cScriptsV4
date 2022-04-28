@@ -12,6 +12,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Prayer;
+import org.tribot.script.sdk.Waiting;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Timer;
@@ -51,13 +52,13 @@ public class VorkthUtil {
     /**
      * AREAS
      */
-    public static final  RSArea LUNAR_ISLE_AREA = new RSArea(new RSTile(2100,3915,0),15);
-    public static final  RSArea DOCK_AREA = new RSArea(new RSTile(2640,3696,0),5);
-    public static final RSArea VORK_ISLAND_AREA = new RSArea(new RSTile(2272,4045,0),15);
+    public static final RSArea LUNAR_ISLE_AREA = new RSArea(new RSTile(2100, 3915, 0), 15);
+    public static final RSArea DOCK_AREA = new RSArea(new RSTile(2640, 3696, 0), 5);
+    public static final RSArea VORK_ISLAND_AREA = new RSArea(new RSTile(2272, 4045, 0), 15);
 
     public static Optional<RSTile> getWesternAcidTile() {
         Optional<RSTile> exitRockTile = getExitRockObject();
-        return exitRockTile.map(t -> t.translate(-4, 1));
+        return exitRockTile.map(t -> t.translate(-3, 1));
     }
 
     public static Optional<RSTile> getEasternAcidTile() {
@@ -98,26 +99,24 @@ public class VorkthUtil {
         if (vork.length > 0) {
             if (!vork[0].isClickable())
                 DaxCamera.focus(vork[0]);
-            Log.log("[Debug]: Clicking Vorkath with " + clickString);
+            Log.info("Clicking Vorkath with " + clickString);
             return DynamicClicking.clickRSNPC(vork[0], clickString);
         }
-        Log.log("[Debug]: Failed to click Vorkath");
+        Log.warn("Failed to click Vorkath");
         return false;
     }
-
-
 
 
     public static boolean walkToTile(RSTile tile, boolean preferMinimapClick) {
         if (!tile.isClickable() || preferMinimapClick) {
             return AccurateMouse.clickMinimap(tile);
         }
-        return  DynamicClicking.clickRSTile(tile, "Walk here");
-      //  return  AccurateMouse.walkScreenTile(tile);
+        return DynamicClicking.clickRSTile(tile, "Walk here");
+        //  return  AccurateMouse.walkScreenTile(tile);
     }
 
     public static boolean waitCond(BooleanSupplier waitUntilCondition, Clickable hoverPoint,
-                                        int timeout) {
+                                   int timeout) {
         int sd = timeout / 10;
         return Timing.waitCondition(() -> {
             General.sleep(20, 60);
@@ -130,20 +129,17 @@ public class VorkthUtil {
                                    int timeout) {
         Point hover = hoverPoint.getHumanHoverPoint();
         int sd = timeout / 10;
-        return Timing.waitCondition(() -> {
-            General.sleep(20, 60);
+        return Waiting.waitUntil(General.randomSD(timeout, sd), 20, () -> {
             if (Mouse.getPos() != hover)
                 Mouse.move(hover);
             return waitUntilCondition.getAsBoolean();
-        }, General.randomSD(timeout, sd));
+        });
     }
 
     public static boolean waitCond(BooleanSupplier waitUntilCondition, int timeout) {
         int sd = timeout / 10;
-        return Timing.waitCondition(() -> {
-            General.sleep(20, 60);
-            return waitUntilCondition.getAsBoolean();
-        }, General.randomSD(timeout, sd));
+        return Waiting.waitUntil(General.randomSD(timeout, sd),
+                20, waitUntilCondition);
     }
 
 }

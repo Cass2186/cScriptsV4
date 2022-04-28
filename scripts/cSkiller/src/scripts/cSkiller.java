@@ -20,6 +20,7 @@ import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.painting.template.basic.*;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.util.Util;
 import scripts.API.SkillSwitchThread;
@@ -40,6 +41,7 @@ import scripts.Tasks.Combat.CrabTasks.MoveToCrabTile;
 import scripts.Tasks.Combat.CrabTasks.ResetAggro;
 import scripts.Tasks.Herblore.MixTar;
 import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
+import scripts.Tasks.MiscTasks.*;
 import scripts.Tasks.PestControl.PestTasks.AttackPortal;
 import scripts.Tasks.PestControl.PestTasks.DefendKnight;
 import scripts.Tasks.PestControl.PestTasks.EnterBoat;
@@ -90,10 +92,6 @@ import scripts.Tasks.Magic.EnchantJewelery;
 import scripts.Tasks.Magic.MagicBank;
 import scripts.Tasks.Mining.Tasks.*;
 import scripts.Tasks.Mining.Utils.MLMUtils;
-import scripts.Tasks.MiscTasks.Afk;
-import scripts.Tasks.MiscTasks.BuyItems;
-import scripts.Tasks.MiscTasks.MiniBreak;
-import scripts.Tasks.MiscTasks.SwitchTask;
 import scripts.Tasks.PestControl.PestUtils.PestUtils;
 import scripts.Tasks.Prayer.EnterHome;
 import scripts.Tasks.Prayer.PlaceBones;
@@ -321,6 +319,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new SlayerRestock(),
                 new GetTask(),
                 new Loot(),
+                new WorldHop(),
                 // new SmithBars(),
                 new BuyHouse(),
                 new EatDrink(),
@@ -336,7 +335,8 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new Stamina(),
                 new StartQuest(),
                 new PrayerBank(),
-                new SpringRun()
+                new SpringRun(),
+                new RelocateHouse()
                 //MiniBreak.get(),
                 // new MakeCannonballs()
 
@@ -620,6 +620,13 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
             graphics.drawString("Or: " + orientation + " | Y: " +
                             n.getTile().getY(), (int) pp.getBounds().getX(),
                     (int) pp.getBounds().getY());
+        }
+        SkillTasks task = Vars.get().currentTask;
+        if (task != null && task.equals(SkillTasks.SLAYER)){
+            Area a = SlayerVars.get().fightArea;
+            if (a != null){
+                graphics.drawPolygon(a.getBounds());
+            }
         }
     }
 }

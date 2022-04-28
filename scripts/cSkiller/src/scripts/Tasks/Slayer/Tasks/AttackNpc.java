@@ -14,6 +14,7 @@ import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
 
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.walking.LocalWalking;
@@ -183,8 +184,9 @@ public class AttackNpc implements Task {
             Log.info("[Fight]: Unable to set target");
             Waiting.waitNormal(200, 50);
             i++;
-            if (i >= 10 && !SlayerVars.get().fightArea.contains(MyPlayer.getTile()) &&
-                    PathingUtil.walkToTile(SlayerVars.get().fightArea.getRandomTile())) {
+            Area slayArea = SlayerVars.get().fightArea;
+            if (i >= 10 && slayArea != null && !slayArea.contains(MyPlayer.getTile()) &&
+                    PathingUtil.walkToTile(slayArea.getRandomTile())) {
                 Log.info("[Fight]: Walking to area");
                 i = 0;
             }
@@ -234,6 +236,7 @@ public class AttackNpc implements Task {
 
     public static boolean waitUntilOutOfCombatNew(Optional<Npc> npcOptional, int eatAt, int longTimeOut) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
+        Assign assign = SlayerVars.get().assignment;
 
         return Waiting.waitUntil(longTimeOut, () -> {
             Waiting.waitNormal(500, 125);
@@ -248,18 +251,19 @@ public class AttackNpc implements Task {
 
             equipExpeditiousIfNeeded();
 
-            if ((Prayer.getActivePrayers().size() > 0 || SlayerVars.get().shouldPrayMelee) &&
+            if ((Prayer.getActivePrayers().size() > 0 || (assign != null &&
+                    assign.getPrayerType().equals(PrayerType.MELEE))) &&
                     org.tribot.script.sdk.Prayer.getPrayerPoints() <
                             General.random(7, 27)) {
                 Log.info("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
                 EatUtil.drinkPotion(ItemID.PRAYER_POTION);
             }
-            if (SlayerVars.get().shouldPrayMelee && Prayer.getPrayerPoints() > 0 &&
+            if (assign != null &&
+                    assign.getPrayerType().equals(PrayerType.MELEE) && Prayer.getPrayerPoints() > 0 &&
                     Prayer.getActivePrayers().size() == 0) {
                 Prayer.enableAll(Prayer.PROTECT_FROM_MELEE);
             }
-            if (SlayerVars.get().assignment != null && SlayerVars.get().assignment.isUseSpecialItem()
-                    && npcOptional.isPresent()) {
+            if (assign != null && assign.isUseSpecialItem() && npcOptional.isPresent()) {
                 //  Log.log("Using special item");
                 if (checkSpecialItem())
                     Waiting.waitNormal(1500, 440);

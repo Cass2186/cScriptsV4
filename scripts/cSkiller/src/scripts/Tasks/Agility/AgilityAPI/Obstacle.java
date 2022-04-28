@@ -73,17 +73,26 @@ public class Obstacle {
 
     public boolean eat() {
         if (Combat.getHPRatio() < Vars.get().eatAt) {
-            General.println("[Debug]: Eating food");
-            if (!EatUtil.eatFood()) {
-                General.println("[Debug]: We have no more food in inventory and need to eat. Ending");
-                cSkiller.isRunning.set(false);
-                return false;
+            for (int i = 0; i < 3; i++) {
+                Log.info("[Debug]: Eating food i = " + i);
+                if (EatUtil.eatFood()) {
+                    Vars.get().eatAt = AntiBan.getEatAt();
+                    General.println("[ABC2]: Next eating at: " + Vars.get().eatAt + "% HP");
+                    return true;
+                } else {
+                    if (MyPlayer.isMoving())
+                        Waiting.waitUntil(2000, 200,
+                                () -> !MyPlayer.isMoving());
+                    Waiting.waitNormal(70, 15);
+                }
             }
-
-            Vars.get().eatAt = AntiBan.getEatAt();
-            General.println("[ABC2]: Next eating at: " + Vars.get().eatAt + "% HP");
+            General.println("[Debug]: We have no more food in inventory and need to eat. Ending");
+            cSkiller.isRunning.set(false);
+            return false;
         }
+
         return true;
+
     }
 
     public void alch(int itemId) {
@@ -118,7 +127,6 @@ public class Obstacle {
                     .actionContains(this.obstacleAction)
                     .idEquals(this.obstacleId)
                     .sortedByDistance()
-                    //.isReachable() //TODO confirm this doens't mess it up
                     .findBestInteractable();
 
             RSObject[] obj = Objects.findNearest(40,
@@ -148,18 +156,19 @@ public class Obstacle {
                         return clickObject(object, this.obstacleAction, false, true);
 
 
-                } else
-                    return clickObject(object, this.obstacleAction, false, false);
+                } else if (clickObject(object, this.obstacleAction, false, false))
+                    return true; //can't just return the clickobject() because sometimes it gets stuck in canifis floating
 
-            } else if (object.isPresent()) {
-                return object.map(o -> o.interact(this.obstacleAction)).orElse(false)
-                        && Timer.agilityWaitCondition(() ->
+            } else if (object.map(o -> o.interact(this.obstacleAction)).orElse(false)) {
+                Log.info("interacted with");
+                Timer.agilityWaitCondition(() ->
                                 (!MyPlayer.isMoving()
                                         && !this.obstacleArea.contains(Player.getPosition()) ||
                                         Player.getPosition().getPlane() == 0),
-                        3500, 5500);
-
-            } else if (obj.length > 0) {
+                        5000, 6500);
+                return true;
+            }
+            if (obj.length > 0) {
                 //need this for Canifis when you're floating and stuck
                 Log.info("API Dynamic clicking failsafe");
                 if (!obj[0].isClickable())
@@ -170,14 +179,14 @@ public class Obstacle {
                                 (!MyPlayer.isMoving()
                                         && !this.obstacleArea.contains(Player.getPosition()) ||
                                         Player.getPosition().getPlane() == 0),
-                        3500, 5500);
+                        5000, 6500);
             }
         }
         return false;
     }
 
     public boolean clickObject(Optional<GameObject> obj, String action, boolean accurateMouse, boolean abc2Wait) {
-        int plane = MyPlayer.getPosition().getPlane();
+        int plane = MyPlayer.getTile().getPlane();
         int shouldAlch = Utils.random(0, 100);
         for (int i = 0; i < 3; i++) { //tries 3 times
             Log.info("Clicking " + this.obstacleAction + " "
@@ -199,12 +208,14 @@ public class Obstacle {
                 if (abc2Wait)
                     return Timer.abc2WaitCondition(() -> (!MyPlayer.isMoving()
                             && this.nextObstacleArea.contains(Player.getPosition())
-                            && MyPlayer.getAnimation() == -1) || Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
+                            && MyPlayer.getAnimation() == -1) ||
+                            Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
 
                 else
                     return Timer.agilityWaitCondition(() -> (!MyPlayer.isMoving()
                             && this.nextObstacleArea.contains(Player.getPosition())
-                            && MyPlayer.getAnimation() == -1) || Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
+                            && MyPlayer.getAnimation() == -1) ||
+                            Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
 
 
             }

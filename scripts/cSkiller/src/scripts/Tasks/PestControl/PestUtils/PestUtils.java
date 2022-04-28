@@ -1,10 +1,7 @@
 package scripts.Tasks.PestControl.PestUtils;
 
-import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.local_pathfinding.Reachable;
-import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
-import org.tribot.api2007.Combat;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Player;
@@ -19,7 +16,9 @@ import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.Widget;
 import scripts.AntiBan;
+import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
 import scripts.PathingUtil;
@@ -33,7 +32,7 @@ import java.util.Optional;
 public class PestUtils {
 
     public static int PEST_POINTS = 0;
-    public static final int STARTING_PEST_POINTS = 0;
+    public static int STARTING_PEST_POINTS = -1;
     public static boolean ATTACK_PORTALS = false;// General.randomBoolean();
     public static RSArea INTERMEDIATE_BOAT_AREA = new RSArea(new RSTile(2641, 2642, 0), new RSTile(2638, 2647, 0));
     public static int[] KNIGHT_ID = {2950, 2951, 2952, 2953};
@@ -48,17 +47,27 @@ public class PestUtils {
             SOUTH_EAST_PORTAL_ID
     };
 
+    public static int getGainedPestPoints() {
+        return Vars.get().pestControlPoints - STARTING_PEST_POINTS;
+    }
+
     public static int getPestPoints() {
-        RSInterface bar = Interfaces.get(407, 5);
-        if (bar != null) {
-            String fullString = bar.getText();
+        Optional<Widget> first = Query.widgets().inIndexPath(407)
+                .textContains("Pest Point").findFirst();
+
+        if (first.isPresent()) {
+            Optional<String> stringOptional = first.get().getText();
+            String fullString = stringOptional.orElse(" ");
             String[] splitString = fullString.split("Pest Points: ");
             if (splitString.length > 1) {
-                //   Log.log("[Debug]: Points is: " + splitString[1]);
-                PEST_POINTS = Integer.parseInt(splitString[1]);
+                Vars.get().pestControlPoints = Integer.parseInt(splitString[1]);
+                Log.info("[Debug]: Points is: " + Vars.get().pestControlPoints);
+                if (STARTING_PEST_POINTS == -1)
+                    STARTING_PEST_POINTS = Integer.parseInt(splitString[1]);
                 return Integer.parseInt(splitString[1]);
             }
         }
+        Log.warn("failed to parse pest points");
         return 0;
     }
 
@@ -151,11 +160,12 @@ public class PestUtils {
 
     public static boolean killTargets() {
         Optional<Npc> targ = PestUtils.getTarget();
-        Optional<Character> interactingCharacter = MyPlayer.get().get().getInteractingCharacter();
-        Optional<Npc> sdkTarg = Query.npcs().isInteractingWith(MyPlayer.get().get())
+        Optional<Npc> interactingCharacter = Query.npcs().isMyPlayerInteractingWith().findFirst();
+        Optional<Npc> sdkTarg = Query.npcs().isMyPlayerInteractingWith()
                 .isHealthBarVisible().findBestInteractable();
+
         if (MyPlayer.isHealthBarVisible() || interactingCharacter.isPresent()) {
-            Log.info("[Debug]: Waiting to finish combat");
+            //Log.info("[Debug]: Waiting to finish combat");
             return Timer.waitCondition(() -> {
                 AntiBan.timedActions();
                 Waiting.waitNormal(700, 150);

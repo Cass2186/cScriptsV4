@@ -31,12 +31,14 @@ public class EnterBoat implements Task {
                 }
             }
         } else {
+            Waiting.waitUniform(500,1000);
             PestUtils.getPestPoints();
-            Log.log("[Debug]: Waiting for game");
+            Log.info("Waiting for game");
             if(Timer.waitCondition(Game::isInInstance, 20000, 30000))
-                Waiting.waitNormal(1000,100);
+                Waiting.waitNormal(1000,100);//keep
+
             if (Game.isInInstance()) {
-                Waiting.waitNormal(2200, 220);
+               // Waiting.waitNormal(1600, 220); //was 2200 mean
                 Area area = PestUtils.getCenterArea();
                 if (area != null &&
                         PathingUtil.localNav(area.getCenter()))

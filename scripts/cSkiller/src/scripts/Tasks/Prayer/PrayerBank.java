@@ -9,12 +9,14 @@ import org.tribot.script.sdk.types.InventoryItem;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
+import scripts.Data.Enums.Bones;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.MiscTasks.BuyItems;
+import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +37,8 @@ public class PrayerBank implements Task {
     @Override
     public boolean validate() {
         Optional<InventoryItem> item = Query.inventory().nameContains("bones").findFirst();
-        return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.PRAYER) &&
+        return Vars.get().currentTask != null &&
+                Vars.get().currentTask.equals(SkillTasks.PRAYER) &&
                 item.isEmpty();
     }
 
@@ -54,8 +57,8 @@ public class PrayerBank implements Task {
             return 0;
         int max = SkillTasks.PRAYER.getEndLevel();
         int xpTillMax = Skills.getXPToLevel(Skills.SKILLS.PRAYER, max);
-        General.println("DetermineResourcesToNextItem: " + (xpTillMax / 252));
-        return (int) (xpTillMax / 252) + 5;
+        General.println("DetermineResourcesToNextItem: " + (xpTillMax / Bones.DRAGON_BONES.getGildedAltarXp()));
+        return (int) (xpTillMax / Bones.DRAGON_BONES.getGildedAltarXp()) + 5;
     }
 
 
@@ -67,26 +70,22 @@ public class PrayerBank implements Task {
     public void getBones() {
         List<ItemReq> inv = new ArrayList<>(
                 Arrays.asList(
-                        new ItemReq(ItemID.DRAGON_BONES, 26),
-                        new ItemReq(ItemID.COINS, 0, 1000)
+                        new ItemReq(ItemID.DRAGON_BONES, 25, 0),
+                        new ItemReq(ItemID.COINS, 0, 100000)
                 )
         );
-        List<ItemReq> notedInv = new ArrayList<>(
-                Arrays.asList(
-                        new ItemReq(ItemID.DRAGON_BONES, 0)
+        //make req for notes bones
+        inv.add(new ItemReq.Builder()
+                .id(ItemID.DRAGON_BONES)
+                .isItemNoted(true)
+                .amount(determineResourcesToNextItem()-25).build());
 
-                )
-        );
         BankManager.open(true);
         BankManager.depositAll(true);
 
         List<ItemReq> newInv = SkillBank.withdraw(inv);
-        List<ItemReq> newNotedInv = null;
-        if(BankManager.turnNotesOn()){
-            BankManager.withdraw(0, true, ItemID.DRAGON_BONES);
-        }
-        Optional<InventoryItem> item = Query.inventory().nameContains("bones").isNoted().findFirst();
-        if ((newInv != null && newInv.size() > 0) || item.isEmpty()) {
+
+        if ((newInv != null && newInv.size() > 0)) {
             General.println("[Prayer Training]: Creating buy list");
             BuyItems.itemsToBuy = BuyItems.populateBuyList(getRequiredItemList());
             return;

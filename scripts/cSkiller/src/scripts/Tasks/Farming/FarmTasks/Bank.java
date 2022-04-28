@@ -203,7 +203,7 @@ public class Bank implements Task {
         BankManager.depositAll(true);
         if (checkSecateurs()) {
             BankManager.withdraw(1, true, FarmConst.MAGIC_SECATEURS);
-            Utils.equipItem(FarmConst.MAGIC_SECATEURS); // might need to check action
+            Utils.equipItem(FarmConst.MAGIC_SECATEURS);
         }
         int treeNum = 5;
         if (Skills.getActualLevel(Skills.SKILLS.FARMING) > 65
@@ -220,9 +220,9 @@ public class Bank implements Task {
         if (!checkBottomlessCompost()) {
             BankManager.withdraw(5, true, FarmConst.ULTRACOMPOST);
         }
-        BankManager.withdraw(2, true, FarmConst.FALADOR_TAB);
-        BankManager.withdraw(3, true, FarmConst.VARROCK_TAB);
-        BankManager.withdraw(2, true, FarmConst.LUMBRIDGE_TAB);
+        BankManager.withdraw(5, true, FarmConst.FALADOR_TAB);
+        BankManager.withdraw(5, true, FarmConst.VARROCK_TAB);
+        BankManager.withdraw(5, true, FarmConst.LUMBRIDGE_TAB);
         BankManager.withdraw(1, true, FarmConst.RAKE);
         BankManager.withdraw(2000, true, 995);
         BankManager.withdraw(1, true, FarmConst.SPADE);

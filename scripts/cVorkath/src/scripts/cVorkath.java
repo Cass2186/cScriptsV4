@@ -13,6 +13,8 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
+import org.tribot.script.sdk.interfaces.Tile;
+import org.tribot.script.sdk.types.LocalTile;
 import scripts.Tasks.*;
 import scripts.VorkUtils.Vars;
 import scripts.VorkUtils.VorkthUtil;
@@ -150,7 +152,8 @@ public class cVorkath extends Script implements Painting, Starting, Ending, Argu
         if (vork.length > 0){
             myString.add("Health Percent: " + vork[0].getHealthPercent());
         }
-
+        Optional<Tile> nextTile = AcidPhase.getNextTile();
+        nextTile.ifPresent(t->g.drawPolygon(t.getBounds().get()));
 
         PaintUtil.createPaint(g, myString.toArray(String[]::new));
     }

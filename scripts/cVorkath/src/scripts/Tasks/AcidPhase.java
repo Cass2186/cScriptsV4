@@ -10,8 +10,13 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.interfaces.Tile;
 import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.GlobalWalking;
+import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EatUtil;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
@@ -19,6 +24,7 @@ import scripts.Utils;
 import scripts.VorkUtils.Vars;
 import scripts.VorkUtils.VorkthUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AcidPhase implements Task {
@@ -34,11 +40,11 @@ public class AcidPhase implements Task {
              we are to his left, and should move right (otherwise move left). */
         boolean moveRight = vorkX >= myX;
         if (moveRight) {
-            Log.log("[Debug]: Moving right");
+            Log.info("Moving right");
             return false;
 
         } else {
-            Log.log("[Debug]: Moving Left");
+            Log.info("Moving Left");
             return true;
         }
     }
@@ -48,11 +54,14 @@ public class AcidPhase implements Task {
         return Player.getPosition().getY() == y;
     }
 
+    public static Optional<Tile> getNextTile() {
+        Optional<org.tribot.script.sdk.types.Player> me = MyPlayer.get();
+        return me.map(m -> m.getNextTile()).orElse(Optional.of(MyPlayer.getTile().toLocalTile()));
+    }
 
     public void handleAcidPhase() {
         //toggle run off
         Options.setRunEnabled(false);
-        Optional<org.tribot.script.sdk.types.Player> me = MyPlayer.get();
         RSProjectile[] acid = Projectiles.getAll(p ->
                 p.getGraphicID() == VorkthUtil.ACID_SPRAY);
         Optional<RSTile> eTile = VorkthUtil.getEasternAcidTile();
@@ -61,52 +70,50 @@ public class AcidPhase implements Task {
         /*  if (acid.length > 0 &&*/
         if (eTile.isPresent() && wTile.isPresent() && centre.isPresent()) {
             RSTile topCentre = centre.get().translate(0, -2);
-            for (int i = 0; i < 20; i++) {
-
-                Log.debug("i = " + i);
-
-                if (i == 0 && VorkthUtil.walkToTile(topCentre, false)) {
-                    if (me.isPresent()) {
-                        Optional<Tile> next = me.get().getNextTile();
-                        Area a = Area.fromRadius(Utils.getWorldTileFromRSTile(topCentre), 1);
-                        Waiting.waitUntil(1250, ()-> me.get().getNextTile().isPresent() &&
-                                a.contains( me.get().getNextTile().get()));
-                    }
-                    /*if (centre.get().equals(Player.getPosition()))
-                        Timing.waitCondition(() -> topCentre.distanceToDouble(Player.getPosition()) < 2, 1250);
-                    else
-                        Timing.waitCondition(() -> topCentre.distanceToDouble(Player.getPosition()) < 2.2, 1250);
-*/
-                }
-                if (isOnRightSide() &&
-                        VorkthUtil.walkToTile(wTile.get(), false)) {
-                    General.sleep(700, 1100);
-                    VorkthUtil.waitCond(() -> (Player.isMoving() &&
-                                    // (wWalkTriggerTile.equals(Player.getPosition()) ||
-                                    (wTile.get().distanceTo(Player.getPosition()) <= 3)) ||
-                                    Entities.find(ObjectEntity::new)
-                                            .nameContains("Acid pool").getResults().length == 0,
-                            eTile.get(), 4000);
-
-                }
+            for (int i = 0; i < 30; i++) {
                 if (i >= 3 && Entities.find(ObjectEntity::new)
                         .nameContains("Acid pool").getResults().length == 0) {
                     VorkthUtil.clickVorkath("Attack");
                     break;
                 }
+                Log.debug("i = " + i);
 
-                if (!isOnRightSide() && VorkthUtil.walkToTile(eTile.get(), false)) {
+                if (i == 0 && VorkthUtil.walkToTile(topCentre, false)) {
+                    Log.warn("Using next time");
+                    Waiting.waitUntil(2050, 20,
+                            () -> getNextTile().map(t -> t.equals(
+                                            Utils.getWorldTileFromRSTile(topCentre)))
+                                    .orElse(false));
+
+                    /*if (centre.get().equals(Player.getPosition()))
+                        Timing.waitCondition(() -> topCentre.distanceToDouble(Player.getPosition()) < 2, 1250);
+                    else
+                        Timing.waitCondition(() -> topCentre.distanceToDouble(Player.getPosition()) < 2.2, 1250);
+*/
+                } else if (isOnRightSide() &&
+                        VorkthUtil.walkToTile(wTile.get(), false)) {
                     General.sleep(700, 1100);
+                    VorkthUtil.waitCond(() -> (MyPlayer.isMoving() &&
+                                    // (wWalkTriggerTile.equals(Player.getPosition()) ||
+                                    getNextTile().map(t -> t.equals(
+                                                    Utils.getWorldTileFromRSTile(wTile.get())))
+                                            .orElse(false)) ||
+                                    Entities.find(ObjectEntity::new)
+                                            .nameContains("Acid pool").getResults().length == 0,
+                            eTile.get(), 4000);
+
+                } else if (!isOnRightSide() &&
+                        VorkthUtil.walkToTile(eTile.get(), false)) {
+                    Waiting.waitUntil(800, () -> MyPlayer.isMoving());
                     VorkthUtil.waitCond(() -> (Player.isMoving() &&
                                     // (eWalkTriggerTile.equals(Player.getPosition()) ||
-                                    (eTile.get().distanceTo(Player.getPosition()) <= 3)) ||
+                                    getNextTile().map(t -> t.equals(
+                                                    Utils.getWorldTileFromRSTile(eTile.get())))
+                                            .orElse(false)) ||
                                     Entities.find(ObjectEntity::new)
                                             .nameContains("Acid pool").getResults().length == 0,
                             wTile.get(), 4000);
-                }
-
-
-                if (i >= 3 && Entities.find(ObjectEntity::new) //if the i > 3 isn't there it breaks early
+                } else if (i >= 3 && Entities.find(ObjectEntity::new) //if the i > 3 isn't there it breaks early
                         .nameContains("Acid pool").getResults().length == 0) {
                     Log.log("[Debug]: Attacking acid phase break");
                     VorkthUtil.clickVorkath("Attack");

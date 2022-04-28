@@ -8,6 +8,8 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.Log;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -46,7 +48,11 @@ public class DepositOre implements Task {
 
     @Override
     public void execute() {
-        if (Banking.isBankScreenOpen())
+        if (org.tribot.script.sdk.Camera.getZoomPercent() > 10) {
+            Log.info("Setting zoom");
+           org.tribot.script.sdk.Camera.setZoomPercent(Utils.random(0, 8));
+        }
+        if (Bank.isOpen())
             BankManager.close(true);
 
         if (BfVars.get().useGoldSmith && !Equipment.isEquipped(BfConst.GOLDSMITH_GAUNTLETS))
@@ -55,7 +61,7 @@ public class DepositOre implements Task {
 
         clickConveyor();
 
-        if (NPCInteraction.isConversationWindowUp())
+        if (ChatScreen.isOpen())
             NPCInteraction.handleConversation("Yes, and don't ask again.");
 
         if (emptyCoalBag()) {
@@ -72,11 +78,12 @@ public class DepositOre implements Task {
         } else if (PathingUtil.clickScreenWalk(BfConst.BAR_COLLECTION_TILE)) {
             General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
             Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 ||
-                    Interfaces.isInterfaceSubstantiated(233, 2), 3000, 6000);
+                    Interfaces.isInterfaceSubstantiated(233, 2)
+                    || ChatScreen.isOpen(), 3000, 6000);
         }
 
-        if (Interfaces.isInterfaceSubstantiated(233, 2))
-            NPCInteraction.handleConversation();
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
 
 
     }

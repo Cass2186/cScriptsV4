@@ -49,11 +49,13 @@ public class MimicChallenge implements QuestTask {
 
     private void doSteps() {
         if (Utils.getVarBitValue(2419) == 0) {
-            Optional<Npc> mim = Query.npcs().idEquals(NpcID.ETHEREAL_MIMIC).maxDistance(12).isReachable()
+            Optional<Npc> mim = Query.npcs().idEquals(NpcID.ETHEREAL_MIMIC)
+                    .maxDistance(20).isReachable()
                     .stream().findFirst();
-            Log.log("Talking to mim with SDK version");
+            Log.info("Talking to mim with SDK version");
             if (mim.map(m->m.interact("Talk-to")).orElse(false)){
-                Timer.waitCondition(()-> mim.get().distanceTo(MyPlayer.getPosition()) < 1, 5000,7000);
+                Log.info("Talking to mim with SDK version - success");
+                Timer.waitCondition(()-> mim.get().distanceTo(MyPlayer.getTile()) < 2, 5000,7000);
             }
           //  talk.setUseLocalNav(true);
           //  talk.execute();
@@ -77,7 +79,7 @@ public class MimicChallenge implements QuestTask {
                 think.execute();
                 break;
             default:
-                Log.log("talking");
+                Log.info("Talking");
                 talk.execute();
                 break;
         }
@@ -101,7 +103,7 @@ public class MimicChallenge implements QuestTask {
     public boolean validate() {
         Optional<Npc> mim = Query.npcs()
                 .idEquals(NpcID.ETHEREAL_MIMIC)
-                .maxDistance(15)
+                .maxDistance(20)
                 .isReachable()
                 .stream().findFirst();
 

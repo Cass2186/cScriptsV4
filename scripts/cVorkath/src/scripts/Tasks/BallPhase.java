@@ -46,7 +46,7 @@ public class BallPhase implements Task {
             }
         }
         // short wait until the ball is gone
-        Waiting.waitUntil(200, () -> Projectiles.getAll(p ->
+        Waiting.waitUntil(400, () -> Projectiles.getAll(p ->
                 p.getGraphicID() == VorkthUtil.BALL_FLAME).length == 0);
     }
 

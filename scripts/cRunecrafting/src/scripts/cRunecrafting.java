@@ -15,10 +15,16 @@ import scripts.Data.Paint;
 import scripts.Data.RunecraftItems;
 import scripts.Data.Vars;
 import scripts.ScriptUtils.CassScript;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.*;
+import scripts.Tasks.BloodCrafting.ChipEssence;
+import scripts.Tasks.BloodCrafting.GetDenceEssence;
+import scripts.Tasks.BloodCrafting.GoToBloodAltar;
+import scripts.Tasks.BloodCrafting.GoToDarkAltar;
 
 import java.awt.*;
 import java.net.URL;
+import java.util.Locale;
 
 @ScriptManifest(name = "cRunecrafting", authors = {"Cass2186"}, category = "Testing")
 public class cRunecrafting extends CassScript implements TribotScript {
@@ -31,6 +37,10 @@ public class cRunecrafting extends CassScript implements TribotScript {
 
     @Override
     public void execute(String args) {
+        if (args.toLowerCase().contains("blood")){
+            Log.info("Blood rune crafting");
+            Vars.get().bloodRuneCrafting = true;
+        }
         AntiBan.create();
         super.initializeDax();
 
@@ -45,6 +55,7 @@ public class cRunecrafting extends CassScript implements TribotScript {
         Vars.get().startRcLevel = Skill.RUNECRAFT.getCurrentLevel();
         Vars.get().startRcXp = Skill.RUNECRAFT.getXp();
 
+
         Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
         //Tasks
         TaskSet tasks = new TaskSet(
@@ -54,6 +65,15 @@ public class cRunecrafting extends CassScript implements TribotScript {
                 new RepairPouches()
         );
 
+        if (Vars.get().bloodRuneCrafting){
+            tasks = new TaskSet(
+                    new GetDenceEssence(),
+                    new GoToBloodAltar(),
+                    new GoToDarkAltar()
+            );
+            Vars.get().safetyTimer =  new Timer(300000);
+        }
+        ScriptTimer.resetRuntime();
         initializeListeners();
         isRunning.set(true);
         Utils.setCameraZoomAboveDefault();

@@ -7,6 +7,7 @@ import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
 import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Utils;
 import scripts.cRunecrafting;
 
@@ -20,7 +21,8 @@ public class Paint {
 
         BasicPaintTemplate paint = BasicPaintTemplate.builder()
                 .row(PaintRows.scriptName(template.toBuilder()))
-                .row(PaintRows.runtime(template.toBuilder()))
+                .row(template.toBuilder().label("Runtime").value(()->
+                        ScriptTimer.getRuntimeString()).build())
                 .row(template.toBuilder().label("Task").value(() -> Vars.get().status).build())
                 .row(template.toBuilder().label("Current Rune").value(() -> {
                             String s = Vars.get().currentRune
@@ -31,6 +33,10 @@ public class Paint {
                         .condition(() -> Vars.get().currentRune.isPresent())
                         .build())
                 .row(template.toBuilder().label("Runecrafting").value(Paint::getXpGainedString).build())
+                .row(template.toBuilder().label("Profit").value(()-> Utils.addCommaToNum(
+                        Vars.get().getProfit())+
+                        " | " + Utils.addCommaToNum(Vars.get().getProfitHr()) + "/hr").build())
+
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
 

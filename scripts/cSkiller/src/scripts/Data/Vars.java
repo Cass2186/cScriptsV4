@@ -94,8 +94,8 @@ public class Vars {
     public int skillSwitchMax = 24000000;
     public Timer skillSwitchTimer = new Timer(General.random(skillSwitchMin, skillSwitchMax)); //~26-45m //General.random(2400000, 4200000)
     public long startTime = System.currentTimeMillis();
-
-    //booleans
+    public int pestControlPoints = 0;
+        //booleans
     public boolean isOnBreak = false;
     public boolean switchingTasks = false;
 

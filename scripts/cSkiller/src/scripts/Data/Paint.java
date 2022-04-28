@@ -17,7 +17,9 @@ import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.Npc;
 import scripts.PaintUtil;
 import scripts.ScriptUtils.ScriptTimer;
+import scripts.Tasks.PestControl.PestUtils.PestUtils;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
+import scripts.Tasks.Slayer.Tasks.WorldHop;
 import scripts.Utils;
 import scripts.cSkiller;
 
@@ -29,8 +31,8 @@ import java.util.Optional;
 
 public class Paint {
 
-    private static Color backgroundColor = new Color(93, 140, 245, 160);
-    private static Color backgroundColorGreen = Color.green.darker();
+    private static Color backgroundColor = new Color(27, 99, 235, 160);
+    private static Color backgroundColorGreen = Color.blue;
 
     private static PaintTextRow template = PaintTextRow.builder().background(backgroundColor).build();
 
@@ -79,12 +81,23 @@ public class Paint {
                                  Vars.get().getGainedFarmXp(),
                                  PaintUtil.getXpHr(Skill.FARMING, Const.START_FARM_XP, Vars.get().startTime)))
                          .build())*/
+                .row(template.toBuilder().label("Pest Points").condition( ()->
+                                Vars.get().currentTask !=null &&
+                                Vars.get().currentTask.equals(SkillTasks.PEST_CONTROL))
+                        .value(()-> Vars.get().pestControlPoints  +
+                                " (+"+PestUtils.getGainedPestPoints() + ")").build())
                 .row(template.toBuilder().label("Toggle Slayer Info")
                         .onClick(() ->
                                 Vars.get().showSlayerInfo = !Vars.get().showSlayerInfo)
                         .condition(() ->
                                 Vars.get().currentTask != null &&
                                         Vars.get().currentTask.equals(SkillTasks.SLAYER))
+                        .build())
+                .row(template.toBuilder().label("Players in area")
+                        .condition(() ->
+                                Vars.get().currentTask != null &&
+                                        Vars.get().currentTask.equals(SkillTasks.SLAYER))
+                        .value(()-> WorldHop.getPlayerCountInArea())
                         .build())
                 .row(template.toBuilder().label("Toggle Timers").onClick(() ->
                         Vars.get().showTimers = !Vars.get().showTimers).build())
@@ -155,6 +168,13 @@ public class Paint {
                                 (Skill.FISHING.getXp() - Const.startFishingXP),
                                 PaintUtil.getXpHr(Skill.FISHING, Const.startFishingXP, Vars.get().startTime)))
                         .build())
+                .row(template.toBuilder().label("Fletching")
+                        .condition(() -> Skill.FLETCHING.getXp() > Const.startFletchXp &&
+                                Vars.get().showExperienceGained)
+                        .value(() -> PaintUtil.formatSkillString(Skill.FLETCHING, Const.startFletchLvl,
+                                (Skill.FLETCHING.getXp() - Const.startFletchXp),
+                                PaintUtil.getXpHr(Skill.FLETCHING, Const.startFletchXp, Vars.get().startTime)))
+                        .build())
                 .row(template.toBuilder().condition(() -> Skill.HITPOINTS.getXp() > Const.startHPXP &&
                                 Vars.get().showExperienceGained)
                         .label("Hitpoints")
@@ -217,6 +237,14 @@ public class Paint {
                         .value(() -> PaintUtil.formatSkillString(Skill.STRENGTH, Const.startStrLvl,
                                 (Skill.STRENGTH.getXp() - Const.startStrXp),
                                 PaintUtil.getXpHr(Skill.STRENGTH, Const.startStrXp, Vars.get().startTime)))
+                        .build())
+
+                .row(template.toBuilder().label("Smithing")
+                        .condition(() -> Skill.SMITHING.getXp() > Const.startSmithingXp &&
+                                Vars.get().showExperienceGained)
+                        .value(() -> PaintUtil.formatSkillString(Skill.SMITHING, Const.startSmithingLvl,
+                                (Skill.SMITHING.getXp() - Const.startSmithingXp),
+                                PaintUtil.getXpHr(Skill.SMITHING, Const.startSmithingXp, Vars.get().startTime)))
                         .build())
 
                 .row(template.toBuilder().label("Woodcutting")

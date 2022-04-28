@@ -13,7 +13,7 @@ import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
-import scripts.Data.Enums.SMITH_ITEMS;
+import scripts.Data.Enums.SmithItems;
 import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
@@ -37,7 +37,7 @@ public class SmithBars implements Task {
     public static RSTile ANVIL_TILE = new RSTile(3188, 3425, 0);
     //   public static RSTile bankTile = new RSTile(3185, 3435, 0);
 
-    public void smithItem(SMITH_ITEMS.genericSmithItems item, int barId) {
+    public void smithItem(SmithItems.genericSmithItems item, int barId) {
         RSItem[] invItem1 = Inventory.find(barId);
         Log.log("Bar ID is " + barId);
         if (invItem1.length >= item.getNumBars()) {
@@ -125,34 +125,34 @@ public class SmithBars implements Task {
     @Override
     public void execute() {
         if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 5) {
-            smithItem(SMITH_ITEMS.genericSmithItems.DAGGER, ItemID.BRONZE_BAR);
+            smithItem(SmithItems.genericSmithItems.DAGGER, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 9) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.BRONZE_BAR);
+            smithItem(SmithItems.genericSmithItems.SCIMITAR, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 18) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.BRONZE_BAR);
+            smithItem(SmithItems.genericSmithItems.WARHAMMER, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 20) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.BRONZE_BAR);
+            smithItem(SmithItems.genericSmithItems.PLATEBODY, ItemID.BRONZE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 24) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.IRON_BAR);
+            smithItem(SmithItems.genericSmithItems.SCIMITAR, ItemID.IRON_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 33) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.IRON_BAR);
+            smithItem(SmithItems.genericSmithItems.WARHAMMER, ItemID.IRON_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 39) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.IRON_BAR);
+            smithItem(SmithItems.genericSmithItems.PLATEBODY, ItemID.IRON_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 48) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.STEEL_BAR);
+            smithItem(SmithItems.genericSmithItems.WARHAMMER, ItemID.STEEL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 55) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.STEEL_BAR);
+            smithItem(SmithItems.genericSmithItems.PLATEBODY, ItemID.STEEL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 59) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.MITHRIL_BAR);
+            smithItem(SmithItems.genericSmithItems.SCIMITAR, ItemID.MITHRIL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 68) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.MITHRIL_BAR);
+            smithItem(SmithItems.genericSmithItems.WARHAMMER, ItemID.MITHRIL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 75) {
-            smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.MITHRIL_BAR);
+            smithItem(SmithItems.genericSmithItems.PLATEBODY, ItemID.MITHRIL_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 79) {
-            smithItem(SMITH_ITEMS.genericSmithItems.SCIMITAR, ItemID.ADAMANTITE_BAR);
+            smithItem(SmithItems.genericSmithItems.SCIMITAR, ItemID.ADAMANTITE_BAR);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.SMITHING) < 88) {
-            smithItem(SMITH_ITEMS.genericSmithItems.WARHAMMER, ItemID.ADAMANTITE_BAR);
-        } else smithItem(SMITH_ITEMS.genericSmithItems.PLATEBODY, ItemID.ADAMANTITE_BAR);
+            smithItem(SmithItems.genericSmithItems.WARHAMMER, ItemID.ADAMANTITE_BAR);
+        } else smithItem(SmithItems.genericSmithItems.PLATEBODY, ItemID.ADAMANTITE_BAR);
     }
 
     @Override

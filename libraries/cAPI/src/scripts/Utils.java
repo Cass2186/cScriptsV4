@@ -115,6 +115,17 @@ public class Utils {
         return new RSTile(tile.getX(), tile.getY(), tile.getPlane());
     }
 
+    public static RSTile getRSTileFromLocalTile(LocalTile tile) {
+        return new RSTile(tile.getX(), tile.getY(), tile.getPlane());
+    }
+
+    public static void setChatScreenConfig(boolean efficient) {
+        ChatScreen.setConfig(ChatScreen.Config.builder()
+                .holdSpaceForContinue(efficient)
+                .useKeysForOptions(efficient)
+                .build());
+    }
+
     public static Area getAreaFromRSArea(RSArea area) {
         List<RSTile> sortedTileList =
                 Arrays.stream(area.getAllTiles())

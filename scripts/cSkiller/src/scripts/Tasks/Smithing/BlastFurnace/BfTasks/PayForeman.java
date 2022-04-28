@@ -8,16 +8,23 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Npc;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.NpcChat;
 import scripts.Tasks.Prayer.PlaceBones;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfConst;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfVars;
 import scripts.Timer;
 import scripts.Utils;
+
+import java.util.List;
+import java.util.Optional;
 
 
 public class PayForeman implements Task {
@@ -44,10 +51,13 @@ public class PayForeman implements Task {
 
     @Override
     public void execute() {
+        Optional<Npc> foreman = Query.npcs()
+                .nameContains("Blast Furnace Foreman").actionContains("Pay")
+                .findBestInteractable();
         getCoins();
-        if (Utils.clickNPC("Blast Furnace Foreman", "Pay")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Yes");
+        if (foreman.map(f->f.interact("Pay")).orElse(false) &&
+                NpcChat.waitForChatScreen()) {
+            NpcChat.handleChat(List.of("Yes"));
             foremanTimer.reset();
             BfVars.get().startPayment = false;
           //  ExampleScriptMain.stamCost = ExampleScriptMain.stamCost + 2500;

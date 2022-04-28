@@ -1,18 +1,42 @@
 package scripts.QuestPackages.LunarDiplomacy;
 
+import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.LocalTile;
+import scripts.NpcID;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
+import scripts.Requirements.Util.Operation;
+import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Utils;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class MemoryChallenge implements QuestTask {
+
+    List<LocalTile> confirmedFailTiles = new ArrayList<>();
+    List<LocalTile> confirmedSuccessTiles = new ArrayList<>();
+
+    private List<GameObject> getNearestPuffs() {
+        return Query.gameObjects()
+                .inArea(Area.fromRadius(MyPlayer.getTile(), 2))
+                .nameContains("Dream puff")
+                .sorted(Comparator.comparingInt(t->t.getTile().getY())) //organizes opposite direction w're going
+                .toList();
+    }
 
     public List<RSTile> setupPaths() {
         // Path 1
@@ -55,7 +79,7 @@ public class MemoryChallenge implements QuestTask {
                     new RSTile(1731, 5085, 2),
                     new RSTile(1731, 5083, 2)
             );
-           // setRSTile(1731, 5083, 2);
+            // setRSTile(1731, 5083, 2);
         }
         // Path 3
         else if (Utils.getVarBitValue(2415) == 7) {
@@ -77,7 +101,7 @@ public class MemoryChallenge implements QuestTask {
                     new RSTile(1740, 5085, 2),
                     new RSTile(1740, 5083, 2)
             );
-          //  setRSTile(1740, 5083, 2);
+            //  setRSTile(1740, 5083, 2);
         }
         // Path 4, shared varbit with 3 but will 3 has already passed
         else if (Utils.getVarBitValue(2412) == 28) {
@@ -221,6 +245,8 @@ public class MemoryChallenge implements QuestTask {
         return null;
     }
 
+    VarbitRequirement finishedMemory = new VarbitRequirement(2408, 1, Operation.GREATER_EQUAL);
+
     @Override
     public Priority priority() {
         return Priority.MEDIUM;
@@ -228,23 +254,31 @@ public class MemoryChallenge implements QuestTask {
 
     @Override
     public boolean validate() {
-        return false;
+        return Game.isInInstance() && !finishedMemory.check() &&
+                Query.npcs().idEquals(NpcID.ETHEREAL_GUIDE).isReachable().isAny();
     }
 
     @Override
     public void execute() {
-
+        List<RSTile> path = setupPaths();
+        for (RSTile t : path) {
+            if (t.click("Jump-to") &&
+                    Waiting.waitUntil(3000, 100, () -> MyPlayer.getAnimation() != -1)) {
+                Waiting.waitUntil(6000, 400, () -> MyPlayer.getAnimation() == -1);
+            }
+        }
     }
 
     @Override
     public String questName() {
-        return null;
+        return "Memory Challenge";
     }
 
     @Override
     public boolean checkRequirements() {
         return false;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;

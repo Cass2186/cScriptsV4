@@ -220,6 +220,8 @@ public enum SupportedQuests {
     PRIEST_IN_PERIL(408, 302, false), //, PriestInPeril.get()),
     PRINCE_ALI_RESCUE(311, 273, false), //, PrinceAliRescue.get()),
     RFD_COOK(-1, -1, false, Quest.RECIPE_FOR_DISASTER), //, PrinceAliRescue.get()),
+    RFD_PIRATE_PETE(-1, -1, false, Quest.RECIPE_FOR_DISASTER), //, PrinceAliRescue.get()),
+    RFD_SKRATCH(-1, -1, false, Quest.RECIPE_FOR_DISASTER), //, PrinceAliRescue.get()),
     ROMEO_JULIET(313, 144, false), //, RomeoAndJuliet.get()),
     RUNE_MYSTERIES(314, 63, false), //, RuneMysteries.get()),
     SEA_SLUG(420, 159, false), //, SeaSlug.get()),
@@ -282,6 +284,12 @@ public enum SupportedQuests {
         this.quest = quest;
     }
 
+    SupportedQuests(int id, int configId, boolean isVarbit, Quest quest, boolean isCompleteCheckOverride) {
+        this.id = id;
+        this.configId = configId;
+        this.isVarbit = isVarbit;
+        this.quest = quest;
+    }
     public String getQuestName() {
         return this.toString().toLowerCase().replace("_", " ");
     }

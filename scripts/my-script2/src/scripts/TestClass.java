@@ -23,6 +23,7 @@ import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
@@ -613,89 +614,8 @@ public class TestClass implements QuestTask {
         }
     }
 
-    public void unNoteClay() {
-        if (!Inventory.contains(ItemID.SOFT_CLAY)) {
-            if (!atLecturn()) {
-                cQuesterV2.status = "Unnoting clay";
-                Optional<InventoryItem> item = Query.inventory()
-                        .nameContains("Soft clay")
-                        .isNoted().findFirst();
-                Optional<Npc> phials = Query.npcs()
-                        .nameContains("Phials")
-                        .stream().findFirst();
-                if (phials.isPresent() && item.isPresent()) {
-                    if (!phials.get().isVisible()) {
-                        LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
-                        Waiting.waitNormal(750, 220);
-                    }
-                    if (Utils.useItemOnNPC(item.get().getId(), phials.get().getId()) &&
-                            Timer.waitCondition(Player::isMoving, 1200, 1800)) {
-                        Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
-
-                    }
-                }
-                if (NPCInteraction.isConversationWindowUp()) {
-                    if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
-                        Timer.waitCondition(() -> Inventory.contains(ItemID.SOFT_CLAY),
-                                2000, 4000);
-                    else if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange 5"))
-                        Timer.waitCondition(() -> Inventory.contains(ItemID.SOFT_CLAY),
-                                2000, 4000);
-
-                    if (NPCInteraction.isConversationWindowUp())
-                        ChatScreen.handle();
-                }
-            } else {
-
-                leaveHouse();
-            }
-        }
-
-    }
-
-    @AllArgsConstructor
-    public enum Tabs {
-        VARROCK(25, ItemID.FIRE_RUNE, 25,"Varrock", ItemID.VARROCK_TELEPORT),
-        LUMBRIDGE(31, ItemID.EARTH_RUNE, 37,"Lumbridge", ItemID.LUMBRIDGE_TELEPORT),
-        HOUSE(40, ItemID.EARTH_RUNE, 30,"House", ItemID.TELEPORT_TO_HOUSE),
-        FALADOR(37, ItemID.WATER_RUNE, 48,"Falador", ItemID.FALADOR_TELEPORT),
-        CAMELOT(45, -1, 55,"Camelot", ItemID.CAMELOT_TELEPORT);
-
-        private int levelReq;
-        private int otherRuneId;
-        private int xpGained;
-        @Getter
-        private String name;
-        @Getter
-        private int tabID;
-
-    }
 
 
-    public Tabs getMostProfitableTab(){
-        int profit = 0;
-        Tabs tab = Tabs.VARROCK;
-        for (Tabs t: Tabs.values()){
-            if (profitPerTab(t) >= profit) {
-                profit = profitPerTab(t);
-                tab = t;
-            }
-        }
-        Log.debug("Best tab is " + tab.getName());
-        return tab;
-    }
-    public boolean hasAnyClay() {
-        return Inventory.contains(SOFT_CLAY) || Inventory.contains(NOTED_SOFT_CLAY);
-    }
-
-
-    private int profitPerTab(Tabs tab) {
-        int lawPrice = GrandExchange.getPrice(ItemID.LAW_RUNE);
-        int tabPrice = GrandExchange.getPrice(tab.getTabID());
-        int profit = tabPrice - (lawPrice + 5);
-        Log.debug("Profit per tab " + tab.getName() + " is " + profit + "gp");
-        return profit;
-    }
 
     public static int startInvValue = Utils.getInventoryValue();
     public static int profit = 0;
@@ -721,10 +641,11 @@ public class TestClass implements QuestTask {
         studyLecturn(getMostProfitableTab().getName());*/
        // VarplayerRequirement req = new VarplayerRequirement(1196, false, 2);
        // Log.debug("Requirement: " + req.check());
+
         BuyItemsStep buyStep = new BuyItemsStep(
                 new ArrayList<>(
-                        Arrays.asList(new GEItem(ItemID.POT, 65, 25))));
-        buyStep.buyItems();
+                        Arrays.asList(new GEItem(ItemID.RING_OF_WEALTH[0], 6, 25))));
+       // buyStep.buyItems();
         Waiting.waitNormal(600, 10);
     }
 

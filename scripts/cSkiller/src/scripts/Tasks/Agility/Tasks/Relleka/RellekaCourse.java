@@ -17,25 +17,25 @@ public class RellekaCourse implements Task {
 
 
     String message = "";
-    public Obstacle WALL_CLIMB = new Obstacle(14946, "Climb",
+    Obstacle WALL_CLIMB = new Obstacle(14946, "Climb",
             AgilityAreas.RELLEKA_LARGE_START,
             AgilityAreas.RELLEKA_OBS_1_AREA);
-    public Obstacle GAP_ONE = new Obstacle(14947, "Leap",
+    Obstacle GAP_ONE = new Obstacle(14947, "Leap",
             AgilityAreas.RELLEKA_OBS_1_AREA,
             AgilityAreas.RELLEKA_OBS_2_AREA);
-    public Obstacle TIGHTROPE_ONE = new Obstacle(14987, "Cross",
+    Obstacle TIGHTROPE_ONE = new Obstacle(14987, "Cross",
             AgilityAreas.RELLEKA_OBS_2_AREA,
             AgilityAreas.RELLEKA_OBS_3_AREA);
-    public Obstacle GAP_TWO = new Obstacle(14990, "Leap",
+    Obstacle GAP_TWO = new Obstacle(14990, "Leap",
             AgilityAreas.RELLEKA_OBS_3_AREA,
             AgilityAreas.RELLEKA_OBS_4_AREA);
-    public Obstacle GAP_THREE = new Obstacle(14991, "Hurdle",
+    Obstacle GAP_THREE = new Obstacle(14991, "Hurdle",
             AgilityAreas.RELLEKA_OBS_4_AREA,
             AgilityAreas.RELLEKA_OBS_5_AREA);
-    public Obstacle TIGHTROPE_TWO = new Obstacle(14992, "Cross",
+    Obstacle TIGHTROPE_TWO = new Obstacle(14992, "Cross",
             AgilityAreas.RELLEKA_OBS_5_AREA,
             AgilityAreas.RELLEKA_OBS_6_AREA);
-    public Obstacle PILE_OF_FISH = new Obstacle(14994, "Jump-in",
+    Obstacle PILE_OF_FISH = new Obstacle(14994, "Jump-in",
             AgilityAreas.RELLEKA_OBS_6_AREA,
             AgilityAreas.RELLEKA_FINISH_AREA);
 

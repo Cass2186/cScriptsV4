@@ -40,6 +40,9 @@ public class DrinkPotion implements Task {
                 ItemID.SUPER_RANGING_1)) {
             Vars.get().usingRangingPotion = true;
         }
+        if (Inventory.contains(ItemID.LOCATOR_ORB)) {
+            Vars.get().usingLocatorOrb = true;
+        }
         Log.info("Using Super combat potions? " + Vars.get().usingSuperCombat);
         Log.info("Using prayer potions? " + Vars.get().usingPrayerPots);
         Log.info("Using absorption potions? " + Vars.get().usingAbsorptions);
@@ -50,8 +53,8 @@ public class DrinkPotion implements Task {
 
     public static boolean shouldDrinkPrayerPot() {
         int drinkAtAbsolute = getAbsolutePrayerDrinkAt();
-     //   System.out.println("[Debug]: Drinking Prayer Potion at " + Vars.get().drinkPrayAtPercentage + "% || " +
-      //          "Absolute: " + drinkAtAbsolute);
+        //   System.out.println("[Debug]: Drinking Prayer Potion at " + Vars.get().drinkPrayAtPercentage + "% || " +
+        //          "Absolute: " + drinkAtAbsolute);
         return Prayer.getPrayerPoints() < drinkAtAbsolute;
     }
 
@@ -96,7 +99,6 @@ public class DrinkPotion implements Task {
             }
         }
     }
-
 
 
     public boolean drinkPotion(int[] potionArray, Skill skill, int add) {
@@ -151,7 +153,10 @@ public class DrinkPotion implements Task {
         Optional<InventoryItem> rockCake = Query.inventory()
                 .idEquals(Const.ROCK_CAKE)
                 .findClosestToMouse();
-        if (rockCake.isPresent() &&
+        Optional<InventoryItem> locatorOrb = Query.inventory()
+                .idEquals(ItemID.LOCATOR_ORB)
+                .findClosestToMouse();
+        if ((rockCake.isPresent() || locatorOrb.isPresent()) &&
                 Combat.getHP() != 1 //&& Vars.get().overloadTimer.isRunning()
                 && Combat.getHP() >= Vars.get().eatRockCakeAt) {
             determineSleep();
@@ -159,13 +164,15 @@ public class DrinkPotion implements Task {
             if (Combat.getHP() > 1 &&
                     ((Vars.get().usingOverloadPots && Vars.get().overloadTimer.isRunning()) ||
                             Vars.get().usingAbsorptions)) {
+
                 for (int i = 0; i < 50; i++) {
                     Log.info("Eating rock cake");
                     General.sleep(50, 80);
                     if (!Game.isInInstance())
                         break;
-
-                    if (rockCake.get().click("Guzzle")) {
+                    if (locatorOrb.map(l -> l.click("Feel")).orElse(false)) {
+                        Waiting.waitNormal(325, 60);
+                    } else if (rockCake.map(r -> r.click("Guzzle")).orElse(false)) {
                         Log.info("Guzzled");
                         General.sleep(General.randomSD(150, 700, 350, 75));
                     }
@@ -177,7 +184,7 @@ public class DrinkPotion implements Task {
 
             }
 
-            Vars.get().eatRockCakeAt = General.randomSD(2, 6, 3, 2);
+            Vars.get().eatRockCakeAt = Vars.get().getEatRockCakeAt();
             Log.info("Next eating rock cake at: " + Vars.get().eatRockCakeAt);
         } else if (Vars.get().usingAbsorptions) {
             Log.error("Error with rock caking: do we have one? " + rockCake.isPresent());
@@ -223,22 +230,28 @@ public class DrinkPotion implements Task {
     public void drinkAbsorption() {
         if (shouldDrinkAbsorption()) {
             // if we have >150 abs points left it will sleep, otherwise it drinks to avoid death
-            Log.info("[Debug]: Drinking up to: " + Vars.get().drinkAbsorptionUpTo);
+            Log.info("Drinking up to: " + Vars.get().drinkAbsorptionUpTo);
             if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo) {
                 if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) > 150)
                     determineSleep();
+
                 for (int i = 0; i < 100; i++) {
-                    Waiting.waitNormal(120, 30);
+                    Waiting.waitNormal(165, 35);
+                    Optional<InventoryItem> abs = Query.inventory()
+                            .idEquals(Const.ABSORPTION_POTION)
+                            .findClosestToMouse();
+
                     if (!Game.isInInstance() || !org.tribot.script.sdk.Login.isLoggedIn())
                         break;
-                    if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo)
-                        drinkPotion(Const.ABSORPTION_POTION);
-                    else
+                    if (Utils.getVarBitValue(Varbits.NMZ_ABSORPTION.getId()) < Vars.get().drinkAbsorptionUpTo &&
+                            abs.map(a -> a.click("Drink")).orElse(false)) {
+                        Waiting.waitNormal(200, 35);
+                    } else
                         break;
                 }
             }
-            Vars.get().drinkAbsorptionUpTo = General.random(400, 800);
-            Vars.get().drinkAbsorptionAt = General.random(50, 150);
+            Vars.get().drinkAbsorptionUpTo = Utils.random(400, 800);
+            Vars.get().drinkAbsorptionAt = Utils.random(50, 150);
             Log.info("[Debug]: Next drinking Absorption at " + Vars.get().drinkAbsorptionAt
                     + " up to: " + Vars.get().drinkAbsorptionUpTo);
             rockCake();
@@ -278,8 +291,8 @@ public class DrinkPotion implements Task {
 
         drinkPotion(Const.SUPER_RANGING_POTION, Skill.RANGED);
         drinkPotion(ItemID.RANGING_POTION, Skill.RANGED);
-        if(drinkPotion(ItemID.SUPER_COMBAT_POTION, Skill.STRENGTH, Vars.get().superCombatAdd)){
-            Vars.get().superCombatAdd =  General.randomSD(Vars.get().superCombatPotionAddMean,
+        if (drinkPotion(ItemID.SUPER_COMBAT_POTION, Skill.STRENGTH, Vars.get().superCombatAdd)) {
+            Vars.get().superCombatAdd = General.randomSD(Vars.get().superCombatPotionAddMean,
                     Vars.get().superCombatPotionAddSd);
         }
 

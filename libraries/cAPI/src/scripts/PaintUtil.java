@@ -69,7 +69,7 @@ public class PaintUtil {
         for (int i = 0; i < words.size(); i++) {
             int width = ((int) fontMetrics.getStringBounds(words.get(i), g).getWidth() + xWords);
             int addY = i * 20;
-            int height = (int) fontMetrics.getStringBounds(words.get(i), g).getHeight() + 2;
+            int height = (int) fontMetrics.getStringBounds(words.get(i), g).getHeight() + 5;
 
             g.setColor(Color.BLACK);
             g.drawRect(xGraphics, rectangleYStart + addY, width, height);
@@ -88,14 +88,14 @@ public class PaintUtil {
     ;
 
     public static void createPaint(Graphics g, String[] words) {
-        int xWords = 15; // for words
-        int xGraphics = 10;
+        int xWords = 17; // for words
+        int xGraphics = 12;
         FontMetrics fontMetrics = g.getFontMetrics();
         Color backgroundColor = new Color(93, 140, 245, 160);
         Font font = new Font("Arial Nova", Font.PLAIN, 12);
 
         int rectangleYStart = 201;
-        int multipleOfString = 20 * words.length;
+        int multipleOfString = 22 * words.length;
         // this uses the chatbox to determine the lowest the graphics go
         if (Interfaces.get(162, 40) != null) {
             rectangleYStart = (int) Interfaces.get(162, 40).getAbsoluteBounds().getY() -
@@ -103,19 +103,19 @@ public class PaintUtil {
         }
 
         for (int i = 0; i < words.length; i++) {
-            int width = ((int) fontMetrics.getStringBounds(words[i], g).getWidth() + xWords);
-            int addY = i * 20;
+            int width = ((int) fontMetrics.getStringBounds(words[i], g).getWidth() + xWords)-5;
+            int addY = i * 22;
+            // box height
             int height = (int) fontMetrics.getStringBounds(words[i], g).getHeight() + 2;
 
             g.setColor(Color.BLACK);
             g.drawRect(xGraphics, rectangleYStart + addY, width, height);
-            g.drawRect(xGraphics-1, rectangleYStart + addY-1, width+2, height+2);
+            g.drawRect(xGraphics-1, rectangleYStart + addY-1, width, height+2);
 
             g.setColor(backgroundColor);
             g.fillRect(xGraphics, rectangleYStart + addY, width, height);
 
             g.setColor(Color.DARK_GRAY);
-
 
             g.setFont(font);
             g.setColor(Color.WHITE);

@@ -8,6 +8,7 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.Widgets;
 import scripts.*;
 import scripts.Data.Const;
 import scripts.Tasks.Priority;
@@ -44,6 +45,7 @@ public class BankTask implements Task {
 
     private void goToAccountGuide() {
         closePollInterface();
+        Widgets.closeAll();
         PathingUtil.localNavigation(Const.ACCOUNT_INFO_TILE);
     }
 
@@ -85,20 +87,15 @@ public class BankTask implements Task {
     public void execute() {
         if (Game.getSetting(Const.GAME_SETTING) == 500 || Game.getSetting(Const.GAME_SETTING) == 510) {
             openBank();
-        }
-        else   if (Game.getSetting(Const.GAME_SETTING) == 520) {
+        } else if (Game.getSetting(Const.GAME_SETTING) == 520) {
             openPollBooth();
-        }
-        else  if (Game.getSetting(Const.GAME_SETTING) == 525) {
+        } else if (Game.getSetting(Const.GAME_SETTING) == 525) {
             goToAccountGuide();
-        }
-        else  if (Game.getSetting(Const.GAME_SETTING) == 530) {
+        } else if (Game.getSetting(Const.GAME_SETTING) == 530) {
             talkToAccountGuide();
-        }
-        else  if (Game.getSetting(Const.GAME_SETTING) == 531) {
+        } else if (Game.getSetting(Const.GAME_SETTING) == 531) {
             openTab();
-        }
-        else  if (Game.getSetting(Const.GAME_SETTING) == 532) {
+        } else if (Game.getSetting(Const.GAME_SETTING) == 532) {
             closePollInterface();
             talkToAccountGuide();
         }

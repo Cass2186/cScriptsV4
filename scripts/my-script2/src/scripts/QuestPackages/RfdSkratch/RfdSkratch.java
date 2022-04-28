@@ -270,6 +270,8 @@ public class RfdSkratch implements QuestTask {
     }
 
     public void inflateToads() {
+        if (Inventory.find(COOKED_JUBBLY).length > 0)
+            return;
         if (!TOAD_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length < 3) {
             cQuesterV2.status = "Going to Toads";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -308,8 +310,10 @@ public class RfdSkratch implements QuestTask {
     RSTile SWAMP_BUBBLE_TILE = new RSTile(2595, 2967, 0);
 
     public void makeBaloon() {
+
         RSNPC[] jubbly = NPCs.find(JUBBLY_ID);
-        if (jubbly.length < 1) {
+        if (jubbly.length < 1 && Inventory.find(BALOON_TOAD).length == 0  &&
+                Inventory.find(COOKED_JUBBLY).length ==0) {
             PathingUtil.walkToArea(TOAD_AREA);
 
             if (TOAD_AREA.contains(Player.getPosition()) && Inventory.find(BELLOW).length > 0) {
@@ -319,7 +323,7 @@ public class RfdSkratch implements QuestTask {
                     General.println("[Debug]: " + cQuesterV2.status);
 
                     Optional<GameObject> bubbles = Query.gameObjects()
-                            .tileEquals(new WorldTile(2595, 2966,0))
+                            .tileEquals(new WorldTile(2595, 2966, 0))
                             .nameContains("Swamp bubbles")
                             .findBestInteractable();
 
@@ -347,7 +351,8 @@ public class RfdSkratch implements QuestTask {
 
     public void mineRocks() {
         RSNPC[] jubbly = NPCs.find(JUBBLY_ID);
-        if (jubbly.length < 1) {
+        if (jubbly.length < 1 && Inventory.find(BALOON_TOAD).length == 0  &&
+                Inventory.find(COOKED_JUBBLY).length ==0) {
             cQuesterV2.status = "Going to mine";
             General.println("[Debug]: " + cQuesterV2.status);
             if (!MINING_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length > 1
@@ -374,7 +379,8 @@ public class RfdSkratch implements QuestTask {
     public void baitBird() {
         Utils.equipItem(OGRE_BOW);
         Utils.equipItem(OGRE_ARROW);
-        if (Inventory.find(BALOON_TOAD).length > 0) {
+        if (Inventory.find(BALOON_TOAD).length > 0  &&
+        Inventory.find(COOKED_JUBBLY).length ==0 ) {
 
             PathingUtil.walkToArea(RANTZ_AREA);
 
@@ -410,7 +416,7 @@ public class RfdSkratch implements QuestTask {
                 }
             }
 
-
+            cQuesterV2.status = "Plucking Jubbly";
             if (Utils.clickNPC(JUBBLY_ID_4864, "Pluck"))
                 Timer.abc2WaitCondition(() -> GroundItems.find(RAW_JUBBLY).length > 0, 25000, 35000);
 
@@ -433,14 +439,18 @@ public class RfdSkratch implements QuestTask {
     }
 
     public void cookJubbly() {
-        if (PathingUtil.walkToTile(new RSTile(2631, 2989, 0)))
-            Timer.waitCondition(() -> Objects.find(30, 6895).length > 0, 8000, 12000);
+        if (Inventory.find(RAW_JUBBLY).length > 0 &&
+                Inventory.find(COOKED_JUBBLY).length==0) {
+            cQuesterV2.status = "Cooking Jubbly";
+            if (PathingUtil.walkToTile(new RSTile(2631, 2989, 0)))
+                Timer.waitCondition(() -> Objects.find(30, 6895).length > 0, 8000, 12000);
 
-        if (Objects.find(30, 6895).length > 0) {
-            Timer.waitCondition(() -> Objects.find(30, 6895)[0]
-                    .getPosition().distanceTo(Player.getPosition()) < 2, 12000);
-            if (Utils.useItemOnObject(RAW_JUBBLY, 6895))
-                Timer.waitCondition(() -> Inventory.find(COOKED_JUBBLY).length > 0, 20000);
+            if (Objects.find(30, 6895).length > 0) {
+                Timer.waitCondition(() -> Objects.find(30, 6895)[0]
+                        .getPosition().distanceTo(Player.getPosition()) < 2, 12000);
+                if (Utils.useItemOnObject(RAW_JUBBLY, 6895))
+                    Timer.waitCondition(() -> Inventory.find(COOKED_JUBBLY).length > 0, 20000);
+            }
         }
     }
 
@@ -472,6 +482,10 @@ public class RfdSkratch implements QuestTask {
         return true;
     }
 
+    private void releaseAllFrogs() {
+
+    }
+
     @Override
     public Priority priority() {
         return Priority.LOW;
@@ -491,50 +505,42 @@ public class RfdSkratch implements QuestTask {
             goToStart();
             inspectOgre();
         }
-        if (Game.getSetting(173) == 1 && RSVarBit.get(1904).getValue() == 10) {
+        else  if (Game.getSetting(173) == 1 && RSVarBit.get(1904).getValue() == 10) {
             goToRantz();
         }
-        if (RSVarBit.get(1904).getValue() == 20) {
+        else  if (RSVarBit.get(1904).getValue() == 20) {
             goToLog();
         }
-        if (RSVarBit.get(1904).getValue() == 30) {
+        else if (RSVarBit.get(1904).getValue() == 30) {
             goToLog();
         }
-        if (RSVarBit.get(6719).getValue() == 30) { // alternatively 1904 is 40 during cutscene
+        else  if (RSVarBit.get(6719).getValue() == 30) { // alternatively 1904 is 40 during cutscene
             General.sleep(General.random(8000, 12000)); // cut scene
-        }
-        if (RSVarBit.get(1904).getValue() == 50) {
+        } else if (RSVarBit.get(1904).getValue() == 50) {
             cutLog();
-        }
-        if (RSVarBit.get(1904).getValue() == 60) {
+        } else if (RSVarBit.get(1904).getValue() == 60) {
             cutLog();
-        }
-        if (RSVarBit.get(1904).getValue() == 70) {
+        } else if (RSVarBit.get(1904).getValue() == 70) {
             talkToRantz3();
-        }
-        if (RSVarBit.get(1904).getValue() == 80) {
+        } else if (RSVarBit.get(1904).getValue() == 80) {
             goToTree();
-        }
-        if (RSVarBit.get(1904).getValue() == 90) {
+        } else if (RSVarBit.get(1904).getValue() == 90) {
             General.sleep(General.random(12000, 22000));
-        }
-
-        if (RSVarBit.get(1904).getValue() == 100) {
+        } else if (RSVarBit.get(1904).getValue() == 100) {
             goWithKids();
-        }
-        if (RSVarBit.get(1904).getValue() == 110) {
+        } else if (RSVarBit.get(1904).getValue() == 110) {
             mineRocks();
             inflateToads();
             makeBaloon();
-        }
-        if (RSVarBit.get(1904).getValue() == 120 || RSVarBit.get(1904).getValue() == 130 || RSVarBit.get(1904).getValue() == 140) {
+        } else if (RSVarBit.get(1904).getValue() == 120 ||
+                RSVarBit.get(1904).getValue() == 130 || RSVarBit.get(1904).getValue() == 140) {
+            makeBaloon();
             baitBird();
-        }
-        if (RSVarBit.get(1904).getValue() == 150) {
+        } else if (RSVarBit.get(1904).getValue() == 150) {
+            makeBaloon();
+            baitBird();
             cookJubbly();
-        }
-
-        if (RSVarBit.get(1904).getValue() == 160) {
+        } else if (RSVarBit.get(1904).getValue() == 160) {
             finishQuest();
         }
 
@@ -569,6 +575,6 @@ public class RfdSkratch implements QuestTask {
 
     @Override
     public boolean isComplete() {
-        return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);
+        return Utils.getVarBitValue(1904) == 170;
     }
 }

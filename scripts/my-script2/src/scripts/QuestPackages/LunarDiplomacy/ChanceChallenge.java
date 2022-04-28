@@ -1,14 +1,19 @@
 package scripts.QuestPackages.LunarDiplomacy;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import org.tribot.api2007.Game;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.query.Query;
 import scripts.NpcID;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.ObjectStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
+import scripts.Requirements.Util.Operation;
+import scripts.Requirements.VarbitRequirement;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 import scripts.Utils;
@@ -26,18 +31,16 @@ public class ChanceChallenge implements QuestTask {
     NPCStep talk = new NPCStep(NpcID.ETHEREAL_FLUKE, new RSTile(1737, 5068, 2),
         new String[]{"Suppose I may as well have a go."});
 
-    ObjectStep spinD1 = new ObjectStep(17019,  new RSTile(1735, 5064, 2), "Flip",
-            NPCInteraction.isConversationWindowUp());
-    ObjectStep spinD2 = new ObjectStep(17024, new RSTile(1737, 5063, 2), "Flip",
-            NPCInteraction.isConversationWindowUp());
-    ObjectStep spinD3 = new ObjectStep(17023, new RSTile(1732, 5067, 2), "Flip",
-            NPCInteraction.isConversationWindowUp());
-    ObjectStep spinD4 = new ObjectStep(17020, new RSTile(1732, 5060, 2), "Flip",
-            NPCInteraction.isConversationWindowUp());
-    ObjectStep spinD5 = new ObjectStep(17022, new RSTile(1739, 5067, 2), "Flip",
-            NPCInteraction.isConversationWindowUp());
-    ObjectStep spinD6 = new ObjectStep(17021, new RSTile(1739, 5060, 2), "Flip",
-            NPCInteraction.isConversationWindowUp());
+    ObjectStep spinD1 = new ObjectStep(17019,  "Roll"
+   );
+    ObjectStep spinD2 = new ObjectStep(17024,  "Roll"
+ );
+    ObjectStep spinD3 = new ObjectStep(17023,  "Roll"
+);
+    ObjectStep spinD4 = new ObjectStep(17020, "Roll"
+    );
+    ObjectStep spinD5 = new ObjectStep(17022, "Roll");
+    ObjectStep spinD6 = new ObjectStep(17021,  "Roll");
 
 
     public void setupSolutions() {
@@ -144,7 +147,7 @@ public class ChanceChallenge implements QuestTask {
         }
     }
 
-
+    VarbitRequirement finishedChance = new VarbitRequirement(2410, 5,Operation.GREATER_EQUAL);
     @Override
     public Priority priority() {
         return Priority.MEDIUM;
@@ -152,17 +155,21 @@ public class ChanceChallenge implements QuestTask {
 
     @Override
     public boolean validate() {
-        return false;
+        return Game.isInInstance() && !finishedChance.check() &&
+                Query.npcs().idEquals(NpcID.ETHEREAL_FLUKE).isReachable().isAny();
     }
 
     @Override
     public void execute() {
+        setupSolutions();
         updateSteps();
+        if (ChatScreen.isOpen())
+            NPCInteraction.handleConversation();
     }
 
     @Override
     public String questName() {
-        return null;
+        return "Chance game";
     }
 
     @Override

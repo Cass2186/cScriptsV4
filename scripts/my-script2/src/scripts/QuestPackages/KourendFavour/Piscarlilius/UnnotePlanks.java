@@ -81,7 +81,7 @@ public class UnnotePlanks implements QuestTask {
 
     @Override
     public String questName() {
-        return null;
+        return "Piscarlilius Favour";
     }
 
     @Override

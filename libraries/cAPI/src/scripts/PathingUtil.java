@@ -164,8 +164,10 @@ public class PathingUtil {
 
 
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
+        var path = LocalWalking.Map.builder().travelThroughDoors(true)
+                .build().getPath(destination);
         Log.info("[PathingUtil] Local walking V2 - Worldtile");
-        return LocalWalking.walkPath(LocalWalking.createMap().getPath(destination.toLocalTile()), state);
+        return LocalWalking.walkPath(path, state);
     }
 
     public static boolean localNav(WorldTile dest) {

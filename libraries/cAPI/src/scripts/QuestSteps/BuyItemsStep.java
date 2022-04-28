@@ -68,8 +68,8 @@ public class BuyItemsStep {
             BankManager.withdraw(0, true, ItemID.COINS);
             BankManager.setUnNoted();
             if (!org.tribot.script.sdk.GrandExchange.isNearby() && Inventory.find(ItemID.RING_OF_WEALTH).length ==0) {
-                Log.log("[BuyItemsStep]: need RoW, not at GE");
-                BankManager.withdrawArray(ItemID.RING_OF_WEALTH, 1);
+                Log.info("[BuyItemsStep]: need RoW, not at GE");
+                BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
             }
             this.bankCache = Banking.getAllList();
         }

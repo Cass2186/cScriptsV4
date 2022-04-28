@@ -171,8 +171,19 @@ public class AgilityAreas {
                     new RSTile(3036, 3342, 3)
             }
     );
-
     public static RSArea FALADOR_AREA_TWO = new RSArea(
+            new RSTile[] {
+                    new RSTile(3044, 3343, 3),
+                    new RSTile(3046, 3343, 3),
+                    new RSTile(3046, 3341, 3),
+                    new RSTile(3050, 3341, 3),
+                    new RSTile(3052, 3347, 3),
+                    new RSTile(3052, 3350, 3),
+                    new RSTile(3047, 3350, 3),
+                    new RSTile(3044, 3346, 3)
+            }
+    );
+    public static RSArea FALADOR_AREA_TWO_b = new RSArea(
             new RSTile[]{
                     new RSTile(3045, 3343, 3),
                     new RSTile(3045, 3348, 3),
@@ -262,6 +273,7 @@ public class AgilityAreas {
      * RELLEKA
      */
     public static RSArea RELLEKA_LARGE_START = new RSArea(new RSTile(2621, 3679, 0), new RSTile(2627, 3677, 0));
+    // just in front of the jump up area
     public static RSTile RELLEKA_START_TILE = new RSTile(2625, 3678, 0);
     public static RSArea RELLEKA_OBS_1_AREA = new RSArea(new RSTile(2626, 3672, 3), new RSTile(2621, 3676, 3));
     public static RSArea RELLEKA_OBS_2_AREA = new RSArea(new RSTile(2614, 3668, 3), new RSTile(2622, 3658, 3));
@@ -270,7 +282,8 @@ public class AgilityAreas {
     public static RSArea RELLEKA_OBS_4_AREA = new RSArea(new RSTile(2638, 3653, 3), new RSTile(2644, 3649, 3));
     public static RSArea RELLEKA_OBS_5_AREA = new RSArea(new RSTile(2642, 3662, 3), new RSTile(2650, 3657, 3));
     public static RSArea RELLEKA_OBS_6_AREA = new RSArea(new RSTile(2662, 3665, 3), new RSTile(2655, 3685, 3));
-    public static RSArea RELLEKA_FINISH_AREA = new RSArea(new RSTile(2654, 3671, 0), new RSTile(2647, 3681, 0));
+    //where you land after finishing
+   public static RSArea RELLEKA_FINISH_AREA = new RSArea(new RSTile(2654, 3671, 0), new RSTile(2647, 3681, 0));
 
     /**
      * WILDERNESS

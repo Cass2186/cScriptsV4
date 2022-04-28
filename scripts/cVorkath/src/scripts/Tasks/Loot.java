@@ -54,7 +54,7 @@ public class Loot implements Task {
             }
             if (loot.get().interact("Take")) {
                 Waiting.waitUntil(3000, () -> Query.groundItems().nameContains(loot.get().getName()).findBestInteractable().isEmpty());
-                tracker.trackData("Looted", (long) Pricing.lookupPrice(loot.get().getId()).orElse(5000) * loot.get().getStack());
+              //  tracker.trackData("Looted", (long) Pricing.lookupPrice(loot.get().getId()).orElse(5000) * loot.get().getStack());
                 looted = Pricing.lookupPrice(loot.get().getId()).orElse(1) * loot.get().getStack() + looted;
             }
         }

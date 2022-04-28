@@ -9,8 +9,11 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
-import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.QuestSteps.QuestTask;
@@ -28,7 +31,8 @@ public class DeathsOffice implements QuestTask {
     public static DeathsOffice get() {
         return quest == null ? quest = new DeathsOffice() : quest;
     }
-   public static int[] GRAVESTONE_TIMER = { 548, 39 ,0};
+
+    public static int[] GRAVESTONE_TIMER = {548, 39, 0};
 
     public static int DEATHS_DOMAIN_ID = 38426;
     public static int DEATHS_ID = 9855;
@@ -82,8 +86,10 @@ public class DeathsOffice implements QuestTask {
             if (NpcChat.talkToNPC("Death")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-                if (Interfaces.isInterfaceSubstantiated(219, 1)) {
+                ChatScreen.handle();
+                if (ChatScreen.getOptions().size() > 0) {
                     List<String> options = ChatScreen.getOptions();
+
                     for (String s : options) {
                         if (s.contains("I think I'm done here.")) {
                             General.println("First chat = true");
@@ -100,11 +106,13 @@ public class DeathsOffice implements QuestTask {
         if (death.length > 0) {
 
             if (isFirstDeathChat()) {
+                Log.info("Doing first chat");
+                ChatScreen.handle(FIRST_TIME_ARRAY);
                 General.println("[DeathUtil]: Handling first death conversation.");
-                NPCInteraction.handleConversation(FIRST_TIME_ARRAY[0]);
-                NPCInteraction.handleConversation(FIRST_TIME_ARRAY[1]);
-                NPCInteraction.handleConversation(FIRST_TIME_ARRAY[2]);
-                NPCInteraction.handleConversation(FIRST_TIME_ARRAY[3]);
+                //NPCInteraction.handleConversation(FIRST_TIME_ARRAY[0]);
+                // NPCInteraction.handleConversation(FIRST_TIME_ARRAY[1]);
+                // NPCInteraction.handleConversation(FIRST_TIME_ARRAY[2]);
+                // NPCInteraction.handleConversation(FIRST_TIME_ARRAY[3]);
                 NPCInteraction.handleConversation();
 
 
@@ -164,9 +172,33 @@ public class DeathsOffice implements QuestTask {
                         Timer.abc2WaitCondition(() -> NPCs.findNearest("Death").length < 1, 6000, 9000);
 
             }
+            equipAllItems();
+        }
+    }
+
+    private static void equipAllItems() {
+        List<InventoryItem> wearableItems = Query.inventory()
+                        .actionContains("Wear")
+                        .toList();
+
+        List<InventoryItem> wieldableItems =
+                Query.inventory().actionContains("Wield").toList();
+
+        for (InventoryItem i : wearableItems){
+            if (i.click("Wear")){
+                Waiting.waitUntil(2000, 200,
+                        ()-> Equipment.isEquipped(i.getId()));
+            }
+        }
+        for (InventoryItem i : wieldableItems){
+            if (i.click("Wield")){
+                Waiting.waitUntil(2000, 200,
+                        ()-> Equipment.isEquipped(i.getId()));
+            }
         }
 
     }
+
     @Override
     public Priority priority() {
         return Priority.HIGH;
@@ -192,6 +224,7 @@ public class DeathsOffice implements QuestTask {
     public boolean checkRequirements() {
         return false;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;

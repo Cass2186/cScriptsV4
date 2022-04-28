@@ -9,6 +9,8 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
@@ -440,7 +442,11 @@ public class FamilyCrest implements QuestTask {
                 if (num == 2)
                     break;
 
-                if (Utils.clickObj(11371, "Mine")) { //gold rocks
+                Optional<GameObject> mine = Query.gameObjects().idEquals(11371)
+                        .actionContains("Mine")
+                        .sortedByPathDistance()
+                        .findClosest();
+                if (mine.map(ore->ore.interact("Mine")).orElse(false)){
                     if (Timer.waitCondition(() -> Player.getAnimation() != -1, 1800, 3300))
                         Timer.waitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_ORE).length > num,
                                 2200, 3800);
@@ -874,7 +880,6 @@ public class FamilyCrest implements QuestTask {
         if (Game.getSetting(148) == 0) {
             buyItems();
             getInitialItems();
-
         }
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_FAMILY_CREST.getId());
         Log.debug("Family Crest gameSetting is " + gameSetting);

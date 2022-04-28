@@ -6,16 +6,18 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
 import scripts.GEManager.GEItem;
 import scripts.*;
 import scripts.QuestPackages.FamilyCrest.FamilyCrest;
@@ -173,14 +175,14 @@ public class DreamMentor implements QuestTask {
                     //TODO change combat gear to melee + trident
                     new GEItem(ItemID.DRAGON_PLATELEGS, 1, 15),
                     new GEItem(ItemID.OCCULT_NECKLACE, 1, 15),
-                 //   new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
+                    //   new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
                     new GEItem(ItemID.RUNE_PLATEBODY, 1, 15),
                     new GEItem(ItemID.RUNE_BOOTS, 1, 45),
                     new GEItem(ItemID.RUNE_FULL_HELM, 1, 15),
                     new GEItem(ItemID.RUNE_KITESHIELD, 1, 25),
                     new GEItem(ItemID.RING_OF_RECOIL, 1, 40),
-
-
+                    new GEItem(ItemID.SUPER_DEFENCE[0], 1, 40),
+                    new GEItem(ItemID.GUTHIX_CLOAK, 1, 200),
                     new GEItem(ItemID.COOKED_KARAMBWAN, 25, 40)
 
             )
@@ -233,17 +235,20 @@ public class DreamMentor implements QuestTask {
                     Arrays.asList(
                             new ItemReq(ItemID.TINDERBOX, 1),
                             new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
-
+                            new ItemReq(ItemID.RUNE_KITESHIELD, 1, true, true),
+                            new ItemReq(ItemID.OBSIDIAN_HELMET, 1, true, true),
                             new ItemReq(ItemID.RING_OF_RECOIL, 1, 0, true, true),
-                            new ItemReq(ItemID.BLACK_DHIDE_VAMBRACES, 1, true, true),
-                            new ItemReq(ItemID.BLACK_DHIDE_BODY, 1, true, true),
-                            new ItemReq(ItemID.BLACK_DHIDE_CHAPS, 1, true, true),
-                            new ItemReq(ItemID.RUNE_CROSSBOW, 1, true, true),
-                            new ItemReq(ItemID.RUNITE_BOLTS, 500, true, true),
-                            new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, true, true),
-                            new ItemReq(ItemID.SNAKESKIN_BOOTS, 1, true, true),
+                            new ItemReq(ItemID.COMBAT_BRACELET0, 1, true, true),
+                            new ItemReq(ItemID.OBSIDIAN_PLATELEGS, 1, true, true),
+                            new ItemReq(ItemID.OBSIDIAN_PLATEBODY, 1, true, true),
+                            tridentReq,
+                            // new ItemReq(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, true, true),
+                            // new ItemReq(ItemID.RUNITE_BOLTS, 500, true, true),
+                            new ItemReq(ItemID.OCCULT_NECKLACE, 1, true, true),
+                            new ItemReq(ItemID.DRAGON_BOOTS, 1, true, true),
                             new ItemReq(ItemID.DREAM_POTION, 1, 0),
                             new ItemReq(ItemID.LUNAR_ISLE_TELEPORT, 1, 0),
+                            new ItemReq(ItemID.SUPER_DEFENCE[0], 1, 0),
                             new ItemReq(ItemID.COOKED_KARAMBWAN, 7, 0),
                             new ItemReq(ItemID.SHARK, 0, 1)
 
@@ -252,21 +257,24 @@ public class DreamMentor implements QuestTask {
     }
 
     BankTask fightTask = BankTask.builder()
-            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.AMMO).item(ItemID.RUNITE_BOLTS, Amount.fill(100))) // mith arrows
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.AMMO)
+                    .item(ItemID.RUNITE_BOLTS, Amount.fill(100))) // mith arrows
+            .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HEAD)
+                    .item(ItemID.OBSIDIAN_HELMET, Amount.fill(100))) // mith arrows
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.HANDS)
                     .item(ItemID.BLACK_DHIDE_VAMBRACES, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.BODY)
-                    .item(ItemID.BLACK_DHIDE_BODY, Amount.of(1)))
+                    .item(ItemID.OBSIDIAN_PLATEBODY, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.LEGS)
-                    .item(ItemID.BLACK_DHIDE_CHAPS, Amount.of(1)))
+                    .item(ItemID.OBSIDIAN_PLATELEGS, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.WEAPON)
-                    .item(ItemID.RUNE_CROSSBOW, Amount.of(1)))
+                    .item(ItemID.TRIDENT_OF_THE_SEAS_FULL, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.NECK)
-                    .item(ItemID.AMULET_OF_GLORY[2], Amount.of(1)))
+                    .item(ItemID.OCCULT_NECKLACE, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.SHIELD)
-                    .item(ItemID.BLACK_DHIDE_SHIELD, Amount.of(1)))
+                    .item(ItemID.RUNE_KITESHIELD, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.FEET)
-                    .item(ItemID.SNAKESKIN_BOOTS, Amount.of(1)))
+                    .item(ItemID.DRAGON_BOOTS, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.CAPE)
                     .item(ItemID.AVAS_ACCUMULATOR, Amount.of(1)))
             .addEquipmentItem(EquipmentReq.slot(org.tribot.script.sdk.Equipment.Slot.RING)
@@ -284,10 +292,15 @@ public class DreamMentor implements QuestTask {
     public void getFightItems() {
         populateItemRequirements();
         if (!fightItems.check()) {
-
             cQuesterV2.status = "Getting fight items";
+            if (BankManager.open(true)) {
+                BankManager.depositEquipment();
+            }
+            fightItems.withdrawItems();
+            ;
+
             //  fightItems.withdrawItems();
-            fightTask.execute();
+            //    fightTask.execute();
         }
     }
 
@@ -425,10 +438,9 @@ public class DreamMentor implements QuestTask {
                 .nameContains("(")
                 .findFirst();
 
-        if (food.isEmpty() && baggedFood.isPresent()) {
-            int item = baggedFood.get().getId();
-            if (baggedFood.get().click("Remove-one"))
-                Timer.waitCondition(() -> Inventory.find(item).length == 0, 1750, 2250);
+        int item = baggedFood.map(InventoryItem::getId).orElse(-1);
+        if (baggedFood.map(b -> b.click("Remove-one")).orElse(false)) {
+            Timer.waitCondition(() -> Inventory.find(item).length == 0, 1750, 2250);
         }
 
         food = Query.inventory().nameContains(foodName)
@@ -476,6 +488,8 @@ public class DreamMentor implements QuestTask {
                 break;
 
         }
+        if (ChatScreen.isOpen())
+            NPCInteraction.handleConversation();
     }
 
 
@@ -576,17 +590,39 @@ public class DreamMentor implements QuestTask {
         }
     }
 
+    private Optional<Npc> getInteractingInadequacy(int id) {
+        return Query.npcs()
+                .isInteractingWithMe().idEquals(id)
+                .findClosestByPathDistance();
+    }
+
+    private Optional<Npc> getIsMyPlayerInteractingWith() {
+        return Query.npcs()
+                .isMyPlayerInteractingWith()
+                .findClosestByPathDistance();
+    }
+
+
     public void handleFightOne() {
         if (Game.isInInstance()) {
 
             if (!Combat.isUnderAttack())
-                Timer.waitCondition(() -> NPCInteraction.isConversationWindowUp() || Combat.isUnderAttack(), 4000, 6000);
+                Timer.waitCondition(() -> NPCInteraction.isConversationWindowUp() ||
+                        Combat.isUnderAttack(), 4000, 6000);
 
             if (NPCInteraction.isConversationWindowUp()) {
                 NPCInteraction.handleConversation();
                 return;
             }
+            Optional<Npc> interactingWithMe = getInteractingInadequacy(3473);
+            if (interactingWithMe.isEmpty()){
+                return;
+            }
 
+            Optional<Npc> imInteractingWith = getIsMyPlayerInteractingWith();
+            if (imInteractingWith.map(i-> i.getId() != 3473).orElse(false)){
+                //clikc the right NPC if we're interacting with wrong one
+            }
             RSNPC[] inadeq = NPCs.find(3473);
             if (inadeq.length > 0) {
                 eat();
@@ -594,7 +630,6 @@ public class DreamMentor implements QuestTask {
                     if (inadeq[0].isClickable())
                         DaxCamera.focus(inadeq[0]);
                     General.println("[Debug]: Attacking NPC");
-                    //  ddsSpec(3473);
                     eat();
 
                     if (Equipment.isEquipped(ItemID.DRAGON_DAGGERP_5698))
@@ -608,6 +643,7 @@ public class DreamMentor implements QuestTask {
                 eat();
             }
         }
+
     }
 
     public void handleFightTwo() {
@@ -728,9 +764,11 @@ public class DreamMentor implements QuestTask {
 
     @Override
     public void execute() {
+        Waiting.waitUniform(30, 60);
         getSealOfPassage();
         populateItemRequirements();
         setUpSteps();
+        Log.info("Varbit 3618 = " + Utils.getVarBitValue(3618));
         if (Utils.getVarBitValue(3618) == 0) {
             buyAndGetItems();
             startQuest();
@@ -747,19 +785,21 @@ public class DreamMentor implements QuestTask {
         }
         if (Utils.getVarBitValue(3618) == 4 &&
                 Utils.getVarBitValue(HEALTH_VARBIT) < 20) {
+            Log.info("3618 =4 & health < 20");
             if (NPCInteraction.isConversationWindowUp())
                 NPCInteraction.handleConversation();
         }
         if ((Utils.getVarBitValue(3618) == 6 ||
                 Utils.getVarBitValue(3618) == 8) &&
-                Utils.getVarBitValue(HEALTH_VARBIT) == 20 &&
+                Utils.getVarBitValue(HEALTH_VARBIT) < 40 &&
                 Utils.getVarBitValue(3622) < 32) {
-            General.println("[Debug]: Talking to fallen man");
+            Log.info("Talking to fallen man");
             talkToCyrisus3.execute();
         }
         if (Utils.getVarBitValue(3618) == 8 &&
                 Utils.getVarBitValue(3622) >= 32
                 && Utils.getVarBitValue(HEALTH_VARBIT) < 40) {
+            Log.info("3618 =8 & health < 40");
             feedFood(6, "Fallen Man");
         }
         if (Utils.getVarBitValue(3618) == 10 &&

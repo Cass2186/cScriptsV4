@@ -69,7 +69,9 @@ public class EnterHome implements Task {
                     .collect(Collectors.toList());
             for (Widget w : button) {
                 Log.debug("[Debug]: Entering host");
-                if (w.click("Enter House") && Timer.waitCondition(Game::isInInstance, 3000, 4500)) {
+                if (w.click("Enter House") &&
+                        Waiting.waitUntil(4500, 800, Game::isInInstance)) {
+                    Waiting.waitNormal(2000,150);
                     return;
                 } else {
                     //  Log.log("[Debug]: Blacklisting failed host");

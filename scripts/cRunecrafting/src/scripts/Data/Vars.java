@@ -3,6 +3,7 @@ package scripts.Data;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.query.Query;
 import scripts.ItemID;
+import scripts.ScriptUtils.ScriptTimer;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -37,7 +38,7 @@ public class Vars {
     }
 
     public int getProfitHr() {
-        double timeRanMin = ((double) this.getRunTime() / 3600000);
+        double timeRanMin = ((double) ScriptTimer.getRuntime() / 3600000);
         int hr = (int) (getProfit() /timeRanMin);
         //Log.debug("Hourly: " + hr);
         return Math.max(hr, 0);

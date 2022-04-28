@@ -1,14 +1,12 @@
 package scripts.QuestPackages.LunarDiplomacy;
 
+import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Quest;
-import scripts.ItemID;
-import scripts.NpcID;
-import scripts.ObjectID;
+import org.tribot.script.sdk.*;
+import scripts.*;
+import scripts.QuestPackages.LostTribe.LostTribe;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.Items.ItemCollections;
@@ -22,8 +20,16 @@ import scripts.Tasks.Task;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class LunarDiplomacy implements QuestTask {
+
+
+    private static LunarDiplomacy quest;
+
+    public static LunarDiplomacy get() {
+        return quest == null ? quest = new LunarDiplomacy() : quest;
+    }
 
 
     //Items Required
@@ -60,10 +66,12 @@ public class LunarDiplomacy implements QuestTask {
             addToothToPotion, bringPotionToOneiromancer, enterFireAltar, enterWaterAltar, enterAirAltar, enterEarthAltar, useOnEarth, useOnFire,
             useOnAir, useOnWater, talkToOneiromancerWithStaff, enterMine, smeltBar, makeHelmet, talkToPauline, talkToMeteora, talkToSelene,
             returnTiaraToMeteora, digForRing, makeClothes, bringItemsToOneiromancer, talkToRimae, pickUpTiara, useVialOnKindling, lightBrazier,
-            useKindlingOnBrazier, talkToEthereal, doMemoryChallenge,
+            talkToEthereal, doMemoryChallenge,
             startTreeChallenge, doRaceChallenge, startNumber, startRace, doTreeChallenge, talkWithEtherealToFight, leaveLecturn, finishQuest;
 
     NPCStep talkToBentleyToSail, killSuqahForTooth, killSuqahForTiara, fightMe;
+
+    UseItemOnObjectStep useKindlingOnBrazier;
 
     ObjectStep mineOre;
 
@@ -233,10 +241,11 @@ public class LunarDiplomacy implements QuestTask {
         steps.put(165, startingDream);
 
         //TODO add these back in
+        //TODO add these back in
         ConditionalStep challenges = new ConditionalStep(enterDream);
         challenges.addStep(new Conditions(inCentreOfDream, needToTalkAtMiddle), talkToEthereal);
-      //  challenges.addStep(new Conditions(inNumbersDream, startedNumberChallenge), doNumberChallenge);
-      //  challenges.addStep(inMimicDream, doMimicChallenge);
+        //  challenges.addStep(new Conditions(inNumbersDream, startedNumberChallenge), doNumberChallenge);
+        //  challenges.addStep(inMimicDream, doMimicChallenge);
         challenges.addStep(inNumbersDream, startNumber);
         //challenges.addStep(inChanceDream, doChanceChallenge);
         challenges.addStep(inMemoryDream, doMemoryChallenge);
@@ -466,13 +475,13 @@ public class LunarDiplomacy implements QuestTask {
         revealedChart = new VarbitRequirement(2434, 2);
         revealedChest = new VarbitRequirement(2435, 2);
 
-      //  toothNearby = new ItemOnTileRequirement(suqahTooth);
+        //  toothNearby = new ItemOnTileRequirement(suqahTooth);
 
         talkedToSelene = new VarbitRequirement(2445, 1);
         talkedToMeteora = new VarbitRequirement(2446, 1);
         talkedToRimae = new VarbitRequirement(2447, 1);
 
-       // tiaraNearby = new ItemOnTileRequirement(tiara);
+        // tiaraNearby = new ItemOnTileRequirement(tiara);
 
        /* hadHelm = new Conditions(LogicType.OR, helm.alsoCheckBank(questBank), new VarbitRequirement(2436, 1));
         hadCape = new Conditions(LogicType.OR, cape.alsoCheckBank(questBank), new VarbitRequirement(2437, 1));
@@ -571,10 +580,10 @@ public class LunarDiplomacy implements QuestTask {
         //goUpToCabinBoy.addSubSteps(talkToCabinBoy);
 
         //TODO Do these
-       // getLensAndBullseye = new DetailedQuestStep("Go get a bullseye lantern to add the emerald lens to.", bullseyeLantern, emeraldLens);
-       // extinguishLantern = new DetailedQuestStep("Extinguish the bullseye lantern.", bullseyeLanternLit);
-      ////  replaceLens = new DetailedQuestStep("Use the emerald lens on the lantern.", emeraldLensHighlighted, bullseyeLanternHighlighted);
-       // lightLantern = new DetailedQuestStep("Light the emerald lantern.", tinderboxHighlighted, emeraldLantern);
+        // getLensAndBullseye = new DetailedQuestStep("Go get a bullseye lantern to add the emerald lens to.", bullseyeLantern, emeraldLens);
+        // extinguishLantern = new DetailedQuestStep("Extinguish the bullseye lantern.", bullseyeLanternLit);
+        ////  replaceLens = new DetailedQuestStep("Use the emerald lens on the lantern.", emeraldLensHighlighted, bullseyeLanternHighlighted);
+        // lightLantern = new DetailedQuestStep("Light the emerald lantern.", tinderboxHighlighted, emeraldLantern);
 
         goUpToCannon1 = new ObjectStep(ObjectID.STAIRS_16946, new RSTile(2225, 3808, 0), "Go to the top deck to remove the cannon's symbol.");
         goUpToCannon2 = new ObjectStep(ObjectID.STAIRS_16945, new RSTile(2222, 3792, 1), "Go to the top deck to remove the cannon's symbol.");
@@ -612,7 +621,7 @@ public class LunarDiplomacy implements QuestTask {
 
         goDownToIsle1 = new ObjectStep(ObjectID.LADDER_16961, new RSTile(2127, 3893, 2), "Climb down to Lunar Isle.");
         goDownToIsle2 = new ObjectStep(ObjectID.LADDER_16962, new RSTile(2118, 3894, 1), "Climb down to Lunar Isle.");
-       // enterTown = new DetailedQuestStep(new RSTile(2100, 3914, 0), "Enter the town on Lunar Isle.");
+        // enterTown = new DetailedQuestStep(new RSTile(2100, 3914, 0), "Enter the town on Lunar Isle.");
         //   enterTown.addSubSteps(goDownToIsle1, goDownToIsle2);
 
         talkToOneiromancer = new NPCStep(NpcID.ONEIROMANCER, new RSTile(2151, 3867, 0), sealOfPassage);
@@ -626,22 +635,22 @@ public class LunarDiplomacy implements QuestTask {
         fillVial = new ObjectStep(ObjectID.SINK_16705, new RSTile(2091, 3922, 0), "Fill the vial with water.", specialVialHighlighted);
         //fillVial.addSubSteps(leaveChickenHouse);
         // TODO make these add ItemToItemSteps
-       // addGuam = new DetailedQuestStep("Add guam to the vial of water.", waterVial, guam);
-    //    addGuamToMarrentill = new DetailedQuestStep("Add guam to the marr vial.", marrentilPotion, guam);
+        // addGuam = new DetailedQuestStep("Add guam to the vial of water.", waterVial, guam);
+        //    addGuamToMarrentill = new DetailedQuestStep("Add guam to the marr vial.", marrentilPotion, guam);
         //      addGuam.addSubSteps(addGuamToMarrentill);
 
 
-     //   addMarrentil = new DetailedQuestStep("Add marrentill to the guam vial.", marrentill, guamPotion);
-       // grindTooth = new DetailedQuestStep("Grind the suqah tooth.", suqahTooth, pestle);
+        //   addMarrentil = new DetailedQuestStep("Add marrentill to the guam vial.", marrentill, guamPotion);
+        // grindTooth = new DetailedQuestStep("Grind the suqah tooth.", suqahTooth, pestle);
 
-      //  addToothToPotion = new DetailedQuestStep("Add the ground tooth to the guam-marr potion.", groundTooth, guamMarrentilPotionHighlighted);
+        //  addToothToPotion = new DetailedQuestStep("Add the ground tooth to the guam-marr potion.", groundTooth, guamMarrentilPotionHighlighted);
 
-      //\  killSuqahForTooth = new NPCStep(NpcID.SUQAH, "Kill the Suqah outside the town for a tooth. You'll also need 4 hides for later, so pick them up.", true);
-       //TODO add itemStep
+        //\  killSuqahForTooth = new NPCStep(NpcID.SUQAH, "Kill the Suqah outside the town for a tooth. You'll also need 4 hides for later, so pick them up.", true);
+        //TODO add itemStep
         //pickUpTooth = new ItemStep("Pick up the suqah tooth.", suqahTooth);
 
         bringPotionToOneiromancer = new NPCStep(NpcID.ONEIROMANCER, new RSTile(2151, 3867, 0),
-             sealOfPassage, sleepPotion);
+                sealOfPassage, sleepPotion);
 
         enterAirAltar = new ObjectStep(34813, new RSTile(2985, 3292, 0),
                 "Enter the Air Altar and use a dramen staff on it.", airTalisman, dramenStaff);
@@ -708,19 +717,20 @@ public class LunarDiplomacy implements QuestTask {
                 Inventory.find(ItemID.KINDLING).length == 0,
                 sleepPotionHighlighted, kindling);
 
-        lightBrazier = new ObjectStep(17025, new RSTile(2073, 3912, 0),
+        lightBrazier = new UseItemOnObjectStep(ItemID.TINDERBOX, 17025, new RSTile(2073, 3912, 0),
                 "Equip your lunar equipment, some combat runes, and light the Brazier in the west of Lunar Isle's town.",
                 sealOfPassage, tinderboxHighlighted, soakedKindling, helmEquipped, bodyEquipped, legsEquipped, bootsEquipped, glovesEquipped,
                 cloakEquipped, amuletEquipped, ringEquipped, lunarStaffEquipped);
 
 
-        useKindlingOnBrazier = new ObjectStep(17025, new RSTile(2073, 3912, 0),
+        useKindlingOnBrazier = new UseItemOnObjectStep(ItemID.SOAKED_KINDLING, 17025,
+                new RSTile(2073, 3911, 0),
                 "Add the soaked kindling the Brazier in the west of Lunar Isle's town.",
                 sealOfPassage, soakedKindlingHighlighted, helmEquipped, bodyEquipped, legsEquipped, bootsEquipped, glovesEquipped,
                 cloakEquipped, amuletEquipped, ringEquipped, lunarStaffEquipped);
 
         //TODO Fix this
-        //  if (client.getLocalPlayer().getPlayerComposition().isFemale()) {
+        //  if (MyPlayer.get().isFemale()) {
         talkToEthereal = new NPCStep(NpcID.ETHEREAL_LADY, new RSTile(1762, 5088, 2),
                 "Talk to the Ethereal Lady.");
         talkWithEtherealToFight = new NPCStep(NpcID.ETHEREAL_LADY, new RSTile(1762, 5088, 2),
@@ -781,12 +791,12 @@ public class LunarDiplomacy implements QuestTask {
         returnToTalkToYaga = new ConditionalStep(enteringTheIsland
                 //   "Talk to Baba Yaga in the chicken-legged house in the north of Lunar Isle's town."
         );
-        //returnToTalkToYaga.addSubSteps(talkToYaga, enterChickenHouse);
+        // returnToTalkToYaga.addSubSteps(talkToYaga, enterChickenHouse);
 
         returnToMakePotion = new ConditionalStep(enteringTheIsland
                 // "Kill the Suqah outside the town on Lunar Isle for a tooth. You'll also need 4 hides for later, so pick them up."
         );
-        //   returnToMakePotion.addSubSteps(killSuqahForTooth, pickUpTooth);
+        // returnToMakePotion.addSubSteps(killSuqahForTooth, pickUpTooth);
 
         returnToOneWithPotion = new ConditionalStep(enteringTheIsland,
                 //"Return to the Oneiromancer with the waking sleep vial.",
@@ -796,57 +806,71 @@ public class LunarDiplomacy implements QuestTask {
         returnWithStaff = new ConditionalStep(enteringTheIsland,
                 //"Return to the Oneiromancer with the Lunar Staff.",
                 lunarStaff);
-        // returnWithStaff.addSubSteps(talkToOneiromancerWithStaff);
+        //returnWithStaff.addSubSteps(talkToOneiromancerWithStaff);
 
         makingHelm = new ConditionalStep(enterMine);
         makingHelm.addStep(lunarBar, makeHelmet);
         makingHelm.addStep(lunarOre, smeltBar);
         makingHelm.addStep(inLunarMine, mineOre);
-        //  makingHelm.setLockingCondition(hadHelm);
+        makingHelm.setLockingCondition(hadHelm);
 
         gettingRing = new ConditionalStep(talkToSelene);
         gettingRing.addStep(talkedToSelene, digForRing);
-        //  gettingRing.setLockingCondition(hadRing);
+        gettingRing.setLockingCondition(hadRing);
 
         gettingCape = new ConditionalStep(talkToPauline);
-        //  gettingCape.setLockingCondition(hadCape);
+        gettingCape.setLockingCondition(hadCape);
 
         gettingAmulet = new ConditionalStep(talkToMeteora);
         gettingAmulet.addStep(tiara, returnTiaraToMeteora);
         gettingAmulet.addStep(tiaraNearby, pickUpTiara);
         gettingAmulet.addStep(talkedToMeteora, killSuqahForTiara);
-        //   gettingAmulet.setLockingCondition(hadAmulet);
+        gettingAmulet.setLockingCondition(hadAmulet);
 
         gettingClothes = new ConditionalStep(talkToRimae);
         gettingClothes.addStep(talkedToRimae, makeClothes);
-        //  gettingClothes.setLockingCondition(hadClothes);
+        gettingClothes.setLockingCondition(hadClothes);
+
+
     }
 
 
     @Override
     public Priority priority() {
-        return null;
+        return Priority.LOW;
     }
 
     @Override
     public boolean validate() {
-        return false;
+        return cQuesterV2.taskList.size() > 0 &&
+                cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
     public void execute() {
+        int varbit = Utils.getVarBitValue(QuestVarbits.QUEST_LUNAR_DIPLOMACY.getId());
+        if (Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE)) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
 
+        Log.debug("[Debug]: Lunar Diplomacy varbit is " + varbit);
+        Map<Integer, QuestStep> steps = loadSteps();
+        Optional<QuestStep> step = Optional.ofNullable(steps.get(varbit));
+        step.ifPresent(s -> cQuesterV2.status = s.getClass().toGenericString());
+        Waiting.waitNormal(500, 20);
     }
 
     @Override
     public String questName() {
-        return null;
+        return "Lunar Diplomacy";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
@@ -856,6 +880,7 @@ public class LunarDiplomacy implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
     @Override
     public boolean isComplete() {
         return Quest.LUNAR_DIPLOMACY.getState().equals(Quest.State.COMPLETE);

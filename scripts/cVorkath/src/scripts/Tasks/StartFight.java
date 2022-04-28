@@ -25,7 +25,7 @@ public class StartFight implements Task {
 
     public boolean enterInstance() {
         if (!Game.isInInstance() && VorkthUtil.VORK_ISLAND_AREA.contains(Player.getPosition())) {
-            Log.log("[Debug]: Entering Instance");
+            Log.info("Entering Instance");
             Optional<RSObject> p = Optional.ofNullable(Entities.find(ObjectEntity::new)
                     .nameContains("Ice chunks")
                     .actionsContains("Climb-over")
@@ -49,7 +49,7 @@ public class StartFight implements Task {
         if (!Game.isInInstance() && !VorkthUtil.VORK_ISLAND_AREA.contains(Player.getPosition())) {
             HouseBank.leaveLunarIsle();
             Waiting.waitNormal(1500, 250);
-            Log.log("[Debug]: Taking boat");
+            Log.info("Taking boat");
             PathingUtil.walkToTile(new RSTile(2640, 3697, 0), 2, false);
             if (Utils.clickNPC("Torfinn", "Ungael")) {
                 Timer.slowWaitCondition(() -> VorkthUtil.VORK_ISLAND_AREA.contains(Player.getPosition()), 8000,9000);
@@ -83,7 +83,7 @@ public class StartFight implements Task {
         //Pokes vorkath
         if (sleepingVork.length > 0 && Vars.get().antiFireTimer.isRunning() &&
                 Utils.clickNPC(sleepingVork[0], "Poke", false)) {
-            Log.log("[Debug]: Poking Vork");
+            Log.info("Poking Vork");
             VorkthUtil.waitCond(() -> NPCs.findNearest(VorkthUtil.AWAKENING_VORK).length > 0, 6500);
         }
 

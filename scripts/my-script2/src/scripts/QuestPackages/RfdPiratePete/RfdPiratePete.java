@@ -4,9 +4,14 @@ import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.GoblinDiplomacy.GoblinDiplomacy;
@@ -21,6 +26,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class RfdPiratePete implements QuestTask {
 
@@ -32,30 +38,29 @@ public class RfdPiratePete implements QuestTask {
 
     int lobster = 379;
     int bread = 2309;
-    int rawCod = 341;
+
     int knife = 946;
     int pestleAndMotar = 233;
     int fishBowl = 6667;
-    int needle = 1733;
+
     int bronzeWire = 1794;
-    int runeScimitar = 1333;
-    int adamantScimitar = 1331;
-    int faladorTab = 8009;
-    int lumbridgeTab = 8008;
-    int camelotTab = 8010;
+
+
     int fishbowlHelmet = 7534;
     int divingApparatus = 7535;
     int mudskipperHide = 7532;
     int crabMeat = 7518;
     int kelp = 7516;
     int cookedCrabCake = 7530;
-    int rawCrabCake = 7529;
     int groundKelp = 7517;
     int groundCod = 7528;
-    int breadCrumbs = 7515;
+
     int burntCake = 7531;
 
-    public int[] neededInventoryItems = {bread, rawCod, knife, pestleAndMotar, fishBowl, needle, bronzeWire, faladorTab, lumbridgeTab};
+    boolean hasKelp = false;
+    boolean hasMudSkipperHides = false;
+
+    public int[] neededInventoryItems = {bread, ItemID.RAW_COD, knife, pestleAndMotar, fishBowl, ItemID.NEEDLE, bronzeWire, ItemID.FALADOR_TELEPORT, ItemID.LUMBRIDGE_TELEPORT};
     public boolean hasItems = false;
 
     public ArrayList<Integer> neededItems = null;
@@ -77,7 +82,7 @@ public class RfdPiratePete implements QuestTask {
     RSItem[] invItem2;
 
     RSArea cooksKitchenArea = new RSArea(new RSTile(3212, 3212, 0), new RSTile(3205, 3217, 0));
-     RSArea portKhazardArea = new RSArea(new RSTile(2666, 3162, 0), new RSTile(2674, 3161, 0));
+    RSArea portKhazardArea = new RSArea(new RSTile(2666, 3162, 0), new RSTile(2674, 3161, 0));
 
 
     InventoryRequirement startInv = new InventoryRequirement(new ArrayList<>(
@@ -95,6 +100,7 @@ public class RfdPiratePete implements QuestTask {
     public void checkLevel() {
 
     }
+
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(ItemID.FALADOR_TELEPORT, 5, 50),
@@ -114,7 +120,7 @@ public class RfdPiratePete implements QuestTask {
             )
     );
 
-    public  void buyItems() {
+    public void buyItems() {
         cQuesterV2.status = "Buying Items";
         General.println("[Debug]: Buying Items");
         if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 40)
@@ -126,27 +132,27 @@ public class RfdPiratePete implements QuestTask {
 
     }
 
-    public  void getItems() {
+    public void getItems() {
         cQuesterV2.status = "Getting Items";
         General.println("[Debug]: " + cQuesterV2.status);
         BankManager.open(true);
         BankManager.depositAll(true);
         BankManager.depositEquipment();
-        BankManager.withdraw(4, true, faladorTab);
+        BankManager.withdraw(4, true, ItemID.FALADOR_TELEPORT);
         BankManager.withdraw(1, true, bread);
         BankManager.withdraw(1, true, knife);
-        BankManager.withdraw(5, true, lumbridgeTab);
+        BankManager.withdraw(5, true, ItemID.LUMBRIDGE_TELEPORT);
         BankManager.withdraw(3, true, bronzeWire);
         BankManager.withdraw(12, true, lobster);
-        BankManager.withdraw(1, true, needle);
-        BankManager.withdraw(2, true, camelotTab);
+        BankManager.withdraw(1, true, ItemID.NEEDLE);
+        BankManager.withdraw(2, true, ItemID.CAMELOT_TELEPORT);
         BankManager.withdraw(1, true, fishBowl);
         if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 40) {
-            BankManager.withdraw2(1, true, runeScimitar);
-            Utils.equipItem(runeScimitar);
+            BankManager.withdraw2(1, true, ItemID.RUNE_SCIMITAR);
+            Utils.equipItem(ItemID.RUNE_SCIMITAR);
         } else if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 30) {
-            BankManager.withdraw(1, true, adamantScimitar);
-            Utils.equipItem(adamantScimitar);
+            BankManager.withdraw(1, true, ItemID.ADAMANT_SCIMITAR);
+            Utils.equipItem(ItemID.ADAMANT_SCIMITAR);
         }
         BankManager.withdraw(1, true, BankManager.STAMINA_POTION[0]);
         BankManager.close(true);
@@ -157,7 +163,7 @@ public class RfdPiratePete implements QuestTask {
     public void goToStart() {
         cQuesterV2.status = "Going to Start";
         if (!BankManager.checkInventoryItems(ItemID.FALADOR_TELEPORT, bread, knife,
-                ItemID.LUMBRIDGE_TELEPORT, bronzeWire, lobster, needle, camelotTab, fishBowl) && !BankManager.checkInventoryItems(FISH_CAKE)) {
+                ItemID.LUMBRIDGE_TELEPORT, bronzeWire, ItemID.LOBSTER, ItemID.NEEDLE, ItemID.CAMELOT_TELEPORT, fishBowl) && !BankManager.checkInventoryItems(FISH_CAKE)) {
             buyItems();
             getItems();
         } else {
@@ -249,20 +255,14 @@ public class RfdPiratePete implements QuestTask {
     public void getKelp() {
         if (oceanArea.contains(Player.getPosition())) {
             cQuesterV2.status = "Getting kelp";
-            kelpObj = Objects.findNearest(30, "Kelp");
-
-            if (kelpObj.length > 0) {
-                if (!kelpObj[0].isClickable()) {
-                    Walking.blindWalkTo(kelpObj[0].getPosition());
-                    Timer.waitCondition(() -> kelpObj[0].isClickable(), 10000, 15000);
-                    kelpObj[0].adjustCameraTo();
-                }
-                for (int i =0; i < 3; i++) {
-                    if (AccurateMouse.click(kelpObj[0], "Pick")) {
-                        PathingUtil.movementIdle();
-                        Timer.waitCondition(() -> Player.getAnimation() != -1, 10000, 15000);
-                        General.sleep(300, 1200);
-                    }
+            Optional<GameObject> kelp = Query.gameObjects()
+                    .nameContains("Kelp")
+                    .actionContains("Pick").findClosestByPathDistance();
+            for (int i = 0; i < 3; i++) {
+                if (kelp.map(k -> k.interact("Pick")).orElse(false)) {
+                    PathingUtil.movementIdle();
+                    Timer.waitCondition(() -> Player.getAnimation() != -1, 10000, 15000);
+                    General.sleep(300, 1200);
                 }
             }
         }
@@ -273,16 +273,17 @@ public class RfdPiratePete implements QuestTask {
             cQuesterV2.status = "Talking to Nung";
             General.println("[Debug]: " + cQuesterV2.status);
             if (PathingUtil.blindWalkToTile(new RSTile(2975, 9510, 1)))
-                Timer.abc2WaitCondition(() -> NUNG_AREA.contains(Player.getPosition()), 10000, 15000);
+                Timer.slowWaitCondition(() -> NUNG_AREA.contains(Player.getPosition()), 10000, 15000);
 
-            Utils.idle(750, 2500);
-            if (NpcChat.talkToNPC("Nung")) {
-                General.sleep(2000, 3000);
+            Optional<Npc> nung = Query.npcs()
+                    .nameContains("Nung")
+                    .findClosestByPathDistance();
+            if (nung.map(n->n.interact("Talk-to")).orElse(false)){
+                Waiting.waitUntil(5500, ()-> ChatScreen.isOpen());
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-                NPCInteraction.handleConversation();
 
-                General.sleep(General.random(4000, 6000));
+                Waiting.waitUntil(5500, ()-> ChatScreen.isOpen());
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
             }
@@ -296,11 +297,30 @@ public class RfdPiratePete implements QuestTask {
             Walking.blindWalkTo(rockArea.getRandomTile());
             Timer.waitCondition(() -> rockArea.contains(Player.getPosition()), 10000, 15000);
 
+            Optional<GameObject> rock = Query.gameObjects()
+                    .idEquals(7533)
+                    .actionContains("Take")
+                    .maxDistance(1)
+                    .findClosestByPathDistance();
+
             for (int i = 0; i < 6; i++) {
-                Utils.clickGroundItem(7533);
-                Utils.idle(3500, 5000);
+                rock = Query.gameObjects()
+                        .idEquals(7533)
+                        .actionContains("Take")
+                        .maxDistance(1)
+                        .findClosestByPathDistance();
+                if (rock.isEmpty()){
+                    Waiting.waitUntil(5500, 200, ()-> Query.gameObjects()
+                            .idEquals(7533)
+                            .maxDistance(1)
+                            .findClosestByPathDistance().isPresent());
+                }
+                if (rock.map(r->r.interact("Take")).orElse(false)) {
+                    Utils.idle(2500, 4000);
+                }
                 if (hasRocks)
                     break;
+
             }
             if (Utils.clickObj("Underwater Cavern Entrance", "Enter"))
                 Timer.abc2WaitCondition(() -> mudskipperArea.contains(Player.getPosition()), 9000, 15000);
@@ -316,35 +336,35 @@ public class RfdPiratePete implements QuestTask {
             General.sleep(General.random(2000, 3000));
             if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 40) {
 
-                if (Equipment.find(runeScimitar).length < 1) {
-                    Utils.equipItem(runeScimitar);
+                if (Equipment.find(ItemID.RUNE_SCIMITAR).length < 1) {
+                    Utils.equipItem(ItemID.RUNE_SCIMITAR);
                     General.sleep(General.random(300, 800));
                 }
             } else if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 30) {
                 General.sleep(General.random(300, 800));
-                Utils.equipItem(adamantScimitar);
+                Utils.equipItem(ItemID.ADAMANT_SCIMITAR);
                 General.sleep(General.random(300, 800));
-                if (Equipment.find(adamantScimitar).length < 1) {
-                    Utils.equipItem(adamantScimitar);
+                if (Equipment.find(ItemID.ADAMANT_SCIMITAR).length < 1) {
+                    Utils.equipItem(ItemID.ADAMANT_SCIMITAR);
                     General.sleep(General.random(300, 800));
                 }
             }
             while (Inventory.find(mudskipperHide).length < 5) {
                 General.sleep(100);
-                if (!Equipment.isEquipped(runeScimitar))
-                    Utils.equipItem(runeScimitar);
+                if (!Equipment.isEquipped(ItemID.RUNE_SCIMITAR))
+                    Utils.equipItem(ItemID.RUNE_SCIMITAR);
 
                 invItem1 = Inventory.find(mudskipperHide);
 
                 RSNPC[] mudskipper = NPCs.findNearest(4820);
-                if (mudskipper.length > 0 && !Combat.isUnderAttack()) {
+                if (mudskipper.length > 0 && !MyPlayer.isHealthBarVisible()) {
                     General.println("[Debug]: Attacking mudskippers");
 
                     if (AccurateMouse.click(mudskipper[0], "Attack")) {
-                        Timer.waitCondition(() -> Combat.isUnderAttack(), 5000, 8000);
+                        Timer.waitCondition(MyPlayer::isHealthBarVisible, 5000, 8000);
                         CombatUtil.waitUntilOutOfCombat(General.random(40, 60));
                         Utils.shortSleep();
-                        //  Timer.abc2WaitCondition(() -> !Combat.isUnderAttack()
+                        //  Timer.abc2WaitCondition(() -> !MyPlayer.isHealthBarVisible())
                         //           || Combat.getHPRatio() < General.random(51, 61), 30000, 45000);
                     }
                 }
@@ -442,10 +462,10 @@ public class RfdPiratePete implements QuestTask {
                 General.sleep(100);
 
                 if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 40)
-                    Utils.equipItem(runeScimitar);
+                    Utils.equipItem(ItemID.RUNE_SCIMITAR);
 
                 else if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 30)
-                    Utils.equipItem(adamantScimitar);
+                    Utils.equipItem(ItemID.ADAMANT_SCIMITAR);
 
                 RSNPC[] crab = NPCs.findNearest(4822);
                 RSGroundItem[] crabMeatGround = GroundItems.find(crabMeat);
@@ -462,10 +482,10 @@ public class RfdPiratePete implements QuestTask {
                     if (AccurateMouse.click(crabMeatGround[0], "Take"))
                         Timer.waitCondition(() -> Inventory.find(crabMeat).length > invItem1.length, 6000, 9000);
                 }
-                if (crab.length > 0 && !Combat.isUnderAttack()) {
+                if (crab.length > 0 && !MyPlayer.isHealthBarVisible()) {
                     General.println("[Debug]: Attacking crab");
                     if (CombatUtil.clickTarget(crab[0])) {
-                        Timer.waitCondition(() -> Combat.isUnderAttack(), 5000, 8000);
+                        Timer.waitCondition(() -> MyPlayer.isHealthBarVisible(), 5000, 8000);
                         CombatUtil.waitUntilOutOfCombat("Crab", General.random(35, 55));
                     }
 
@@ -528,7 +548,7 @@ public class RfdPiratePete implements QuestTask {
                 && Inventory.find(groundCod).length < 1 && Inventory.find(groundKelp).length < 1) {
             if (Utils.useItemOnItem(kelp, pestleAndMotar))
                 General.sleep(General.random(800, 1800));
-            if (Utils.useItemOnItem(rawCod, pestleAndMotar))
+            if (Utils.useItemOnItem(ItemID.RAW_COD, pestleAndMotar))
                 General.sleep(General.random(800, 1800));
             if (Utils.useItemOnItem(knife, bread))
                 General.sleep(General.random(800, 1800));
@@ -549,7 +569,8 @@ public class RfdPiratePete implements QuestTask {
         if (Utils.useItemOnObject(7529, "Cooking Range"))
             Timer.abc2WaitCondition(() -> Inventory.find(7530).length > 0, 8000, 10000);
 
-        if (Inventory.find(burntCake).length > 0 && Inventory.find(cookedCrabCake).length < 1) {
+        if (Inventory.find(burntCake).length > 0 &&
+                Inventory.find(cookedCrabCake).length < 1) {
             makeCake();
         }
     }
@@ -559,9 +580,9 @@ public class RfdPiratePete implements QuestTask {
             cQuesterV2.status = "Getting items to finish";
             General.println("[Debug]: " + cQuesterV2.status);
             BankManager.open(true);
-            BankManager.withdraw(1, true, lumbridgeTab);
+            BankManager.withdraw(1, true, ItemID.LUMBRIDGE_TELEPORT);
             BankManager.withdraw(1, true, pestleAndMotar);
-            BankManager.withdraw(2, true, rawCod);
+            BankManager.withdraw(2, true, ItemID.RAW_COD);
             BankManager.withdraw(1, true, bread);
             BankManager.withdraw(1, true, kelp);
             BankManager.withdraw(1, true, knife);
@@ -671,7 +692,7 @@ public class RfdPiratePete implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-       return Skills.getActualLevel(Skills.SKILLS.COOKING) > 30;
+        return Skills.getActualLevel(Skills.SKILLS.COOKING) > 30;
     }
 
     @Override

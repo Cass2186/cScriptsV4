@@ -9,6 +9,7 @@ import org.tribot.script.sdk.Skill;
 import scripts.Data.Enums.HerbloreItems;
 import scripts.Data.SkillTasks;
 import scripts.ItemID;
+import scripts.ObjectID;
 import scripts.Requirements.ItemReq;
 import scripts.Tasks.Construction.ConsData.Room;
 
@@ -22,8 +23,9 @@ public enum FURNITURE {
     CRUDE_CHAIR("Chair", Room.PARLOUR, 4517, 58, ItemID.PLANK, 2, "1", 1, 4),
     WOODEN_CHAIR("Chair", Room.PARLOUR, 4517, 87, ItemID.PLANK, 3, "2", 8, 8),
     BOOKCASE("Bookcase", Room.PARLOUR, 4521, 110, ItemID.PLANK, 4, "1", 4, 22),
-    OAK_TABLE("Oak table", Room.DINING, 15298, 240, ItemID.OAK_PLANK, 4, "2", 22, 33),
-    OAK_LARDER("Larder", Room.KITCHEN, 15403, 480, ItemID.OAK_PLANK, 8, "2", 33, 99);
+    OAK_TABLE("Oak table", Room.DINING, ObjectID.TABLE_SPACE, 240, ItemID.OAK_PLANK, 4, "2", 22, 33),
+    OAK_LARDER("Larder", Room.KITCHEN, 15403, 480, ItemID.OAK_PLANK, 8, "2", 33, 52),
+    MAHOGANY_TABLE("Mahogany table", Room.DINING, ObjectID.TABLE_SPACE, 840, ItemID.MAHOGANY_PLANK, 6, "6", 52, 99);
 
 
     FURNITURE(String name, Room room, int spaceId, int xpPer, int plankId, int plankNum, String numString, int reqLevl, int maxLevel) {
@@ -59,7 +61,6 @@ public enum FURNITURE {
     private Room room;
 
 
-
     private static Skills.SKILLS skill = Skills.SKILLS.CONSTRUCTION;
 
     public int determineResourcesToNextItem() {
@@ -90,7 +91,7 @@ public enum FURNITURE {
         for (FURNITURE furn : FURNITURE.values()) {
 
             // skip the furniture piece if we're past it's max level
-            if (Skill.CONSTRUCTION.getActualLevel()  >= furn.maxLevel )// ||
+            if (Skill.CONSTRUCTION.getActualLevel() >= furn.maxLevel)// ||
                 //  SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
                 continue;
 
@@ -100,10 +101,17 @@ public enum FURNITURE {
             if (furn.getMaxLevel() < 23 && Skill.CONSTRUCTION.getActualLevel() < 22) {
                 numOfRegPlanks = numOfRegPlanks + plankNum;
                 General.println("[Construction Items]: We need " + numOfRegPlanks + " regular planks");
+            } else if (furn.getPlankId() == ItemID.MAHOGANY_PLANK) {
+                i.add(new ItemReq.Builder()
+                        .id(ItemID.MAHOGANY_PLANK)
+                        .isItemNoted(true)
+                        .amount(furn.determineResourcesToNextItem()).build());
             } else {
                 numOfOakPlanks = numOfOakPlanks + plankNum;
-                General.println("[Construction Items]: We need " + numOfRegPlanks + " Oak planks");
+                General.println("[Construction Items]: We need " + numOfRegPlanks +
+                        " Oak planks for " + furn.getObjectName());
             }
+
         }
         if (Skill.CONSTRUCTION.getActualLevel() < 22) {
             //make req for planks items only if we are less than level 22
@@ -120,6 +128,11 @@ public enum FURNITURE {
                 .isItemNoted(true)
                 .amount(numOfOakPlanks).build());
 
+        //make req for oak planks items
+       /* i.add(new ItemReq.Builder()
+                .id(ItemID.MAHOGANY_PLANK)
+                .isItemNoted(true)
+                .amount(numOfOakPlanks).build());*/
 
 
         // ADD Hammer and saw
