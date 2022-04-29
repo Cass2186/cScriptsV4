@@ -84,7 +84,7 @@ public class WildernessAgility implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.LOW;
+        return Priority.HIGH;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class WildernessAgility implements Task {
             Optional<GameObject> ladder = Query.gameObjects().actionContains("Climb-up").findBestInteractable();
             if (ladder.map(l->l.interact("Climb-up")).orElse(false)){
                 Log.info("Climbing Ladder");
-                Waiting.waitUntil(7000, 200, ()->
+                Waiting.waitUntil(8000, 200, ()->
                        !AgilityAreas.FAIL_AREA_UNDERGROUND_WILDERNESS.contains(Player.getPosition()));
             } else
                 Log.error("Climbing Ladder FAILED");
@@ -108,9 +108,8 @@ public class WildernessAgility implements Task {
         pkObserver();
         allObstacles.get(0).setTimeOutMin(12000); //pipe
         allObstacles.get(2).setTimeOutMin(10000); //stepping stones
+        allObstacles.get(3).setTimeOutMin(11000); //stepping stones
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
-        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
-                obstacle.getObstacleName());
         obs.ifPresent(Obstacle::navigateObstacle);
     }
 

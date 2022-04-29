@@ -39,7 +39,7 @@ public class PrayerBank implements Task {
         Optional<InventoryItem> item = Query.inventory().nameContains("bones").findFirst();
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.PRAYER) &&
-                item.isEmpty();
+                item.isEmpty() &&  !Vars.get().useWildernessAltar;
     }
 
     @Override

@@ -163,8 +163,8 @@ public class Timer {
 
     public static boolean agilityWaitCondition(BooleanSupplier condition, int min, int max) {
         return Waiting.waitUntil(Utils.random(min, max),
-                General.random(1200, 2400), () -> {
-                    Utils.idleNormalAction();
+                General.random(600, 1800), () -> {
+                    AntiBan.timedActions();
                     return (condition.getAsBoolean() || isLvlUpInterfaceOpen());
                 }
         );

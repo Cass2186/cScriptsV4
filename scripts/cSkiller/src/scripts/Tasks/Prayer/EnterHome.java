@@ -102,7 +102,7 @@ public class EnterHome implements Task {
     @Override
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.PRAYER)
-                && !Game.isInInstance();
+               && !Vars.get().useWildernessAltar && !Game.isInInstance();
     }
 
     @Override

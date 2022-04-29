@@ -69,7 +69,7 @@ public class UnnoteBones implements Task {
     public boolean validate() {
         Optional<InventoryItem> item = Query.inventory().nameContains("bones").isNotNoted().findFirst();
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.PRAYER) &&
-                item.isEmpty();
+                item.isEmpty() &&  !Vars.get().useWildernessAltar;
     }
 
     @Override

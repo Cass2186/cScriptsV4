@@ -20,25 +20,27 @@ import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.Data.Vars;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 
 ;import java.util.Optional;
 
 public class Obstacle {
 
-    int obstacleId;
-    String obstacleName;
+    private int obstacleId;
+    private  String obstacleName;
     @Getter
     public String obstacleAction;
-    RSArea obstacleArea;
+    private RSArea obstacleArea;
 
     @Getter
     @Setter
-    int timeOutMin = 6500;
+    private int timeOutMin = 7500;
 
-    RSArea nextObstacleArea;
+    private RSArea nextObstacleArea;
 
     public Obstacle(int id, String action, RSArea area) {
         this.obstacleId = id;
@@ -74,16 +76,17 @@ public class Obstacle {
     public boolean eat() {
         if (Combat.getHPRatio() < Vars.get().eatAt) {
             for (int i = 0; i < 3; i++) {
+                if (MyPlayer.isMoving())
+                    Waiting.waitUntil(2500, 50, ()-> !MyPlayer.isMoving());
+
                 Log.info("[Debug]: Eating food i = " + i);
-                if (EatUtil.eatFood()) {
+                Optional<InventoryItem> eat = Query.inventory().actionContains("Eat").findClosestToMouse();
+                if (eat.map(f->f.click("Eat")).orElse(false)) {
                     Vars.get().eatAt = AntiBan.getEatAt();
                     General.println("[ABC2]: Next eating at: " + Vars.get().eatAt + "% HP");
                     return true;
                 } else {
-                    if (MyPlayer.isMoving())
-                        Waiting.waitUntil(2000, 200,
-                                () -> !MyPlayer.isMoving());
-                    Waiting.waitNormal(70, 15);
+                    Waiting.waitNormal(150, 15);
                 }
             }
             General.println("[Debug]: We have no more food in inventory and need to eat. Ending");
@@ -204,18 +207,25 @@ public class Obstacle {
                 Magic.selectSpell("High Level Alchemy");
                 Waiting.waitNormal(350, 75);
             }
-            if (Waiting.waitUntil(1200, 125, MyPlayer::isMoving)) {
+            WorldTile t = MyPlayer.getTile();
+            if (Waiting.waitUntil(1200, 25, MyPlayer::isMoving)) {
                 if (abc2Wait)
                     return Timer.abc2WaitCondition(() -> (!MyPlayer.isMoving()
-                            && this.nextObstacleArea.contains(Player.getPosition())
-                            && MyPlayer.getAnimation() == -1) ||
-                            Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
+                                    && this.nextObstacleArea.contains(Player.getPosition())
+                                    && MyPlayer.getAnimation() == -1) ||
+                                    MyPlayer.getTile().getPlane() != plane ||
+                                    (MyPlayer.getTile().getPlane() == plane &&
+                                            t.distance() > 30),
+                            timeOutMin, timeOutMin + 3000);
 
                 else
                     return Timer.agilityWaitCondition(() -> (!MyPlayer.isMoving()
-                            && this.nextObstacleArea.contains(Player.getPosition())
-                            && MyPlayer.getAnimation() == -1) ||
-                            Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
+                                    && this.nextObstacleArea.contains(Player.getPosition())
+                                    && MyPlayer.getAnimation() == -1) ||
+                                    MyPlayer.getTile().getPlane() != plane ||
+                                    (MyPlayer.getTile().getPlane() == plane &&
+                                            t.distance() > 30),
+                            timeOutMin, timeOutMin + 3000);
 
 
             }

@@ -178,6 +178,9 @@ public class Vars {
             WcLocations.SEERS_MAPLES
     ));
 
+    // Prayer
+    public boolean useWildernessAltar = false;
+
     public DaxTracker daxTracker;
 
 

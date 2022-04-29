@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
@@ -888,8 +889,8 @@ public class TouristTrap implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (Utils.useItemOnObject(ANA_IN_BARREL, 18951)) {
                 NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes please.");
-                NPCInteraction.handleConversation("I said you were very gregarious!");
+                ChatScreen.handle("Yes please.", "I said you were very gregarious!");
+               // NPCInteraction.handleConversation("I said you were very gregarious!");
                 NPCInteraction.handleConversation();
             }
         }
@@ -902,7 +903,7 @@ public class TouristTrap implements QuestTask {
 
             RSObject[] obj = Objects.findNearest(40, 2699);
             if (obj.length > 0) {
-                PathingUtil.localNavigation(obj[0].getPosition());
+                PathingUtil.localNavigation(obj[0].getPosition().translate(1,1));
                 Utils.modSleep();
             }
         }

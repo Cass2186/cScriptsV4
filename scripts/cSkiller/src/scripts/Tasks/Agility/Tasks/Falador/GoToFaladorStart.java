@@ -19,7 +19,7 @@ public class GoToFaladorStart implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.HIGH;
+        return Priority.MEDIUM;
     }
 
     @Override
