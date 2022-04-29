@@ -179,7 +179,7 @@ public class Vars {
     ));
 
     // Prayer
-    public boolean useWildernessAltar = false;
+    public boolean useWildernessAltar = true;
 
     public DaxTracker daxTracker;
 

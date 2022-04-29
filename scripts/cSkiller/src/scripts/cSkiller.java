@@ -48,6 +48,7 @@ import scripts.Tasks.PestControl.PestTasks.EnterBoat;
 import scripts.Tasks.Prayer.Wilderness.GoToWildernessAltar;
 import scripts.Tasks.Prayer.Wilderness.HopWorlds;
 import scripts.Tasks.Prayer.Wilderness.PlaceBonesOnWilderness;
+import scripts.Tasks.Prayer.Wilderness.WildyPrayerBank;
 import scripts.Tasks.Smithing.BlastFurnace.BfTasks.*;
 import scripts.Tasks.SorceressGarden.ElementalCollisionDetector;
 import scripts.dax.tracker.DaxTracker;
@@ -253,6 +254,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new SwitchTask(),
                 new GoToWildernessAltar(),
                 new HopWorlds(),
+                new WildyPrayerBank(),
                 new PlaceBonesOnWilderness(),
                 new CookFood(),
                 new BankCook(),

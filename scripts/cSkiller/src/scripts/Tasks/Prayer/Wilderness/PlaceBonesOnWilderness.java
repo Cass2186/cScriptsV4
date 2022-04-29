@@ -5,10 +5,7 @@ import org.tribot.api2007.Combat;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.GameTab;
 import org.tribot.api2007.Player;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
@@ -40,13 +37,15 @@ public class PlaceBonesOnWilderness implements Task {
                 Log.info("Idling");
             }
         }
-        if (Waiting.waitUntil(75000, 50, () -> {
+        if (Waiting.waitUntil(75000, 75, () -> {
             if (MyPlayer.getAnimation() == -1 &&
                     !Waiting.waitUntil(800, () ->
                             MyPlayer.getAnimation() != -1)) {
                 return true;
             }
-            PkObserver.scrollToWorldNoClick(PkObserver.nextWorld);
+            //have this otherwise it flips between inv and hop alot when leveling quickly
+            if (Skill.PRAYER.getActualLevel() > 27)
+                PkObserver.scrollToWorldNoClick(PkObserver.nextWorld);
             return ChatScreen.isOpen() ||
                     PkObserver.shouldHop() ||
                     Query.inventory().nameContains("bones")
@@ -77,7 +76,11 @@ public class PlaceBonesOnWilderness implements Task {
     }
 
     @Override
+    public String toString() {
+        return "Placing Bones";
+    }
+    @Override
     public String taskName() {
-        return null;
+        return "Prayer - Wilderness";
     }
 }
