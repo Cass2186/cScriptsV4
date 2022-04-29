@@ -166,16 +166,16 @@ public class DreamMentor implements QuestTask {
                     new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
                     new GEItem(ItemID.LUNAR_ISLE_TELEPORT, 6, 25),
                     new GEItem(ItemID.HAMMER, 1, 100),
-                    new GEItem(ItemID.POTATOES10, 1, 100),
-                    new GEItem(ItemID.ONIONS10, 1, 100),
-                    new GEItem(ItemID.CABBAGES10, 1, 100),
+                    new GEItem(ItemID.POTATOES10, 1, 500),
+                    new GEItem(ItemID.ONIONS10, 1, 500),
+                    new GEItem(ItemID.CABBAGES10, 1, 500),
                     new GEItem(ItemID.SHARK, 40, 25),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 25),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
                     //TODO change combat gear to melee + trident
                     new GEItem(ItemID.DRAGON_PLATELEGS, 1, 15),
                     new GEItem(ItemID.OCCULT_NECKLACE, 1, 15),
-                    //   new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
+                      new GEItem(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, 15),
                     new GEItem(ItemID.RUNE_PLATEBODY, 1, 15),
                     new GEItem(ItemID.RUNE_BOOTS, 1, 45),
                     new GEItem(ItemID.RUNE_FULL_HELM, 1, 15),
@@ -207,11 +207,11 @@ public class DreamMentor implements QuestTask {
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
-    ItemReq tridentReq = new ItemReq(ItemID.TRIDENT_OF_THE_SEAS, 1, true, true);
+    ItemReq tridentReq = new ItemReq(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, true, true);
     InventoryRequirement fightItems;
 
     public void populateItemRequirements() {
-        tridentReq.addAlternateItemID(ItemID.TRIDENT_OF_THE_SEAS_FULL);
+        tridentReq.addAlternateItemID(ItemID.TRIDENT_OF_THE_SEAS);
         if (Skills.getActualLevel(Skills.SKILLS.RANGED) < 70) {
             fightItems = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
@@ -236,11 +236,11 @@ public class DreamMentor implements QuestTask {
                             new ItemReq(ItemID.TINDERBOX, 1),
                             new ItemReq(ItemID.SEAL_OF_PASSAGE, 1),
                             new ItemReq(ItemID.RUNE_KITESHIELD, 1, true, true),
-                            new ItemReq(ItemID.OBSIDIAN_HELMET, 1, true, true),
+                            new ItemReq(ItemID.RUNE_FULL_HELM, 1, true, true),
                             new ItemReq(ItemID.RING_OF_RECOIL, 1, 0, true, true),
                             new ItemReq(ItemID.COMBAT_BRACELET0, 1, true, true),
-                            new ItemReq(ItemID.OBSIDIAN_PLATELEGS, 1, true, true),
-                            new ItemReq(ItemID.OBSIDIAN_PLATEBODY, 1, true, true),
+                            new ItemReq(ItemID.DRAGON_PLATELEGS, 1, true, true),
+                            new ItemReq(ItemID.RUNE_PLATEBODY, 1, true, true),
                             tridentReq,
                             // new ItemReq(ItemID.TRIDENT_OF_THE_SEAS_FULL, 1, true, true),
                             // new ItemReq(ItemID.RUNITE_BOLTS, 500, true, true),

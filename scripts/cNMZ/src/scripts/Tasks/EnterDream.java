@@ -17,6 +17,7 @@ import scripts.cNMZ;
 
 import javax.swing.text.html.Option;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,12 +70,12 @@ public class EnterDream implements Task {
         if (ChatScreen.isOpen()) {
             if (ChatScreen.getOptions().stream()
                     .anyMatch(s -> s.contains(HARD_RUMBLE_PREV.get(0)))) {
-               NpcChat.handleChat(HARD_RUMBLE_PREV);
-
-
+                Log.info("Using hard rumble previous");
+               ChatScreen.handle(HARD_RUMBLE_PREV.toArray(String[]::new));
 
             } else {
-                NpcChat.handleChat(HARD_RUMBLE_INITIAL_STRINGS);
+                Log.info("Using hard rumble initial");
+                ChatScreen.handle( HARD_RUMBLE_INITIAL_STRINGS.toArray(String[]::new));
 
             }
         }

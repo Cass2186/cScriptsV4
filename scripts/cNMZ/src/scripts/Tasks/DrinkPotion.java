@@ -272,11 +272,11 @@ public class DrinkPotion implements Task {
     @Override
     public boolean validate() {
         return Game.isInInstance() &&
-                (Vars.get().usingPrayerPots && shouldDrinkPrayerPot()) ||
+                ((Vars.get().usingPrayerPots && shouldDrinkPrayerPot()) ||
                 (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()) ||
                 (shouldDrinkAbsorption() && Vars.get().usingAbsorptions) ||
                 (Vars.get().usingAbsorptions &&
-                        Combat.getHP() >= Vars.get().eatRockCakeAt);
+                        Combat.getHP() >= Vars.get().eatRockCakeAt));
     }
 
     @Override

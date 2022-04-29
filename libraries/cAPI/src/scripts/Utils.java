@@ -1910,7 +1910,7 @@ public class Utils {
         RSItem[] invItem = Inventory.find(itemName);
         RSNPC[] npc = NPCs.findNearest(NPCName);
 
-        if (invItem.length > 0) {
+        if (invItem.length > 0 && npc.length > 0) {
             Log.info("[Debug]: Using: " + itemName);
             if (selectInvItem(invItem[0].getID())) {
                 AntiBan.waitItemInteractionDelay();
@@ -1931,7 +1931,7 @@ public class Utils {
         RSItem[] invItem = Inventory.find(ItemID);
         RSNPC[] npc = NPCs.findNearest(NPCNames);
 
-        if (invItem.length > 0) {
+        if (invItem.length > 0&& npc.length > 0 ) {
             Log.info("[Debug]: Using: " + ItemID);
 
             if (selectInvItem(ItemID)) {
