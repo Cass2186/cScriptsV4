@@ -12,7 +12,9 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.GlobalWalking;
 import scripts.*;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
@@ -20,7 +22,7 @@ import scripts.Timer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NPCStep extends DetailedQuestStep  {
+public class NPCStep extends DetailedQuestStep {
 
     @Getter
     private int npcID;
@@ -160,6 +162,7 @@ public class NPCStep extends DetailedQuestStep  {
         this.listChatOptions = Arrays.asList(chatText);
 
     }
+
     public NPCStep(int id) {
         this.npcID = id;
 
@@ -232,9 +235,9 @@ public class NPCStep extends DetailedQuestStep  {
         if (listChatOptions == null) {
             listChatOptions = new ArrayList<>();
         }
-       // Log.debug("Adding dialog " + dialog);
+        // Log.debug("Adding dialog " + dialog);
         listChatOptions.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
-      //  Collections.addAll(listChatOptions, dialog);
+        //  Collections.addAll(listChatOptions, dialog);
     }
 
 
@@ -256,6 +259,7 @@ public class NPCStep extends DetailedQuestStep  {
         return "NPC Step";
     }
 
+
     @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
@@ -269,45 +273,23 @@ public class NPCStep extends DetailedQuestStep  {
             }
         }
 
-        if (this.area != null && !area.contains(Player.getPosition())) {
-            if (useBlindWalk) {
-                General.println("[NPCStep]: Blind walking to location");
-                Walking.blindWalkTo(this.area.getRandomTile());
-            }
-            //attempt to generate a local path first, if that fails call dax walker
-            if (!PathingUtil.walkToArea(this.area, false))
-                PathingUtil.localNavigation(this.area.getRandomTile());
-
-            // check we're moving before we do a longer timeout for movement
-            if (Timer.waitCondition(Player::isMoving, 1500, 2250))
-                Timer.waitCondition(() -> this.area.contains(Player.getPosition()), 6500, 9500);
-        } else if (this.npcTile != null) {
-            //attempt to generate a local path first, if that fails call dax walker
-//            if (!PathingUtil.localNavigation(this.npcTile))
-            PathingUtil.walkToTile(this.npcTile, radius, false);
-
-
-            // check we're moving before we do a longer timeout for movement
-            if (Timer.waitCondition(Player::isMoving, 1500, 2250))
-                Timer.slowWaitCondition(() -> this.npcTile.isClickable(), 8500, 9500);
-            Log.log("[NpcStep]: Done walking");
-        }
+        navigateTo();
 
         if (this.isCombatStep) {
             // interact to start dialog or combat if not already in combat
             if (!MyPlayer.isHealthBarVisible() && NpcChat.talkToNPC(this.npcID, this.interactionString))
                 Timer.waitCondition(() -> MyPlayer.isHealthBarVisible() ||
-                        NPCInteraction.isConversationWindowUp(), 4500, 5500);
+                        ChatScreen.isOpen(), 4500, 5500);
 
             // handle dialog if up
-            if (NPCInteraction.isConversationWindowUp()) {
+            if (ChatScreen.isOpen()) {
                 if (listChatOptions != null && listChatOptions.size() > 0) {
                     Log.debug("Handling chat");
-                    NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
+                    // NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
                     ChatScreen.handle(listChatOptions.toArray(String[]::new));
-                }else
+                } else
                     ChatScreen.handle();
-                    //NPCInteraction.handleConversation();
+                //NPCInteraction.handleConversation();
             }
             if (this.prayer.isPresent()) {
                 if (Prayer.getPrayerPoints() < 15) {
@@ -319,36 +301,63 @@ public class NPCStep extends DetailedQuestStep  {
             // handle safespot
             if (this.markedTiles != null) {
                 WorldTile tile = this.markedTiles.get(0);
-                if (!tile.equals(MyPlayer.getPosition()) && tile.interact("Walk here")) {
+                if (!tile.equals(MyPlayer.getTile()) && tile.interact("Walk here")) {
                     PathingUtil.movementIdle();
                     //re-engage NPC
                     NpcChat.talkToNPC(this.npcID, this.interactionString);
                 }
             }
-
-            // handle food
+            // TODO handle food
             return;
         }
 
+        // Actual talking tp NPC
         if (NpcChat.talkToNPC(this.rsnpc, this.interactionString) ||
                 (this.npcName != null && NpcChat.talkToNPC(this.npcName)) ||
                 NpcChat.talkToNPC(this.npcID, this.interactionString)) {
-            Log.log("Waiting for conversation window");
-            NPCInteraction.waitForConversationWindow();
-            if (listChatOptions != null && listChatOptions.size() > 0 &&
-                    NPCInteraction.isConversationWindowUp()) {
-                Log.debug("Handling chat");
-                NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
-                ChatScreen.handle(listChatOptions.toArray(String[]::new));
-
+            Log.info("Clicked NPC, Waiting for conversation window");
+            if (NpcChat.waitForChatScreen()) {
+                if (listChatOptions != null && listChatOptions.size() > 0) {
+                    Log.info("Handling chat with options");
+                    ChatScreen.handle(listChatOptions.toArray(String[]::new));
+                    NPCInteraction.handleConversation(listChatOptions.toArray(String[]::new));
+                } else
+                    ChatScreen.handle();
             }
-
-            if (NPCInteraction.isConversationWindowUp())
-                ChatScreen.handle();
         }
-
-        Log.debug("[NPCStep]: Execution finished");
+        Log.info("[NPCStep]: Execution finished");
     }
 
+
+    /**
+     * METHODS
+     */
+
+
+    private void navigateTo() {
+        if (this.npcTile != null) {
+            WorldTile worldTile = Utils.getWorldTileFromRSTile(this.npcTile);
+            //attempt to generate a local path first, if that fails call dax walker
+            if (PathingUtil.localNav(worldTile) || PathingUtil.walkToTile(worldTile)) {
+                // check we're moving before we do a longer timeout for movement
+                if (Waiting.waitUntil(1500, 50, MyPlayer::isMoving))
+                    Waiting.waitUntil(9500, 450, () -> worldTile.distance() < 5 ||
+                            worldTile.distance() < 5);
+                Log.info("[NpcStep]: Done walking");
+            }
+        } else if (this.area != null && !area.contains(Player.getPosition())) {
+            WorldTile worldTile = Utils.getWorldTileFromRSTile(this.area.getRandomTile());
+
+            //attempt to generate a local path first, if that fails call dax walker
+            if (PathingUtil.localNav(worldTile) ||
+                    PathingUtil.walkToArea(this.area, false)) {
+
+                // check we're moving before we do a longer timeout for movement
+                if (Waiting.waitUntil(1500, 50, MyPlayer::isMoving))
+                    Timer.waitCondition(() -> this.area.contains(Player.getPosition()), 6500, 9500);
+            }
+        }
+
+    }
 
 }

@@ -6,22 +6,20 @@ import dax.walker_engine.WaitFor;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import dax.walker_engine.local_pathfinding.Reachable;
 import org.tribot.api.General;
-import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
 import org.tribot.api2007.Player;
-import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Npc;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class NpcChat extends NPCChat {
@@ -29,6 +27,9 @@ public class NpcChat extends NPCChat {
     private static Reachable reachable = new Reachable();
 
     public static boolean talkToNPC(String npcName) {
+        Optional<Npc> npc = Query.npcs()
+                .nameContains(npcName).findClosestByPathDistance();
+
         RSNPC[] targetNPC = NPCs.findNearest(npcName);
         return targetNPC.length > 0 && talkToNPC(targetNPC[0].getID());
     }
@@ -121,7 +122,7 @@ public class NpcChat extends NPCChat {
             } else {
                 if (targetNPC.getPosition().distanceTo(Player.getPosition()) <= 4 &&
                         AccurateMouse.click(targetNPC, interactionString) &&
-                        NPCInteraction.waitForConversationWindow()) {
+                        NpcChat.waitForChatScreen()) {
                     return true;
                 }
             }
@@ -129,11 +130,11 @@ public class NpcChat extends NPCChat {
                 Log.log("[NpcChat]: Distance to npc is " + targetNPC.getPosition().distanceTo(Player.getPosition()));
                 // if we're right beside the npc reachable gives an issue so we check if were right beside them first
                 if (AccurateMouse.click(targetNPC, interactionString) &&
-                        NPCInteraction.waitForConversationWindow())
+                        NpcChat.waitForChatScreen())
                     return true;
 
                 if (AccurateMouse.click(targetNPC, interactionString) &&
-                        NPCInteraction.waitForConversationWindow())
+                        NpcChat.waitForChatScreen())
                     return true;
                 else {
                     Log.log("[Debug]: Cannot reach npc or failed to click, trying to walk");
@@ -147,7 +148,7 @@ public class NpcChat extends NPCChat {
                     }
                     Log.log("[NpcChat]: Attempting to Accurate click NPC");
                     if (AccurateMouse.click(targetNPC, interactionString) &&
-                            NPCInteraction.waitForConversationWindow()) {
+                            NpcChat.waitForChatScreen()) {
                         Log.log("[NpcChat]: Success");
                         return true;
                     }
@@ -155,6 +156,59 @@ public class NpcChat extends NPCChat {
                 Waiting.waitUniform(1500, 2500);
             }
         }
+        return false;
+    }
+
+
+    public static boolean talkToNPC(Optional<Npc> targetNPC, String interactionString) {
+        //no target
+        if (targetNPC.isEmpty())
+            return false;
+
+        // Npc is > 5 tiles and isn't visible, so we try walking
+        if (targetNPC.map(t -> t.distance() > 5 && !t.isVisible()).orElse(false)) {
+            Optional<LocalTile> walkable = Utils.getWalkableTile(targetNPC.get().getTile().toLocalTile());
+            if (walkable.map(PathingUtil::localNav).orElse(false)) {
+                Waiting.waitUntil(7500, 350,
+                        () -> targetNPC.get().getTile().distance() < 5);
+            } else if (PathingUtil.walkToTile(targetNPC.get().getTile())) {
+                Waiting.waitUntil(7500, 350,
+                        () -> targetNPC.get().getTile().distance() < 5);
+            }
+        } else if (targetNPC.get().getTile().distance() < 5 &&
+                targetNPC.get().interact(interactionString) &&
+                NpcChat.waitForChatScreen()) {
+            return true;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            Log.info("[NpcChat]: Distance to npc is " + targetNPC.get().distance());
+            // if we're right beside the npc reachable gives an issue so we check if were right beside them first
+            if (interactionString.equalsIgnoreCase("attack")) {
+                return targetNPC.get().interact(interactionString);
+            } else if (targetNPC.get().interact(interactionString) &&
+                    NpcChat.waitForChatScreen()) {
+                return true;
+            } else {
+                Log.log("[Debug]: Cannot reach npc or failed to click, trying to walk");
+
+                if (PathingUtil.walkToTile(targetNPC.get().getTile())) {
+                    //  || PathingUtil.localNavigation(npc.getPosition())) {
+                    Log.log("[NpcChat]: Movement true");
+                    PathingUtil.movementIdle();
+                    Timer.slowWaitCondition(() -> targetNPC.get().isVisible(), 8000, 10000);
+                    Waiting.waitUniform(1500, 2500);
+                }
+                Log.log("[NpcChat]: Attempting to Accurate click NPC");
+                if (targetNPC.get().interact(interactionString) &&
+                        NpcChat.waitForChatScreen()) {
+                    Log.info("[NpcChat]: Success");
+                    return true;
+                }
+            }
+            Waiting.waitUniform(500, 1500);
+        }
+
         return false;
     }
 
@@ -189,7 +243,7 @@ public class NpcChat extends NPCChat {
         } else {
             if (targetNPC.getTile().distanceTo(MyPlayer.getPosition()) <= 4 &&
                     targetNPC.interact(interactionString) &&
-                    NPCInteraction.waitForConversationWindow()) {
+                    NpcChat.waitForChatScreen()) {
                 return true;
             }
         }
@@ -197,11 +251,11 @@ public class NpcChat extends NPCChat {
             Log.log("[NpcChat]: Distance to npc is " + targetNPC.getTile().distanceTo(MyPlayer.getPosition()));
             // if we're right beside the npc reachable gives an issue so we check if were right beside them first
             if (targetNPC.interact(interactionString) &&
-                    NPCInteraction.waitForConversationWindow())
+                    NpcChat.waitForChatScreen())
                 return true;
 
             if (targetNPC.interact(interactionString) &&
-                    NPCInteraction.waitForConversationWindow())
+                    NpcChat.waitForChatScreen())
                 return true;
             else {
                 Log.log("[Debug]: Cannot reach npc or failed to click, trying to walk");
@@ -214,7 +268,7 @@ public class NpcChat extends NPCChat {
                 }
                 Log.log("[NpcChat]: Attempting to Accurate click NPC");
                 if (targetNPC.interact(interactionString) &&
-                        NPCInteraction.waitForConversationWindow()) {
+                        NpcChat.waitForChatScreen()) {
                     Log.log("[NpcChat]: Success");
                     return true;
                 }

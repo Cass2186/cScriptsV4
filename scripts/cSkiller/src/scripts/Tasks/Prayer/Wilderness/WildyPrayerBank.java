@@ -6,6 +6,7 @@ import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.GroundItem;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -18,20 +19,23 @@ import java.util.Optional;
 public class WildyPrayerBank implements Task {
 
     private void suicideWine(){
-        Optional<GameObject> wine = Query.gameObjects()
+        Optional<GroundItem> wine = Query.groundItems()
                 .actionContains("Take")
                 .nameContains("Wine").findBestInteractable();
 
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 200; i++){
             int health = MyPlayer.getCurrentHealth();
             if (health == 0)
                 break;
 
             if (wine.map(w-> w.interact("Take")).orElse(false)) {
-                Waiting.waitUntil(2000, 15, ()->
+                if (i == 0) //first click
+                    Waiting.waitUntil(2000, 0, ()->
                         MyPlayer.getCurrentHealth() < health);
+                else
+                    Waiting.waitNormal(75, 15);
             }
-            Waiting.waitNormal(70, 15);
+
         }
     }
 

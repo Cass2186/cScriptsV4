@@ -41,7 +41,7 @@ public class GoToWildernessAltar implements Task {
     private boolean shouldGoToAltar() {
         return Inventory.contains(ItemID.DRAGON_BONES) &&
                 Equipment.getAll().size() <= 1 &&
-                !altarBuilding.contains(MyPlayer.getTile());
+                !altarBuilding.containsMyPlayer();
     }
 
     private boolean useBurning() {
@@ -83,7 +83,8 @@ public class GoToWildernessAltar implements Task {
             Waiting.waitNormal(400, 15); //otherwise tries to tele agail
             Log.info("Walking path to altar");
             LocalWalking.Map.builder().travelThroughDoors(true).build();
-            LocalWalking.walkPath(PATH_TO_ALTAR);
+            if (LocalWalking.walkPath(PATH_TO_ALTAR))
+                Waiting.waitUntil(3500, 125, () -> altarBuilding.containsMyPlayer());
         } else
             GlobalWalking.walkTo(ALTAR_WALK_TARGET);
     }

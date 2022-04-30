@@ -20,6 +20,7 @@ import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
 import org.tribot.script.sdk.tasks.InsufficientItemError;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.walking.GlobalWalking;
 import scripts.Requirements.ItemReq;
 
 import java.awt.event.KeyEvent;
@@ -77,8 +78,6 @@ public class BankManager {
         }
         return true;
     }
-
-
 
 
     public void handleBankTaskError(BankTaskError err) {
@@ -409,8 +408,6 @@ public class BankManager {
     }
 
 
-
-
     /**
      * Caches and combines both banked and equipped items to a single array...
      * that is referenced when buying items (see "determinePurchaseAmounts()")
@@ -489,35 +486,39 @@ public class BankManager {
         return !Banking.close() || !shouldWait || Timer.waitCondition(() -> !Banking.isBankScreenOpen(), 3000);
     }
 
+    private static boolean isBankNearby() {
+
+        return false;
+    }
+
     public static boolean open(boolean shouldWait) {
         if (Bank.isOpen())
             return true;
-
-        if (!Banking.isInBank()) {
-            Log.log("[Bank]: Walking to Bank");
+        if (!Bank.isNearby()) {
+            Log.info("[Bank]: Walking to Bank");
             for (int i = 0; i < 3; i++) { //tries 3 times to make a dax call to walk to bank
-                if (DaxWalker.walkToBank()) {
-                    Timer.waitCondition(Banking::isInBank, 8000, 10000);
+                if (GlobalWalking.walkToBank()) {
+                    Timer.waitCondition(Bank::isNearby, 8000, 10000);
                     break;
                 } else
                     General.sleep(General.random(2500, 4000));
             }
-
         }
-        Log.log("[Bank]: Getting item");
         // will try 3 times to open the bank
         // loop breaks if successful
+        Log.info("[Bank]: Opening bank");
         if (!Bank.isOpen()) {
             for (int i = 0; i < 3; i++) {
-                if (Banking.openBank()) {
-                    if (Timer.quickWaitCondition(Bank::isOpen, 4500, 6000))
-                        Utils.idlePredictableAction();
-                    break;
+                if (Bank.open() && Waiting.waitUntil(5000, 50, Bank::isOpen)) {
+                    Utils.idlePredictableAction();
+                    return true;
                 }
+                if (Bank.isOpen())
+                    return true;
             }
         }
         closeHelpWindow();
-        return !Banking.openBank() || !shouldWait || Timer.waitCondition(Bank::isOpen, 5000);
+        return !Bank.open() || !shouldWait || Timer.waitCondition(Bank::isOpen, 5000);
     }
 
 
@@ -570,6 +571,19 @@ public class BankManager {
         closeHelpWindow();
         return Banking.depositAllExcept(id) <= 0 || !shouldWait || Timer.waitCondition(() -> inventoryChange(false), 5000);
     }
+
+    public static boolean depositAllExceptNew(boolean shouldWait, int... id) {
+        closeHelpWindow();
+        List<InventoryItem> all = org.tribot.script.sdk.Inventory.getAll();
+        for (int i : id){
+           all = all.stream().filter(inv -> inv.getId() != i).collect(Collectors.toList());
+        }
+        Log.info("Depositing all");
+        all.stream().forEach(a->Bank.depositAll(a));
+        Log.info("done");
+        return Banking.depositAllExcept(id) <= 0 || !shouldWait || Timer.waitCondition(() -> inventoryChange(false), 5000);
+    }
+
 
 
     public static boolean withdrawArray(int[] array, int num) {
@@ -873,7 +887,7 @@ public class BankManager {
                     .allMatch(rsItem -> AccurateMouse.click(rsItem, "Wear", "Equip"));
 
             if (worn && Timer.waitCondition(() -> getItemsNotWorn(itemsToEquip).size() == 0, General.random(1000, 2000))) {
-                Waiting.waitNormal(100,25);
+                Waiting.waitNormal(100, 25);
                 return true;
             }
         }
@@ -881,8 +895,6 @@ public class BankManager {
         return false;
 
     }
-
-
 
 
     public static boolean withdrawGloryIfRequired() {
@@ -916,7 +928,7 @@ public class BankManager {
 
             BankManager.withdrawArray(
                     ItemID.AMULET_OF_GLORY
-                  , 1);
+                    , 1);
 
             Timer.waitCondition(() -> Inventory.find(ItemID.AMULET_OF_GLORY).length > 0, 2500, 4000);
             RSItem[] invGlory = Inventory.find(ItemID.AMULET_OF_GLORY);

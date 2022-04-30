@@ -5,6 +5,12 @@ import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.GrandExchange;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Npc;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
@@ -21,6 +27,7 @@ import scripts.Timer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class BankFireMaking implements Task {
 
@@ -36,17 +43,18 @@ public class BankFireMaking implements Task {
         return tinderbox != null && logs != null;
     }
 
+    private boolean openGEBank(){
+        if (Bank.isOpen())
+            return true;
 
+        Optional<Npc> bank = Query.npcs().actionContains("Bank").findBestInteractable();
+        return bank.map(b->b.interact("Bank")).orElse(false) &&
+                Waiting.waitUntil(4500, Bank::isOpen);
+    }
 
     public void getLog(int logId) {
-        BankManager.open(true);
+        openGEBank();
 
-        if (Banking.isBankScreenOpen() && Banking.find(logId).length < 1) {
-            General.println("[Debug]: Missing Log.");
-            //  cSkiller.changeRunningBool(false); //ends script
-        }
-        if (BankManager.depositAllExcept(false, ItemID.TINDERBOX))
-            Timer.waitCondition(() -> Inventory.getAll().length == 1, 2500, 3500);
         List<ItemReq> inv = new ArrayList<>(
                 Arrays.asList(
                         new ItemReq(ItemID.TINDERBOX, 1),
@@ -54,6 +62,19 @@ public class BankFireMaking implements Task {
 
                 )
         );
+        if (!GrandExchange.isNearby()){
+            Log.info("Not at GE, getting RoW");
+            inv = new ArrayList<>(
+                    Arrays.asList(
+                            new ItemReq(ItemID.TINDERBOX, 1),
+                            new ItemReq(ItemID.RING_OF_WEALTH, 1),
+                            new ItemReq(logId, 0)
+                    )
+            );
+        }
+        if (BankManager.depositAllExceptNew(false, ItemID.TINDERBOX))
+            Timer.waitCondition(() -> Inventory.getAll().length == 1, 2500, 3500);
+
         General.println("[BankFireMaking]: getLog() inv.size() is: " + inv.size());
 
         List<ItemReq> newInv = SkillBank.withdraw(inv);
@@ -65,10 +86,6 @@ public class BankFireMaking implements Task {
 
 
     public void bank() {
-        BankManager.open(true);
-
-        //   BankManager.depositAllExcept(true, ItemID.TINDERBOX);
-
         if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 15) {
             getLog(ItemID.LOG_IDS[0]);
         } else if (Skills.getCurrentLevel(Skills.SKILLS.FIREMAKING) < 30) {
