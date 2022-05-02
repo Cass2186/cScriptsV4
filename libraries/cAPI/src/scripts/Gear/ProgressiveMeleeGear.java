@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 public enum ProgressiveMeleeGear {
 
-    WEAPON(Skills.SKILLS.ATTACK, new HashMap<>() {{
+    WEAPON(Skills.SKILLS.ATTACK, new HashMap<>() {
+        {
             put(ItemID.DRAGON_SWORD, 60);
             put(ItemID.RUNE_SCIMITAR, 40);
             put(ItemID.ADAMANT_SCIMITAR, 30);
@@ -69,22 +70,27 @@ public enum ProgressiveMeleeGear {
     BOOTS(new HashMap<>() {
         {
             put(ItemID.RUNE_BOOTS, 40);
-            put(ItemID.ADAMANT_KITESHIELD, 30);
-            put(ItemID.MITHRIL_KITESHIELD, 20);
-            put(ItemID.STEEL_KITESHIELD, 5);
-            put(ItemID.IRON_KITESHIELD, 1);
+            put(ItemID.ADAMANT_BOOTS, 30);
+            put(ItemID.MITHRIL_BOOTS, 20);
+            put(ItemID.STEEL_BOOTS, 5);
+            put(ItemID.IRON_BOOTS, 1);
         }
     }),
 
     WRIST(new HashMap<>() {
         {
-            put(ItemID.RUNE_KITESHIELD, 40);
-            put(ItemID.ADAMANT_KITESHIELD, 30);
-            put(ItemID.MITHRIL_KITESHIELD, 20);
-            put(ItemID.STEEL_KITESHIELD, 5);
-            put(ItemID.IRON_KITESHIELD, 1);
+            put(ItemID.COMBAT_BRACELET0, 1);
+
+
+        }
+    }),
+
+    NECKLACe(new HashMap<>() {{
+            put(ItemID.AMULET_OF_GLORY0, 1);
+
         }
     });
+
 
     @Getter
     private Skills.SKILLS skill;
@@ -111,8 +117,8 @@ public enum ProgressiveMeleeGear {
         List<Integer> gearList = new ArrayList<>();
         for (ProgressiveMeleeGear gear : values()) {
             for (Integer i : gear.map.keySet().stream().sorted(Comparator
-                            .comparingInt(max-> gear.map.get(max))
-                            .reversed()).collect(Collectors.toList())) {
+                    .comparingInt(max -> gear.map.get(max))
+                    .reversed()).collect(Collectors.toList())) {
 
                 if (gear.skill.getActualLevel() >= gear.map.get(i)) {
                     Optional<ItemDefinition> itemDefinition = ItemDefinition.get(i);

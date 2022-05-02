@@ -175,6 +175,8 @@ public class EatDrink implements Task {
         drinkPotion(Const.SUPER_DEFENCE_POTION, Skills.SKILLS.DEFENCE);
         drinkCombatPotion();
         drinkPrayerPotion();
+        Vars.get().shouldDrink = false;
+        Vars.get().shouldEat = false;
     }
 
 }

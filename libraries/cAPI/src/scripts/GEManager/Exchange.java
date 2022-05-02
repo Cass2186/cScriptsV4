@@ -13,6 +13,7 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.GrandExchangeOffer;
 import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.*;
 
 
@@ -27,6 +28,10 @@ public class Exchange {
     public static int CONFIRM_OFFER_ID = 54;
     public static int SEARCH_ITEM_NAME_INTERFACE_ID = 42;
     public static int GE_BOOTH_ID = 10061;
+
+    private static final int ROOT_WIDGET = 465;
+    private static final int OFFER_WINDOW_ENTER_MENU_MASTER = 162;
+    private static final int ITEM_SELECTION_MASTER = 162;
 
 
     public static String GE_CLERK_STRING = "Grand Exchange Clerk";
@@ -64,6 +69,49 @@ public class Exchange {
             }
         }
         return null;
+    }
+
+
+    /**
+     * this won't get coins or travel to GE or relist
+     * @param item object to buy
+     * @return successfully placed or not
+     */
+    public static boolean placeBuyOffer(GEItem item) {
+        return GrandExchange.open() && GrandExchange.placeOffer(getBuyConfigFromItem(item));
+    }
+
+    private static GrandExchange.CreateOfferConfig getBuyConfigFromItem(GEItem item) {
+        return GrandExchange.CreateOfferConfig.builder()
+                .type(GrandExchangeOffer.Type.BUY)
+                .itemId(item.getItemID())
+                .priceAdjustment(Utils.roundToNearest(item.getPercentIncrease(), 5) / 5)
+                .searchText(getItemName(item))
+                .quantity(item.getItemQuantity()).build();
+    }
+
+    /**
+     * this won't get the item or travel to GE or relist
+     * @param item object to buy
+     * @return successfully placed or not
+     */
+    public static boolean placeSellOffer(GEItem item) {
+        return GrandExchange.open() &&  GrandExchange.placeOffer(getSellConfigFromItem(item));
+    }
+
+    private static GrandExchange.CreateOfferConfig getSellConfigFromItem(GEItem item) {
+        int id = isStackable(item) ? item.getItemID() : item.getItemID()+1;
+        return GrandExchange.CreateOfferConfig.builder()
+                .type(GrandExchangeOffer.Type.SELL)
+                .itemId(id)
+                .priceAdjustment(-Utils.roundToNearest(item.getPercentIncrease(), 5) / 5)
+                .quantity(item.getItemQuantity()).build();
+    }
+
+    private static boolean isStackable(GEItem item){
+        Optional<ItemDefinition> def = Query
+                .itemDefinitions().idEquals(item.getItemID()).findFirst();
+        return def.map(d->!d.isStackable()).orElse(false);
     }
 
 

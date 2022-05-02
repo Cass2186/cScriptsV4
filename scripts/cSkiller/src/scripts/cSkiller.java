@@ -520,9 +520,10 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
 
 
     private void endOnDeath(String message) {
-        if (Vars.get().currentTask != null && Vars.get().currentTask != SkillTasks.PEST_CONTROL) {
+        if (Vars.get().currentTask != null && Vars.get().currentTask != SkillTasks.PEST_CONTROL
+                && Vars.get().currentTask != SkillTasks.PRAYER) {
             if (message.toLowerCase().contains("you are dead") || message.toLowerCase().contains("you died")) {
-                General.println("[Message Listner]: Death Message received, ending script");
+                Log.error("[Message Listner]: Death Message received, ending script");
                 isRunning.set(false);
                 throw new NullPointerException();
             }
@@ -630,9 +631,9 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                     (int) pp.getBounds().getY());
         }
         SkillTasks task = Vars.get().currentTask;
-        if (task != null && task.equals(SkillTasks.SLAYER)){
+        if (task != null && task.equals(SkillTasks.SLAYER)) {
             Area a = SlayerVars.get().fightArea;
-            if (a != null){
+            if (a != null) {
                 graphics.drawPolygon(a.getBounds());
             }
         }

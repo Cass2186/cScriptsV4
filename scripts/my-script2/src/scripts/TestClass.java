@@ -642,11 +642,8 @@ public class TestClass implements QuestTask {
        // VarplayerRequirement req = new VarplayerRequirement(1196, false, 2);
        // Log.debug("Requirement: " + req.check());
 
-        BuyItemsStep buyStep = new BuyItemsStep(
-                new ArrayList<>(
-                        Arrays.asList(new GEItem(ItemID.RING_OF_WEALTH[0], 6, 25))));
-       // buyStep.buyItems();
-        Waiting.waitNormal(600, 10);
+       Exchange.placeSellOffer(new GEItem(ItemID.RING_OF_DUELING8, 10, 10));
+        Waiting.waitNormal(6000, 10);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package scripts;
 
 public class NpcID {
+    public static final int THORA_THE_BARKEEP = 3932;
     public static final int MARLO = 10408;
+
     public static final int MARLO_10409 = 10409;
     public static final int ELLIE = 10410;
     public static final int ELLIE_10411 = 10411;

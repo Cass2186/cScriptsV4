@@ -69,6 +69,7 @@ public class cCrabs extends Script implements Starting, Ending, Painting, Messag
                 new MoveToCrabTile(),
                 new HopWorlds(),
                 new Fight(),
+                new BuyGear(),
                 new ResetAggro()
         );
 

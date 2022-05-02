@@ -38,6 +38,7 @@ public class EnakhrasLament implements QuestTask {
     // SpellbookRequirement onNormals;
     UseItemOnObjectStep placeBase, useChiselOnWall;
     UseItemOnItemStep useChiselOn32Sandstone, useChiselOn20Sandstone, useChiselOnGranite;
+
     @DoNotRename
     Requirement hasPlacedBase, hasTalkedToLazimAfterBase, hasPlacedBody, chiseledStatue, canChooseHead, inTempleEntranceRoom,
             inTempleGroundFloor, startedTemple, gottenLimbs, openedDoor1, openedDoor2, openedDoor3, openedDoor4, mPlaced, kPlaced,

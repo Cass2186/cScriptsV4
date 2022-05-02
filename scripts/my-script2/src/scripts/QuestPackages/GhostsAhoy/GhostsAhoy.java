@@ -11,12 +11,15 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
@@ -979,6 +982,17 @@ public class GhostsAhoy implements QuestTask {
                     new RSTile(3610, 3550, 0)
             }
     );
+
+
+    private void navigatePath(List<WorldTile> tileList){
+        for (WorldTile t : tileList){
+            Optional<GameObject> obj = Query.gameObjects().tileEquals(t).isReachable()
+                    .actionContains("Jump-to").findClosest();
+            if (obj.map(o-> o.interact("Jump-to")).orElse(false)){
+                Waiting.waitUntil(3500, 350, ()-> MyPlayer.isAnimating());
+            }
+        }
+    }
 
     public void jumpRocks(boolean towardsRock) {
         if (Player.getPosition().getPlane() == 1) {

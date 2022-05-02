@@ -461,8 +461,8 @@ public enum Assign {
             .useGearType(GearType.MELEE)),
 
     SPIRITUAL_CREATURE(new Builder()
-            //  .inArea(Areas.) //TODO Add this area
-            .nameContains("Kalphite worker")
+           // .inArea(Areas.SPIRI) //TODO Add this area
+            .nameContains("Spirita")
             .useGearType(GearType.MELEE)),
 
     STEEL_DRAGON(new Builder()
@@ -473,6 +473,7 @@ public enum Assign {
     SUQAH(new Builder()
             .inArea(Areas.SUQAH_AREA)
             .usingCannon(true)
+            .usePrayerType(PrayerType.MAGIC)
             .useCannonTile(Areas.SUQAH_CANNON_TILE)
             .nameContains("Suqah")
             .useGearType(GearType.MELEE)),

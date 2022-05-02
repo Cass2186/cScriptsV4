@@ -1,37 +1,29 @@
 package scripts;
 
-import dax.api_lib.DaxWalker;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 
-import obf.ih;
-import org.tribot.api.Clicking;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
-import org.tribot.api.Timing;
-import org.tribot.api.input.Keyboard;
-import org.tribot.api.input.Mouse;
-import org.tribot.api.interfaces.Clickable;
 import org.tribot.api.interfaces.Positionable;
-import org.tribot.api.types.generic.CustomRet_2P;
-import org.tribot.api2007.Combat;
-import org.tribot.api2007.Equipment;
-import org.tribot.api2007.GameTab;
-import org.tribot.api2007.Inventory;
-import org.tribot.api2007.Login;
-import org.tribot.api2007.Objects;
+
 import org.tribot.api2007.*;
-import org.tribot.api2007.Options;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
-import org.tribot.api2007.WorldHopper;
-import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.Script;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Camera;
+import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.GameTab;
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Login;
+import org.tribot.script.sdk.Options;
+import org.tribot.script.sdk.WorldHopper;
 import org.tribot.script.sdk.cache.BankCache;
+import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.interfaces.Tile;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
@@ -41,7 +33,6 @@ import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Items.PotionEnum;
-import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 
@@ -161,7 +152,7 @@ public class Utils {
 
 
     public static int getQuestPoints() {
-        return Game.getSetting(101);
+        return GameState.getSetting(101);
     }
 
     public static void cutScene() {
@@ -184,11 +175,11 @@ public class Utils {
 
         if (!handleUnclickableNpc(npc.get())) return false;
 
-        int num = General.random(5, 7);
+        int num = Utils.random(5, 7);
         for (int i = 0; i < num; i++) {
             // org.tribot.script.sdk.input.Mouse.setClickMethod(org.tribot.script.sdk.input.Mouse.ClickMethod.ACCURATE_MOUSE);
             if (Utils.unselectItem())
-                General.sleep(General.randomSD(20, 250, 120, 50));
+                Waiting.wait(General.randomSD(20, 250, 120, 50));
 
             if (i == 3) { // force camera adjustment if it's failed 2x prior to click
                 Log.info("[Utils]: Force focusing camera on NPC");
@@ -218,14 +209,14 @@ public class Utils {
         if (npc != null) {
             handleUnclickableNpc(npc);
 
-            int num = General.random(5, 7);
+            int num = Utils.random(5, 7);
             for (int i = 0; i < num; i++) {
                 if (i == 2) { // force camera adjustment if it's failed 2x prior to click
                     Log.info("[Utils]: Force focusing camera on NPC");
                     DaxCamera.focus(npc);
                 }
                 if (Utils.unselectItem())
-                    General.sleep(General.randomSD(20, 250, 120, 50));
+                    Waiting.wait(General.randomSD(20, 250, 120, 50));
 
                 if (useAccurateMouse && AccurateMouse.click(npc, action))
                     return true;
@@ -245,14 +236,14 @@ public class Utils {
     private static boolean clickObj(Optional<GameObject> obj, String action, boolean useAccurateMouse) {
         if (obj.isEmpty()) return false;
 
-        int num = General.random(4, 6);
+        int num = Utils.random(4, 6);
         for (int i = 0; i < num; i++) {
             if (i == 2) { // force camera adjustment if it's failed 2x prior to click
                 Log.info("[Utils]: Force focusing camera on GameObject");
                 obj.get().adjustCameraTo();
             }
             if (Utils.unselectItem())
-                General.sleep(General.randomSD(20, 250, 120, 50));
+                Waiting.wait(General.randomSD(20, 250, 120, 50));
 
             if (useAccurateMouse) {
                 org.tribot.script.sdk.input.Mouse.setClickMethod(
@@ -304,7 +295,8 @@ public class Utils {
 
     public static void clanWarsReset() {
         if (!FEROX_WHOLE_AREA.contains(Player.getPosition())) {
-            if (Inventory.find(ItemID.RING_OF_DUELING).length < 1 && Equipment.find(ItemID.RING_OF_DUELING).length < 1) {
+            if (!Inventory.contains(ItemID.RING_OF_DUELING) &&
+                    !Equipment.contains(ItemID.RING_OF_DUELING)) {
 
                 General.println("[Debug]: Getting Ring of Dueling");
                 BankManager.open(true);
@@ -312,24 +304,20 @@ public class Utils {
                 BankManager.close(true);
                 Utils.shortSleep();
             }
-            if (Inventory.find(ItemID.RING_OF_DUELING).length > 0) {
-                General.println("[Debug]: Going to Ferox Area");
-                if (Clicking.click("Rub", Inventory.find(ItemID.RING_OF_DUELING)[0]))
-                    Timer.abc2WaitCondition(() -> Interfaces.isInterfaceSubstantiated(219, 1, 3), 5000, 9000);
-                if (Interfaces.isInterfaceSubstantiated(219, 1, 3) && Interfaces.get(219, 1, 3).getText().contains("Ferox")) {
-                    Keyboard.typeString("3");
-                    Utils.modSleep();
-                }
-            } else if (Equipment.find(ItemID.RING_OF_DUELING).length > 0) {
-                Equipment.find(ItemID.RING_OF_DUELING)[0].click("Ferox Enclave");
+            Optional<EquipmentItem> ring = Query.equipment().idEquals(ItemID.RING_OF_DUELING)
+                    .findClosestToMouse();
+            Optional<InventoryItem> invRing = QueryUtils.getItem(ItemID.RING_OF_DUELING);
+            if (invRing.map(r -> r.click("Ferox Enclave")).orElse(false)) {
+                Utils.modSleep();
+            } else if (ring.map(r -> r.click("Ferox Enclave")).orElse(false)) {
                 Utils.modSleep();
             }
 
         }
         PathingUtil.walkToArea(FEROX_POOL_AREA);
-        RSObject[] poolOfRefreshment = Objects.findNearest(20, "Pool of Refreshment");
-        if (poolOfRefreshment.length > 0 && clickObj("Pool of Refreshment", "Drink"))
-            Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 8000, 12000);
+        Optional<GameObject> pool_of_refreshment = QueryUtils.getObject("Pool of Refreshment");
+        if (QueryUtils.interactObject(pool_of_refreshment, "Drink"))
+            Timer.slowWaitCondition(() -> MyPlayer.getAnimation() != -1, 8000, 12000);
 
     }
 
@@ -390,14 +378,14 @@ public class Utils {
 
             handleUnclickableObj(obj);
 
-            int num = General.random(5, 7);
+            int num = Utils.random(5, 7);
             for (int i = 0; i < num; i++) {
                 if (i == 2) { // force camera adjustment if it's failed 2x prior to click
                     Log.info("[Utils]: Force focusing camera on RSObject");
                     DaxCamera.focus(obj);
                 }
                 if (Utils.unselectItem())
-                    General.sleep(General.randomSD(20, 250, 120, 50));
+                    Waiting.wait(General.randomSD(20, 250, 120, 50));
 
                 if (useAccurateMouse && AccurateMouse.click(obj, action))
                     return true;
@@ -413,7 +401,7 @@ public class Utils {
 
     public static boolean handleUnclickableNpc(Npc obj) {
         if (!obj.isVisible()) {
-            if (obj.getTile().distanceTo(MyPlayer.getPosition()) > General.random(9, 12)) {
+            if (obj.getTile().distanceTo(MyPlayer.getPosition()) > Utils.random(9, 12)) {
                 Log.info("[Utilities]: NPC is far away, walking to it");
 
                 if (!LocalWalking.walkTo(obj.getTile()))
@@ -456,7 +444,7 @@ public class Utils {
 
     public static boolean handleUnclickableObj(RSObject obj) {
         if (!obj.isClickable()) {
-            if (obj.getPosition().distanceTo(Player.getPosition()) > General.random(10, 12)) {
+            if (obj.getPosition().distanceTo(Player.getPosition()) > Utils.random(10, 12)) {
                 Log.info("[Utilities]: Object is far away, walking to obj");
                 RSTile tile = obj.getPosition();
                 LocalTile localTile = new LocalTile(tile.getX(), tile.getY(), MyPlayer.getPosition().getPlane());
@@ -496,6 +484,7 @@ public class Utils {
     }
 
     public static boolean clickObject(Predicate<RSObject> filter, String action) {
+
         RSObject[] obj = Objects.findNearest(40, filter);
         if (obj.length > 0)
             return clickObj(obj[0], action, true);
@@ -515,8 +504,10 @@ public class Utils {
 
     public static boolean clickGroundItem(int ItemID) {
         int stock = org.tribot.script.sdk.Inventory.getCount(ItemID);
-        Optional<GroundItem> gItem = Query.groundItems().idEquals(ItemID).findBestInteractable();
-        //TODO check it's reachable
+        Optional<GroundItem> gItem = Query.groundItems()
+                .idEquals(ItemID)
+                .isReachable()
+                .findBestInteractable();
         if (gItem.map(g -> g.interact("Take")).orElse(false))
             return Timer.waitCondition(() -> org.tribot.script.sdk.Inventory.getCount(ItemID) >= stock + 1, 7000, 9000);
         return false;
@@ -524,8 +515,9 @@ public class Utils {
 
     public static boolean clickGroundItem(int[] ItemIDs) {
         int stock = org.tribot.script.sdk.Inventory.getCount(ItemIDs);
-        Optional<GroundItem> gItem = Query.groundItems().idEquals(ItemIDs).findBestInteractable();
-        //TODO check it's reachable
+        Optional<GroundItem> gItem = Query.groundItems().idEquals(ItemIDs)
+                .isReachable()
+                .findBestInteractable();
         if (gItem.map(g -> g.interact("Take")).orElse(false))
             return Timer.waitCondition(() -> org.tribot.script.sdk.Inventory.getCount(ItemIDs) >= stock + 1, 7000, 9000);
         return false;
@@ -533,8 +525,9 @@ public class Utils {
 
     public static boolean clickGroundItem(String itemName) {
         int stock = org.tribot.script.sdk.Inventory.getCount(itemName);
-        Optional<GroundItem> gItem = Query.groundItems().nameContains(itemName).findBestInteractable();
-        //TODO check it's reachable
+        Optional<GroundItem> gItem = Query.groundItems().nameContains(itemName)
+                .isReachable()
+                .findBestInteractable();
         if (gItem.map(g -> g.interact("Take")).orElse(false))
             return Timer.waitCondition(() -> org.tribot.script.sdk.Inventory.getCount(itemName) >= stock + 1, 7000, 9000);
         return false;
@@ -543,14 +536,14 @@ public class Utils {
 
     //TODO Delete and find all usages
     public static void pickupItem(int ItemID) {
-        RSItem[] stock = Inventory.find(ItemID);
+        RSItem[] stock = org.tribot.api2007.Inventory.find(ItemID);
         RSGroundItem[] item = GroundItems.find(ItemID);
         if (item.length > 0) {
             if (!item[0].isClickable())
                 DaxCamera.focus(item[0]);
 
             if (AccurateMouse.click(item[0], "Take"))
-                Timing.waitCondition(() -> Inventory.find(ItemID).length == stock.length + 1, 9000);
+                Waiting.waitUntil(9000, 250, () -> Inventory.getCount(ItemID) == stock.length + 1);
         }
     }
 
@@ -561,7 +554,7 @@ public class Utils {
             if (tempFrame.getTitle().contains("TRiBot")) {
                 return (JFrame) tempFrame;
             }
-            General.sleep(100);
+            Waiting.wait(100);
         }
         return null;
     }
@@ -605,7 +598,7 @@ public class Utils {
             handleUnclickableObj(obj);
 
             if (Utils.unselectItem())
-                General.sleep(General.randomSD(20, 200, 100, 50));
+                Waiting.wait(General.randomSD(20, 200, 100, 50));
             if (useAccurateMouse)
                 return AccurateMouse.click(obj, action);
             else
@@ -665,26 +658,26 @@ public class Utils {
             Log.info("[Utils]: Setting NPC Attach preferences");
         if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
             GameTab.open(GameTab.TABS.OPTIONS);
-            General.sleep(General.randomSD(100, 750, 400, 150));
+            Waiting.wait(General.randomSD(100, 750, 400, 150));
         }
         if (GameTab.getOpen() == GameTab.TABS.OPTIONS) {
 
             if (Interfaces.get(109, 6) != null) { // selects tab
                 Interfaces.get(109, 6).click();
-                General.sleep(General.randomSD(100, 750, 400, 150));
+                Waiting.wait(General.randomSD(100, 750, 400, 150));
             }
 
             if (Interfaces.get(116, 7, 3) != null) { // selects drop down
                 Interfaces.get(116, 7, 3).click();
-                General.sleep(General.randomSD(100, 750, 400, 150));
+                Waiting.wait(General.randomSD(100, 750, 400, 150));
             }
             if (hidden) {
                 InterfaceUtil.clickInterfaceText(116, 36, "Hidden");
-                General.sleep(General.randomSD(100, 750, 400, 150));
+                Waiting.wait(General.randomSD(100, 750, 400, 150));
 
             } else if (Interfaces.get(116, 36, 3) != null) { // selects 'left click when availible'
                 InterfaceUtil.clickInterfaceText(116, 36, "Left-click where available");
-                General.sleep(General.randomSD(100, 750, 400, 150));
+                Waiting.wait(General.randomSD(100, 750, 400, 150));
             }
         }
     } */
@@ -718,7 +711,7 @@ public class Utils {
     ArrayList<Integer> invList = new ArrayList<>();
 
     public void checkInventoryItems(ArrayList<Integer> list) {
-        RSItem[] invItems = Inventory.getAll();
+        RSItem[] invItems = org.tribot.api2007.Inventory.getAll();
         toBuy.clear();
 
         for (int i = 0; i < invItems.length; i++) {
@@ -847,7 +840,7 @@ public class Utils {
 
     public static void setCameraAngle() {
         if (Camera.getAngle() < 45) {
-            int angle = General.random(90, 100);
+            int angle = Utils.random(90, 100);
             Log.info("[Utils]: Setting Camera Angle to " + angle);
             Camera.setAngle(angle);
         }
@@ -863,7 +856,7 @@ public class Utils {
 
     public static boolean adjustCameraToObj(RSObject obj) {
         if (!obj.isClickable()) {
-            if (obj.getPosition().distanceTo(Player.getPosition()) > General.random(8, 12)) {
+            if (obj.getPosition().distanceTo(Player.getPosition()) > Utils.random(8, 12)) {
                 Log.info("[Utils]: Object is far away, walking closer");
                 RSTile tile = obj.getPosition();
                 PathingUtil.walkToArea(getObjectRSArea(obj));
@@ -879,7 +872,7 @@ public class Utils {
         if (!obj.isClickable()) {
 
             if (shouldWalk &&
-                    obj.getPosition().distanceTo(Player.getPosition()) > General.random(8, 12)) {
+                    obj.getPosition().distanceTo(Player.getPosition()) > Utils.random(8, 12)) {
                 Log.info("[Utils]: Object is far away, walking closer");
                 PathingUtil.walkToArea(getObjectRSArea(obj), false);
             }
@@ -907,8 +900,8 @@ public class Utils {
         if (!timer.isRunning()) {
             int lengthSec = lengthMS / 1000;
             Log.info("[Utils]: AFKing for " + lengthSec + "s");
-            Mouse.leaveGame();
-            Timer.waitCondition(() -> Combat.isUnderAttack(), lengthMS, lengthMS + 1);
+            Mouse.leaveScreen();
+            Timer.waitCondition(() -> MyPlayer.isHealthBarVisible(), lengthMS, lengthMS + 1);
             return true;
         }
         return false;
@@ -917,8 +910,8 @@ public class Utils {
     public static void afk(int lengthMS) {
         int lengthSec = lengthMS / 1000;
         Log.info("[Utils]: AFKing for " + lengthSec + "s");
-        Mouse.leaveGame();
-        Timer.waitCondition(() -> Combat.isUnderAttack(), lengthMS, lengthMS + 1);
+        Mouse.leaveScreen();
+        Timer.waitCondition(() -> MyPlayer.isHealthBarVisible(), lengthMS, lengthMS + 1);
     }
 
     public static void dropItem(int item) {
@@ -938,27 +931,25 @@ public class Utils {
      * @return
      */
     public static boolean unselectItem() {
-        if (Game.getItemSelectionState() == 1) {
-
-            String itemName = Game.getSelectedItemName();
+        if (GameState.isAnyItemSelected()) {
+            String itemName = GameState.getSelectedItemName();
             Log.info("[Utils]: Un-select item failsafe activated, clicking item to unselect");
-            if (itemName != null) {
-                RSItem[] invItem = Inventory.find(itemName);
-                if (invItem.length > 0 && invItem[0].click())
-                    return Timer.waitCondition(() ->
-                            Game.getItemSelectionState() == 0, 1500, 2500);
-            }
+            Optional<InventoryItem> invItem = QueryUtils.getItem(itemName);
+            if (invItem.map(i -> i.click()).orElse(false))
+                return Timer.waitCondition(() ->
+                        !GameState.isAnyItemSelected(), 1500, 2500);
+
         }
-        return Game.getItemSelectionState() == 0;
+        return !GameState.isAnyItemSelected();
     }
 
 
     public static boolean hoverXp(Skills.SKILLS skill, int chance) {
-        int num = General.random(0, 100);
+        int num = Utils.random(0, 100);
         if (chance > num) {
             Log.info("[Antiban]: Hovering XP");
             skill.hover();
-            General.sleep(300, 1200);
+            Waiting.wait(Utils.random(300, 1200));
             return true;
         }
         return false;
@@ -975,7 +966,7 @@ public class Utils {
         if (Camera.getRotation() > (rotation + rotnAllowance) ||
                 Camera.getRotation() < (rotation - rotnAllowance)) {
             int half = rotnAllowance / 2;
-            int i = General.random(rotation - half, rotation + half);
+            int i = Utils.random(rotation - half, rotation + half);
             Log.info("[Camera]: Setting camera rotation to " + i);
             Camera.setRotation(i);
         }
@@ -985,27 +976,41 @@ public class Utils {
                 Log.info("Debug]: Angle is less than " + (angle - angleAllowance));
             }
             int half = angleAllowance / 2;
-            int i = General.random(angle - half, angle + half);
+            int i = Utils.random(angle - half, angle + half);
             Log.info("[Camera]: Setting camera angle to " + i);
             Camera.setAngle(i);
         }
     }
 
     public static boolean handleDoor(RSTile doorTile, boolean open) {
-        RSObject[] doorTarget = Objects.findNearest(20, Filters.Objects.tileEquals(doorTile));
-        if (doorTarget.length > 0) {
+        Optional<GameObject> door;
+        if (open)
+            door = Query.gameObjects()
+                    .nameContains("Door")
+                    .actionContains("Open")
+                    .tileEquals(getWorldTileFromRSTile(doorTile))
+                    .findClosestByPathDistance();
+        else
+            door = Query.gameObjects()
+                    .nameContains("Door")
+                    .actionContains("Close")
+                    .tileEquals(getWorldTileFromRSTile(doorTile))
+                    .findClosestByPathDistance();
 
-            for (int i = 0; i < 5; i++) {
-                adjustCameraToObj(doorTarget[0]);
 
-                if (Doors.handleDoor(doorTarget[0], open)) {
-                    Log.info("[Utils]: Door handled");
-                    return true;
+        for (int i = 0; i < 3; i++) {
+            if (door.isEmpty())
+                return false;
 
-                } else {
-                    Log.info("[Utils]: Failed to handle door, waiting up to 2s and trying again");
-                    General.sleep(General.random(500, 2500));
-                }
+            if (open && door.map(d -> d.interact("Open")).orElse(false)) {
+                Log.info("[Utils]: Door handled");
+                return true;
+            } else if (door.map(d -> d.interact("Close")).orElse(false)) {
+                Log.info("[Utils]: Door handled");
+                return true;
+            } else {
+                Log.info("[Utils]: Failed to handle door, waiting up to 2s and trying again");
+                Waiting.wait(Utils.random(500, 2500));
             }
 
         }
@@ -1013,24 +1018,20 @@ public class Utils {
     }
 
     public static void setGameSettings() {
-        if (Game.getSetting(281) == 1000) {
-            if (Game.getRoofsEnabledStatus() != Game.RoofStatus.HIDDEN) {
+        if (GameState.getSetting(281) == 1000) {
+
+            if (Options.isRoofsEnabled()) {
                 Options.setRemoveRoofsEnabled(true);
                 Utils.shortSleep();
             }
 
             if (!Options.isShiftClickDropEnabled()) {
-                Options.setShiftClickDropEnabled(true);
+                Options.setShiftClickDrop(true);
                 Utils.shortSleep();
             }
 
             if (Options.isResizableModeEnabled()) {
-                Options.setResizableModeEnabled(false);
-                Utils.shortSleep();
-            }
-
-            if (!Options.isShiftClickDropEnabled()) {
-                Options.setShiftClickDropEnabled(true);
+                Options.setResizableModeType(Options.ResizableType.FIXED);
                 Utils.shortSleep();
             }
         }
@@ -1046,10 +1047,9 @@ public class Utils {
         return false;
     }
 
-
+    //TODO Delete this and usages
     public static boolean isItemInInventory(int item) {
-        RSItem[] inv = Inventory.find(item);
-        return inv.length > 0;
+        return Inventory.contains(item);
     }
 
     public static void setNPCAttackPreference() {
@@ -1060,12 +1060,11 @@ public class Utils {
                 return;
 
             Log.info("[Utils]: Setting NPC Attach preferences");
-            if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
-                GameTab.open(GameTab.TABS.OPTIONS);
-                General.sleep(General.randomSD(100, 750, 400, 150));
+            if (!GameTab.OPTIONS.isOpen() && GameTab.OPTIONS.open()) {
+                Waiting.wait(General.randomSD(100, 750, 400, 150));
             }
 
-            if (GameTab.getOpen() == GameTab.TABS.OPTIONS) {
+            if (GameTab.OPTIONS.open()) {
                 // not in the right options tab (gear one)
                 if (Utils.getVarBitValue(9683) != 0) {
                     if (Interfaces.get(109, 6) != null) { // selects tab in options
@@ -1076,7 +1075,7 @@ public class Utils {
 
                 if (Interfaces.get(116, 7, 3) != null) { // selects drop down
                     Interfaces.get(116, 7, 3).click();
-                    General.sleep(General.randomSD(100, 750, 400, 150));
+                    Waiting.wait(General.randomSD(100, 750, 400, 150));
                 }
 
                 Optional<Widget> first = Query.widgets()
@@ -1091,34 +1090,32 @@ public class Utils {
     }
 
     public static boolean waitCondtion(BooleanSupplier condition) {
-        return Timing.waitCondition(() -> {
-            General.sleep(100, 400);
-            return (condition.getAsBoolean());
-        }, General.random(4200, 6500));
+        return Waiting.waitUntil(Utils.random(4200, 6500), 300,
+                condition);
     }
 
     public static void microSleep() {
         int sleepTime = General.randomSD(100, 1000, 500, 200);
         Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
-        General.sleep(sleepTime);
+        Waiting.wait(sleepTime);
     }
 
     public static void shortSleep() {
         int sleepTime = General.randomSD(1000, 3200, 1600, 200);
         Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
-        General.sleep(sleepTime);
+        Waiting.wait(sleepTime);
     }
 
     public static void modSleep() {
         int sleepTime = General.randomSD(2500, 8000, 5000, 600);
         Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
-        General.sleep(sleepTime);
+        Waiting.wait(sleepTime);
     }
 
     public static void longSleep() {
         int sleepTime = General.randomSD(8000, 20000, 14000, 2500);
         Log.info("[Debug]: Sleeping for " + sleepTime + "ms");
-        General.sleep(sleepTime);
+        Waiting.wait(sleepTime);
     }
 
     public static boolean handleRecoilMessage(String message) {
@@ -1154,12 +1151,12 @@ public class Utils {
 
                 if (potion != null) {
 
-                    RSItem[] item = Inventory.find(potion);
+                    RSItem[] item = org.tribot.api2007.Inventory.find(potion);
 
                     if (item != null && item.length > 0) {
 
                         if (item[0].click("Drink"))
-                            Utils.waitCondtion(() -> Player.getAnimation() == 829);
+                            Utils.waitCondtion(() -> MyPlayer.getAnimation() == 829);
                     }
                 }
             }
@@ -1167,13 +1164,12 @@ public class Utils {
     }
 
     public static boolean drinkPotion(int[] potionList) {
-        for (Integer potionName : potionList) {
-            Predicate<RSItem> potion = Filters.Items.idEquals(potionName);
-            RSItem[] item = Inventory.find(potion);
-            if (item != null && item.length > 0) {
-                if (item[0].click("Drink"))
-                    return Utils.waitCondtion(() -> Player.getAnimation() == 829);
-            }
+        for (Integer id : potionList) {
+            Optional<InventoryItem> item = QueryUtils.getItem(id);
+
+            if (item.map(i -> i.click("Drink")).orElse(false))
+                return Utils.waitCondtion(() -> MyPlayer.getAnimation() == 829);
+
         }
         return false;
     }
@@ -1259,19 +1255,19 @@ public class Utils {
 
 
     public static void idle(int low, int high) {
-        int sleep = General.random(low, high);
+        int sleep = Utils.random(low, high);
         Log.info("[Debug]: Sleeping for: " + sleep);
-        General.sleep(sleep);
+        Waiting.wait(sleep);
     }
 
 
     public static void breakUtil(Timer timer, Script script) { // breaks for 10-20min
         if (!timer.isRunning()) {
-            int length = General.random(600000, 1200000);
+            int length = Utils.random(600000, 1200000);
             int min = length / 60000;
             script.setLoginBotState(false);
             Log.info("[Debug]: Breaking for ~" + min + "min");
-            General.sleep(length);
+            Waiting.wait(length);
             timer.reset();
 
             Log.info("[Debug]: Resuming from break");
@@ -1283,10 +1279,10 @@ public class Utils {
 
     public static void breakUtil(Timer timer) { // breaks for 10-20min
         if (!timer.isRunning()) {
-            int length = General.random(600000, 1200000);
+            int length = Utils.random(600000, 1200000);
             int min = length / 60000;
             Log.info("[Debug]: Breaking for ~" + min + "min");
-            General.sleep(length);
+            Waiting.wait(length);
             timer.reset();
             Log.info("[Debug]: Resuming from break");
             Login.login();
@@ -1296,10 +1292,8 @@ public class Utils {
 
 
     public static boolean waitCondtion(BooleanSupplier condition, int min, int max) {
-        return Timing.waitCondition(() -> {
-            General.sleep(80, 350);
-            return (condition.getAsBoolean());
-        }, General.random(min, max));
+        return Waiting.waitUntil(Utils.random(min, max), 175, () ->
+                condition.getAsBoolean());
     }
 
 
@@ -1340,7 +1334,7 @@ public class Utils {
 
     public static List<Integer> sleep(List<Integer> waitTimes) {
         if (waitTimes.isEmpty())
-            AntiBan.generateTrackers(General.random(500, 1600), false);
+            AntiBan.generateTrackers(Utils.random(500, 1600), false);
 
         if (!waitTimes.isEmpty())
             AntiBan.generateTrackers(average(waitTimes), false);
@@ -1362,43 +1356,29 @@ public class Utils {
      */
     private static void abc2CombatSleep(int sleepTime) {
         Timer timer = new Timer(sleepTime);
-        Timer.waitCondition(() -> !timer.isRunning() || Combat.getHPRatio() < 20, sleepTime, sleepTime + 500);
+        Timer.waitCondition(() -> !timer.isRunning() || MyPlayer.getCurrentHealthPercent() < 20, sleepTime, sleepTime + 500);
 
-        if (Combat.getHPRatio() < 20) {
+        if (MyPlayer.getCurrentHealthPercent() < 20) {
             EatUtil.eatFood();
         }
 
     }
 
-    public static boolean clickInventoryItem(int ItemID) {
-        RSItem[] item = Inventory.find(ItemID);
-        if (item.length > 0) {
-            if (item[0].click()) {
-                Waiting.waitUniform(25, 150);
-                return true;
-            }
-        }
-        return false;
+    public static boolean clickInventoryItem(int itemID) {
+        return QueryUtils.getItem(itemID).map(InventoryItem::click).orElse(false);
     }
 
 
     public static ArrayList<Integer> worldsAttempted = new ArrayList<>();
 
     public static boolean hopWorlds() {
-        int world = WorldHopper.getRandomWorld(true);
-        for (int i = 0; i < worldsAttempted.size(); i++) {
-            if (worldsAttempted.get(i) == world) {
-                world = WorldHopper.getRandomWorld(true);
-            }
-        }
-        worldsAttempted.add(world);
-        int finalWorld = world;
-        WorldHopper.changeWorld(world);
-        return Timer.waitCondition(() -> WorldHopper.getWorld() == finalWorld, 15000, 25000);
+        Optional<World> random = Query.worlds().isMainGame().isMembers()
+                .isNotDangerous().isLowPing().findRandom();
+        return random.map(w -> WorldHopper.hop(w.getWorldNumber())).orElse(false);
     }
 
     public static void abc2ReactionSleep(long time, boolean eatIfLowHp) {
-        if (Combat.getHPRatio() < 40 && eatIfLowHp) {
+        if (MyPlayer.getCurrentHealthPercent() < 40 && eatIfLowHp) {
             EatUtil.eatFood();
             return;
         }
@@ -1408,18 +1388,28 @@ public class Utils {
     }
 
 
+    public static Optional<Npc> getTargetEntity() {
+        Optional<Npc> interactable = Query.npcs().isMyPlayerInteractingWith()
+                .isInteractingWithMe()
+                .findBestInteractable();
+        return interactable.isPresent() ? interactable : Query.npcs()
+                .isMyPlayerInteractingWith()
+                .findBestInteractable();
+    }
+
     public static void abc2ReactionSleep(long time) {
-        if (Combat.getHPRatio() < 40) {
+        if (MyPlayer.getCurrentHealthPercent() < 40) {
             EatUtil.eatFood();
             return;
         }
-        RSCharacter target = Combat.getTargetEntity();
-        if (target != null && target.getHealthPercent() != 0) {
+
+        Optional<Npc> target = Utils.getTargetEntity();
+        if (target.map(t -> t.getHealthBarPercent() > 0).orElse(false)) {
             Log.info("[ABC2]: Skipping sleep as we are still in combat");
-            Utils.shortSleep();
+            Waiting.waitNormal(700, 92);
             return;
         }
-       /* if (Combat.isUnderAttack()) {
+       /* if (MyPlayer.isHealthBarVisible()) {
                 Log.info("[ABC2]: Skipping sleep as we are still in combat");
             Utils.microSleep();
             return;
@@ -1432,18 +1422,18 @@ public class Utils {
 
     public static int getInventoryValue() {
         int value = 0;
-        RSItem[] inv = Inventory.getAll();
-        for (RSItem i : inv) {
+        List<InventoryItem> inv = Inventory.getAll();
+        for (InventoryItem i : inv) {
             if (i.getDefinition().isNoted()) {
                 int stack = i.getStack();
 
-                value = value + scripts.rsitem_services.GrandExchange.getPrice(i.getID() - 1) * stack;
+                value = value + scripts.rsitem_services.GrandExchange.getPrice(i.getId() - 1) * stack;
 
             } else if (i.getDefinition().isStackable()) {
                 int stack = i.getStack();
-                value = value + (scripts.rsitem_services.GrandExchange.getPrice(i.getID()) * stack);
+                value = value + (scripts.rsitem_services.GrandExchange.getPrice(i.getId()) * stack);
             } else
-                value = value + scripts.rsitem_services.GrandExchange.getPrice(i.getID());
+                value = value + scripts.rsitem_services.GrandExchange.getPrice(i.getId());
         }
 
         return value;
@@ -1455,16 +1445,10 @@ public class Utils {
      * @return
      */
     public static boolean turnOnEscToClose() {
-        if (Interfaces.isInterfaceSubstantiated(134, 17, 141)) {
-            Mouse.moveBox(Interfaces.get(134).getAbsoluteBounds());
-            Mouse.scroll(false);
-            if (Interfaces.get(134, 17, 141).getTextureID() == 2847) {
-                Interfaces.get(134, 17, 141).click();
-            }
-            return Timing.waitCondition(() -> Interfaces.get(134, 17, 141).getTextureID() == 2848, 5000);
+        if (!Options.isEscapeClosingEnabled())
+            Log.warn("Attempting to turn on escpe to clsoe windows, but method isn't defined");
 
-        }
-        return false;
+        return Options.isEscapeClosingEnabled();
     }
 
     public static String addCommaToNum(int num) {
@@ -1498,19 +1482,19 @@ public class Utils {
     public static boolean equipItem(Optional<InventoryItem> itemOptional) {
         if (itemOptional.isPresent()) {
             if (!itemOptional.get().getDefinition().isStackable() &&
-                    Equipment.isEquipped(itemOptional.get().getId())) {
+                    Equipment.contains(itemOptional.get().getId())) {
                 //already equipped and not stackable (e.g. arrows)
                 return true;
             }
             ItemDefinition def = itemOptional.get().getDefinition();
             if (def.getActions().stream().anyMatch(s -> s.contains("Wield")) &&
                     itemOptional.map(i -> i.click("Wield")).orElse(false)) {
-                return Timer.waitCondition(() -> Equipment.isEquipped(def.getId()), 1200, 2000);
+                return Timer.waitCondition(() -> Equipment.contains(def.getId()), 1200, 2000);
             } else if (def.getActions().stream().anyMatch(s -> s.contains("Wear")) &&
                     itemOptional.map(i -> i.click("Wear")).orElse(false)) {
-                return Timer.waitCondition(() -> Equipment.isEquipped(def.getId()), 1200, 2000);
+                return Timer.waitCondition(() -> Equipment.contains(def.getId()), 1200, 2000);
             } else if (itemOptional.map(InventoryItem::click).orElse(false)) {
-                return Timer.waitCondition(() -> Equipment.isEquipped(def.getId()), 1200, 2000);
+                return Timer.waitCondition(() -> Equipment.contains(def.getId()), 1200, 2000);
             }
         }
         return false;
@@ -1554,38 +1538,28 @@ public class Utils {
         return "";
     }
 
-    public static boolean equipItem(int ItemID, String method) {
-        RSItem[] inv = Inventory.find(ItemID);
-        if (inv.length > 0 && inv[0].click(method))
-            return Timer.waitCondition(() -> Equipment.isEquipped(ItemID), 2000, 4000);
+    public static boolean equipItem(int itemID, String method) {
+        Optional<InventoryItem> inv = QueryUtils.getItem(itemID);
 
-        return Equipment.isEquipped(ItemID);
+        if (inv.map(i -> i.click(method)).orElse(false))
+            return Timer.waitCondition(() -> Equipment.contains(itemID), 2000, 4000);
+
+        return Equipment.contains(itemID);
     }
 
+    //TODO redundant now, delete
     public static int getCombatLevel() {
-        RSPlayer me = Player.getRSPlayer();
-
-        if (me != null)
-            return me.getCombatLevel();
-
-        return -1;
+        return MyPlayer.getCombatLevel();
     }
 
     public static String getItemNameFromID(int id) {
-        RSItemDefinition item = RSItemDefinition.get(id);
-        if (item != null) {
-            return item.getName();
-        } else
-            return "";
+        Optional<ItemDefinition> first = Query.itemDefinitions().idEquals(id).findFirst();
+        return first.map(f -> f.getName()).orElse("");
     }
 
+    // TODO delete, redundant now
     public static String getCharacterName() {
-        String name = Player.getRSPlayer().getName();
-
-        if (name != null)
-            return name; // returns name or null
-
-        return "Failed to get name: ";
+        return MyPlayer.getUsername();
     }
 
     /**
@@ -1613,7 +1587,8 @@ public class Utils {
         if (Interfaces.isInterfaceSubstantiated(SETTINGS_WINDOW_PARENT)) {
             return true;
         } else {
-            GameTab.open(GameTab.TABS.OPTIONS);
+            if (GameTab.OPTIONS.open())
+                Utils.idlePredictableAction();
 
             if (openInterface(SETTINGS_TAB_PARENT_ID, 59)) // clicks the tab with the gear on it
                 Utils.microSleep();
@@ -1625,7 +1600,7 @@ public class Utils {
 
     public boolean checkForInventoryItems(ArrayList<Integer> ItemIDList) {
         for (Integer i : ItemIDList) {
-            if (Inventory.find(i).length == 0) {
+            if (!Inventory.contains(i)) {
                 RSItemDefinition def = RSItemDefinition.get(i);
                 if (def != null) {
                     Log.info("[Utils]: Missing and item: " + def.getName());
@@ -1641,7 +1616,7 @@ public class Utils {
     public static void forceDownwardCameraAngle() {
         if (Camera.getAngle() < 80) {
             Log.info("[Utils]: Adjusting camera angle");
-            Camera.setAngle(General.random(80, 100));
+            Camera.setAngle(Utils.random(80, 100));
         }
     }
 
@@ -1706,34 +1681,43 @@ public class Utils {
         return useItemOnObject(invItem, gameObj);
     }
 
-    public static boolean useItemOnObject(int ItemID, RSObject obj) {
-        RSItem[] invItem = Inventory.find(ItemID);
+    public static boolean useItemOnObject(int itemID, RSObject obj) {
+
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemID);
+
         for (int i = 0; i < 3; i++) {
-            if (invItem.length > 0 && obj != null) {
-                Log.info("[Debug]: Using: " + ItemID);
+            if (obj != null) {
+                Optional<GameObject> gameObject = Query.gameObjects().idEquals(obj.getID())
+                        .tileEquals(getWorldTileFromRSTile(obj.getPosition()))
+                        .findClosestByPathDistance();
 
-                if (!isItemSelected(ItemID)) {
+                Log.info("[Utils]: Using: " + itemID);
+                if (gameObject.map(o->invItem.map(inv->inv.useOn(o)).orElse(false)).orElse(false)){
+                    return true;
+                }
+                if (!isItemSelected(itemID)) {
 
-                    if (AccurateMouse.click(invItem[0], "Use"))
+                    if (invItem.map(inv->inv.click("Use")).orElse(false))
                         AntiBan.waitItemInteractionDelay();
 
                     if (!obj.isClickable() || i == 2)
                         DaxCamera.focus(obj);
 
-
-                    if (Timing.waitCondition(() -> obj.click(rsMenuNode ->
-                            rsMenuNode.getAction().equals("Use") && rsMenuNode.getTarget().toLowerCase().
-                                    contains(obj.getDefinition().getName().toLowerCase())), 500))
+                    if (Waiting.waitUntil(500, 15, () -> obj.click(rsMenuNode ->
+                            rsMenuNode != null &&
+                                    rsMenuNode.getAction().equals("Use") && rsMenuNode.getTarget().toLowerCase().
+                                    contains(obj.getDefinition().getName().toLowerCase()))))
                         return true;
 
-                } else if (isItemSelected(ItemID)) {
+                } else if (isItemSelected(itemID)) {
 
                     if (!obj.isClickable() || i == 2)
                         DaxCamera.focus(obj);
 
-                    if (Timing.waitCondition(() -> obj.click(rsMenuNode ->
-                            rsMenuNode.getAction().equals("Use") && rsMenuNode.getTarget().toLowerCase().
-                                    contains(obj.getDefinition().getName().toLowerCase())), 500))
+                    if (Waiting.waitUntil(500, 10, () -> obj.click(rsMenuNode ->
+                            rsMenuNode != null &&
+                                    rsMenuNode.getAction().equals("Use") && rsMenuNode.getTarget().toLowerCase().
+                                    contains(obj.getDefinition().getName().toLowerCase()))))
                         return true;
                 }
 
@@ -1743,30 +1727,22 @@ public class Utils {
     }
 
     public static boolean useItemOnObject(String itemName, int objectId) {
-        RSItem[] invItem = Inventory.find(itemName);
-        RSObject[] obj = Objects.findNearest(25, objectId);
-        if (invItem.length > 0 && obj.length > 0) {
-            return useItemOnObject(invItem[0].getID(), obj[0]);
-        }
-        return false;
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemName);
+        Optional<GameObject> obj = QueryUtils.getObject(objectId);
+        return useItemOnObject(invItem, obj);
     }
 
     public static boolean useItemOnObject(int ItemID, String objectName) {
-        RSItem[] invItem = Inventory.find(ItemID);
-        RSObject[] obj = Objects.findNearest(25, objectName);
-        if (invItem.length > 0 && obj.length > 0)
-            return useItemOnObject(ItemID, obj[0]);
-
-        return false;
+        Optional<InventoryItem> invItem = QueryUtils.getItem(ItemID);
+        Optional<GameObject> obj = QueryUtils.getObject(objectName);
+        return useItemOnObject(invItem, obj);
     }
 
     public static boolean useItemOnObject(String itemName, String objectName) {
-        RSItem[] invItem = Inventory.find(itemName);
-        RSObject[] obj = Objects.findNearest(25, objectName);
-        if (invItem.length > 0 && obj.length > 0)
-            return useItemOnObject(invItem[0].getID(), obj[0]);
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemName);
+        Optional<GameObject> obj = QueryUtils.getObject(objectName);
+        return useItemOnObject(invItem, obj);
 
-        return false;
     }
 
     public static int getPlayerCountInArea(RSArea area) {
@@ -1806,85 +1782,65 @@ public class Utils {
 
 
     public static int roundToNearestThousand(int initial) {
-        return (int) (Math.round(initial / 1000.0) * 1000);
+        return
+                (int) Math.round(initial / 1000.0) * 1000;
     }
 
     public static int roundToNearest(int initial, int roundTo) {
 
-        return (int) Math.round(initial / roundTo) * roundTo;
+        return Math.round(initial / roundTo) * roundTo;
     }
 
     public static int roundToNearest(double initial, int roundTo) {
         return (int) ((Math.round(initial) / roundTo) * roundTo);
-        //  return (int) Math.round(initial/roundTo) * roundTo;
     }
 
 
     public static boolean isItemSelected(int ItemID) {
         RSItemDefinition itemDef = RSItemDefinition.get(ItemID);
-        if (itemDef != null && Game.getItemSelectionState() == 1) {
+        if (itemDef != null && GameState.isAnyItemSelected()) {
             String itemString = itemDef.getName();
-            return Game.getSelectedItemName().contains(itemString);
+            return GameState.getSelectedItemName().contains(itemString);
         }
-        return Game.getItemSelectionState() == 1;
+        return GameState.isAnyItemSelected();
     }
 
     public static boolean isItemSelected(String itemName) {
-        return Game.getSelectedItemName().contains(itemName);
+        return GameState.getSelectedItemName().contains(itemName);
     }
 
     public static boolean selectInvItem(int id) {
-        RSItem[] invItem = Inventory.find(id);
-        if (!isItemSelected(id) && invItem.length > 0) {
-            return invItem[0].click("Use");
-        }
-        return isItemSelected(id);
+        Optional<InventoryItem> invItem = QueryUtils.getItem(id);
+        return invItem.map(i -> i.click("Use")).orElse(false);
     }
 
-    public static boolean useItemOnNPC(int ItemID, String NPCName) {
-        RSItem[] invItem = Inventory.find(ItemID);
-        RSItemDefinition itemDef = RSItemDefinition.get(ItemID);
-        String itemString = itemDef.getName();
-        RSNPC[] npc = NPCs.findNearest(NPCName);
+    public static boolean useItemOnNPC(int itemID, String NPCName) {
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemID);
+        String itemString = getItemName(itemID);
+        Optional<Npc> npc = QueryUtils.getNpc(NPCName);
+        Log.info("[Debug]: Using: " + itemString);
+        return npc.map(n-> invItem.map(i->i.useOn(n)).orElse(false)).orElse(false);
 
-        if (invItem.length > 0 && npc.length > 0) {
+   }
+
+
+    public static boolean useItemOnNPC(int itemID, RSNPC rsnpc) {
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemID);
+        String itemString = getItemName(itemID);
+
+        if (invItem.isPresent() && rsnpc != null) {
             Log.info("[Debug]: Using: " + itemString);
 
-
-            if (selectInvItem(invItem[0].getID()))
-                AntiBan.waitItemInteractionDelay();
-
-            if (!npc[0].isClickable())
-                DaxCamera.focus(npc[0]);
-
-            return Timing.waitCondition(() -> npc[0].click(rsMenuNode ->
-                    rsMenuNode.getAction().equals("Use")
-                            && rsMenuNode.getTarget().toLowerCase().contains(npc[0].getDefinition().getName().toLowerCase())), 500);
-
-        }
-
-        return false;
-    }
-
-
-    public static boolean useItemOnNPC(int ItemID, RSNPC rsnpc) {
-        RSItem[] invItem = Inventory.find(ItemID);
-        RSItemDefinition itemDef = RSItemDefinition.get(ItemID);
-        String itemString = itemDef.getName();
-
-
-        if (invItem.length > 0 && rsnpc != null) {
-            Log.info("[Debug]: Using: " + itemString);
-
-            if (selectInvItem(invItem[0].getID()))
+            if (selectInvItem(itemID))
                 AntiBan.waitItemInteractionDelay();
 
             if (!rsnpc.isClickable())
                 DaxCamera.focus(rsnpc);
 
-            return Timing.waitCondition(() -> rsnpc.click(rsMenuNode ->
-                    rsMenuNode.getAction().equals("Use")
-                            && rsMenuNode.getTarget().toLowerCase().contains(rsnpc.getDefinition().getName().toLowerCase())), 500);
+            return Waiting.waitUntil(800, 15, () -> rsnpc.click(rsMenuNode ->
+                    rsMenuNode != null &&
+                            rsMenuNode.getAction().equals("Use")
+                            && rsMenuNode.getTarget().toLowerCase().contains(rsnpc.getDefinition().getName().toLowerCase())));
 
 
         }
@@ -1907,45 +1863,19 @@ public class Utils {
     }
 
     public static boolean useItemOnNPC(String itemName, String NPCName) {
-        RSItem[] invItem = Inventory.find(itemName);
-        RSNPC[] npc = NPCs.findNearest(NPCName);
-
-        if (invItem.length > 0 && npc.length > 0) {
-            Log.info("[Debug]: Using: " + itemName);
-            if (selectInvItem(invItem[0].getID())) {
-                AntiBan.waitItemInteractionDelay();
-
-                if (!npc[0].isClickable())
-                    DaxCamera.focus(npc[0]);
-
-                return Timing.waitCondition(() -> npc[0].click(rsMenuNode ->
-                        rsMenuNode.getAction().equals("Use") && rsMenuNode.getTarget().toLowerCase().
-                                contains(npc[0].getDefinition().getName().toLowerCase())), 500);
-            }
-        }
-        return false;
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemName);
+        Optional<Npc> npc = QueryUtils.getNpc(NPCName);
+        Log.info("[Debug]: Using: " + itemName);
+        return npc.map(n -> invItem.map(i -> i.useOn(n)).orElse(false)).orElse(false);
     }
 
 
-    public static boolean useItemOnNPC(int ItemID, String[] NPCNames) {
-        RSItem[] invItem = Inventory.find(ItemID);
-        RSNPC[] npc = NPCs.findNearest(NPCNames);
-
-        if (invItem.length > 0&& npc.length > 0 ) {
-            Log.info("[Debug]: Using: " + ItemID);
-
-            if (selectInvItem(ItemID)) {
-                AntiBan.waitItemInteractionDelay();
-
-                if (!npc[0].isClickable())
-                    DaxCamera.focus(npc[0]);
-
-                return Timing.waitCondition(() -> npc[0].click(rsMenuNode ->
-                        rsMenuNode.getAction().equals("Use") && rsMenuNode.getTarget().toLowerCase().
-                                contains(npc[0].getDefinition().getName().toLowerCase())), 500);
-            }
-        }
-        return false;
+    public static boolean useItemOnNPC(int itemID, String[] NpcNames) {
+        Optional<InventoryItem> invItem = QueryUtils.getItem(itemID);
+        String itemString = getItemName(itemID);
+        Optional<Npc> npc = Query.npcs().nameContains(NpcNames).findClosestByPathDistance();
+        Log.info("[Utils]: Using: " + itemString);
+        return npc.map(n-> invItem.map(i->i.useOn(n)).orElse(false)).orElse(false);
     }
 
     public static boolean useItemOnNPC(int ItemID, int npcId) {
@@ -1963,22 +1893,10 @@ public class Utils {
     }
 
 
-    public static boolean useItemOnNPC(int[] ItemID, int NPCID) {
-        RSItem[] invItem = Inventory.find(ItemID);
-        RSNPC[] npc = NPCs.findNearest(NPCID);
-        if (invItem.length > 0) {
-            if (invItem[0].click("Use"))
-                AntiBan.waitItemInteractionDelay();
-
-            if (npc.length > 0 && isItemSelected(ItemID[0])) {
-
-                if (!npc[0].isClickable())
-                    DaxCamera.focus(npc[0]);
-
-                return AccurateMouse.click(npc[0], "Use");
-            }
-        }
-        return false;
+    public static boolean useItemOnNPC(int[] itemID, int NpcId) {
+        Optional<InventoryItem> invItem = Query.inventory().idEquals(itemID).findClosestToMouse();
+        Optional<Npc> npc = QueryUtils.getNpc(NpcId);
+        return npc.map(n-> invItem.map(i->i.useOn(n)).orElse(false)).orElse(false);
     }
 
 

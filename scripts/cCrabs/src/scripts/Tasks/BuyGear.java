@@ -1,14 +1,29 @@
 package scripts.Tasks;
 
+import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.definitions.ItemDefinition;
+import scripts.BankManager;
 import scripts.GEManager.GEItem;
+import scripts.Gear.ProgressiveMeleeGear;
 import scripts.ItemID;
 import scripts.QuestSteps.BuyItemsStep;
+import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-public class BuyGear implements Task{
+public class BuyGear implements Task {
 
+    ArrayList<GEItem> meleeItems = new ArrayList<>(Arrays.asList(
+            new GEItem(ItemID.SUPER_ATTACK4, 40, 50),
+            new GEItem(ItemID.SUPER_STRENGTH4, 30, 50),
+            new GEItem(ItemID.SKILLS_NECKLACE4, 1, 30),
+            new GEItem(ItemID.MONKFISH, 25, 30)
+    ));
 
     ArrayList<GEItem> rangedItemToBuy = new ArrayList<GEItem>(
             Arrays.asList(
@@ -33,6 +48,40 @@ public class BuyGear implements Task{
 
     BuyItemsStep buyStep = new BuyItemsStep(rangedItemToBuy);
 
+    private void populateBuyItems() {
+        List<Integer> bestUsableGearList = ProgressiveMeleeGear.getBestUsableGearList();
+        for (Integer i : bestUsableGearList) {
+            meleeItems.add(new GEItem(i, 1, 35));
+        }
+        BuyItemsStep buyStep2 = new BuyItemsStep(meleeItems);
+        buyStep2.buyItems();
+    }
+
+    private void bankForItems() {
+        List<Integer> bestUsableGearList = ProgressiveMeleeGear.getBestUsableGearList();
+        BankManager.open(true);
+        BankManager.depositEquipment();
+        BankManager.depositAll(true);
+        for (Integer i : bestUsableGearList) {
+            BankManager.withdraw(1, true, i);
+            Utils.equipItem(i);
+        }
+        BankManager.withdraw(0, true, ItemID.COINS_995);
+        BankManager.withdraw(10, true, ItemID.SUPER_ATTACK4);
+        BankManager.withdraw(10, true, ItemID.SUPER_STRENGTH4);
+        BankManager.withdrawArray(ItemID.SKILLS_NECKLACE, 1);
+        BankManager.withdraw(0, true, ItemID.MONKFISH);
+        BankManager.close(true);
+    }
+
+    private String getNameWithoutTeleports(String name) {
+        if (name.contains("\\(")) {
+            String[] split = name.split("\\(");
+            Log.info("returning " + split[0]);
+            return split[0];
+        }
+        return name;
+    }
 
     @Override
     public String toString() {
@@ -47,11 +96,25 @@ public class BuyGear implements Task{
 
     @Override
     public boolean validate() {
+        if (Query.itemDefinitions().nameContains("bow", "dart")
+                .isAny())
+            return false;
+        List<Integer> bestUsableGearList = ProgressiveMeleeGear.getBestUsableGearList();
+        for (Integer i : bestUsableGearList) {
+            Optional<ItemDefinition> name = Query.itemDefinitions().idEquals(i).findFirst();
+            if (!name.map(n -> Query.equipment()
+                    .nameContains(getNameWithoutTeleports(n.getName())).isAny()).orElse(false)) {
+                Log.info("Missing " + name.get().getName());
+                return true;
+            }
+
+        }
         return false;
     }
 
     @Override
     public void execute() {
-
+        populateBuyItems();
+        bankForItems();
     }
 }

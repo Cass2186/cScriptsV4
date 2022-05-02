@@ -8,6 +8,7 @@ import org.tribot.script.sdk.types.EquipmentItem;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
+import org.tribot.script.sdk.walking.WalkState;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -33,7 +34,26 @@ public class GoToWildernessAltar implements Task {
     Area DANGER_AREA = Area.fromRectangle(new WorldTile(2943, 3827, 0), new WorldTile(2966, 3812, 0));
     Area WHOLE_WILDERNESS = Area.fromRectangle(new WorldTile(2944, 3803, 0), new WorldTile(3071, 3854, 0));
     Area CHAOS_FANATIC_AREA = Area.fromRectangle(new WorldTile(2975, 3846, 0), new WorldTile(2989, 3835, 0));
-    List<Positionable> PATH_TO_ALTAR = Arrays.asList(new WorldTile[]{new WorldTile(3028, 3840, 0), new WorldTile(3028, 3840, 0), new WorldTile(3027, 3839, 0), new WorldTile(3026, 3838, 0), new WorldTile(3025, 3837, 0), new WorldTile(3024, 3836, 0), new WorldTile(3023, 3835, 0), new WorldTile(3022, 3834, 0), new WorldTile(3021, 3833, 0), new WorldTile(3020, 3832, 0), new WorldTile(3019, 3831, 0), new WorldTile(3018, 3830, 0), new WorldTile(3017, 3829, 0), new WorldTile(3016, 3828, 0), new WorldTile(3016, 3827, 0), new WorldTile(3016, 3826, 0), new WorldTile(3015, 3825, 0), new WorldTile(3015, 3824, 0), new WorldTile(3015, 3823, 0), new WorldTile(3015, 3823, 0), new WorldTile(3014, 3823, 0), new WorldTile(3013, 3823, 0), new WorldTile(3012, 3823, 0), new WorldTile(3011, 3823, 0), new WorldTile(3010, 3823, 0), new WorldTile(3009, 3823, 0), new WorldTile(3008, 3823, 0), new WorldTile(3007, 3823, 0), new WorldTile(3006, 3823, 0), new WorldTile(3005, 3823, 0), new WorldTile(3004, 3823, 0), new WorldTile(3003, 3823, 0), new WorldTile(3002, 3823, 0), new WorldTile(3001, 3823, 0), new WorldTile(3000, 3823, 0), new WorldTile(2999, 3823, 0), new WorldTile(2998, 3823, 0), new WorldTile(2997, 3823, 0), new WorldTile(2996, 3823, 0), new WorldTile(2995, 3823, 0), new WorldTile(2994, 3823, 0), new WorldTile(2993, 3823, 0), new WorldTile(2992, 3823, 0), new WorldTile(2991, 3823, 0), new WorldTile(2990, 3823, 0), new WorldTile(2989, 3823, 0), new WorldTile(2988, 3823, 0), new WorldTile(2987, 3823, 0), new WorldTile(2986, 3823, 0), new WorldTile(2985, 3823, 0), new WorldTile(2984, 3823, 0), new WorldTile(2983, 3823, 0), new WorldTile(2982, 3823, 0), new WorldTile(2981, 3823, 0), new WorldTile(2980, 3823, 0), new WorldTile(2979, 3823, 0), new WorldTile(2978, 3823, 0), new WorldTile(2977, 3823, 0), new WorldTile(2976, 3823, 0), new WorldTile(2975, 3823, 0), new WorldTile(2974, 3823, 0), new WorldTile(2973, 3823, 0), new WorldTile(2972, 3823, 0), new WorldTile(2971, 3823, 0), new WorldTile(2970, 3823, 0), new WorldTile(2969, 3823, 0), new WorldTile(2968, 3823, 0), new WorldTile(2967, 3823, 0), new WorldTile(2966, 3823, 0), new WorldTile(2965, 3823, 0), new WorldTile(2964, 3823, 0), new WorldTile(2963, 3823, 0), new WorldTile(2962, 3823, 0), new WorldTile(2961, 3823, 0), new WorldTile(2960, 3823, 0), new WorldTile(2959, 3822, 0), new WorldTile(2958, 3821, 0), new WorldTile(2957, 3821, 0), new WorldTile(2956, 3821, 0), new WorldTile(2955, 3821, 0), new WorldTile(2954, 3821, 0), new WorldTile(2953, 3821, 0), new WorldTile(2952, 3821, 0), new WorldTile(2951, 3821, 0), new WorldTile(2950, 3820, 0)});
+    List<Positionable> PATH_TO_ALTAR = Arrays.asList(new WorldTile[]{new WorldTile(3028, 3840, 0), new WorldTile(3028, 3840, 0), new WorldTile(3027, 3839, 0), new WorldTile(3026, 3838, 0),
+            new WorldTile(3025, 3837, 0), new WorldTile(3024, 3836, 0), new WorldTile(3023, 3835, 0), new WorldTile(3022, 3834, 0),
+            new WorldTile(3021, 3833, 0), new WorldTile(3020, 3832, 0), new WorldTile(3019, 3831, 0), new WorldTile(3018, 3830, 0),
+            new WorldTile(3017, 3829, 0), new WorldTile(3016, 3828, 0), new WorldTile(3016, 3827, 0), new WorldTile(3016, 3826, 0),
+            new WorldTile(3015, 3825, 0), new WorldTile(3015, 3824, 0), new WorldTile(3015, 3823, 0), new WorldTile(3015, 3823, 0),
+            new WorldTile(3014, 3823, 0), new WorldTile(3013, 3823, 0), new WorldTile(3012, 3823, 0), new WorldTile(3011, 3823, 0),
+            new WorldTile(3010, 3823, 0), new WorldTile(3009, 3823, 0), new WorldTile(3008, 3823, 0), new WorldTile(3007, 3823, 0),
+            new WorldTile(3006, 3823, 0), new WorldTile(3005, 3823, 0), new WorldTile(3004, 3823, 0), new WorldTile(3003, 3823, 0),
+            new WorldTile(3002, 3823, 0), new WorldTile(3001, 3823, 0), new WorldTile(3000, 3823, 0), new WorldTile(2999, 3823, 0), new WorldTile(2998, 3823, 0), new WorldTile(2997, 3823, 0), new WorldTile(2996, 3823, 0),
+            new WorldTile(2995, 3823, 0), new WorldTile(2994, 3823, 0), new WorldTile(2993, 3823, 0), new WorldTile(2992, 3823, 0),
+            new WorldTile(2991, 3823, 0), new WorldTile(2990, 3823, 0), new WorldTile(2989, 3823, 0), new WorldTile(2988, 3823, 0),
+            new WorldTile(2987, 3823, 0), new WorldTile(2986, 3823, 0), new WorldTile(2985, 3823, 0), new WorldTile(2984, 3823, 0),
+            new WorldTile(2983, 3823, 0), new WorldTile(2982, 3823, 0), new WorldTile(2981, 3823, 0), new WorldTile(2980, 3823, 0),
+            new WorldTile(2979, 3823, 0), new WorldTile(2978, 3823, 0), new WorldTile(2977, 3823, 0), new WorldTile(2976, 3823, 0),
+            new WorldTile(2975, 3823, 0), new WorldTile(2974, 3823, 0), new WorldTile(2973, 3823, 0), new WorldTile(2972, 3823, 0),
+            new WorldTile(2971, 3823, 0), new WorldTile(2970, 3823, 0), new WorldTile(2969, 3823, 0), new WorldTile(2968, 3823, 0),
+            new WorldTile(2967, 3823, 0), new WorldTile(2966, 3823, 0), new WorldTile(2965, 3823, 0), new WorldTile(2964, 3823, 0),
+            new WorldTile(2963, 3823, 0), new WorldTile(2962, 3823, 0), new WorldTile(2961, 3823, 0), new WorldTile(2960, 3823, 0),
+            new WorldTile(2959, 3822, 0), new WorldTile(2958, 3821, 0), new WorldTile(2957, 3821, 0), new WorldTile(2956, 3821, 0), new WorldTile(2955, 3821, 0), new WorldTile(2954, 3821, 0),
+            new WorldTile(2953, 3821, 0), new WorldTile(2952, 3821, 0), new WorldTile(2951, 3821, 0), new WorldTile(2950, 3820, 0), new WorldTile(2949, 3820, 0), new WorldTile(2948, 3820, 0)});
 
 
     WorldTile ALTAR_WALK_TARGET = new WorldTile(2949, 3821, 0);
@@ -84,9 +104,14 @@ public class GoToWildernessAltar implements Task {
             Log.info("Walking path to altar");
             LocalWalking.Map.builder().travelThroughDoors(true).build();
             if (LocalWalking.walkPath(PATH_TO_ALTAR))
-                Waiting.waitUntil(3500, 125, () -> altarBuilding.containsMyPlayer());
-        } else
-            GlobalWalking.walkTo(ALTAR_WALK_TARGET);
+                Waiting.waitUntil(4500, 75, () -> !MyPlayer.isMoving());
+        } else if (GlobalWalking.walkTo(ALTAR_WALK_TARGET, () -> {
+                    if (PkObserver.shouldHop())
+                        return WalkState.FAILURE;
+                    return WalkState.CONTINUE;
+                }
+        ))
+            Waiting.waitUntil(4500, 75, () -> !MyPlayer.isMoving());
     }
 
     @Override

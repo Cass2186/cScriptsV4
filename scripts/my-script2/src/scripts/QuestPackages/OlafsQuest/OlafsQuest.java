@@ -8,6 +8,7 @@ import scripts.ItemID;
 import scripts.NpcID;
 import scripts.NullObjectID;
 import scripts.ObjectID;
+import scripts.QuestPackages.NatureSpirit.NatureSpirit;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.Conditional.NpcCondition;
@@ -20,6 +21,12 @@ import scripts.Tasks.Priority;
 import java.util.*;
 
 public class OlafsQuest implements QuestTask {
+    private static OlafsQuest quest;
+
+    public static OlafsQuest get() {
+        return quest == null ? quest = new OlafsQuest() : quest;
+    }
+
 
     //Items Required
     ItemRequirement axe, tinderbox, spade, dampPlanks, windsweptLogs, crudeCarving, cruderCarving, key, rottenBarrels2, rottenBarrel, ropes6, ropes3, crossKey, squareKey,

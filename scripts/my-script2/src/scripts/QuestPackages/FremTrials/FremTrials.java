@@ -5,13 +5,11 @@ import dax.api_lib.DaxWalker;
 import dax.walker.utils.AccurateMouse;
 import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
+import obf.M;
 import org.tribot.api.Clicking;
-import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
-import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
-import org.tribot.api2007.Combat;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.GameTab;
 import org.tribot.api2007.Inventory;
@@ -21,20 +19,23 @@ import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.ext.Doors;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Combat;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestSteps.BuyItemsStep;
-import scripts.QuestSteps.GroundItemStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class FremTrials implements QuestTask {
     boolean REVELLER = false;
@@ -84,9 +85,9 @@ public class FremTrials implements QuestTask {
     String ringOfRecoilMessage = "Your Ring of Recoil has shattered.";
 
     //Item IDs
+    int DRAUGEN_BUTTERFLY_ID = 3923;
     int ringOfRecoil = 2550;
-    int staffOfAir = 1381;
-    int lyre = 3689;
+    int LYRE = 3689;
     int beer = 1917;
     int coins = 995;
     int rawShark = 383;
@@ -159,31 +160,10 @@ public class FremTrials implements QuestTask {
 
 
     //Items
-    public RSItem[] invLyre = Inventory.find(lyre);
-    RSItem[] invItem1;
-    RSItem[] invItem2;
-    RSItem[] invBeer = Inventory.find(beer);
-    RSItem[] invRawShark = Inventory.find(rawShark);
-    RSItem[] invTinderbox = Inventory.find(tinderbox);
     RSItem[] invCamelotTab = Inventory.find(camelotTab);
     RSItem[] invLowAlcoholKeg = Inventory.find(lowAlcoholKeg);
-    RSItem[] invKegOfBeer = Inventory.find(kegOfBeer);
     RSItem[] invBeerTankard = Inventory.find(beerTankard);
-    RSItem[] invCherryBomb = Inventory.find(cherryBomb);
     RSItem[] invEnchantedLyre = Inventory.find(enchantedLyre);
-    RSItem[] invUnusualFish = Inventory.find(unusualFish);
-    RSItem[] invBowString = Inventory.find(customBowString);
-    RSItem[] invTrackingMap = Inventory.find(trackingMap);
-    RSItem[] invFiscalStatement = Inventory.find(fiscalStatement);
-    RSItem[] invSturdyBoots = Inventory.find(sturdyBoots);
-    RSItem[] invWeatherForecast = Inventory.find(weatherForecast);
-    RSItem[] invSeaFishingMap = Inventory.find(seaFishingMap);
-    RSItem[] invPromissaryNote = Inventory.find(promissaryNote);
-    RSItem[] invLegendaryCocktail = Inventory.find(3707);
-    RSItem[] invChampionsToken = Inventory.find(3706);
-    RSItem[] invWarriorsContraction = Inventory.find(3710);
-    RSItem[] invFremennikBallad = Inventory.find(3699);
-    RSItem[] invExoticFlower = Inventory.find(3698);
     RSItem[] invRingOfRecoil = Inventory.find(ringOfRecoil);
     RSItem[] invRedDish = Inventory.find(oldRedDish);
     RSItem[] invRedHerring = Inventory.find(RED_HERRING);
@@ -349,9 +329,9 @@ public class FremTrials implements QuestTask {
     }
 
     public void startThorvaldFight() {
-        if (!Combat.isAutoRetaliateOn()) {
+        if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
-        }
+
         cQuesterV2.status = "Starting Fight";
         RSObject[] ladder = Objects.findNearest(20, "Ladder");
         if (ladder.length > 0) {
@@ -378,24 +358,27 @@ public class FremTrials implements QuestTask {
         }
     }
 
+    private int getMinEatAtHp() {
+        return Utils.random(9, 15);
+    }
+
     public void combatIdleKoshei() {
         cQuesterV2.status = "Fighting...";
         General.println("[Debug]: Fight idle.");
-        while (Combat.isUnderAttack()) {
-            General.sleep(General.random(300, 900));
-            if (Combat.getHPRatio() < General.random(35, 50)) {
-                invItem1 = Inventory.find(shark);
+        while (MyPlayer.isHealthBarVisible()) {
+            General.sleep(300, 900);
+            if (MyPlayer.getCurrentHealth() < getMinEatAtHp()) {
+                RSItem[] invItem1 = Inventory.find(shark);
 
                 if (invItem1.length > 0) {
                     General.println("[Debug]: Eating Shark.");
                     Clicking.click("Eat", invItem1);
-
                 }
 
             }
         }
-
-        NPCInteraction.handleConversation();
+        if (ChatScreen.isOpen())
+            NPCInteraction.handleConversation();
     }
 
     /**
@@ -435,13 +418,9 @@ public class FremTrials implements QuestTask {
 
     public void swensenRoom1() {
         if (SWENSEN_ROOM1.contains(Player.getPosition())) {
-            Options.setRunEnabled(true);
-            if (room1.contains(Player.getPosition())) {
-                cQuesterV2.status = "Navigating Room 1";
-                swensenRoom(2631, 10003, 4150);
-                Timer.waitCondition(() -> SWENSEN_ROOM2.contains(Player.getPosition()), 6000, 8000);
-                Utils.shortSleep();
-            }
+            cQuesterV2.status = "Navigating Room 1";
+            swensenRoom(2631, 10003, 4150);
+            Timer.waitCondition(() -> SWENSEN_ROOM2.contains(Player.getPosition()), 6000, 8000);
         }
     }
 
@@ -450,7 +429,6 @@ public class FremTrials implements QuestTask {
             cQuesterV2.status = "Navigating Room 2";
             swensenRoom(2640, 10015, 4151);
             Timer.waitCondition(() -> SWENSEN_ROOM3.contains(Player.getPosition()), 6000, 8000);
-            Utils.shortSleep();
         }
     }
 
@@ -459,7 +437,6 @@ public class FremTrials implements QuestTask {
             cQuesterV2.status = "Navigating Room 3";
             swensenRoom(2655, 10004, 4152);
             Timer.waitCondition(() -> SWENSEN_ROOM4.contains(Player.getPosition()), 6000, 8000);
-            Utils.shortSleep();
         }
     }
 
@@ -468,7 +445,6 @@ public class FremTrials implements QuestTask {
             cQuesterV2.status = "Navigating Room 4";
             swensenRoom(2665, 10017, 4153);
             Timer.waitCondition(() -> SWENSEN_ROOM5.contains(Player.getPosition()), 6000, 8000);
-            Utils.shortSleep();
         }
     }
 
@@ -477,7 +453,6 @@ public class FremTrials implements QuestTask {
             cQuesterV2.status = "Navigating Room 5";
             swensenRoom(2630, 10024, 4154);
             Timer.waitCondition(() -> SWENSEN_ROOM6.contains(Player.getPosition()), 6000, 8000);
-            Utils.shortSleep();
         }
     }
 
@@ -486,7 +461,7 @@ public class FremTrials implements QuestTask {
             cQuesterV2.status = "Navigating Room 6";
             swensenRoom(2655, 10037, 4155);
             Timer.waitCondition(() -> SWENSEN_ROOM7.contains(Player.getPosition()), 6000, 8000);
-            Utils.shortSleep();
+
         }
     }
 
@@ -495,7 +470,7 @@ public class FremTrials implements QuestTask {
             cQuesterV2.status = "Navigating Room 6";
             swensenRoom(2655, 10037, 4156);
             Timer.waitCondition(() -> SWENSEN_ROOM8.contains(Player.getPosition()), 6000, 8000);
-            Utils.shortSleep();
+
         }
         if (SWENSEN_ROOM8.contains(Player.getPosition())) {
             cQuesterV2.status = "Navigating Room 7";
@@ -538,10 +513,8 @@ public class FremTrials implements QuestTask {
         gotoSeer();
         if (NpcChat.talkToNPC("Peer the Seer")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Yes");
-            NPCInteraction.handleConversation("Yes");
+            ChatScreen.handle("Yes");
             NPCInteraction.handleConversation();
-            Utils.modSleep();
         }
     }
 
@@ -551,240 +524,115 @@ public class FremTrials implements QuestTask {
         if (!Interfaces.isInterfaceSubstantiated(Interfaces.get(298, 43))) {
             if (Utils.clickObj(4165, "Open")) {
                 NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                NPCChat.selectOption("Read the riddle", true);
+                ChatScreen.handle(ChatScreen::isSelectOptionOpen);
+                if (ChatScreen.selectOption("Read the riddle"))
+                    Waiting.waitUntil(1500, 100,
+                            () -> ChatScreen.isClickContinueOpen());
             }
         }
+    }
+
+    int PUZZLE_PARENT = 298;
+    int FIRST_BUTTON_CHILD = 48;
+    int SECOND_BUTTON_CHILD = 50;
+    int THIRD_BUTTON_CHILD = 52;
+    int FOURTH_BUTTON_CHILD = 54;
+
+    public boolean setLetter(String letter, int interfaceChild, int buttonNum) {
+        RSInterface inter = Interfaces.get(PUZZLE_PARENT, interfaceChild);
+        if (inter != null) {
+            String s = inter.getText();
+            if (!s.contains(letter)) {
+                for (int i = 0; i < 150; i++) {
+                    String str = s;
+                    RSInterface button = Interfaces.get(PUZZLE_PARENT, buttonNum);
+                    if (button != null && button.click()) {
+                        Timer.waitCondition(() -> !str.equals(Interfaces.get(PUZZLE_PARENT, interfaceChild).getText()),
+                                1500, 2000);
+                    }
+                    s = inter.getText();
+                    if (s.contains(letter))
+                        return true;
+                }
+            } else
+                return true;
+        }
+        return false;
+    }
+
+    private void solveDoor(String answer) {
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
+        Waiting.waitUntil(1500, 125, () -> Widgets.isVisible(PUZZLE_PARENT));
+        if (Interfaces.get(PUZZLE_PARENT) == null)
+            return;
+        Log.info("Answer is " + answer);
+        if (answer.equalsIgnoreCase("fire")) {
+            setLetter("F", 43, FIRST_BUTTON_CHILD);
+            setLetter("I", 44, SECOND_BUTTON_CHILD);
+            setLetter("R", 45, THIRD_BUTTON_CHILD);
+            setLetter("E", 46, FOURTH_BUTTON_CHILD);
+        } else if (answer.equalsIgnoreCase("life")) {
+            setLetter("L", 43, FIRST_BUTTON_CHILD);
+            setLetter("I", 44, SECOND_BUTTON_CHILD);
+            setLetter("F", 45, THIRD_BUTTON_CHILD);
+            setLetter("E", 46, FOURTH_BUTTON_CHILD);
+        } else if (answer.equalsIgnoreCase("mind")) {
+            setLetter("M", 43, FIRST_BUTTON_CHILD);
+            setLetter("I", 44, SECOND_BUTTON_CHILD);
+            setLetter("N", 45, THIRD_BUTTON_CHILD);
+            setLetter("D", 46, FOURTH_BUTTON_CHILD);
+        } else if (answer.equalsIgnoreCase("tree")) {
+            setLetter("T", 43, FIRST_BUTTON_CHILD);
+            setLetter("R", 44, SECOND_BUTTON_CHILD);
+            setLetter("E", 45, THIRD_BUTTON_CHILD);
+            setLetter("E", 46, FOURTH_BUTTON_CHILD);
+        } else if (answer.equalsIgnoreCase("wind")) {
+            setLetter("W", 43, FIRST_BUTTON_CHILD);
+            setLetter("I", 44, SECOND_BUTTON_CHILD);
+            setLetter("N", 45, THIRD_BUTTON_CHILD);
+            setLetter("D", 46, FOURTH_BUTTON_CHILD);
+        } else if (answer.equalsIgnoreCase("time")) {
+            setLetter("T", 43, FIRST_BUTTON_CHILD);
+            setLetter("I", 44, SECOND_BUTTON_CHILD);
+            setLetter("M", 45, THIRD_BUTTON_CHILD);
+            setLetter("E", 46, FOURTH_BUTTON_CHILD);
+        }
+
     }
 
     int SEER_DOOR_ENTRANCE = 4165;
 
-    public void solveDoor() {
+    private void handleDoorNew() {
         cQuesterV2.status = "Solving Door";
         General.sleep(500);
-        if (Interfaces.get(229, 1) != null) {
-            String answer;
-            String seerText = Interfaces.get(229, 1).getText();
-            if (seerText.contains("My first is in fish, but not in the sea.")) {
-                answer = "FIRE";
-                General.println("[Debug]: Answer is: " + answer);
-                NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(298, 47), 3000, 5000);
-                General.sleep(General.random(300, 1000));
-                if (Interfaces.isInterfaceSubstantiated(298, 47)) {
-                    while (!Interfaces.get(298, 43).getText().contains("F")) {
-                        String s = Interfaces.get(298, 43).getText();
-                        General.sleep(General.randomSD(50, 600, 200, 75));
-                        if (Interfaces.get(298, 48).click())
-                            Timer.waitCondition(() -> !Interfaces.get(298, 43).getText().contains(s), 4000, 7000);
-                    }
-                    while (!Interfaces.get(298, 44).getText().contains("I")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 50).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 45).getText().contains("R")) {
-                        General.sleep(General.random(150, 300));
-                        Interfaces.get(298, 52).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 46).getText().contains("E")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 54).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    if (Interfaces.isInterfaceSubstantiated(298, 56)) {
-                        Interfaces.get(298, 56).click(); // confirm button
-                        Timing.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(298, 56), 3500);
-                    }
-                }
-                Utils.clickObj(SEER_DOOR_ENTRANCE, "Open"); //4165 is the door ID that you need to open to enter Seer's building
-                Utils.modSleep();
-            }
-            if (seerText.contains("My first is in the well, but not at sea.")) {
-                answer = "LIFE";
-                General.println("[Debug]: Answer is: " + answer);
-                NPCInteraction.handleConversation();
-                Timing.waitCondition(() -> Interfaces.isInterfaceSubstantiated(298, 47), 3000);
-                General.sleep(General.random(300, 1000));
-                if (Interfaces.get(298, 47) != null) {
-                    while (!Interfaces.get(298, 43).getText().contains("L")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 48).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 44).getText().contains("I")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 50).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 45).getText().contains("F")) {
-                        General.sleep(General.random(150, 300));
-                        Interfaces.get(298, 52).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 46).getText().contains("E")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 54).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    if (Interfaces.isInterfaceSubstantiated(298, 56)) {
-                        Interfaces.get(298, 56).click(); // confirm button
-                        Timing.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(298, 56), 3500);
-                    }
-                }
-                Utils.clickObj(SEER_DOOR_ENTRANCE, "Open"); //4165 is the door ID that you need to open to enter Seer's building
-                Utils.modSleep();
-            }
-            if (seerText.contains("My first is in mage, but not in wizard.")) {
-                answer = "MIND";
-                General.println("[Debug]: Answer is: " + answer);
-                NPCInteraction.handleConversation();
-                Timing.waitCondition(() -> Interfaces.isInterfaceSubstantiated(298, 47), 3000);
-                General.sleep(General.random(300, 1000));
-                if (Interfaces.get(298, 47) != null) {
-                    while (!Interfaces.get(298, 43).getText().contains("M")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 48).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 44).getText().contains("I")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 50).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 45).getText().contains("N")) {
-                        General.sleep(General.random(150, 300));
-                        if (Interfaces.get(298, 52).click())
-                            General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 46).getText().contains("D")) {
-                        General.sleep(General.random(50, 300));
-                        if (Interfaces.get(298, 54).click())
-                            General.sleep(General.random(500, 800));
-                    }
-                    if (Interfaces.isInterfaceSubstantiated(298, 56)) {
-                        if (Interfaces.get(298, 56).click()) // confirm button
-                            Timing.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(298, 56), 3500);
-                    }
-                }
-                Utils.clickObj(SEER_DOOR_ENTRANCE, "Open"); //4165 is the door ID that you need to open to enter Seer's building
-                Utils.modSleep();
-            }
-            if (seerText.contains("My first is in tar, but not in a swamp.")) {
-                answer = "TREE";
-                General.println("[Debug]: Answer is: " + answer);
-                NPCInteraction.handleConversation();
-                Timing.waitCondition(() -> Interfaces.isInterfaceSubstantiated(298, 47), 3000);
-                General.sleep(General.random(300, 1000));
-                if (Interfaces.get(298, 47) != null) {
-                    while (!Interfaces.get(298, 43).getText().contains("T")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 48).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 44).getText().contains("R")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 50).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 45).getText().contains("E")) {
-                        General.sleep(General.random(150, 300));
-                        Interfaces.get(298, 52).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 46).getText().contains("E")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 54).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    if (Interfaces.isInterfaceSubstantiated(298, 56)) {
-                        Interfaces.get(298, 56).click(); // confirm button
-                        Timing.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(298, 56), 3500);
-                    }
-                }
-                Utils.clickObj(SEER_DOOR_ENTRANCE, "Open"); //4165 is the door ID that you need to open to enter Seer's building
-                General.sleep(General.random(2000, 4000));
-            }
-            if (seerText.contains("My first is in wizard, but not in a mage.")) {
-                answer = "WIND";
-                General.println("[Debug]: Answer is: " + answer);
-                NPCInteraction.handleConversation();
-                Timing.waitCondition(() -> Interfaces.isInterfaceSubstantiated(298, 47), 3000);
-                General.sleep(General.random(300, 1000));
-                if (Interfaces.get(298, 47) != null) {
-                    while (!Interfaces.get(298, 43).getText().contains("W")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 48).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 44).getText().contains("I")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 50).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 45).getText().contains("N")) {
-                        General.sleep(General.random(150, 300));
-                        Interfaces.get(298, 52).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 46).getText().contains("D")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 54).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    if (Interfaces.isInterfaceSubstantiated(298, 56)) {
-                        Interfaces.get(298, 56).click(); // confirm button
-                        Timing.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(298, 56), 3500);
-                    }
-                }
-                Utils.clickObj(SEER_DOOR_ENTRANCE, "Open"); //4165 is the door ID that you need to open to enter Seer's building
-                General.sleep(General.random(2000, 4000));
-            }
-            if (seerText.contains("My first is in water, and also in tea.")) {
-                answer = "TIME";
-                General.println("[Debug]: Answer is: " + answer);
-                NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(298, 47), 3000, 5000);
-                General.sleep(General.random(300, 1000));
-                if (Interfaces.get(298, 47) != null) {
-                    while (!Interfaces.get(298, 43).getText().contains("T")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 48).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 44).getText().contains("I")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 50).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 45).getText().contains("M")) {
-                        General.sleep(General.random(150, 300));
-                        Interfaces.get(298, 52).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    while (!Interfaces.get(298, 46).getText().contains("E")) {
-                        General.sleep(General.random(50, 300));
-                        Interfaces.get(298, 54).click();
-                        General.sleep(General.random(500, 800));
-                    }
-                    if (Interfaces.isInterfaceSubstantiated(298, 56)) {
-                        Interfaces.get(298, 56).click(); // confirm button
-                        Timer.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(298, 56), 3500, 7000);
-                    }
-                }
-                Utils.clickObj(SEER_DOOR_ENTRANCE, "Open"); //4165 is the door ID that you need to open to enter Seer's building
-                General.sleep(General.random(2000, 4000));
-            }
+        Optional<String> seerText = ChatScreen.getMessage();
+        if (seerText.map(s -> s.contains("My first is in fish, but not in the sea.")).orElse(false)) {
+            solveDoor("Fire");
+        } else if (seerText.map(s -> s.contains("My first is in the well, but not at sea.")).orElse(false)) {
+            solveDoor("life");
+        } else if (seerText.map(s -> s.contains("My first is in mage, but not in wizard.")).orElse(false)) {
+            solveDoor("mind");
+        } else if (seerText.map(s -> s.contains("My first is in tar, but not in a swamp.")).orElse(false)) {
+            solveDoor("tree");
+        } else if (seerText.map(s -> s.contains("My first is in wizard, but not in a mage.")).orElse(false)) {
+            solveDoor("wind");
+        } else if (seerText.map(s -> s.contains("My first is in water, and also in tea.")).orElse(false)) {
+            solveDoor("time");
         }
+        Optional<Widget> enter = Query.widgets().inIndexPath(PUZZLE_PARENT).textContains("Enter").isVisible().findFirst();
+        if (enter.map(Widget::click).orElse(false))
+            Waiting.waitUntil(2500, 125, () -> !Widgets.isVisible(PUZZLE_PARENT));
+        if (Utils.clickObj(SEER_DOOR_ENTRANCE, "Open")) //4165 is the door ID that you need to open to enter Seer's building
+            Utils.modSleep();
     }
+
 
     public void seerUpStairsItems() {
         if (peerBottomRightRoom.contains(Player.getPosition())) {
             cQuesterV2.status = "Going upstairs";
             if (Utils.clickObj("Ladder", "Climb-up")) {
                 Timer.waitCondition(() -> PEER_UPSTAIRS.contains(Player.getPosition()), 5000, 7000);
-                Utils.modSleep();
             }
         }
         if (PEER_UPSTAIRS.contains(Player.getPosition())) {
@@ -1046,24 +894,9 @@ public class FremTrials implements QuestTask {
     }
 
 
-    //**********************SIGMUND TRIAL**************************//
-
-    public void startSigmund() {
-        inventoryItemCheck2(995, 5000);
-        cQuesterV2.status = "Fremennik Trials:: Staring Sigmund Trial";
-        General.println("[Debug]: " + cQuesterV2.status);
-        gotoSigmund();
-        General.sleep(1000, 2500);
-        if (NpcChat.talkToNPC("Sigmund The Merchant")) {
-            NPCInteraction.waitForConversationWindow();
-            //NPCInteraction.handleConversation();
-            // NPCInteraction.handleConversation();
-            NPCInteraction.handleConversation("Yes");
-            NPCInteraction.handleConversation();
-        }
-        General.sleep(3000, 4000);
-    }
-
+    /*************************
+     * ******SIGMUND TRIAL****
+     * **********************/
     public void talkToSigmund() {
         cQuesterV2.status = "Fremennik Trials: Staring Sigmund Trial";
         General.println("[Debug]: " + cQuesterV2.status);
@@ -1124,117 +957,59 @@ public class FremTrials implements QuestTask {
         }
     }
 
-    public void checkSpecialItem() {
-        invPromissaryNote = Inventory.find(promissaryNote);
-        invUnusualFish = Inventory.find(unusualFish);
-        invBowString = Inventory.find(customBowString);
-        invTrackingMap = Inventory.find(trackingMap);
-        invFiscalStatement = Inventory.find(fiscalStatement);
-        invSturdyBoots = Inventory.find(sturdyBoots);
-        invWeatherForecast = Inventory.find(weatherForecast);
-        invSeaFishingMap = Inventory.find(seaFishingMap);
-        invLegendaryCocktail = Inventory.find(3707);
-        invChampionsToken = Inventory.find(3706);
-        invWarriorsContraction = Inventory.find(3710);
-        invFremennikBallad = Inventory.find(3699);
-        invExoticFlower = Inventory.find(3698);
-    }
 
-    public void sigmundPart2() {
-        checkSpecialItem();
-        //   while (invExoticFlower.length < 1) {
-        thoraTalk();
-        checkSpecialItem();
-        General.sleep(100);
-        if (invWeatherForecast.length > 0) {
-            swensenTalk();
-            checkSpecialItem();
-        }
-        if (invSeaFishingMap.length > 0) {
-            fishermanTalk();
-            checkSpecialItem();
-        }
-        if (invUnusualFish.length > 0) {
-            skulrimenTalk();
-            checkSpecialItem();
-        }
-        if (invBowString.length > 0) {
-            sigiliTalk();
-            checkSpecialItem();
-        }
-        if (invTrackingMap.length > 0) {
-            brundtTalk();
-            checkSpecialItem();
-        }
-        if (invFiscalStatement.length > 0) {
-            yrsaTalk();
-            checkSpecialItem();
+    int fremennikBallad = 3699;
+    int EXOTIC_FLOWER = 3698;
+    int WARRIOR_CONTRACT = 3710;
+    int CHAMPION_TOKEN = 3706;
+    int LEGENDARY_COCKTAIL = 3707;
 
-        }
-        if (invSturdyBoots.length > 0) {
-            olafTalk();
-            sailorTalk();
-            startSigmund();
-            checkSpecialItem();
-        }
-        if (invPromissaryNote.length > 0) {
-            gotoManni();
-            checkSpecialItem();
-        }
-        if (invLegendaryCocktail.length > 0) {
-            talkToManni1();
-            checkSpecialItem();
-        }
-        if (invChampionsToken.length > 0) {
-            thorvaldTalk();
-            checkSpecialItem();
-        }
-        if (invWarriorsContraction.length > 0) {
-            peerTalk();
-            checkSpecialItem();
-        }
-        if (invWeatherForecast.length > 0) {
-            swensenTalk();
-            checkSpecialItem();
-        }
-        if (invSeaFishingMap.length > 0) {
-            fishermanTalk();
-            checkSpecialItem();
-        }
-        if (invUnusualFish.length > 0) {
-            skulrimenTalk();
-            checkSpecialItem();
-        }
-        if (invBowString.length > 0) {
-            sigiliTalk();
-            checkSpecialItem();
-        }
-        if (invTrackingMap.length > 0) {
-            brundtTalk();
-            checkSpecialItem();
-        }
-        if (invFiscalStatement.length > 0) {
-            yrsaTalk();
-            checkSpecialItem();
-        }
-        if (invSturdyBoots.length > 0) {
-            olafTalk();
-            checkSpecialItem();
-        }
-        if (invFremennikBallad.length > 0) {
-            sailorTalk();
-            checkSpecialItem();
-        }
-        checkSpecialItem();
-        // }
-        if (Inventory.find(3698).length > 0) {
+    private boolean finishSigmundsTrial() {
+        if (Inventory.find(EXOTIC_FLOWER).length > 0) {
             talkToSigmund();
+            return true;
+        } else if (Inventory.find(fremennikBallad).length > 0) {
+            sailorTalk();
+            return true;
+        } else if (Inventory.find(sturdyBoots).length > 0) {
+            olafTalk();
+            return true;
+        } else if (Inventory.find(fiscalStatement).length > 0) {
+            yrsaTalk();
+            return true;
+        } else if (Inventory.find(trackingMap).length > 0) {
+            brundtTalk();
+            return true;
+        } else if (Inventory.find(customBowString).length > 0) {
+            sigiliTalk();
+            return true;
+        } else if (Inventory.find(unusualFish).length > 0) {
+            skulrimenTalk();
+            return true;
+        } else if (Inventory.find(seaFishingMap).length > 0) {
+            fishermanTalk();
+            return true;
+        } else if (Inventory.find(weatherForecast).length > 0) {
+            swensenTalk();
+            return true;
+        } else if (Inventory.find(WARRIOR_CONTRACT).length > 0) {
+            peerTalk();
+            return true;
+        } else if (Inventory.find(CHAMPION_TOKEN).length > 0) {
+            thorvaldTalk();
+            return true;
+        } else if (Inventory.find(ItemID.LEGENDARY_COCKTAIL).length > 0) {
+            talkToManni1();
+            return true;
+        } else if (Inventory.find(ItemID.PROMISSORY_NOTE).length > 0) {
+            thoraTalk();
+            return true;
         }
+        return false;
     }
 
     public void sailorTalk() {
         gotoSailor();
-        General.sleep(General.random(1000, 2000));
         NpcChat.talkToNPC("Sailor");
         NPCInteraction.waitForConversationWindow();
         NPCInteraction.handleConversation("Ask about the Merchant's trial");
@@ -1285,7 +1060,7 @@ public class FremTrials implements QuestTask {
     }
 
     public void sigiliTalk() {
-        invItem1 = Inventory.find(huntersTalisman);
+        RSItem[] invItem1 = Inventory.find(huntersTalisman);
         if (invItem1.length < 1) {
             cQuesterV2.status = "Talking to Sigili";
             gotoSigli();
@@ -1363,28 +1138,23 @@ public class FremTrials implements QuestTask {
         }
     }
 
-
     public void thoraTalk() {
         if (!THORA_AREA.contains(Player.getPosition())) {
             PathingUtil.walkToTile(new RSTile(2658, 3669, 0), 2, false);
-            Timer.abc2WaitCondition(() -> THORA_AREA.contains(Player.getPosition()) && !Player.isMoving(), 9000, 12000);
+            Timer.abc2WaitCondition(() -> THORA_AREA.contains(Player.getPosition()) && !MyPlayer.isMoving(), 9000, 12000);
         }
         cQuesterV2.status = "Talking to Thora";
-        RSNPC[] targetNPC = NPCs.findNearest(3932);
-        if (targetNPC.length > 0) {
-            if (!targetNPC[0].isOnScreen() || !targetNPC[0].isClickable()) {
-                if (PathingUtil.localNavigation(targetNPC[0].getPosition()))
-                    Timer.waitCondition(() -> targetNPC[0].isClickable(), 8000, 12000);
-            }
-            if (Utils.clickNPC(targetNPC[0].getID(), "Talk to")) { // has to be this method.
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Ask about the Merchant's trial");
+        RSNPC[] targetNPC = NPCs.findNearest(NpcID.THORA_THE_BARKEEP);
+
+        if (NpcChat.talkToNPC(NpcID.THORA_THE_BARKEEP) && NpcChat.waitForChatScreen()) {
+            NPCInteraction.handleConversation("Ask about the Merchant's trial");
+            THORA = true;
+            NPCInteraction.handleConversation();
+
+            if (NpcChat.waitForChatScreen())
                 NPCInteraction.handleConversation();
-                THORA = true;
-                General.sleep(500);
-                NPCInteraction.handleConversation();
-            }
         }
+
     }
 
     public void askeladdenTalk() {
@@ -1473,11 +1243,12 @@ public class FremTrials implements QuestTask {
         cQuesterV2.status = "Going to Sailor.";
         General.println("[Debug]: Going to Sailor");
         PathingUtil.walkToTile(sailorTile);
+        PathingUtil.movementIdle();
     }
 
     public void walkIdle() {
-        Timer.waitCondition(() -> Player.isMoving(), 2000, 4000);
-        Timer.waitCondition(() -> !Player.isMoving(), 10000, 15000);
+        if (Timer.waitCondition(() -> MyPlayer.isMoving(), 2000, 4000))
+            Timer.waitCondition(() -> !MyPlayer.isMoving(), 10000, 15000);
     }
 
     public void getItemsPart1() {
@@ -1506,11 +1277,11 @@ public class FremTrials implements QuestTask {
     public void getOlafItems() {
         if (Inventory.find(enchantedLyre).length < 1) {
             cQuesterV2.status = "Getting Items for Olaf";
-            invRawShark = Inventory.find(rawShark);
-            invTinderbox = Inventory.find(tinderbox);
-            invItem1 = Inventory.find(lyre);
-            invItem2 = Inventory.find(lobster);
-            invCamelotTab = Inventory.find(camelotTab);
+            RSItem[] invRawShark = Inventory.find(rawShark);
+            RSItem[] invTinderbox = Inventory.find(tinderbox);
+            RSItem[] invItem1 = Inventory.find(LYRE);
+            RSItem[] invItem2 = Inventory.find(lobster);
+            RSItem[] invCamelotTab = Inventory.find(camelotTab);
             if ((invRawShark.length < 1) || (invItem1.length < 1) || (invCamelotTab.length < 1) || (invItem2.length < 6)) { // this is to prevent it doubling back to this point if script loops
                 cQuesterV2.status = "Getting Items for Olaf";
                 General.println("[Debug]: " + cQuesterV2.status);
@@ -1520,7 +1291,7 @@ public class FremTrials implements QuestTask {
                 BankManager.withdraw(14, true, lobster);
                 BankManager.withdraw(1, true, rawShark);
                 BankManager.withdraw(5, true, camelotTab);
-                BankManager.withdraw(1, true, lyre);
+                BankManager.withdraw(1, true, LYRE);
                 BankManager.withdraw(2, true, STAMINA_POTION[0]);
                 General.sleep(General.random(500, 2000));
             }
@@ -1530,15 +1301,15 @@ public class FremTrials implements QuestTask {
     public void combatIdle() {
         cQuesterV2.status = "Fight Idle";
         General.println("[Debug]: Fight idle.");
-        while (Combat.isUnderAttack()) {
+        while (MyPlayer.isHealthBarVisible()) {
             if (!lanzigSafeArea.contains(Player.getPosition()) && lanzigSafeTle.isClickable()) {
                 Walking.clickTileMS(lanzigSafeTle, "Walk here");
             } else if (!lanzigSafeTle.isClickable()) {
                 PathingUtil.walkToTile(lanzigSafeTle);
             }
             General.sleep(General.random(1000, 2000));
-            if (Combat.getHPRatio() < General.random(40, 65)) {
-                invItem1 = Inventory.find(lobster);
+            if (MyPlayer.getCurrentHealthPercent() < General.random(40, 65)) {
+                RSItem[] invItem1 = Inventory.find(lobster);
                 if (invItem1.length > 0) {
                     Clicking.click("Eat", invItem1);
                 } else {
@@ -1575,27 +1346,6 @@ public class FremTrials implements QuestTask {
 
     RSArea SAFE_AREA = new RSArea(new RSTile(2670, 3665, 0), new RSTile(2669, 3665, 0));
 
-    public void setNPCAttackPreference() {
-        if (GameTab.getOpen() != GameTab.TABS.OPTIONS) {
-            GameTab.open(GameTab.TABS.OPTIONS);
-            Utils.idle(200, 500);
-        }
-        if (GameTab.getOpen() == GameTab.TABS.OPTIONS) {
-            if (Interfaces.get(261, 1, 6) != null) {
-                Interfaces.get(261, 1, 6).click();
-                Utils.idle(200, 500);
-            }
-            if (Interfaces.get(261, 92, 3) != null) { // selects drop down
-                Interfaces.get(261, 92, 3).click();
-                Utils.idle(100, 300);
-            }
-            if (Interfaces.get(261, 109, 3) != null) { // selects 'left click when availible'
-                Interfaces.get(261, 109, 3).click();
-
-                Utils.idle(300, 800);
-            }
-        }
-    }
 
     public void worldHopLanzig() {
         int world = WorldHopper.getRandomWorld(true, false);
@@ -1615,14 +1365,15 @@ public class FremTrials implements QuestTask {
                 Equipment.find(ItemID.STAFF_OF_FIRE).length < 1) {
             buyItems();
             getItemsPart1();
+            return;
         }
-        RSItem[] invLyre = Inventory.find(lyre);
-        RSGroundItem[] groundLyre = GroundItems.find(lyre);
+        RSGroundItem[] groundLyre = GroundItems.find(LYRE);
 
         cQuesterV2.status = "Killing Lanzig";
         General.println("[Debug]: " + cQuesterV2.status);
-        setNPCAttackPreference();
-        while (Inventory.find(lyre).length < 1) {
+        org.tribot.script.sdk.Options.AttackOption.setNpcAttackOption(org.tribot.script.sdk.Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
+
+        while (Inventory.find(LYRE).length < 1) {
             General.sleep(20, 40);
 
             if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE))
@@ -1639,7 +1390,7 @@ public class FremTrials implements QuestTask {
                 PathingUtil.walkToTile(lanzigSafeTle);
             }
 
-            groundLyre = GroundItems.find(lyre);
+            groundLyre = GroundItems.find(LYRE);
             lanzig = NPCs.find("Lanzig");
             if (lanzig.length > 0) {
                 cQuesterV2.status = "Attacking Lanzig";
@@ -1661,12 +1412,12 @@ public class FremTrials implements QuestTask {
                         Timer.waitCondition(() -> lanzig[0] == null, 3000, 5000);
                 }
 
-                groundLyre = GroundItems.find(lyre);
+                groundLyre = GroundItems.find(LYRE);
                 if (groundLyre.length > 0) {
-                    cQuesterV2.status = "Looting lyre";
+                    cQuesterV2.status = "Looting LYRE";
                     General.println("[Debug]: " + cQuesterV2.status);
-                    if (Utils.clickGroundItem(lyre) &&
-                            Timer.waitCondition(() -> Inventory.find(lyre).length > 0, 10000, 12000))
+                    if (Utils.clickGroundItem(LYRE) &&
+                            Timer.waitCondition(() -> Inventory.find(LYRE).length > 0, 10000, 12000))
                         break;
                 }
                 if (!SAFE_AREA.contains(Player.getPosition())) {
@@ -1691,21 +1442,20 @@ public class FremTrials implements QuestTask {
                 cQuesterV2.status = "Talk to Manni";
                 General.println("[Debug]: " + cQuesterV2.status);
                 PathingUtil.walkToArea(START_AREA);
-                manni = NPCs.find(3920);
-            } // DO NOT CHANGE THIS, works well for Manni, whereas other methods don't seem to
-            if (manni.length > 0) {
-                if (!manni[0].isClickable()) {
-                    manni[0].adjustCameraTo();
-                }
-                AccurateMouse.click(manni[0], "Talk-to");
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                NPCInteraction.handleConversation("Yes", "Ask about the Merchant's trial");
-                NPCInteraction.handleConversation("yes", "Yes");
-                NPCInteraction.handleConversation();
-                General.sleep(General.random(8000, 14000));
-                NPCInteraction.handleConversation();
 
+            } // DO NOT CHANGE THIS, works well for Manni, whereas other methods don't seem to
+            manni = NPCs.find(3920);
+            if (manni.length > 0) {
+                if (!manni[0].isClickable())
+                    DaxCamera.focus(manni[0]);
+
+                if (AccurateMouse.click(manni[0], "Talk-to") && NpcChat.waitForChatScreen()) {
+                    NPCInteraction.handleConversation("Yes", "Ask about the Merchant's trial");
+                    NPCInteraction.handleConversation("yes", "Yes");
+                    NPCInteraction.handleConversation();
+                    if (Waiting.waitUntil(15000, 500, ChatScreen::isOpen))
+                        NPCInteraction.handleConversation();
+                }
             }
         }
     }
@@ -1842,7 +1592,7 @@ public class FremTrials implements QuestTask {
         RSItem[] invKegOfBeer = Inventory.find(kegOfBeer);
         if (invCherryBomb.length < 1 && invLowAlcoholKeg.length > 0 && invKegOfBeer.length < 1) {
             cQuesterV2.status = "Fremennik Trials: Switching beer";
-            Log.log("[Debug]: " + cQuesterV2.status);
+            Log.info("" + cQuesterV2.status);
 
             PathingUtil.walkToTile(inFrontOfBeer, 2, false);
 
@@ -1912,7 +1662,7 @@ public class FremTrials implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         invEnchantedLyre = Inventory.find(enchantedLyre);
         if (invEnchantedLyre.length < 1) {
-            General.println("[Debug]: Going to enchant lyre");
+            General.println("[Debug]: Going to enchant LYRE");
             PathingUtil.walkToTile(strangeAltarTile);
 
             if (Utils.useItemOnObject(rawShark, "Strange altar"))
@@ -1975,16 +1725,13 @@ public class FremTrials implements QuestTask {
 
     // ************** SIGLI ***********************************//
     public void startSigli() {
-        invItem1 = Inventory.find(huntersTalisman);
-        invItem2 = Inventory.find(3696);
+        RSItem[] invItem1 = Inventory.find(huntersTalisman);
+        RSItem[] invItem2 = Inventory.find(3696);
         if (invItem1.length < 1 && invItem2.length < 1) {
             gotoSigli();
             if (NpcChat.talkToNPC("Sigli the Huntsman")) {
                 NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation(); // need this
-                NPCInteraction.handleConversation("What's a Draugen?");
-                NPCInteraction.handleConversation("Yes");
-                NPCInteraction.handleConversation();
+                ChatScreen.handle("What's a Draugen?", "Yes");
             }
         }
     }
@@ -1992,8 +1739,8 @@ public class FremTrials implements QuestTask {
     public void getSigliItems() {
         cQuesterV2.status = "Fremenik Trials: Getting Items for Sigli's task.";
         General.println("[Debug]: " + cQuesterV2.status);
-        invItem2 = Inventory.find(mindRune);
-        invItem1 = Inventory.find(lobster);
+        RSItem[] invItem2 = Inventory.find(mindRune);
+        RSItem[] invItem1 = Inventory.find(lobster);
         invCamelotTab = Inventory.find(camelotTab);
         if ((invItem2.length < 1) || (invItem1.length < 1) || (invCamelotTab.length < 1)) {
             General.println("[Debug]: Withdrawing Quest items.");
@@ -2029,15 +1776,20 @@ public class FremTrials implements QuestTask {
             }
     );
 
+    private boolean isDraugenHere() {
+        return Query.npcs().nameContains("Draugen").isAny();
+    }
+
     public void locateDraugen() {
+        Optional<Npc> draugen = Query.npcs().nameContains("Draugen").findClosest();
         RSNPC[] draug = NPCs.findNearest("Draugen");
-        if (draug.length > 0) return;
+        if (isDraugenHere()) return;
 
         if (!Game.isRunOn())
             Options.setRunEnabled(true);
-
-        RSItem[] tal = Inventory.find(huntersTalisman);
-        if (tal.length > 0) {
+        Optional<InventoryItem> talisman = Query.inventory().idEquals(huntersTalisman).findClosestToMouse();
+        if (talisman.isPresent()) {
+            RSItem[] tal = Inventory.find(huntersTalisman);
             cQuesterV2.status = "Locating Draugen.";
 
             if (!SE_AREA.contains(Player.getPosition()) && !NWArea.contains(Player.getPosition()) && !SE_SAFE_TILE_AREA.contains(Player.getPosition())
@@ -2046,39 +1798,40 @@ public class FremTrials implements QuestTask {
                 General.println("[Debug]: Going to Draugen reset tile");
                 PathingUtil.walkToTile(draugenTile);
             }
-            if (tal[0].click("Locate"))
-                General.sleep(General.randomSD(500, 5000, 1750, 500));
+            if (talisman.map(t -> t.click("Locate")).orElse(false))
+                Waiting.waitUntil(Utils.random(1500, 3000), 300, () -> isDraugenHere());
         }
 
         if (moveSW) {
-            Log.log("[Debug]: Moving South-West");
-            PathingUtil.walkToTile(Player.getPosition().translate(General.random(-6, -9), General.random(-6, -9)));
+            Log.info("Moving South-West");
+            PathingUtil.walkToTile(Player.getPosition().translate(General.random(-6, -10),
+                    General.random(-6, -10)));
             PathingUtil.movementIdle();
             moveSW = false;
             checkButterfly();
         } else if (moveSE) {
             if (SE_AREA.contains(Player.getPosition()) || Player.getPosition().getX() > 2660) {
-                Log.log("[Debug]: Already as far SE as we will go");
+                Log.info("Already as far SE as we will go");
                 moveSE = false;
                 shouldHop = true;
                 PathingUtil.walkToTile(Player.getPosition().translate(General.random(-9, -12), 0));
                 PathingUtil.movementIdle();
                 checkButterfly();
             } else {
-                Log.log("[Debug]: Moving South-East");
+                Log.info("Moving South-East");
                 PathingUtil.walkToTile(Player.getPosition().translate(General.random(6, 9), General.random(-6, -9)));
                 PathingUtil.movementIdle();
                 moveSE = false;
                 checkButterfly();
             }
         } else if (moveNE) {
-            Log.log("[Debug]: Moving North-East");
+            Log.info("Moving North-East");
             PathingUtil.walkToTile(Player.getPosition().translate(General.random(6, 12), General.random(6, 12)));
             PathingUtil.movementIdle();
             moveNE = false;
             checkButterfly();
         } else if (moveNW) {
-            Log.log("[Debug]: Moving North-West");
+            Log.info("Moving North-West");
             PathingUtil.walkToTile(Player.getPosition().translate(General.random(-6, -12), General.random(6, 12)));
             PathingUtil.movementIdle();
             moveNW = false;
@@ -2086,9 +1839,10 @@ public class FremTrials implements QuestTask {
         }
     }
 
+
     public boolean checkButterfly() {
-        RSNPC[] butterfly = NPCs.find("Butterfly");
-        if (butterfly.length > 0) {
+        RSNPC[] butterfly = NPCs.find(DRAUGEN_BUTTERFLY_ID);
+        if (butterfly.length > 0 && !Query.npcs().nameContains("Draugen").isAny()) {
             General.println("[Debug]: Checking area for butterfly -> true");
             PathingUtil.walkToTile(butterfly[0].getPosition());
             Timer.waitCondition(() -> butterfly[0].getPosition().distanceTo(Player.getPosition()) < 5, 3500, 5000);
@@ -2157,22 +1911,7 @@ public class FremTrials implements QuestTask {
                     moveSE = false;
                     moveNW = false;
                     moveNE = true;
-
-                    //PathingUtil.walkToTile(SE_SAFE_TILE);
-                    //  Utils.clickInventoryItem(huntersTalisman);
-
-
-                } /*else if (SE_SAFE_TILE_AREA.contains(Player.getPosition())) {
-                    General.println("[Debug]: We are already North east");
-                    if (!checkButterfly()) {
-                        General.println("[Message Listener}: World-hopping");
-                        shouldHop = true;
-                        return;
-                    }
-                } else {
-                    PathingUtil.walkToArea(NEArea);
-                    Utils.clickInventoryItem(huntersTalisman);
-                }*/
+                }
 
             } else if (message.contains("south-east")) {
                 if (SE_AREA.contains(Player.getPosition())) {
@@ -2191,7 +1930,6 @@ public class FremTrials implements QuestTask {
                 }
             }
         }
-
     }
 
     public void handleDraugenIsHere(String message) {
@@ -2240,7 +1978,7 @@ public class FremTrials implements QuestTask {
 
     public void attackDraugen() {
         if (shouldAttack) {
-            Log.log("[Debug]: Killing Draugen");
+            Log.info("Killing Draugen");
 
             draugen = NPCs.find("The Draugen");
 
@@ -2253,7 +1991,7 @@ public class FremTrials implements QuestTask {
                     Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 
 
-                if (Combat.getHPRatio() < General.random(45, 65) && Inventory.find(
+                if (MyPlayer.getCurrentHealthPercent() < General.random(45, 65) && Inventory.find(
                         ItemID.LOBSTER).length > 0) // low health, eat food
                     AccurateMouse.click(Inventory.find(379)[0], "Eat");
 
@@ -2271,7 +2009,7 @@ public class FremTrials implements QuestTask {
                 draugen = NPCs.find("The Draugen");
 
                 if (draugen.length > 0) { // rechecks as he might have died while moving above.
-                    if (!Combat.isUnderAttack() && !draugen[0].isInCombat() && Player.getAnimation() == -1 && (safeTile1.equals(Player.getPosition()) || safeTile2.equals(Player.getPosition()))) { // if we're not under attack we need to attack him
+                    if (!MyPlayer.isHealthBarVisible() && !draugen[0].isInCombat() && Player.getAnimation() == -1 && (safeTile1.equals(Player.getPosition()) || safeTile2.equals(Player.getPosition()))) { // if we're not under attack we need to attack him
                         AccurateMouse.click(draugen[0], "Attack");
 
                         Utils.idle(1500, 6000);
@@ -2310,7 +2048,7 @@ public class FremTrials implements QuestTask {
             if (SHOULD_PRAY && Prayer.getPrayerPoints() > 0)
                 Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 
-            if (Combat.getHPRatio() < General.random(40, 65) && Inventory.find(
+            if (MyPlayer.getCurrentHealthPercent() < General.random(40, 65) && Inventory.find(
                     ItemID.LOBSTER).length > 0)  // low health, eat food
                 AccurateMouse.click(Inventory.find(
                         ItemID.LOBSTER)[0], "Eat");
@@ -2325,9 +2063,9 @@ public class FremTrials implements QuestTask {
 
             draugen = NPCs.find("The Draugen");
             if (draugen.length > 0) {
-                if (!Combat.isUnderAttack() && !draugen[0].isInCombat()) { // if we're not under attack we need to attack him
+                if (!MyPlayer.isHealthBarVisible() && !draugen[0].isInCombat()) { // if we're not under attack we need to attack him
                     if (AccurateMouse.click(draugen[0], "Attack"))
-                        Timer.waitCondition(() -> draugen[0].isInCombat() || Combat.isUnderAttack(), 6000, 8700);
+                        Timer.waitCondition(() -> draugen[0].isInCombat() || MyPlayer.isHealthBarVisible(), 6000, 8700);
 
                 } else if (draugen[0].getPosition().distanceTo(Player.getPosition()) < 2) { // the draugen is very close to us (likely hitting us), so try moving.
                     General.println("[Debug]: First Safe Tile seemingly failed, using backup");
@@ -2434,72 +2172,28 @@ public class FremTrials implements QuestTask {
         return false;
     }
 
-    public void openQuestGuide() {
-        if (GameTab.getOpen() != GameTab.TABS.QUESTS) {
+    int[] scoll_bar_widget = {399, 5, 1};
+
+    public void openQuestGuide(String questName) {
+        if (!Widgets.isVisible(119)) {
+            Log.info("Opening quest guide");
             GameTab.open(GameTab.TABS.QUESTS);
-            Timer.waitCondition(() -> GameTab.getOpen() == GameTab.TABS.QUESTS, 2550, 3200);
         }
-        if (GameTab.getOpen() == GameTab.TABS.QUESTS) {
-            if (InterfaceUtil.clickInterfaceAction(629, "Quest List"))
-                Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(399, 2), 3000, 5000);
-
-            RSInterface questInter = Interfaces.get(399, 2);
-            if (questInter != null) {
-                Rectangle rec = questInter.getAbsoluteBounds();
-                for (int i = 0; i < 3; i++) {
-                    if (isQuestNameVisible("Fremennik trials")) {
-                        General.println("[Debug]: Quest is visible");
-                        break;
-                    }
-                    // scroll so that the quest name is visible to click
-                    RSInterface scrollInter = Interfaces.get(399, 4, 1);
-                    int pos = General.random(75, 80);
-                    while (scrollInter != null && scrollInter.getY() < pos) { //was 80-85
-                        General.sleep(100, 300);
-                        if (!rec.contains(Mouse.getPos()))
-                            Mouse.moveBox(rec);
-
-                        Mouse.scroll(false);
-                        scrollInter = Interfaces.get(399, 4, 1);
-                    }
-                    while (scrollInter != null && scrollInter.getY() > pos) {//was 80-85
-                        if (!rec.contains(Mouse.getPos()))
-                            Mouse.moveBox(rec);
-                        General.sleep(100, 300);
-                        Mouse.scroll(true);
-                        scrollInter = Interfaces.get(399, 4, 1);
-                    }
-
-                }
-            }
-        }
-        General.sleep(General.random(300, 800));
-        if (Interfaces.isInterfaceSubstantiated(399, 7, 37)) {
-            for (int i = 0; i < 3; i++) {
-
-                RSInterface questName = Interfaces.get(399, 7, 37);
-                if (questName != null && questName.click())// clicks quest
-                    Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(Interfaces.get(119, 15)), 5000, 8000);
-
-                if (Interfaces.isInterfaceSubstantiated(Interfaces.get(119, 15))) {
-                    break;
-                } else {
-                    Mouse.moveBox(Interfaces.get(399, 2).getAbsoluteBounds());
-                    if (!Interfaces.get(399, 2).getAbsoluteBounds().contains(Mouse.getPos())) {
-                        Mouse.moveBox(Interfaces.get(399, 2).getAbsoluteBounds());
-
-                    }
-                    if (Interfaces.get(399, 4, 1).getY() < General.random(80, 85))
-                        Mouse.scroll(false);
-                    if (Interfaces.get(399, 4, 1).getY() > General.random(80, 85)) {
-                        General.sleep(General.random(200, 500));
-                        Mouse.scroll(true);
+        for (int i = 0; i < 5; i++) {
+            if (org.tribot.script.sdk.GameTab.QUESTS.open()) {
+                Optional<Widget> quest = Query.widgets().inIndexPath(399, 7)
+                        .nameContains(questName).findFirst();
+                if (quest.map(f -> f.scrollTo()).orElse(false) &&
+                        quest.map(Widget::click).orElse(false)) {
+                    Log.info("Clicking Quest");
+                    if (Timer.waitCondition(() -> Widgets.isVisible(119), 5000, 7000)) {
+                        Utils.idleNormalAction();
+                        return;
                     }
                 }
             }
+            General.sleep(300, 550); //need this after scrolling
         }
-        General.println("[Debug]: Checking Quest status");
-        General.sleep(General.random(500, 2000));
     }
 
     public void checkSigmundStatus() {
@@ -2639,7 +2333,7 @@ public class FremTrials implements QuestTask {
         General.sleep(300, 800);
 
         cQuesterV2.status = "Checking Status";
-        openQuestGuide();
+        openQuestGuide("Fremennik trials");
         Timer.waitCondition(() -> Interfaces.get(119) != null, 2500, 3500);
         if (checkInterfacesText("I now have the Reveller's vote")) {
             REVELLER = true;
@@ -2722,9 +2416,8 @@ public class FremTrials implements QuestTask {
             playLyre();
 
         } else if (Game.getSetting(347) == 3) { // cahnge back to 3
-            sigmundPart1();
-            Utils.longSleep();
-            sigmundPart2();
+            if (!finishSigmundsTrial())
+                sigmundPart1();
         } else if (Game.getSetting(347) == 4) {
             startSwensen();
             swensenRoom1();
@@ -2761,7 +2454,7 @@ public class FremTrials implements QuestTask {
                     && !PEER_UPSTAIRS.contains(Player.getPosition()) && !SEER_BOTTOM_RIGHT_ROOM.contains(Player.getPosition())) {
                 startSeerTrial();
                 seerDoor();
-                solveDoor();
+                handleDoorNew();
             }
             seerUpStairsItems();
             doWaterPuzzle();
@@ -2769,8 +2462,10 @@ public class FremTrials implements QuestTask {
 
         } else if (Game.getSetting(347) == 7) {
             getThorvaldItems();
-            gotoSkulrimen();
-            startThorvald();
+            if (!MyPlayer.isHealthBarVisible()) {
+                gotoSkulrimen();
+                startThorvald();
+            }
             startThorvaldFight();
         } else if (Game.getSetting(347) == 8) {
             finishQuest();

@@ -91,7 +91,7 @@ public class MiningBank implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.MINING) &&
-                Skills.getActualLevel(Skills.SKILLS.MINING) < 60 &&
+                Skills.getActualLevel(Skills.SKILLS.MINING) < 68 &&
                 !hasBestPickAxe();
     }
 

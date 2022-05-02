@@ -77,6 +77,7 @@ import scripts.QuestPackages.MurderMystery.MurderMystery;
 import scripts.QuestPackages.NatureSpirit.NatureSpirit;
 import scripts.QuestPackages.OneSmallFavour.OneSmallFavour;
 
+import scripts.QuestPackages.PiratesTreasure.PiratesTreasure;
 import scripts.QuestPackages.PlagueCity.PlagueCity;
 import scripts.QuestPackages.PriestInPeril.PriestInPeril;
 import scripts.QuestPackages.PrinceAliRescue.PrinceAliRescue;
@@ -696,6 +697,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         }else if (arg.toLowerCase().contains("shilovillage")) {
             General.println("[Args]: Added Shilo Village ");
             taskList.add(ShilloVillage.get());
+        }
+        else if (arg.toLowerCase().contains("piratestreas")) {
+            General.println("[Args]: Added Pirates Treasure ");
+            taskList.add(PiratesTreasure.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

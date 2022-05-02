@@ -44,13 +44,11 @@ public class Areas {
     public static Area VAMPYRE_AREA = Area.fromRadius(new WorldTile(3578, 3480, 0), 15);
     public static WorldTile WALL_BEAST_TILE = new WorldTile(3162, 9573, 0);
     public static Area GOBLIN_AREA = Area.fromPolygon(
-            new ArrayList<>(Arrays.asList(
-                    new WorldTile(3239, 3250, 0),
-                    new WorldTile(3259, 3250, 0),
-                    new WorldTile(3261, 3223, 0),
-                    new WorldTile(3249, 3223, 0),
-                    new WorldTile(3242, 3235, 0)
-            )));
+            new WorldTile(3239, 3250, 0),
+            new WorldTile(3259, 3250, 0),
+            new WorldTile(3261, 3223, 0),
+            new WorldTile(3249, 3223, 0),
+            new WorldTile(3242, 3235, 0));
     public static Area OTHERWORLDLY_BEING_AREA = Area.fromRectangle(new WorldTile(2376, 4434, 0), new WorldTile(2393, 4416, 0));
     public static Area OGRE_AREA = Area.fromRectangle(new WorldTile(2572, 2971, 0), new WorldTile(2602, 2958, 0));
     public static Area ABBERANT_SPECTRE_AREA_1 = Area.fromRectangle(new WorldTile(2467, 9786, 0), new WorldTile(2474, 9773, 0));
@@ -61,15 +59,34 @@ public class Areas {
     public static Area ANKOU_AREA = Area.fromRectangle(new WorldTile(2486, 9795, 0), new WorldTile(2466, 9810, 0));
     public static Area BASILISK_AREA = Area.fromRectangle(new WorldTile(2752, 9998, 0), new WorldTile(2734, 10018, 0));
     public static Area BANSHEE_AREA = Area.fromPolygon(
-            new ArrayList<>(Arrays.asList(
-                    new WorldTile(3453, 3535, 0),
-                    new WorldTile(3449, 3531, 0),
-                    new WorldTile(3445, 3531, 0), new WorldTile(3442, 3534, 0), new WorldTile(3439, 3534, 0), new WorldTile(3438, 3533, 0), new WorldTile(3434, 3533, 0), new WorldTile(3432, 3535, 0), new WorldTile(3434, 3541, 0), new WorldTile(3437, 3541, 0), new WorldTile(3437, 3547, 0), new WorldTile(3431, 3547, 0), new WorldTile(3431, 3557, 0), new WorldTile(3433, 3557, 0), new WorldTile(3433, 3562, 0), new WorldTile(3450, 3562, 0), new WorldTile(3450, 3559, 0), new WorldTile(3449, 3558, 0), new WorldTile(3449, 3553, 0), new WorldTile(3450, 3552, 0), new WorldTile(3450, 3548, 0), new WorldTile(3449, 3547, 0), new WorldTile(3449, 3543, 0), new WorldTile(3453, 3539, 0)
-            )));
+            new WorldTile(3449, 3568, 0),
+            new WorldTile(3433, 3568, 0),
+            new WorldTile(3433, 3557, 0),
+            new WorldTile(3430, 3557, 0),
+            new WorldTile(3430, 3547, 0),
+            new WorldTile(3437, 3547, 0),
+            new WorldTile(3437, 3541, 0),
+            new WorldTile(3432, 3541, 0),
+            new WorldTile(3432, 3535, 0),
+            new WorldTile(3434, 3533, 0),
+            new WorldTile(3438, 3533, 0),
+            new WorldTile(3439, 3534, 0),
+            new WorldTile(3442, 3534, 0),
+            new WorldTile(3445, 3531, 0),
+            new WorldTile(3449, 3531, 0),
+            new WorldTile(3453, 3535, 0),
+            new WorldTile(3453, 3539, 0),
+            new WorldTile(3449, 3543, 0),
+            new WorldTile(3449, 3547, 0),
+            new WorldTile(3450, 3548, 0),
+            new WorldTile(3450, 3552, 0),
+            new WorldTile(3449, 3553, 0)
+    );
+
+  
     public static Area BAT_AREA = Area.fromPolygon(
-            new ArrayList<>(Arrays.asList(
-                    new WorldTile(2899, 9845, 0), new WorldTile(2899, 9823, 0), new WorldTile(2927, 9823, 0), new WorldTile(2933, 9832, 0), new WorldTile(2931, 9836, 0), new WorldTile(2920, 9845, 0)
-            )));
+            new WorldTile(2899, 9845, 0), new WorldTile(2899, 9823, 0), new WorldTile(2927, 9823, 0), new WorldTile(2933, 9832, 0), new WorldTile(2931, 9836, 0), new WorldTile(2920, 9845, 0)
+    );
     public static Area BEAR_AREA = Area.fromRectangle(new WorldTile(2714, 3329, 0), new WorldTile(2680, 3346, 0));
     // public static Area BLUE_DRAGON_AREA = Area(new WorldTile(2922, 9796, 0), new WorldTile(2913, 9807, 0));
     public static Area BLUE_DRAGON_AREA = Area.fromPolygon(
@@ -199,9 +216,9 @@ public class Areas {
     // public static Area KURASK_AREA = Area(new WorldTile(2687, 10009, 0), new WorldTile(2708, 9989, 0));
     public static Area KURASK_AREA = Area.fromRectangle(new WorldTile(2691, 9982, 0), new WorldTile(2723, 9952, 0));
     public static Area LIZARD_AREA = Area.fromRectangle(new WorldTile(3379, 3083, 0), new WorldTile(3414, 3043, 0));
-    public static Area LESSER_DEMON_AREA =Area.fromPolygon(
+    public static Area LESSER_DEMON_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(2924, 9813, 0), new WorldTile(2924, 9796, 0), new WorldTile(2929, 9796, 0), new WorldTile(2930, 9785, 0), new WorldTile(2943, 9785, 0), new WorldTile(2941, 9798, 0), new WorldTile(2936, 9810, 0), new WorldTile(2934, 9813, 0)
+                    new WorldTile(2924, 9813, 0), new WorldTile(2924, 9796, 0), new WorldTile(2929, 9796, 0), new WorldTile(2930, 9785, 0), new WorldTile(2943, 9785, 0), new WorldTile(2941, 9798, 0), new WorldTile(2936, 9810, 0), new WorldTile(2934, 9813, 0)
             )));
     public static Area MUTATED_ZYGOMITE_AREA = Area.fromRectangle(new WorldTile(2426, 4462, 0), new WorldTile(2409, 4478, 0));
     public static Area MONKEY_AREA = Area.fromRectangle(new WorldTile(2892, 3148, 0), new WorldTile(2865, 3163, 0));
@@ -209,38 +226,38 @@ public class Areas {
     //this is in catacombs
     public static Area MOSS_GIANT_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(1668, 10020, 0),
-                new WorldTile(1677, 10020, 0),
-                new WorldTile(1674, 10015, 0),
-                new WorldTile(1675, 10008, 0),
-                new WorldTile(1672, 10006, 0),
-                new WorldTile(1670, 10006, 0),
-                new WorldTile(1666, 10003, 0),
-                new WorldTile(1664, 10003, 0),
-                new WorldTile(1662, 10005, 0),
-                new WorldTile(1657, 10002, 0),
-                new WorldTile(1650, 10002, 0),
-                new WorldTile(1650, 10008, 0),
-                new WorldTile(1654, 10011, 0),
-                new WorldTile(1654, 10015, 0),
-                new WorldTile(1660, 10016, 0),
-                new WorldTile(1664, 10016, 0))));
+                    new WorldTile(1668, 10020, 0),
+                    new WorldTile(1677, 10020, 0),
+                    new WorldTile(1674, 10015, 0),
+                    new WorldTile(1675, 10008, 0),
+                    new WorldTile(1672, 10006, 0),
+                    new WorldTile(1670, 10006, 0),
+                    new WorldTile(1666, 10003, 0),
+                    new WorldTile(1664, 10003, 0),
+                    new WorldTile(1662, 10005, 0),
+                    new WorldTile(1657, 10002, 0),
+                    new WorldTile(1650, 10002, 0),
+                    new WorldTile(1650, 10008, 0),
+                    new WorldTile(1654, 10011, 0),
+                    new WorldTile(1654, 10015, 0),
+                    new WorldTile(1660, 10016, 0),
+                    new WorldTile(1664, 10016, 0))));
     public static Area MOSS_GIANT_FISHING_GUILD_AREA = Area.fromRadius(
             new WorldTile(2555, 3406, 0), 5);
 
     public static Area MINOTAUR_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(1869, 5228, 0),
-                new WorldTile(1869, 5224, 0),
-                new WorldTile(1875, 5224, 0),
-                new WorldTile(1876, 5245, 0),
-                new WorldTile(1868, 5245, 0),
-                new WorldTile(1866, 5237, 0)
+                    new WorldTile(1869, 5228, 0),
+                    new WorldTile(1869, 5224, 0),
+                    new WorldTile(1875, 5224, 0),
+                    new WorldTile(1876, 5245, 0),
+                    new WorldTile(1868, 5245, 0),
+                    new WorldTile(1866, 5237, 0)
             )));
 
     public static Area PYREFIEND_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(2752, 10015, 0), new WorldTile(2769, 10015, 0), new WorldTile(2767, 10008, 0), new WorldTile(2770, 10003, 0), new WorldTile(2770, 9992, 0), new WorldTile(2752, 9993, 0)
+                    new WorldTile(2752, 10015, 0), new WorldTile(2769, 10015, 0), new WorldTile(2767, 10008, 0), new WorldTile(2770, 10003, 0), new WorldTile(2770, 9992, 0), new WorldTile(2752, 9993, 0)
             )));
 
     public static Area RAT_AREA = Area.fromRectangle(new WorldTile(3227, 3170, 0), new WorldTile(3208, 3191, 0));
@@ -248,57 +265,57 @@ public class Areas {
 
     public static Area SOURHOG_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(3156, 9704, 0),
-                new WorldTile(3158, 9704, 0),
-                new WorldTile(3167, 9706, 0),
-                new WorldTile(3167, 9706, 0),
-                new WorldTile(3170, 9706, 0),
-                new WorldTile(3174, 9704, 0),
-                new WorldTile(3178, 9693, 0),
-                new WorldTile(3185, 9687, 0),
-                new WorldTile(3178, 9673, 0),
-                new WorldTile(3169, 9667, 0),
-                new WorldTile(3159, 9674, 0),
-                new WorldTile(3151, 9703, 0)
+                    new WorldTile(3156, 9704, 0),
+                    new WorldTile(3158, 9704, 0),
+                    new WorldTile(3167, 9706, 0),
+                    new WorldTile(3167, 9706, 0),
+                    new WorldTile(3170, 9706, 0),
+                    new WorldTile(3174, 9704, 0),
+                    new WorldTile(3178, 9693, 0),
+                    new WorldTile(3185, 9687, 0),
+                    new WorldTile(3178, 9673, 0),
+                    new WorldTile(3169, 9667, 0),
+                    new WorldTile(3159, 9674, 0),
+                    new WorldTile(3151, 9703, 0)
             )));
     public static Area SUQAH_AREA = Area.fromRectangle(new WorldTile(2110, 3947, 0), new WorldTile(2121, 3939, 0));
     public static Area SCORPION_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(3306, 3278, 0), new WorldTile(3306, 3283, 0), new WorldTile(3302, 3287, 0), new WorldTile(3302, 3288, 0), new WorldTile(3306, 3292, 0), new WorldTile(3306, 3294, 0), new WorldTile(3303, 3298, 0), new WorldTile(3292, 3297, 0), new WorldTile(3293, 3285, 0), new WorldTile(3290, 3283, 0), new WorldTile(3292, 3281, 0), new WorldTile(3293, 3279, 0)
+                    new WorldTile(3306, 3278, 0), new WorldTile(3306, 3283, 0), new WorldTile(3302, 3287, 0), new WorldTile(3302, 3288, 0), new WorldTile(3306, 3292, 0), new WorldTile(3306, 3294, 0), new WorldTile(3303, 3298, 0), new WorldTile(3292, 3297, 0), new WorldTile(3293, 3285, 0), new WorldTile(3290, 3283, 0), new WorldTile(3292, 3281, 0), new WorldTile(3293, 3279, 0)
             )));
     public static Area SKELETON_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(3134, 9881, 0), new WorldTile(3144, 9881, 0), new WorldTile(3144, 9875, 0), new WorldTile(3146, 9873, 0), new WorldTile(3152, 9873, 0), new WorldTile(3152, 9870, 0), new WorldTile(3150, 9868, 0), new WorldTile(3136, 9868, 0), new WorldTile(3134, 9870, 0)
+                    new WorldTile(3134, 9881, 0), new WorldTile(3144, 9881, 0), new WorldTile(3144, 9875, 0), new WorldTile(3146, 9873, 0), new WorldTile(3152, 9873, 0), new WorldTile(3152, 9870, 0), new WorldTile(3150, 9868, 0), new WorldTile(3136, 9868, 0), new WorldTile(3134, 9870, 0)
             )));
     public static Area SPIDER_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(2134, 5261, 0), new WorldTile(2137, 5266, 0), new WorldTile(2136, 5277, 0), new WorldTile(2115, 5277, 0), new WorldTile(2120, 5265, 0)
+                    new WorldTile(2134, 5261, 0), new WorldTile(2137, 5266, 0), new WorldTile(2136, 5277, 0), new WorldTile(2115, 5277, 0), new WorldTile(2120, 5265, 0)
             )));
     public static Area SHADES_AREA = Area.fromRectangle(new WorldTile(3479, 3293, 0), new WorldTile(3497, 3279, 0));
-    public static Area TUROTH_AREA =Area.fromPolygon(
+    public static Area TUROTH_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(2713, 10014, 0), new WorldTile(2721, 10017, 0), new WorldTile(2730, 10013, 0), new WorldTile(2734, 10004, 0), new WorldTile(2734, 9991, 0), new WorldTile(2714, 9993, 0)
+                    new WorldTile(2713, 10014, 0), new WorldTile(2721, 10017, 0), new WorldTile(2730, 10013, 0), new WorldTile(2734, 10004, 0), new WorldTile(2734, 9991, 0), new WorldTile(2714, 9993, 0)
             )));
     public static Area TROLL_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(2770, 10166, 0),
-                new WorldTile(2782, 10166, 0),
-                new WorldTile(2782, 10158, 0),
-                new WorldTile(2772, 10146, 0),
-                new WorldTile(2787, 10151, 0),
-                new WorldTile(2789, 10134, 0),
-                new WorldTile(2801, 10137, 0),
-                new WorldTile(2806, 10127, 0),
-                new WorldTile(2784, 10126, 0),
-                new WorldTile(2780, 10140, 0),
-                new WorldTile(2765, 10138, 0)
+                    new WorldTile(2770, 10166, 0),
+                    new WorldTile(2782, 10166, 0),
+                    new WorldTile(2782, 10158, 0),
+                    new WorldTile(2772, 10146, 0),
+                    new WorldTile(2787, 10151, 0),
+                    new WorldTile(2789, 10134, 0),
+                    new WorldTile(2801, 10137, 0),
+                    new WorldTile(2806, 10127, 0),
+                    new WorldTile(2784, 10126, 0),
+                    new WorldTile(2780, 10140, 0),
+                    new WorldTile(2765, 10138, 0)
             )));
 
     public static Area WALL_BEAST_AREA = Area.fromRectangle(new WorldTile(3160, 9574, 0), new WorldTile(3165, 9572, 0));
 
     public static Area WEREWOLF_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(3507, 3480, 0), new WorldTile(3507, 3490, 0), new WorldTile(3504, 3491, 0), new WorldTile(3504, 3494, 0), new WorldTile(3503, 3495, 0), new WorldTile(3503, 3499, 0), new WorldTile(3493, 3499, 0), new WorldTile(3482, 3494, 0), new WorldTile(3483, 3480, 0)
+                    new WorldTile(3507, 3480, 0), new WorldTile(3507, 3490, 0), new WorldTile(3504, 3491, 0), new WorldTile(3504, 3494, 0), new WorldTile(3503, 3495, 0), new WorldTile(3503, 3499, 0), new WorldTile(3493, 3499, 0), new WorldTile(3482, 3494, 0), new WorldTile(3483, 3480, 0)
             )));
     public static Area WOLF_AREA = Area.fromRectangle(new WorldTile(1875, 5225, 0), new WorldTile(1868, 5242, 0));
     public static Area WYRM_AREA = Area.fromRectangle(new WorldTile(1254, 10203, 0), new WorldTile(1285, 10175, 0));
@@ -306,12 +323,12 @@ public class Areas {
     public static Area ZOMBIE_AREA = Area.fromRectangle(new WorldTile(3114, 9872, 0), new WorldTile(3132, 9851, 0));
     public static Area TZHARR_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(
-        new WorldTile(2453, 5174, 0),
-                new WorldTile(2444, 5165, 0),
-                new WorldTile(2453, 5158, 0),
-                new WorldTile(2442, 5148, 0),
-                new WorldTile(2453, 5138, 0),
-                new WorldTile(2470, 5164, 0)
+                    new WorldTile(2453, 5174, 0),
+                    new WorldTile(2444, 5165, 0),
+                    new WorldTile(2453, 5158, 0),
+                    new WorldTile(2442, 5148, 0),
+                    new WorldTile(2453, 5138, 0),
+                    new WorldTile(2470, 5164, 0)
             )));
     public static Area TURAEL_AREA = Area.fromRectangle(new WorldTile(2930, 3537, 0), new WorldTile(2932, 3535, 0));
     public static Area VANNAKA_AREA = Area.fromRectangle(new WorldTile(3147, 9912, 0), new WorldTile(3144, 9915, 0));

@@ -15,7 +15,11 @@ import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Magic;
 import org.tribot.script.sdk.Prayer;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -32,6 +36,7 @@ import scripts.Tasks.Task;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class FightArena implements QuestTask {
 
@@ -44,9 +49,7 @@ public class FightArena implements QuestTask {
     public int COINS = 995;
     public int lobster = 379;
     public int staffOfAir = 1381;
-    public int KEYS = 76;
     public int khaliBrew = 77;
-    public int camelotTab = 8010;
     int HELMET = 74;
     int CHEST_ARMOUR = 75;
 
@@ -137,39 +140,41 @@ public class FightArena implements QuestTask {
         }
     }
 
-    public void step2() {
+    public void getArmour() {
         cQuesterV2.status = "Getting Armour";
         if (!ARMOUR_AREA.contains(Player.getPosition()) && !ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
-            PathingUtil.walkToArea(ARMOUR_AREA_DOOR);
-           /* if (Utils.clickObject(1535, "Open", false)) {
-                Timer.waitCondition(() -> Objects.findNearest(20, 1536).length > 0, 6000);
-                General.sleep(General.randomSD(250, 2500, 1200, 400));
-            }*/
+            PathingUtil.walkToTile(new WorldTile(2613, 3190, 0));
         }
         if (!ARMOUR_AREA.contains(Player.getPosition()) && ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
-            PathingUtil.localNavigation(ARMOUR_AREA.getRandomTile());
-            Timer.waitCondition(() -> ARMOUR_AREA.contains(Player.getPosition()), 8000, 12000);
+            if (PathingUtil.localNav(new WorldTile(2613, 3190, 0)))
+                Timer.waitCondition(() -> ARMOUR_AREA.contains(Player.getPosition()), 8000, 12000);
         }
         if (ARMOUR_AREA.contains(Player.getPosition())) {
             if (Utils.clickObject(75, "Open", false))
                 Timer.waitCondition(() -> Objects.findNearest(5, 76).length > 0, 6000, 8000);
 
             if (Utils.clickObject(76, "Search", false)) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                General.sleep(General.randomSD(250, 2500, 1200, 400));
+                Waiting.waitUntil(4500, 250,
+                        () -> org.tribot.script.sdk.Inventory.contains(HELMET));
             }
         }
     }
 
-    public void step3() {
+    private void equipGear() {
         if (Utils.equipItem(HELMET))
-            General.sleep(General.randomSD(100, 1000, 400, 200));
+            Utils.idleNormalAction();
 
         if (Utils.equipItem(CHEST_ARMOUR))
-            General.sleep(General.randomSD(250, 2500, 1200, 400));
+            Utils.idleNormalAction();
 
+        if (Utils.equipItem(ItemID.STAFF_OF_AIR))
+            Utils.idleNormalAction();
+    }
+
+    public void goToGuard() {
+        equipGear();
         if (ARMOUR_AREA.contains(Player.getPosition())) {
+            cQuesterV2.status = "Going to entrance";
             if (Utils.clickObject(1535, "Open", false))
                 Timer.waitCondition(() -> Objects.findNearest(20, 1536).length > 0, 6000);
 
@@ -177,18 +182,22 @@ public class FightArena implements QuestTask {
                 PathingUtil.movementIdle();
 
         }
-        if (!DOOR_ENTRANCE.contains(Player.getPosition()) && !NORTH_JAIL_AREA.contains(Player.getPosition()) && !THIRSY_GUARD_AREA.contains(Player.getPosition()) && !BEFORE_THIRSTY_GUARD_AREA.contains(Player.getPosition())) {
+        if (!DOOR_ENTRANCE.contains(Player.getPosition()) &&
+                !NORTH_JAIL_AREA.contains(Player.getPosition()) &&
+                !THIRSY_GUARD_AREA.contains(Player.getPosition()) &&
+                !BEFORE_THIRSTY_GUARD_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to entrance";
             General.println("[Debug]: " + cQuesterV2.status);
             if (PathingUtil.walkToTile(new RSTile(2617, 3172), 1, false))
                 Timer.waitCondition(() -> DOOR_ENTRANCE.contains(Player.getPosition()), 8000);
         }
         if (DOOR_ENTRANCE.contains(Player.getPosition())) {
+            cQuesterV2.status = "Opening Door";
             if (Utils.clickObject("Door", "Open", false)) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> INSIDE_DOOR.contains(Player.getPosition()), 6000);
-                General.sleep(General.randomSD(250, 2500, 1200, 400));
+                if (Timer.waitCondition(() -> INSIDE_DOOR.contains(Player.getPosition()), 6000))
+                    Utils.idleNormalAction();
             }
         }
         if (BEFORE_EXIT_TO_AREA.contains(Player.getPosition())) {
@@ -248,7 +257,7 @@ public class FightArena implements QuestTask {
     );
     WorldTile BAR_TILE = new WorldTile(2566, 3143, 0);
 
-    public void step4() {
+    public void buyKhaliBrew() {
         cQuesterV2.status = "Going to Bar";
         General.println("[Debug]: " + cQuesterV2.status);
         if (!BAR_AREA.contains(Player.getPosition()) && Inventory.find(khaliBrew).length < 1) {
@@ -353,21 +362,22 @@ public class FightArena implements QuestTask {
         }
 
         if (NORTH_JAIL_AREA.contains(Player.getPosition())) {
+
             Utils.equipItem(staffOfAir);
             Autocast.enableAutocast(Autocast.FIRE_STRIKE);
             if (Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
                 cQuesterV2.status = "Talking to Sammy";
-                if (Utils.clickNPC("Sammy Servil", "Talk-to")) {
+                if (Utils.clickNPC(1220, "Talk-to")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
 
-                    General.sleep(3000, 6000);
+                    cQuesterV2.status = "Waiting...";
                     Timer.waitCondition(() -> COMBAT_AREA.contains(Player.getPosition()), 25000);
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                    NPCInteraction.handleConversation();
+                    if (NPCInteraction.waitForConversationWindow()) {
+                        NPCInteraction.handleConversation();
+                    }
 
-                    General.sleep(3000, 6000);
+                    //General.sleep(3000, 6000);
                 }
             }
         } else {
@@ -377,8 +387,103 @@ public class FightArena implements QuestTask {
 
     }
 
+    Area validNpcFightArea = Area.fromPolygon(
+            new WorldTile[]{
+                    new WorldTile(2594, 3173, 0),
+                    new WorldTile(2603, 3173, 0),
+                    new WorldTile(2607, 3168, 0),
+                    new WorldTile(2607, 3155, 0),
+                    new WorldTile(2604, 3152, 0),
+                    new WorldTile(2598, 3151, 0),
+                    new WorldTile(2594, 3151, 0)
+            }
+    );
+    WorldTile SAFE_TILE_1 = new WorldTile(2598, 3160, 0);
+    WorldTile SAFE_TILE_2 = new WorldTile(2598, 3163, 0); // for scorpion
+    //WorldTile END_SAFE_TILE = new WorldTile(2599, 3163, 0);
+
+    private boolean shouldEat() {
+        return MyPlayer.getCurrentHealthPercent() < 50 || MyPlayer.getCurrentHealth() < 10;
+    }
+
+    private void killNpc(String npcName) {
+        if (!validNpcFightArea.containsMyPlayer()) {
+            Log.info("Not in fight area");
+            return;
+        }
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
+
+        if (shouldEat())
+            EatUtil.eatFood(false);
+        Optional<Npc> npc = Query.npcs().nameContains(npcName).inArea(validNpcFightArea)
+                .isInteractingWithMe()
+                .findClosestByPathDistance();
+        //not on safetile 1 or 2
+        if (!MyPlayer.getTile().equals(SAFE_TILE_1) && !MyPlayer.getTile().equals(SAFE_TILE_2)) {
+            Log.info("Going to safe tile 1");
+            if (SAFE_TILE_1.interact("Walk here") &&
+                    Waiting.waitUntil(1000, 25, MyPlayer::isMoving)) {
+                Waiting.waitUntil(4000, 25, () -> shouldEat() ||
+                        (MyPlayer.getTile().equals(SAFE_TILE_1) && !MyPlayer.isHealthBarVisible()));
+            }
+        } else if (MyPlayer.getTile().equals(SAFE_TILE_1)) {
+            if (npc.map(n -> n.distance() >= 2).orElse(false)) {
+                Log.warn("NPC is too close");
+
+                // if safe tile 1 fails
+                if (MyPlayer.isHealthBarVisible() && SAFE_TILE_2.interact("Walk here") &&
+                        Waiting.waitUntil(800, 25, MyPlayer::isMoving)) {
+                    Log.warn("Going to safe tile 2, b/c health bar is visible");
+                    Waiting.waitUntil(2000, 25, () -> shouldEat() ||
+                            (MyPlayer.getTile().equals(SAFE_TILE_2) && !MyPlayer.isHealthBarVisible()));
+                    return;
+                }
+            }
+        } else if (MyPlayer.getTile().equals(SAFE_TILE_2)) {
+            if (!npc.map(n -> n.distance() >= 2).orElse(false)) {
+                Log.warn("NPC is too close");
+                // if safe tile 2 fails
+                if (MyPlayer.isHealthBarVisible() && SAFE_TILE_1.interact("Walk here") &&
+                        Waiting.waitUntil(800, 25, MyPlayer::isMoving)) {
+                    Log.warn("Going to safe tile 1, b/c health bar is visible");
+                    if (Waiting.waitUntil(2000, 25, () -> shouldEat() ||
+                            MyPlayer.getTile().equals(SAFE_TILE_1)))
+                        Utils.idleNormalAction();
+                    return;
+                }
+
+            }
+        }
+        if (MyPlayer.getTile().equals(SAFE_TILE_1) || MyPlayer.getTile().equals(SAFE_TILE_2)) {
+            Optional<Npc> npcFinal = Query.npcs().nameContains(npcName).inArea(validNpcFightArea)
+                    .isInteractingWithMe()
+                    .findClosestByPathDistance();
+
+
+            Autocast.enableAutocast(Autocast.FIRE_STRIKE);
+
+            if (npc.map(n -> !n.isHealthBarVisible() && n.interact("Attack")).orElse(false)) {
+                Log.info("Attacked NPC");
+                Waiting.waitUntil(4000, 125, () -> shouldEat() ||
+                        npcFinal.map(n -> n.isHealthBarVisible()).orElse(false));
+            } else if (npc.map(n -> n.isHealthBarVisible()).orElse(false)) {
+                Log.info("Combat Idle");
+                //wait until we are no longer interacting with or its health bar isn't visible
+                Waiting.waitUntil(15000, 150, () -> shouldEat() ||
+                        npcFinal.map(n -> !n.isHealthBarVisible()).orElse(false) ||
+                        !Query.npcs().nameContains(npcName)
+                                .inArea(validNpcFightArea)
+                                .isMyPlayerInteractingWith()
+                                .isAny());
+            }
+        }
+    }
+
+
     public void killNPC(RSNPC[] npc) {
         if (!SAFE_AREA1.contains(Player.getPosition()) && !SAFE_AREA2.contains(Player.getPosition()) && !safeTile.equals(Player.getPosition())) {
+            Log.info("Walking to safe area");
             Walking.blindWalkTo(safeTile);
             Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 8000);
         }
@@ -464,7 +569,7 @@ public class FightArena implements QuestTask {
                     .nameContains(NPCName)
                     .inArea(FIGHT_AREA)
                     .getResults();
-            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)){
+            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
                 Autocast.enableAutocast(Autocast.FIRE_STRIKE);
             }
             if (npc.length == 0) {
@@ -497,7 +602,7 @@ public class FightArena implements QuestTask {
 
             while (NPC.length > 0 && FIGHT_AREA.contains(NPC[0].getPosition())) {
                 General.sleep(50);
-                if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)){
+                if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
                     Autocast.enableAutocast(Autocast.FIRE_STRIKE);
                 }
                 if (!NPC[0].isInCombat()) {
@@ -530,15 +635,16 @@ public class FightArena implements QuestTask {
     }
 
     public void step6() {
-        if (COMBAT_AREA.contains(Player.getPosition())) {
+       /* if (COMBAT_AREA.contains(Player.getPosition())) {
             NPCInteraction.handleConversation();
             Walking.blindWalkTo(safeTile);
             Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 8000);
             General.sleep(General.randomSD(250, 1000, 600, 200));
-        }
+        }*/
         cQuesterV2.status = "Attacking Ogre";
         General.println("[Debug]: " + cQuesterV2.status);
-        killNPC(1225);
+        killNpc("Ogre");
+        // killNPC(1225);
     }
 
     public void step7() {
@@ -599,7 +705,7 @@ public class FightArena implements QuestTask {
         }
 
         if (COMBAT_AREA.contains(Player.getPosition())) {
-            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)){
+            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
                 Autocast.enableAutocast(Autocast.FIRE_STRIKE);
             }
             cQuesterV2.status = "Killing Bouncer";
@@ -609,7 +715,7 @@ public class FightArena implements QuestTask {
             //General.sleep(2500, 4000);
             if (!Player.getPosition().equals(safeTile))
                 Walking.blindWalkTo(safeTile);
-            if (Skill.PRAYER.getActualLevel() >= 43 && Prayer.getPrayerPoints() >0){
+            if (Skill.PRAYER.getActualLevel() >= 43 && Prayer.getPrayerPoints() > 0) {
                 Prayer.enableAll(Prayer.PROTECT_FROM_MELEE);
             }
             Timer.waitCondition(() -> SAFE_AREA1.contains(Player.getPosition()), 4000);
@@ -648,14 +754,13 @@ public class FightArena implements QuestTask {
             startQuest();
         }
         if (Game.getSetting(17) == 1) {
-            step2();
+            getArmour();
         }
         if (Game.getSetting(17) == 2) {
-            step3();
+            goToGuard();
         }
         if (Game.getSetting(17) == 3) {
-            step4();
-            Utils.longSleep();
+            buyKhaliBrew();
         }
         if (Game.getSetting(17) == 4) {
 
@@ -677,10 +782,12 @@ public class FightArena implements QuestTask {
         }
         if (Game.getSetting(17) == 9) {
             step7();
-            killScoprion();
+            killNpc("Scorpion");
+            // killScoprion();
         }
         if (Game.getSetting(17) == 10) {
-            killBouncer();
+            killNpc("Bouncer");
+          //  killBouncer();
         }
         if (Game.getSetting(17) == 11) {
             finishQuest();

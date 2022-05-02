@@ -5,12 +5,16 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Options;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
+
+import java.util.List;
 
 public class FishDrop implements Task {
 
@@ -45,12 +49,10 @@ public class FishDrop implements Task {
 
     @Override
     public void execute() {
-        RSItem[] rawFish = Entities.find(ItemEntity::new)
-                .nameContains("raw")
-                .getResults();
+        List<InventoryItem> raw = Query.inventory().nameContains("raw").toList();
         setShiftDroppingPref();
-        if (rawFish.length > 0)
-            Inventory.drop(rawFish);
+        if (raw.size() > 0)
+            org.tribot.script.sdk.Inventory.drop(raw);
     }
 
     @Override

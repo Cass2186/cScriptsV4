@@ -8,6 +8,7 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -363,8 +364,18 @@ public class HolyGrail implements QuestTask {
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
+        Optional<InventoryItem> prayerPot = Query.inventory()
+                .idEquals(ItemID.PRAYER_POTION).findClosestToMouse();
+
+        if (org.tribot.script.sdk.Prayer.getPrayerPoints() <5 &&
+            prayerPot.map(p-> p.click("Drink")).orElse(false)){
+            Utils.idleNormalAction();
+        }
+
         RSNPC[] titan = NPCs.findNearest(4067);
-        Optional<Npc> ttn = Query.npcs().idEquals(4067).findClosest();
+
+        Optional<Npc> ttn = QueryUtils.getNpc(4067);
+
         if (titan.length > 0 && !inFisherKingRealmAfterTitan.check()
                 && !inFisherKingCastle1.check() && ttn.isPresent()) {
             if (titan[0].isInCombat() && !titan[0].isInteractingWithMe()) {

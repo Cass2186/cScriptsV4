@@ -1,6 +1,7 @@
 package scripts.Tasks.Agility.Tasks.Falador;
 
 import org.tribot.api2007.Player;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.AgilityAreas;
@@ -19,7 +20,7 @@ public class GoToFaladorStart implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.MEDIUM;
+        return Priority.HIGH;
     }
 
     @Override
@@ -33,8 +34,7 @@ public class GoToFaladorStart implements Task {
 
     @Override
     public void execute() {
-
-        if (!PathingUtil.localNavigation(AgilityAreas.FALADOR_FINISH_AREA))
+        if (!PathingUtil.localNav(new WorldTile(3036, 3340, 0)))
             PathingUtil.walkToArea(AgilityAreas.FALADOR_FINISH_AREA, false);
     }
 
