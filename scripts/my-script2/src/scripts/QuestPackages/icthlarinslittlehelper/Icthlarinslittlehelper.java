@@ -10,6 +10,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -96,6 +97,7 @@ public class Icthlarinslittlehelper implements QuestTask {
     ObjectStep openPyramidDoor = new ObjectStep(6614, new RSTile(3295, 2780, 0),
             "Open", openPyramidDoorStep());// catFollower);
 
+
     public boolean openPyramidDoorStep() {
         RSItem[] kitten = Inventory.find("Kitten");
         if (kitten.length > 0 && kitten[0].click("Drop")) {
@@ -136,7 +138,6 @@ public class Icthlarinslittlehelper implements QuestTask {
 
     ObjectStep openPyramidDoorWithSymbol = new ObjectStep(6614, new RSTile(3295, 2779, 0),
             "Open", holySymbol);
-
 
 
     ObjectStep enterEastRoom = new ObjectStep(6643, new RSTile(3306, 9199, 0),
@@ -225,13 +226,17 @@ public class Icthlarinslittlehelper implements QuestTask {
     ObjectStep pickUpAnyJarAgain = new ObjectStep(6638, new RSTile(3286, 9194, 0), "Take");
     ObjectStep jumpPitWithSymbol = new ObjectStep(ObjectID.PIT, new RSTile(3292, 9194, 0),
             "Jump-Across", inNorthPyramid.check(), holySymbol);
+
     public void pickUpAnyJarStep() {
         int[] jars = {6638, 6636, 6634, 6640};
         for (int i : jars) {
             if (Inventory.find(i).length > 0 || Combat.isUnderAttack()) {
                 break;
             }
-            ObjectStep pickUpAnyJar = new ObjectStep(i, new RSTile(3286, 9194, 0), "Take");
+            if(Query.groundItems().idEquals(i).findClosest()
+                    .map(g->g.interact("Take")).orElse(false))
+                Waiting.waitUntil(5000, 500, ()-> org.tribot.script.sdk.Inventory.contains(i));
+
             pickUpAnyJar.execute();
             if (Inventory.find(i).length > 0 || Combat.isUnderAttack()) {
                 break;
@@ -304,11 +309,29 @@ public class Icthlarinslittlehelper implements QuestTask {
         // picked up apmeken, 405 = 1
     }
 
+    private boolean pastGap() {
+        Optional<GameObject> pit = Query.gameObjects().actionContains("Jump-across")
+                .nameContains("Pit").findBestInteractable();
+        return GameState.isInInstance() &&
+                pit.map(p -> p.getTile().getY() < MyPlayer.getTile().getY()).orElse(false);
+    }
+
+    private boolean clickWestDoor() {
+        if (pastGap()) {
+            Log.info("Opening Door");
+            if (QueryUtils.interactObject(QueryUtils.getObject(44059), "Open")) {
+                return Waiting.waitUntil(6500, 400,
+                        () ->  ChatScreen.isOpen() ||
+                                Widgets.isVisible(147));
+            }
+        }
+
+        return false;
+    }
 
     public void handlePuzzle() {
         if (!Interfaces.isInterfaceSubstantiated(147)) {
-            openWestDoor.execute();
-            NPCInteraction.waitForConversationWindow();
+            clickWestDoor();
             ChatScreen.handle();
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(147, 3), 5000, 6000);
         }
@@ -369,9 +392,9 @@ public class Icthlarinslittlehelper implements QuestTask {
         if (inPyramid.check()) {
             cQuesterV2.status = "Jumping Pit";
             jumpPit.setUseLocalNav(true);
-            if(PathingUtil.localNavigation(new RSTile(3292, 9193, 0)))
+            if (PathingUtil.localNavigation(new RSTile(3292, 9193, 0)))
                 PathingUtil.movementIdle();
-            if (MyPlayer.getRunEnergy() < 60){
+            if (MyPlayer.getRunEnergy() < 60) {
                 Log.debug("Drnking stamina potion for run energy");
                 Utils.clickInventoryItem(ItemID.SUMMER_PIE);
                 Utils.drinkPotion(ItemID.STAMINA_POTION);
@@ -403,10 +426,10 @@ public class Icthlarinslittlehelper implements QuestTask {
         }
     }
 
-    public void handleRitual(){
+    public void handleRitual() {
         int varbit = QuestVarbits.QUEST_ICTHLARINS_LITTLE_HELPER.getId();
-        for (int i =0 ; i <30; i++) {
-            if (Utils.getVarBitValue(varbit ) != 21)
+        for (int i = 0; i < 30; i++) {
+            if (Utils.getVarBitValue(varbit) != 21)
                 break;
 
             cQuesterV2.status = "Handling Ritual";
@@ -421,7 +444,7 @@ public class Icthlarinslittlehelper implements QuestTask {
             if (NPCInteraction.isConversationWindowUp()) {
                 cQuesterV2.status = "Handling Ritual - chat";
                 NPCInteraction.handleConversation();
-                Waiting.waitNormal(1200,150);
+                Waiting.waitNormal(1200, 150);
                 continue;
             }
             //varbit == 21
@@ -433,7 +456,7 @@ public class Icthlarinslittlehelper implements QuestTask {
             goToRitual.addStep(inSoph, openPyramidDoorWithSymbol);
 
             goToRitual.execute();
-            Waiting.waitNormal(500,15);
+            Waiting.waitNormal(500, 15);
         }
 
 
@@ -663,7 +686,7 @@ public class Icthlarinslittlehelper implements QuestTask {
             } else if (inSoph.check() && !inPyramid.check()) {
                 cQuesterV2.status = "Opening Pyramid door";
                 openPyramidDoor.execute();
-            } else if (!inPyramid.check()){
+            } else if (!inPyramid.check()) {
                 cQuesterV2.status = "Entering Rock";
                 enterRock.execute();
             }
@@ -722,16 +745,15 @@ public class Icthlarinslittlehelper implements QuestTask {
         } else if (Utils.getVarBitValue(varbit) == 20 || Utils.getVarBitValue(varbit) == 21
                 || Utils.getVarBitValue(varbit) == 22) {
             handleRitual();
-         }
-        else {
+        } else {
             Map<Integer, QuestStep> steps = loadSteps();
             Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
             cQuesterV2.status = step.map(s -> s.toString()).orElse("Unknown Step");
             step.ifPresent(QuestStep::execute);
         }
         // need this for symbol step
-        Waiting.waitNormal(1250,100);
-        if (NPCInteraction.isConversationWindowUp()){
+        Waiting.waitNormal(1250, 100);
+        if (NPCInteraction.isConversationWindowUp()) {
             NPCInteraction.handleConversation("Yes.");
         }
         if (Utils.inCutScene())
