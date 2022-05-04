@@ -158,7 +158,7 @@ public class PathingUtil {
     }
 
     public static boolean walkToTile(WorldTile destination) {
-        Log.info("[PathingUtil] Local walking V2 - Worldtile");
+        Log.info("[PathingUtil] Global walking V2 - Worldtile");
         return GlobalWalking.walkTo(destination);
     }
 

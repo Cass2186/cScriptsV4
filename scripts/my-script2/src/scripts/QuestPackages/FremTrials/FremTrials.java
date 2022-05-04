@@ -620,7 +620,7 @@ public class FremTrials implements QuestTask {
         } else if (seerText.map(s -> s.contains("My first is in water, and also in tea.")).orElse(false)) {
             solveDoor("time");
         }
-        Optional<Widget> enter = Query.widgets().inIndexPath(PUZZLE_PARENT).textContains("Enter").isVisible().findFirst();
+        Optional<Widget> enter = Query.widgets().inIndexPath(PUZZLE_PARENT).textContains("E N T E R").isVisible().findFirst();
         if (enter.map(Widget::click).orElse(false))
             Waiting.waitUntil(2500, 125, () -> !Widgets.isVisible(PUZZLE_PARENT));
         if (Utils.clickObj(SEER_DOOR_ENTRANCE, "Open")) //4165 is the door ID that you need to open to enter Seer's building

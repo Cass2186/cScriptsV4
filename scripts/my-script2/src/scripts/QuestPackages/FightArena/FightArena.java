@@ -142,8 +142,10 @@ public class FightArena implements QuestTask {
 
     public void getArmour() {
         cQuesterV2.status = "Getting Armour";
-        if (!ARMOUR_AREA.contains(Player.getPosition()) && !ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
-            PathingUtil.walkToTile(new WorldTile(2613, 3190, 0));
+        if (!ARMOUR_AREA.contains(Player.getPosition()) &&
+                !ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
+            Log.info("Walking to armour area");
+            PathingUtil.walkToTile(ARMOUR_AREA_DOOR.getRandomTile());
         }
         if (!ARMOUR_AREA.contains(Player.getPosition()) && ARMOUR_AREA_DOOR.contains(Player.getPosition())) {
             if (PathingUtil.localNav(new WorldTile(2613, 3190, 0)))

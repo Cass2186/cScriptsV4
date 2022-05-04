@@ -1791,6 +1791,12 @@ public class Utils {
         return Math.round(initial / roundTo) * roundTo;
     }
 
+    /**
+     * Rounds to nearest whole number specified
+     * @param initial double provided
+     * @param roundTo rounds to nearest specified value
+     * @return the rounded number
+     */
     public static int roundToNearest(double initial, int roundTo) {
         return (int) ((Math.round(initial) / roundTo) * roundTo);
     }
