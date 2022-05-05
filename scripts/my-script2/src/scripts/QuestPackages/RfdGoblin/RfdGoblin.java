@@ -35,12 +35,7 @@ public class RfdGoblin implements QuestTask {
     }
 
 
-    public static int faladorTab = 8009;
-    public static int lumbridgeTab = 8008;
-
     public static int dyedOrangeSlices = 7514;
-    public static int spicyMaggots = 7513;
-    public static int soggyBread = 7512;
     int GOBLIN_COOK_ID_4850 = 4850;
     int GOBLIN_COOK_ID = 4851;
     int WARTFACE_OBJ_ID = 12334;
@@ -48,8 +43,6 @@ public class RfdGoblin implements QuestTask {
     RSArea lumbridge = new RSArea(new RSTile(3213, 3225, 0), new RSTile(3216, 3219, 0));
     // RSArea lumbridgeKitchen = new RSArea(new RSTile(10693, 9102, 0), 20);
     RSArea goblinVillage = new RSArea(new RSTile(2959, 3507, 0), new RSTile(2962, 3504, 0));
-    RSArea goblinUnderground = new RSArea(new RSTile(6669, 10443, 0), 15);
-    RSArea goblinUnderground2 = new RSArea(new RSTile(10315, 11589, 0), 15);
 
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
@@ -99,34 +92,23 @@ public class RfdGoblin implements QuestTask {
     }
 
     public void getItems() {
-        if (!Inventory.contains(ItemID.BLUE_DYE) ||
-                !Inventory.contains(faladorTab) || !Inventory.contains(ItemID.ORANGE)) {
+        if (!initialItemReqs.check()) {
             cQuesterV2.status = "Getting Items";
             General.println("[Debug]: Getting Items");
             BankManager.open(true);
             BankManager.checkEquippedGlory();
             BankManager.depositAll(true);
-            BankManager.withdraw(1, true, ItemID.ORANGE);
-            BankManager.withdraw(1, true, ItemID.BLUE_DYE);
-            BankManager.withdraw(3, true, ItemID.FALADOR_TELEPORT);
-            BankManager.withdraw(1, true, ItemID.FISHING_BAIT);
-            BankManager.withdraw(1, true, ItemID.BREAD);
-            BankManager.withdraw(1, true, ItemID.KNIFE);
-            BankManager.withdraw(1, true, ItemID.SPICE);
-            BankManager.withdraw(1, true, ItemID.BUCKET_OF_WATER);
-            BankManager.withdraw(1, true, ItemID.CHARCOAL);
-            BankManager.withdraw(3, true, lumbridgeTab);
-            BankManager.withdraw(1, true, BankManager.STAMINA_POTION[0]);
-            BankManager.close(true);
+            initialItemReqs.withdrawItems();
         }
     }
 
-    public boolean enterInstance() {
+    public boolean enterRfdInstance() {
         if (!Game.isInInstance() || NPCs.findNearest("Gypsy").length == 0) {
             PathingUtil.walkToArea(lumbridge);
             if (Utils.clickObj("Large door", "Open")) {
-                Timer.waitCondition(() -> NPCs.findNearest("Gypsy").length > 0, 8000, 12000);
-                General.sleep(4000, 5000);
+                Waiting.waitUntil(9500, 500,
+                        () -> NPCs.findNearest("Gypsy").length > 0);
+                General.sleep(4000, 5000);//sleep once we enter instance as we cant' click right away
 
             }
         }
@@ -140,37 +122,39 @@ public class RfdGoblin implements QuestTask {
             getItems();
         }
         cQuesterV2.status = "Going to Start";
-        if (enterInstance() &&
+        if (enterRfdInstance() &&
                 Utils.clickObj(WARTFACE_OBJ_ID, "Inspect") && NpcChat.waitForChatScreen()) {
-            NPCInteraction.handleConversation("Yes.");
+            ChatScreen.handle("Yes.");
             Utils.modSleep();
         }
     }
 
 
+    // area is instanced so we check if the goblin cook is there
     public boolean goToGoblinCook() {
         boolean b = Query.npcs().idEquals(GOBLIN_COOK_ID_4850, GOBLIN_COOK_ID).isAny();
         if (!b) {
             cQuesterV2.status = " Going to cook";
             // go to the hut
             if (PathingUtil.walkToTile(new RSTile(2960, 3506, 0)))
-                Timer.waitCondition(() -> goblinVillage.contains(Player.getPosition()), 6000, 9000);
+               Waiting.waitUntil(9000, 500,
+                       () -> goblinVillage.contains(Player.getPosition()));
 
             //click ladder
             if (Utils.clickObj(12389, "Climb-down"))
-                Timer.slowWaitCondition(() -> goblinUnderground.contains(Player.getPosition()), 6000, 9000);
+                Waiting.waitUntil(6000, 1200, () ->
+                        Query.npcs().idEquals(GOBLIN_COOK_ID_4850, GOBLIN_COOK_ID).isAny());
 
         }
-        return Query.npcs().idEquals(GOBLIN_COOK_ID_4850, GOBLIN_COOK_ID).isAny() ||
-                goblinUnderground.contains(Player.getPosition());
+        return Query.npcs().idEquals(GOBLIN_COOK_ID_4850, GOBLIN_COOK_ID).isAny();
     }
 
     public void goToGoblinVillage() {
         cQuesterV2.status = "Talking to cook";
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID_4850) && NpcChat.waitForChatScreen()) {
-            NPCInteraction.handleConversation("I need your help...");
-            NPCInteraction.handleConversation("What do you need? Maybe I can get it for you.");
-            NPCInteraction.handleConversation();
+            ChatScreen.handle("I need your help...");
+            ChatScreen.handle("What do you need? Maybe I can get it for you.");
+            ChatScreen.handle();
             Utils.modSleep();
         }
     }
@@ -178,11 +162,11 @@ public class RfdGoblin implements QuestTask {
     public void talkToCook2() {
         cQuesterV2.status = "Talking to cook (#2)";
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID_4850) && NpcChat.waitForChatScreen()) {
-            NPCInteraction.handleConversation("I've got the charcoal you were after.");
-            NPCInteraction.handleConversation();
-           // General.sleep(General.random(20000, 30000));
+            ChatScreen.handle("I've got the charcoal you were after.");
+            ChatScreen.handle();
+            // General.sleep(General.random(20000, 30000));
         }
-        if (Waiting.waitUntil(3000, 200, () -> Utils.inCutScene()))
+        if (Waiting.waitUntil(4000, 500, Utils::inCutScene))
             Utils.cutScene();
 
     }
@@ -191,13 +175,13 @@ public class RfdGoblin implements QuestTask {
         cQuesterV2.status = "Talking to cook (#3)";
         General.println("[Debug: " + cQuesterV2.status);
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID) && NpcChat.waitForChatScreen()) {
-            NPCInteraction.handleConversation("I need your help...");
-            NPCInteraction.handleConversation();
+            ChatScreen.handle("I need your help...");
+            ChatScreen.handle();
         }
     }
 
     public void foodPrep() {
-        cQuesterV2.status = "RFD Goblin: Making food";
+        cQuesterV2.status = "Making food";
 
         // slice orange
         if (!Inventory.contains(ItemID.ORANGE_SLICES) && !Inventory.contains(dyedOrangeSlices)) {
@@ -209,21 +193,21 @@ public class RfdGoblin implements QuestTask {
         }
 
         // make dyed slices
-        if (!Inventory.contains(dyedOrangeSlices)) {
-            if (Utils.useItemOnItem(ItemID.BLUE_DYE, ItemID.ORANGE_SLICES))
-                Waiting.waitUntil(4000, 400, () -> Inventory.contains(dyedOrangeSlices));
+        if (!Inventory.contains(dyedOrangeSlices) &&
+                Utils.useItemOnItem(ItemID.BLUE_DYE, ItemID.ORANGE_SLICES)) {
+            Waiting.waitUntil(4000, 400, () -> Inventory.contains(dyedOrangeSlices));
         }
+        // make spicy maggots
+        if (!Inventory.contains(ItemID.SPICY_MAGGOTS) &&
+                Utils.useItemOnItem(ItemID.SPICE, ItemID.FISHING_BAIT)) {
+            Waiting.waitUntil(4000, 400,
+                    () -> Inventory.contains(ItemID.SPICY_MAGGOTS));
 
-        if (!Inventory.contains(ItemID.SPICY_MAGGOTS)) {
-            if (Utils.useItemOnItem(ItemID.SPICE, ItemID.FISHING_BAIT)) {
-                Waiting.waitUntil(4000, 400,
-                        () -> Inventory.contains(ItemID.SPICY_MAGGOTS));
-            }
         }
-
-        if (!Inventory.contains(ItemID.SOGGY_BREAD))
-            if (Utils.useItemOnItem(ItemID.BUCKET_OF_WATER, ItemID.BREAD))
-                Timer.waitCondition(() -> !Inventory.contains(ItemID.BUCKET_OF_WATER), 5000, 8000);
+        // make soggy bread
+        if (!Inventory.contains(ItemID.SOGGY_BREAD) &&
+                Utils.useItemOnItem(ItemID.BUCKET_OF_WATER, ItemID.BREAD))
+            Timer.waitCondition(() -> Inventory.contains(ItemID.SOGGY_BREAD), 5000, 8000);
 
     }
 
@@ -237,8 +221,8 @@ public class RfdGoblin implements QuestTask {
     }
 
     public void finishQuest() {
-        if (enterInstance()) {
-            RSObject[] wartface = Objects.findNearest(20, 12334);
+        if (enterRfdInstance()) {
+            RSObject[] wartface = Objects.findNearest(20, WARTFACE_OBJ_ID);
             if (wartface.length > 0) {
                 cQuesterV2.status = "Giving food to general";
                 General.println("[Debug]: " + cQuesterV2.status);
@@ -247,11 +231,10 @@ public class RfdGoblin implements QuestTask {
                     Walking.blindWalkTo(wartface[0].getPosition());
                     Utils.shortSleep();
                     wartface[0].adjustCameraTo();
-
                 }
-                if (Utils.useItemOnObject(ItemID.SLOP_OF_COMPROMISE, 12334)) {
+                if (Utils.useItemOnObject(ItemID.SLOP_OF_COMPROMISE, WARTFACE_OBJ_ID)) {
                     NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
+                    ChatScreen.handle();
                     Utils.modSleep();
                 }
             }
@@ -265,33 +248,25 @@ public class RfdGoblin implements QuestTask {
             buyItems();
             getItems();
             goToStart();
-        }
-        if (Game.getSetting(679) == 3070) {
+        } else if (Game.getSetting(679) == 3070) {
             goToGoblinVillage();
-        }
-        if (Game.getSetting(679) == 5630) {
+        } else if (Game.getSetting(679) == 5630) {
             talkToCook2();
-        }
-        if (Game.getSetting(679) == 8190) {
+        } else if (Game.getSetting(679) == 8190) {
             cQuesterV2.status = "RFD Goblin: Cut scene";
             Timer.waitCondition(() -> Game.getSetting(679) != 8190, 40000);
             Utils.cutScene();
-        }
-        if (Game.getSetting(679) == 73726) {
+        } else if (Game.getSetting(679) == 73726) {
             talkToChef3();
-        }
-        if (Game.getSetting(679) == 81406) {
+        } else if (Game.getSetting(679) == 81406) {
             foodPrep();
             talkToChef4();
-        }
-        if (Game.getSetting(679) == 83966) {
+        } else if (Game.getSetting(679) == 83966) {
             finishQuest();
-        }
-        if (Game.getSetting(679) == 86524) {
+        } else if (Game.getSetting(679) == 86524) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
         }
-
     }
 
 
