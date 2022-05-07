@@ -15,6 +15,10 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.CrabUtils;
 import scripts.AntiBan;
 import scripts.Data.Const;
@@ -24,6 +28,7 @@ import scripts.ItemID;
 import scripts.Utils;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class Fight implements Task {
 
@@ -32,20 +37,22 @@ public class Fight implements Task {
      */
 
 
-    public static RSNPC[] getAllCrabs() {
-        return NPCs.find(Const.get().SAND_CRAB_IDS);
+    public static List<Npc> getAllCrabs() {
+        return Query.npcs().idEquals(Const.SAND_CRAB_IDS).toList();
     }
 
-    public static RSNPC[] getAllRocks() {
-        return NPCs.find(Const.get().SAND_ROCKS_IDS);
+    public static List<Npc> getAllRocks() {
+        return Query.npcs().idEquals(Const.SAND_ROCKS_IDS).toList();
+
     }
 
     /**
      * @return A 9x9 box with coordinates top right (x+3, y+3), and bottom left (x-3, y-3).
      * @TODO make it so it is only 3x3 for sandcrabs and 9x9 for ammonite
      */
-    public static RSArea getAggroArea() {
-        return new RSArea(Player.getPosition().translate(3, 3), Player.getPosition().translate(-3, -3));
+    public static Area getAggroArea() {
+        return Area.fromRectangle(MyPlayer.getTile().translate(1, 1),
+                MyPlayer.getTile().translate(-1, -1));
     }
 
     /**
@@ -54,8 +61,8 @@ public class Fight implements Task {
      * @return Whether or not there are sandy rocks next to the player.
      */
     public static boolean sandyRocksNearby() {
-        RSArea aggroArea = getAggroArea();
-        for (RSNPC npc : getAllRocks())
+        Area aggroArea = getAggroArea();
+        for (Npc npc : getAllRocks())
             if (aggroArea.contains(npc))
                 return true;
         return false;
@@ -67,8 +74,8 @@ public class Fight implements Task {
      * @return Whether or not there are sand crabs next to the player.
      */
     public static boolean sandCrabsNearby() {
-        RSArea aggroArea = getAggroArea();
-        for (RSNPC npc : getAllCrabs())
+        Area aggroArea = getAggroArea();
+        for (Npc npc : getAllCrabs())
             if (aggroArea.contains(npc))
                 return true;
         return false;
@@ -80,28 +87,28 @@ public class Fight implements Task {
      *
      * @return All of the tiles of sandy rocks in a 3x3 box around the player.
      */
-    public static RSTile[] getSandyRockTilesNearby() {
-        LinkedList<RSTile> tiles = new LinkedList<RSTile>();
-        RSArea aggroArea = getAggroArea();
-        for (RSNPC npc : getAllRocks())
+    public static WorldTile[] getSandyRockTilesNearby() {
+        LinkedList<WorldTile> tiles = new LinkedList<WorldTile>();
+        Area aggroArea = getAggroArea();
+        for (Npc npc : getAllRocks())
             if (aggroArea.contains(npc))
-                tiles.add(npc.getPosition());
-        return tiles.toArray(new RSTile[tiles.size()]);
+                tiles.add(npc.getTile());
+        return tiles.toArray(new WorldTile[tiles.size()]);
     }
 
     public static boolean checkAggro() {
-        RSArea area = new RSArea(Vars.get().crabTile, 2);
-        if (sandyRocksNearby() && area.contains(Player.getPosition())) {
+        Area area = Area.fromRadius(Utils.getWorldTileFromRSTile(Vars.get().crabTile), 2);
+        if (sandyRocksNearby() && area.contains(MyPlayer.getTile())) {
             // If there are sandy rocks nearby, wait 1200-1800 ms and check again to make sure the crab wasn't just respawning.
-            RSTile[] rockTilesFirstCheck = getSandyRockTilesNearby();
-            if (!Timing.waitCondition(() -> !sandyRocksNearby(), General.random(1200, 1800))) {
+            WorldTile[] rockTilesFirstCheck = getSandyRockTilesNearby();
+            if (!Waiting.waitUntil(1500, 350, () -> !sandyRocksNearby())) {
                 /* Make sure the sandy rock has the same tile as before, just in case a crab respawned just as the second check took place.
                  * May not be necessary as the wait condition checks constantly if there are any sandy rocks nearby
                  */
-                RSTile[] rockTilesSecondCheck = getSandyRockTilesNearby();
-                for (RSTile tile1 : rockTilesFirstCheck)
-                    for (RSTile tile2 : rockTilesSecondCheck)
-                        if (tile1.getPosition().equals(tile2)) {
+                WorldTile[] rockTilesSecondCheck = getSandyRockTilesNearby();
+                for (WorldTile tile1 : rockTilesFirstCheck)
+                    for (WorldTile tile2 : rockTilesSecondCheck)
+                        if (tile1.getTile().equals(tile2)) {
                             General.println("[Debug]: Check aggro returning true");
                             Vars.get().shouldResetAggro = true;
                             return true;
@@ -138,16 +145,16 @@ public class Fight implements Task {
 
     private void handleProgressive() {
         if (Vars.get().progressiveMelee) {
-            if (Skill.STRENGTH.getActualLevel() < 58){
+            if (Skill.STRENGTH.getActualLevel() < 58) {
                 org.tribot.script.sdk.
                         Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.AGGRESSIVE);
             } else if (Skill.ATTACK.getActualLevel() < 60) {
                 org.tribot.script.sdk.
                         Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.ACCURATE);
-            } else if (Skill.STRENGTH.getActualLevel() < 62){
+            } else if (Skill.STRENGTH.getActualLevel() < 62) {
                 org.tribot.script.sdk.
                         Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.AGGRESSIVE);
-            } else if (Skill.DEFENCE.getActualLevel() < 60){
+            } else if (Skill.DEFENCE.getActualLevel() < 60) {
                 org.tribot.script.sdk.
                         Combat.setAttackStyle(org.tribot.script.sdk.Combat.AttackStyle.DEFENSIVE);
             }
@@ -166,7 +173,7 @@ public class Fight implements Task {
             return;
         }
 
-        if (Combat.isUnderAttack() || Combat.getAttackingEntities().length > 0) {
+        if (MyPlayer.isHealthBarVisible() || Combat.getAttackingEntities().length > 0) {
             if (Vars.get().usingPrayer) {
                 if (!Prayer.isPrayerEnabled(Prayer.PRAYERS.HAWK_EYE))
                     Prayer.enable(Prayer.PRAYERS.HAWK_EYE);
@@ -186,14 +193,14 @@ public class Fight implements Task {
             } else {
                 AntiBan.timedActions();
                 Vars.get().task = "AFK";
-                waitCond(false, true);
-                if (Combat.isUnderAttack() && Combat.getHPRatio() > Vars.get().eatAt)
+                waitCond(true, true);
+                if (MyPlayer.isHealthBarVisible() && Combat.getHPRatio() > Vars.get().eatAt)
                     return; // still in combat so we skip abc2 sleep
             }
             if (Combat.getHPRatio() < Vars.get().eatAt) {
                 Utils.shortSleep(); // short sleep so we don't immediately eat
                 Vars.get().shouldEat = true;
-            } else if (chance < 60) {
+            } else if (chance < 65) {
                 Utils.idleAfkAction();
             } else {
                 // Utils.idleAfkAction();
@@ -216,7 +223,7 @@ public class Fight implements Task {
     @Override
     public boolean validate() {
         return (Vars.get().crabTile.equals(Player.getPosition()) &&
-                (Combat.isUnderAttack() || Combat.getAttackingEntities().length > 0));
+                (MyPlayer.isHealthBarVisible() || Combat.getAttackingEntities().length > 0));
     }
 
     @Override

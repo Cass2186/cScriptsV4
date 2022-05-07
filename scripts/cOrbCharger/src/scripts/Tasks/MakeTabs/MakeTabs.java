@@ -31,50 +31,47 @@ import java.util.stream.Collectors;
 
 public class MakeTabs implements Task {
 
-
-    int STUDYING_ANIMATION = 9491;
-    int ANIMATION_ID = 4068;
-    int PARENT_INTERFACE_ID = 79;
-    int NOTED_SOFT_CLAY = 1762;
-    int SOFT_CLAY = 1761;
+    private int ANIMATION_ID = 4068;
+    private int PARENT_INTERFACE_ID = 79;
 
     public static boolean atLecturn() {
         return Query.gameObjects()
                 .nameContains("Lectern")
                 .maxDistance(30)
-                .findBestInteractable()
-                .isPresent();
+                .isReachable()
+                .isAny();
     }
 
-
-    public void studyLecturn(String teleport) {
-        if (Inventory.contains(ItemID.LAW_RUNE) &&
-                Inventory.contains(ItemID.SOFT_CLAY) && atLecturn()) {
+    private void studyLecturn(String teleport) {
+        if (Inventory.contains(ItemID.LAW_RUNE, ItemID.SOFT_CLAY) && atLecturn()) {
             if (MyPlayer.getAnimation() == ANIMATION_ID) {
                 Log.debug("Making Tabs");
-                Timer.slowWaitCondition(() ->
+                Waiting.waitUntil(70000, Utils.random(1000, 2400), () ->
                         !Inventory.contains(ItemID.SOFT_CLAY) ||
-                                Widgets.get(233, 2).isPresent(), 60000, 69000);
+                                Widgets.get(233, 2).isPresent());
                 Vars.get().profit = Utils.getInventoryValue() - Const.startInvValue;
                 //Log.debug("Current profit is " + profit);
                 Utils.idleAfkAction();
                 return;
             }
-            Optional<GameObject> lectern = Query.gameObjects().nameContains("Lectern")
+
+            Optional<GameObject> lectern = Query.gameObjects()
+                    .nameContains("Lectern")
+                    .maxDistance(30)
+                    .isReachable() //TODO verify this doesn't break it
                     .findBestInteractable();
 
-            if (lectern.isPresent()) {
-                Log.debug("Going to Lectern");
+            if (!Widgets.isVisible(PARENT_INTERFACE_ID) && lectern.isPresent()) {
 
-                if (!lectern.get().isVisible() || lectern.get().getTile().distanceTo(MyPlayer.getPosition()) > 10) {
-                    Log.debug("Walking closer to Lectern");
-                    if (lectern.map(l -> PathingUtil.localNav(l.getTile().translate(-1,-1))).orElse(false))
-                        Timer.waitCondition(() -> lectern.get().isVisible(), 6000, 9000);
+                if (lectern.map(l -> !l.isVisible() && l.getTile().distance() > 10).orElse(false)) {
+                    Log.info("Walking closer to Lectern");
+                    if (lectern.map(l -> PathingUtil.localNav(l.getTile().translate(-1, -1))).orElse(false))
+                        Waiting.waitUntil(8000, 450, () -> lectern.get().isVisible());
                 }
 
-                if (!Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID) &&
-                        Utils.clickObj(lectern, "Study"))
-                    Timer.slowWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE_ID), 8000, 12000);
+                if (lectern.map(l -> l.interact("Study")).orElse(false))
+                    Waiting.waitUntil(10000, 750, () ->
+                            Widgets.isVisible(PARENT_INTERFACE_ID));
 
 
                 Optional<Widget> tabWidget = Query.widgets()
@@ -84,7 +81,7 @@ public class MakeTabs implements Task {
                         .findFirst();
 
                 if (tabWidget.map(Widget::click).orElse(false))
-                    Timer.waitCondition(() -> Player.getAnimation() == ANIMATION_ID, 5000, 7000);
+                    Waiting.waitUntil(6000, 550, () -> Player.getAnimation() == ANIMATION_ID);
 
             }
         }
@@ -107,13 +104,15 @@ public class MakeTabs implements Task {
 
     @Override
     public boolean validate() {
-        return org.tribot.script.sdk.Inventory.contains(ItemID.LAW_RUNE) &&
-                org.tribot.script.sdk.Inventory.contains(SOFT_CLAY) && atLecturn();
+        return Inventory.contains(ItemID.LAW_RUNE, ItemID.SOFT_CLAY) &&
+                atLecturn();
     }
 
     @Override
     public void execute() {
         if (WorldHopper.getCurrentWorld() != 330) {
+            if (ChatScreen.isOpen())
+                ChatScreen.handle();
             WorldHopper.hop(330);
             return;
         }

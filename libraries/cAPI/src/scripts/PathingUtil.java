@@ -21,12 +21,12 @@ import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import org.tribot.script.sdk.walking.WalkState;
-import org.tribot.script.sdk.walking.adapter.GlobalWalkerAdapter;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class PathingUtil {
     public static DPathNavigator nav = new DPathNavigator();
 
     private static int nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);
-    private static int eatAtPercent = General.randomSD(50, 70, 65, 7);
+    private static int eatAtPercent = General.randomSD(45, 70, 60, 5);
     private static RSArea stonesArea = new RSArea(new RSTile(2521, 3595, 0), 5);
 
     private static void setDaxPref() {
@@ -102,6 +102,64 @@ public class PathingUtil {
         });
     }
 
+    private static boolean handleFood() {
+        Optional<InventoryItem> eatable = Query.inventory().actionContains("Eat").findClosestToMouse();
+        if (Combat.getHPRatio() <= eatAtPercent) {
+            Log.warn("[DaxPref]: Need to eat food");
+            if (eatable.map(e -> e.click("Eat")).orElse(false)) {
+                Utils.idleNormalAction();
+                eatAtPercent = General.randomSD(45, 70, 60, 5);
+                Log.info("[DaxPref]: Next eating at % " + eatAtPercent);
+                return true;
+            } else if (eatable.isEmpty()) {
+                Log.warn("[DaxPref]: Need to eat food, but none in inventory");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static WalkState getWalkState() {
+        // for horror from the deep rock area
+        if (stonesArea.contains(Player.getPosition())) {
+            Log.info("[DaxPref]: In stone area");
+            if (!handleFood())
+                return WalkState.FAILURE;
+        }
+
+        // handle stamina
+        if (Utils.getVarBitValue(25) == 0 && MyPlayer.getRunEnergy() <= nextStaminaPotionUse) {
+            Optional<InventoryItem> invStam = Query.inventory().idEquals(ItemID.STAMINA_POTION).findClosestToMouse();
+            if (invStam.map(s -> s.click("Drink")).orElse(false)) {
+                nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);
+                if (Waiting.waitUntilAnimating(1700))
+                    Utils.idleNormalAction();
+            }
+        }
+
+        // handle poison
+        if (MyPlayer.isPoisoned()) {
+            Optional<InventoryItem> invAntiPoison = Query.inventory()
+                    .idEquals(ItemID.ANTIPOISON1, ItemID.ANTIPOISON2,
+                            ItemID.ANTIPOISON3, ItemID.ANTIPOISON4).findClosestToMouse();
+            Optional<InventoryItem> invAntidote = Query.inventory()
+                    .idEquals(ItemID.ANTIDOTE_PLUS_PLUS).findClosestToMouse();
+
+            if ((invAntiPoison.map(p -> p.click("Drink")).orElse(false) ||
+                    invAntidote.map(p -> p.click("Drink")).orElse(false)) &&
+                    Waiting.waitUntilAnimating(1700)) {
+                Utils.idleNormalAction();
+            }
+        }
+        //handle general eating
+        if (Combat.getHPRatio() <= eatAtPercent) {
+            if (!handleFood())
+                return WalkState.FAILURE;
+        }
+
+        return WalkState.CONTINUE;
+    }
+
     public static boolean blindWalkToArea(RSArea area) {
         if (!area.contains(Player.getPosition())) {
             checkRun();
@@ -145,22 +203,19 @@ public class PathingUtil {
         });
     }
 
-    public static boolean lle(WorldTile destination, Supplier<WalkState> state) {
-        Log.log("[PathingUtil] walking V2 - Worldtile");
+    public static boolean walkToTile(WorldTile destination) {
+        Log.info("[PathingUtil] Global Walking V2 - Worldtile");
         for (int i = 0; i < 3; i++) {
-            if (!GlobalWalking.walkTo(destination, state)) {
-                Log.log("[PathingUtil]  Worldtile failed to generate a path, sleeping 1.5s");
-                Waiting.waitNormal(1500, 300);
+            if (!GlobalWalking.walkTo(destination,  PathingUtil::getWalkState)) {
+                Log.warn("[PathingUtil]  GlobalWalking failed to generate a path, sleeping ~1-2s");
+                Waiting.waitNormal(1700, 200);
             } else
                 return true;
         }
         return false;
     }
 
-    public static boolean walkToTile(WorldTile destination) {
-        Log.info("[PathingUtil] Global walking V2 - Worldtile");
-        return GlobalWalking.walkTo(destination);
-    }
+
 
 
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
@@ -186,7 +241,7 @@ public class PathingUtil {
                 .travelThroughDoors(travelThroughDoors)
                 .build().getPath(destination);
         Log.info("[PathingUtil] Local walking V2 - LocalTile (doors = " + travelThroughDoors + ")");
-        return LocalWalking.walkPath(path);
+        return LocalWalking.walkPath(path,  PathingUtil::getWalkState);
     }
 
     public static boolean localNav(LocalTile destination) {
@@ -610,8 +665,8 @@ public class PathingUtil {
                 }
 
                 if (targetTile.map(PathingUtil::localNav).orElse(false) ||
-                        GlobalWalking.walkTo(area.getCenter()) ||
-                        GlobalWalking.walkTo(area.getRandomTile())) {
+                        GlobalWalking.walkTo(area.getCenter(),  PathingUtil::getWalkState) ||
+                        GlobalWalking.walkTo(area.getRandomTile(),  PathingUtil::getWalkState)) {
                     val finalTargetTile = targetTile;
                     currentTime = System.currentTimeMillis();
                     if (Waiting.waitUntil(1500, 25, MyPlayer::isMoving) &&

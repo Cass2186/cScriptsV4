@@ -34,8 +34,8 @@ public class CrabUtils {
      * @return A box, use 1 for sandcrabs and 3 for ammonite
      */
     public static Area getAggroArea(int translateDistance) {
-        return  Area.fromRectangle(MyPlayer.getPosition().translate(translateDistance, translateDistance),
-                MyPlayer.getPosition().translate(-translateDistance, -translateDistance));
+        return  Area.fromRectangle(MyPlayer.getTile().translate(translateDistance, translateDistance),
+                MyPlayer.getTile().translate(-translateDistance, -translateDistance));
     }
 
     /**
@@ -71,12 +71,16 @@ public class CrabUtils {
         return tiles.toArray(WorldTile[]::new);
     }
 
+    public static List<Npc> getInteractingNpcs(){
+        return Query.npcs().isInteractingWithMe().toList();
+    }
+
     public static boolean lostAgro(WorldTile crabTile) {
         Area area = Area.fromRadius(crabTile, 2);
-        if (sandyRocksNearby() && area.contains(MyPlayer.getPosition())) {
+        if (sandyRocksNearby() && area.contains(MyPlayer.getTile())) {
             // wait to see if the rocks agro us
              if(!Waiting.waitUntil(General.random(1600,2000), CrabUtils::sandCrabsNearby)){
-                 Log.debug("LOST AGRO");
+                 Log.info("Lost Agro");
                  return true;
              }
 

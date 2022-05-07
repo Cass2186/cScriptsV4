@@ -8,6 +8,9 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.api2007.util.DPathNavigator;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import scripts.API.CrabUtils;
 import scripts.Data.Const;
 import scripts.Data.CrabTile;
 import scripts.Data.Vars;
@@ -62,11 +65,10 @@ public class ResetAggro implements Task {
 
         nav.setAcceptAdjacent(true);
 
-        if ((!Combat.isUnderAttack() && Player.getAnimation() == -1 &&
-                Player.getRSPlayer().getInteractingCharacter() == null )||
+        if ((!MyPlayer.isHealthBarVisible()  && CrabUtils.getInteractingNpcs().isEmpty()) ||
                 Vars.get().shouldResetAggro) { // double checks to make sure you're actually not in combat
             Vars.get().task = "Resetting Aggression";
-            General.println("[Reset Aggro]: Resetting Aggression");
+            Log.info("[Reset Aggro]: Resetting Aggression");
             //attempt to feed a path to dax before trying to us dax to generate the path
             PathingUtil.walkToTile(resetArea.getRandomTile());
             if (!resetArea.contains(Player.getPosition()))
@@ -90,7 +92,7 @@ public class ResetAggro implements Task {
 
     @Override
     public boolean validate() {
-        if (!org.tribot.script.sdk.Login.isLoggedIn()){
+        if (!org.tribot.script.sdk.Login.isLoggedIn()) {
             Login.login();
             Utils.shortSleep();
         }
@@ -100,7 +102,7 @@ public class ResetAggro implements Task {
 
     @Override
     public void execute() {
-        if (!org.tribot.script.sdk.Login.isLoggedIn()){
+        if (!org.tribot.script.sdk.Login.isLoggedIn()) {
             Login.login();
             Utils.shortSleep();
         }

@@ -6,7 +6,12 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.TheFeud.TheFeud;
@@ -19,6 +24,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class GrandTree implements QuestTask {
 
@@ -63,10 +69,10 @@ public class GrandTree implements QuestTask {
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
-                    new GEItem(   ItemID.SUMMER_PIE, 1, 50),
+                    new GEItem(ItemID.SUMMER_PIE, 1, 50),
                     new GEItem(ItemID.RING_OF_DUELING[0], 2, 100),
 
-                    new GEItem( ItemID.NECKLACE_OF_PASSAGE[0], 2, 100),
+                    new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 2, 100),
                     new GEItem(ItemID.MIND_RUNE, 300, 20),
                     new GEItem(ItemID.FIRE_RUNE, 1200, 20),
                     new GEItem(ItemID.STAFF_OF_AIR, 1, 50),
@@ -145,10 +151,10 @@ public class GrandTree implements QuestTask {
             NPCInteraction.handleConversation();
             General.sleep(2000, 3000);
             NPCInteraction.waitForConversationWindow();
-          //  NPCInteraction.handleConversation();
+            //  NPCInteraction.handleConversation();
             NPCInteraction.handleConversation(KING_CHAT2, "Yes.");
             NPCInteraction.handleConversation();
-         //   NPCInteraction.handleConversation();
+            //   NPCInteraction.handleConversation();
             General.sleep(2000, 3000);
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Yes.");
@@ -162,7 +168,7 @@ public class GrandTree implements QuestTask {
         PathingUtil.walkToArea(hazelmeerBottom, false);
         Timer.waitCondition(() -> hazelmeerBottom.contains(Player.getPosition()), 5000, 7000);
         if (Utils.clickObj("Ladder", "Climb-up"))
-           Timer.waitCondition(()-> Player.getPosition().getPlane() ==1 , 8000,12000);
+            Timer.waitCondition(() -> Player.getPosition().getPlane() == 1, 8000, 12000);
 
         if (NpcChat.talkToNPC("Hazelmere")) {
             NPCInteraction.waitForConversationWindow();
@@ -236,7 +242,7 @@ public class GrandTree implements QuestTask {
             if (NpcChat.talkToNPC("King Narnode Shareen")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-              //  NPCInteraction.handleConversation();
+                //  NPCInteraction.handleConversation();
                 General.sleep(General.randomSD(1000, 7000, 3500, 1200));
             }
         }
@@ -252,8 +258,8 @@ public class GrandTree implements QuestTask {
             if (NpcChat.talkToNPC("Charlie")) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
-             //   NPCInteraction.handleConversation();
-            //    NPCInteraction.handleConversation();
+                //   NPCInteraction.handleConversation();
+                //    NPCInteraction.handleConversation();
                 General.sleep(General.randomSD(1000, 7000, 3500, 1200));
             }
         }
@@ -305,7 +311,7 @@ public class GrandTree implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (NpcChat.talkToNPC("Captain Errdo")) {
                 NPCInteraction.waitForConversationWindow();
-               // NPCInteraction.handleConversation();
+                // NPCInteraction.handleConversation();
                 NPCInteraction.handleConversation(CAPTAIN_ERRDO);
                 NPCInteraction.handleConversation();
 
@@ -325,7 +331,7 @@ public class GrandTree implements QuestTask {
                     NPCInteraction.handleConversation("Lu.");
                     NPCInteraction.handleConversation("Min.");
                     NPCInteraction.handleConversation();
-                    Timer.waitCondition(()-> AFTER_GATE_AREA.contains(Player.getPosition()), 10000);
+                    Timer.waitCondition(() -> AFTER_GATE_AREA.contains(Player.getPosition()), 10000);
                 }
             }
         }
@@ -352,7 +358,7 @@ public class GrandTree implements QuestTask {
         NPCInteraction.handleConversation("He loves worm holes.");
         NPCInteraction.handleConversation("Anita.");
         NPCInteraction.handleConversation();
-      //  NPCInteraction.handleConversation();
+        //  NPCInteraction.handleConversation();
         Utils.modSleep();
     }
 
@@ -476,9 +482,9 @@ public class GrandTree implements QuestTask {
 
 
     public void step15() {
-        Log.log("[Debug]: Step 15: Going to Glough's");
+        Log.info("[Debug]: Step 15: Going to Glough's");
         if (Inventory.find(staffOfAir).length < 1 && Equipment.find(staffOfAir).length < 1 || Inventory.find(mindRune).length < 1) {
-            Log.log("[Debug]: Step 15: Getting items");
+            Log.info("[Debug]: Step 15: Getting items");
             getItemsFight();
         }
 
@@ -549,29 +555,41 @@ public class GrandTree implements QuestTask {
     RSArea SAFE_AREA2 = new RSArea(new RSTile(2492, 9865, 0), new RSTile(2491, 9865, 0));
     RSTile SAFE_SPOT2 = new RSTile(2492, 9865, 0);
 
-    public void step17() { // Fight
+    WorldTile SAFE_SPOT_WORLD_TILE = new WorldTile(2492, 9865, 0);
+
+    public void killBlackDemon() { // Fight
         if (!glough2ndFloor.contains(Player.getPosition())) {
+            Optional<Npc> demon = Query.npcs().nameContains("Black demon")
+                    .findClosestByPathDistance();
+            Optional<Npc> interactingWith = Query.npcs().nameContains("Black demon")
+                    .isMyPlayerInteractingWith().findBestInteractable();
+
+            if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
+                Autocast.enableAutocast(Autocast.FIRE_STRIKE);
+            }
 
             RSNPC[] blackDemon = NPCs.findNearest("Black demon");
             if (blackDemon.length > 0) {
-                if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
-                    Autocast.enableAutocast(Autocast.FIRE_STRIKE);
-                }
                 if (!SAFE_AREA2.contains(Player.getPosition())) {
                     cQuesterV2.status = "Going to SafeTile.";
                     General.println("[Debug]: " + cQuesterV2.status);
-                    Walking.clickTileMS(SAFE_SPOT2, "Walk here");
-                    Timer.abc2WaitCondition(() -> SAFE_AREA2.contains(Player.getPosition()), 4000, 6000);
-                }
-                if (SAFE_AREA2.contains(Player.getPosition()) && !blackDemon[0].isInCombat()) {
-                    cQuesterV2.status = "Attacking.";
-                    General.println("[Debug]: " + cQuesterV2.status);
-                    AccurateMouse.click(blackDemon[0], "Attack");
-                    General.sleep(General.random(1000, 3000));
+                    if (SAFE_SPOT_WORLD_TILE.interact("Walk here"))
+                        Waiting.waitUntil(4000, 150, () -> SAFE_SPOT_WORLD_TILE.equals(MyPlayer.getTile()));
+                    // Timer.abc2WaitCondition(() -> SAFE_AREA2.contains(Player.getPosition()), 4000, 6000);
                 }
                 if (Combat.getHPRatio() < General.random(41, 66)) {
-                    cQuesterV2.status = "Eating.";
-                    AccurateMouse.click(Inventory.find(lobster)[0], "Eat");
+                    cQuesterV2.status = "Eating";
+                    EatUtil.eatFood(false);
+                }
+                if (SAFE_SPOT_WORLD_TILE.equals(MyPlayer.getTile())) {
+                    if (demon.map(d -> !d.isHealthBarVisible() && d.interact("Attack")).orElse(false)) {
+                        cQuesterV2.status = "Attacking";
+                        Waiting.waitUntil(3500, 250,
+                                () -> demon.map(d -> !d.isHealthBarVisible()).orElse(false));
+                    } else {
+                        cQuesterV2.status = "Combat idle";
+                        Waiting.waitNormal(700, 50);
+                    }
                 }
             }
         }
@@ -724,7 +742,7 @@ public class GrandTree implements QuestTask {
         }
         if (Game.getSetting(150) == 130) {
             step16();
-            step17();
+            killBlackDemon();
         }
         if (Game.getSetting(150) == 140) {
             step18();

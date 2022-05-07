@@ -155,6 +155,9 @@ public class EnterHouse implements Task {
 
     @Override
     public void execute() {
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
+
         if (WorldHopper.getCurrentWorld() != 330) {
             WorldHopper.hop(330);
             return;

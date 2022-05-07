@@ -27,15 +27,13 @@ public class UnnoteClay implements Task {
                 Inventory.contains(ItemID.getNotedId(ItemID.SOFT_CLAY));
     }
 
-    public Optional<Npc> getPhials() {
-        return Query
-                .npcs()
+    private Optional<Npc> getPhials() {
+        return Query.npcs()
                 .nameContains("Phials")
-                .stream()
-                .findFirst();
+                .findClosestByPathDistance();
     }
 
-    public void unNoteClay() {
+    private void unNoteClay() {
         if (!MakeTabs.atLecturn()) {
             Log.debug("Unnoting clay");
 
@@ -45,27 +43,24 @@ public class UnnoteClay implements Task {
                     .findFirst();
             Optional<Npc> phials = getPhials();
 
-            if (phials.isPresent() && notedClay.isPresent()) {
-                if (!phials.get().isVisible()) {
-                    LocalWalking.walkTo(phials.get().getTile().translate(0, 1));
-                    Waiting.waitNormal(1250, 220);
-                }
-                if (notedClay.map(c -> c.useOn(phials.get())).orElse(false) &&
-                        Timer.waitCondition(Player::isMoving, 1200, 1800)) {
-                    Timer.waitCondition(NPCInteraction::isConversationWindowUp, 6000, 8000);
+            if (phials.map(p -> !p.isVisible() &&
+                    LocalWalking.walkTo(p.getTile().translate(0, 2))).orElse(false))
+                Waiting.waitNormal(1750, 200);
 
-                }
+            if (phials.map(p -> notedClay.map(c -> c.useOn(p)).orElse(false)).orElse(false) &&
+                    Waiting.waitUntil(1800, 150, Player::isMoving)) {
+                Waiting.waitUntil(7500, 400, ChatScreen::isOpen);
+
             }
-            if (NPCInteraction.isConversationWindowUp()) {
-                if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
-                    Timer.waitCondition(() -> org.tribot.script.sdk.Inventory.contains(ItemID.SOFT_CLAY),
-                            2000, 4000);
+            if (ChatScreen.isOpen()) {
+                if (ChatScreen.handle("Exchange All"))
+                    Waiting.waitUntil(3500, 250, () -> Inventory.contains(ItemID.SOFT_CLAY));
                 else if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange 5"))
-                    Timer.waitCondition(() ->
-                                    org.tribot.script.sdk.Inventory.contains(ItemID.SOFT_CLAY),
-                            2000, 4000);
+                    Waiting.waitUntil(3500, 250, () ->
+                            Inventory.contains(ItemID.SOFT_CLAY));
 
-                if (NPCInteraction.isConversationWindowUp())
+                // if still open
+                if (ChatScreen.isOpen())
                     ChatScreen.handle();
             }
         } else {
@@ -75,9 +70,8 @@ public class UnnoteClay implements Task {
 
     public static void leaveHouse() {
         if (Game.isInInstance() && Utils.clickObject(4525, "Enter", false)) {
-            Timer.waitCondition(() -> !Game.isInInstance() &&
-                            Query.npcs().nameContains("Phials").stream().findFirst().isPresent(),
-                    7000, 9000);
+            Waiting.waitUntil(9000, 750, () -> !Game.isInInstance() &&
+                    Query.npcs().nameContains("Phials").stream().findFirst().isPresent());
         }
     }
 
