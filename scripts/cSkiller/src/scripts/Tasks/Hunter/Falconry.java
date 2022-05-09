@@ -10,6 +10,10 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Npc;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.AntiBan;
@@ -18,6 +22,8 @@ import scripts.Data.Vars;
 import scripts.Tasks.Hunter.HunterData.HunterConst;
 import scripts.Timer;
 import scripts.Utils;
+
+import java.util.Optional;
 
 public class Falconry implements Task {
 
@@ -68,28 +74,30 @@ public class Falconry implements Task {
     public void catchKibbets() {
         if (getFalcon()) {
 
-            if (Inventory.getAll().length > General.random(14, 24))
+            if (Inventory.getAll().length > General.random(14, 22))
                 Inventory.drop(HunterConst.BONES, SPOTTED_FUR);
 
-
-            if (Equipment.isEquipped(GLOVE_WITHOUT_FALCON)
-                    && Utils.clickNPC("Gyr Falcon", "Retrieve")) {
-                Timer.slowWaitCondition(() -> NPCs.findNearest("Gyr Falcon").length == 0, 3500, 5000);
+            Optional<Npc> falcon = Query.npcs().nameContains("Gyr Falcon").findBestInteractable();
+            if (Equipment.isEquipped(GLOVE_WITHOUT_FALCON) &&
+                    falcon.map(f->f.interact("Retrieve")).orElse(false)){
+                Waiting.waitUntil(5000, 125,() -> Equipment.isEquipped(GLOVE_WITH_FALCON) ||
+                        !Query.npcs().maxDistance(15 ).nameContains("Gyr Falcon").isAny());
+                Utils.idlePredictableAction();
             }
-            RSNPC[] kibbet = NPCs.findNearest(5531);
-            if (kibbet.length > 0 && Equipment.isEquipped(GLOVE_WITH_FALCON)
-                    && Utils.clickNPC(kibbet[0], "Catch", true)) {
-                if (abc2Chance < 42) {
-                    Timer.abc2SkillingWaitCondition(() -> NPCs.findNearest("Gyr Falcon").length > 0, 2500, 4000);
-                    abc2Chance = General.random(0, 100);
+           // RSNPC[] kibbet = NPCs.findNearest(5531);
+            Optional<Npc> kibbet = Query.npcs().idEquals(5531).findBestInteractable();
+            if (Equipment.isEquipped(GLOVE_WITH_FALCON) &&
+                    kibbet.map(k->k.interact("Catch")).orElse(false)){
+                Waiting.waitUntil(2000, ()-> Equipment.isEquipped(GLOVE_WITHOUT_FALCON));
+                abc2Chance = General.random(0, 100);
+                if (abc2Chance < 12) {
+                    Timer.abc2SkillingWaitCondition(() -> Equipment.isEquipped(GLOVE_WITH_FALCON) ||
+                            NPCs.findNearest("Gyr Falcon").length > 0, 2500, 4000);
                 } else {
                     AntiBan.timedActions();
-                    Timer.waitCondition(() -> NPCs.findNearest("Gyr Falcon").length > 0, 2500, 4000);
-
-                    int sleep = General.randomSD(720, 340);
-                    General.println("[Debug]: Sleeping for " + sleep + "ms");
-                    General.sleep(sleep);
-                    abc2Chance = General.random(0, 100);
+                    Waiting.waitUntil(4000, 75,() -> Equipment.isEquipped(GLOVE_WITH_FALCON) ||
+                            NPCs.findNearest("Gyr Falcon").length > 0);
+                    Utils.idlePredictableAction();
                 }
             }
 
@@ -107,14 +115,14 @@ public class Falconry implements Task {
                 Vars.get().currentTask.equals(SkillTasks.HUNTER)) {
             if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) {
                 return false;
-            } else return Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80;
+            } else return Skill.HUNTER.getActualLevel() < 47;
         }
         return false;
     }
 
     @Override
     public void execute() {
-        Mouse.setSpeed(150);
+        Mouse.setSpeed(160);
         catchKibbets();
     }
     @Override

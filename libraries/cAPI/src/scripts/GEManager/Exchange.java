@@ -399,14 +399,20 @@ public class Exchange {
 
         for (int i = 0; i < 3; i++) {
             openGE();
-            if (Interfaces.isInterfaceSubstantiated(GE_PARENT))
+            Waiting.waitUntil(4500,500, ()-> GrandExchange.isOpen());
+            if (GrandExchange.isOpen())
                 break;
         }
         if (getEmptyOffer() == null) {
             collectItems();
         }
 
-        General.println("[GEManager]: Buying: " + itemString + " x " + geItem.quantity + " for " + geItem.percentIncrease + "% more");
+        Log.info("[GEManager]: Buying: " + itemString + " x " + geItem.quantity + " for " + geItem.percentIncrease + "% more");
+
+        if (placeBuyOffer(geItem)){
+            Log.info("[Exchange]: Placed buy offer (new)");
+            return;
+        }
 
         if (selectBuyItem(geItem))
             General.sleep(General.random(800, 1500)); // lets load

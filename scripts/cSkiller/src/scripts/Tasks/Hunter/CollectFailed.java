@@ -6,6 +6,8 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.query.Query;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Hunter.HunterData.HunterConst;
@@ -48,15 +50,17 @@ public class CollectFailed implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.HUNTER)) {
-            if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
+            if (Skill.HUNTER.getActualLevel() < 29) {
                 return GroundItems.find(HunterConst.BIRD_SNARE).length > 0 ||
                         Objects.findNearest(20, HunterConst.DISABLED_BIRD_SNARE).length > 0;
 
-            } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) { // should be 43
+            } else if (Skill.HUNTER.getActualLevel() < 43) { // should be 43
                 return GroundItems.find(HunterConst.ROPE).length > 0 ||
                         GroundItems.find(HunterConst.SMALL_FISHING_NET).length > 0;
-            } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
-
+            } else if (Skill.HUNTER.getActualLevel() < 67 && Skill.HUNTER.getActualLevel() > 46) {
+                return Query.groundItems().idEquals(HunterConst.ROPE).maxDistance(20).isAny() ||
+                        Query.groundItems().idEquals(HunterConst.SMALL_FISHING_NET)
+                                .maxDistance(20).isAny();
             } else {
 
             }

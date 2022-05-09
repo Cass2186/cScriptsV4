@@ -2,6 +2,8 @@ package scripts.Tasks.Hunter.HunterData;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.WorldTile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +26,8 @@ public class HunterConst {
     public static int SHAKING_BOX_TRAP = 9383;
     public static int FAILED_BOX_TRAP = 9385;
     public static int RED_CHINS_NPC_ID = 2911;
-    public static  int DESERT_LIZARD = 10146;
-    public static int[] ALL_SALAMANDERS ={
+    public static int DESERT_LIZARD = 10146;
+    public static int[] ALL_SALAMANDERS = {
             DESERT_LIZARD,
             SWAMP_LIZARD};
 
@@ -49,11 +51,35 @@ public class HunterConst {
     public static RSArea CANIFIS_SWAMP_AREA = new RSArea(new RSTile[]{new RSTile(3532, 3452, 0), new RSTile(3529, 3446, 0), new RSTile(3537, 3443, 0), new RSTile(3546, 3450, 0), new RSTile(3541, 3454, 0)});
     public static RSTile CANFIS_TRAP_1 = new RSTile(3532, 3447, 0);
     public static RSTile CANFIS_TRAP_2 = new RSTile(3538, 3445, 0);
-    public static   RSTile CANFIS_TRAP_3 = new RSTile(3536, 3451, 0);
+    public static RSTile CANFIS_TRAP_3 = new RSTile(3536, 3451, 0);
 
     public static List<RSTile> CANFIS_TRAP_TILES = new ArrayList<>(Arrays.asList(CANFIS_TRAP_1, CANFIS_TRAP_2, CANFIS_TRAP_3));
+    public static Area CANIFIS_HUNTER_AREA = Area.fromPolygon(
+            new WorldTile[]{
+                    new WorldTile(3531, 3448, 0),
+                    new WorldTile(3535, 3443, 0),
+                    new WorldTile(3541, 3445, 0),
+                    new WorldTile(3545, 3451, 0),
+                    new WorldTile(3536, 3454, 0)
+            }
+    );
 
+    // YELLOW SALS
 
+    public static RSTile N_YELLOW_SAL_TREE = new RSTile(3407, 3093, 0);
+    public static RSTile E_YELLOW_SAL_TREE = new RSTile(3404, 3092, 0);
+    public static RSTile S_YELLOW_SAL_TREE = new RSTile(3407, 3088, 0);
+    public static Area YELLOW_SAL_AREA = Area.fromPolygon(
+            new WorldTile[]{
+                    new WorldTile(3408, 3095, 0),
+                    new WorldTile(3403, 3093, 0),
+                    new WorldTile(3406, 3086, 0),
+                    new WorldTile(3413, 3086, 0),
+                    new WorldTile(3414, 3094, 0)
+            }
+    );
+    public static List<RSTile> YELLOW_SALAMANDER_TREES = new ArrayList<>(Arrays.asList(N_YELLOW_SAL_TREE,
+            E_YELLOW_SAL_TREE,   S_YELLOW_SAL_TREE ));
     /**
      * RED SALAMANDERS
      */

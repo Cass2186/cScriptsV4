@@ -10,9 +10,12 @@ import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Equipment;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.EquipmentReq;
+import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.*;
@@ -22,6 +25,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Contact implements QuestTask {
 
@@ -38,9 +42,11 @@ public class Contact implements QuestTask {
     ItemReq coins, glory;
 
     RSArea bank = new RSArea(new RSTile(2772, 5129, 0), new RSTile(2758, 5145, 0));
-    RSArea dungeon = new RSArea(new RSTile(3263, 9200, 2), new RSTile(3327, 9280, 2));
-    RSArea chasm = new RSArea(new RSTile(3216, 9217, 0), new RSTile(3265, 9277, 0));
-
+    // RSArea dungeon = new RSArea(new RSTile(3263, 9200, 2), new RSTile(3327, 9280, 2));
+    //RSArea chasm = new RSArea(new RSTile(3216, 9217, 0), new RSTile(3265, 9277, 0));
+    RSArea chasm = new RSArea(new RSTile(2244, 4348, 0), new RSTile(2305, 4286, 0));
+    RSArea dungeon2 = new RSArea(new RSTile(3201, 9335, 0), new RSTile(3265, 9280, 0));
+    RSArea dungeon = new RSArea(new RSTile(2112, 4413, 2), new RSTile(2179, 4355, 2));
     AreaRequirement inBank = new AreaRequirement(bank);
     AreaRequirement inDungeon = new AreaRequirement(dungeon);
     AreaRequirement inChasm = new AreaRequirement(chasm);
@@ -128,7 +134,7 @@ public class Contact implements QuestTask {
     int HIGH_PRIEST_ID = 6192;
     int VARBIT = 3274;
     RSArea AFTER_PUSH_WALL_FAILSAFE = new RSArea(
-            new RSTile[] {
+            new RSTile[]{
                     new RSTile(3293, 9242, 2),
                     new RSTile(3293, 9244, 2),
                     new RSTile(3284, 9244, 2),
@@ -225,7 +231,7 @@ public class Contact implements QuestTask {
 
         talkToOsman = new NPCStep(6165, new RSTile(3287, 3179, 0));
         talkToOsman.addDialogStep("I want to talk to you about Sophanem.");
-        talkToOsman.addDialogStep("It would drive a wedge between the Menaphite cities.");
+        talkToOsman.addDialogStep("It could drive a wedge between the Menaphite cities.");
         talkToOsmanOutsideSoph = new NPCStep(6166, new RSTile(3285, 2812, 0));
         talkToOsmanOutsideSoph.addDialogStep("I know of a secret entrance to the north.");
 
@@ -234,9 +240,9 @@ public class Contact implements QuestTask {
                 lightSource, combatGear);
         goDownToDungeonAgain = new ObjectStep(20340, new RSTile(2766, 5130, 0),
                 "Climb-down", lightSource);
-        goDownToChasmAgain = new ObjectStep(20287, new RSTile(3268, 9229, 2),
+        goDownToChasmAgain = new ObjectStep(20287, new RSTile(2116, 4365, 2),
                 "Climb-down");
-        killGiantScarab = new NPCStep(NpcID.GIANT_SCARAB, new RSTile(3231, 9251, 0));
+        killGiantScarab = new NPCStep(NpcID.GIANT_SCARAB, new RSTile(2272, 4323, 0));
         killGiantScarab.setInteractionString("Attack");
 
         pickUpKeris = new GroundItemStep(keris.getId());
@@ -309,62 +315,63 @@ public class Contact implements QuestTask {
     }
 
     RSArea SCARAB_BANK_AREA = new RSArea(new RSTile(2793, 5174, 0), new RSTile(2806, 5158, 0));
-    RSArea BEFORE_FIRST_TRAP = new RSArea(new RSTile(3297, 9267, 2), new RSTile(3295, 9268, 2));
-    RSArea LAGE_SCARAB_FIGHT_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(3295, 9262, 2),
-                    new RSTile(3305, 9262, 2),
-                    new RSTile(3306, 9257, 2),
-                    new RSTile(3308, 9252, 2),
-                    new RSTile(3308, 9250, 2),
-                    new RSTile(3293, 9252, 2),
-                    new RSTile(3295, 9256, 2)
-            }
-    );
-    // whole area before first trap
+
     RSArea MAZE_PART_ONE = new RSArea(
             new RSTile[]{
-                    new RSTile(3322, 9276, 2),
-                    new RSTile(3295, 9276, 2),
-                    new RSTile(3295, 9267, 2),
-                    new RSTile(3298, 9267, 2),
-                    new RSTile(3298, 9270, 2),
-                    new RSTile(3307, 9270, 2),
-                    new RSTile(3307, 9266, 2),
-                    new RSTile(3312, 9266, 2),
-                    new RSTile(3312, 9263, 2),
-                    new RSTile(3321, 9263, 2)
+                    new RSTile(2147, 4405, 2),
+                    new RSTile(2147, 4403, 2),
+                    new RSTile(2142, 4403, 2),
+                    new RSTile(2142, 4412, 2),
+                    new RSTile(2170, 4412, 2),
+                    new RSTile(2169, 4400, 2),
+                    new RSTile(2159, 4400, 2),
+                    new RSTile(2156, 4404, 2),
+                    new RSTile(2155, 4405, 2)
             }
     );
 
     RSArea BETWEEN_FIRST_AND_SECOND_TRAP = new RSArea(
             new RSTile[]{
-                    new RSTile(3298, 9267, 2),
-                    new RSTile(3298, 9269, 2),
-                    new RSTile(3307, 9269, 2),
-                    new RSTile(3307, 9266, 2),
-                    new RSTile(3310, 9266, 2),
-                    new RSTile(3310, 9261, 2),
-                    new RSTile(3323, 9261, 2),
-                    new RSTile(3323, 9253, 2),
-                    new RSTile(3321, 9253, 2),
-                    new RSTile(3320, 9258, 2),
-                    new RSTile(3306, 9258, 2)
+                    new RSTile(2147, 4405, 2),
+                    new RSTile(2147, 4403, 2),
+                    new RSTile(2151, 4399, 2),
+                    new RSTile(2154, 4399, 2),
+                    new RSTile(2154, 4395, 2),
+                    new RSTile(2169, 4392, 2),
+                    new RSTile(2171, 4392, 2),
+                    new RSTile(2171, 4397, 2),
+                    new RSTile(2158, 4398, 2),
+                    new RSTile(2158, 4401, 2),
+                    new RSTile(2154, 4403, 2),
+                    new RSTile(2154, 4405, 2)
             }
     );
     RSArea BETWEEN_SECOND_TRAP_AND_FIGHT_AREA = new RSArea(
             new RSTile[]{
-                    new RSTile(3321, 9253, 2),
-                    new RSTile(3323, 9253, 2),
-                    new RSTile(3323, 9245, 2),
-                    new RSTile(3311, 9245, 2),
-                    new RSTile(3309, 9250, 2),
-                    new RSTile(3304, 9250, 2),
-                    new RSTile(3304, 9253, 2),
-                    new RSTile(3310, 9253, 2),
-                    new RSTile(3310, 9256, 2),
-                    new RSTile(3319, 9256, 2),
-                    new RSTile(3319, 9253, 2)
+                    new RSTile(2168, 4392, 2),
+                    new RSTile(2172, 4392, 2),
+                    new RSTile(2172, 4381, 2),
+                    new RSTile(2158, 4380, 2),
+                    new RSTile(2158, 4386, 2),
+                    new RSTile(2151, 4387, 2),
+                    new RSTile(2151, 4390, 2),
+                    new RSTile(2158, 4390, 2),
+                    new RSTile(2158, 4392, 2)
+            }
+    );
+    RSArea LAGE_SCARAB_FIGHT_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2155, 4390, 2),
+                    new RSTile(2151, 4390, 2),
+                    new RSTile(2151, 4384, 2),
+                    new RSTile(2137, 4385, 2),
+                    new RSTile(2138, 4389, 2),
+                    new RSTile(2143, 4389, 2),
+                    new RSTile(2143, 4394, 2),
+                    new RSTile(2147, 4399, 2),
+                    new RSTile(2150, 4399, 2),
+                    new RSTile(2150, 4394, 2),
+                    new RSTile(2154, 4394, 2)
             }
     );
 
@@ -373,11 +380,47 @@ public class Contact implements QuestTask {
             Timer.waitCondition(() -> lightSource.check(), 1200, 2000);
     }
 
-    RSArea AFTER_SLAYER_AREA = new RSArea(new RSTile(3294, 9256, 2), new RSTile(3301, 9238, 2));
-    RSArea AFTER_CRUSHERS = new RSArea(new RSTile(3289, 9243, 2), new RSTile(3284, 9236, 2));
+  //  RSArea AFTER_SLAYER_AREA = new RSArea(new RSTile(3294, 9256, 2), new RSTile(3301, 9238, 2));
+    RSArea AFTER_SLAYER_AREA = new RSArea(
+            new RSTile[] {
+                    new RSTile(2146, 4393, 2),
+                    new RSTile(2147, 4388, 2),
+                    new RSTile(2150, 4388, 2),
+                    new RSTile(2150, 4373, 2),
+                    new RSTile(2134, 4373, 2),
+                    new RSTile(2134, 4380, 2),
+                    new RSTile(2139, 4388, 2)
+            }
+    );
+    // RSArea AFTER_CRUSHERS = new RSArea(new RSTile(3289, 9243, 2), new RSTile(3284, 9236, 2));
     RSTile BEFORE_LADDER_DOWN = new RSTile(3271, 9229, 2);
-    RSArea LADDER_AREA_GOING_DOWN = new RSArea(new RSTile(3267, 9230, 2), new RSTile(3272, 9226, 2));
-    RSArea WHOLE_UNDERGROUND_AREA = new RSArea(new RSTile(3326, 9218, 0), new RSTile(3203, 9277, 0));
+    //RSArea LADDER_AREA_GOING_DOWN = new RSArea(new RSTile(3267, 9230, 2), new RSTile(3272, 9226, 2));
+    RSArea LADDER_AREA_GOING_DOWN = new RSArea(new RSTile(2114, 4366, 2), new RSTile(2123, 4363, 2));
+   // RSArea WHOLE_UNDERGROUND_AREA = new RSArea(new RSTile(3326, 9218, 0), new RSTile(3203, 9277, 0));
+    RSArea WHOLE_UNDERGROUND_AREA = new RSArea(new RSTile(2176, 4354, 2), new RSTile(2113, 4413, 2));
+    RSArea AFTER_CRUSHERS = new RSArea(
+            new RSTile[]{
+                    new RSTile(2139, 4380, 2),
+                    new RSTile(2139, 4374, 2),
+                    new RSTile(2144, 4374, 2),
+                    new RSTile(2146, 4372, 2),
+                    new RSTile(2146, 4360, 2),
+                    new RSTile(2122, 4361, 2),
+                    new RSTile(2119, 4363, 2),
+                    new RSTile(2114, 4363, 2),
+                    new RSTile(2114, 4367, 2),
+                    new RSTile(2120, 4367, 2),
+                    new RSTile(2133, 4365, 2),
+                    new RSTile(2133, 4363, 2),
+                    new RSTile(2139, 4363, 2),
+                    new RSTile(2143, 4363, 2),
+                    new RSTile(2143, 4369, 2),
+                    new RSTile(2138, 4369, 2),
+                    new RSTile(2136, 4371, 2),
+                    new RSTile(2131, 4371, 2),
+                    new RSTile(2131, 4380, 2)
+            }
+    );
 
     public void checkPrayer(boolean on) {
         if (Combat.getHPRatio() < 40) {
@@ -432,21 +475,24 @@ public class Contact implements QuestTask {
     public void goDownToDungeon() {
         checkLightSource();
 
-        if (!inBank.check() && !inDungeon.check() && !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()))
+        if (!inBank.check() && !inDungeon.check() && !WHOLE_UNDERGROUND_AREA.contains(Player.getPosition()) &&
+                !GameState.isInInstance()) {
+            Log.info("Going to bank");
             goDownToBank.execute();
-
+        }
         if (inBank.check()) {
             cQuesterV2.status = "Climbing down ladder";
-            General.println("[Debug]: Climbing down ladder");
+            Log.info("Climbing down ladder");
             goDownToDungeon.execute();
             Timer.waitCondition(() -> Player.getPosition().getPlane() == 2 ||
                     Interfaces.isInterfaceSubstantiated(562), 6000, 9000);
-
+            Optional<Widget> proceed = Query.widgets().inIndexPath(562).textContains("Proceed").findFirst();
             RSInterface warning = Interfaces.get(562, 17);
-            if (warning != null && warning.click()) {
+            if (proceed.map(p -> p.click()).orElse(false)) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
                 General.sleep(2000, 3000);
+                Waiting.waitUntil(4500, 500, () -> MyPlayer.getTile().getPlane() == 2);
             }
         }
         checkLightSource();
@@ -456,14 +502,14 @@ public class Contact implements QuestTask {
 
             if (!LAGE_SCARAB_FIGHT_AREA.contains(Player.getPosition())) {
                 if (MAZE_PART_ONE.contains(Player.getPosition()) &&
-                        PathingUtil.localNavigation(BEFORE_FIRST_TRAP.getRandomTile(), 1)) {
+                        PathingUtil.localNav(new WorldTile(2146, 4404, 2))) {
+                    PathingUtil.movementIdle();
                     General.println("[MoveToArea]: Going to first trap");
                     checkLightSource();
                     for (int i = 0; i < 3; i++) {
-                        if (Utils.clickObject("Floor", "Search", false)) {
-                            NPCInteraction.waitForConversationWindow();
-                            NPCInteraction.handleConversation("Yes, I'll give it a go.");
-                            Timer.waitCondition(Player::isMoving, 1500);
+                        if (Utils.clickObject("Trap", "Evade", false)) {
+                           PathingUtil.movementIdle();
+                           break;
                         }
                         if (Player.isMoving()) {
                             Waiting.waitNormal(2000, 300);
@@ -474,14 +520,12 @@ public class Contact implements QuestTask {
                     }
                 }
                 if (BETWEEN_FIRST_AND_SECOND_TRAP.contains(Player.getPosition()) ||
-                        !BEFORE_FIRST_TRAP.contains(Player.getPosition())) {
+                        !MAZE_PART_ONE.contains(Player.getPosition())) {
                     checkLightSource();
                     General.println("[MoveToArea]: Going to second trap");
                     if (PathingUtil.localNavigation(new RSTile(3321, 9255, 2)))
                         PathingUtil.movementIdle();
-                    if (Utils.clickObject("Odd markings", "Search", false)) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation("Yes, I'll give it a go.");
+                    if (Utils.clickObject(20272, "Disable", false)) {
                         PathingUtil.movementIdle();
                         checkPrayer(true);
                     }
@@ -498,7 +542,7 @@ public class Contact implements QuestTask {
             if (AFTER_SLAYER_AREA.contains(Player.getPosition())) {
                 checkLightSource();
                 cQuesterV2.status = "After Slayer area";
-                General.println("[MoveToArea]: " +  cQuesterV2.status);
+                General.println("[MoveToArea]: " + cQuesterV2.status);
                 eatAndDrink();
                 RSTile afterCrushers = new RSTile(3285, 9242, 2);
                 if (PathingUtil.localNavigation(afterCrushers))
@@ -529,7 +573,7 @@ public class Contact implements QuestTask {
         cQuesterV2.status = "Talking to Maisa";
         talkToMaisa.setUseLocalNav(true);
 
-        if (PathingUtil.localNavigation(new RSTile(3224, 9246, 0)))
+        if (PathingUtil.localNavigation(new RSTile(2263, 4316, 0)))
             PathingUtil.movementIdle();
         checkLightSource();
 
@@ -659,7 +703,7 @@ public class Contact implements QuestTask {
         } else if (Utils.getVarBitValue(VARBIT) == 20) {
             cQuesterV2.status = "Talking to high priest";
             talkToHighPriest2.execute();
-            if(NPCInteraction.isConversationWindowUp()){
+            if (NPCInteraction.isConversationWindowUp()) {
                 NPCInteraction.handleConversation("Is there any way into Menaphos from below?");
             }
 

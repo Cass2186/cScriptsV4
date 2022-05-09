@@ -10,6 +10,7 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -62,7 +63,7 @@ public class BigChompyBirdHunting implements QuestTask {
     boolean addPotato = false;
     boolean addEquaLeaves = false;
 
-    RSArea START_AREA = new RSArea(new RSTile(2626, 2986, 0), new RSTile(2636, 2975, 0));
+    RSArea START_AREA = new RSArea(new RSTile(2631, 2979, 0), 5);
     RSArea CAVE_ENTRANCE_AREA = new RSArea(new RSTile(2633, 2991, 0), new RSTile(2628, 2996, 0));
     RSArea INSIDE_CAVE = new RSArea(new RSTile(2632, 9399, 0), new RSTile(2659, 9378, 0));
     RSArea BUGS_AREA = new RSArea(new RSTile(2636, 9395, 0), new RSTile(2644, 9388, 0));
@@ -274,7 +275,10 @@ public class BigChompyBirdHunting implements QuestTask {
                 if (unlockedChest.length > 0) {
                     cQuesterV2.status = "Searching chest";
                     if (Utils.clickObj(UNLOCKED_CHEST_ID, "Search")) {
-                        NPCInteraction.waitForConversationWindow();
+                        Waiting.waitUntil(3500, 125, () -> MakeScreen.isOpen() || ChatScreen.isOpen());
+                        if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.OGRE_BELLOWS)) {
+                            Log.info("Used make screen to get bellows");
+                        }
                         Keyboard.typeString(" ");
                         ChatScreen.handle();
                         Timer.waitCondition(() -> Inventory.find(bellows).length > 0, 3000, 5000);
@@ -360,7 +364,7 @@ public class BigChompyBirdHunting implements QuestTask {
         if (HUNT_AREA.contains(Player.getPosition()) && invToad.length > 0) {
             cQuesterV2.status = "Dropping toad";
 
-            if (AccurateMouse.click(invToad[0], "Drop")) {
+            if (invToad[0].click("Drop")) {
                 Timer.waitCondition(() -> NPCs.findNearest(1474).length > 0, 8000, 12000); // 1474 = toad ID
                 General.sleep(General.random(500, 2000));
                 PathingUtil.walkToArea(HIDE_AREA);
@@ -373,14 +377,14 @@ public class BigChompyBirdHunting implements QuestTask {
     }
 
 
-
     public void rantzHunt() {
         if (Inventory.find(bloatedToad).length < 1)
             inflateToads();
 
         if (!HUNT_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length > 0) {
             cQuesterV2.status = "Going to hunt area";
-            PathingUtil.walkToTile(new RSTile(2635, 2965, 0), 2, false);
+            if (PathingUtil.walkToTile(new RSTile(2635, 2965, 0), 2, false))
+                PathingUtil.movementIdle();
         }
         RSItem[] bloatedTd = Inventory.find(bloatedToad);
         if (HUNT_AREA.contains(Player.getPosition()) && bloatedTd.length > 0) {
@@ -407,8 +411,8 @@ public class BigChompyBirdHunting implements QuestTask {
         PathingUtil.walkToArea(START_AREA);
         if (NpcChat.talkToNPC("Rantz")) {
             NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Come on, let me have a go...");
-            NPCInteraction.handleConversation("I'm actually quite strong...please let me try.");
+            // NPCInteraction.handleConversation("Come on, let me have a go...");
+            ChatScreen.handle("Come on, let me have a go...", "I'm actually quite strong...please let me try.");
             NPCInteraction.handleConversation();
         }
     }
@@ -511,7 +515,7 @@ public class BigChompyBirdHunting implements QuestTask {
                 if (theirChatCont != null) {
                     ChatScreen.clickContinue();
                     Waiting.waitNormal(750, 50);
-                    if(determineIngredients())
+                    if (determineIngredients())
                         break;
                 }
                 if (!ChatScreen.isOpen())
@@ -668,6 +672,10 @@ public class BigChompyBirdHunting implements QuestTask {
         }
         if (Game.getSetting(293) == 65) {
             Utils.closeQuestCompletionWindow();
+            Optional<InventoryItem> toad = Query.inventory().idEquals(ItemID.BLOATED_TOAD).findClosestToMouse();
+            if (toad.map(t->t.click("Release All")).orElse(false)){
+                Waiting.waitUntil(3500, 125, ()-> Inventory.find(ItemID.BLOATED_TOAD).length == 0);
+            }
             cQuesterV2.taskList.remove(this);
         }
     }

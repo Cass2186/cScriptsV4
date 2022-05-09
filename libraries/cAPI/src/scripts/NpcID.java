@@ -220,7 +220,7 @@ public class NpcID {
     public static final int KAMIL = 3458;
     public static final int AZZANADRA = 730;
     public static final int NED = 4280;
-    public static final int LADY_KELI = 4281;
+    public static final int LADY_KELI = 11643;
     public static final int PRINCE_ALI = 4282;
     public static final int PRINCE_ALI_4283 = 4283;
     public static final int SPAWN_OF_SARACHNIS = 8714;

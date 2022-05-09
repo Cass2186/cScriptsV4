@@ -235,15 +235,15 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener, ChatListen
         talkToAggie.addDialogStep("Yes please. Mix me some skin paste.");
         talkToKeli = new NPCStep(NpcID.LADY_KELI, new RSTile(3127, 3244, 0), softClay);
         talkToKeli.addDialogStep("Heard of you? You are famous in Gielinor!");
-        talkToKeli.addDialogStep("What is your latest plan then?");
-        talkToKeli.addDialogStep("Can you be sure they will not try to get him out?");
+        talkToKeli.addDialogStep("What's your latest plan then?");
+        talkToKeli.addDialogStep("How do you know someone won't try to free him?");
         talkToKeli.addDialogStep("Could I see the key please?");
         talkToKeli.addDialogStep("Could I touch the key for a moment please?");
         bringImprintToOsman = new NPCStep(6165, new RSTile(3285, 3179, 0),
                 keyMould, bronzeBar);
         talkToLeela = new NPCStep(NpcID.LEELA, new RSTile(3113, 3262, 0),
                 beers3, dyedWig, paste, rope, pinkSkirt);
-        talkToJoe = new NPCStep(NpcID.JOE_4275, new RSTile(3124, 3245, 0),
+        talkToJoe = new NPCStep(11642, new RSTile(3124, 3245, 0),
                 beers3, key, dyedWig, paste, rope, pinkSkirt);
         talkToJoe.addDialogStep("I have some beer here, fancy one?");
         useRopeOnKeli = new UseItemOnNpcStep(ItemID.ROPE, NpcID.LADY_KELI, new RSTile(3127, 3244, 0),
@@ -252,7 +252,7 @@ public class PrinceAliRescue implements QuestTask, InterfaceListener, ChatListen
         useKeyOnDoor = new ObjectStep(ObjectID.PRISON_DOOR_2881, new RSTile(3123, 3243, 0),
                 "Open", inCell.check(), key, dyedWig, paste, pinkSkirt);
 
-        talkToAli = new NPCStep(NpcID.PRINCE_ALI, new RSTile(3123, 3240, 0),
+        talkToAli = new NPCStep(11644, new RSTile(3123, 3240, 0),
                 key, dyedWig, paste, pinkSkirt);
 
         returnToHassan = new NPCStep(NpcID.HASSAN, new RSTile(3298, 3163, 0), "Return to Hassan in the Al Kharid Palace to complete the quest.");

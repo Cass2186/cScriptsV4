@@ -10,6 +10,10 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.AntiBan;
@@ -17,12 +21,14 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
+import scripts.ItemID;
 import scripts.Tasks.Hunter.HunterData.HunterConst;
 import scripts.Timer;
 import scripts.Utils;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 
 public class CollectSuccessful implements Task {
 
@@ -41,27 +47,37 @@ public class CollectSuccessful implements Task {
         }
 
     }
-    public void dropSalamanders(){
-        RSItem[] sals = Inventory.find(HunterConst.ALL_SALAMANDERS);
-        if (sals.length > 0) {
+
+    public void dropSalamanders() {
+        List<InventoryItem> list = Query.inventory().idEquals(HunterConst.ALL_SALAMANDERS).sortedByDistanceToMouse().toList();
+        if (list.size() > 0) {
             Keyboard.sendPress((char) KeyEvent.VK_SHIFT, 16);
-            for (RSItem s : sals){
-                s.click("Release");
-                AntiBan.waitItemInteractionDelay();
-            }
+            list.forEach(s -> s.click("Release"));
             Keyboard.sendRelease((char) KeyEvent.VK_SHIFT, 16);
-            Waiting.waitNormal(400,120); //prevents trying to reclick
+            Waiting.waitUntil(1500, 20, () -> !org.tribot.script.sdk.Inventory.contains(HunterConst.ALL_SALAMANDERS));
+            Waiting.waitNormal(400, 120); //prevents trying to reclick
         }
+        Inventory.drop(ItemID.WATERSKIN0);
     }
+
     public void collectNetTrap(List<RSTile> tileList) {
         for (RSTile t : tileList) {
             RSObject trap = Entities.find(ObjectEntity::new)
-                    .inArea(new RSArea(t,1))
+                    .inArea(new RSArea(t, 1))
                     .idEquals(HunterConst.NET_TRAP_SUCCESSFUL)
                     .getFirstResult();
-            if (Inventory.getAll().length > 20){
+            if (Inventory.getAll().length > Utils.random(16, 19)) {
                 dropSalamanders();
-
+            }
+            List<InventoryItem> sals = Query.inventory().nameContains("salamander")
+                    .toList();
+            Optional<GameObject> check = Query.gameObjects().actionContains("Check")
+                    .inArea(Area.fromRadius(Utils.getWorldTileFromRSTile(t), 1))
+                    .maxDistance(20).findBestInteractable();
+            if (check.map(c->c.interact("Check")).orElse(false)){
+                Timer.slowWaitCondition(() -> Query.inventory().nameContains("salamander")
+                        .toList().size() >
+                        sals.size(), 7000, 9000); //was 10-12s
             }
 
             RSItem[] invTraps = Inventory.find(HunterConst.SWAMP_LIZARD);
@@ -105,18 +121,22 @@ public class CollectSuccessful implements Task {
 
     @Override
     public boolean validate() {
-      if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
+        if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
             return Vars.get().currentTask != null &&
                     Vars.get().currentTask.equals(SkillTasks.HUNTER) &&
                     Objects.findNearest(20, HunterConst.CAUGHT_BIRD_SNARE)
-                    .length > 0;
+                            .length > 0;
 
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 49) { // should be 43
-          return Vars.get().currentTask != null &&
-                  Vars.get().currentTask.equals(SkillTasks.HUNTER) &&
-                  Objects.findNearest(20, HunterConst.NET_TRAP_SUCCESSFUL)
-                  .length > 0;
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
+        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 47) { // should be 43
+            return Vars.get().currentTask != null &&
+                    Vars.get().currentTask.equals(SkillTasks.HUNTER) &&
+                    Query.gameObjects().idEquals(HunterConst.NET_TRAP_SUCCESSFUL)
+                            .maxDistance(20).isAny();
+        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 67) {
+            return Vars.get().currentTask != null &&
+                    Vars.get().currentTask.equals(SkillTasks.HUNTER) &&
+                    Query.gameObjects().actionContains("Check")
+                            .maxDistance(20).isAny();
 
         } else {
 
@@ -133,10 +153,10 @@ public class CollectSuccessful implements Task {
 
         } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) { // should be 43
             collectNetTrap(HunterConst.CANFIS_TRAP_TILES);
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
-
-        } else {
-
+        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 47) {
+            //doing falcons, not needed
+        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 67) {
+            collectNetTrap(HunterConst.YELLOW_SALAMANDER_TREES);
         }
     }
 

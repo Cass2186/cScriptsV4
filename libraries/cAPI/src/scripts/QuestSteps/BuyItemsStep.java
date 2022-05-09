@@ -40,6 +40,7 @@ public class BuyItemsStep {
         ArrayList<GEItem> list = updatePurchaseQuantities(invList);
         // if (list.size() > 0)
         for (GEItem i : list) {
+
             Exchange.buyItem(i);
             // buy each items
         }

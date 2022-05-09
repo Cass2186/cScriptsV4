@@ -193,7 +193,7 @@ public class Paint {
                         .condition(() -> Skill.HUNTER.getXp() > Const.startHunterXP &&
                                 Vars.get().showExperienceGained)
                         .value(() -> PaintUtil.formatSkillString(Skill.HUNTER, Const.startHunterLvl,
-                                (Skill.HUNTER.getXp() - Const.startHerbloreXP),
+                                (Skill.HUNTER.getXp() - Const.startHunterXP),
                                 PaintUtil.getXpHr(Skill.HUNTER, Const.startHunterXP, Vars.get().startTime)))
                         .build())
                 .row(template.toBuilder().condition(() -> Skill.MAGIC.getXp() > Const.startMagicXp &&
