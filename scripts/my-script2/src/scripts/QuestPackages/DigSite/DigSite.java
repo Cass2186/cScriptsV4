@@ -8,6 +8,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -332,19 +333,24 @@ public class DigSite implements QuestTask {
                 if (panningSite.length > 0 && Inventory.find(CUP_OF_TEA).length > 0) {
                     if (AccurateMouse.click(panningSite[0], "Pan")) {
                         NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation("So how do I become invited then?");
+                        ChatScreen.handle(
+                                "So how do I become invited then?");
                         NPCInteraction.handleConversation();
                     }
                 }
-
+                long time = System.currentTimeMillis();
+                long add = time + 200000;//<4 min
                 while (Inventory.find(SPECIAL_CUP).length < 1) {
                     General.sleep(75,150);
                     panningSite = Objects.findNearest(20, 2363);
 
                     if (panningSite.length > 0) {
                         if (AccurateMouse.click(panningSite[0], "Pan")) {
-                            Timer.waitCondition(() -> Inventory.find(FULL_PAN).length > 0, 7000, 9000);
-
+                            Timer.waitCondition(() -> Inventory.find(FULL_PAN).length > 0 ||
+                                    ChatScreen.isOpen(), 7000, 9000);
+                            if (ChatScreen.isOpen()){
+                                ChatScreen.handle("So how do I become invited then?");
+                            }
                             Utils.idle(300, 2000);
                         }
 

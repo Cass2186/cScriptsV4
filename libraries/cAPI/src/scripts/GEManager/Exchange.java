@@ -9,6 +9,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.GrandExchange;
+import org.tribot.script.sdk.interfaces.Item;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.GrandExchangeOffer;
@@ -74,6 +75,7 @@ public class Exchange {
 
     /**
      * this won't get coins or travel to GE or relist
+     *
      * @param item object to buy
      * @return successfully placed or not
      */
@@ -82,6 +84,23 @@ public class Exchange {
     }
 
     private static GrandExchange.CreateOfferConfig getBuyConfigFromItem(GEItem item) {
+        Optional<ItemDefinition> itemDef = Query.itemDefinitions().idEquals(item.getItemID())
+                .isGrandExchangeTradeable().stream().findFirst();
+        if (itemDef.isPresent()) {
+            Optional<Integer> priceOptional = ((Item) itemDef.get()).lookupPrice();
+            int price = priceOptional
+                    .map(p-> p *item.getPercentIncrease()).orElse(1.0).intValue();
+            int clicks = Utils.roundToNearest(item.getPercentIncrease(), 5) / 5;
+            if (clicks > Utils.random(5, 8)) {
+                Log.warn("Price adjustment is > 5-8 clicks, using " + price);
+                return GrandExchange.CreateOfferConfig.builder()
+                        .type(GrandExchangeOffer.Type.BUY)
+                        .itemId(item.getItemID())
+                        .price(price)
+                        .searchText(getItemName(item))
+                        .quantity(item.getItemQuantity()).build();
+            }
+        }
         return GrandExchange.CreateOfferConfig.builder()
                 .type(GrandExchangeOffer.Type.BUY)
                 .itemId(item.getItemID())
@@ -92,15 +111,27 @@ public class Exchange {
 
     /**
      * this won't get the item or travel to GE or relist
+     *
      * @param item object to buy
      * @return successfully placed or not
      */
     public static boolean placeSellOffer(GEItem item) {
-        return GrandExchange.open() &&  GrandExchange.placeOffer(getSellConfigFromItem(item));
+        return GrandExchange.open() && GrandExchange.placeOffer(getSellConfigFromItem(item));
     }
 
     private static GrandExchange.CreateOfferConfig getSellConfigFromItem(GEItem item) {
-        int id = isStackable(item) ? item.getItemID() : item.getItemID()+1;
+        int id = isStackable(item) ? item.getItemID() : item.getItemID() + 1;
+        Optional<ItemDefinition> itemDef = Query.itemDefinitions().idEquals(item.getItemID()).isGrandExchangeTradeable().stream().findFirst();
+        int price = itemDef.map(i -> i.getBaseValue()).orElse(1000);
+        Log.warn("Base price is " + price);
+        double db = item.percentIncrease / 100;
+        General.println("[Debug]: Percent to add " + item.percentIncrease);
+        General.println("[Debug]: Percent of current price " + (item.percentIncrease / 100 + 1));
+        double offerPrice = Math.round(price * (item.percentIncrease / 100 + 1));
+        int realOfferPrice = (int) (5 * (Math.round(offerPrice / 5)) + 5);
+
+        if (realOfferPrice > 2000)
+            realOfferPrice = (int) (100 * (Math.round(offerPrice / 100)));
         return GrandExchange.CreateOfferConfig.builder()
                 .type(GrandExchangeOffer.Type.SELL)
                 .itemId(id)
@@ -108,10 +139,10 @@ public class Exchange {
                 .quantity(item.getItemQuantity()).build();
     }
 
-    private static boolean isStackable(GEItem item){
+    private static boolean isStackable(GEItem item) {
         Optional<ItemDefinition> def = Query
                 .itemDefinitions().idEquals(item.getItemID()).findFirst();
-        return def.map(d->!d.isStackable()).orElse(false);
+        return def.map(d -> !d.isStackable()).orElse(false);
     }
 
 
@@ -399,7 +430,7 @@ public class Exchange {
 
         for (int i = 0; i < 3; i++) {
             openGE();
-            Waiting.waitUntil(4500,500, ()-> GrandExchange.isOpen());
+            Waiting.waitUntil(4500, 500, () -> GrandExchange.isOpen());
             if (GrandExchange.isOpen())
                 break;
         }
@@ -409,7 +440,7 @@ public class Exchange {
 
         Log.info("[GEManager]: Buying: " + itemString + " x " + geItem.quantity + " for " + geItem.percentIncrease + "% more");
 
-        if (placeBuyOffer(geItem)){
+        if (placeBuyOffer(geItem)) {
             Log.info("[Exchange]: Placed buy offer (new)");
             return;
         }

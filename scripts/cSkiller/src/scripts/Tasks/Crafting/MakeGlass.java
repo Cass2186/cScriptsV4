@@ -50,9 +50,9 @@ public class MakeGlass implements Task {
     @Override
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CRAFTING)
-
                 && (Inventory.find(ItemID.MOLTEN_GLASS).length > 0 &&
-                Inventory.find(ItemID.GLASSBLOWING_PIPE).length > 0);
+                Inventory.find(ItemID.GLASSBLOWING_PIPE).length > 0) &&
+                !Vars.get().doingDragonHide;
     }
 
     @Override

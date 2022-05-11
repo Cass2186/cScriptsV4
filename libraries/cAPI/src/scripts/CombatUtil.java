@@ -48,6 +48,10 @@ public class CombatUtil {
     }
 
 
+    public static boolean isInteractingWith(String name) {
+        return Query.npcs().nameContains(name).isMyPlayerInteractingWith().isAny();
+    }
+
     public static boolean checkTarget(RSNPC target, RSArea area) {
         if (target == null || area == null)
             return false;
@@ -113,6 +117,21 @@ public class CombatUtil {
     public static boolean clickAttack() {
         if (ChooseOption.select("Attack"))
             return Timer.waitCondition(Combat::isUnderAttack, 3500, 5000);
+        return false;
+    }
+
+    public static boolean attackTarget(int id) {
+        Optional<Npc> npc = Query.npcs().idEquals(id)
+                .isNotBeingInteractedWith()
+                .findClosestByPathDistance();
+
+        if (Query.npcs().idEquals(id)
+                .isMyPlayerInteractingWith().isAny())
+            return true;
+
+        if (npc.map(n -> n.interact("Attack")).orElse(false)) {
+            return Waiting.waitUntil(4000, 200, () -> npc.map(n -> n.isHealthBarVisible()).orElse(false));
+        }
         return false;
     }
 
@@ -204,7 +223,7 @@ public class CombatUtil {
             if (!npc.isClickable())
                 DaxCamera.focus(npc);
             if (i.isPresent() && n.isPresent() && n.get().getHealthBarPercent() < 0.15) {
-                Log.log("Health percent is " +  n.get().getHealthBarPercent());
+                Log.log("Health percent is " + n.get().getHealthBarPercent());
                /* if (Utils.useItemOnNPC(i.get().getId(), npc))
                     return Timing.waitCondition(() -> npc.click(rsMenuNode ->
                             rsMenuNode.getAction().equals("Use")
@@ -214,12 +233,12 @@ public class CombatUtil {
 */
                 if (i.get().click()) {
                     Waiting.waitNormal(75, 20);
-                   // if (n.get().click("Use "))
-                        return Timing.waitCondition(() -> npc.click(rsMenuNode ->
-                                rsMenuNode.getAction() != null &&
-                                rsMenuNode.getAction().equals("Use")
-                                        && rsMenuNode.getTarget().toLowerCase()
-                                        .contains(npc.getDefinition().getName().toLowerCase())), 700);
+                    // if (n.get().click("Use "))
+                    return Timing.waitCondition(() -> npc.click(rsMenuNode ->
+                            rsMenuNode.getAction() != null &&
+                                    rsMenuNode.getAction().equals("Use")
+                                    && rsMenuNode.getTarget().toLowerCase()
+                                    .contains(npc.getDefinition().getName().toLowerCase())), 700);
                 }
             }
 
@@ -227,6 +246,7 @@ public class CombatUtil {
         Log.log("UseSlayerItemOnNPC is false");
         return false;
     }
+
     private static boolean useSlayerItemOnNPC() {
         Optional<InventoryItem> i = Query.inventory().idEquals(ItemID.SLAYER_SPECIAL_ITEMS)
                 .findClosestToMouse();
@@ -251,7 +271,7 @@ public class CombatUtil {
 
         int icon = Player.getRSPlayer().getPrayerIcon();
 
-        if(!Timing.waitCondition(() -> {
+        if (!Timing.waitCondition(() -> {
             General.sleep(General.random(100, 500));
 
             AntiBan.timedActions();

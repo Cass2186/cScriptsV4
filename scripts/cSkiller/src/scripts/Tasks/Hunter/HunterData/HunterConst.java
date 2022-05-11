@@ -66,9 +66,9 @@ public class HunterConst {
 
     // YELLOW SALS
 
-    public static RSTile N_YELLOW_SAL_TREE = new RSTile(3407, 3093, 0);
-    public static RSTile E_YELLOW_SAL_TREE = new RSTile(3404, 3092, 0);
-    public static RSTile S_YELLOW_SAL_TREE = new RSTile(3407, 3088, 0);
+    public static WorldTile N_YELLOW_SAL_TREE = new WorldTile(3407, 3093, 0);
+    public static WorldTile E_YELLOW_SAL_TREE = new WorldTile(3404, 3092, 0);
+    public static WorldTile S_YELLOW_SAL_TREE = new WorldTile(3407, 3088, 0);
     public static Area YELLOW_SAL_AREA = Area.fromPolygon(
             new WorldTile[]{
                     new WorldTile(3408, 3095, 0),
@@ -78,7 +78,7 @@ public class HunterConst {
                     new WorldTile(3414, 3094, 0)
             }
     );
-    public static List<RSTile> YELLOW_SALAMANDER_TREES = new ArrayList<>(Arrays.asList(N_YELLOW_SAL_TREE,
+    public static List<WorldTile> YELLOW_SALAMANDER_TREES = new ArrayList<>(Arrays.asList(N_YELLOW_SAL_TREE,
             E_YELLOW_SAL_TREE,   S_YELLOW_SAL_TREE ));
     /**
      * RED SALAMANDERS

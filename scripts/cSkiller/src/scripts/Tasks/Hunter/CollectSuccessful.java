@@ -14,6 +14,7 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.AntiBan;
@@ -60,6 +61,26 @@ public class CollectSuccessful implements Task {
         Inventory.drop(ItemID.WATERSKIN0);
     }
 
+    public void collectNetTrapNew(List<WorldTile> tileList) {
+        Optional<GameObject> check = Query.gameObjects().actionContains("Check")
+                .tileEquals(tileList.toArray(WorldTile[]::new))
+                .maxDistance(20).findBestInteractable();
+        for (WorldTile t : tileList) {
+            if (Inventory.getAll().length > Utils.random(16, 19)) {
+                dropSalamanders();
+            }
+            List<InventoryItem> sals = Query.inventory().nameContains("salamander")
+                    .toList();
+            check = Query.gameObjects().actionContains("Check")
+                    .inArea(Area.fromRadius(t, 1))
+                    .maxDistance(20).findBestInteractable();
+            if (check.map(c->c.interact("Check")).orElse(false)){
+                Timer.slowWaitCondition(() -> Query.inventory().nameContains("salamander")
+                        .toList().size() >
+                        sals.size(), 7000, 9000); //was 10-12s
+            }
+        }
+    }
     public void collectNetTrap(List<RSTile> tileList) {
         for (RSTile t : tileList) {
             RSObject trap = Entities.find(ObjectEntity::new)
@@ -156,12 +177,12 @@ public class CollectSuccessful implements Task {
         } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 47) {
             //doing falcons, not needed
         } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 67) {
-            collectNetTrap(HunterConst.YELLOW_SALAMANDER_TREES);
+            collectNetTrapNew(HunterConst.YELLOW_SALAMANDER_TREES);
         }
     }
 
     @Override
     public String taskName() {
-        return "Hunter: collect successful";
+        return "Hunter";
     }
 }

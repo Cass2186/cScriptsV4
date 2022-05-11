@@ -33,6 +33,7 @@ import scripts.QuestPackages.DeathPlateau.DeathPlateau;
 import scripts.QuestPackages.DeathsOffice.DeathsOffice;
 import scripts.QuestPackages.DemonSlayer.DemonSlayer;
 import scripts.QuestPackages.DepthsofDespair.DepthsOfDespair;
+import scripts.QuestPackages.DesertTreasure.DesertTreasure;
 import scripts.QuestPackages.DigSite.DigSite;
 import scripts.QuestPackages.DoricsQuest.DoricsQuest;
 import scripts.QuestPackages.DragonSlayer.DragonSlayer;
@@ -701,6 +702,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("piratestreas")) {
             General.println("[Args]: Added Pirates Treasure ");
             taskList.add(PiratesTreasure.get());
+        }
+        else if (arg.toLowerCase().contains("deserttreas")) {
+            General.println("[Args]: Added Desert Treasure ");
+            taskList.add(DesertTreasure.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

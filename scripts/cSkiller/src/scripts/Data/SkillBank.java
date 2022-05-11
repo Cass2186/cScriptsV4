@@ -76,7 +76,7 @@ public class SkillBank {
 
                     for (Integer alt : i.getAlternateItemIDs()) {
 
-                        var amount = i.getAmount() <= 0 ? 1 : i.getAmount();
+                        var amount = i.getAmount() < 0 ? 1 : i.getAmount();
                         if (Inventory.getCount(alt) >= amount) {
                             Log.info("[ItemRequirement]: Accepted an alternative id of " + alt +
                                     " for ItemID of:  " + i.getId());

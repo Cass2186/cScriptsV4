@@ -9,8 +9,12 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -29,28 +33,44 @@ import java.util.Optional;
 public class SetTrap implements Task {
 
     public static int determineMaxTraps() {
-        if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 20)
+        if (Skill.HUNTER.getActualLevel() < 20)
             return 1;
 
-        else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 40)
+        else if (Skill.HUNTER.getActualLevel() < 40)
             return 2;
 
-        else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 60)
+        else if (Skill.HUNTER.getActualLevel() < 60)
             return 3;
 
-        else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80)
+        else if (Skill.HUNTER.getActualLevel() < 80)
             return 4;
 
         else
             return 5;
     }
 
+
+    public static int getAllNearbyTrapsWorldTile(List<WorldTile> tiles) {
+        int i = 0;
+        for (WorldTile t : tiles) {
+            List<GameObject> traps = Query.gameObjects().inArea(Area.fromRadius(t, 1))
+                    .nameContains("trap")
+                    .toList();
+
+
+            if (traps.size() > 0)
+                i++;
+
+        }
+        return i;
+    }
+
     public static int getAllNearbyTraps(List<RSTile> tiles) {
         int i = 0;
         for (RSTile t : tiles) {
 
-            RSObject[] traps =Entities.find(ObjectEntity::new)
-                    .inArea(new RSArea(t,1))
+            RSObject[] traps = Entities.find(ObjectEntity::new)
+                    .inArea(new RSArea(t, 1))
                     .nameContains("trap")
                     .getResults();
 
@@ -61,17 +81,26 @@ public class SetTrap implements Task {
         return i;
     }
 
+    public static int getAllNearbySnaresNew(List<WorldTile> tiles) {
+        int i = 0;
+        for (WorldTile t : tiles) {
+            List<GameObject> snare = Query.gameObjects().tileEquals(t)
+                    .nameContains("snare").toList();
+
+            if (snare.size() > 0)
+                i++;
+        }
+        return i;
+    }
+
+
     public static int getAllNearbySnares(List<RSTile> tiles) {
         int i = 0;
         for (RSTile t : tiles) {
             List<GameObject> snare = Query.gameObjects().tileEquals(Utils.getWorldTileFromRSTile(t))
                     .nameContains("snare").toList();
-            RSObject[] traps = Objects.findNearest(20, Filters.Objects.tileEquals(t)
-                    .and(Filters.Objects.nameContains("snare")));
-
             if (snare.size() > 0)
                 i++;
-
         }
         return i;
     }
@@ -122,9 +151,10 @@ public class SetTrap implements Task {
     }
 
 
-    public void layNetTrap(List<RSTile> tiles) {
+    public void layNetTrapNew(List<WorldTile> tiles) {
         for (int i = 0; i < tiles.size(); i++) {
-            Optional<GameObject> young_tree = Query.gameObjects().tileEquals(Utils.getWorldTileFromRSTile(tiles.get(i)))
+            Optional<GameObject> young_tree = Query.gameObjects()
+                    .tileEquals(tiles.get(i))
                     .nameContains("Young tree")
                     .actionContains("Set-trap")
                     .findBestInteractable();
@@ -134,15 +164,52 @@ public class SetTrap implements Task {
                     .nameContains("Young Tree")
                     .getResults();
 */
-
-            int t = getAllNearbyTraps(tiles);
-            Log.info("There are: " + t + " traps set up");
-            Log.info("Is t < maxTraps() " + (t<determineMaxTraps()));
+            int t = getAllNearbyTrapsWorldTile(tiles);
+            Log.info("There are " + t + " traps set up");
+            //  Log.info("Is t < maxTraps() " + (t<determineMaxTraps()));
             if (t < determineMaxTraps() && Inventory.find(HunterConst.ROPE).length > 0
                     && Inventory.find(HunterConst.SMALL_FISHING_NET).length > 0) {
                 // we can lay a trap
 
-                if (young_tree.map(y->y.interact("Set-trap")).orElse(false)&&
+                if (young_tree.map(y -> y.interact("Set-trap")).orElse(false) &&
+                        Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 6000, 8000)) {
+                    Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 6000, 8000);
+                    Utils.idleNormalAction();
+                }
+            }
+        }
+        if (!Query.gameObjects().actionContains("Check")
+                .maxDistance(20).isAny() && !isTrapsSetLessThanAllowed() &&
+                GroundItems.find(HunterConst.ROPE).length  ==0
+                && GroundItems.find(HunterConst.SMALL_FISHING_NET).length == 0) {
+            Log.info("Waiting");
+            Utils.FACTOR = 0.4;
+            Waiting.waitUntil(10000, 125, () ->
+                    // Objects.findNearest(20, HunterConst.NET_TRAP_SUCCESSFUL).length > 0 ||
+                    GroundItems.find(HunterConst.ROPE).length > 0 ||
+                            Query.gameObjects().actionContains("Check")
+                                    .maxDistance(20).isAny() || isTrapsSetLessThanAllowed() ||
+                            GroundItems.find(HunterConst.SMALL_FISHING_NET).length > 0);
+            Utils.idleNormalAction();
+        }
+    }
+
+    public void layNetTrap(List<RSTile> tiles) {
+        for (int i = 0; i < tiles.size(); i++) {
+            Optional<GameObject> young_tree = Query.gameObjects()
+                    .tileEquals(Utils.getWorldTileFromRSTile(tiles.get(i)))
+                    .nameContains("Young tree")
+                    .actionContains("Set-trap")
+                    .findBestInteractable();
+
+            int t = getAllNearbyTraps(tiles);
+            Log.info("There are " + t + " traps set up");
+            //  Log.info("Is t < maxTraps() " + (t<determineMaxTraps()));
+            if (t < determineMaxTraps() && Inventory.find(HunterConst.ROPE).length > 0
+                    && Inventory.find(HunterConst.SMALL_FISHING_NET).length > 0) {
+                // we can lay a trap
+
+                if (young_tree.map(y -> y.interact("Set-trap")).orElse(false) &&
                         Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 6000, 8000)) {
                     Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 6000, 8000);
                     Utils.idleNormalAction();
@@ -150,17 +217,30 @@ public class SetTrap implements Task {
             } else {
                 Log.info("Waiting");
                 Utils.FACTOR = 0.4;
-                Timer.waitCondition(() ->
-                        Objects.findNearest(20, HunterConst.NET_TRAP_SUCCESSFUL).length > 0 ||
-                                GroundItems.find(HunterConst.ROPE).length > 0 ||
+                Waiting.waitUntil(10000, 125, () ->
+                        // Objects.findNearest(20, HunterConst.NET_TRAP_SUCCESSFUL).length > 0 ||
+                        GroundItems.find(HunterConst.ROPE).length > 0 ||
                                 Query.gameObjects().actionContains("Check")
-                                        .maxDistance(20).isAny() ||
-                                GroundItems.find(HunterConst.SMALL_FISHING_NET).length > 0, 45000, 60000);
+                                        .maxDistance(20).isAny() || isTrapsSetLessThanAllowed() ||
+                                GroundItems.find(HunterConst.SMALL_FISHING_NET).length > 0);
                 Utils.idleNormalAction();
             }
         }
     }
 
+    private boolean isTrapsSetLessThanAllowed() {
+        if (Skill.HUNTER.getActualLevel() < 29) {
+            return getAllNearbySnares(Arrays.asList(HunterConst.TROPICAL_WAGTAIL_TILE_1,
+                    HunterConst.TROPICAL_WAGTAIL_TILE_2)) < determineMaxTraps();
+        } else if (Skill.HUNTER.getActualLevel() < 43) { // should be 43 if falconry is being done
+            return
+                    getAllNearbySnares(HunterConst.CANFIS_TRAP_TILES) < determineMaxTraps();
+        } else if (Skill.HUNTER.getActualLevel() < 80) {
+            return getAllNearbySnaresNew(HunterConst.YELLOW_SALAMANDER_TREES) < determineMaxTraps();
+            //  layNetTrap(DESERT_AREA, DESERT_TRAP_1, DESERT_TRAP_2, DESERT_TRAP_3);
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
@@ -174,23 +254,23 @@ public class SetTrap implements Task {
 
     @Override
     public boolean validate() {
-        if(Vars.get().currentTask != null &&
+        if (Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.HUNTER)) {
-            if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 20) {
+            if (Skill.HUNTER.getActualLevel() < 20) {
 
             }
-            if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
+            if (Skill.HUNTER.getActualLevel() < 29) {
                 return Vars.get().currentTask != null &&
                         Vars.get().currentTask.equals(SkillTasks.HUNTER) && getAllNearbySnares(Arrays.asList(HunterConst.TROPICAL_WAGTAIL_TILE_1,
                         HunterConst.TROPICAL_WAGTAIL_TILE_2)) <= determineMaxTraps();
-            } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) { // should be 43 if falconry is being done
+            } else if (Skill.HUNTER.getActualLevel() < 43) { // should be 43 if falconry is being done
                 return Vars.get().currentTask != null &&
                         Vars.get().currentTask.equals(SkillTasks.HUNTER) &&
                         getAllNearbySnares(HunterConst.CANFIS_TRAP_TILES) <= determineMaxTraps();
-            } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
+            } else if (Skill.HUNTER.getActualLevel() < 80) {
                 return Vars.get().currentTask != null &&
                         Vars.get().currentTask.equals(SkillTasks.HUNTER) &&
-                getAllNearbySnares(HunterConst.YELLOW_SALAMANDER_TREES) <= determineMaxTraps();
+                        getAllNearbySnaresNew(HunterConst.YELLOW_SALAMANDER_TREES) <= determineMaxTraps();
                 //  layNetTrap(DESERT_AREA, DESERT_TRAP_1, DESERT_TRAP_2, DESERT_TRAP_3);
             } else {
 
@@ -202,17 +282,17 @@ public class SetTrap implements Task {
     @Override
     public void execute() {
         //General.println("loop set Trap");
-        if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 20) {
+        if (Skill.HUNTER.getActualLevel() < 20) {
             layBirdTrap(HunterConst.COPPER_LONGTAIL_AREA, HunterConst.COPPER_LONGTAIL_TILE);
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
+        } else if (Skill.HUNTER.getActualLevel() < 29) {
             layBirdTrap(HunterConst.TROPICAL_WAGTAIL_AREA,
                     HunterConst.TROPICAL_WAGTAIL_TILE_1, HunterConst.TROPICAL_WAGTAIL_TILE_2);
 
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 47) { // should be 43
+        } else if (Skill.HUNTER.getActualLevel() < 47) { // should be 43
             layNetTrap(HunterConst.CANFIS_TRAP_TILES);
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 80) {
-            layNetTrap(HunterConst.YELLOW_SALAMANDER_TREES);
-            //  layNetTrap(DESERT_AREA, DESERT_TRAP_1, DESERT_TRAP_2, DESERT_TRAP_3);
+        } else if (Skill.HUNTER.getActualLevel() < 80) {
+            layNetTrapNew(HunterConst.YELLOW_SALAMANDER_TREES);
+            ;
         } else {
 
         }
@@ -222,6 +302,6 @@ public class SetTrap implements Task {
 
     @Override
     public String taskName() {
-        return "Hunter: set trap";
+        return "Hunter";
     }
 }

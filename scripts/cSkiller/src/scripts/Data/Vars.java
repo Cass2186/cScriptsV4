@@ -6,10 +6,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Skills;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import scripts.AntiBan;
 import scripts.ItemID;
 import scripts.ScriptUtils.ScriptTimer;
@@ -138,6 +135,9 @@ public class Vars {
     public boolean shouldAlchAgil = false;
     public boolean overridingCourse = false;
     public boolean growKittenDuringAgility = false;
+
+    //crafting
+    public boolean doingDragonHide = Skill.CRAFTING.getActualLevel() > 62;
 
     //firemaking
     public int firemakingTargetLevel = 30;
