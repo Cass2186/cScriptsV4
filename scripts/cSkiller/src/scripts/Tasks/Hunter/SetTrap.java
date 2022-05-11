@@ -56,8 +56,6 @@ public class SetTrap implements Task {
             List<GameObject> traps = Query.gameObjects().inArea(Area.fromRadius(t, 1))
                     .nameContains("trap")
                     .toList();
-
-
             if (traps.size() > 0)
                 i++;
 
