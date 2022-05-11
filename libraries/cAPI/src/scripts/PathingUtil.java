@@ -7,6 +7,7 @@ import dax.walker_engine.WalkerEngine;
 import dax.walker_engine.WalkingCondition;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import lombok.val;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
@@ -32,6 +33,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Supplier;
 
 public class PathingUtil {
@@ -207,7 +209,7 @@ public class PathingUtil {
     public static boolean walkToTile(WorldTile destination) {
         Log.info("[PathingUtil] Global Walking V2 - Worldtile");
         for (int i = 0; i < 3; i++) {
-            if (!GlobalWalking.walkTo(destination,  PathingUtil::getWalkState)) {
+            if (!GlobalWalking.walkTo(destination, PathingUtil::getWalkState)) {
                 Log.warn("[PathingUtil]  GlobalWalking failed to generate a path, sleeping ~1-2s");
                 Waiting.waitNormal(1700, 200);
             } else
@@ -216,7 +218,16 @@ public class PathingUtil {
         return false;
     }
 
-
+    //TODO Finish
+    private static WorldTile getWalkTileFromArea(Area area) {
+        WorldTile centre = area.getCenter();
+        NormalDistribution norm = new NormalDistribution(0, 1);
+        val x = Utils.roundToNearest(norm.sample(), 1);
+        val y = Utils.roundToNearest(norm.sample(), 1);
+        Log.info("Generated a normally distributed WorldTile around center with X = "
+                + x+ " & Y = " + y);
+        return centre.translate(x, y);
+    }
 
 
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
@@ -242,7 +253,7 @@ public class PathingUtil {
                 .travelThroughDoors(travelThroughDoors)
                 .build().getPath(destination);
         Log.info("[PathingUtil] Local walking V2 - LocalTile (doors = " + travelThroughDoors + ")");
-        return LocalWalking.walkPath(path,  PathingUtil::getWalkState);
+        return LocalWalking.walkPath(path, PathingUtil::getWalkState);
     }
 
     public static boolean localNav(LocalTile destination) {
@@ -666,8 +677,8 @@ public class PathingUtil {
                 }
 
                 if (targetTile.map(PathingUtil::localNav).orElse(false) ||
-                        GlobalWalking.walkTo(area.getCenter(),  PathingUtil::getWalkState) ||
-                        GlobalWalking.walkTo(area.getRandomTile(),  PathingUtil::getWalkState)) {
+                        GlobalWalking.walkTo(area.getCenter(), PathingUtil::getWalkState) ||
+                        GlobalWalking.walkTo(area.getRandomTile(), PathingUtil::getWalkState)) {
                     val finalTargetTile = targetTile;
                     currentTime = System.currentTimeMillis();
                     if (Waiting.waitUntil(1500, 25, MyPlayer::isMoving) &&

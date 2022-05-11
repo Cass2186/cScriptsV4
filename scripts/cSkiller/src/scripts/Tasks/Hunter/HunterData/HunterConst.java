@@ -31,6 +31,25 @@ public class HunterConst {
             DESERT_LIZARD,
             SWAMP_LIZARD};
 
+    public static Area FALCONRY_AREA = Area.fromPolygon(
+            new WorldTile(2367, 3613, 0),
+            new WorldTile(2380, 3613, 0),
+            new WorldTile(2385, 3609, 0),
+            new WorldTile(2385, 3605, 0),
+            new WorldTile(2390, 3594, 0),
+            new WorldTile(2391, 3589, 0),
+            new WorldTile(2385, 3588, 0),
+            new WorldTile(2384, 3583, 0),
+            new WorldTile(2380, 3579, 0),
+            new WorldTile(2378, 3575, 0),
+            new WorldTile(2365, 3575, 0),
+            new WorldTile(2365, 3584, 0),
+            new WorldTile(2368, 3586, 0),
+            new WorldTile(2368, 3594, 0),
+            new WorldTile(2366, 3595, 0),
+            new WorldTile(2366, 3600, 0),
+            new WorldTile(2368, 3602, 0)
+    );
 
     /**
      * NET TRAPPING ANIMATIONS
@@ -79,7 +98,7 @@ public class HunterConst {
             }
     );
     public static List<WorldTile> YELLOW_SALAMANDER_TREES = new ArrayList<>(Arrays.asList(N_YELLOW_SAL_TREE,
-            E_YELLOW_SAL_TREE,   S_YELLOW_SAL_TREE ));
+            E_YELLOW_SAL_TREE, S_YELLOW_SAL_TREE));
     /**
      * RED SALAMANDERS
      */

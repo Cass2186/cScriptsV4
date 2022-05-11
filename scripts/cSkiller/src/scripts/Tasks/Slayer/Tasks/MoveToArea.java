@@ -539,7 +539,8 @@ public class MoveToArea implements Task {
                 .isReachable()
                 .findClosestByPathDistance();
 
-        if (closest.map(t->t.interact("Walk here")).orElse(false)){
+        if (!Waiting.waitUntil(1500, () ->area.containsMyPlayer()) &&
+                closest.map(t->t.interact("Walk here")).orElse(false)){
             Log.info("Walking to closest area tile");
             return Waiting.waitUntil(4500, 100, ()-> area.contains(MyPlayer.getTile()) );
         }
@@ -618,7 +619,7 @@ public class MoveToArea implements Task {
             goToElves();
             return;
         }
-        PathingUtil.walkToArea(SlayerVars.get().fightArea, false);
+        PathingUtil.walkToTile(SlayerVars.get().fightArea.getCenter());
         shouldMoveDoubleCheck();
     }
 

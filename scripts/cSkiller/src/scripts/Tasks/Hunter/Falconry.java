@@ -33,27 +33,7 @@ public class Falconry implements Task {
     int GLOVE_WITHOUT_FALCON = 10023;
     //needs 500gp to do this
     //rough area
-    RSArea FALCONRY_AREA = new RSArea(
-            new RSTile[]{
-                    new RSTile(2367, 3613, 0),
-                    new RSTile(2380, 3613, 0),
-                    new RSTile(2385, 3609, 0),
-                    new RSTile(2385, 3605, 0),
-                    new RSTile(2390, 3594, 0),
-                    new RSTile(2391, 3589, 0),
-                    new RSTile(2385, 3588, 0),
-                    new RSTile(2384, 3583, 0),
-                    new RSTile(2380, 3579, 0),
-                    new RSTile(2378, 3575, 0),
-                    new RSTile(2365, 3575, 0),
-                    new RSTile(2365, 3584, 0),
-                    new RSTile(2368, 3586, 0),
-                    new RSTile(2368, 3594, 0),
-                    new RSTile(2366, 3595, 0),
-                    new RSTile(2366, 3600, 0),
-                    new RSTile(2368, 3602, 0)
-            }
-    );
+
 
     public boolean getFalcon() {
         //enter falconry area first

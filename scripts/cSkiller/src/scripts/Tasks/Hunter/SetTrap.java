@@ -173,6 +173,7 @@ public class SetTrap implements Task {
                         Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 6000, 8000)) {
                     Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 6000, 8000);
                     Utils.idleNormalAction();
+                    return;
                 }
             }
         }

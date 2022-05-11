@@ -9,7 +9,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.GrandExchange;
-import org.tribot.script.sdk.interfaces.Item;
+import org.tribot.script.sdk.pricing.Pricing;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.GrandExchangeOffer;
@@ -85,14 +85,15 @@ public class Exchange {
 
     private static GrandExchange.CreateOfferConfig getBuyConfigFromItem(GEItem item) {
         Optional<ItemDefinition> itemDef = Query.itemDefinitions().idEquals(item.getItemID())
-                .isGrandExchangeTradeable().stream().findFirst();
+                .isGrandExchangeTradeable()
+                .findFirst();
         if (itemDef.isPresent()) {
-            Optional<Integer> priceOptional = ((Item) itemDef.get()).lookupPrice();
-            int price = priceOptional
-                    .map(p-> p *item.getPercentIncrease()).orElse(1.0).intValue();
+
+            Optional<Integer> priceOptional = Pricing.lookupPrice(item.getItemID());
+            int price = priceOptional.map(p -> p * item.getPercentIncrease() / 100).orElse(50.0).intValue();
             int clicks = Utils.roundToNearest(item.getPercentIncrease(), 5) / 5;
-            if (clicks > Utils.random(5, 8)) {
-                Log.warn("Price adjustment is > 5-8 clicks, using " + price);
+            if (clicks > Utils.random(8, 12)) {
+                Log.warn("Price adjustment is > 10-18 clicks, using " + price);
                 return GrandExchange.CreateOfferConfig.builder()
                         .type(GrandExchangeOffer.Type.BUY)
                         .itemId(item.getItemID())
@@ -536,7 +537,7 @@ public class Exchange {
                 if (!GrandExchange.isOpen())
                     break;
                 Log.info("Not at selection window, waiting briefly");
-                if (Waiting.waitUntil(5000, 150, () ->
+                if (Waiting.waitUntil(3000, 150, () ->
                         org.tribot.api2007.GrandExchange.getWindowState() ==
                                 org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW))
                     Log.info("After selection window");
@@ -568,7 +569,7 @@ public class Exchange {
                     .toList();
             if (inProgressOfferList.size() > 0) {
                 Log.info("at least 1 in progess");
-                if (Waiting.waitUntil(30000, 400, () ->
+                if (Waiting.waitUntil(Utils.random(8000,15000), 400, () ->
                         Query.grandExchangeOffers()
                                 .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
                                 .toList().size() == 0))
@@ -582,7 +583,7 @@ public class Exchange {
 
                 clickCollect();
                 SHOULD_WAIT = true; // will cause loop to continue
-                Waiting.waitUntil(30000, 400, () ->
+                Waiting.waitUntil(Utils.random(8000,15000), 400, () ->
                         Query.grandExchangeOffers()
                                 .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
                                 .toList().size() == 0);
@@ -594,7 +595,7 @@ public class Exchange {
                         inProgressOfferList.size()));
                 SHOULD_WAIT = true; // will cause loop to continue
                 checkRelist();
-                Waiting.waitUntil(30000, 400, () ->
+                Waiting.waitUntil(Utils.random(8000,15000), 400, () ->
                         Query.grandExchangeOffers()
                                 .statusEquals(GrandExchangeOffer.Status.IN_PROGRESS)
                                 .toList().size() == 0);
@@ -653,7 +654,7 @@ public class Exchange {
     public static void checkRelist() {
         if (org.tribot.api2007.GrandExchange.getWindowState() == org.tribot.api2007.GrandExchange.WINDOW_STATE.SELECTION_WINDOW) {
             clickCollect(); // collects items first, otherwise an issue if all windows are in use
-            General.sleep(General.random(1500, 3000)); // allows for the last offer placed to insta-complete if it's going to.
+            General.sleep(2000, 3000); // allows for the last offer placed to insta-complete if it's going to.
 
             Optional<RSGEOffer> offer = checkForOffersInProgress();
             if (offer.isPresent()) {
@@ -664,9 +665,9 @@ public class Exchange {
                     amount = Interfaces.get(465, index, 18).getComponentStack();
 
                 int id = offer.get().getItemID();
-                int price = offer.get().getPrice();
-
-                price = getListPrice(offer.get());
+                int price = getListPrice(offer.get());
+                if (price < 1000)
+                    price = (int) ((int) price * 1.3);
 
                 General.println("[GEManager]: Relisting item: " + RSItemDefinition.get(id).getName() + " at " + (price * 1.2) + " coins");
 
@@ -674,7 +675,7 @@ public class Exchange {
                     General.println("[GEManager]: Aborting offer");
                     Timer.waitCondition(() -> offer.get().getStatus() == RSGEOffer.STATUS.CANCELLED, 6000, 8000);
                 }
-                int newPrice = (int) (price * 1.2) + 10;
+                int newPrice = (int) (price * 1.2) + 50;
                 // will attempt to re-buy at 20% more, does not collect canceled gold before.
                 buyItemFlat(id, newPrice, amount);
 
@@ -717,7 +718,7 @@ public class Exchange {
                 }
                 if (Interfaces.get(465, 25, 39) != null) { // selects item price (custom)
 
-                    int GE_PRICE = getGrandExchangePrice();
+                    Optional<Integer> GE_PRICE = Pricing.lookupPrice(ItemID);//getGrandExchangePrice();
                     General.println("[GEManager]: GE Price: " + GE_PRICE);
                     General.println("[GEManager]: Using Flat Price: " + flatPrice);
                     RSInterface listPriceButton = Interfaces.get(465, 25, 12);
@@ -755,7 +756,7 @@ public class Exchange {
     private static boolean clickCollect() {
         if (GrandExchange.collectAll()) {
             Log.info("[Exchange]: SDK Collection");
-            Waiting.waitUntil(30000, 400, () ->
+            Waiting.waitUntil(5000, 400, () ->
                     Query.grandExchangeOffers()
                             .statusNotEquals(GrandExchangeOffer.Status.EMPTY)
                             .toList().size() == 0);

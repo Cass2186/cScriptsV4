@@ -15,6 +15,9 @@ import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.World;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.MoneyMaking.ClockWorks.MakeClockWork;
 import scripts.QuestPackages.APorcineOfInterest.APorcineOfInterest;
 import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
@@ -250,9 +253,21 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         }
     }
 
+    Area CASTLE_WARS =  Area.fromRectangle(new WorldTile(2437, 3093, 0), new WorldTile(2444, 3087, 0));
+    List<WorldTile> allTiles = CASTLE_WARS.getAllTiles();
+    HashMap<WorldTile, Integer> tileMap = new HashMap<>();
+
+    public void populateMap(){
+        if (tileMap.size() == 0){
+            for (WorldTile t : allTiles){
+                tileMap.put(t, 0);
+            }
+        }
+    }
 
     @Override
     public void onPaint(Graphics g) {
+        populateMap();
         double timeRan = getRunningTime();
         double timeRanMin = (timeRan / 3600000);
         List<String> myString;
@@ -284,6 +299,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         }
 
         PaintUtil.createPaint(g, myString.toArray(String[]::new));
+
+
     }
 
 

@@ -31,7 +31,7 @@ import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 public class Obstacle {
 
     private int obstacleId;
-    private  String obstacleName;
+    private String obstacleName;
     @Getter
     public String obstacleAction;
     private RSArea obstacleArea;
@@ -77,11 +77,11 @@ public class Obstacle {
         if (Combat.getHPRatio() < Vars.get().eatAt) {
             for (int i = 0; i < 3; i++) {
                 if (MyPlayer.isMoving())
-                    Waiting.waitUntil(2500, 50, ()-> !MyPlayer.isMoving());
+                    Waiting.waitUntil(2500, 50, () -> !MyPlayer.isMoving());
 
                 Log.info("[Debug]: Eating food i = " + i);
                 Optional<InventoryItem> eat = Query.inventory().actionContains("Eat").findClosestToMouse();
-                if (eat.map(f->f.click("Eat")).orElse(false)) {
+                if (eat.map(f -> f.click("Eat")).orElse(false)) {
                     Vars.get().eatAt = AntiBan.getEatAt();
                     General.println("[ABC2]: Next eating at: " + Vars.get().eatAt + "% HP");
                     return true;
@@ -171,18 +171,18 @@ public class Obstacle {
                         5000, 6500);
                 return true;
             }
-            if (obj.length > 0) {
+            if (obj.length > 0 && this.obstacleArea.contains(Player.getPosition())) {
                 //need this for Canifis when you're floating and stuck
                 Log.info("API Dynamic clicking failsafe");
                 if (!obj[0].isClickable())
                     DaxCamera.focus(obj[0]);
 
                 return DynamicClicking.clickRSObject(obj[0], this.obstacleAction)
-                        && Timer.agilityWaitCondition(() ->
+                        && Waiting.waitUntil(Utils.random(5000, 6500),
+                        Utils.random(400, 800), () ->
                                 (!MyPlayer.isMoving()
                                         && !this.obstacleArea.contains(Player.getPosition()) ||
-                                        Player.getPosition().getPlane() == 0),
-                        5000, 6500);
+                                        MyPlayer.getTile().getPlane() == 0));
             }
         }
         return false;
@@ -192,9 +192,17 @@ public class Obstacle {
         int plane = MyPlayer.getTile().getPlane();
         int shouldAlch = Utils.random(0, 100);
         for (int i = 0; i < 3; i++) { //tries 3 times
-            Log.info("Clicking " + this.obstacleAction + " "
-                    + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
-            if (accurateMouse) {
+            // Log.info("Clicking " + this.obstacleAction + " " + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
+            if (Vars.get().spamClickAgility) {
+                for (int clicks = 0; clicks < Utils.random(2, 5); clicks++) {
+                    if (obj.map(o -> o.isVisible() && o.click(action)).orElse(false)) {
+                        Waiting.waitNormal(25, 7);
+                    } else if (obj.map(o -> o.interact(action)).orElse(false)) {
+                        Log.info("Interact");
+                        Waiting.waitNormal(30, 7);
+                    }
+                }
+            } else if (accurateMouse) {
                 Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
                 if (obj.map(o -> o.interact(action)).orElse(false))
                     Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);

@@ -23,6 +23,7 @@ import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.ItemID;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 import scripts.Tasks.Hunter.HunterData.HunterConst;
 import scripts.Timer;
 import scripts.Utils;
@@ -61,11 +62,20 @@ public class CollectSuccessful implements Task {
         Inventory.drop(ItemID.WATERSKIN0);
     }
 
-    public void collectNetTrapNew(List<WorldTile> tileList) {
+    public boolean collectNetTrapNew(List<WorldTile> tileList) {
         Optional<GameObject> check = Query.gameObjects().actionContains("Check")
                 .tileEquals(tileList.toArray(WorldTile[]::new))
                 .maxDistance(20).findBestInteractable();
-        for (WorldTile t : tileList) {
+        List<InventoryItem> sals = Query.inventory().nameContains("salamander")
+                .toList();
+        if (check.map(c -> c.interact("Check")).orElse(false)) {
+            return Waiting.waitUntil(8000, Utils.random(340, 550),
+                    () -> Query.inventory()
+                            .nameContains("salamander")
+                            .toList().size() > sals.size());
+        }
+        return false;
+       /* for (WorldTile t : tileList) {
             if (Inventory.getAll().length > Utils.random(16, 19)) {
                 dropSalamanders();
             }
@@ -79,8 +89,9 @@ public class CollectSuccessful implements Task {
                         .toList().size() >
                         sals.size(), 7000, 9000); //was 10-12s
             }
-        }
+        }*/
     }
+
     public void collectNetTrap(List<RSTile> tileList) {
         for (RSTile t : tileList) {
             RSObject trap = Entities.find(ObjectEntity::new)
@@ -95,7 +106,7 @@ public class CollectSuccessful implements Task {
             Optional<GameObject> check = Query.gameObjects().actionContains("Check")
                     .inArea(Area.fromRadius(Utils.getWorldTileFromRSTile(t), 1))
                     .maxDistance(20).findBestInteractable();
-            if (check.map(c->c.interact("Check")).orElse(false)){
+            if (check.map(c -> c.interact("Check")).orElse(false)) {
                 Timer.slowWaitCondition(() -> Query.inventory().nameContains("salamander")
                         .toList().size() >
                         sals.size(), 7000, 9000); //was 10-12s
@@ -110,28 +121,28 @@ public class CollectSuccessful implements Task {
         }
     }
 
-    public void collectBoxTrap(List<RSTile> tileList, int chinId) {
-        for (RSTile t : tileList) {
-            RSObject trap = Entities.find(ObjectEntity::new)
-                    .tileEquals(t)
-                    .idEquals(HunterConst.SHAKING_BOX_TRAP)
-                    .getFirstResult();
+    public boolean collectBoxTrap(WorldTile... tiles) {
+        Optional<GameObject> box = Query.gameObjects()
+                .actionContains("Check")
+                .idEquals(HunterConst.SHAKING_BOX_TRAP)
+                .tileEquals(tiles)
+                .maxDistance(20).findBestInteractable();
 
-            RSItem[] invTraps = Inventory.find(HunterConst.BOX_TRAP_ITEM_ID);
-
-            //TODO Check the action here
-            if (trap != null && Utils.clickObject(trap, "Check",
-                    false)) {
-                Timer.slowWaitCondition(() -> Inventory.find(HunterConst.BOX_TRAP_ITEM_ID).length >
-                        invTraps.length, 7000, 9000); //was 10-12s
-            }
+        List<InventoryItem> chins = Query.inventory().nameContains("chinchompa")
+                .toList();
+        if (box.map(b -> b.interact("Check")).orElse(false)) {
+            return Waiting.waitUntil(8000, Utils.random(340, 550),
+                    () -> Query.inventory()
+                            .nameContains("chinchompa")
+                            .toList().size() > chins.size());
         }
+        return false;
     }
 
 
     @Override
     public String toString() {
-        return "Collecting successful traps";
+        return "Collecting catches";
     }
 
 

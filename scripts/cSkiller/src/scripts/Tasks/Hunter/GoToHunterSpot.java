@@ -21,11 +21,11 @@ public class GoToHunterSpot implements Task {
 
     public static Optional<Area> getHunterArea() {
         if (Skill.HUNTER.getActualLevel() < 29) {
-
+            //bird area
         } else if (Skill.HUNTER.getActualLevel() < 43) {
             return Optional.of(HunterConst.CANIFIS_HUNTER_AREA);
         } else if (Skill.HUNTER.getActualLevel() < 47) {
-            // falconry area
+            return Optional.of(HunterConst.FALCONRY_AREA);
         } else if (Skill.HUNTER.getActualLevel() < 67) {
             return  Optional.of(HunterConst.YELLOW_SAL_AREA);
         }

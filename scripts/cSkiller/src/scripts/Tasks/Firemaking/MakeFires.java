@@ -42,8 +42,15 @@ public class MakeFires implements Task {
         List<WorldTile> allTiles = GE_START_AREA.getAllTiles()
                 .stream().sorted(Comparator.comparingInt(WorldTile::distance))
                 .collect(Collectors.toList());
-
-        return allTiles.stream().filter(t -> isPathGood(t, Utils.random(6, 10))).findAny();
+        List<WorldTile> allTilesRendered = GE_START_AREA.getAllTiles()
+                .stream().sorted(Comparator.comparingInt(WorldTile::distance))
+                .filter(t->t.isRendered())
+                .collect(Collectors.toList());
+        if (allTilesRendered.size() == 0 && allTiles.size() > 0){
+            Log.info("Going to start tile");
+            PathingUtil.walkToTile(allTiles.get(0));
+        }
+        return allTiles.stream().filter(t -> isPathGood(t, Utils.random(6, 10))).findFirst();
     }
 
     private boolean isPathGood(WorldTile startTile, int minLength) {
@@ -56,6 +63,7 @@ public class MakeFires implements Task {
                 return false;
             }
         }
+
         Log.info("Tile is a good for path of min tiles: " + minLength);
         return true;
     }
