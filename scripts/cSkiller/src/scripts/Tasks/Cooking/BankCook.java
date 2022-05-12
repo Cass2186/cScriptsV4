@@ -120,7 +120,7 @@ public class BankCook implements Task {
                     Utils.equipItem(wealth[0].getID());
                 return false;
             }
-            
+
             BankManager.close(true);
             if (GlobalWalking.walkTo(CATHERBY_BANK_TILE))
                 Waiting.waitUntil(5000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 10);

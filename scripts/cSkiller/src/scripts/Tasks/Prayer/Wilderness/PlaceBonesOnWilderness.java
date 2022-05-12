@@ -13,6 +13,7 @@ import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -27,31 +28,39 @@ public class PlaceBonesOnWilderness implements Task {
                 .nameContains("Chaos altar")
                 .findClosest();
 
-        if (Player.getAnimation() == -1 && item.isPresent() && altar.isPresent()) {
-            Log.info("Placing bones");
+        //will scroll to the world only upon initially arriving
+        if (Inventory.isFull())
             PkObserver.scrollToWorldNoClick(PkObserver.nextWorld);
+
+        if (MyPlayer.getAnimation() == -1 && item.isPresent() && altar.isPresent()) {
+            Log.info("Placing bones");
+
             if (altar.map(a -> item.map(i -> i.useOn(a))
                     .orElse(false)).orElse(false) &&
-                    //  if (Utils.useItemOnObject(item.get().getId(), altar.get().getId()) &&
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 4600, 6200)) {
+                    Waiting.waitUntil(5000, 50, () -> PkObserver.shouldHop() ||
+                            MyPlayer.getAnimation() != -1)) {
                 Log.info("Idling");
             }
         }
-        if (Waiting.waitUntil(75000, 75, () -> {
-            if (MyPlayer.getAnimation() == -1 &&
-                    !Waiting.waitUntil(800, () ->
-                            MyPlayer.getAnimation() != -1)) {
-                return true;
-            }
-            //have this otherwise it flips between inv and hop alot when leveling quickly
-            if (Skill.PRAYER.getActualLevel() > 27)
-                PkObserver.scrollToWorldNoClick(PkObserver.nextWorld);
-            return ChatScreen.isOpen() ||
-                    PkObserver.shouldHop() ||
-                    Query.inventory().nameContains("bones")
-                            .isNotNoted().findFirst().isEmpty();
-        })) {
+        if (Waiting.waitUntil(75000, 50, () -> {
+                    if (MyPlayer.getAnimation() == -1 &&
+                            !Waiting.waitUntil(900, 10, () ->
+                                    PkObserver.shouldHop() ||  //TODO make sure this works
+                                            MyPlayer.getAnimation() != -1)) {
+                        return true;
+                    }
+                    //have this otherwise it flips between inv and hop alot when leveling quickly
+                    if (Skill.PRAYER.getActualLevel() > 25)
+                        PkObserver.scrollToWorldNoClick(PkObserver.nextWorld);
+
+                    return ChatScreen.isOpen() ||
+                            PkObserver.shouldHop() ||
+                            Query.inventory().nameContains("bones")
+                                    .isNotNoted().findFirst().isEmpty();
+                }
+        )) {
             Waiting.waitNormal(50, 10);
+            // wait after returning
         }
 
     }
@@ -79,6 +88,7 @@ public class PlaceBonesOnWilderness implements Task {
     public String toString() {
         return "Placing Bones";
     }
+
     @Override
     public String taskName() {
         return "Prayer - Wilderness";
