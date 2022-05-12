@@ -14,10 +14,12 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
 import org.tribot.script.sdk.tasks.EquipmentReq;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.AscentOfArceuus.AscentOfArceuus;
@@ -114,7 +116,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
         if (!HorrorConst.BOTTOM_FLOOR.contains(Player.getPosition()) && !HorrorConst.BASEMENT.contains(Player.getPosition())
                 && !HorrorConst.DAGGANOTH_AREA.contains(Player.getPosition()) && !HorrorConst.SECOND_FLOOR.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to unlock door";
-            PathingUtil.walkToArea(HorrorConst.START_AREA, false);
+            PathingUtil.walkToTile(HorrorConst.START_TILE);
 
             if (Utils.clickObject("Doorway", "Walk-through", false))
                 Timer.waitCondition(() -> HorrorConst.INSIDE_LIGHTHOUSE_DOOR.contains(Player.getPosition()), 8000, 12000);
@@ -128,7 +130,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
                 (!HorrorConst.OUTSIDE_LIGHTHOUSE.contains(Player.getPosition())) &&
                         !HorrorConst.BASEMENT.contains(Player.getPosition()) &&
                         !HorrorConst.BOTTOM_OF_PIT.contains(Player.getPosition())
-                        && Player.getPosition().getPlane() == 0) {
+                        && MyPlayer.getTile().getPlane() == 0) {
             HorrorFromTheDeep.unlockDoor();
         }
     }
@@ -159,8 +161,11 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
                     General.sleep(400, 800);
             }
         }
+        Optional<Widget> close = Query.widgets().inIndexPath(392).actionContains("Close").findFirst();
+
         // close book interface
-        if (InterfaceUtil.clickInterfaceAction(392, "Close"))
+       // if (InterfaceUtil.clickInterfaceAction(392, "Close"))
+        if (close.map(Widget::click).orElse(false))
             //if (Interfaces.get(392, 7) != null && Interfaces.get(392, 7).click())
             Timer.waitCondition(() -> !Interfaces.isInterfaceSubstantiated(392, 7), 2500, 4000);
     }
@@ -172,33 +177,31 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
 
     public void goUpStairs() {
-        if (Player.getPosition().getPlane() < 2) {
+        if (MyPlayer.getTile().getPlane() < 2) {
             cQuesterV2.status = "Fixing Lighthouse";
-            int plane = Player.getPosition().getPlane();
+            int plane = MyPlayer.getTile().getPlane();
 
             if (Utils.clickObject("Staircase", "Climb-up", false))
-                Timer.waitCondition(() -> Player.getPosition().getPlane() != plane, 4000, 6000);
+                Timer.waitCondition(() -> MyPlayer.getTile().getPlane() != plane, 4000, 6000);
         }
     }
 
 
     public boolean useItemOnLight(int item) {
         cQuesterV2.status = "Using item on Light";
-        if (Utils.useItemOnObject(item, "Lighting mechanism"))
-            return Timer.waitCondition(() -> Inventory.find(item).length < 1, 5000, 7000);
-
-        return false;
+        return Utils.useItemOnObject(item, "Lighting mechanism") &&
+                Waiting.waitUntil(5000, 250, () -> Inventory.find(item).length == 0);
     }
 
 
     public static void goDownStairs() {
         goToLightHouse();
-        if (Player.getPosition().getPlane() != 0) {
+        if (MyPlayer.getTile().getPlane() != 0) {
             cQuesterV2.status = "Going to basement";
-            int plane = Player.getPosition().getPlane();
+            int plane = MyPlayer.getTile().getPlane();
 
             if (Utils.clickObject("Staircase", "Climb-down", false))
-                Timer.waitCondition(() -> Player.getPosition().getPlane() != plane, 4000, 6000);
+                Timer.waitCondition(() -> MyPlayer.getTile().getPlane() != plane, 4000, 6000);
 
         } else if (HorrorConst.BOTTOM_FLOOR.contains(Player.getPosition()) ||
                 HorrorConst.FIXED_GROUND_FLOOR.contains(Player.getPosition())) {
@@ -229,31 +232,31 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
 
     public void handleBasementDoor() {
-        if (Player.getPosition().getPlane() == 0) {
+        if (MyPlayer.getTile().getPlane() == 0) {
             goDownStairs();
             cQuesterV2.status = "Using items on door";
-            if (Game.getSetting(HorrorConst.GAME_SETTING) == 29421572
-                    && Utils.getVarBitValue(40) == 0) {
+            if (//Game.getSetting(HorrorConst.GAME_SETTING) == 29421572 &&
+                    Utils.getVarBitValue(40) == 0) {
                 fireRuneOnDoor.setTileRadius(4);
                 fireRuneOnDoor.useItemOnObject();
             }
-            if (Game.getSetting(HorrorConst.GAME_SETTING) == 29487108 &&
+            if (//Game.getSetting(HorrorConst.GAME_SETTING) == 29487108 &&
                     Utils.getVarBitValue(43) == 0) {
                 airRuneOnDoor.useItemOnObject();
             }
-            if (Game.getSetting(HorrorConst.GAME_SETTING) == 30011396 &&
+            if (//Game.getSetting(HorrorConst.GAME_SETTING) == 30011396 &&
                     Utils.getVarBitValue(41) == 0) {
                 waterRuneOnDoor.useItemOnObject();
             }
-            if (Game.getSetting(HorrorConst.GAME_SETTING) == 30142468 &&
+            if (//Game.getSetting(HorrorConst.GAME_SETTING) == 30142468 &&
                     Utils.getVarBitValue(42) == 0) {
                 earthRuneOnDoor.useItemOnObject();
             }
-            if (Game.getSetting(HorrorConst.GAME_SETTING) == 30404612 &&
+            if (//Game.getSetting(HorrorConst.GAME_SETTING) == 30404612 &&
                     Utils.getVarBitValue(45) == 0) {
                 arrowOnDoor.useItemOnObject();
             }
-            if (Game.getSetting(HorrorConst.GAME_SETTING) == 32501764 &&
+            if (//Game.getSetting(HorrorConst.GAME_SETTING) == 32501764 &&
                     Utils.getVarBitValue(44) == 0) {
                 swordOnDoor.useItemOnObject();
             }
@@ -348,7 +351,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
                 Timer.waitCondition(() -> dagFinal[0].isInteractingWithMe(), 5000, 6000);
                 //wait is needed after it is interacting, otherwise fails to move
                 Log.debug("Waiting for healthbar visible");
-                Waiting.waitUntil(3000, () -> MyPlayer.isHealthBarVisible());
+                Waiting.waitUntil(3000, 75, () -> MyPlayer.isHealthBarVisible());
             }
 
             moveToSafeArea();
@@ -409,7 +412,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
 
 
     public void moveToSafeArea() {
-        for (int i = 0; i <3; i++ ) {
+        for (int i = 0; i < 3; i++) {
             Log.debug("Loop i = " + i);
             if (!HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition())) {
 
@@ -422,7 +425,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
                     Timer.waitCondition(() -> HorrorConst.MOTHER_SAFE_TILE.equals(Player.getPosition())
                             || !Player.isMoving(), 4000, 6000);
 
-                Waiting.waitNormal(500,70);
+                Waiting.waitNormal(500, 70);
             } else
                 break;
         }
@@ -682,6 +685,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
     @Override
     public boolean isComplete() {
         return Quest.HORROR_FROM_THE_DEEP.getState().equals(Quest.State.COMPLETE);

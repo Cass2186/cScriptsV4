@@ -116,6 +116,7 @@ import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestPackages.ZogreFleshEaters.ZogreFleshEaters;
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
+import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.TaskSet;
 import scripts.QuestUtils.Vars;
@@ -723,6 +724,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("deserttreas")) {
             General.println("[Args]: Added Desert Treasure ");
             taskList.add(DesertTreasure.get());
+        }
+        else if (arg.toLowerCase().contains("observ")) {
+            General.println("[Args]: Added Observatory Quest ");
+            taskList.add(ObservatoryQuest.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

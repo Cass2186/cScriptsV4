@@ -5,6 +5,11 @@ import obf.G;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.NatureSpirit.NatureSpirit;
@@ -26,11 +31,16 @@ public class ObservatoryQuest implements QuestTask {
     public static ObservatoryQuest get() {
         return quest == null ? quest = new ObservatoryQuest() : quest;
     }
+
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(ItemID.PLANK, 3, 40),
                     new GEItem(ItemID.BRONZE_BAR, 1, 500),
                     new GEItem(ItemID.MOLTEN_GLASS, 1, 50),
+                    new GEItem(ItemID.RING_OF_DUELING8, 1, 50),
+                    new GEItem(ItemID.NECKLACE_OF_PASSAGE5, 1, 75),
+                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 50),
+                    new GEItem(ItemID.LOBSTER, Utils.random(8, 12), 50),
                     new GEItem(ItemID.AMULET_OF_GLORY4, 1, 30),
                     new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
@@ -42,7 +52,10 @@ public class ObservatoryQuest implements QuestTask {
                     new ItemReq(ItemID.PLANK, 3),
                     new ItemReq(ItemID.BRONZE_BAR, 1),
                     new ItemReq(ItemID.MOLTEN_GLASS, 1),
-
+                    new ItemReq(ItemID.NECKLACE_OF_PASSAGE5, 1, 0),
+                    new ItemReq(ItemID.RING_OF_DUELING8, 1, 0),
+                    new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 0),
+                    new ItemReq(ItemID.LOBSTER, 8, 2),
                     new ItemReq(ItemID.AMULET_OF_GLORY4, 1, 0, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
@@ -75,6 +88,17 @@ public class ObservatoryQuest implements QuestTask {
     //RSArea()s
     RSArea observatoryDungeon, observatoryF1, observatoryF2;
 
+    private boolean handleWarning() {
+        if (!Query.widgets().inIndexPath(560).textContains("Proceed").isVisible().isAny()) {
+            Waiting.waitUntil(3500, 250, () -> Query.widgets().inIndexPath(560).textContains("Proceed").isVisible().isAny());
+        }
+        Optional<Widget> proceed = Query.widgets().inIndexPath(560).textContains("Proceed").findFirst();
+        WorldTile t = MyPlayer.getTile();
+        if (proceed.map(p -> p.click()).orElse(false)) {
+            return Waiting.waitUntil(5000, 500, () -> !MyPlayer.getTile().equals(t));
+        }
+        return false;
+    }
 
     public Map<Integer, QuestStep> loadSteps() {
         loadRSAreas();
@@ -152,6 +176,30 @@ public class ObservatoryQuest implements QuestTask {
         observatoryF2 = new RSArea(new RSTile(2433, 3154, 1), new RSTile(2448, 3169, 1));
     }
 
+    WorldTile CHEST_TILE_1 = new WorldTile(2359, 9366, 0);
+    int CLOSED_CHEST = 25387;
+
+    private void searchChests() {
+        List<GameObject> closedChest = Query.gameObjects().actionContains("Open").idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
+                .sortedByPathDistance().toList();
+        for (GameObject object : closedChest) {
+            if (object.interact("Open")) {
+                Waiting.waitUntil(8000, 500, MyPlayer::isAnimating);
+            }
+            Optional<GameObject> openChest = Query.gameObjects()
+                    .actionContains("Search")
+                    .idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
+                    .inArea(Area.fromRadius(MyPlayer.getTile(), 2))
+                    .findClosestByPathDistance();
+            if (openChest.map(chest->chest.interact("Search")).orElse(false)){
+                Waiting.waitUntil(8000, 500, ()-> ChatScreen.isOpen());
+                ChatScreen.handle();
+            }
+        }
+
+
+    }
+
     public void setupSteps() {
         talkToProfessor = new NPCStep(NpcID.OBSERVATORY_PROFESSOR, new RSTile(2442, 3186, 0),
                 plank.quantity(3), moltenGlass, bronzeBar);
@@ -171,8 +219,8 @@ public class ObservatoryQuest implements QuestTask {
         giveProfessorGlass.addDialogStep("Talk about the Observatory quest.");
         talkToAssistant = new NPCStep(NpcID.OBSERVATORY_ASSISTANT, new RSTile(2443, 3189, 0),
                 "Talk to the observatory assistant.");
-        enterDungeon = new ObjectStep(ObjectID.STAIRS_25432, new RSTile(2458, 3186, 0),
-                "Climb-down");
+        enterDungeon = new ObjectStep(ObjectID.STAIRS_25432, new RSTile(2458, 3185, 0),
+                "Climb-down", handleWarning());
         searchChests = new ObjectStep(ObjectID.CHEST_25385,
                 "Search");
         ((ObjectStep) searchChests).addAlternateObjects(ObjectID.CHEST_25386, ObjectID.CHEST_25387,
@@ -195,15 +243,15 @@ public class ObservatoryQuest implements QuestTask {
                 lens);
         giveProfessorLensAndMould.addDialogStep("Talk about the Observatory quest.");
         enterDungeonAgain = new ObjectStep(ObjectID.STAIRS_25432, new RSTile(2458, 3186, 0),
-                "Enter the dungeon east of the Professor.");
+                "Enter", handleWarning());
         enterObservatory = new ObjectStep(ObjectID.STAIRS_25429, new RSTile(2335, 9352, 0),
-                "Follow the dungeon around anti-clockwise to a staircase, then climb it.");
+                "Climb-up");
         goToF2Observatory = new ObjectStep(ObjectID.STAIRS_25431, new RSTile(2444, 3160, 0),
-                "Climb up the stairs in the observatory.");
+                "Climb-up");
         viewTelescope = new ObjectStep(25591, new RSTile(2441, 3162, 1),
                 "Use the telescope.");
         //tellProfessorConstellation = new StarSignAnswer(this);
-        tellProfessorConstellation.addDialogStep("Talk about the Observatory quest.");
+        //  tellProfessorConstellation.addDialogStep("Talk about the Observatory quest.");
     }
 
 
@@ -324,13 +372,18 @@ public class ObservatoryQuest implements QuestTask {
 
         // buy initial items on quest start
         if (GameState.getSetting(gameSetting) == 0) {
-            // buyStep.buyItems();
-            // initialItemReqs.withdrawItems();
+            if (!initialItemReqs.check()) {
+                buyStep.buyItems();
+                initialItemReqs.withdrawItems();
+            }
         }
-
+        if (GameState.getSetting(gameSetting) == 4) {
+            cQuesterV2.status = "Searching chests";
+            searchChests();
+        }
         // done quest
         if (isComplete()) {
-            Log.debug("Prince Ali Rescue is complete");
+            Log.info("Observatory Quest is complete");
             cQuesterV2.taskList.remove(this);
             return;
         }

@@ -2,6 +2,7 @@ package scripts.QuestPackages.HorrorFromTheDeep;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.WorldTile;
 
 public class HorrorConst {
 
@@ -25,7 +26,7 @@ public class HorrorConst {
     public static RSTile BRIDGE_TILE_2 = new RSTile(2592, 3607, 0);
     public static RSTile MOTHER_SAFE_TILE = new RSTile(2510, 4655, 0);
     public static RSTile BASEMENT_DOOR_TILE = new RSTile(2515, 4626, 0);
-
+    public static WorldTile START_TILE =  new WorldTile(2508, 3633, 0);
     public static RSArea BASEMENT = new RSArea(new RSTile(2505, 4626, 0), new RSTile(2527, 4611, 0));
     public static RSArea BOTTOM_FLOOR = new RSArea(new RSTile(2442, 4602, 0), 10);
     public static RSArea START_AREA = new RSArea(new RSTile(2502, 3635, 0), new RSTile(2514, 3631, 0));

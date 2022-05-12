@@ -349,10 +349,21 @@ public class ObjectStep extends QuestStep {
         } else if (this.alternateIds != null) {
             Log.info("Attempting an alternate ID");
             for (Integer i : this.alternateIds) {
-                Optional<GameObject> ob = Query.gameObjects()
+                Optional<GameObject> ob;
+                if (this.tile == null)
+                  ob = Query.gameObjects()
+                            .idEquals(i)
+                            .findClosest();
+                else
+                    ob = Query.gameObjects()
                         .tileEquals(Utils.getWorldTileFromRSTile(this.tile))
                         .idEquals(i)
                         .findClosest();
+                if (ob.map(o-> o.interact(this.objectAction)).orElse(false)){
+                    Log.info("Interacted successfully");
+                    handleSuccessfulClick();
+                    return;
+                }
                 if (Utils.clickObj(ob, this.objectAction)
                         || Utils.clickObject(this.objectId, this.objectAction, false)) {
                     handleSuccessfulClick();

@@ -2,16 +2,20 @@ package scripts.QuestPackages.ShieldOfArrav;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
-import org.tribot.api2007.*;
+
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.TradeScreen;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.query.TradeQuery;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.Player;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.Listeners.MuleListener;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
@@ -29,6 +33,7 @@ import scripts.Tasks.Task;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class BlackArmsGang implements QuestTask, MuleListener {
     private static BlackArmsGang quest;
@@ -48,8 +53,8 @@ public class BlackArmsGang implements QuestTask, MuleListener {
     RSArea storeRoom = new RSArea(new RSTile(3242, 3380, 1), new RSTile(3252, 3386, 1));
     RSArea upstairsInBase = new RSArea(new RSTile(3182, 3382, 1), new RSTile(3201, 3398, 1));
 
-    RSArea GROUND_FLOOR_OF_BASE = new RSArea(new RSTile(3250, 3385, 0), new RSTile(3252, 3382, 0));
-    RSArea BEFORE_DOOR = new RSArea(new RSTile(3252, 3386, 0), new RSTile(3250, 3389, 0));
+    Area GROUND_FLOOR_OF_BASE = Area.fromRectangle(new WorldTile(3250, 3385, 0), new WorldTile(3252, 3382, 0));
+    Area BEFORE_DOOR = Area.fromRectangle(new WorldTile(3252, 3386, 0), new WorldTile(3250, 3389, 0));
     ItemReq storeRoomKey = new ItemReq(ItemID.WEAPON_STORE_KEY);
     ItemReq twoPhoenixCrossbow = new ItemReq(ItemID.PHOENIX_CROSSBOW, 2);
     ItemReq shieldHalf = new ItemReq(ItemID.BROKEN_SHIELD_765);
@@ -61,7 +66,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
             "Open", Objects.findNearest(3, 2401).length > 0);
 
     ObjectStep getShieldHalf1 = new ObjectStep(2401, new RSTile(3188, 3386, 1),
-            Inventory.find(ItemID.BROKEN_SHIELD_765).length > 0, "Search", true);
+            Inventory.contains(ItemID.BROKEN_SHIELD_765), "Search", true);
 
     NPCStep talkToHaig = new NPCStep(CURATOR_HAIG_HALEN, new RSTile(3255, 3449, 0));
 
@@ -76,7 +81,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
     ));
 
     public void talkToKaterineStep() {
-        if (Game.getSetting(146) == 1) {
+        if (GameState.getSetting(146) == 1) {
             message = "Going to Katerine";
             General.println("[Debug]: Going to Katerine");
             talkToKatrine = new NPCStep(5210, new RSTile(3185, 3385, 0));
@@ -90,7 +95,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
     }
 
     public void talkToCharilieStep() {
-        if (Game.getSetting(146) == 0) {
+        if (GameState.getSetting(146) == 0) {
             talkToCharlie = new NPCStep(5209, new RSTile(3208, 3392, 0));
             talkToCharlie.addDialogStep("Is there anything down this alleyway?");
             talkToCharlie.addDialogStep("Do you think they would let me join?");
@@ -98,46 +103,63 @@ public class BlackArmsGang implements QuestTask, MuleListener {
         }
     }
 
+
     public void getWeaponStoreKey() {
-        if (Inventory.find(ItemID.WEAPON_STORE_KEY).length == 0) {
-            Log.log("[Debug]; trade someone for the weapon store key");
-            Waiting.waitNormal(5000, 500);
-            if (!BEFORE_DOOR.contains(Player.getPosition()))
-                PathingUtil.walkToArea(BEFORE_DOOR, false);
+        if (!Inventory.contains(ItemID.WEAPON_STORE_KEY)) {
+            Log.info("Trading partner for the weapon store key");
+            if (SoA_Vars.get().partnerName.isEmpty()) {
+                Log.warn("No partner specified!!");
+                return;
+            } else {
+                // go to area
+                if (!BEFORE_DOOR.containsMyPlayer())
+                    PathingUtil.walkToArea(BEFORE_DOOR, false);
+
+                Optional<Player> partner = Query.players().nameContains(SoA_Vars.get().partnerName.get()).findBestInteractable();
+                if (partner.map(p->p.interact("Trade")).orElse(false)){
+                    Waiting.waitUntil(25000,500, ()->
+                            TradeScreen.getStage().isPresent());
+                }
+                if(TradeScreen.getStage().isPresent()){
+                    Waiting.waitUntil(8000, ()-> !TradeScreen.isDelayed());
+                }
+
+                Waiting.waitNormal(5000, 500);
+            }
         }
     }
 
     public void getCrossbows() {
-        if (Inventory.find(ItemID.WEAPON_STORE_KEY).length == 1
-                && Inventory.find(ItemID.PHOENIX_CROSSBOW).length < 2) {
+        if (Inventory.contains(ItemID.WEAPON_STORE_KEY)
+                && Inventory.getCount(ItemID.PHOENIX_CROSSBOW) < 2) {
 
 
-            if (Player.getPosition().getPlane() != 1) {
-                if (!GROUND_FLOOR_OF_BASE.contains(Player.getPosition())) {
+            if (MyPlayer.getTile().getPlane() != 1) {
+                if (!GROUND_FLOOR_OF_BASE.containsMyPlayer()) {
                     General.println("[Debug]: Going to Outside Pheonix base");
                     PathingUtil.walkToArea(BEFORE_DOOR, false);
                     if (Utils.clickObject(2398, "Open", false))
-                        Timer.waitCondition(() -> GROUND_FLOOR_OF_BASE.contains(Player.getPosition()), 6000, 9000);
+                        Timer.waitCondition(() -> GROUND_FLOOR_OF_BASE.containsMyPlayer(), 6000, 9000);
                 } else if (Utils.clickObject(11794, "Climb-up", false))
-                    Timer.waitCondition(() -> Player.getPosition().getPlane() == 1, 6000, 9000);
+                    Timer.waitCondition(() -> MyPlayer.getTile().getPlane() == 1, 6000, 9000);
 
             }
 
 
-            if (Player.getPosition().getPlane() == 1) {
+            if (MyPlayer.getTile().getPlane() == 1) {
                 General.println("[Debug]: Killing weapon master");
                 if (Utils.clickNPC(WEAPONSMASTER, "Attack")) {
                     General.println("TRUE");
-                    Timer.waitCondition(() -> Player.getRSPlayer().isInCombat(), 5000, 7000);
+                    Timer.waitCondition(() -> MyPlayer.isHealthBarVisible(), 5000, 7000);
 
                 }
-                if (Combat.isUnderAttack()) {
+                if (MyPlayer.isHealthBarVisible()) {
                     General.println("TRUE - in combat");
                     int eatAt = General.random(30, 50);
                     CombatUtil.waitUntilOutOfCombat(eatAt, false);
                 }
             }
-            if (!Combat.isUnderAttack()) {
+            if (!MyPlayer.isHealthBarVisible()) {
                 Utils.pickupItem(ItemID.PHOENIX_CROSSBOW);
                 Utils.pickupItem(ItemID.PHOENIX_CROSSBOW);
             }
@@ -146,7 +168,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
     }
 
     public void talkToKaterineStepAgain() {
-        if (Inventory.find(ItemID.PHOENIX_CROSSBOW).length >= 2) {
+        if (Inventory.getCount(ItemID.PHOENIX_CROSSBOW) >= 2) {
             message = "Going to Katerine";
             General.println("[Debug]: Going to Katerine");
             talkToKatrine = new NPCStep(5210, new RSTile(3185, 3385, 0));
@@ -155,45 +177,45 @@ public class BlackArmsGang implements QuestTask, MuleListener {
     }
 
     public void getShield() {
-        if (Inventory.find(ItemID.CERTIFICATE).length == 0 &&
-                Inventory.find(ItemID.BROKEN_SHIELD_765).length == 0
-                && Inventory.find(ItemID.HALF_CERTIFICATE_11174).length == 0) {
-            if (Player.getPosition().getPlane() == 0) {
+        if (!Inventory.contains(ItemID.CERTIFICATE) &&
+                !Inventory.contains(ItemID.BROKEN_SHIELD_765)
+                && !Inventory.contains(ItemID.HALF_CERTIFICATE_11174)) {
+            if (MyPlayer.getTile().getPlane() == 0) {
                 PathingUtil.walkToTile(new RSTile(3188, 3388, 0), 1, false);
                 if (Utils.clickObject(Filters.Objects.actionsContains("Climb-up"), "Climb-up")) {
-                    Timer.waitCondition(() -> Player.getPosition().getPlane() == 1, 5000, 8000);
+                    Timer.waitCondition(() -> MyPlayer.getTile().getPlane() == 1, 5000, 8000);
                 }
             }
             getShieldHalf.setUseLocalNav(true);
             getShieldHalf.execute();
             getShieldHalf1.execute();
         }
-        if (Inventory.find(ItemID.BROKEN_SHIELD_765).length == 1 && Player.getPosition().getPlane() == 1) {
+        if (Inventory.contains(ItemID.BROKEN_SHIELD_765) && MyPlayer.getTile().getPlane() == 1) {
             if (Utils.clickObject(Filters.Objects.actionsContains("Climb-down"), "Climb-down")) {
-                Timer.waitCondition(() -> Player.getPosition().getPlane() == 0, 7000, 9000);
+                Timer.waitCondition(() -> MyPlayer.getTile().getPlane() == 0, 7000, 9000);
             }
         }
     }
 
     public void talkToHaigen() {
-        if (Inventory.find(ItemID.BROKEN_SHIELD_765).length == 1) {
+        if (Inventory.contains(ItemID.BROKEN_SHIELD_765)) {
             General.println("[Debug]: Going to currator");
             talkToHaig.execute();
         }
     }
 
     public void getFullCert() {
-        if (Inventory.find(ItemID.HALF_CERTIFICATE_11174).length == 1) {
+        if (Inventory.contains(ItemID.HALF_CERTIFICATE_11174)) {
             //trade ppl
         }
-        if (Inventory.find(ItemID.HALF_CERTIFICATE).length == 1
-                && Inventory.find(ItemID.HALF_CERTIFICATE_11174).length == 1) {
+        if (Inventory.contains(ItemID.HALF_CERTIFICATE)
+                && Inventory.contains(ItemID.HALF_CERTIFICATE_11174)) {
 
             //combine
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Yes.");
         }
-        if (Inventory.find(ItemID.CERTIFICATE).length == 1) {
+        if (Inventory.contains(ItemID.CERTIFICATE)) {
             talkToRoald.execute();
         }
     }
@@ -201,7 +223,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
 
     @Override
     public String toString() {
-        return "" + Player.getRSPlayer().isInCombat();
+        return "" + MyPlayer.isHealthBarVisible();
     }
 
     @Override
@@ -211,7 +233,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
 
     @Override
     public boolean validate() {
-        return Game.getSetting(146) <= 4;
+        return GameState.getSetting(146) <= 4;
     }
 
     @Override
@@ -222,11 +244,11 @@ public class BlackArmsGang implements QuestTask, MuleListener {
             talkToCharilieStep();
             talkToKaterineStep();
         }
-        if (Game.getSetting(146) == 2) {
+        if (GameState.getSetting(146) == 2) {
             getWeaponStoreKey();
             getCrossbows();
             talkToKaterineStepAgain();
-        } else if (Game.getSetting(146) == 3) {
+        } else if (GameState.getSetting(146) == 3) {
             getShield();
             talkToHaigen();
             getFullCert();
@@ -234,7 +256,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
         if (certificate.check()) {
             talkToRoald.execute();
 
-        } else if (Game.getSetting(146) == 4) {
+        } else if (GameState.getSetting(146) == 4) {
             cQuesterV2.taskList.remove(this);
         }
     }

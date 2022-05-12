@@ -166,7 +166,7 @@ public class NpcID {
     public static final int SIR_PERCIVAL = 4057;
     public static final int LOKAR_SEARUNNER_6648 = 6648;
     public static final int OBSERVATORY_ASSISTANT = 5365;
-    public static final int OBSERVATORY_PROFESSOR = 5366;
+    public static final int OBSERVATORY_PROFESSOR = 6403;
     public static final int OBSERVATORY_PROFESSOR_5367 = 5367;
     public static final int SLEEPING_GUARD = 5368;
     public static final int GOBLIN_GUARD = 5369;

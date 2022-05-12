@@ -90,7 +90,8 @@ public class Exchange {
         if (itemDef.isPresent()) {
 
             Optional<Integer> priceOptional = Pricing.lookupPrice(item.getItemID());
-            int price = priceOptional.map(p -> p * item.getPercentIncrease() / 100).orElse(50.0).intValue();
+            priceOptional.ifPresent(p-> Log.info("price adj is " + p));
+            int price = priceOptional.map(p -> p * (1+item.getPercentIncrease()) / 100).orElse(50.0).intValue();
             int clicks = Utils.roundToNearest(item.getPercentIncrease(), 5) / 5;
             if (clicks > Utils.random(8, 12)) {
                 Log.warn("Price adjustment is > 10-18 clicks, using " + price);

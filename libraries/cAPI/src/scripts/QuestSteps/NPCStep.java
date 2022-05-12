@@ -274,6 +274,8 @@ public class NPCStep extends DetailedQuestStep {
         }
 
         navigateTo();
+        ChatScreen.setConfig(ChatScreen.Config.builder().holdSpaceForContinue(true)
+                .useKeysForOptions(true).build());
 
         if (this.isCombatStep) {
             // interact to start dialog or combat if not already in combat
