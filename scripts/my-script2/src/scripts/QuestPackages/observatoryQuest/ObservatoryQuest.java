@@ -172,9 +172,9 @@ public class ObservatoryQuest implements QuestTask {
         talkToAssistant = new NPCStep(NpcID.OBSERVATORY_ASSISTANT, new RSTile(2443, 3189, 0),
                 "Talk to the observatory assistant.");
         enterDungeon = new ObjectStep(ObjectID.STAIRS_25432, new RSTile(2458, 3186, 0),
-                "Enter the dungeon east of the Professor.");
-        searchChests = new ObjectStep(ObjectID.CHEST_25385, "Search only the marked chests in the dungeon. " +
-                "Unmarked chests contain monsters and may poison you.");
+                "Climb-down");
+        searchChests = new ObjectStep(ObjectID.CHEST_25385,
+                "Search");
         ((ObjectStep) searchChests).addAlternateObjects(ObjectID.CHEST_25386, ObjectID.CHEST_25387,
                 ObjectID.CHEST_25388, ObjectID.CHEST_25389, ObjectID.CHEST_25390);
         prodGuard = new NPCStep(NpcID.SLEEPING_GUARD, new RSTile(2327, 9394, 0),
@@ -185,7 +185,7 @@ public class ObservatoryQuest implements QuestTask {
                 "Either kill or trap the guard on the marked tile to the north, then search the goblin stove.");
         //  inspectStove.addTileMarker(new RSTile(2327, 9399, 0), SpriteID.BARBARIAN_ASSAULT_HORN_FOR_HEALER_ICON);
         leaveDungeon = new ObjectStep(ObjectID.STAIRS_25429, new RSTile(2355, 9396, 0),
-                "Climb the stairs back to the surface.");
+                "Climb-up");
         giveProfessorMould = new NPCStep(NpcID.OBSERVATORY_PROFESSOR, new RSTile(2442, 3186, 0),
                 //  "Give the professor the lens mould. If you don't have it, check your bank.",
                 mould);
