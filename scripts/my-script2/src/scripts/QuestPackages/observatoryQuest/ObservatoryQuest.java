@@ -1,15 +1,13 @@
 package scripts.QuestPackages.observatoryQuest;
 
 import lombok.Getter;
+import obf.Ch;
 import obf.G;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.types.Area;
-import org.tribot.script.sdk.types.GameObject;
-import org.tribot.script.sdk.types.Widget;
-import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.types.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.NatureSpirit.NatureSpirit;
@@ -89,7 +87,8 @@ public class ObservatoryQuest implements QuestTask {
     RSArea observatoryDungeon, observatoryF1, observatoryF2;
 
     private boolean handleWarning() {
-        if (!Query.widgets().inIndexPath(560).textContains("Proceed").isVisible().isAny()) {
+        if (!Query.widgets().inIndexPath(560).textContains("Proceed").isVisible().isAny() &&
+                new WorldTile(2458, 3185, 0).distance() < 4) {
             Waiting.waitUntil(3500, 250, () -> Query.widgets().inIndexPath(560).textContains("Proceed").isVisible().isAny());
         }
         Optional<Widget> proceed = Query.widgets().inIndexPath(560).textContains("Proceed").findFirst();
@@ -180,24 +179,46 @@ public class ObservatoryQuest implements QuestTask {
     int CLOSED_CHEST = 25387;
 
     private void searchChests() {
-        List<GameObject> closedChest = Query.gameObjects().actionContains("Open").idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
-                .sortedByPathDistance().toList();
-        for (GameObject object : closedChest) {
-            if (object.interact("Open")) {
-                Waiting.waitUntil(8000, 500, MyPlayer::isAnimating);
-            }
-            Optional<GameObject> openChest = Query.gameObjects()
-                    .actionContains("Search")
-                    .idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
-                    .inArea(Area.fromRadius(MyPlayer.getTile(), 2))
-                    .findClosestByPathDistance();
-            if (openChest.map(chest->chest.interact("Search")).orElse(false)){
-                Waiting.waitUntil(8000, 500, ()-> ChatScreen.isOpen());
-                ChatScreen.handle();
+        if (!Inventory.contains(ItemID.LENS_MOULD, ItemID.GOBLIN_KITCHEN_KEY)) {
+            List<GameObject> closedChest = Query.gameObjects().actionContains("Open").idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
+                    .sortedByPathDistance().toList();
+            for (GameObject object : closedChest) {
+                if (object.interact("Open")) {
+                    if (MyPlayer.isMoving()) {
+                        Waiting.waitUntil(4000, 500, () -> !MyPlayer.isMoving());
+                    }
+                    if (Waiting.waitUntil(9000, 500, MyPlayer::isAnimating))
+                        Waiting.waitUntil(4000, 200, () -> Query.gameObjects()
+                                .actionContains("Search")
+                                .idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
+                                .inArea(Area.fromRadius(MyPlayer.getTile(), 2))
+                                .isAny());
+                }
+                Optional<GameObject> openChest = Query.gameObjects()
+                        .actionContains("Search")
+                        .idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389, 25390)
+                        .inArea(Area.fromRadius(MyPlayer.getTile(), 2))
+                        .findClosestByPathDistance();
+                if (openChest.map(chest -> chest.interact("Search")).orElse(false)) {
+                    Waiting.waitUntil(3000, 500, () -> ChatScreen.isOpen());
+                    ChatScreen.handle();
+                }
             }
         }
+    }
 
-
+    public void killGuard() {
+        if (!Inventory.contains(ItemID.LENS_MOULD) && Inventory.contains(ItemID.GOBLIN_KITCHEN_KEY)) {
+            if (!Query.gameObjects().idEquals(25442).isReachable().isAny()) {
+                cQuesterV2.status = "Killing guard";
+                prodGuard = new NPCStep(NpcID.SLEEPING_GUARD, new RSTile(2327, 9394, 0),
+                        "Prod");
+                prodGuard.execute();
+                if (Waiting.waitUntil(3500, 500, MyPlayer::isHealthBarVisible)) {
+                    Waiting.waitUntil(45000, 500, () -> !MyPlayer.isHealthBarVisible());
+                }
+            }
+        }
     }
 
     public void setupSteps() {
@@ -225,15 +246,13 @@ public class ObservatoryQuest implements QuestTask {
                 "Search");
         ((ObjectStep) searchChests).addAlternateObjects(ObjectID.CHEST_25386, ObjectID.CHEST_25387,
                 ObjectID.CHEST_25388, ObjectID.CHEST_25389, ObjectID.CHEST_25390);
-        prodGuard = new NPCStep(NpcID.SLEEPING_GUARD, new RSTile(2327, 9394, 0),
-                "Prod the sleeping guard in the north of the dungeon. He'll attack you. You need to then either kill him," +
-                        " or get him in the marked spot to the north of the gate.");
+
         // prodGuard.addTileMarker(new RSTile()(2327, 9399, 0), SpriteID.BARBARIAN_ASSAULT_HORN_FOR_HEALER_ICON);
         inspectStove = new ObjectStep(25442, new RSTile(2327, 9389, 0),
                 "Either kill or trap the guard on the marked tile to the north, then search the goblin stove.");
         //  inspectStove.addTileMarker(new RSTile(2327, 9399, 0), SpriteID.BARBARIAN_ASSAULT_HORN_FOR_HEALER_ICON);
         leaveDungeon = new ObjectStep(ObjectID.STAIRS_25429, new RSTile(2355, 9396, 0),
-                "Climb-up");
+                "Climb up");
         giveProfessorMould = new NPCStep(NpcID.OBSERVATORY_PROFESSOR, new RSTile(2442, 3186, 0),
                 //  "Give the professor the lens mould. If you don't have it, check your bank.",
                 mould);
@@ -245,15 +264,54 @@ public class ObservatoryQuest implements QuestTask {
         enterDungeonAgain = new ObjectStep(ObjectID.STAIRS_25432, new RSTile(2458, 3186, 0),
                 "Enter", handleWarning());
         enterObservatory = new ObjectStep(ObjectID.STAIRS_25429, new RSTile(2335, 9352, 0),
-                "Climb-up");
+                "Climb up", Utils.inCutScene());
         goToF2Observatory = new ObjectStep(ObjectID.STAIRS_25431, new RSTile(2444, 3160, 0),
                 "Climb-up");
         viewTelescope = new ObjectStep(25591, new RSTile(2441, 3162, 1),
-                "Use the telescope.");
-        //tellProfessorConstellation = new StarSignAnswer(this);
+                "View");
         //  tellProfessorConstellation.addDialogStep("Talk about the Observatory quest.");
     }
 
+    Optional<String> answer = Optional.empty();
+
+    private void handleTelescope() {
+        if (MyPlayer.getTile().getPlane() == 0) {
+            enterObservatory = new ObjectStep(ObjectID.STAIRS_25429, new RSTile(2335, 9352, 0),
+                    "Climb up", Utils.inCutScene());
+            goToF2Observatory = new ObjectStep(ObjectID.STAIRS_25431, new RSTile(2444, 3160, 0),
+                    "Climb-up");
+            enterObservatory.execute();
+            goToF2Observatory.execute();
+            return;
+        }
+        initializeStarStep();
+
+        cQuesterV2.status = "Current Value: " + answer;
+        if (answer.isEmpty() && !Widgets.isVisible(552)) {
+            viewTelescope = new ObjectStep(25591, new RSTile(2441, 3162, 1),
+                    "View");
+            viewTelescope.execute();
+            Waiting.waitUntil(9000, 200, () -> Widgets.isVisible(552));
+            answer = updateCorrectChoice();
+            Optional<Widget> close = Query.widgets().inIndexPath(552).actionContains("Close").findFirst();
+            if (close.map(c -> c.click("Close")).orElse(false))
+                Waiting.waitUntil(3000, 200, () -> !Widgets.isVisible(552));
+        } else {
+            Log.info("Talking to prof");
+            Optional<Npc> prof = Query.npcs().idEquals(6404).findClosestByPathDistance();
+            if (prof.map(p -> p.interact("Talk-to")).orElse(false)) {
+                NpcChat.waitForChatScreen();
+                for (int i = 0; i < 4; i++) {
+                    if (!answer.map(a -> ChatScreen.handle("Talk about the Observatory quest.", a)).orElse(false)) {
+                        ChatScreen.handle("Next");
+                    }
+                    if (!ChatScreen.isOpen())
+                        break;
+                }
+                Waiting.waitNormal(200, 20);
+            }
+        }
+    }
 
     public void initializeStarStep() {
         // super(NpcID.OBSERVATORY_PROFESSOR, new RSTile(2440, 3159, 1));
@@ -304,20 +362,21 @@ public class ObservatoryQuest implements QuestTask {
         }
     }
 
-    private void updateCorrectChoice() {
+    private Optional<String> updateCorrectChoice() {
         //   addDialogSteps("Talk about the Observatory quest.");
         int currentStep = GameState.getSetting(QuestVarPlayer.QUEST_OBSERVATORY_QUEST.getId());
         if (currentStep < 2) {
-            return;
+            return Optional.empty();
         }
 
         int newValue = Utils.getVarBitValue(3828);
         if (currentValue != newValue) {
             currentValue = newValue;
-            String constellation = StarSign.getStarSignFromVarbit(newValue);
+            return Optional.ofNullable(StarSign.getStarSignFromVarbit(newValue));
             // setText("Tell the professor you observed " + constellation + ".");
             // addDialogStep(constellation);
         }
+        return Optional.empty();
 
     }
 
@@ -387,7 +446,18 @@ public class ObservatoryQuest implements QuestTask {
             cQuesterV2.taskList.remove(this);
             return;
         }
-
+        // for end of quest
+        if (Utils.inCutScene()) {
+            cQuesterV2.status = "Cut Scene";
+            ChatScreen.handle();
+            Utils.cutScene();
+            Waiting.waitNormal(1000, 10);
+            return;
+        }
+        if (GameState.getSetting(gameSetting) == 6) {
+            handleTelescope();
+            return;
+        }
         //load questSteps into a map
         Map<Integer, QuestStep> steps = loadSteps();
         //get the step based on the game setting key in the map

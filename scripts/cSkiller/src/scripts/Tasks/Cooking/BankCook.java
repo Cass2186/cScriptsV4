@@ -36,8 +36,8 @@ public class BankCook implements Task {
         if (Skill.COOKING.getActualLevel() >= 35) {
             inv = new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemID.GRAPES, 14),
-                            new ItemReq(ItemID.JUG_OF_WATER, 14)
+                            new ItemReq(ItemID.GRAPES, 14, 1),
+                            new ItemReq(ItemID.JUG_OF_WATER, 14, 1)
                     )
             );
         } else {
@@ -107,13 +107,21 @@ public class BankCook implements Task {
             BankManager.open(true);
             inv = new ArrayList<>(
                     Arrays.asList(
-                            new ItemReq(ItemID.CAMELOT_TELEPORT, 1),
-                            new ItemReq(ItemID.COINS, 1000)
+                            new ItemReq(ItemID.CAMELOT_TELEPORT, 1)
                     )
             );
-            SkillBank.withdraw(inv);
+            List<ItemReq> newInv = SkillBank.withdraw(inv);
+            if (newInv != null && newInv.size() > 0) {
+                General.println("[Cooking Training]: Creating buy list");
+                BuyItems.itemsToBuy = BuyItems.populateBuyList(CookItems.getRequiredRawFood());
+                BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
+                RSItem[] wealth = Inventory.find(Filters.Items.nameContains("wealth"));
+                if (wealth.length > 0)
+                    Utils.equipItem(wealth[0].getID());
+                return false;
+            }
+            
             BankManager.close(true);
-
             if (GlobalWalking.walkTo(CATHERBY_BANK_TILE))
                 Waiting.waitUntil(5000, () -> CATHERBY_BANK_TILE.distanceTo(MyPlayer.getPosition()) < 10);
             return CATHERBY_BANK_TILE.distanceTo(MyPlayer.getTile()) < 20;

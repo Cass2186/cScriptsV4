@@ -2,28 +2,43 @@ package scripts;
 
 import org.tribot.script.sdk.TradeScreen;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.interfaces.Item;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Player;
+import scripts.Requirements.ItemReq;
 
+import java.util.List;
 import java.util.Optional;
 
 public class TradeUtils {
 
-    public boolean sendTrade(String playerName) {
-        Optional<Player> targ = Query.players().nameContains(playerName).findBestInteractable();
-        return targ.map(p -> p.interact("Trade")).orElse(false);
+    public static boolean tradeItems(String playerName, List<ItemReq> items){
+        if (sendTrade(playerName) && waitForTradeScreen(8000)){
+            for (ItemReq i :items){
+                if(offerItem(i.getId(), i.getAmount()))
+                    Waiting.waitNormal(350, 45);
+            }
+        }
+        return false;
     }
 
 
-    private boolean waitForTradeScreen(int waitLength) {
-        return Waiting.waitUntil(waitLength, 500, () ->
-                TradeScreen.getStage().isPresent());
+    public static boolean sendTrade(String playerName) {
+        Optional<Player> targ = Query.players().nameContains(playerName).findBestInteractable();
+        return isOpen() || targ.map(p -> p.interact("Trade")).orElse(false);
+    }
+
+    private static boolean isOpen(){
+        return TradeScreen.getStage().isPresent();
+    }
+
+    private static boolean waitForTradeScreen(int waitLength) {
+        return Waiting.waitUntil(waitLength, 500, () -> isOpen());
     }
 
     private static int getCount(int itemId) {
         return Query.trade().idEquals(itemId).includeMyItems().count();
     }
-
 
     private static boolean offerItem(int itemId, int amount) {
         //first window
@@ -51,6 +66,10 @@ public class TradeUtils {
 
 
     private boolean acceptFirstWindow() {
+        if (!TradeScreen.getStage().map(stage ->
+                stage.equals(TradeScreen.Stage.FIRST_WINDOW)).orElse(false))
+            return false;
+
         if (TradeScreen.isDelayed())
             Waiting.waitUntil(5000, 300, () -> !TradeScreen.isDelayed());
 
@@ -65,9 +84,14 @@ public class TradeUtils {
     }
 
     private boolean acceptSecondWindow() {
-        return TradeScreen.accept() &&
+        return TradeScreen.getStage().map(stage ->
+                stage.equals(TradeScreen.Stage.SECOND_WINDOW)).orElse(false) &&
+                TradeScreen.accept() &&
                 Waiting.waitUntil(30000, 500, () ->
                         TradeScreen.getStage().isEmpty());
     }
+
+
+
 
 }
