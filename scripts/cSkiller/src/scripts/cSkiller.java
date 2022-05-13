@@ -117,10 +117,7 @@ import scripts.Tasks.Woodcutting.DropLogs;
 import scripts.Tasks.Woodcutting.WoodcuttingBank;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -133,6 +130,8 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         Arguments, Breaking, MessageListening07 {
 
     private boolean shouldEnd = false;
+
+    public static final File PATH  = new File(Util.getWorkingDirectory().getAbsolutePath(), "cSkiller" + "settings.ini");
 
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);

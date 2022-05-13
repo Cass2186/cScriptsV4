@@ -61,6 +61,7 @@ public class WorldHop implements Task {
     public void execute() {
         Optional<World> world = Query.worlds().isLowPing().isMembers()
                 .worldNumberNotEquals(WorldHopper.getCurrentWorld())
+                .isNotAnyType(World.Type.PVP)
                 .isMainGame().findRandom();
         world.ifPresent(w -> Log.info(String.format("Hopping to World %s with pint %s",
                 w.getWorldNumber(), w.getPing())));

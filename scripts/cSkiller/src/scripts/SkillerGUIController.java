@@ -25,15 +25,23 @@ import scripts.Tasks.Magic.Alch;
 import scripts.Tasks.Slayer.SlayerConst.CombatPotions;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Tasks.Woodcutting.WoodcuttingData.WcLocations;
+import scripts.skillergui.GUI;
 import scripts.skillergui.SkillerAbstractGUIController;
 
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 @DoNotRename
 public class SkillerGUIController extends SkillerAbstractGUIController {
 
+    public SkillerGUIController(){
+        this.prop = new Properties();
+    }
+
+    private Properties prop;
 
     @FXML
     @DoNotRename
@@ -110,6 +118,20 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     @DoNotRename
     private Slider slayerAbc2ChanceSlider;
 
+
+   /* private void saveSettings() {
+        try {
+            prop.clear();    //clear settings to avoid issues re-using this method (optional)
+            prop.put("vars", String.valueOf(test2_checkBox.isSelected()));    //example of JCheckBox
+            prop.put("test1_comboBox", String.valueOf(test1_comboBox.getSelectedItem()));    //example of JComboBox
+            prop.put("test1_spinner", String.valueOf(test1_spinner.getValue()));    //example of JSpinner
+            prop.put("test1_textField", test1_textField.getText());    //example of JSpinner
+            prop.store(new FileOutputStream(cSkiller.PATH), "GUI Settings");
+        } catch (Exception e1) {
+            System.out.print("Unable to save settings");
+            e1.printStackTrace();
+        }
+    }*/
 
     @FXML
     @DoNotRename
@@ -409,6 +431,8 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+
         ScriptSettings settingsHandler = ScriptSettings.getDefault();
         settingsHandler.load("last", Vars.class)
                 .ifPresent(s -> {
@@ -474,15 +498,17 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         SlayerVars.get().pointBoosting = pointBoosingBox.isSelected();
         updateSlayerPotion();
         SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() + 1; // adding 1 in case it's set to 0
-        //  setUseCBalls(event);
+
+
         ScriptSettings settingsHandler = ScriptSettings.getDefault();
         //update slayer vars object in vars
-        Vars.get().slayVars = SlayerVars.get();
-        val settings = new SkillerSettings();
-        settings.setTest("wee");
+        //ars.get().slayVars = SlayerVars.get();
+        SkillerSettings settings = new SkillerSettings();
+        settings.setVars(GuiVars.get());
+
 
         Log.info("Settings dir: " + settingsHandler.getDirectory());
-        if (settingsHandler.save("lastTes", settings)) {
+        if (settingsHandler.save("lastTest", settings)) {
             Log.info("Saved settings as last");
         } else {
             Log.error("FAILED to Save settings as last");

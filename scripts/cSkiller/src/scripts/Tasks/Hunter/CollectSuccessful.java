@@ -178,9 +178,7 @@ public class CollectSuccessful implements Task {
 
     @Override
     public void execute() {
-        if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 20) {
-            collectBirdSnare();
-        } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
+      if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 29) {
             collectBirdSnare();
 
         } else if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) { // should be 43

@@ -199,5 +199,5 @@ public class Vars {
      * SLAYER
      */
 
-    public SlayerVars slayVars = SlayerVars.get();
+  //  public SlayerVars slayVars = SlayerVars.get();
 }

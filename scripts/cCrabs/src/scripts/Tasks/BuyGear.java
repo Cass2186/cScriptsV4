@@ -97,7 +97,7 @@ public class BuyGear implements Task {
 
     @Override
     public boolean validate() {
-        if (Query.equipment().nameContains("bow", "dart")
+        if (Query.equipment().nameContains("bow", "dart", "Obsidian")
                 .isAny() && !Vars.get().progressiveMelee)
             return false;
         List<Integer> bestUsableGearList = ProgressiveMeleeGear.getBestUsableGearList();
@@ -108,7 +108,6 @@ public class BuyGear implements Task {
                 Log.info("Missing " + name.get().getName());
                 return true;
             }
-
         }
         Log.info("return false " );
         return false;

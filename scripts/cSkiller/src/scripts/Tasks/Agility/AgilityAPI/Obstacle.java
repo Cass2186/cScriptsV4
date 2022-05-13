@@ -139,18 +139,6 @@ public class Obstacle {
                             .and(Filters.Objects.idEquals(this.obstacleId)));
 
 
-          /*  if (object.isPresent()) {
-                if (!object.get().isVisible()) {
-                    // can't click and its far away
-                    if (object.get().getTile().distanceTo(MyPlayer.getPosition()) > General.random(7, 10)
-                            && object.map(LocalWalking::walkTo).orElse(false)) {
-                        Log.info("[Obstacle]: Distance to obstacle (sdk): " + object.get().getTile().distanceTo(MyPlayer.getPosition()));
-                        Timer.slowWaitCondition(() -> object.get().isVisible(), 6000, 10000);
-                    } else {
-                        object.get().adjustCameraTo();
-                    }
-                }
-            }*/
             if (this.nextObstacleArea != null && object.isPresent()) {
                 int chance = General.random(0, 100);
                 if (chance <= Vars.get().abc2Chance) {
@@ -193,9 +181,10 @@ public class Obstacle {
     public boolean clickObject(Optional<GameObject> obj, String action, boolean accurateMouse, boolean abc2Wait) {
         int plane = MyPlayer.getTile().getPlane();
         int shouldAlch = Utils.random(0, 100);
+        int shouldSpam = TribotRandom.uniform(0,100);
         for (int i = 0; i < 3; i++) { //tries 3 times
             // Log.info("Clicking " + this.obstacleAction + " " + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
-            if (Vars.get().spamClickAgility) {
+            if (Vars.get().spamClickAgility && shouldSpam < TribotRandom.normal(62,6))  {
                 int num = TribotRandom.normal(1, 6, 2, 1);
                 for (int clicks = 0; clicks < num; clicks++) {
                     if (obj.map(o -> o.isVisible() && o.click(action)).orElse(false)) {
@@ -244,57 +233,6 @@ public class Obstacle {
         return false;
     }
 
-
-   /* public boolean clickObject(RSObject obj, String action, boolean accurateMouse, boolean abc2Wait) {
-        int plane = MyPlayer.getPosition().getPlane();
-        int shouldAlch = Utils.random(0, 100);
-        for (int i = 0; i < 3; i++) { //tries 3 times
-            //    General.println("[Debug]: i: " + i);
-            if (accurateMouse && AccurateMouse.click(obj, action)) {
-                General.println("[Debug]: Accurate Clicking " + this.obstacleAction + " "
-                        + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
-                if (Vars.get().shouldAlchAgil && shouldAlch < 62) {
-                    Magic.selectSpell("High Level Alchemy");
-                    Waiting.waitNormal(350, 75);
-                }
-                Timer.waitCondition(MyPlayer::isMoving, 1200, 2200);
-                if (abc2Wait)
-                    return Timer.abc2WaitCondition(() ->
-                            (!MyPlayer.isMoving()
-                                    && this.nextObstacleArea.contains(Player.getPosition())
-                                    && MyPlayer.getAnimation() == -1) || Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
-                else
-                    return Timer.agilityWaitCondition(() ->
-                            (!MyPlayer.isMoving()
-                                    && this.nextObstacleArea.contains(Player.getPosition())
-                                    && MyPlayer.getAnimation() == -1) || Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
-
-            } else if (!accurateMouse &&
-                    DynamicClicking.clickRSObject(obj, action + " " + Utils.getObjectName(obj))) {
-                General.println("[Debug]: Clicking " + this.obstacleAction + " "
-                        + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
-                if (Vars.get().shouldAlchAgil && shouldAlch < 62) {
-                    Magic.selectSpell("High Level Alchemy");
-                    Waiting.waitNormal(350, 75);
-                }
-
-                Timer.waitCondition(MyPlayer::isMoving, 1200, 2200);
-
-                if (abc2Wait)
-                    return Timer.abc2WaitCondition(() -> (!MyPlayer.isMoving()
-                            && this.nextObstacleArea.contains(Player.getPosition())
-                            && MyPlayer.getAnimation() == -1) || Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
-
-                else
-                    return Timer.agilityWaitCondition(() -> (!MyPlayer.isMoving()
-                            && this.nextObstacleArea.contains(Player.getPosition())
-                            && MyPlayer.getAnimation() == -1) || Player.getPosition().getPlane() != plane, timeOutMin, timeOutMin + 3000);
-
-            }
-        }
-        return false;
-    }
-*/
 
     public boolean isValidObstacle() {
         return this.obstacleArea.contains(Player.getPosition());

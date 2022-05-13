@@ -17,6 +17,7 @@ import scripts.cSkiller;
 import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.Properties;
 
 /**
  * @author Laniax
@@ -28,6 +29,7 @@ public class SkillerGUI extends Application {
     private  URL url= null;
 
     private final URL stylesheet;
+
     Script script;
     private Stage stage;
 
@@ -36,6 +38,8 @@ public class SkillerGUI extends Application {
     private SkillerAbstractGUIController controller;
 
     private boolean decorated = true;
+
+
 
 
 
@@ -60,7 +64,6 @@ public class SkillerGUI extends Application {
         this.url = fxml;
         this.stylesheet = stylesheet;
         this.decorated = decorated;
-
         // We have to start the JFX thread from the EDT otherwise tribot will end it.
         SwingUtilities.invokeLater(() -> {
 
@@ -87,6 +90,8 @@ public class SkillerGUI extends Application {
             this.close();
         });
     }
+
+
 
 
     public SkillerGUI(String fxml) {

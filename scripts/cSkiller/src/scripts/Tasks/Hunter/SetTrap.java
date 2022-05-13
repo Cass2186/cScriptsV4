@@ -122,7 +122,7 @@ public class SetTrap implements Task {
                     message = "Going to trap tile";
                     if (AccurateMouse.walkScreenTile(tile[i]))
                         PathingUtil.movementIdle();
-                    General.sleep(750, 3000);
+
                 }
                 RSItem[] trap = Inventory.find(HunterConst.BIRD_SNARE);
                 if (area.contains(Player.getPosition()) &&
