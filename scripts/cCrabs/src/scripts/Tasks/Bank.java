@@ -126,7 +126,8 @@ public class Bank implements Task {
 
     @Override
     public boolean validate() {
-        return Vars.get().shouldBank || (Vars.get().ranging && !getRangedGearTask().isSatisfied()) ;
+        return Vars.get().shouldBank || (Vars.get().ranging && !getRangedGearTask().isSatisfied());
+           //     || ( Vars.get().progressiveMelee && !isBestGearEquipped());
     }
 
     @Override

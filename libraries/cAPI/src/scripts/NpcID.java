@@ -171,7 +171,11 @@ public class NpcID {
     public static final int SLEEPING_GUARD = 5368;
     public static final int GOBLIN_GUARD = 5369;
     public static final int GHOST_5370 = 5370;
-
+    public static final int ANNA = 967;
+    public static final int DAVID = 968;
+    public static final int GOSSIP = 4219;
+    public static final int ANNA_4220 = 4220;
+    public static final int BOB_4221 = 4221;
     public static final int CAPTAIN_BENTLEY = 6649;
     public static final int CAPTAIN_BENTLEY_6650 = 6650;
     public static final int BRUNDT_THE_CHIEFTAIN_9263 = 9263;

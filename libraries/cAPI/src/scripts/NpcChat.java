@@ -38,6 +38,22 @@ public class NpcChat extends NPCChat {
         return talkToNPC(npc, "Talk-to");
     }
 
+    public static boolean handle(boolean waitForChat, String... options){
+        if (waitForChat)
+            waitForChatScreen();
+
+        return handle(options);
+    }
+
+
+    public static boolean handle(String... options){
+        ChatScreen.setConfig(ChatScreen.Config.builder()
+                .holdSpaceForContinue(true)
+                .useKeysForOptions(true)
+                .build());
+        return ChatScreen.handle(options);
+    }
+
     public static void handleChat(List<String> options) {
         Log.info("Handling... " + List.of(options));
         List<String> blackList = new ArrayList();

@@ -5,6 +5,7 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.definitions.ItemDefinition;
 import scripts.BankManager;
+import scripts.Data.Vars;
 import scripts.GEManager.GEItem;
 import scripts.Gear.ProgressiveMeleeGear;
 import scripts.ItemID;
@@ -96,8 +97,8 @@ public class BuyGear implements Task {
 
     @Override
     public boolean validate() {
-        if (Query.itemDefinitions().nameContains("bow", "dart")
-                .isAny())
+        if (Query.equipment().nameContains("bow", "dart")
+                .isAny() && !Vars.get().progressiveMelee)
             return false;
         List<Integer> bestUsableGearList = ProgressiveMeleeGear.getBestUsableGearList();
         for (Integer i : bestUsableGearList) {
@@ -109,6 +110,7 @@ public class BuyGear implements Task {
             }
 
         }
+        Log.info("return false " );
         return false;
     }
 

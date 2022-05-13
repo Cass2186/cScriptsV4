@@ -9,11 +9,15 @@ import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Prayer;
+import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
@@ -31,6 +35,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class MonkeyMadnessI implements QuestTask {
     private static MonkeyMadnessI quest;
@@ -429,11 +434,11 @@ public class MonkeyMadnessI implements QuestTask {
                 } else {
                     Log.info("handle");
                     ChatScreen.handle(s);
-                    Log.info("handle done" );
+                    Log.info("handle done");
                 }
                 if (NPCInteraction.isConversationWindowUp()) {
-                //    Log.info("Using Dax");
-                   // NPCInteraction.handleConversation(s);
+                    //    Log.info("Using Dax");
+                    // NPCInteraction.handleConversation(s);
                 }
             }
            /* Timer.waitCondition((() -> Interfaces.isInterfaceSubstantiated(219, 1, 4)), 5000, 7000); // talk about the journey
@@ -637,8 +642,8 @@ public class MonkeyMadnessI implements QuestTask {
                         PAID_GLOUGH = true; // to prevent errors in script causing a loop and paying >1x
                     NPCInteraction.handleConversation("Ok then. You win again, Glough.");
                     NPCInteraction.handleConversation();
-                    if (Inventory.find(ItemID.COINS_995).length ==0){
-                        PAID_GLOUGH  = true;
+                    if (Inventory.find(ItemID.COINS_995).length == 0) {
+                        PAID_GLOUGH = true;
                         Log.debug("Paid the sum bish");
                     }
                 }
@@ -1301,34 +1306,34 @@ public class MonkeyMadnessI implements QuestTask {
                         General.println("[Debug]: " + cQuesterV2.status);
                         if (!MONKEY_CHILD_AREA.contains(Player.getPosition())) {
                             Walking.blindWalkTo(new RSTile(2743, 2795, 0));
-                            Waiting.waitUniform(2000, 3500);
+                            Waiting.waitUntil(1500, 250, () -> MyPlayer.isMoving());
+                            Waiting.waitUniform(2500, 3500);
                         }
                         if (NpcChat.talkToNPC(5268)) {
-                            NPCInteraction.waitForConversationWindow();
-                            NPCInteraction.handleConversation("Well I'll be a monkey's uncle!", "How many bananas did Aunty want?");
-                            NPCInteraction.handleConversation("How many bananas did Aunty want?");
-                            NPCInteraction.handleConversation();
+                            NpcChat.waitForChatScreen();
+                            NpcChat.handle("Well I'll be a monkey's uncle!",
+                                    "How many bananas did Aunty want?", "How many bananas did Aunty want?");
                         }
                     } else if (!hidingArea.contains(Player.getPosition())) {
                         cQuesterV2.status = "Hiding";
                         Walking.blindWalkTo(monkeyChildHidingTile);
-                        General.sleep(General.random(1000, 3000));
+                        General.sleep(1500, 3000);
                         if (Inventory.find(monkeyTalisman).length > 0) {
                             break;
                         }
                     }
-                    General.sleep(General.random(500, 1000));
+                    General.sleep(700, 1000);
                 }
             }
         }
     }
 
     public void eatAnyFoodButBanana() {
-        RSItem food = Entities.find(ItemEntity::new)
-                .actionsContains("Eat")
+        Optional<InventoryItem> food = Query.inventory().actionContains("Eat")
                 .nameNotContains("Banana")
-                .getFirstResult();
-        if (food != null && food.click("Eat"))
+                .findClosestToMouse();
+
+        if (food.map(InventoryItem::click).orElse(false))
             Timer.waitCondition(() -> Player.getAnimation() != -1, 1500, 2200);
 
     }
@@ -2046,8 +2051,8 @@ public class MonkeyMadnessI implements QuestTask {
         } else if (Game.getSetting(365) == 2) {
             Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
             if (RSVarBit.get(123).getValue() <= 4) {
-               talkToKing();
-                 Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
+                talkToKing();
+                Log.info("Varbit 123  = " + RSVarBit.get(123).getValue());
                 step4Part2Banking(); // banking
                 step5Part2TalkToDaero(); // going to Daero
             }
