@@ -8,18 +8,24 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.cache.BankCache;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfConst;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfVars;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 public class BlastFurnaceBank implements Task {
 
@@ -62,7 +68,7 @@ public class BlastFurnaceBank implements Task {
 
     public static void coalBagMessaageHandler(String message) {
         if (message.toLowerCase().contains("the coal bag contains")) {
-            General.println("[Message Listening]: Coal bag is full");
+            Log.info("[Message Listening]: Coal bag is full");
             BfVars.get().coalBagFull = true;
         }
         if (message.toLowerCase().contains("the coal bag is now empty")) {
@@ -75,7 +81,7 @@ public class BlastFurnaceBank implements Task {
         RSObject[] bank = Objects.findNearest(20, Filters.Objects.nameContains("Bank"));
         if (bank.length > 0) {
             if (!bank[0].isClickable()) {
-                General.println("[Debug]: Walking to bank tile");
+                Log.info("[Debug]: Walking to bank tile");
                 Walking.blindWalkTo(BfConst.BANK_TILE);
             }
 
@@ -83,7 +89,7 @@ public class BlastFurnaceBank implements Task {
                 if (!Player.getPosition().equals(BfConst.BANK_TILE))
                     Walking.clickTileMS(BfConst.BANK_TILE, "Walk here");
                 AntiBan.waitItemInteractionDelay();
-                General.println("[Debug]: Equiping goldsmith gauntlets");
+                Log.info("[Debug]: Equiping goldsmith gauntlets");
                 Utils.equipItem(BfConst.GOLDSMITH_GAUNTLETS, "Wear");
                 AntiBan.waitItemInteractionDelay();
             }
@@ -93,7 +99,7 @@ public class BlastFurnaceBank implements Task {
 
             if (Banking.isBankScreenOpen()) {
                 BankCache.update();
-                if (BankCache.getStack(ItemID.COAL) < 28 || BankCache.getStack(ItemID.IRON_ORE) < 28){
+                if (BankCache.getStack(ItemID.COAL) < 28 || BankCache.getStack(ItemID.IRON_ORE) < 28) {
                     throw new NullPointerException("Not enough ore");
                 }
                 if (!BfVars.get().useGoldSmith)
@@ -120,7 +126,7 @@ public class BlastFurnaceBank implements Task {
 
                 RSItem[] bars = Inventory.find(Filters.Items.nameContains("bar"));
                 if (bars.length > 0) {
-                    General.println("[Bank]: Depositing bars failsafe", Color.RED);
+                    Log.warn("[Bank]: Depositing bars failsafe");
                     int id = bars[0].getID();
                     Banking.deposit(0, id);
                 }
@@ -130,20 +136,23 @@ public class BlastFurnaceBank implements Task {
                 } else
                     BankManager.withdraw(0, true, oreId);
 
-                Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
-                Timer.waitCondition(() -> !Banking.isBankScreenOpen(), 500, 750);
-                BankManager.close(true);
+                if (org.tribot.script.sdk.Options.isEscapeClosingEnabled()) {
+                    Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
+                    Timer.waitCondition(() -> !Bank.isOpen(), 500, 750);
+                }
+                if (Bank.isOpen())
+                    BankManager.close(true);
 
                 if (!BfVars.get().useGoldSmith && Inventory.find(BfConst.IRON_ORE).length < 15) {
                     failNum++;
                     if (failNum > 2) {
-                        General.println("[Bank]: Ending due to lack of iron ore", Color.RED);
+                        Log.warn("[Bank]: Ending due to lack of iron ore");
                         Vars.get().currentTask = null;
                         return false;
                     }
 
                 } else {
-                    General.println("[Bank]: Resetting Fail Number");
+                    Log.info("[Bank]: Resetting Fail Number");
                     failNum = 0;
                 }
 
@@ -162,7 +171,7 @@ public class BlastFurnaceBank implements Task {
             if (Banking.find(BfConst.ICE_GLOVES).length == 0) {
                 return BfVars.get().usingIceGloves = false;
             } else {
-                General.println("[Debug]: Getting Ice gloves");
+                Log.info("[Debug]: Getting Ice gloves");
                 BankManager.withdraw(1, true, BfConst.ICE_GLOVES);
                 Utils.equipItem(BfConst.ICE_GLOVES);
                 return true;
@@ -173,23 +182,31 @@ public class BlastFurnaceBank implements Task {
 
     public boolean fillCoalBag() {
         if (Inventory.find(BfConst.ALL_COAL_BAG).length > 0) {
-            RSItem[] fullBag = Inventory.find(Filters.Items.actionsContains("Empty")
+            Optional<InventoryItem> full = Query.inventory().actionContains("Empty")
+                    .idEquals(BfConst.ALL_COAL_BAG)
+                    .findClosestToMouse();
+            if (full.map(f->f.click("Empty")).orElse(false)){
+                Waiting.waitUntil(3000, 150, ()-> Query.inventory()
+                        .actionContains("Fill")
+                        .isAny());
+            }
+          /*  RSItem[] fullBag = Inventory.find(Filters.Items.actionsContains("Empty")
                     .and(Filters.Items.idEquals(BfConst.ALL_COAL_BAG)));
             if (fullBag.length > 0) {
-                General.println("[Bank]: Action contains empty");
+                Log.info("[Bank]: Action contains empty");
                 if (fullBag[0].click("Empty")) {
                     General.sleep(100);
                     Timer.waitCondition(() -> Inventory.find(Filters.Items.actionsContains("Fill")).length > 0, 2500, 3000);
                     General.sleep(General.random(100, 500));
                 }
-            }
+            }*/
             RSItem[] emptyBag = Inventory.find(Filters.Items.actionsContains("Fill"));
             if (emptyBag.length > 0 && AccurateMouse.click(emptyBag[0], "Fill")) {
                 General.sleep(General.random(100, 500));
                 return true;
             }
             if (emptyBag.length > 0 && emptyBag[0].click("Fill")) {
-                General.println("[Bank]: Action contains fill");
+                Log.info("[Bank]: Action contains fill");
                 return true;
             }
         }

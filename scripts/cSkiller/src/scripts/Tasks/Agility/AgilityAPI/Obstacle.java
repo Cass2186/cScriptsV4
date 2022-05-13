@@ -15,12 +15,14 @@ import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSObjectDefinition;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Tribot;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.util.TribotRandom;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.Data.Vars;
@@ -194,7 +196,8 @@ public class Obstacle {
         for (int i = 0; i < 3; i++) { //tries 3 times
             // Log.info("Clicking " + this.obstacleAction + " " + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
             if (Vars.get().spamClickAgility) {
-                for (int clicks = 0; clicks < Utils.random(2, 5); clicks++) {
+                int num = TribotRandom.normal(1, 6, 2, 1);
+                for (int clicks = 0; clicks < num; clicks++) {
                     if (obj.map(o -> o.isVisible() && o.click(action)).orElse(false)) {
                         Waiting.waitNormal(25, 7);
                     } else if (obj.map(o -> o.interact(action)).orElse(false)) {

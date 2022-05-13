@@ -99,7 +99,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
     private CheckBox useMlmBox1, useFruitStallButton, pointBoosingBox, getBarbarianRodCheckBox,
             moveMouseOffScreenWhileAfkBox, useBlastFurnaceBox, preferJewleryOverTeleportsCheckBox,
             growKittenDuringFishingBox, growKittenDuringAgilityBox, enableSummerPieBoostingBox,
-            enableAlchingAgilityBox, enableWildernessCourseBox;
+            enableAlchingAgilityBox, enableWildernessCourseBox, enableSpamClickingAgilityBox;
 
     @FXML
     @DoNotRename
@@ -126,6 +126,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         Vars.get().useSummerPieBoost =  enableSummerPieBoostingBox.isSelected();
         Vars.get().shouldAlchAgil = enableAlchingAgilityBox.isSelected();
         Vars.get().useWildernessAgility = enableWildernessCourseBox.isSelected();
+        Vars.get().spamClickAgility = enableSpamClickingAgilityBox.isSelected();
     }
 
     @FXML

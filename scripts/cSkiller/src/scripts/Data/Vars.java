@@ -135,7 +135,7 @@ public class Vars {
     public boolean shouldAlchAgil = false;
     public boolean overridingCourse = false;
     public boolean growKittenDuringAgility = false;
-    public boolean spamClickAgility = false;
+    public boolean spamClickAgility = true;
 
     //crafting
     public boolean doingDragonHide = Skill.CRAFTING.getActualLevel() > 62;
