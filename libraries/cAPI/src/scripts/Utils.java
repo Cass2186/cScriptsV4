@@ -1231,6 +1231,13 @@ public class Utils {
         //System.out.println("[Debug]: Sleeping (predictable rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
+    public static void idleNormalAction(boolean print) {
+        int sleep = (int) ReactionGenerator.get().nextReactionTime(200, 50, 0.007, 0.2,
+                100, 2000);
+        if (print)
+        Log.info("[Utils]: Sleeping (normal rxn) for: " + sleep);
+        Waiting.wait(sleep);
+    }
 
     public static void idleNormalAction() {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(200, 50, 0.007, 0.2,

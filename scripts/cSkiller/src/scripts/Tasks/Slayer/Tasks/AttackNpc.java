@@ -52,15 +52,9 @@ public class AttackNpc implements Task {
     }
 
     private static boolean checkAggro() {
-        if (Waiting.waitUntil(500, 50, () ->
-                MyPlayer.get().
-                        map(player -> player.getInteractingCharacter().isPresent())
-                        .orElse(false))
-                && org.tribot.script.sdk.Combat.isAutoRetaliateOn()) {
-            //Log.info("Still have aggro");
-            return true;
-        }
-        return false;
+        return
+            Waiting.waitUntil(500, 5, () ->
+                Query.npcs().isMyPlayerInteractingWith().isAny());
     }
 
     public static void expeditiousMessage(String message) {
@@ -72,7 +66,7 @@ public class AttackNpc implements Task {
 
     private static void equipExpeditiousIfNeeded() {
         if (Equipment.Slot.HANDS.getItem().isEmpty()) {
-            Utils.idleNormalAction();
+            Utils.idleNormalAction(); //idle before doing it
             Utils.equipItem(ItemID.EXPEDITIOUS_BRACELET);
         }
     }
@@ -192,15 +186,15 @@ public class AttackNpc implements Task {
             }
             return;
         }
-        if ((//!MyPlayer.isHealthBarVisible() &&
-                !checkAggro() &&
-                        (targ.map(t -> !t.isInteractingWithMe() ||
-                                !t.isHealthBarVisible()).orElse(false))) &&
+        if ((!checkAggro() &&
+                (targ.map(t -> !t.isInteractingWithMe() ||
+                        !t.isHealthBarVisible()).orElse(false))) &&
                 targ.map(t -> t.interact("Attack")).orElse(false)) {
             SlayerVars.get().status = "Attacking Target";
             SlayerVars.get().currentTime = System.currentTimeMillis();
-            Waiting.waitUntil(4500, 200,
-                    () -> targ.map(t -> t.isInteractingWithMe()).orElse(false));
+            Waiting.waitUntil(4000, 75,
+                    () -> Query.npcs().isMyPlayerInteractingWith().isAny());
+
 
         } else if (targ.map(t -> t.isInteractingWithMe()).orElse(false)) { //already fighting
             SlayerVars.get().status = "Fighting Target";
@@ -226,10 +220,11 @@ public class AttackNpc implements Task {
                 sleep(targ.get());
             }
         } else if (waitUntilOutOfCombatNew(targ, AntiBan.getEatAt(), 45000)) {
+            //Log.info("Sleeping after WaitUntilAfterCombat()");
             sleep(targ.get());
 
         } else
-            Waiting.waitNormal(1100, 330);
+            Utils.idleNormalAction(true);
 
     }
 
@@ -237,13 +232,13 @@ public class AttackNpc implements Task {
     public static boolean waitUntilOutOfCombatNew(Optional<Npc> npcOptional, int eatAt, int longTimeOut) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
         Assign assign = SlayerVars.get().assignment;
+        Log.info("Waiting for Out of Cb");
 
-        return Waiting.waitUntil(longTimeOut, () -> {
-            Waiting.waitNormal(500, 125);
+        return Waiting.waitUntil(longTimeOut, 45, () -> {
 
             AntiBan.timedActions();
 
-            if (EatUtil.hpPercent() <= (eatAtHP))
+            if (EatUtil.hpPercent() <= eatAtHP)
                 EatUtil.eatFood();
 
             if (MyPlayer.isPoisoned())
@@ -266,10 +261,11 @@ public class AttackNpc implements Task {
             if (assign != null && assign.isUseSpecialItem() && npcOptional.isPresent()) {
                 //  Log.log("Using special item");
                 if (checkSpecialItem())
-                    Waiting.waitNormal(1500, 440);
+                    Waiting.waitNormal(1500, 340);
 
             }
-            return !MyPlayer.isHealthBarVisible() ||
+            return
+                    !Query.npcs().isMyPlayerInteractingWith().isAny() ||
                     npcOptional.map(npc -> npc.getHealthBarPercent() == 0).orElse(false) ||
                     !EatUtil.hasFood() ||
                     (Prayer.getActivePrayers().size() > 0 && Prayer.getPrayerPoints() < 6);
@@ -287,71 +283,13 @@ public class AttackNpc implements Task {
     }
 
 
-    public static boolean waitUntilOutOfCombat(RSNPC name, int eatAt, int longTimeOut) {
-        int eatAtHP = eatAt + General.random(1, 10);//true if praying
-
-        int icon = Player.getRSPlayer().getPrayerIcon();
-
-        Timing.waitCondition(() -> {
-            General.sleep(General.random(100, 500));
-
-            AntiBan.timedActions();
-
-            if (EatUtil.hpPercent() <= (eatAtHP)) {
-                EatUtil.eatFood();
-            }
-            if (icon != -1 && Prayer.getPrayerPoints() < General.random(7, 27)) {
-                Log.info("[CombatUtil]: WaitUntilOutOfCombat -> Drinking Prayer potion");
-                EatUtil.drinkPotion(ItemID.PRAYER_POTION);
-            }
-            if (AntiBan.getShouldHover() && Mouse.isInBounds() && name != null) {
-                AntiBan.hoverNextNPC(name.getName());
-                AntiBan.resetShouldHover();
-            }
-            if (SlayerVars.get().assignment != null && SlayerVars.get().assignment.isUseSpecialItem()) {
-                // Log.log("Using special item");
-                if (CombatUtil.checkSpecialItem(name)) {
-                    Waiting.waitNormal(1500, 440);
-                }
-            }
-            if (AntiBan.getShouldOpenMenu() && (Mouse.isInBounds() && (!ChooseOption.isOpen())) && name != null)
-                AntiBan.openMenuNextNPC(name.getName());
-
-            RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
-            if (target != null) {
-                if (target.getHealthPercent() == 0) {
-                    Vars.get().daxTracker.trackData("Kills", 1);
-                }
-                return !MyPlayer.isHealthBarVisible() || !EatUtil.hasFood()
-                        || (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
-            }
-            return !MyPlayer.isHealthBarVisible() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
-        }, General.random(longTimeOut - 5000, longTimeOut));
-
-        AntiBan.resetShouldOpenMenu();
-
-        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
-        if (target != null) {
-            if (target.getHealthPercent() == 0) {
-                Vars.get().daxTracker.trackData("Kills", 1);
-            }
-
-            return target.getHealthPercent() == 0 || !MyPlayer.isHealthBarVisible()
-                    || !EatUtil.hasFood() || (CombatUtil.isPraying() && Prayer.getPrayerPoints() < 5);
-        }
-
-        if (ChooseOption.isOpen() && !MyPlayer.isHealthBarVisible() && EatUtil.hasFood()) {
-            CombatUtil.clickAttack();
-        }
-        return !MyPlayer.isHealthBarVisible();
-    }
-
     private void sleep(Npc currentTarget) {
-        if (checkAggro())
+        if (checkAggro()) //this adds 500ms of sleep to all
             return;
+
         if (currentTarget != null && currentTarget.getHealthBarPercent() == 0) {
             // General.sleep(General.random(100, 500));
-            if (SlayerVars.get().abc2Delay && SlayerVars.get().abc2Chance < 60) {
+            if (SlayerVars.get().abc2Delay && SlayerVars.get().abc2Chance < 40) {
                 SlayerVars.get().status = "ABC2 Sleeping...";
                 Utils.abc2ReactionSleep(SlayerVars.get().currentTime);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
@@ -359,9 +297,10 @@ public class AttackNpc implements Task {
             } else {
                 SlayerVars.get().status = "Sleeping...";
                 // int sleep = General.random(150, 3000);
-                int sleepSD = General.randomSD(150, 4000, 1150, 325);
-                Log.debug("[AttackNpc]: Sleeping for " + sleepSD);
-                Waiting.wait(sleepSD);
+                Utils.idleNormalAction(true);
+                //int sleepSD = General.randomSD(150, 4000, 1150, 325);
+                // Log.debug("[AttackNpc]: Sleeping for " + sleepSD);
+                // Waiting.wait(sleepSD);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
             }
         }
@@ -378,9 +317,10 @@ public class AttackNpc implements Task {
             } else {
                 SlayerVars.get().status = "Sleeping...";
                 // int sleep = General.random(150, 3000);
-                int sleepSD = General.randomSD(150, 4000, 1150, 325);
-                Log.log("[AttackNpc]: Sleeping for " + sleepSD);
-                Waiting.wait(sleepSD);
+                Utils.idleNormalAction();
+                //int sleepSD = General.randomSD(150, 4000, 1150, 325);
+                // Log.debug("[AttackNpc]: Sleeping for " + sleepSD);
+                // Waiting.wait(sleepSD);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
             }
         }

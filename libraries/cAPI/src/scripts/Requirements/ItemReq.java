@@ -391,6 +391,7 @@ public class ItemReq implements Requirement {
         private int minimumDosesNeeded;
 
         public Builder() {
+
         }
 
         public Builder equip(boolean val) {

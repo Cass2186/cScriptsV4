@@ -134,8 +134,6 @@ public class SlayerVars {
 
     public boolean useBraceletOfSlaughter = false;
 
-    public boolean needToReplaceExpBracelet = false;
-
     public int expeditiousCharges = 0;
 
     public boolean drinkPotions = true;

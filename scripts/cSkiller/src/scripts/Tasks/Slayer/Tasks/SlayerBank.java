@@ -22,6 +22,7 @@ import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Tasks.MiscTasks.BuyItems;
 import scripts.Tasks.Slayer.SlayerConst.Areas;
+import scripts.Tasks.Slayer.SlayerConst.Assign;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Timer;
 
@@ -102,13 +103,20 @@ public class SlayerBank implements Task {
      * this one is called when you want a custom array item such as a teleport item (e.g. skills necklace)
      *
      * @param teleItem         the tab needed, use -1 if none
-     * @param useExpeditious
      * @param arrayItem
      * @param itemRequirements
      */
-    public void newInventorySetup(int teleItem, boolean useExpeditious, int[] arrayItem,
+    public void newInventorySetup(int teleItem, int[] arrayItem,
                                   ItemReq... itemRequirements) {
-        newInventorySetup(teleItem, useExpeditious, itemRequirements);
+        Assign assign = SlayerVars.get().assignment;
+        if (assign != null) {
+            assign.getCustomGearList(); //TODO handle this
+            newInventorySetup(teleItem, SlayerVars.get().useExpeditiousBracelet,
+                    assign.getSpecialItemList().toArray(ItemReq[]::new));
+        } else {
+            newInventorySetup(teleItem, SlayerVars.get().useExpeditiousBracelet,
+                    itemRequirements);
+        }
         BankManager.withdrawArray(arrayItem, 1);
     }
 
@@ -754,8 +762,8 @@ public class SlayerBank implements Task {
                 return;
             }
         BankManager.withdraw(1, ItemID.TINDERBOX);
-        BankManager.withdraw(1, true, ItemID.ANTIDOTE_PLUS_PLUS);
-
+        BankManager.withdrawArray(ItemID.ANTIDOTE_PLUS_PLUS, 1);
+        BankManager.close(true);
         lightCandle();
     }
 
@@ -1174,9 +1182,17 @@ public class SlayerBank implements Task {
                     EatUtil.eatFood();
                     Utils.microSleep();
                 }
-
             }
         }
+    }
+
+    private boolean weHaveAssignmentItemEquipped() {
+        Assign assign = SlayerVars.get().assignment;
+        if (assign != null) {
+            return assign.getCustomGearList().stream().allMatch(item ->
+                    Equipment.contains(item));
+        }
+        return true; //defaults true;
     }
 
     public static void mutatedZygomiteInventory() {
