@@ -60,7 +60,6 @@ public class Utils {
     private static final String[] NAMES_TO_REMOVE = {"Divine", "Super", "super"};
 
     public static Object[] reverseItemArray(int[] arr) {
-
         List<Integer> list = Arrays.stream(arr)
                 .boxed()
                 .collect(Collectors.toList());

@@ -232,8 +232,6 @@ public class AttackNpc implements Task {
     public static boolean waitUntilOutOfCombatNew(Optional<Npc> npcOptional, int eatAt, int longTimeOut) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
         Assign assign = SlayerVars.get().assignment;
-        Log.info("Waiting for Out of Cb");
-
         return Waiting.waitUntil(longTimeOut, 45, () -> {
 
             AntiBan.timedActions();

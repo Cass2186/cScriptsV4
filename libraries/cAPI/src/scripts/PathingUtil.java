@@ -16,6 +16,7 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.api2007.util.DPathNavigator;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
@@ -127,6 +128,10 @@ public class PathingUtil {
             Log.info("[DaxPref]: In stone area");
             if (!handleFood())
                 return WalkState.FAILURE;
+        }
+
+        if (MyPlayer.getRunEnergy() > 30 && !org.tribot.script.sdk.Options.isRunEnabled()){
+            org.tribot.script.sdk.Options.setRunEnabled(true);
         }
 
         // handle stamina

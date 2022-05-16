@@ -246,7 +246,7 @@ public class Exchange {
     private static String determineShortName(String fullName) {
         int stringLength = fullName.length();
         try {
-            if (stringLength > General.random(10, 12)) {
+            if (stringLength > 10) {
                 int firstInt = General.random(7, 10);
                 int secondInt = firstInt + 1;
                 char firstChar = fullName.charAt(firstInt);
@@ -260,11 +260,26 @@ public class Exchange {
         return fullName;
     }
 
-    private static String getItemName(GEItem item) {
-        RSItemDefinition itemDef = RSItemDefinition.get(item.getItemID());
-        String itemString = itemDef.getName();
+    private static String getItemName(int itemId) {
+        Optional<ItemDefinition> first = Query.itemDefinitions().idEquals(itemId).findFirst();
+        String itemString = first.map(ItemDefinition::getName).orElse("");
 
-        if (itemString != null && itemString.length() > 10) {
+        if (itemString.length() > Utils.random(8,10)) {
+            itemString = determineShortName(itemString);
+            General.println("[GEManager]: Truncated item string: " + itemString);
+        }
+
+        if (itemString != null && itemString.contains("("))
+            itemString = itemString.split("\\(")[0];
+
+        return itemString;
+    }
+
+    private static String getItemName(GEItem item) {
+        Optional<ItemDefinition> first = Query.itemDefinitions().idEquals(item.getItemID()).findFirst();
+        String itemString = first.map(ItemDefinition::getName).orElse("");
+
+        if (itemString.length() > 10) {
             itemString = determineShortName(itemString);
             General.println("[GEManager]: Truncated item string: " + itemString);
         }

@@ -423,6 +423,9 @@ public class BigChompyBirdHunting implements QuestTask {
     }
 
     public void kill() {
+        if (Inventory.find(rawChompy).length >0)
+            return;
+
         cQuesterV2.status = "Kill Bird";
         General.println("[Debug]: " + cQuesterV2.status);
         RSNPC[] bird = NPCs.find(1475);
