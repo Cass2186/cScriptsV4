@@ -38,6 +38,10 @@ public class ObjectStep extends QuestStep {
 
     @Getter
     private RSTile tile;
+
+    @Getter
+    private LocalTile localTile;
+
     private int objectId;
     private String objectAction;
     private BooleanSupplier waitCondition;
@@ -83,6 +87,7 @@ public class ObjectStep extends QuestStep {
         this.objectId = objectId;
         this.tile = tile;
         this.handleChat = false;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     public ObjectStep(int objectId, RSTile tile, String objectAction, boolean waitCond) {
@@ -91,6 +96,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = waitCond;
         this.handleChat = false;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     public ObjectStep(int objectId, RSTile tile, String objectAction) {
@@ -99,6 +105,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = NPCInteraction.isConversationWindowUp();
         this.handleChat = false;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     // USe this for instanced objects
@@ -108,6 +115,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = NPCInteraction.isConversationWindowUp();
         this.handleChat = false;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
 
@@ -118,6 +126,7 @@ public class ObjectStep extends QuestStep {
         this.waitCond = NPCInteraction.isConversationWindowUp();
         this.handleChat = false;
         this.requirements.addAll(Arrays.asList(requirements));
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     public ObjectStep(int objectId, RSTile tile, String objectAction, boolean waitCond, boolean handleChat) {
@@ -126,6 +135,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = waitCond;
         this.handleChat = handleChat;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     public ObjectStep(int objectId, String objectAction, RSTile tile, boolean waitCond) {
@@ -134,6 +144,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = waitCond;
         this.handleChat = false;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     public ObjectStep(int objectId, RSTile tile, String objectAction, boolean waitCond, Requirement... requirements) {
@@ -143,6 +154,7 @@ public class ObjectStep extends QuestStep {
         this.waitCond = waitCond;
         this.handleChat = false;
         this.requirements.addAll(Arrays.asList(requirements));
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     @Builder
@@ -154,6 +166,7 @@ public class ObjectStep extends QuestStep {
         this.priorAction = priorAction;
         this.handleChat = false;
         this.requirements.addAll(Arrays.asList(requirements));
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
 
@@ -164,6 +177,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = waitCond;
         this.handleChat = handleChat;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     public ObjectStep(Predicate<RSObject> predicate,
@@ -175,6 +189,7 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = waitCond;
         this.handleChat = handleChat;
+        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
     @Override
@@ -197,12 +212,6 @@ public class ObjectStep extends QuestStep {
         this.substeps.addAll(substeps);
     }
 
-    public Optional<LocalTile> getWalkableTile(LocalTile tile) {
-        return Query.tiles()
-                .inArea(Area.fromRadius(tile, 1))
-                .filter(LocalTile::isWalkable)
-                .findBestInteractable();
-    }
 
     public void addAlternateObjects(int... ids) {
         for (int i : ids)
@@ -271,7 +280,7 @@ public class ObjectStep extends QuestStep {
                         .isReachable()
                         .tileEquals(tile)
                         .findBestInteractable();
-                Optional<LocalTile> walkable = bestInteractable.map(b -> getWalkableTile(b))
+                Optional<LocalTile> walkable = bestInteractable.map(b -> PathingUtil.getWalkableTile(b))
                         .orElse(Optional.empty());
 
                 if (bestInteractable.map(LocalWalking::walkTo).orElse(false)) {
@@ -335,6 +344,21 @@ public class ObjectStep extends QuestStep {
                 Log.error("Failed to handle object with a null tile");
                 return;
             }
+        } else  {
+            Optional<GameObject> object = Query.gameObjects()
+                    .idEquals(this.objectId)
+                    .actionContains(this.objectAction)
+                    .isReachable()
+                    .sortedByPathDistance()
+                    .findBestInteractable();
+            if (PathingUtil.localNav(this.localTile)){
+                Log.info("Walking to local tile");
+                PathingUtil.movementIdle();
+            }
+            if (object.map(obj -> obj.interact(this.objectAction)).orElse(false)) {
+                handleSuccessfulClick();
+                return;
+            }
         }
 
         RSObject tileObj = Entities.find(ObjectEntity::new)
@@ -351,15 +375,15 @@ public class ObjectStep extends QuestStep {
             for (Integer i : this.alternateIds) {
                 Optional<GameObject> ob;
                 if (this.tile == null)
-                  ob = Query.gameObjects()
+                    ob = Query.gameObjects()
                             .idEquals(i)
                             .findClosest();
                 else
                     ob = Query.gameObjects()
-                        .tileEquals(Utils.getWorldTileFromRSTile(this.tile))
-                        .idEquals(i)
-                        .findClosest();
-                if (ob.map(o-> o.interact(this.objectAction)).orElse(false)){
+                            .tileEquals(Utils.getWorldTileFromRSTile(this.tile))
+                            .idEquals(i)
+                            .findClosest();
+                if (ob.map(o -> o.interact(this.objectAction)).orElse(false)) {
                     Log.info("Interacted successfully");
                     handleSuccessfulClick();
                     return;

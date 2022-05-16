@@ -115,6 +115,7 @@ import scripts.QuestPackages.WitchsHouse.WitchsHouse;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestPackages.ZogreFleshEaters.ZogreFleshEaters;
+import scripts.QuestPackages.kingsRansom.KingsRansom;
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
 import scripts.QuestSteps.QuestTask;
@@ -728,6 +729,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("observ")) {
             General.println("[Args]: Added Observatory Quest ");
             taskList.add(ObservatoryQuest.get());
+        }
+        else if (arg.toLowerCase().contains("kingsransom")) {
+            General.println("[Args]: Added Kings Ransom ");
+            taskList.add(KingsRansom.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

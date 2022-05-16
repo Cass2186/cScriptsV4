@@ -97,6 +97,10 @@ public class Utils {
         return Arrays.stream(reqs).anyMatch(r -> !r.check());
     }
 
+
+    public static LocalTile getLocalTileFromRSTile(RSTile tile) {
+        return new LocalTile(tile.getX(), tile.getY(), tile.getPlane());
+    }
     public static WorldTile getWorldTileFromRSTile(RSTile tile) {
         return new WorldTile(tile.getX(), tile.getY(), tile.getPlane());
     }

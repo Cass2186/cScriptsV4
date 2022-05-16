@@ -122,6 +122,14 @@ public class PathingUtil {
         return true;
     }
 
+    public static Optional<LocalTile> getWalkableTile(LocalTile tile) {
+        return Query.tiles()
+                .inArea(Area.fromRadius(tile, 1))
+                .filter(LocalTile::isWalkable)
+                .findBestInteractable();
+    }
+
+
     public static WalkState getWalkState() {
         // for horror from the deep rock area
         if (stonesArea.contains(Player.getPosition())) {

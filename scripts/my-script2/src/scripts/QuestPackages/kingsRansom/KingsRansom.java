@@ -3,10 +3,14 @@ package scripts.QuestPackages.kingsRansom;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Quest;
-import scripts.ItemID;
-import scripts.NpcID;
-import scripts.ObjectID;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
+import scripts.*;
+import scripts.GEManager.GEItem;
 import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
@@ -17,8 +21,8 @@ import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
-import scripts.cQuesterV2;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class KingsRansom implements QuestTask {
@@ -52,10 +56,45 @@ public class KingsRansom implements QuestTask {
     //RSAreas
     RSArea upstairsManor, downstairsManor, downstairsManor2, trialRoom, prison, basement, keepF0, keepF1, keepF2, secretRoomFloor0, mainEntrance1, mainEntrance2,
             mainEntrance3, mainEntrance4, secretBasement;
+    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.LAW_RUNE, 1, 50),
+                    new GEItem(ItemID.AIR_RUNE, 1, 200),
+                    new GEItem(ItemID.GRANITE_2KG, 1, 200),
+                    new GEItem(ItemID.BLACK_FULL_HELM, 1, 200),
+                    new GEItem(ItemID.BLACK_PLATEBODY, 1, 200),
+                    new GEItem(ItemID.BLACK_PLATELEGS, 1, 200),
+                    new GEItem(ItemID.IRON_CHAINBODY, 1, 500),
+                    new GEItem(ItemID.BRONZE_BAR, 1, 500),
+                    new GEItem(ItemID.BRONZE_MED_HELM, 1, 500),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 50),
+                    new GEItem(ItemID.AMULET_OF_GLORY4, 1, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
+            )
+    );
 
+    InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.LAW_RUNE, 1),
+                    new ItemReq(ItemID.AIR_RUNE, 1),
+                    new ItemReq(ItemID.GRANITE_2KG, 1),
+                    new ItemReq(ItemID.BLACK_PLATELEGS, 1, true),
+                    new ItemReq(ItemID.BLACK_PLATEBODY, 1, true),
+                    new ItemReq(ItemID.BLACK_FULL_HELM, 1, true),
+                    new ItemReq(ItemID.IRON_CHAINBODY, 1),
+                    new ItemReq(ItemID.BRONZE_MED_HELM, 1),
+                    new ItemReq(ItemID.ANIMATE_ROCK_SCROLL, 1, 0),
+                    new ItemReq(ItemID.AMULET_OF_GLORY4, 1, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
 
-    public Map<Integer, QuestStep> loadSteps()
-    {
+            )
+    ));
+
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+
+    public Map<Integer, QuestStep> loadSteps() {
         loadAreas();
         setupItemRequirements();
         setupConditions();
@@ -65,7 +104,7 @@ public class KingsRansom implements QuestTask {
         steps.put(0, talkToGossip);
         steps.put(5, talkToGuard);
 
-        ConditionalStep collectItems = new ConditionalStep( breakWindow);
+        ConditionalStep collectItems = new ConditionalStep(breakWindow);
         collectItems.addStep(new Conditions(inDownstairsManor, hasScrapPaper, hasForm, hasBlackHelm), leaveWindow);
         collectItems.addStep(new Conditions(inUpstairsManor, hasScrapPaper, hasForm, hasBlackHelm), goDownstairsManor);
         collectItems.addStep(new Conditions(hasScrapPaper, hasForm, hasBlackHelm), returnToGuard);
@@ -82,7 +121,7 @@ public class KingsRansom implements QuestTask {
 
         steps.put(25, talkToAnna);
 
-        ConditionalStep trialsSteps = new ConditionalStep( talkToAnna);
+        ConditionalStep trialsSteps = new ConditionalStep(talkToAnna);
         trialsSteps.addStep(new Conditions(askedAboutPoison, askedAboutDagger, askedAboutNight, askedAboutThread), waitForVerdict);
         trialsSteps.addStep(new Conditions(criminalsThread, askedAboutPoison, askedAboutDagger, askedAboutNight), callAboutThread);
         trialsSteps.addStep(new Conditions(criminalsThread, askedAboutPoison, askedAboutDagger, maidInRoom), talkToMaidAboutNight);
@@ -95,24 +134,24 @@ public class KingsRansom implements QuestTask {
 
         steps.put(30, trialsSteps);
 
-        ConditionalStep talkToAnnaAfterTrialSteps = new ConditionalStep( talkToAnnaAfterTrial);
+        ConditionalStep talkToAnnaAfterTrialSteps = new ConditionalStep(talkToAnnaAfterTrial);
         talkToAnnaAfterTrialSteps.addStep(inTrialRoom, leaveCourt);
 
         steps.put(35, talkToAnnaAfterTrialSteps);
 
         steps.put(40, enterStatue);
 
-        ConditionalStep goTalkToMerlin = new ConditionalStep( enterStatue);
+        ConditionalStep goTalkToMerlin = new ConditionalStep(enterStatue);
         goTalkToMerlin.addStep(inPrison, talkToMerlin);
 
         steps.put(45, goTalkToMerlin);
 
-        ConditionalStep findMerlinEscape = new ConditionalStep( enterStatue);
+        ConditionalStep findMerlinEscape = new ConditionalStep(enterStatue);
         findMerlinEscape.addStep(inPrison, reachForVent);
 
         steps.put(50, findMerlinEscape);
 
-        ConditionalStep freeKnights = new ConditionalStep( enterStatue);
+        ConditionalStep freeKnights = new ConditionalStep(enterStatue);
         freeKnights.addStep(inPuzzle, solvePuzzle);
         freeKnights.addStep(new Conditions(inPrison, hairclipOrLockpick), useHairClipOnOnDoor);
         freeKnights.addStep(new Conditions(inPrison, hasTelegrabItems), useGrabOnGuard);
@@ -121,7 +160,7 @@ public class KingsRansom implements QuestTask {
         steps.put(55, freeKnights);
         steps.put(60, freeKnights);
 
-        ConditionalStep getGrail = new ConditionalStep( enterStatueForGrail);
+        ConditionalStep getGrail = new ConditionalStep(enterStatueForGrail);
         getGrail.addStep(inBoxWidget, selectPurpleBox);
         getGrail.addStep(inKeepF2, searchTable);
         getGrail.addStep(inKeepF1, climbF1ToF2);
@@ -132,14 +171,14 @@ public class KingsRansom implements QuestTask {
 
         steps.put(70, talkToCromperty);
 
-        ConditionalStep goFreeArthur = new ConditionalStep( enterFortress);
+        ConditionalStep goFreeArthur = new ConditionalStep(enterFortress);
         goFreeArthur.addStep(inBasement, freeArthur);
         goFreeArthur.addStep(inSecretRoom, goDownToArthur);
         goFreeArthur.addStep(inFortressEntrance, enterWallInFortress);
 
         steps.put(75, goFreeArthur);
 
-        ConditionalStep talkToArthurInBasement = new ConditionalStep( enterFortressAfterFreeing);
+        ConditionalStep talkToArthurInBasement = new ConditionalStep(enterFortressAfterFreeing);
         talkToArthurInBasement.addStep(inBasement, talkToArthur);
         talkToArthurInBasement.addStep(inSecretRoom, enterBasementAfterFreeing);
         talkToArthurInBasement.addStep(inFortressEntrance, enterWallInFortressAfterFreeing);
@@ -151,8 +190,7 @@ public class KingsRansom implements QuestTask {
         return steps;
     }
 
-    public void setupItemRequirements()
-    {
+    public void setupItemRequirements() {
         scrapPaper = new ItemRequirement("Scrap paper", ItemID.SCRAP_PAPER);
         addressForm = new ItemRequirement("Address form", ItemID.ADDRESS_FORM);
         blackHelm = new ItemRequirement("Black knight helm", ItemID.BLACK_KNIGHT_HELM);
@@ -166,7 +204,7 @@ public class KingsRansom implements QuestTask {
         ironChainWorn = new ItemRequirement(ItemID.IRON_CHAINBODY, 1, true);
 
         bronzeMed = new ItemRequirement("Bronze med helm", ItemID.BRONZE_MED_HELM);
-        bronzeMedWorn = new ItemRequirement( ItemID.BRONZE_MED_HELM, 1, true);
+        bronzeMedWorn = new ItemRequirement(ItemID.BRONZE_MED_HELM, 1, true);
 
         blackKnightBody = new ItemRequirement("Black platebody", ItemID.BLACK_PLATEBODY);
         blackKnightBodyWorn = new ItemRequirement(ItemID.BLACK_PLATEBODY, 1, true);
@@ -175,10 +213,10 @@ public class KingsRansom implements QuestTask {
         blackKnightLegWorn = new ItemRequirement(ItemID.BLACK_PLATELEGS, 1, true);
 
         blackKnightHelm = new ItemRequirement("Black full helm", ItemID.BLACK_FULL_HELM);
-        blackKnightHelmWorn = new ItemRequirement( ItemID.BLACK_FULL_HELM, 1, true);
+        blackKnightHelmWorn = new ItemRequirement(ItemID.BLACK_FULL_HELM, 1, true);
 
         animateRock = new ItemRequirement("Animate rock scroll", ItemID.ANIMATE_ROCK_SCROLL);
-   //     animateRock.setTooltip("If you don't have one, you can get another from Wizard Cromperty in Ardougne during " + "the quest");
+        //     animateRock.setTooltip("If you don't have one, you can get another from Wizard Cromperty in Ardougne during " + "the quest");
 
         lockpick = new ItemRequirement("Lockpick", ItemID.LOCKPICK);
 
@@ -191,7 +229,7 @@ public class KingsRansom implements QuestTask {
         hairclipOrLockpick.addAlternateItemIDs(ItemID.HAIR_CLIP);
 
         holyGrail = new ItemRequirement("Holy grail", ItemID.HOLY_GRAIL);
-       // holyGrail.setTooltip("You can get another from the purple box on the table in Morgan la Faye's Keep");
+        // holyGrail.setTooltip("You can get another from the purple box on the table in Morgan la Faye's Keep");
 
         granite = new ItemRequirement("Any granite", ItemID.GRANITE_2KG);
         granite.setDisplayMatchedItemName(true);
@@ -202,8 +240,7 @@ public class KingsRansom implements QuestTask {
         edgevilleTeleport = new ItemRequirement("Edgeville teleport", ItemID.AMULET_OF_GLORY6);
     }
 
-    public void loadAreas()
-    {
+    public void loadAreas() {
         upstairsManor = new RSArea(new RSTile(2729, 3572, 1), new RSTile(2749, 3584, 1));
         downstairsManor = new RSArea(new RSTile(2733, 3574, 0), new RSTile(2747, 3582, 0));
         downstairsManor2 = new RSArea(new RSTile(2739, 3573, 0), new RSTile(2742, 3573, 0));
@@ -221,8 +258,7 @@ public class KingsRansom implements QuestTask {
         mainEntrance4 = new RSArea(new RSTile(3019, 3513, 0), new RSTile(3019, 3517, 0));
     }
 
-    public void setupConditions()
-    {
+    public void setupConditions() {
         hasForm = new Conditions(LogicType.OR, addressForm, new VarbitRequirement(3890, 1));
         hasScrapPaper = new Conditions(LogicType.OR, scrapPaper, new VarbitRequirement(3891, 1));
         hasBlackHelm = new Conditions(LogicType.OR, blackHelm, new VarbitRequirement(3892, 1));
@@ -253,142 +289,141 @@ public class KingsRansom implements QuestTask {
         inBoxWidget = new WidgetModelRequirement(390, 0, 27488);
     }
 
-    public void setupSteps()
-    {
-        talkToGossip = new NPCStep( NpcID.GOSSIP, new RSTile(2741, 3557, 0), "Talk to Gossip, just south of the Sinclair Mansion.");
+    public void setupSteps() {
+        talkToGossip = new NPCStep(NpcID.GOSSIP, new RSTile(2741, 3557, 0), "Talk to Gossip, just south of the Sinclair Mansion.");
         talkToGossip.addDialogStep("How curious. Maybe I should investigate it.");
         talkToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0), "Talk to the Guard in the Sinclair Manor.");
 
-        breakWindow = new ObjectStep(26123, new RSTile(2748, 3577, 0), "Right-click break the east window of the mansion, and enter it.");
-        goUpstairsManor = new ObjectStep( ObjectID.STAIRCASE_25682, new RSTile(2737, 3582, 0), "Go upstairs.");
+        breakWindow = new ObjectStep(26123, new RSTile(2749, 3577, 0), "Break");
+        goUpstairsManor = new ObjectStep(ObjectID.STAIRCASE_25682, new RSTile(2737, 3582, 0), "Climb-up");
 
-        goDownstairsForPaper = new ObjectStep( ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Pick up the scrap paper downstairs.");
+        goDownstairsForPaper = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Take");
         grabPaper = new GroundItemStep(ItemID.SCRAP_PAPER, new RSTile(2746, 3580, 0));
         grabPaper.addSubSteps(goDownstairsForPaper);
 
-        takeForm = new GroundItemStep( ItemID.ADDRESS_FORM, new RSTile(2739, 3581, 1));
-        searchBookcase = new ObjectStep( ObjectID.BOOKCASE_26053, new RSTile(2738, 3580, 1), "Search the west bookcase for a black knight helm.");
-        goDownstairsManor = new ObjectStep( ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Go down the staircase.");
+        takeForm = new GroundItemStep(ItemID.ADDRESS_FORM, new RSTile(2739, 3581, 1));
+        searchBookcase = new ObjectStep(ObjectID.BOOKCASE_26053, new RSTile(2738, 3580, 1), "Search");
+        goDownstairsManor = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Climb-down");
         leaveWindow = new ObjectStep(26123, new RSTile(2748, 3577, 0), "Step out of the window.");
         returnToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0), "Return to the guard with the 3 items.");
         returnToGuard.addDialogStep("I have proof that the Sinclairs have left.", "I have proof that links the Sinclairs to Camelot.", "I have proof of foul play.");
 
-        talkToGossipAgain = new NPCStep( NpcID.GOSSIP, new RSTile(2741, 3557, 0), "Ask Gossip all 3 chat options.");
+        talkToGossipAgain = new NPCStep(NpcID.GOSSIP, new RSTile(2741, 3557, 0), "Ask Gossip all 3 chat options.");
+        talkToGossip.addDialogStep("tell me about the family.");
+        talkToGossip.addDialogStep("tell me about the mansion.");
+        talkToGossip.addDialogStep("tell me about the Anna Sinclair.");
 
-        talkToAnna = new NPCStep( NpcID.ANNA, new RSTile(2737, 3466, 0), "Talk to Anna in the Seers' Village Court House.");
+        talkToAnna = new NPCStep(NpcID.ANNA, new RSTile(2737, 3468, 0), "Talk to Anna in the Seers' Village Court House.");
         talkToAnna.addDialogStep("Okay, I guess I don't have much of a choice.");
         talkToAnna.setAllowInCutscene(true);
 
-        goIntoTrial = new ObjectStep( ObjectID.STAIRS_26017, new RSTile(2738, 3470, 0), "Go down the stairs to the court room.");
+        goIntoTrial = new ObjectStep(ObjectID.STAIRS_26017, new RSTile(2738, 3470, 0), "Go down the stairs to the court room.");
         goIntoTrial.addDialogStep("Yes, I'm ready.");
         goIntoTrial.setAllowInCutscene(true);
 
-        callHandlerAboutPoison = new ObjectStep( ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Dog Handler and ask them about the poison.");
+        callHandlerAboutPoison = new ObjectStep(ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Dog Handler and ask them about the poison.");
         callHandlerAboutPoison.addDialogStep("Dog handler", "Previous page");
         callHandlerAboutPoison.setAllowInCutscene(true);
 
-        talkToHandlerAboutPoison = new NPCStep( NpcID.PIERRE);
+        talkToHandlerAboutPoison = new NPCStep(NpcID.PIERRE);
         talkToHandlerAboutPoison.addDialogStep("Ask about the poison");
         talkToHandlerAboutPoison.setAllowInCutscene(true);
         callHandlerAboutPoison.addSubSteps(talkToHandlerAboutPoison);
 
-        callButlerAboutDagger = new ObjectStep( ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Butler and ask them about the dagger.");
+        callButlerAboutDagger = new ObjectStep(ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Butler and ask them about the dagger.");
         callButlerAboutDagger.addDialogStep("Butler", "Previous page");
         callButlerAboutDagger.setAllowInCutscene(true);
 
-        talkToButlerAboutDagger = new NPCStep( NpcID.HOBBES);
+        talkToButlerAboutDagger = new NPCStep(NpcID.HOBBES);
         talkToButlerAboutDagger.addDialogStep("Ask about the dagger");
         talkToButlerAboutDagger.setAllowInCutscene(true);
         callButlerAboutDagger.addSubSteps(talkToButlerAboutDagger);
 
-        callMaidAboutNight = new ObjectStep( ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Maid and ask them about the night of the murder.");
+        callMaidAboutNight = new ObjectStep(ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Maid and ask them about the night of the murder.");
         callMaidAboutNight.addDialogStep("Maid", "Next page");
         callMaidAboutNight.setAllowInCutscene(true);
 
-        talkToMaidAboutNight = new NPCStep( NpcID.MARY);
+        talkToMaidAboutNight = new NPCStep(NpcID.MARY);
         talkToMaidAboutNight.addDialogStep("Ask about the night of the murder");
         talkToMaidAboutNight.setAllowInCutscene(true);
         callMaidAboutNight.addSubSteps(talkToMaidAboutNight);
 
-        callAboutThread = new NPCStep( NpcID.MARY);
+        callAboutThread = new NPCStep(NpcID.MARY);
         callAboutThread.addDialogStep("Ask about the thread");
         callAboutThread.addAlternateNpcs(NpcID.HOBBES, NpcID.PIERRE, NpcID.DONOVAN_THE_FAMILY_HANDYMAN, NpcID.LOUISA, NpcID.STANFORD);
         callAboutThread.setAllowInCutscene(true);
 
-        waitForVerdict = new DetailedQuestStep( "Wait for the jury to reach their verdict.");
+        waitForVerdict = new DetailedQuestStep("Wait for the jury to reach their verdict.");
         callAboutThread.addSubSteps(waitForVerdict);
 
-        leaveCourt = new ObjectStep( ObjectID.GATE_26042, new RSTile(1820, 4268, 0), "Leave the court room.");
+        leaveCourt = new ObjectStep(ObjectID.GATE_26042, new RSTile(1820, 4268, 0), "Leave the court room.");
 
-        talkToAnnaAfterTrial = new NPCStep( NpcID.ANNA, new RSTile(2737, 3466, 0), "Talk to Anna in the Seers' Village Court House.");
+        talkToAnnaAfterTrial = new NPCStep(NpcID.ANNA, new RSTile(2737, 3466, 0), "Talk to Anna in the Seers' Village Court House.");
 
-        enterStatue = new ObjectStep( ObjectID.STATUE_26073, new RSTile(2780, 3508, 0), "Search the statue east of Camelot.", grabOrLockpick);
+        enterStatue = new ObjectStep(ObjectID.STATUE_26073, new RSTile(2780, 3508, 0), "Search the statue east of Camelot.", grabOrLockpick);
 
-        talkToMerlin = new NPCStep( NpcID.MERLIN, new RSTile(1907, 4281, 0), "Talk to Merlin.");
+        talkToMerlin = new NPCStep(NpcID.MERLIN, new RSTile(1907, 4281, 0), "Talk to Merlin.");
         talkToMerlin.addDialogStep("What do we do now?");
-        reachForVent = new ObjectStep( ObjectID.VENT_25880, new RSTile(1904, 4283, 0), "Reach for the vent on the north wall.");
+        reachForVent = new ObjectStep(ObjectID.VENT_25880, new RSTile(1904, 4283, 0), "Reach for the vent on the north wall.");
         useGrabOnGuard = new NPCStep(4332, new RSTile(1906, 4270, 0),
-              //  "Use telekinetic grab on the guard grooming their hair.",
+                //  "Use telekinetic grab on the guard grooming their hair.",
                 lawRune, airRune);
-        useHairClipOnOnDoor = new ObjectStep( ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0), "Attempt to open the cell door.", hairclipOrLockpick);
+        useHairClipOnOnDoor = new ObjectStep(ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0), "Attempt to open the cell door.", hairclipOrLockpick);
 
-       // getLockpickOrRunes = new QuestStep( "Get a lockpick or runes for telegrab. Talking to the knights in the room can give you a lockpick.");
+        // getLockpickOrRunes = new QuestStep( "Get a lockpick or runes for telegrab. Talking to the knights in the room can give you a lockpick.");
         useGrabOnGuard.addSubSteps(getLockpickOrRunes);
 
-        goDownToArthur = new ObjectStep( ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
+        goDownToArthur = new ObjectStep(ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
 
         //solvePuzzle = new LockpickPuzzle(this);
 
-        enterStatueForGrail = new ObjectStep( ObjectID.STATUE_26073, new RSTile(2780, 3508, 0), "Search the statue east of Camelot.");
+        enterStatueForGrail = new ObjectStep(ObjectID.STATUE_26073, new RSTile(2780, 3508, 0), "Search the statue east of Camelot.");
 
-        openMetalDoor = new ObjectStep( ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0), "Go through the cell door.");
+        openMetalDoor = new ObjectStep(ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0), "Go through the cell door.");
 
-        climbF0ToF1 = new ObjectStep( ObjectID.STAIRCASE_25786, new RSTile(1696, 4260, 0), "Climb to the top of the keep.");
-        climbF1ToF2 = new ObjectStep( ObjectID.STAIRCASE_25786, new RSTile(1696, 4254, 1), "Climb to the top of the keep.");
+        climbF0ToF1 = new ObjectStep(ObjectID.STAIRCASE_25786, new RSTile(1696, 4260, 0), "Climb to the top of the keep.");
+        climbF1ToF2 = new ObjectStep(ObjectID.STAIRCASE_25786, new RSTile(1696, 4254, 1), "Climb to the top of the keep.");
         climbF0ToF1.addSubSteps(climbF1ToF2);
-        searchTable = new ObjectStep( ObjectID.TABLE_2650, new RSTile(1696, 4259, 2), "Search the table and take the purple round box.");
-    //    selectPurpleBox = new WidgetStep( "Take the purple round box.", 390, 16);
+        searchTable = new ObjectStep(ObjectID.TABLE_2650, new RSTile(1696, 4259, 2), "Search the table and take the purple round box.");
+        //    selectPurpleBox = new WidgetStep( "Take the purple round box.", 390, 16);
         searchTable.addSubSteps(selectPurpleBox);
 
-        talkToCromperty = new NPCStep( NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0), "Talk to Wizard Cromperty in East Ardougne.");
+        talkToCromperty = new NPCStep(NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0), "Talk to Wizard Cromperty in East Ardougne.");
         talkToCromperty.addAlternateNpcs(NpcID.WIZARD_CROMPERTY_8481);
         talkToCromperty.addDialogStep("Chat.");
 
-        enterFortress = new ObjectStep( ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
+        enterFortress = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
                 "Enter the Black Knight Fortress wearing the bronze med helm and iron chainbody.",
                 bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody, blackKnightLeg, animateRock, holyGrail, granite);
-        enterWallInFortress = new ObjectStep( ObjectID.WALL_2341, new RSTile(3016, 3517, 0), "Enter the secret room wearing the black knight armour.",
+        enterWallInFortress = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0), "Enter the secret room wearing the black knight armour.",
                 blackKnightHelmWorn, blackKnightBodyWorn, blackKnightLegWorn, animateRock, holyGrail, granite);
         freeArthur = new ObjectStep(25943, new RSTile(1867, 4233, 0), "Free King Arthur " +
                 "by using the animate rock scroll.", animateRock, holyGrail, granite);
 
-        enterFortressAfterFreeing = new ObjectStep( ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0), "Enter the Black Knight Fortress.",
+        enterFortressAfterFreeing = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0), "Enter the Black Knight Fortress.",
                 bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody, blackKnightLeg);
-        enterWallInFortressAfterFreeing = new ObjectStep( ObjectID.WALL_2341, new RSTile(3016, 3517, 0), "Enter the secret room.",
+        enterWallInFortressAfterFreeing = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0), "Enter the secret room.",
                 blackKnightHelmWorn, blackKnightBodyWorn, blackKnightLegWorn, bronzeMed, ironChain);
 
-        enterBasementAfterFreeing = new ObjectStep( ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
-        talkToArthur = new NPCStep( NpcID.KING_ARTHUR, new RSTile(1867, 4235, 0), bronzeMed, ironChain);
+        enterBasementAfterFreeing = new ObjectStep(ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
+        talkToArthur = new NPCStep(NpcID.KING_ARTHUR, new RSTile(1867, 4235, 0), bronzeMed, ironChain);
         talkToArthur.addSubSteps(enterBasementAfterFreeing, enterFortressAfterFreeing, enterWallInFortressAfterFreeing);
 
-        talkToArthurInCamelot = new NPCStep( NpcID.KING_ARTHUR, new RSTile(2763, 3512, 0), "Talk to King Arthur in Camelot to finish the quest.");
+        talkToArthurInCamelot = new NPCStep(NpcID.KING_ARTHUR, new RSTile(2763, 3512, 0), "Talk to King Arthur in Camelot to finish the quest.");
     }
 
 
-    public List<ItemRequirement> getItemRequirements()
-    {
+    public List<ItemRequirement> getItemRequirements() {
         return Arrays.asList(grabOrLockpick, granite, blackKnightHelm, blackKnightBody, blackKnightLeg, bronzeMed, ironChain);
     }
 
 
-    public List<ItemRequirement> getItemRecommended()
-    {
+    public List<ItemRequirement> getItemRecommended() {
         return Arrays.asList(ardougneTeleport, camelotTeleport, edgevilleTeleport);
     }
 
     @Override
-    public List<Requirement> getGeneralRequirements()
-    {
+    public List<Requirement> getGeneralRequirements() {
         ArrayList<Requirement> req = new ArrayList<>();
         req.add(new QuestRequirement(Quest.BLACK_KNIGHTS_FORTRESS, Quest.State.COMPLETE));
         req.add(new QuestRequirement(Quest.HOLY_GRAIL, Quest.State.COMPLETE));
@@ -397,6 +432,44 @@ public class KingsRansom implements QuestTask {
         req.add(new SkillRequirement(Skills.SKILLS.MAGIC, 45));
         req.add(new SkillRequirement(Skills.SKILLS.DEFENCE, 65));
         return req;
+    }
+
+
+    Area FIRST_TWO_ROOMS_NEAR_WINDOW = Area.fromPolygon(
+            new WorldTile(2748, 3574, 0),
+            new WorldTile(2748, 3580, 0),
+            new WorldTile(2745, 3580, 0),
+            new WorldTile(2745, 3574, 0)
+    );
+
+    private boolean breakWindow() {
+        if (!inDownstairsManor.check() && !inUpstairsManor.check()) {
+            cQuesterV2.status = "Going to break window";
+            WorldTile tile = new WorldTile(2748, 3575, 0);
+            if (PathingUtil.walkToTile(tile)) {
+                Utils.idleNormalAction(true);
+            }
+
+            Optional<GameObject> window = Query.gameObjects()
+                    .actionContains("Break")
+                    .nameContains("window")
+                    .findBestInteractable();
+            cQuesterV2.status = "Breaking window";
+            if (window.map(w -> w.interact("Break")).orElse(false)) {
+                Waiting.waitUntil(7000, 250, () -> ChatScreen.isOpen() ||
+                        FIRST_TWO_ROOMS_NEAR_WINDOW.containsMyPlayer());
+            }
+
+        }
+        return inDownstairsManor.check() || inUpstairsManor.check();
+    }
+
+    private void pickUpPaper() {
+        cQuesterV2.status = "Getting paper";
+        Log.info(cQuesterV2.status);
+        LocalTile paperTile = new LocalTile(2746, 3580, 0);
+        PathingUtil.localNav(paperTile);
+        grabPaper.execute();
     }
 
  /*   @Override
@@ -431,17 +504,52 @@ public class KingsRansom implements QuestTask {
 
     @Override
     public void execute() {
+        // need a way to initialize without doing it each iteration, trying a for loop here
+        int varbit = QuestVarbits.QUEST_KINGS_RANSOM.getId();
+        Log.debug("King's ransom varbit is " + Utils.getVarBitValue(varbit));
+
+        // buy initial items on quest start
+        if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
+            // buyStep.buyItems();
+            //initialItemReqs.withdrawItems();
+        }
+
+        // done quest
+        if (isComplete()) {
+            cQuesterV2.taskList.remove(this);
+        } else if (Utils.getVarBitValue(varbit) == 3888) {
+            breakWindow();
+            pickUpPaper();
+        }
+        //load questSteps into a map
+        Map<Integer, QuestStep> steps = loadSteps();
+        //get the step based on the game setting key in the map
+        Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
+
+        // set status
+        cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
+
+        //do the actual step
+        step.ifPresent(QuestStep::execute);
+
+        // handle any chats that are failed to be handled by the QuestStep (failsafe)
+        if (ChatScreen.isOpen()) {
+            ChatScreen.handle();
+        }
+
+        //slow down looping if it gets stuck
+        Waiting.waitNormal(100, 20);
 
     }
 
     @Override
     public String questName() {
-        return "King's Ransom";
+        return "King's Ransom (" + QuestVarbits.QUEST_KINGS_RANSOM.getId() + ")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true; //TODO change
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
 import scripts.BankManager;
 
+import scripts.Data.Birdhouse;
 import scripts.Data.Const;
 
 import scripts.Tasks.Priority;
@@ -14,6 +15,8 @@ import scripts.Tasks.Task;
 import scripts.Timer;
 
 import scripts.Utils;
+
+import java.util.Optional;
 
 public class MakeBirdHouses implements Task {
 
@@ -53,6 +56,8 @@ public class MakeBirdHouses implements Task {
 
     @Override
     public void execute() {
+        Optional<Birdhouse> best = Birdhouse.getBestCraftableBirdhouse();
+        best.ifPresent(b->bank(b.getLogID()));
 
     }
 
