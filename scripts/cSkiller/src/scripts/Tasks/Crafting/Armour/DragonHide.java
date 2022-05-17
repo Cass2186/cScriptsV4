@@ -48,15 +48,16 @@ public class DragonHide implements Task {
         } else if (bestItem.isPresent()) {
             //TODO add buying
             Log.info("Banking for D'hide items");
-            InventoryRequirement inv = new InventoryRequirement(
-                    new ArrayList<>(bestItem.get().getItemReqList()));
-
             BankManager.open(true);
+            List<Integer> itemIdList = new ArrayList<>();
+            for (ItemReq i : bestItem.get().getItemReqList()){
+                itemIdList.add(i.getId());
+            }
             BankManager.depositAllExcept(ItemID.NEEDLE, ItemID.THREAD);
             List<ItemReq> newInv = SkillBank.withdraw(bestItem.get().getItemReqList());
             if (newInv != null && newInv.size() > 0) {
                 Log.warn("[Crafting Dragon Hide]: Creating buy list");
-                BuyItems.itemsToBuy = BuyItems.populateBuyList(Armour.getRequiredItemList());
+                BuyItems.itemsToBuy = BuyItems.populateBuyList(bestItem.get().getRequiredItemList());
             } else
                 BankManager.close(true);
             // need to bank
@@ -67,7 +68,11 @@ public class DragonHide implements Task {
     }
 
     @Override
+    public String toString() {
+        return "Making D'hide";
+    }
+    @Override
     public String taskName() {
-        return "Crafting: D'hide";
+        return "Crafting";
     }
 }

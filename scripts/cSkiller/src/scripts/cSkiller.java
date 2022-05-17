@@ -39,6 +39,7 @@ import scripts.Tasks.Combat.CrabTasks.EatDrink;
 import scripts.Tasks.Combat.CrabTasks.Fight;
 import scripts.Tasks.Combat.CrabTasks.MoveToCrabTile;
 import scripts.Tasks.Combat.CrabTasks.ResetAggro;
+import scripts.Tasks.Crafting.Armour.DragonHide;
 import scripts.Tasks.Herblore.MixTar;
 import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
 import scripts.Tasks.MiscTasks.*;
@@ -259,6 +260,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new BankCook(),
                 new CraftBank(),
                 new MakeGlass(),
+                new DragonHide(),
                 new BankFireMaking(),
                 new MakeFires(),
                 new WoodcuttingBank(),
@@ -554,7 +556,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
             endOnMessage(message, "steel dragon");
 
         }
-        if (message.contains("green dragon"))
+        if (message.contains("green dragon "))
             Log.log("[Message]: " + message);
         if (message.equals("You don't find anything useful here.")) {
             State.get().getLastBookcaseTile().ifPresent(tile -> {
@@ -568,7 +570,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 }
             });
         }
-        endOnMessage(message, "green dragon");
+        endOnMessage(message, "green dragon ");
         endOnMessage(message, "earth warrior");
         endOnDeath(message);
     }

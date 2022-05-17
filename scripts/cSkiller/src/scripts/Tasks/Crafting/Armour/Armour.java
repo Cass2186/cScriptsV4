@@ -1,19 +1,16 @@
 package scripts.Tasks.Crafting.Armour;
 
 import lombok.Getter;
-import org.tribot.api.General;
 import org.tribot.api2007.Skills;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.BankManager;
-import scripts.Data.Enums.Crafting.CraftItems;
 import scripts.Data.SkillTasks;
 import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Utils;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -115,39 +112,31 @@ public enum Armour {
         }
     }
 
-    /* public int determineResourcesToNextItem() {
+    public int determineResourcesToNextItem() {
          if (Skill.CRAFTING.getActualLevel() > this.levelReq)
              return 0;
-         int max = this.maxLevel;
-         int xpTillMax = Skills.getXPToLevel(skill, SkillTasks.CRAFTING.getEndLevel());
+         int max = this.getLevelReq();
+        Skills.SKILLS skill = Skills.SKILLS.CRAFTING;
+         int xpTillMax = Skills.getXPToLevel(Skills.SKILLS.CRAFTING,
+                 SkillTasks.CRAFTING.getEndLevel());
          if (max <=SkillTasks.CRAFTING.getEndLevel()) {
-             xpTillMax = Skills.getXPToLevel(skill, this.maxLevel);
+             xpTillMax = Skills.getXPToLevel(skill, this.getLevelReq());
          }
-         General.println("DetermineResourcesToNextItem: " + (xpTillMax / this.xpPer));
-         return (int) (xpTillMax / this.xpPer) + 5;
+         Log.info("DetermineResourcesToNextItem: " + (xpTillMax / this.xpEarned));
+         return (int) (xpTillMax / this.xpEarned) + 5;
      }
 
-     private static Optional<CraftItems> getCurrentItem() {
-         for (CraftItems i : values()) {
-             if (Skills.getActualLevel(skill) < i.maxLevel) {
-                 return Optional.of(i);
-             }
-         }
-         return Optional.empty();
-     }
- */
-    public static List<ItemReq> getRequiredItemList() {
+
+    public  List<ItemReq> getRequiredItemList() {
         List<ItemReq> i = new ArrayList<>();
-      /*  if ( getCurrentItem().isPresent()){
-            Log.log("Current Item: " +getCurrentItem().get().toString());
-        }
-     //   getCurrentItem().ifPresent(h -> i.add(new ItemReq(ItemID.MOLTEN_GLASS, h.determineResourcesToNextItem())));
-*/
-        Log.info("[Armour]: We need " + i.size() + " sized list for craft items");
-        Log.info("[Armour]: We need " + " sized list for herblore items: " + i.get(0).getAmount());
+        Optional<Armour> best = getBestItem();
+        best.ifPresent(b->Log.info("[Armour] Current Item: " +b));
+        best.ifPresent(b -> i.add(new ItemReq(b.getItemId(), determineResourcesToNextItem()))); //TODO make determinenext
+        best.ifPresent(b -> i.add(new ItemReq(ItemID.THREAD,
+                Utils.roundToNearest(Utils.random(3000,6000), 500))));
+        i.add(new ItemReq(ItemID.NEEDLE, 1));
+          Log.info("[Armour]: We need " + i.size() + " sized list for crafting items: " + i.get(0).getAmount());
 
-
-        i.add(new ItemReq(ItemID.GLASSBLOWING_PIPE, 1));
         return i;
     }
 

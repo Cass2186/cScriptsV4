@@ -78,7 +78,7 @@ public class CraftBank implements Task {
     @Override
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CRAFTING)
-                &&
+                && !Vars.get().doingDragonHide &&
                 (Inventory.find(ItemID.MOLTEN_GLASS).length == 0 ||
                         Inventory.find(ItemID.GLASSBLOWING_PIPE).length == 0);
     }

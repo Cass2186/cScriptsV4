@@ -115,7 +115,6 @@ public class ObjectStep extends QuestStep {
         this.objectAction = objectAction;
         this.waitCond = NPCInteraction.isConversationWindowUp();
         this.handleChat = false;
-        this.localTile = Utils.getLocalTileFromRSTile(tile);
     }
 
 

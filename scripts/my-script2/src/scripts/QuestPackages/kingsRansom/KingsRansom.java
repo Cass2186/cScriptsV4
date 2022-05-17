@@ -90,6 +90,7 @@ public class KingsRansom implements QuestTask {
                     new ItemReq(ItemID.BLACK_FULL_HELM, 1, true),
                     new ItemReq(ItemID.IRON_CHAINBODY, 1),
                     new ItemReq(ItemID.BRONZE_MED_HELM, 1),
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5),
                     new ItemReq(ItemID.ANIMATE_ROCK_SCROLL, 1, 0),
                     new ItemReq(ItemID.AMULET_OF_GLORY4, 1, 0, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
@@ -554,7 +555,7 @@ public class KingsRansom implements QuestTask {
         }
     }
 
-    private void handleFortress() {
+    private boolean handleFortress() {
         enterFortress = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
                 "Open",
                 bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody,
@@ -570,13 +571,8 @@ public class KingsRansom implements QuestTask {
 
         enterBasementAfterFreeing = new ObjectStep(ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
 
-        ConditionalStep goFreeArthur = new ConditionalStep(enterFortress);
-        goFreeArthur.addStep(inBasement, freeArthur);
-        goFreeArthur.addStep(inSecretRoom, goDownToArthur);
-        goFreeArthur.addStep(inFortressEntrance, enterWallInFortress);
-
         if (inBasement.check())
-            return;
+            return true;
         else if (inSecretRoom.check()) {
             goDownToArthur.execute();
         } else if (inFortressEntrance.check() && blackKnightBody.equipItem() &&
@@ -585,7 +581,7 @@ public class KingsRansom implements QuestTask {
         } else if (bronzeMedWorn.equipItem() && ironChainWorn.equipItem()) {
             enterFortress.execute();
         }
-
+        return false;
     }
  /*   @Override
     public QuestPointReward getQuestPointReward()
@@ -619,13 +615,14 @@ public class KingsRansom implements QuestTask {
 
     @Override
     public void execute() {
-        if (isComplete() || checkRequirements()) {
+        if (isComplete() || !checkRequirements()) {
             cQuesterV2.taskList.remove(this);
             return;
         }
 
         int varbit = QuestVarbits.QUEST_KINGS_RANSOM.getId();
         Log.debug("King's ransom varbit is " + Utils.getVarBitValue(varbit));
+        loadSteps(); //needed to intializae steps
 
         // buy initial items on quest start
         if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
@@ -638,14 +635,19 @@ public class KingsRansom implements QuestTask {
             for (int i = 0; i < 50; i++) {
                 Log.info("solving widget");
                 if (solveTumbler())
-                    Waiting.waitNormal(1200, 75);
+                    Waiting.waitNormal(1200,  120);
                 if (!Widgets.isVisible(588))
                     break;
             }
         } else {
             handleBoxWidget();
         }
-
+        for (int i = 0; i <5; i++){
+            Log.info("Handling fortress");
+            if (handleFortress())
+                break;
+            Waiting.waitNormal(600, 75);
+        }
         freeArthur();
 
 

@@ -52,6 +52,7 @@ import scripts.QuestPackages.FamilyCrest.FamilyCrest;
 import scripts.QuestPackages.FightArena.FightArena;
 import scripts.QuestPackages.FishingContest.FishingContest;
 import scripts.QuestPackages.FremTrials.FremTrials;
+import scripts.QuestPackages.FremennikIsles.FremennikIsles;
 import scripts.QuestPackages.GertrudesCat.GertrudesCat;
 import scripts.QuestPackages.GhostsAhoy.GhostsAhoy;
 import scripts.QuestPackages.GoblinDiplomacy.GoblinDiplomacy;
@@ -733,6 +734,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("kingsransom")) {
             General.println("[Args]: Added Kings Ransom ");
             taskList.add(KingsRansom.get());
+        }
+        else if (arg.toLowerCase().contains("fremisles")) {
+            General.println("[Args]: Added Fremennick Isles");
+            taskList.add(FremennikIsles.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

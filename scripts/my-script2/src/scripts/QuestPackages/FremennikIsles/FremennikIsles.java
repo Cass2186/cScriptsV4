@@ -6,6 +6,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
+import scripts.QuestPackages.ShiloVillage.ShilloVillage;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.Items.ItemCollections;
@@ -19,6 +20,13 @@ import scripts.Tasks.Priority;
 import java.util.*;
 
 public class FremennikIsles implements QuestTask {
+
+    private static FremennikIsles quest;
+
+    public static FremennikIsles get() {
+        return quest == null ? quest = new FremennikIsles() : quest;
+    }
+
     //Items Required
     ItemRequirement tuna, ores, jesterHat, jesterTights, jesterTop, jesterBoots, arcticLogs8, splitLogs8,
             knife, rope8, rope4, splitLogs4, yakTop, yakBottom, royalDecree, roundShield, yakTopWorn, yakBottomWorn,
@@ -43,7 +51,6 @@ public class FremennikIsles implements QuestTask {
     RSArea islands, jatizso1, jatizso2, neitiznot1, neitiznot2, trollLands, trollCave, kingCave;
 
 
-
     List<ItemRequirement> items;
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
@@ -51,7 +58,6 @@ public class FremennikIsles implements QuestTask {
                     new GEItem(ItemID.RAW_TUNA, 1, 500),
                     new GEItem(ItemID.ROPE, 8, 500),
                     new GEItem(ItemID.NEITIZNOT_SHIELD, 1, 100),
-                    new GEItem(ItemID.REDBERRIES, 1, 500),
                     new GEItem(ItemID.KNIFE, 1, 500),
                     new GEItem(ItemID.SPLIT_LOG, 8, 300),
                     new GEItem(ItemID.COAL, 7, 300),
@@ -60,7 +66,7 @@ public class FremennikIsles implements QuestTask {
                     new GEItem(ItemID.YAKHIDE_ARMOUR_10824, 1, 200),
                     new GEItem(ItemID.SHARK, 20, 30),
                     new GEItem(ItemID.CAMELOT_TELEPORT, 10, 50),
-                   // new GEItem(ItemID.ROPE, 2, 500),
+                    new GEItem(ItemID.MONKFISH, 12, 50),
                     new GEItem(ItemID.AMULET_OF_GLORY4, 2, 30),
                     new GEItem(ItemID.STAMINA_POTION[0], 5, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
@@ -69,23 +75,29 @@ public class FremennikIsles implements QuestTask {
 
     InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
+
                     new ItemReq(ItemID.RAW_TUNA, 1),
-                    new ItemReq(ItemID.ROPE, 8),
-                    new ItemReq(ItemID.SOFT_CLAY, 1),
-                    new ItemReq(ItemID.REDBERRIES, 1),
-                    new ItemReq(ItemID.ASHES, 1),
-                    new ItemReq(ItemID.BUCKET_OF_WATER, 1),
-                    new ItemReq(ItemID.POT_OF_FLOUR, 1),
-                    new ItemReq(ItemID.BRONZE_BAR, 1),
-                    new ItemReq(ItemID.PINK_SKIRT, 1),
-                    new ItemReq(ItemID.BEER, 3),
-                    new ItemReq(ItemID.ROPE, 2,1),
-
-
+                    new ItemReq(ItemID.NEITIZNOT_SHIELD, 1),
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5),
+                    new ItemReq(ItemID.YAKHIDE_ARMOUR, 1),
+                    new ItemReq(ItemID.YAKHIDE_ARMOUR_10824, 1),
+                    new ItemReq(ItemID.MONKFISH, 3),
                     new ItemReq(ItemID.AMULET_OF_GLORY4, 2, 0, true, true),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
-                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
-
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true),
+                    new ItemReq.Builder()
+                            .id(ItemID.MITHRIL_ORE)
+                            .isItemNoted(true)
+                            .amount(6)
+                            .build(),
+                    new ItemReq.Builder().id(ItemID.SPLIT_LOG)
+                            .isItemNoted(true)
+                            .amount(8)
+                            .build(),
+                    new ItemReq.Builder().id(ItemID.ROPE)
+                            .isItemNoted(true)
+                            .amount(8)
+                            .build()
             )
     ));
 
@@ -308,9 +320,9 @@ public class FremennikIsles implements QuestTask {
         }
         // ores.setTooltip("You can mine some in the underground mine north west of Jatizso.");
 
-        jesterHat = new ItemRequirement( ItemID.SILLY_JESTER_HAT, 1, true);
+        jesterHat = new ItemRequirement(ItemID.SILLY_JESTER_HAT, 1, true);
         jesterTop = new ItemRequirement(ItemID.SILLY_JESTER_TOP, 1, true);
-        jesterTights = new ItemRequirement( ItemID.SILLY_JESTER_TIGHTS, 1, true);
+        jesterTights = new ItemRequirement(ItemID.SILLY_JESTER_TIGHTS, 1, true);
         jesterBoots = new ItemRequirement(ItemID.SILLY_JESTER_BOOTS, 1, true);
         arcticLogs8 = new ItemRequirement("Arctic pine logs", ItemID.ARCTIC_PINE_LOGS, 8);
         splitLogs8 = new ItemRequirement("Split log", ItemID.SPLIT_LOG, 8);
@@ -330,7 +342,7 @@ public class FremennikIsles implements QuestTask {
         head = new ItemRequirement("Decapitated head", ItemID.DECAPITATED_HEAD_10842);
         //  head.setTooltip("You can get another from the corpse of the Ice Troll King");
 
-       // protectRanged = new PrayerRequirement("Protect from Missiles", Prayer.PROTECT_FROM_MISSILES);
+        // protectRanged = new PrayerRequirement("Protect from Missiles", Prayer.PROTECT_FROM_MISSILES);
     }
 
     public void loadAreas() {
@@ -368,14 +380,15 @@ public class FremennikIsles implements QuestTask {
     }
 
     public void setupSteps() {
-        talkToMord = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0), "Talk to Mord Gunnars on a pier in north Rellekka.");
+        talkToMord = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0),
+                "Talk to Mord Gunnars on a pier in north Rellekka.");
         travelToJatizso = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0), "Travel to Jatizso with Mord.");
         travelToJatizso.addDialogStep("Can you ferry me to Jatizso?");
 
         travelToNeitiznot = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0), "Travel to Neitiznot with Maria Gunnars.");
 
         talkToGjuki = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0),
-            tuna);
+                tuna);
         continueTalkingToGjuki = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0), "Talk to King Gjuki Sorvott IV on Jatizso.");
         talkToGjuki.addSubSteps(continueTalkingToGjuki);
 
@@ -387,7 +400,7 @@ public class FremennikIsles implements QuestTask {
         returnToRellekkaFromJatizso.addDialogStep("Can you ferry me to Rellekka?");
 
         talkToSlug = new NPCStep(NpcID.SLUG_HEMLIGSSEN, new RSTile(2335, 3811, 0),
-            //    "Talk to Slug Hemligssen wearing nothing but your Silly Jester outfit.",
+                //    "Talk to Slug Hemligssen wearing nothing but your Silly Jester outfit.",
                 jesterHat, jesterTop, jesterTights, jesterBoots);
         talkToSlug.addSubSteps(returnToRellekkaFromJatizso, travelToNeitiznot);
         talkToSlug.addDialogStep("Free stuff please.");
@@ -401,7 +414,7 @@ public class FremennikIsles implements QuestTask {
 
         performForMawnis = new DetailedQuestStep("Perform the actions that Mawnis requests of you.");
         goSpyOnMawnis = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
-               // "Talk to Mawnis in Neitiznot to start spying on him.",
+                // "Talk to Mawnis in Neitiznot to start spying on him.",
                 jesterHat, jesterTop, jesterTights, jesterBoots);
         goSpyOnMawnis.addSubSteps(performForMawnis);
 
@@ -414,7 +427,7 @@ public class FremennikIsles implements QuestTask {
         talkToMawnis = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Take off the jester outfit, and talk to Mawnis.");
 
         talkToMawnisWithLogs = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
-               // "Bring Mawnis the 8 split logs, 8 rope, and a knife.",
+                // "Bring Mawnis the 8 split logs, 8 rope, and a knife.",
                 splitLogs8, rope8, knife);
 
         talkToMawnisAfterItems = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Talk to Mawnis.");
@@ -464,14 +477,14 @@ public class FremennikIsles implements QuestTask {
         returnToRellekkaFromJatizsoToSpyAgain = new NPCStep(NpcID.MORD_GUNNARS_1940, new RSTile(2420, 3781, 0), "Return to Rellekka with Mord.");
         returnToRellekkaFromJatizsoToSpyAgain.addDialogStep("Can you ferry me to Rellekka?");
         talkToSlugToSpyAgain = new NPCStep(NpcID.SLUG_HEMLIGSSEN, new RSTile(2335, 3811, 0),
-             //   "Talk to Slug Hemligssen wearing nothing but your Silly Jester outfit.",
+                //   "Talk to Slug Hemligssen wearing nothing but your Silly Jester outfit.",
                 jesterHat, jesterTop, jesterTights, jesterBoots);
         talkToSlugToSpyAgain.addSubSteps(travelToNeitiznotToSpyAgain, returnToRellekkaFromJatizsoToSpyAgain);
 
         performForMawnisAgain = new DetailedQuestStep("Perform the actions that Mawnis requests of you.");
 
         goSpyOnMawnisAgain = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
-               /// "Talk to Mawnis to start spying on him.",
+                /// "Talk to Mawnis to start spying on him.",
                 jesterHat, jesterTop, jesterTights, jesterBoots);
         goSpyOnMawnisAgain.addSubSteps(performForMawnisAgain);
 
@@ -483,14 +496,14 @@ public class FremennikIsles implements QuestTask {
         talkToGjukiAfterSpy2.addSubSteps(returnToRellekkaFromNeitiznotAfterSpy2, travelToJatizsoAfterSpy2);
 
         returnToRellekkaFromJatizsoWithDecree = new NPCStep(NpcID.MORD_GUNNARS_1940, new RSTile(2420, 3781, 0),
-               royalDecree);
+                royalDecree);
         returnToRellekkaFromJatizsoWithDecree.addDialogStep("Can you ferry me to Rellekka?");
 
         returnToRellekkaFromJatizsoAfterDecree = new NPCStep(NpcID.MORD_GUNNARS_1940, new RSTile(2420, 3781, 0), "Return to Rellekka with Mord.");
         returnToRellekkaFromJatizsoAfterDecree.addDialogStep("Can you ferry me to Rellekka?");
 
         travelToNeitiznotWithDecree = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0),
-        royalDecree);
+                royalDecree);
         travelToNeitiznotAfterDecree = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0), "Travel to Neitiznot with Maria Gunnars.");
 
         talkToMawnisWithDecree = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
@@ -500,16 +513,16 @@ public class FremennikIsles implements QuestTask {
         talkToMawnisWithDecree.addSubSteps(talkToMawnisAfterDecree, returnToRellekkaFromJatizsoAfterDecree, returnToRellekkaFromJatizsoWithDecree, travelToNeitiznotWithDecree, travelToNeitiznotAfterDecree);
 
         getYakArmour = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
-              //  "Talk to Mawnis with full yak-hide armour.",
+                //  "Talk to Mawnis with full yak-hide armour.",
                 yakTop, yakBottom);
         makeShield = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
-             //   "Talk to Mawnis with a Neitiznot Shield.",
+                //   "Talk to Mawnis with a Neitiznot Shield.",
                 roundShield);
 
         enterCave = new ObjectStep(ObjectID.CAVE_21584, new RSTile(2402, 3890, 0),
                 "Enter the cave in the north east of the islands. Be prepared in your yak armour, Neitiznot shield, and a melee weapon.", yakTopWorn, yakBottomWorn, shieldWorn, meleeWeapon, food);
 
-     //   killTrolls = new KillTrolls(this);
+        //   killTrolls = new KillTrolls(this);
         enterKingRoom = new ObjectStep(ObjectID.ROPE_BRIDGE_21316, new RSTile(2385, 10263, 1), "Cross the rope bridge. Be prepared to fight the Ice Troll King. Use the Protect from Magic prayer for the fight.");
         killKing = new NPCStep(NpcID.ICE_TROLL_KING, new RSTile(2386, 10249, 1), "Kill the king. Use the Protect from Magic prayer for the fight.");
         decapitateKing = new ObjectStep(ObjectID.ICE_TROLL_KING, "Decapitate the king's head.");
@@ -536,59 +549,60 @@ public class FremennikIsles implements QuestTask {
 
     @Override
     public Priority priority() {
-        return null;
+        return Priority.LOW;
     }
 
     @Override
     public boolean validate() {
-        return false;
+        return cQuesterV2.taskList.size() > 0 &&
+                cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
     public void execute() {
 
-            int varbit = QuestVarbits.QUEST_THE_FREMENNIK_ISLES.getId();
-            Log.debug("Prince Ali Rescue Game setting is " + Utils.getVarBitValue(varbit));
+        int varbit = QuestVarbits.QUEST_THE_FREMENNIK_ISLES.getId();
+        Log.debug("Fremennik Isles Varbit is " + Utils.getVarBitValue(varbit));
 
-            // buy initial items on quest start
-            if ( Utils.getVarBitValue(varbit)== 0 && !initialItemReqs.check()) {
-                buyStep.buyItems();
-                initialItemReqs.withdrawItems();
-            }
+        // buy initial items on quest start
+        if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
+            buyStep.buyItems();
+            initialItemReqs.withdrawItems();
+        }
 
-            // done quest
-            if (isComplete()) {
-                Log.debug("Prince Ali Rescue is complete");
-                cQuesterV2.taskList.remove(this);
+        // done quest
+        if (isComplete()) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
 
-            }
+        //load questSteps into a map
+        Map<Integer, QuestStep> steps = loadSteps();
+        //get the step based on the game setting key in the map
+        Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
 
-            //load questSteps into a map
-            Map<Integer, QuestStep> steps = loadSteps();
-            //get the step based on the game setting key in the map
-            Optional<QuestStep> step = Optional.ofNullable(steps.get( Utils.getVarBitValue(varbit)));
+        // set status
+        cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
 
-            // set status
-            cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
+        //do the actual step
+        step.ifPresent(QuestStep::execute);
 
-            //do the actual step
-            step.ifPresent(QuestStep::execute);
+        // handle any chats that are failed to be handled by the QuestStep (failsafe)
+        if (ChatScreen.isOpen()) {
+            Log.debug("Handling chat screen -test");
+            ChatScreen.handle();
+            // NPCInteraction.handleConversation();
+        }
 
-            // handle any chats that are failed to be handled by the QuestStep (failsafe)
-            if (ChatScreen.isOpen()) {
-                Log.debug("Handling chat screen -test");
-                ChatScreen.handle();
-                // NPCInteraction.handleConversation();
-            }
-
-            //slow down looping if it gets stuck
-            Waiting.waitNormal(200, 20);
+        //slow down looping if it gets stuck
+        Waiting.waitNormal(200, 20);
 
     }
 
     @Override
     public String questName() {
-        return null;
+        return "Fremennick Isles (" + Utils.getVarBitValue(QuestVarbits.QUEST_THE_FREMENNIK_ISLES.getId())
+                + ")";
     }
 
     @Override
