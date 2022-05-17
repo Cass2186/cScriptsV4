@@ -269,7 +269,8 @@ public class NPCStep extends DetailedQuestStep {
         if (this.substeps.size() > 0) {
             General.println("[NPCStep]: There are substeps for this NPCStep, executing them");
             for (QuestStep sub : this.substeps) {
-                sub.execute();
+                if (sub != null)
+                    sub.execute();
             }
         }
 

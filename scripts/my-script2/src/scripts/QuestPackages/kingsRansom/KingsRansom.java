@@ -5,10 +5,7 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.types.Area;
-import org.tribot.script.sdk.types.GameObject;
-import org.tribot.script.sdk.types.LocalTile;
-import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.types.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
@@ -32,6 +29,15 @@ public class KingsRansom implements QuestTask {
         return quest == null ? quest = new KingsRansom() : quest;
     }
 
+    int[] TUMBLER_ANSWERS = new int[]{3894, 3895, 3896, 3897};
+    int[] TUMBLER_WIDGETS = new int[]{20, 21, 22, 23};
+    int[] TUMBLER_CURRENT = new int[]{3901, 3902, 3903, 3904};
+    int CURRENT_TUMBLER = 3905;
+    int UP_WIDGET = 12;
+    int DOWN_WIDGET = 13;
+    int TRY_LOCK = 14;
+
+    int highlightChildID;
     //Items Required
     ItemRequirement scrapPaper, addressForm, blackHelm, criminalsThread, hairclip, lawRune, airRune, bronzeMed, ironChain, bronzeMedWorn, ironChainWorn,
             blackKnightLeg, blackKnightLegWorn, blackKnightBody, blackKnightBodyWorn, blackKnightHelm, blackKnightHelmWorn, animateRock, lockpick, grabOrLockpick,
@@ -213,7 +219,7 @@ public class KingsRansom implements QuestTask {
         blackKnightLegWorn = new ItemRequirement(ItemID.BLACK_PLATELEGS, 1, true);
 
         blackKnightHelm = new ItemRequirement("Black full helm", ItemID.BLACK_FULL_HELM);
-        blackKnightHelmWorn = new ItemRequirement(ItemID.BLACK_FULL_HELM, 1, true);
+        blackKnightHelmWorn = new ItemRequirement(ItemID.BLACK_FULL_HELM, 1, true, true);
 
         animateRock = new ItemRequirement("Animate rock scroll", ItemID.ANIMATE_ROCK_SCROLL);
         //     animateRock.setTooltip("If you don't have one, you can get another from Wizard Cromperty in Ardougne during " + "the quest");
@@ -360,15 +366,19 @@ public class KingsRansom implements QuestTask {
 
         talkToAnnaAfterTrial = new NPCStep(NpcID.ANNA, new RSTile(2737, 3466, 0), "Talk to Anna in the Seers' Village Court House.");
 
-        enterStatue = new ObjectStep(ObjectID.STATUE_26073, new RSTile(2780, 3508, 0), "Search the statue east of Camelot.", grabOrLockpick);
+        enterStatue = new ObjectStep(ObjectID.STATUE_26073, new RSTile(2780, 3508, 0),
+                "Search", Utils.inCutScene(), grabOrLockpick);
 
-        talkToMerlin = new NPCStep(NpcID.MERLIN, new RSTile(1907, 4281, 0), "Talk to Merlin.");
+        talkToMerlin = new NPCStep(4341, new RSTile(1907, 4281, 0), "Talk to Merlin.");
         talkToMerlin.addDialogStep("What do we do now?");
-        reachForVent = new ObjectStep(ObjectID.VENT_25880, new RSTile(1904, 4283, 0), "Reach for the vent on the north wall.");
+        reachForVent = new ObjectStep(ObjectID.VENT_25880, new RSTile(1904, 4283, 0),
+                "Reach");
+        reachForVent.addDialogStep("");
         useGrabOnGuard = new NPCStep(4332, new RSTile(1906, 4270, 0),
                 //  "Use telekinetic grab on the guard grooming their hair.",
                 lawRune, airRune);
-        useHairClipOnOnDoor = new ObjectStep(ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0), "Attempt to open the cell door.", hairclipOrLockpick);
+        useHairClipOnOnDoor = new ObjectStep(ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0),
+                "Open", hairclipOrLockpick);
 
         // getLockpickOrRunes = new QuestStep( "Get a lockpick or runes for telegrab. Talking to the knights in the room can give you a lockpick.");
         useGrabOnGuard.addSubSteps(getLockpickOrRunes);
@@ -377,15 +387,20 @@ public class KingsRansom implements QuestTask {
 
         //solvePuzzle = new LockpickPuzzle(this);
 
-        enterStatueForGrail = new ObjectStep(ObjectID.STATUE_26073, new RSTile(2780, 3508, 0), "Search the statue east of Camelot.");
+        enterStatueForGrail = new ObjectStep(ObjectID.STATUE_26073,
+                new RSTile(2780, 3508, 0), "Search the statue east of Camelot.");
 
-        openMetalDoor = new ObjectStep(ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0), "Go through the cell door.");
+        openMetalDoor = new ObjectStep(ObjectID.METAL_DOOR, new RSTile(1904, 4273, 0),
+                "Open");
 
-        climbF0ToF1 = new ObjectStep(ObjectID.STAIRCASE_25786, new RSTile(1696, 4260, 0), "Climb to the top of the keep.");
-        climbF1ToF2 = new ObjectStep(ObjectID.STAIRCASE_25786, new RSTile(1696, 4254, 1), "Climb to the top of the keep.");
+        climbF0ToF1 = new ObjectStep(ObjectID.STAIRCASE_25786, new RSTile(1695, 4258, 0),
+                "Climb-up", MyPlayer.getTile().getPlane() == 1);
+        climbF1ToF2 = new ObjectStep(ObjectID.STAIRCASE_25786, new RSTile(1695, 4252, 1),
+                "Climb-up", MyPlayer.getTile().getPlane() == 2);
         climbF0ToF1.addSubSteps(climbF1ToF2);
-        searchTable = new ObjectStep(ObjectID.TABLE_2650, new RSTile(1696, 4259, 2), "Search the table and take the purple round box.");
-        //    selectPurpleBox = new WidgetStep( "Take the purple round box.", 390, 16);
+        searchTable = new ObjectStep(ObjectID.TABLE_2650, new RSTile(1695, 4259, 2),
+                "Search");
+        //   selectPurpleBox = new WidgetStep( "Take the purple round box.", 390, 16);
         searchTable.addSubSteps(selectPurpleBox);
 
         talkToCromperty = new NPCStep(NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0), "Talk to Wizard Cromperty in East Ardougne.");
@@ -393,12 +408,11 @@ public class KingsRansom implements QuestTask {
         talkToCromperty.addDialogStep("Chat.");
 
         enterFortress = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
-                "Enter the Black Knight Fortress wearing the bronze med helm and iron chainbody.",
+                "Open",
                 bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody, blackKnightLeg, animateRock, holyGrail, granite);
-        enterWallInFortress = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0), "Enter the secret room wearing the black knight armour.",
+        enterWallInFortress = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0),
+                "Push",
                 blackKnightHelmWorn, blackKnightBodyWorn, blackKnightLegWorn, animateRock, holyGrail, granite);
-        freeArthur = new ObjectStep(25943, new RSTile(1867, 4233, 0), "Free King Arthur " +
-                "by using the animate rock scroll.", animateRock, holyGrail, granite);
 
         enterFortressAfterFreeing = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0), "Enter the Black Knight Fortress.",
                 bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody, blackKnightLeg);
@@ -412,6 +426,24 @@ public class KingsRansom implements QuestTask {
         talkToArthurInCamelot = new NPCStep(NpcID.KING_ARTHUR, new RSTile(2763, 3512, 0), "Talk to King Arthur in Camelot to finish the quest.");
     }
 
+    private void freeArthur() {
+        if (inSecretRoom.check()) {
+            freeArthur = new ObjectStep(25943, new RSTile(1867, 4233, 0),
+                    "Free King Arthur " +
+                            "by using the animate rock scroll.", Utils.inCutScene(), animateRock, holyGrail, granite);
+            Optional<GameObject> arthur = Query.gameObjects().idEquals(25943).findBestInteractable();
+            Optional<InventoryItem> scroll = Query.inventory().idNotEquals(ItemID.ANIMATE_ROCK_SCROLL).findClosestToMouse();
+            if (Utils.useItemOnObject(scroll, arthur))
+                Waiting.waitUntil(6500, 500, Utils::inCutScene);
+
+            if (Utils.inCutScene())
+                Utils.cutScene();
+
+            talkToArthur = new NPCStep(NpcID.KING_ARTHUR, new RSTile(1867, 4235, 0), bronzeMed, ironChain);
+            talkToArthur.execute();
+        }
+    }
+
 
     public List<ItemRequirement> getItemRequirements() {
         return Arrays.asList(grabOrLockpick, granite, blackKnightHelm, blackKnightBody, blackKnightLeg, bronzeMed, ironChain);
@@ -420,18 +452,6 @@ public class KingsRansom implements QuestTask {
 
     public List<ItemRequirement> getItemRecommended() {
         return Arrays.asList(ardougneTeleport, camelotTeleport, edgevilleTeleport);
-    }
-
-    @Override
-    public List<Requirement> getGeneralRequirements() {
-        ArrayList<Requirement> req = new ArrayList<>();
-        req.add(new QuestRequirement(Quest.BLACK_KNIGHTS_FORTRESS, Quest.State.COMPLETE));
-        req.add(new QuestRequirement(Quest.HOLY_GRAIL, Quest.State.COMPLETE));
-        req.add(new QuestRequirement(Quest.MURDER_MYSTERY, Quest.State.COMPLETE));
-        req.add(new QuestRequirement(Quest.ONE_SMALL_FAVOUR, Quest.State.COMPLETE));
-        req.add(new SkillRequirement(Skills.SKILLS.MAGIC, 45));
-        req.add(new SkillRequirement(Skills.SKILLS.DEFENCE, 65));
-        return req;
     }
 
 
@@ -459,7 +479,6 @@ public class KingsRansom implements QuestTask {
                 Waiting.waitUntil(7000, 250, () -> ChatScreen.isOpen() ||
                         FIRST_TWO_ROOMS_NEAR_WINDOW.containsMyPlayer());
             }
-
         }
         return inDownstairsManor.check() || inUpstairsManor.check();
     }
@@ -472,6 +491,102 @@ public class KingsRansom implements QuestTask {
         grabPaper.execute();
     }
 
+
+    private boolean solveTumbler() {
+        updateSolvedPositionState();
+        Optional<Widget> first = Query.widgets().inIndexPath(588, highlightChildID).findFirst();
+        return first.map(f -> f.click()).orElse(false);
+    }
+
+
+    private void updateSolvedPositionState() {
+        int current0 = Utils.getVarBitValue(TUMBLER_CURRENT[0]);
+        int answer0 = Utils.getVarBitValue(TUMBLER_ANSWERS[0]);
+        if (current0 != answer0) {
+            updateWidget(0, current0, answer0);
+            return;
+        }
+        int current1 = Utils.getVarBitValue(TUMBLER_CURRENT[1]);
+        int answer1 = Utils.getVarBitValue(TUMBLER_ANSWERS[1]);
+        if (current1 != answer1) {
+            updateWidget(1, current1, answer1);
+            return;
+        }
+
+        int current2 = Utils.getVarBitValue(TUMBLER_CURRENT[2]);
+        int answer2 = Utils.getVarBitValue(TUMBLER_ANSWERS[2]);
+        if (current2 != answer2) {
+            updateWidget(2, current2, answer2);
+            return;
+        }
+        int current3 = Utils.getVarBitValue(TUMBLER_CURRENT[3]);
+        int answer3 = Utils.getVarBitValue(TUMBLER_ANSWERS[3]);
+        if (current3 != answer3) {
+            updateWidget(3, current3, answer3);
+            return;
+        }
+
+        highlightChildID = TRY_LOCK;
+    }
+
+    private void updateWidget(int widgetID, int currentVal, int answer) {
+        int currentTumbler = Utils.getVarBitValue(CURRENT_TUMBLER);
+        if (currentTumbler != widgetID + 1) {
+            highlightChildID = TUMBLER_WIDGETS[widgetID];
+        } else if (currentVal > answer) {
+            highlightChildID = DOWN_WIDGET;
+        } else {
+            highlightChildID = UP_WIDGET;
+        }
+    }
+
+    private void handleBoxWidget() {
+        if (MyPlayer.getTile().getPlane() == 2) {
+            Optional<GameObject> table = Query.gameObjects().idEquals(2650).findBestInteractable();
+            if (table.map(t -> t.interact("Search")).orElse(false)) {
+                Log.info("solving widget");
+                Waiting.waitUntil(2500, 200, () -> Widgets.isVisible(390));
+            }
+            Optional<Widget> first = Query.widgets().inIndexPath(390, 16).findFirst();
+            if (first.map(Widget::click).orElse(false)) {
+                Waiting.waitUntil(2500, 200, () -> !Widgets.isVisible(390));
+            }
+        }
+    }
+
+    private void handleFortress() {
+        enterFortress = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0),
+                "Open",
+                bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody,
+                blackKnightLeg, animateRock, holyGrail, granite);
+        enterWallInFortress = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0),
+                "Push",
+                blackKnightHelmWorn, blackKnightBodyWorn, blackKnightLegWorn, animateRock, holyGrail, granite);
+
+        enterFortressAfterFreeing = new ObjectStep(ObjectID.STURDY_DOOR, new RSTile(3016, 3514, 0), "Enter the Black Knight Fortress.",
+                bronzeMedWorn, ironChainWorn, blackKnightHelm, blackKnightBody, blackKnightLeg);
+        enterWallInFortressAfterFreeing = new ObjectStep(ObjectID.WALL_2341, new RSTile(3016, 3517, 0), "Enter the secret room.",
+                blackKnightHelmWorn, blackKnightBodyWorn, blackKnightLegWorn, bronzeMed, ironChain);
+
+        enterBasementAfterFreeing = new ObjectStep(ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
+
+        ConditionalStep goFreeArthur = new ConditionalStep(enterFortress);
+        goFreeArthur.addStep(inBasement, freeArthur);
+        goFreeArthur.addStep(inSecretRoom, goDownToArthur);
+        goFreeArthur.addStep(inFortressEntrance, enterWallInFortress);
+
+        if (inBasement.check())
+            return;
+        else if (inSecretRoom.check()) {
+            goDownToArthur.execute();
+        } else if (inFortressEntrance.check() && blackKnightBody.equipItem() &&
+                blackKnightHelmWorn.equipItem() && blackKnightLegWorn.equipItem()) {
+            enterWallInFortress.execute();
+        } else if (bronzeMedWorn.equipItem() && ironChainWorn.equipItem()) {
+            enterFortress.execute();
+        }
+
+    }
  /*   @Override
     public QuestPointReward getQuestPointReward()
     {
@@ -504,23 +619,36 @@ public class KingsRansom implements QuestTask {
 
     @Override
     public void execute() {
-        // need a way to initialize without doing it each iteration, trying a for loop here
+        if (isComplete() || checkRequirements()) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
+
         int varbit = QuestVarbits.QUEST_KINGS_RANSOM.getId();
         Log.debug("King's ransom varbit is " + Utils.getVarBitValue(varbit));
 
         // buy initial items on quest start
         if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
-            // buyStep.buyItems();
-            //initialItemReqs.withdrawItems();
-        }
-
-        // done quest
-        if (isComplete()) {
-            cQuesterV2.taskList.remove(this);
-        } else if (Utils.getVarBitValue(varbit) == 3888) {
+            buyStep.buyItems();
+            initialItemReqs.withdrawItems();
+        } else if (Utils.getVarBitValue(varbit) == 10) {
             breakWindow();
             pickUpPaper();
+        } else if (Widgets.isVisible(588)) {
+            for (int i = 0; i < 50; i++) {
+                Log.info("solving widget");
+                if (solveTumbler())
+                    Waiting.waitNormal(1200, 75);
+                if (!Widgets.isVisible(588))
+                    break;
+            }
+        } else {
+            handleBoxWidget();
         }
+
+        freeArthur();
+
+
         //load questSteps into a map
         Map<Integer, QuestStep> steps = loadSteps();
         //get the step based on the game setting key in the map
@@ -533,23 +661,22 @@ public class KingsRansom implements QuestTask {
         step.ifPresent(QuestStep::execute);
 
         // handle any chats that are failed to be handled by the QuestStep (failsafe)
-        if (ChatScreen.isOpen()) {
+        if (ChatScreen.isOpen())
             ChatScreen.handle();
-        }
 
         //slow down looping if it gets stuck
-        Waiting.waitNormal(100, 20);
+        Waiting.waitNormal(100, 10);
 
     }
 
     @Override
     public String questName() {
-        return "King's Ransom (" + QuestVarbits.QUEST_KINGS_RANSOM.getId() + ")";
+        return "King's Ransom (" + Utils.getVarBitValue(QuestVarbits.QUEST_KINGS_RANSOM.getId()) + ")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return true; //TODO change
+        return getGeneralRequirements().stream().allMatch(Requirement::check);
     }
 
     @Override
@@ -561,4 +688,17 @@ public class KingsRansom implements QuestTask {
     public boolean isComplete() {
         return Quest.KINGS_RANSOM.getState().equals(Quest.State.COMPLETE);
     }
+
+    @Override
+    public List<Requirement> getGeneralRequirements() {
+        ArrayList<Requirement> req = new ArrayList<>();
+        req.add(new QuestRequirement(Quest.BLACK_KNIGHTS_FORTRESS, Quest.State.COMPLETE));
+        req.add(new QuestRequirement(Quest.HOLY_GRAIL, Quest.State.COMPLETE));
+        req.add(new QuestRequirement(Quest.MURDER_MYSTERY, Quest.State.COMPLETE));
+        req.add(new QuestRequirement(Quest.ONE_SMALL_FAVOUR, Quest.State.COMPLETE));
+        req.add(new SkillRequirement(Skills.SKILLS.MAGIC, 45));
+        req.add(new SkillRequirement(Skills.SKILLS.DEFENCE, 65));
+        return req;
+    }
+
 }

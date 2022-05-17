@@ -8,6 +8,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.EquipmentItem;
@@ -428,6 +429,16 @@ public class ItemRequirement implements Requirement {
         }
 
         return tempQuantity;
+    }
+
+    public boolean equipItem() {
+        if (org.tribot.script.sdk.Equipment.contains(this.id)) {
+            return true;
+        } else if (Utils.equipItem(this.id)) {
+            return Waiting.waitUntil(2000,50, ()->
+                    org.tribot.script.sdk.Equipment.contains(this.id));
+        }
+        return org.tribot.script.sdk.Equipment.contains(this.id);
     }
 
     public ItemRequirement copy() {
