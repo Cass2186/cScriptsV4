@@ -166,9 +166,9 @@ public class DreamMentor implements QuestTask {
                     new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
                     new GEItem(ItemID.LUNAR_ISLE_TELEPORT, 6, 25),
                     new GEItem(ItemID.HAMMER, 1, 100),
-                    new GEItem(ItemID.POTATOES10, 1, 500),
-                    new GEItem(ItemID.ONIONS10, 1, 500),
-                    new GEItem(ItemID.CABBAGES10, 1, 500),
+                    new GEItem(ItemID.POTATOES10, 1, 700),
+                    new GEItem(ItemID.ONIONS10, 1, 700),
+                    new GEItem(ItemID.CABBAGES10, 1, 700),
                     new GEItem(ItemID.SHARK, 40, 25),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 25),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
@@ -432,6 +432,8 @@ public class DreamMentor implements QuestTask {
         Optional<InventoryItem> food = Query.inventory().nameContains(foodName)
                 .nameNotContains("(")
                 .findFirst();
+        if (food.isPresent())
+            return true;
 
         Optional<InventoryItem> baggedFood = Query.inventory()
                 .nameContains(foodName)
@@ -457,12 +459,26 @@ public class DreamMentor implements QuestTask {
         }
     }
 
+    private boolean useItemOnNpc(String foodName, String name){
+        Optional<InventoryItem>  food = Query.inventory().nameContains(foodName)
+                .nameNotContains("(")
+                .findFirst();
+
+        Optional<Npc>  npc = Query.npcs().nameContains(name)
+                .findClosestByPathDistance();
+
+       return npc.map(n-> food.map(f-> f.useOn(n)).orElse(false)).orElse(false);
+    }
+
     public void feedFood(int num, String name) {
         int b = 0;
         for (int i = 0; i < num; i++) {
             scripts.cQuesterV2.status = "Feeding Food";
             if (openFoodSack("Cabbage")) {
-                Utils.useItemOnNPC("Cabbage", name);
+                Optional<InventoryItem>  food = Query.inventory().nameContains("Cabbage")
+                        .nameNotContains("(")
+                        .findFirst();
+                if(useItemOnNpc("Cabbage", name))
                 Timer.waitCondition(NPCInteraction::isConversationWindowUp, 3000, 4000);
                 b++;
             }
@@ -470,7 +486,7 @@ public class DreamMentor implements QuestTask {
                 break;
 
             if (openFoodSack("Potato")) {
-                Utils.useItemOnNPC("Potato", name);
+                if(useItemOnNpc("Potato", name))
                 Timer.waitCondition(NPCInteraction::isConversationWindowUp, 3000, 4000);
                 b++;
             }
@@ -479,7 +495,7 @@ public class DreamMentor implements QuestTask {
                 break;
 
             if (openFoodSack("Onion")) {
-                Utils.useItemOnNPC("Onion", name);
+                if(useItemOnNpc("Onion", name))
                 Timer.waitCondition(NPCInteraction::isConversationWindowUp, 3000, 4000);
                 b++;
             }
@@ -507,7 +523,7 @@ public class DreamMentor implements QuestTask {
                         if (c.getComponentItem() == i) {
                             General.println("[Debug]: Getting item ID: " + i);
                             if (c.click())
-                                General.sleep(500, 1200);
+                                General.sleep(700, 1200);
                         }
                     }
 

@@ -684,9 +684,9 @@ public class NpcID {
     public static final int SPHINX_4209 = 4209;
     public static final int POSSESSED_PRIEST = 4210;
     public static final int DONOVAN_THE_FAMILY_HANDYMAN = 4212;
-    public static final int PIERRE = 4213;
-    public static final int HOBBES = 4214;
-    public static final int LOUISA = 4215;
+    public static final int PIERRE = 4338;
+    public static final int HOBBES = 4339;
+    public static final int LOUISA = 4340;
     public static final int MARY = 4216;
     public static final int STANFORD = 4217;
     public static final int ETHEREAL_NUMERATOR = 779;

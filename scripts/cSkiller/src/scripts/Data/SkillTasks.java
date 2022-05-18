@@ -19,22 +19,22 @@ public enum SkillTasks {
     CONSTRUCTION(2, 1, 1, SKILLS.CONSTRUCTION), // end point is ? here really
     COOKING(3, 1, 1, SKILLS.COOKING), //13 from gertrudes cat
     CRAFTING(4, 1, 1, SKILLS.CRAFTING),
-   // FARMING(5, 1, 1, SKILLS.FARMING),
-    ATTACK(2, 1,1, SKILLS.ATTACK),
-    STRENGTH(2, 1,1, SKILLS.STRENGTH),
-    DEFENCE(2, 1,1, SKILLS.DEFENCE),
-    RANGED(2, 1,1, SKILLS.RANGED),
+    // FARMING(5, 1, 1, SKILLS.FARMING),
+    ATTACK(2, 1, 1, SKILLS.ATTACK),
+    STRENGTH(2, 1, 1, SKILLS.STRENGTH),
+    DEFENCE(2, 1, 1, SKILLS.DEFENCE),
+    RANGED(2, 1, 1, SKILLS.RANGED),
     FIREMAKING(5, 1, 1, SKILLS.FIREMAKING),
     FISHING(6, 15, 15, SKILLS.FISHING), //use seaslug for 1-24 ideally
     FLETCHING(7, 1, 1, SKILLS.FLETCHING),
     HERBLORE(8, 3, 3, SKILLS.HERBLORE),
     HUNTER(9, 9, 9, SKILLS.HUNTER),
-     MAGIC(10, 7, 7, SKILLS.MAGIC),
+    MAGIC(10, 7, 7, SKILLS.MAGIC),
     MINING(11, 1, 1, SKILLS.MINING), //Dig site, plague city and doric's quest get 33 (i think)
     PRAYER(12, 1, 1, SKILLS.PRAYER),
-     RUNECRAFTING(13, 9, 9, SKILLS.RUNECRAFTING),
-     SLAYER(14, 1, 1, SKILLS.SLAYER),
-     SMITHING(15, 0, 0, SKILLS.SMITHING), //knights sword for 1-29
+    RUNECRAFTING(13, 9, 9, SKILLS.RUNECRAFTING),
+    SLAYER(14, 1, 1, SKILLS.SLAYER),
+    SMITHING(15, 0, 0, SKILLS.SMITHING), //knights sword for 1-29
     THIEVING(16, 5, 5, SKILLS.THIEVING), //use Fight arena for 1-14
     WOODCUTTING(17, 1, 1, SKILLS.WOODCUTTING), // use Monk's Friend for 1-13
     PEST_CONTROL(18, 99, 99, SKILLS.HITPOINTS),
@@ -91,7 +91,7 @@ public enum SkillTasks {
     public boolean isWithinLevelRange() {
         int currentLevel = Skills.getActualLevel(this.skill);
         boolean b = (currentLevel >= this.startLevel) && (currentLevel < this.endLevel);
-    //    System.out.println("[SkillTasks]: Are we within level range of " + this.getSkillName() + ": " + b);
+        //    System.out.println("[SkillTasks]: Are we within level range of " + this.getSkillName() + ": " + b);
         return b;
     }
 

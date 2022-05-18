@@ -308,27 +308,29 @@ public class KingsRansom implements QuestTask {
         grabPaper = new GroundItemStep(ItemID.SCRAP_PAPER, new RSTile(2746, 3580, 0));
         grabPaper.addSubSteps(goDownstairsForPaper);
 
-        takeForm = new GroundItemStep(ItemID.ADDRESS_FORM, new RSTile(2739, 3581, 1));
-        searchBookcase = new ObjectStep(ObjectID.BOOKCASE_26053, new RSTile(2738, 3580, 1), "Search");
+        takeForm = new GroundItemStep(ItemID.ADDRESS_FORM, new RSTile(2740, 3581, 1));
+        searchBookcase = new ObjectStep(ObjectID.BOOKCASE_26053, new RSTile(2738, 3581, 1), "Search");
         goDownstairsManor = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Climb-down");
         leaveWindow = new ObjectStep(26123, new RSTile(2748, 3577, 0), "Step out of the window.");
         returnToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0), "Return to the guard with the 3 items.");
         returnToGuard.addDialogStep("I have proof that the Sinclairs have left.", "I have proof that links the Sinclairs to Camelot.", "I have proof of foul play.");
 
         talkToGossipAgain = new NPCStep(NpcID.GOSSIP, new RSTile(2741, 3557, 0), "Ask Gossip all 3 chat options.");
-        talkToGossip.addDialogStep("tell me about the family.");
-        talkToGossip.addDialogStep("tell me about the mansion.");
-        talkToGossip.addDialogStep("tell me about the Anna Sinclair.");
+        talkToGossipAgain.addDialogStep("tell me about the family.");
+        talkToGossipAgain.addDialogStep("tell me about the mansion.");
+        talkToGossipAgain.addDialogStep("tell me about the Anna Sinclair.");
 
-        talkToAnna = new NPCStep(NpcID.ANNA, new RSTile(2737, 3468, 0), "Talk to Anna in the Seers' Village Court House.");
+        talkToAnna = new NPCStep(NpcID.ANNA, new RSTile(2737, 3468, 0),
+                "Talk to Anna in the Seers' Village Court House.");
         talkToAnna.addDialogStep("Okay, I guess I don't have much of a choice.");
         talkToAnna.setAllowInCutscene(true);
 
-        goIntoTrial = new ObjectStep(ObjectID.STAIRS_26017, new RSTile(2738, 3470, 0), "Go down the stairs to the court room.");
+        goIntoTrial = new ObjectStep(ObjectID.STAIRS_26017, new RSTile(2736, 3469, 0),
+                "Climb-down");
         goIntoTrial.addDialogStep("Yes, I'm ready.");
         goIntoTrial.setAllowInCutscene(true);
 
-        callHandlerAboutPoison = new ObjectStep(ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Dog Handler and ask them about the poison.");
+        callHandlerAboutPoison = new ObjectStep(ObjectID.COURT_JUDGE, "Talk-to");
         callHandlerAboutPoison.addDialogStep("Dog handler", "Previous page");
         callHandlerAboutPoison.setAllowInCutscene(true);
 
@@ -337,7 +339,7 @@ public class KingsRansom implements QuestTask {
         talkToHandlerAboutPoison.setAllowInCutscene(true);
         callHandlerAboutPoison.addSubSteps(talkToHandlerAboutPoison);
 
-        callButlerAboutDagger = new ObjectStep(ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Butler and ask them about the dagger.");
+        callButlerAboutDagger = new ObjectStep(ObjectID.COURT_JUDGE, "Talk-to");
         callButlerAboutDagger.addDialogStep("Butler", "Previous page");
         callButlerAboutDagger.setAllowInCutscene(true);
 
@@ -346,7 +348,7 @@ public class KingsRansom implements QuestTask {
         talkToButlerAboutDagger.setAllowInCutscene(true);
         callButlerAboutDagger.addSubSteps(talkToButlerAboutDagger);
 
-        callMaidAboutNight = new ObjectStep(ObjectID.COURT_JUDGE, new RSTile(1820, 4276, 0), "Talk to the judge to call the Maid and ask them about the night of the murder.");
+        callMaidAboutNight = new ObjectStep(ObjectID.COURT_JUDGE, "Talk-to");
         callMaidAboutNight.addDialogStep("Maid", "Next page");
         callMaidAboutNight.setAllowInCutscene(true);
 
@@ -363,7 +365,8 @@ public class KingsRansom implements QuestTask {
         waitForVerdict = new DetailedQuestStep("Wait for the jury to reach their verdict.");
         callAboutThread.addSubSteps(waitForVerdict);
 
-        leaveCourt = new ObjectStep(ObjectID.GATE_26042, new RSTile(1820, 4268, 0), "Leave the court room.");
+        leaveCourt = new ObjectStep(ObjectID.GATE_26042,
+                "Exit");
 
         talkToAnnaAfterTrial = new NPCStep(NpcID.ANNA, new RSTile(2737, 3466, 0), "Talk to Anna in the Seers' Village Court House.");
 
@@ -384,7 +387,8 @@ public class KingsRansom implements QuestTask {
         // getLockpickOrRunes = new QuestStep( "Get a lockpick or runes for telegrab. Talking to the knights in the room can give you a lockpick.");
         useGrabOnGuard.addSubSteps(getLockpickOrRunes);
 
-        goDownToArthur = new ObjectStep(ObjectID.LADDER_25843, new RSTile(3016, 3519, 0), "Enter the Black Knight Fortress basement.");
+        goDownToArthur = new ObjectStep(ObjectID.LADDER_25843, new RSTile(3016, 3519, 0),
+                "Climb-down");
 
         //solvePuzzle = new LockpickPuzzle(this);
 
@@ -439,7 +443,7 @@ public class KingsRansom implements QuestTask {
 
             if (Utils.inCutScene())
                 Utils.cutScene();
-
+            Log.info("Talking to Arthur");
             talkToArthur = new NPCStep(NpcID.KING_ARTHUR, new RSTile(1867, 4235, 0), bronzeMed, ironChain);
             talkToArthur.execute();
         }
@@ -583,6 +587,69 @@ public class KingsRansom implements QuestTask {
         }
         return false;
     }
+
+    private void talkToJudge() {
+        if (Utils.clickObj(ObjectID.COURT_JUDGE, "Talk-to")) {
+            Waiting.waitUntil(5000, () -> ChatScreen.isOpen());
+        }
+    }
+
+    private boolean clickNpc(int npc) {
+        if (Utils.clickNPC(npc, "Talk-to")) {
+            return Waiting.waitUntil(5000, () -> ChatScreen.isOpen());
+        }
+        return ChatScreen.isOpen();
+    }
+
+    private void handleTrial() {
+        if (!GameState.isInInstance()) {
+            talkToAnna.execute();
+            goIntoTrial.execute();
+            Waiting.waitUntil(15000, 500, () -> GameState.isInInstance() && ChatScreen.isOpen());
+            if (ChatScreen.isOpen())
+                ChatScreen.handle();
+
+        }
+
+
+        if (GameState.isInInstance()) {
+            if (new Conditions(askedAboutPoison, askedAboutDagger, askedAboutNight, askedAboutThread).check()) {
+                Log.info("Waiting for verdict");
+                waitForVerdict.execute();
+            } else if (new Conditions(criminalsThread, askedAboutPoison, askedAboutDagger, askedAboutNight).check()) {
+                Log.info("Call about Thread");
+                callAboutThread.execute();
+
+            } else if (new Conditions(criminalsThread, askedAboutPoison, askedAboutDagger, maidInRoom).check()) {
+                Log.info("Talk to Maid about Night");
+                if (clickNpc(NpcID.PIERRE))
+                    NpcChat.handle("Ask about the night of the murder");
+            } else if (new Conditions(criminalsThread, askedAboutPoison, askedAboutDagger).check()) {
+                Log.info("Calling maid about night");
+                talkToJudge();
+                ChatScreen.handle("Maid", "Next page");
+            } else if (new Conditions(criminalsThread, askedAboutPoison, butlerInRoom).check()) {
+                Log.info("talk to butler about dagger");
+            //    talkToButlerAboutDagger.execute();
+                if (clickNpc(NpcID.PIERRE))
+                    NpcChat.handle("Ask about the dagger");
+            } else if (new Conditions(criminalsThread, askedAboutPoison).check()) {
+                Log.info("Call butler about dagger");
+              //  callButlerAboutDagger.execute();
+                talkToJudge();
+                    NpcChat.handle("Butler", "Previous page");
+            } else if (new Conditions(criminalsThread, handlerInRoom).check()) {
+                Log.info("Talk to hander about poison");
+                if (clickNpc(NpcID.PIERRE))
+                    NpcChat.handle("Ask about the poison");
+
+            } else if (new Conditions(criminalsThread).check()) {
+                Log.info("Call hander about poison");
+                talkToJudge();
+                NpcChat.handle("Dog handler", "Previous page");
+            }
+        }
+    }
  /*   @Override
     public QuestPointReward getQuestPointReward()
     {
@@ -635,18 +702,28 @@ public class KingsRansom implements QuestTask {
             for (int i = 0; i < 50; i++) {
                 Log.info("solving widget");
                 if (solveTumbler())
-                    Waiting.waitNormal(1200,  120);
+                    Waiting.waitNormal(1200, 120);
                 if (!Widgets.isVisible(588))
                     break;
             }
         } else {
             handleBoxWidget();
         }
-        for (int i = 0; i <5; i++){
-            Log.info("Handling fortress");
-            if (handleFortress())
-                break;
-            Waiting.waitNormal(600, 75);
+        if (Utils.getVarBitValue(varbit) > 50) {
+            for (int i = 0; i < 5; i++) {
+                Log.info("Handling fortress");
+                if (handleFortress()) {
+                    freeArthur();
+                    break;
+                }
+                Waiting.waitNormal(600, 75);
+            }
+        } else    if (Utils.getVarBitValue(varbit) <35) {
+            for (int i = 0; i < 7; i++) {
+                Log.info("Handling Trial");
+                handleTrial();
+                Waiting.waitNormal(600, 75);
+            }
         }
         freeArthur();
 

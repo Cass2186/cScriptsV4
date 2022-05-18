@@ -42,6 +42,9 @@ import scripts.Tasks.Combat.CrabTasks.ResetAggro;
 import scripts.Tasks.Crafting.Armour.DragonHide;
 import scripts.Tasks.Herblore.MixTar;
 import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
+import scripts.Tasks.KourendFavour.Hosidius.BankForCompost;
+import scripts.Tasks.KourendFavour.Hosidius.CashInCompost;
+import scripts.Tasks.KourendFavour.Hosidius.MixCompost;
 import scripts.Tasks.MiscTasks.*;
 import scripts.Tasks.PestControl.PestTasks.AttackPortal;
 import scripts.Tasks.PestControl.PestTasks.DefendKnight;
@@ -345,11 +348,15 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new StartQuest(),
                 new PrayerBank(),
                 new SpringRun(),
-                new RelocateHouse()
+                new RelocateHouse(),
+                new MixCompost(),
+                new CashInCompost(),
+                new BankForCompost()
                 //MiniBreak.get(),
                 // new MakeCannonballs()
 
         );
+
         Paint.setToggleablePaint();
         Paint.setSlayerPaint();
         Paint.setMainPaint();
@@ -390,7 +397,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 Vars.get().currentTask = SkillTasks.getSkillTask();
             }
 
-            if (Vars.get().currentTask == null) {
+            if (Vars.get().currentTask == null && !Vars.get().hosaFavour) {
                 General.println("[Debug]: Failed to select a new task, likely done all");
                 isRunning.set(false);
                 return;
@@ -448,6 +455,11 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                     Vars.get().shouldShowGUI = false;
                     SkillTasks.PEST_CONTROL.setStartLevel(1);
                     Vars.get().currentTask = SkillTasks.PEST_CONTROL;
+                }   else if (arg.toLowerCase().contains("hosa")) {
+                    General.println("[Args]: Training Hosa favour");
+                    Vars.get().shouldShowGUI = false;
+                    Vars.get().hosaFavour = true;
+                    SkillTasks.KOUREND_FAVOUR.setStartLevel(1);
                 }
 
 

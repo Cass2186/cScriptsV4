@@ -7,6 +7,8 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
@@ -15,31 +17,31 @@ import scripts.Data.Vars;
 import scripts.Tasks.Woodcutting.WoodcuttingData.WcLocations;
 import scripts.Tasks.Woodcutting.WoodcuttingData.WoodCuttingConst;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 
 public class CutLogs implements Task {
 
 
-    public void chopTree(RSArea area, String treeName) {
+    public void chopTree(Area area, String treeName) {
         Utils.unselectItem();
 
         PathingUtil.walkToArea(area, false);
 
-        if (area.contains(Player.getPosition())) {
+        if (area.containsMyPlayer()) {
             if (Utils.getPlayerCountInArea(area) > 1) {
                 General.println("[Debug]: World hopping due to players in area");
                 Utils.hopWorlds();
             }
 
             RSObject[] tree = Objects.findNearest(20, treeName);
-            if (tree.length > 0 && !Inventory.isFull()) {
-
-                if (!tree[0].isClickable())
-                    DaxCamera.focus(tree[0]);
+            Optional<GameObject> treeOpt = Query.gameObjects().nameContains(treeName).maxDistance(15).findBestInteractable();
+            if (!Inventory.isFull()) {
 
                 if (Player.getAnimation() == -1) {
-                    if (Utils.clickObject(tree[0], "Chop down", false)) {
+                    if (treeOpt.map(t -> t.interact("Chop down")).orElse(false)) {
+                        //if (Utils.clickObject(tree[0], "Chop down", false)) {
                         Timer.waitCondition(() -> Player.getAnimation() != -1, 5000, 7000);
                     }
                 }
@@ -60,29 +62,11 @@ public class CutLogs implements Task {
                 }
 
             }
-        } else if (PathingUtil.localNavigation(area.getRandomTile()))
+        } else if (PathingUtil.localNav(area.getCenter()))
             PathingUtil.movementIdle();
 
-        else if (PathingUtil.walkToArea(area)) {
+        else if (PathingUtil.walkToTile(area.getCenter())) {
             PathingUtil.movementIdle();
-        }
-    }
-
-    public void defaultProgressive() {
-        WoodCuttingConst.equipAxe();
-        checkAxe();
-        int currentLevel = Skills.getActualLevel(Skills.SKILLS.WOODCUTTING);
-        if (currentLevel < 15) {
-            chopTree(WoodCuttingConst.VARROCK_WESK_REGULAR, "Tree");
-
-        } else if (currentLevel < 30) {
-            checkAxe();
-            chopTree(WoodCuttingConst.VARROCK_WEST_OAKS, "Oak");
-        } else if (currentLevel < 55) {
-            checkAxe();
-            chopTree(WoodCuttingConst.PORT_SARIM_WILLOWS, "Willow");
-        } else {
-            chopTree(WoodCuttingConst.SEERS_MAPLES_AREA, "Maple");
         }
     }
 
@@ -90,14 +74,19 @@ public class CutLogs implements Task {
         WoodCuttingConst.equipAxe();
         checkAxe();
 
-        Optional<WcLocations> wcOptional = Vars.get().wcLocationsList.stream()
-                .filter(WcLocations::isWithinLevelRange)
-                .max(Comparator.comparingInt(WcLocations::getMinLevel));
-
+        Optional<WcLocations> wcOptional = WcLocations.getWoodcuttingLocation();
         wcOptional.ifPresent(w -> chopTree(w.getArea(), w.getTreeName()));
 
     }
 
+    private void withdrawAndEquip(int id, int levelReq) {
+        BankManager.open(true);
+        BankManager.withdraw(1, true, id);
+        BankManager.close(true);
+        if (Skill.ATTACK.getActualLevel() >= levelReq) {
+            Utils.equipItem(id, "Wield");
+        }
+    }
 
     public void checkAxe() {
         int currentLevel = Skills.getCurrentLevel(Skills.SKILLS.WOODCUTTING);
@@ -107,49 +96,28 @@ public class CutLogs implements Task {
         }
         if (currentLevel < 6) {
             if (Inventory.find(ItemID.AXE_IDS[0]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[0])) {
-                BankManager.open(true);
-                BankManager.withdraw(1, true, ItemID.AXE_IDS[0]);
-                BankManager.close(true);
-                Utils.equipItem(ItemID.AXE_IDS[0], "Wield");
-
+                withdrawAndEquip(ItemID.AXE_IDS[0], 1);
             }
         } else if (currentLevel < 21) { // steel axe
             if (Inventory.find(ItemID.AXE_IDS[1]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[1])) {
-                BankManager.open(true);
-                BankManager.withdraw(1, true, ItemID.AXE_IDS[1]);
-                BankManager.close(true);
-                if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 5) {
-                    Utils.equipItem(ItemID.AXE_IDS[1], "Wield");
-                }
+                withdrawAndEquip(ItemID.STEEL_AXE, 5);
             }
         } else if (currentLevel < 31) { // mithril axe
             if (Inventory.find(ItemID.AXE_IDS[2]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[2])) {
-                BankManager.open(true);
-                BankManager.withdraw(1, true, ItemID.AXE_IDS[2]);
-                BankManager.close(true);
-                if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 20) {
-                    Utils.equipItem(ItemID.AXE_IDS[2], "Wield");
-                }
+                withdrawAndEquip(ItemID.MITHRIL_AXE, 20);
             }
         } else if (currentLevel < 41) { // adamant axe
             if (Inventory.find(ItemID.AXE_IDS[3]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[3])) {
-                BankManager.open(true);
-                BankManager.withdraw(1, true, ItemID.AXE_IDS[3]);
-                BankManager.close(true);
-                if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 30) {
-                    Utils.equipItem(ItemID.AXE_IDS[3], "Wield");
-                }
+                withdrawAndEquip(ItemID.ADAMANT_AXE, 30);
             }
         } else if (currentLevel < 61) { // rune axe
             if (Inventory.find(ItemID.AXE_IDS[4]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[4])) {
-                BankManager.open(true);
-                BankManager.withdraw(1, true, ItemID.AXE_IDS[4]);
-                BankManager.close(true);
-                if (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) >= 40) {
-                    Utils.equipItem(ItemID.AXE_IDS[4], "Wield");
-                }
+                withdrawAndEquip(ItemID.ADAMANT_AXE, 40);
             }
+        } else if (Inventory.find(ItemID.AXE_IDS[5]).length < 1 && !Equipment.isEquipped(ItemID.AXE_IDS[5])) {
+            withdrawAndEquip(ItemID.ADAMANT_AXE, 60);
         }
+
 
     }
 
@@ -186,7 +154,6 @@ public class CutLogs implements Task {
     @Override
     public void execute() {
         Utils.FACTOR = .55;
-        //defaultProgressive();
         progressive();
     }
 

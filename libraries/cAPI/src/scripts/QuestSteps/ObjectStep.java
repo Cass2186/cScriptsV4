@@ -282,16 +282,16 @@ public class ObjectStep extends QuestStep {
                 Optional<LocalTile> walkable = bestInteractable.map(b -> PathingUtil.getWalkableTile(b))
                         .orElse(Optional.empty());
 
-                if (bestInteractable.map(LocalWalking::walkTo).orElse(false)) {
+                if (bestInteractable.map(PathingUtil::localNav).orElse(false)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK (best interactable)");
                     humanWalkIdle(tile.toWorldTile());
-                } else if (PathingUtil.localNavigation(this.tile)) {
-                    Log.debug("[ObjectStep]: Navigating to object area - local");
-                    humanWalkIdle(this.tile);
-                } else if (walkable.map(LocalWalking::walkTo).orElse(false)) {
+                } else if (walkable.map(PathingUtil::localNav).orElse(false)) {
                     Log.debug("[ObjectStep]: Navigating to object area - local SDK (walkable)");
                     humanWalkIdle(walkable.get().toWorldTile());
-                } else if (PathingUtil.walkToTile(this.tile)) {
+                }else if (PathingUtil.localNavigation(this.tile)) {
+                    Log.debug("[ObjectStep]: Navigating to object area - local");
+                    humanWalkIdle(this.tile);
+                }  else if (PathingUtil.walkToTile(this.tile)) {
                     humanWalkIdle(this.tile);
                 }
             }

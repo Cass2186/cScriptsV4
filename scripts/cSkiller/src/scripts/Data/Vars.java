@@ -144,6 +144,9 @@ public class Vars {
     public int firemakingTargetLevel = 30;
     public boolean shouldResetFireMaking = true;
 
+    //KOUREND FAVOUR
+    public boolean hosaFavour = false;
+    public boolean shouldCashInCompost = false;
 
     //MINING
     public boolean useMLM = false;
