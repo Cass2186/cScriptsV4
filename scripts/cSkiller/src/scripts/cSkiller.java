@@ -45,6 +45,7 @@ import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
 import scripts.Tasks.KourendFavour.Hosidius.BankForCompost;
 import scripts.Tasks.KourendFavour.Hosidius.CashInCompost;
 import scripts.Tasks.KourendFavour.Hosidius.MixCompost;
+import scripts.Tasks.KourendFavour.Piscarlilius.FixCrane;
 import scripts.Tasks.MiscTasks.*;
 import scripts.Tasks.PestControl.PestTasks.AttackPortal;
 import scripts.Tasks.PestControl.PestTasks.DefendKnight;
@@ -351,7 +352,9 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new RelocateHouse(),
                 new MixCompost(),
                 new CashInCompost(),
-                new BankForCompost()
+                new BankForCompost(),
+                new FixCrane(),
+                new UnnotePlanks()
                 //MiniBreak.get(),
                 // new MakeCannonballs()
 
@@ -459,6 +462,11 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                     General.println("[Args]: Training Hosa favour");
                     Vars.get().shouldShowGUI = false;
                     Vars.get().hosaFavour = true;
+                    SkillTasks.KOUREND_FAVOUR.setStartLevel(1);
+                }
+                else if (arg.toLowerCase().contains("portpisc")) {
+                    General.println("[Args]: Training Port P favour");
+                    Vars.get().shouldShowGUI = false;
                     SkillTasks.KOUREND_FAVOUR.setStartLevel(1);
                 }
 

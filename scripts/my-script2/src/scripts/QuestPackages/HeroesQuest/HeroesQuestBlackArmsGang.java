@@ -554,7 +554,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
                 Log.log("[Debug]: starting quest");
                 talkToAchietties.execute();
             }
-        } else if (Game.getSetting(188) == 1) {
+        } else if (Game.getSetting(188)  ==12) { //was == 1
             iceGloves.setAcceptEquipped(true);
             if (!iceGloves.check()) {
                 GetIceGloves.get().execute();
@@ -601,8 +601,8 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
                 finishQuest.execute();
                 cQuesterV2.taskList.remove(this);
 
-            }
-        } else if (iceGloves.check() && oilRod.check() && lavaEel.check()) {
+           }
+        } else if (iceGloves.check() &&oilRod.check() && lavaEel.check()) {
             cQuesterV2.status = "Pheonix gang steps";
             if (Game.getSetting(188) == 1) {
                 enterPhoenixBase.setTileRadius(2);
@@ -647,7 +647,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
 
     @Override
     public String questName() {
-        return "Heroes Quest";
+        return "Heroes Quest (" + Game.getSetting(188) +")";
     }
 
     @Override

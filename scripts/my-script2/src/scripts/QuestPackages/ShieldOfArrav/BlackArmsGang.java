@@ -98,7 +98,7 @@ public class BlackArmsGang implements QuestTask, MuleListener {
         if (GameState.getSetting(146) == 0) {
             talkToCharlie = new NPCStep(5209, new RSTile(3208, 3392, 0));
             talkToCharlie.addDialogStep("Is there anything down this alleyway?");
-            talkToCharlie.addDialogStep("Do you think they would let me join?");
+            talkToCharlie.addDialogStep("Yes.");
             talkToCharlie.execute();
         }
     }

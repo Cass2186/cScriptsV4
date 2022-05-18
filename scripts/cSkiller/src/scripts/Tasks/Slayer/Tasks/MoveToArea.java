@@ -20,6 +20,7 @@ import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 import scripts.Tasks.Slayer.SlayerConst.Areas;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 
@@ -539,10 +540,10 @@ public class MoveToArea implements Task {
                 .isReachable()
                 .findClosestByPathDistance();
 
-        if (!Waiting.waitUntil(1500, () ->area.containsMyPlayer()) &&
-                closest.map(t->t.interact("Walk here")).orElse(false)){
+        if (!Waiting.waitUntil(1500, () -> area.containsMyPlayer()) &&
+                closest.map(t -> t.interact("Walk here")).orElse(false)) {
             Log.info("Walking to closest area tile");
-            return Waiting.waitUntil(4500, 100, ()-> area.contains(MyPlayer.getTile()) );
+            return Waiting.waitUntil(4500, 100, () -> area.contains(MyPlayer.getTile()));
         }
         return false;
     }
@@ -619,8 +620,13 @@ public class MoveToArea implements Task {
             goToElves();
             return;
         }
-        PathingUtil.walkToTile(SlayerVars.get().fightArea.getCenter());
-        shouldMoveDoubleCheck();
+        if (PathingUtil.localNav(SlayerVars.get().fightArea.getCenter().toLocalTile()) &&
+                Waiting.waitUntil(1500, 500, MyPlayer::isMoving)) {
+            Waiting.waitUntil(8000, 500, () -> SlayerVars.get().fightArea.containsMyPlayer());
+        } else {
+            PathingUtil.walkToTile(SlayerVars.get().fightArea.getCenter());
+            shouldMoveDoubleCheck();
+        }
     }
 
     @Override

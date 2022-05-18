@@ -7,6 +7,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Shop;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -36,7 +37,7 @@ public class UnnotePlanks implements Task {
         if (Inventory.find(ItemID.getNotedId(ItemID.PLANK)).length > 0 && Inventory.find(ItemID.PLANK).length < 3) {
             PathingUtil.walkToArea(GENERAL_STORE_AREA);
             if (Utils.clickNPC(LEENZ, "Trade"))
-                Timer.waitCondition(() -> Interfaces.get(300, 16) != null, 7000);
+                Timer.waitCondition(Shop::isOpen, 7000);
 
             if (Interfaces.get(300, 16) != null && Inventory.find(ItemID.getNotedId(ItemID.PLANK)).length > 0) {
                 if (AccurateMouse.click(Inventory.find(ItemID.getNotedId(ItemID.PLANK))[0], "Sell 10"))

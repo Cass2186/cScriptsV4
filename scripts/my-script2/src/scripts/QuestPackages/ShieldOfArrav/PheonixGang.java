@@ -200,6 +200,10 @@ public class PheonixGang implements QuestTask, QuestInterface {
 
     @Override
     public void execute() {
+        if (Quest.SHIELD_OF_ARRAV.getState().equals(Quest.State.COMPLETE)) {
+            cQuesterV2.taskList.remove(this);
+        }
+
         if (!startInventory.check())
             startInventory.withdrawItems();
 
@@ -232,9 +236,6 @@ public class PheonixGang implements QuestTask, QuestInterface {
         if (certificate.check()) {
             talkToRoald.execute();
 
-        }
-        else if (Game.getSetting(145) == 7) {
-       //done
         }
     }
 

@@ -1,18 +1,22 @@
 package scripts.Tasks.KourendFavour.Piscarlilius;
 
 import org.tribot.api.General;
-import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Objects;
-import org.tribot.api2007.Player;
 import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.ItemID;
 import scripts.PathingUtil;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -28,29 +32,37 @@ public class FixCrane implements Task {
     }
 
     public void fixCrane() {
-        if (Inventory.find(ItemID.PLANK).length > 2 &&
-                Inventory.find("Steel nails").length > 0 &&
-                Inventory.find(ItemID.HAMMER).length > 0) {
+        if (Inventory.getCount(ItemID.PLANK) > 2 &&
+                Inventory.contains("Mithril nails") &&
+                Inventory.contains(ItemID.HAMMER)) {
             PathingUtil.walkToArea(CRANE_AREA);
 
-            Timer.waitCondition(() -> Objects.findNearest(6, BROKEN_CRANE).length > 0 &&
-                    Player.getAnimation() == -1, 60000, 95000);
-            // Constants.idle(25, 150); // reaction time sleep
-
-            if (Player.getAnimation() == -1) {
-                if (Utils.clickObj(BROKEN_CRANE, "Repair")) {
-                    Timer.waitCondition(() -> Player.getAnimation() == 7199, 3500, 6000);
-                    Timer.waitCondition(() -> Objects.findNearest(10, BROKEN_CRANE).length < 1
-                            || Player.getAnimation() == -1, 30000, 45000);
+            if (Objects.findNearest(6, BROKEN_CRANE).length == 0) {
+                Log.info("Waiting for Broken Crane");
+                Timer.waitCondition(() -> Query.gameObjects()
+                        .maxDistance(7).idEquals(BROKEN_CRANE).isAny() &&
+                        MyPlayer.getAnimation() == -1, 60000, 95000);
+                Utils.idleNormalAction(true);
+            }
+            if (MyPlayer.getAnimation() != -1) {
+                Log.info("Player is still animating");
+                Timer.waitCondition(() -> !Query.gameObjects().maxDistance(7).idEquals(BROKEN_CRANE).isAny()
+                        || MyPlayer.getAnimation() == -1, 30000, 45000);
+            }
+            if (MyPlayer.getAnimation() == -1) {
+                if (!Waiting.waitUntil(1800, 75, () -> MyPlayer.getAnimation() != -1)) {
+                    if (Utils.clickObj(BROKEN_CRANE, "Repair") &&
+                            Timer.waitCondition(() -> MyPlayer.getAnimation() != -1, 3500, 6000)) {
+                        Timer.waitCondition(() ->
+                                !Query.gameObjects().maxDistance(1).idEquals(BROKEN_CRANE).isAny()
+                                        || MyPlayer.getAnimation() == -1, 30000, 45000);
+                    }
                 }
             }
-            if (Objects.findNearest(1, BROKEN_CRANE).length > 0)
-                Utils.idle(1800, 2500);
-            if (Player.getAnimation() != -1) {
-                General.println("[Debugging]: Player is still animating");
-                Timer.waitCondition(() -> Objects.findNearest(10, BROKEN_CRANE).length < 1
-                        || Player.getAnimation() == -1, 30000, 45000);
-            }
+
+
+
+
         }
     }
 
@@ -61,10 +73,11 @@ public class FixCrane implements Task {
 
     @Override
     public boolean validate() {
-        return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.KOUREND_FAVOUR) &&
-                (Inventory.find(ItemID.PLANK).length > 2 &&
-                        Inventory.find("Steel nails").length > 0 &&
-                        Inventory.find(ItemID.HAMMER).length > 0);
+        return Vars.get().currentTask != null &&
+                Vars.get().currentTask.equals(SkillTasks.KOUREND_FAVOUR) &&
+                (Inventory.getCount(ItemID.PLANK) > 2 &&
+                        Inventory.contains("Mithril nails") &&
+                        Inventory.contains(ItemID.HAMMER));
     }
 
     @Override
