@@ -139,7 +139,7 @@ public class Obstacle {
                             .and(Filters.Objects.idEquals(this.obstacleId)));
 
 
-            if (/*this.nextObstacleArea != null &&*/ object.isPresent()) {
+            if (this.nextObstacleArea != null && object.isPresent()) {
                 int chance = General.random(0, 100);
                 if (chance <= Vars.get().abc2Chance) {
                     if (MyPlayer.isMoving())
