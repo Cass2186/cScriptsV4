@@ -4,12 +4,15 @@ package scripts.Tasks.Smithing.BlastFurnace.BfTasks;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api.input.Keyboard;
+import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
-import org.tribot.script.sdk.Bank;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -50,7 +53,7 @@ public class DepositOre implements Task {
     public void execute() {
         if (org.tribot.script.sdk.Camera.getZoomPercent() > 10) {
             Log.info("Setting zoom");
-           org.tribot.script.sdk.Camera.setZoomPercent(Utils.random(0, 8));
+            org.tribot.script.sdk.Camera.setZoomPercent(Utils.random(0, 8));
         }
         if (Bank.isOpen())
             BankManager.close(true);
@@ -66,20 +69,36 @@ public class DepositOre implements Task {
 
         if (emptyCoalBag()) {
             clickConveyor();
-
         }
+
         int chance = General.random(0, 100);
+        int xp = Skill.SMITHING.getXp();
         if (chance < 38) {
             if (PathingUtil.clickScreenWalk(BfConst.BAR_COLLECTION_TILE_LEFT_SIDE)) {
-                General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
-                Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 || Interfaces.isInterfaceSubstantiated(233, 2), 3000, 6000);
+                if (BfVars.get().useGoldSmith) {
+                    if (Waiting.waitUntil(4000, 75, () ->
+                            Skill.SMITHING.getXp() > xp ||
+                                    ChatScreen.isOpen()))
+                        Log.info("True");
+                } else {
+                    General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
+                    Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 ||
+                            Interfaces.isInterfaceSubstantiated(233, 2), 3000, 4000);
+                }
 
             }
         } else if (PathingUtil.clickScreenWalk(BfConst.BAR_COLLECTION_TILE)) {
-            General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
-            Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 ||
-                    Interfaces.isInterfaceSubstantiated(233, 2)
-                    || ChatScreen.isOpen(), 3000, 6000);
+            if (BfVars.get().useGoldSmith) {
+                if (Waiting.waitUntil(4000, 75, () ->
+                        Skill.SMITHING.getXp() > xp ||
+                                ChatScreen.isOpen()))
+                    Log.info("True");
+            } else {
+                General.println(Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) + " == value");
+                Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 ||
+                        Interfaces.isInterfaceSubstantiated(233, 2)
+                        || ChatScreen.isOpen(), 3000, 4000);
+            }
         }
 
         if (ChatScreen.isOpen())
@@ -113,11 +132,21 @@ public class DepositOre implements Task {
             RSItem[] fullBag = Inventory.find(Filters.Items.actionsContains("Empty").and(Filters.Items.idEquals(BfConst.ALL_COAL_BAG)));
             if (fullBag.length > 0 && Player.isMoving())
                 fullBag[0].hover();
-
+            else if (BfVars.get().useGoldSmith) {
+                BfConst.BAR_COLLECTION_TILE.hover();
+            }
             if (BfVars.get().abc2Sleep)
                 return Timer.abc2WaitCondition(() -> Inventory.getAll().length < 5, 10000, 15000);
 
-            return Timer.waitCondition(() -> Inventory.getAll().length < 5, 10000, 14000);
+            int c = Utils.random(0,100);
+            WorldTile t= Utils.getWorldTileFromRSTile(BfConst.BAR_COLLECTION_TILE);
+            return Waiting.waitUntil(14000, 15, () -> {
+                        AntiBan.timedActions();
+                        if (c < 40 && t.getBounds().map(b-> !b.contains(Mouse.getPos())).orElse(false)){
+                            BfConst.BAR_COLLECTION_TILE.hover();
+                        }
+                        return Inventory.getAll().length < 5;
+                    });
         }
         General.println("[DepositOre]: Click conveyor returning false");
         return false;

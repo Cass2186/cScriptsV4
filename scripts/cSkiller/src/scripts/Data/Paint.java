@@ -21,6 +21,7 @@ import scripts.Tasks.PestControl.PestUtils.PestUtils;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
 import scripts.Tasks.Slayer.Tasks.WorldHop;
 import scripts.Utils;
+import scripts.Varbits;
 import scripts.cSkiller;
 
 import java.awt.*;
@@ -101,6 +102,8 @@ public class Paint {
                         .build())
                 .row(template.toBuilder().label("Toggle Timers").onClick(() ->
                         Vars.get().showTimers = !Vars.get().showTimers).build())
+                .row(template.toBuilder().label("BF Bar Dispenser").value(() ->
+                        Utils.getVarBitValue(Varbits.BLAST_FURNACE_GOLD_BAR.getId())).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));

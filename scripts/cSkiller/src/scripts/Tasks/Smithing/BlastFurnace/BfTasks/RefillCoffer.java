@@ -5,10 +5,12 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.Interfaces;
+import org.tribot.script.sdk.Inventory;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.ItemID;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfVars;
 import scripts.Timer;
 import scripts.Utils;
@@ -40,6 +42,9 @@ public class RefillCoffer implements Task {
 
     @Override
     public void execute() {
+        if (!Inventory.contains(ItemID.COINS_995)){
+            //get coins
+        }
         General.println("Coffer varbit:" + Utils.getVarBitValue(Varbits.BLAST_FURNACE_COFFER.getId()));
         General.println("Coffer refill at:" +refillAt);
         if (Utils.clickObject("Coffer", "Use", false)){

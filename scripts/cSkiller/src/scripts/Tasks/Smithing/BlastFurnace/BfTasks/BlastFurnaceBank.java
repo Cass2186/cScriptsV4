@@ -13,6 +13,7 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.API.Priority;
@@ -38,15 +39,16 @@ public class BlastFurnaceBank implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.LOW;
-    }
+        return Priority.HIGH;
+    } //was low
 
     @Override
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SMITHING)) {
             return Inventory.find(Filters.Items.nameContains("ore")).length < 5
                     && Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) == 0
-                    || (Inventory.isFull() && Inventory.find(Filters.Items.nameContains("bar")).length > 5);
+                    || (Inventory.getAll().length > 25 &&
+                    Inventory.find(Filters.Items.nameContains("bar")).length > 5);
         }
         return false;
     }
@@ -135,7 +137,8 @@ public class BlastFurnaceBank implements Task {
                     BankManager.withdraw(0, true, BfConst.COAL);
                 } else
                     BankManager.withdraw(0, true, oreId);
-
+                Optional<GameObject> bestInteractable = Query.gameObjects().idEquals(9100).findBestInteractable();
+                bestInteractable.ifPresent(b->b.hover());
                 if (org.tribot.script.sdk.Options.isEscapeClosingEnabled()) {
                     Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
                     Timer.waitCondition(() -> !Bank.isOpen(), 500, 750);

@@ -34,24 +34,34 @@ public class WoodCuttingConst {
             new WorldTile(1582, 3482, 0)
 
     );
-    public static Area WC_GUILD_MAPLE_AREA  =Area.fromPolygon(
-                    new WorldTile(1608, 3497, 0),
-                    new WorldTile(1608, 3492, 0),
-                    new WorldTile(1612, 3488, 0),
-                    new WorldTile(1616, 3488, 0),
-                    new WorldTile(1623, 3494, 0),
-                    new WorldTile(1624, 3498, 0),
-                    new WorldTile(1619, 3498, 0),
+    public static Area WC_GUILD_MAPLE_AREA = Area.fromPolygon(
+            new WorldTile(1608, 3497, 0),
+            new WorldTile(1608, 3492, 0),
+            new WorldTile(1612, 3488, 0),
+            new WorldTile(1616, 3488, 0),
+            new WorldTile(1623, 3494, 0),
+            new WorldTile(1624, 3498, 0),
+            new WorldTile(1619, 3498, 0),
             new WorldTile(1615, 3500, 0)
     );
-    public static Area WC_GUILD_YEW_AREA =  Area.fromPolygon(
-                    new WorldTile(1590, 3497, 0),
-                    new WorldTile(1600, 3497, 0),
-                    new WorldTile(1600, 3485, 0),
-                    new WorldTile(1595, 3481, 0),
-                    new WorldTile(1589, 3486, 0)
+    public static Area WC_GUILD_YEW_AREA = Area.fromPolygon(
+            new WorldTile(1590, 3497, 0),
+            new WorldTile(1600, 3497, 0),
+            new WorldTile(1600, 3485, 0),
+            new WorldTile(1595, 3481, 0),
+            new WorldTile(1589, 3486, 0)
 
     );
+
+    public static Area WC_GUILD_WILLOW_AREA = Area.fromPolygon(
+            new WorldTile(1626, 3502, 0),
+            new WorldTile(1628, 3494, 0),
+            new WorldTile(1632, 3494, 0),
+            new WorldTile(1634, 3492, 0),
+            new WorldTile(1637, 3497, 0),
+            new WorldTile(1630, 3503, 0)
+    );
+
     public static int[] WC_ANIMATIONS = {
             879, //bronze
             877, // iron

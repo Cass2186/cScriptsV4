@@ -19,10 +19,7 @@ import scripts.Timer;
 import scripts.Utils;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class SkillBank {
 
@@ -203,6 +200,59 @@ public class SkillBank {
             }
         }
         return false;
+    }
+
+    // new testing method
+    private static void withdrawInvItems(List<ItemReq> invReqs) {
+        // List<Pair<Integer, Integer>> withdrew = new ArrayList<>();
+        HashMap<Integer, Integer> withdrew = new HashMap();
+        invReqs.stream()
+                //.map(i-> new Pair(i.getId(), (i.getAmount()- Inventory.getCount(i.getId()))))
+                .filter(i -> i.getAmount() > 0)
+                //  .sortedBy(it.second.endInclusive)
+                .forEach(item -> {
+                    int id = item.getId();
+                    boolean isNoted = item.isItemNoted();
+                    int amt = item.getAmount();
+                    int startInvCount = Inventory.getCount(id);
+                    int bankCount = BankCache.getStack(id);
+
+                    // Check if we have the amount we need in the bank. If not, bind an error
+                    if (bankCount < amt) {
+                        Log.info("[Bank]: Insufficient item in bank");
+                    }
+
+                    if (bankCount < amt) {
+                        // Special case: If we don't need any of this item and there is none in the bank, skip
+                        //  if (bankCount == 0 && amt == 0)
+                        //     return; //@forEach
+
+
+                        if (BankSettings.isNoteEnabled() != isNoted) {
+                            BankSettings.setNoteEnabled(isNoted);
+                            Waiting.waitNormal(85, 15);
+                        }
+
+                        Bank.withdrawAll(id);
+                    } else {
+                        if (BankSettings.isNoteEnabled() != isNoted) {
+                            BankSettings.setNoteEnabled(isNoted);
+                            Waiting.waitNormal(85, 15);
+                        }
+                        amt = (amt - startInvCount);
+                        //prevents attempting to withdraw if we have enough
+                        if (amt > 0)
+                            Bank.withdraw(id, amt - startInvCount);
+                    }
+
+                    withdrew.put(id, startInvCount);
+                    Waiting.waitNormal(69, 16);
+                });
+        // Wait and confirm all inv items were withdrawn correctly
+        for (Integer i : withdrew.keySet()) {
+            Waiting.waitUntil(2500, () ->
+                    Inventory.getCount(i) > withdrew.get(i));
+        }
     }
 
     private static ItemReq checkSkillSpecificItems(RSItem[] bankCache) {

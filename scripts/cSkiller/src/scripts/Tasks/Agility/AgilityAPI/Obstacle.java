@@ -139,7 +139,7 @@ public class Obstacle {
                             .and(Filters.Objects.idEquals(this.obstacleId)));
 
 
-            if (this.nextObstacleArea != null && object.isPresent()) {
+            if (/*this.nextObstacleArea != null &&*/ object.isPresent()) {
                 int chance = General.random(0, 100);
                 if (chance <= Vars.get().abc2Chance) {
                     if (MyPlayer.isMoving())
@@ -184,13 +184,13 @@ public class Obstacle {
         int shouldSpam = TribotRandom.uniform(0,100);
         for (int i = 0; i < 3; i++) { //tries 3 times
             // Log.info("Clicking " + this.obstacleAction + " " + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
-            if (Vars.get().spamClickAgility && shouldSpam < TribotRandom.normal(62,6))  {
-                int num = TribotRandom.normal(1, 6, 2, 1);
+            if (Vars.get().spamClickAgility && shouldSpam < TribotRandom.normal(64,4))  {
+                int num = TribotRandom.normal(2, 6, 3, 1);
+                Log.info("Clicking " + num + " times");
                 for (int clicks = 0; clicks < num; clicks++) {
                     if (obj.map(o -> o.isVisible() && o.click(action)).orElse(false)) {
                         Waiting.waitNormal(25, 7);
                     } else if (obj.map(o -> o.interact(action)).orElse(false)) {
-                        Log.info("Interact");
                         Waiting.waitNormal(30, 7);
                     }
                 }
@@ -201,6 +201,7 @@ public class Obstacle {
 
             } else if (!obj.map(o -> o.interact(action)).orElse(false)) {
                 Log.error("Miss clicked, i: " + i);
+                Waiting.waitNormal(30, 7);
                 continue;
             }
             if (Vars.get().shouldAlchAgil && shouldAlch < 62) {

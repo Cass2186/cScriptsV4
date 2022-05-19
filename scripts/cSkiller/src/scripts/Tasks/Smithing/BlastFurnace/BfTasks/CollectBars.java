@@ -18,6 +18,7 @@ import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Smithing.BlastFurnace.BfData.BfConst;
+import scripts.Tasks.Smithing.BlastFurnace.BfData.BfVars;
 
 import java.awt.event.KeyEvent;
 
@@ -36,12 +37,12 @@ public class CollectBars implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SMITHING)) {
-            if (Interfaces.isInterfaceSubstantiated(233, 2) || NPCInteraction.isConversationWindowUp()) {
+            if (Interfaces.isInterfaceSubstantiated(233, 2) || ChatScreen.isOpen()) {
                 General.println("[Debug]: Handling level up interface");
-                Keyboard.typeString(" ");
-                NPCInteraction.handleConversation();
+                ChatScreen.handle();
             }
-            return Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 && Inventory.getAll().length < 27;
+            return (Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) > 1 || shouldCollectBars())
+                    && Inventory.getAll().length < 27;
         }
         return false;
     }
@@ -63,8 +64,9 @@ public class CollectBars implements Task {
         }
 
         for (int i = 0; i < 3; i++) {
-            if (Interfaces.isInterfaceSubstantiated(233, 2) || NPCInteraction.isConversationWindowUp())
-                NPCInteraction.handleConversation();
+            if (Interfaces.isInterfaceSubstantiated(233, 2)
+                    || ChatScreen.isOpen())
+                ChatScreen.handle();
 
             General.println("[CollectBars]: Collect Bars attempt:" + i);
 
@@ -115,6 +117,13 @@ public class CollectBars implements Task {
     @Override
     public String taskName() {
         return "Smithing - BF";
+    }
+
+    private boolean shouldCollectBars(){
+        if (BfVars.get().useGoldSmith){
+            return Utils.getVarBitValue(Varbits.BLAST_FURNACE_GOLD_BAR.getId()) >0 ;
+        }
+        return Utils.getVarBitValue(Varbits.BLAST_FURNACE_STEEL_BAR.getId()) >0 ;
     }
 
     public void setCamera() {

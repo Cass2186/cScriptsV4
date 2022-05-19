@@ -5,6 +5,7 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
 import org.tribot.api.General;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
@@ -19,6 +20,7 @@ import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.interfaces.Item;
 import org.tribot.script.sdk.interfaces.Stackable;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.tasks.EquipmentReq;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
@@ -45,6 +47,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestClass implements QuestTask {
     private static TestClass quest;
@@ -201,7 +204,7 @@ public class TestClass implements QuestTask {
 
                     // Check if we have the amount we need in the bank. If not, bind an error
                     if (bankCount < amt) {
-                        Log.log("[Bank]: Insufficient item in bank");
+                        Log.info("[Bank]: Insufficient item in bank");
                     }
 
                     if (bankCount < amt) {
@@ -335,53 +338,53 @@ public class TestClass implements QuestTask {
         }
     }
 
-  /*  private void depositInventory( List<ItemReq> invReqs, List<EquipmentReq>  equipReqs) {
+   private void depositInventory( List<ItemReq> invReqs, List<ItemReq>  equipReqs) {
         // First get all the maximum withdraws. The amount will be negative if we need to deposit
         List<ItemReq> withdrawsToMake = invReqs.stream().map(it ->
                 new ItemReq(it.getId(), (it.getAmount() - Inventory.getCount(it.getId()))))
                 .collect(Collectors.toList());
 
-        val equipmentWithdrawsToMake = equipReqs
-                .filter { !it.isSatisfied() }
-            .mapNotNull { it.item }
-            .map {
-            Pair(it.first, it.second.getWithdrawAmount(Inventory.getCount(it.first)).endInclusive)
-        }
+        val equipmentWithdrawsToMake = equipReqs.stream().map(it ->
+                        new ItemReq(it.getId(), (it.getAmount() - Inventory.getCount(it.getId()))))
+                .collect(Collectors.toList());
+
 
         // Let's calculate all the completely unrelated items that we need to deposit all of
-        val unrelatedItemDepositsToMake = Inventory.getAll()
-                .distinctBy { it.id }
-            .filter { invItem -> withdrawsToMake.none { it.first == invItem.id } }
-            .map { Pair(it.id, Inventory.getCount(it.id)) }
+        val unrelatedItemDepositsToMake = Query.inventory()
+                .filter(i-> withdrawsToMake.stream().anyMatch(req-> req.getId() != i.getId()))
+                .toList();
+
 
         // And combine them with the "withdraws" that are negative (aka deposits)
-        val combined = withdrawsToMake.filter { it.second < 0 } +
-                equipmentWithdrawsToMake.filter { it.second < 0 } +
-                unrelatedItemDepositsToMake;
+        val combined = Stream.concat(withdrawsToMake.stream().filter(it-> it.getAmount() < 0 ),
+                equipmentWithdrawsToMake.stream().filter(it-> it.getAmount() < 0 ))
+                .collect(Collectors.toList());
 
-        if (withdrawsToMake.any { it.second <= 0 }) {
+
+        if (withdrawsToMake.stream().anyMatch(it->it.getAmount() <= 0)) {
             // We must have something in our inv that we need if we have a negative or 0 withdraw
-            val currentInvState = combined.map { Inventory.getCount(it.first) }
+            val currentInvState = combined.stream().map(i-> Inventory.getCount(i.getId()));
+                   // combined.map { Inventory.getCount(it.first) }
 
             // Iterate and execute on the deposits
-            for (entry in combined) {
-                Bank.deposit(entry.first, abs(entry.second)).bind()
-                Waiting.waitNormal(192, 29)
+            for (ItemReq it : combined) {
+                if(Bank.deposit(it.getId(), it.getAmount()))
+                Waiting.waitNormal(192, 29);
             }
 
-            // Wait for the deposits to register
-            combined.forEachIndexed { i, entry ->
+       /*     // Wait for the deposits to register
+            combined.stream().forEach();forEachIndexed { i, entry ->
                     val expectedNewAmt = currentInvState[i] - abs(entry.second)
                 Waiting.waitUntil(2500) { Inventory.getCount(entry.first) == expectedNewAmt }.bind()
-            }
+            }*/
         }
-        else if (Inventory.getAll().isNotEmpty()) {
+        /*else if (!Inventory.getAll().isEmpty()) {
             // We have nothing we need, so deposit all if inv contains anything
             Bank.depositInventory().bind()
             Waiting.waitUntil(2500) { Inventory.getAll().size == 0 }.bind()
             Waiting.waitNormal(254, 38)
-        }
-    }*/
+        }*/
+    }
 
 
     public static void doBank(List<ItemReq> itemReqList) {

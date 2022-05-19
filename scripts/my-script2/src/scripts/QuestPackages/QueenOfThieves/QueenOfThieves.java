@@ -14,6 +14,7 @@ import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ScorpionCatcher.ScorpionCatcher;
@@ -117,20 +118,16 @@ public class QueenOfThieves implements QuestTask {
         cQuesterV2.status = "Step 4: Going to Robert O'Riley";
         PathingUtil.walkToArea(ROBERT_ORILEY_AREA);
         if (NpcChat.talkToNPC(ROBERT)) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Okay.");
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true, "Okay." ,"Nope,");
         }
     }
 
 
     public void goToDevon() {
         cQuesterV2.status = "Step 5: Going to Devon.";
-        PathingUtil.walkToArea(DEVON_AREA);
+        PathingUtil.walkToTile(new WorldTile(1765, 10147,0));
         if (NpcChat.talkToNPC(DEVON)) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Nope, sounds good to me.");
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true, "Okay." ,"Nope,");
         }
     }
 
