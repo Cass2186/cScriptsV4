@@ -7,6 +7,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import scripts.NpcChat;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 
@@ -100,12 +101,15 @@ public class ClickItemStep extends QuestStep {
                 } else if (this.tile != null && PathingUtil.walkToTile(this.tile)) {
                     PathingUtil.movementIdle();
                 }
+                if (this.tile != null && !this.tile.equals(Player.getPosition())){
+                    PathingUtil.clickScreenWalk(this.tile);
+                    PathingUtil.movementIdle();
+                }
                 if (dialog == null) {
                     item[0].click(this.interactionString);
 
                 } else if (item[0].click(this.interactionString)) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation(this.interactionString);
+                    NpcChat.handle(true, this.interactionString);
 
                 }
             }

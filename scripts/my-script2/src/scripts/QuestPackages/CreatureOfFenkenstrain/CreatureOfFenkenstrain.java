@@ -9,13 +9,16 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.EnterTheAbyss.EnterTheAbyss;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.ItemReq;
+import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
@@ -54,14 +57,14 @@ public class CreatureOfFenkenstrain implements QuestTask {
                     new ItemReq(ItemID.RUNE_SCIMITAR, 1, 1, true, true),
                     new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 6, 1),
                     new ItemReq(ItemID.HAMMER, 1, 1),
-
+                    new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1, true, true),
                     new ItemReq(ItemID.SILVER_BAR, 1, 1),
                     new ItemReq(ItemID.BRONZE_WIRE, 3, 3),
                     new ItemReq(ItemID.NEEDLE, 1, 1),
                     new ItemReq(ItemID.THREAD, 5, 5),
                     new ItemReq(ItemID.SPADE, 1),
                     new ItemReq(ItemID.COINS, 5000, 200),
-                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0),
                     new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true, true)
             )
@@ -87,7 +90,7 @@ public class CreatureOfFenkenstrain implements QuestTask {
     ItemReq marbleAmulet = new ItemReq("Marble Amulet", ItemID.MARBLE_AMULET);
     ItemReq starAmulet = new ItemReq("Star Amulet", ItemID.STAR_AMULET);
     ItemReq decapitatedHead = new ItemReq("Decapitated Head", ItemID.DECAPITATED_HEAD);
-    ItemReq decapitatedHeadWithBrain = new ItemReq( ItemID.DECAPITATED_HEAD_4198);
+    ItemReq decapitatedHeadWithBrain = new ItemReq(ItemID.DECAPITATED_HEAD_4198);
     ItemReq armor = new ItemReq("Armour and weapons defeat a level 51 monster and run past level 72 monsters", -1, -1);
 
     ItemReq cavernKey = new ItemReq("Tavern Key", ItemID.CAVERN_KEY);
@@ -98,6 +101,19 @@ public class CreatureOfFenkenstrain implements QuestTask {
     ItemReq fenkenstrainTeleports = new ItemReq("Fenkenstrain's Castle Teleport", ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 2);
     ItemReq teleportToFurnace = new ItemReq(ItemID.AMULET_OF_GLORY[2]);
     ItemReq coins = new ItemReq("Coins at least", ItemID.COINS_995, 100);
+
+    ItemReq brush = new ItemReq("Brush", ItemID.GARDEN_BRUSH);
+    ItemReq coins50 = new ItemReq("Coins", ItemID.COINS_995, 50);
+
+    ItemReq hammer = new ItemReq("Hammer", ItemID.HAMMER);
+    ItemReq ghostSpeakAmulet = new ItemReq("Ghostspeak amulet", ItemID.GHOSTSPEAK_AMULET);
+    ItemReq silverBar = new ItemReq("Silver bar", ItemID.SILVER_BAR);
+    ItemReq bronzeWire = new ItemReq("Bronze wires", ItemID.BRONZE_WIRE, 3);
+    ItemReq needle = new ItemReq("Needle", ItemID.NEEDLE);
+    ItemReq thread = new ItemReq("Threads", ItemID.THREAD, 5);
+    ItemReq spade = new ItemReq("Spade", ItemID.SPADE);
+
+
     Conditions hasCavernKey = new Conditions(LogicType.OR, cavernKey, new VarbitRequirement(199, 1));
     ItemOnTileRequirement keyNearby = new ItemOnTileRequirement(cavernKey);
     Conditions hasTorso = new Conditions(LogicType.OR, torso, new VarbitRequirement(188, 1));
@@ -123,14 +139,15 @@ public class CreatureOfFenkenstrain implements QuestTask {
     ClickItemStep getLeg = new ClickItemStep(ItemID.SPADE, "Dig", new RSTile(3505, 3576, 0));
 
     QuestStep getPickledBrain, talkToFrenkenstrain, goUpstairsForStar, combineAmulet, pickupKey,
-            goDownstairsForStar, talkToGardenerForHead, goToHeadGrave, combinedHead,  killExperiment,
+            goDownstairsForStar, talkToGardenerForHead, goToHeadGrave, combinedHead,
             leaveExperimentCave, deliverBodyParts, gatherNeedleAndThread, talkToGardenerForKey, searchForBrush,
             grabCanes, extendBrush, goUpWestStairs, searchFirePlace, makeLightningRod, goUpWestStairsWithRod,
             goUpTowerLadder,
             repairConductor, goBackToFirstFloor, talkToFenkenstrainAfterFixingRod, goToMonsterFloor1,
             goToMonsterFloor2,
-            talkToMonster, pickPocketFenkenstrain, enterExperimentCave;
-    UseItemOnObjectStep openLockedDoor,useStarOnGrave;
+            talkToMonster, enterExperimentCave;
+    NPCStep killExperiment, pickPocketFenkenstrain;
+    UseItemOnObjectStep openLockedDoor, useStarOnGrave;
     ObjectStep getBook1, getBook2;
 
 
@@ -142,15 +159,17 @@ public class CreatureOfFenkenstrain implements QuestTask {
             initialItemReqs.withdrawItems();
         }
     }
-/*
+
+    private Map<Integer, QuestStep> getQuestStep() {
+        setupSteps();
+        setupConditions();
+        setupItemReqs();
+
         Map<Integer, QuestStep> steps = new HashMap<>();
 
         ConditionalStep grabTheBrain = new ConditionalStep(getPickledBrain);
         grabTheBrain.addStep(pickledBrain, talkToFrenkenstrain);
         steps.put(0, grabTheBrain);
-
-
-
 
 
         ConditionalStep fixLightningRod = new ConditionalStep(talkToGardenerForKey);
@@ -160,7 +179,6 @@ public class CreatureOfFenkenstrain implements QuestTask {
         fixLightningRod.addStep(new Conditions(conductorMould), makeLightningRod);
         fixLightningRod.addStep(new Conditions(inCastleFloor1, extendedBrush3), searchFirePlace);
         fixLightningRod.addStep(new Conditions(extendedBrush3), goUpWestStairs);
-        fixLightningRod.addStep(new Conditions(LogicType.AND, brush, canes), extendBrush);
         fixLightningRod.addStep(new Conditions(brush), grabCanes);
         fixLightningRod.addStep(new Conditions(LogicType.OR, usedShedKey, shedKey), searchForBrush);
 
@@ -172,26 +190,14 @@ public class CreatureOfFenkenstrain implements QuestTask {
         goToMonster.addStep(new Conditions(usedTowerKey, inCastleFloor1), goToMonsterFloor2);
         goToMonster.addStep(new Conditions(towerKey, inCastleFloor1), openLockedDoor);
 
-        steps.put(1, gatherBodyParts);
         steps.put(2, gatherNeedleAndThread);
         steps.put(3, fixLightningRod);
         steps.put(4, talkToFenkentrain);
         steps.put(5, goToMonster);
         steps.put(6, pickPocketFenkenstrain);
 
-        return steps;*/
-
-
-    ItemReq brush = new ItemReq("Brush", ItemID.GARDEN_BRUSH);
-    ItemReq coins50 = new ItemReq("Coins", ItemID.COINS_995, 50);
-
-    ItemReq hammer = new ItemReq("Hammer", ItemID.HAMMER);
-    ItemReq ghostSpeakAmulet = new ItemReq("Ghostspeak amulet", ItemID.GHOSTSPEAK_AMULET);
-    ItemReq silverBar = new ItemReq("Silver bar", ItemID.SILVER_BAR);
-    ItemReq bronzeWire = new ItemReq("Bronze wires", ItemID.BRONZE_WIRE, 3);
-    ItemReq needle = new ItemReq("Needle", ItemID.NEEDLE);
-    ItemReq thread = new ItemReq("Threads", ItemID.THREAD, 5);
-    ItemReq spade = new ItemReq("Spade", ItemID.SPADE);
+        return steps;
+    }
 
 
     public void setupItemReqs() {
@@ -222,25 +228,25 @@ public class CreatureOfFenkenstrain implements QuestTask {
     }
 
     public void extendBrushStep() {
-        RSItem[] cane = Inventory.find(canes.getId());
-        for (RSItem c : cane) {
-            if (Utils.useItemOnItem(c.getID(), brush.getId()))
-                Utils.microSleep();
-
+        for (int i = 0; i < 3; i++) {
+            Optional<InventoryItem> brush = Query.inventory().nameContains("brush").findClosestToMouse();
+            Optional<InventoryItem> cane = Query.inventory().idEquals(ItemID.GARDEN_CANE).findClosestToMouse();
+            if (brush.map(b -> cane.map(c -> c.useOn(b)).orElse(false)).orElse(false))
+                Waiting.waitNormal(1750, 120);
         }
     }
 
     public void setupSteps() {
-        ///  getPickledBrain = new DetailedQuestStep(new RSTile(3492, 3474, 0),
-        //           "Head to the Canifis bar and either buy the pickled brain for 50 coins, or telegrab it.", telegrabOrCoins);
-        // getPickledBrain.addDialogStep("I'll buy one.");
+        getPickledBrain = new GroundItemStep(4199, new RSTile(3492, 3474, 0));
+        //  getPickledBrain = new NPCStep(new RSTile(3492, 3474, 0));
+        getPickledBrain.addDialogStep("I'll buy one.");
         talkToFrenkenstrain = new NPCStep(NpcID.DR_FENKENSTRAIN, new RSTile(3551, 3548, 0),
                 "Talk to Dr.Fenkenstrain to start the quest");
         talkToFrenkenstrain.addDialogStep("Yes.");
         talkToFrenkenstrain.addDialogStep("Braindead");
         talkToFrenkenstrain.addDialogStep("Grave-digging");
 
-        goUpstairsForStar = new ObjectStep(ObjectID.STAIRCASE_5206, new RSTile(3560, 3552, 0),
+        goUpstairsForStar = new ObjectStep(ObjectID.STAIRCASE_5206, new RSTile(3560, 3550, 0),
                 "Climb-up");
 
         getBook1 = new ObjectStep(5166, new RSTile(3555, 3557, 1),
@@ -257,7 +263,7 @@ public class CreatureOfFenkenstrain implements QuestTask {
         goDownstairsForStar = new ObjectStep(ObjectID.STAIRCASE_5207, new RSTile(3573, 3553, 1),
                 "Climb-down");
 
-        talkToGardenerForHead = new NPCStep(2012, new RSTile(3548, 3562, 0),
+        talkToGardenerForHead = new NPCStep(2013, new RSTile(3548, 3562, 0),
                 ghostSpeakAmulet);
         talkToGardenerForHead.addDialogStep("What happened to your head?");
 
@@ -288,60 +294,61 @@ public class CreatureOfFenkenstrain implements QuestTask {
         gatherNeedleAndThread = new NPCStep(NpcID.DR_FENKENSTRAIN, new RSTile(3551, 3548, 0),
                 needle, thread);
 
-        talkToGardenerForKey = new NPCStep(NpcID.GARDENER_GHOST, new RSTile(3548, 3562, 0),
+        talkToGardenerForKey = new NPCStep(2013, new RSTile(3548, 3562, 0),
                 ghostSpeakAmulet, bronzeWire, silverBar);
         talkToGardenerForKey.addDialogStep("Do you know where the key to the shed is?");
 
-        searchForBrush = new ObjectStep(5156, new RSTile(3546, 3564, 0),
-                "Open the cupboard and search it for a brush.", bronzeWire, silverBar);
+        searchForBrush = new ObjectStep(5156, new RSTile(3547, 3565, 0),
+                "Open", bronzeWire, silverBar);
         //   ((ObjectStep) searchForBrush).addAlternateObjects(ObjectID.OPEN_CUPBOARD_5157);
-        grabCanes = new ObjectStep(ObjectID.PILE_OF_CANES, new RSTile(3551, 3564, 0),
-                "Grab 3 canes from the pile.", bronzeWire, silverBar);
+        grabCanes = new ObjectStep(ObjectID.PILE_OF_CANES, new RSTile(3551, 3563, 0),
+                "Take-from", bronzeWire, silverBar);
 
 
         goUpWestStairs = new ObjectStep(5206, new RSTile(3538, 3552, 0),
-                "Climb-up");
-        searchFirePlace = new ObjectStep(5165, new RSTile(3544, 3555, 1),
+                "Climb-up", MyPlayer.getTile().getPlane() != 0);
+        searchFirePlace = new UseItemOnObjectStep(extendedBrush3.getId(), 5165, new RSTile(3544, 3555, 1),
                 "Use the extended brush on the fireplace to get the conductor mould.", extendedBrush3);
 
-        //  makeLightningRod = new DetailedQuestStep( silverBar, conductorMould);
+        // makeLightningRod = new DetailedQuestStep( silverBar, conductorMould);
         goUpWestStairsWithRod = new ObjectStep(5206, new RSTile(3537, 3553, 0),
-                "Return to the castle and go upstairs.");
-        goUpTowerLadder = new ObjectStep(16683, new RSTile(3548, 3539, 1),
-                "Go up to the third floor using the ladder in the middle of the castle.");
+                "Climb-up", MyPlayer.getTile().getPlane() != 0);
+        goUpTowerLadder = new ObjectStep(16683, new RSTile(3548, 3540, 1),
+                "Climb-up", MyPlayer.getTile().getPlane() == 2);
         repairConductor = new ObjectStep(ObjectID.LIGHTNING_CONDUCTOR, new RSTile(3549, 3537, 2),
-                "Repair the lightning Conductor.");
+                "Repair");
 
         //goBackToFirstFloor = new DetailedQuestStep("Go back to the first floor of the castle and talk to Dr.Fenkenstrain.");
         talkToFenkenstrainAfterFixingRod = new NPCStep(NpcID.DR_FENKENSTRAIN, new RSTile(3551, 3548, 0),
                 "Go back to the first floor of the castle and talk to Dr.Fenkenstrain.");
 
-        goToMonsterFloor1 = new ObjectStep(ObjectID.STAIRCASE_5206, new RSTile(3538, 3552, 0),
-                "Go up to the second floor to confront Fenkenstrain's monster.");
+        goToMonsterFloor1 = new ObjectStep(ObjectID.STAIRCASE_5206, new RSTile(3538, 3550, 0),
+                "Climb-up");
         openLockedDoor = new UseItemOnObjectStep(towerKey.getId(), ObjectID.DOOR_5172,
                 new RSTile(3548, 3551, 1), !towerKey.check());
         goToMonsterFloor2 = new ObjectStep(16683, new RSTile(3548, 3554, 1),
-                "Climb-up");
-        talkToMonster = new NPCStep(NpcID.FENKENSTRAINS_MONSTER, new RSTile(3548, 3555, 2),
+                "Climb-up", MyPlayer.getTile().getPlane() != 1);
+        talkToMonster = new NPCStep(2015, new RSTile(3548, 3555, 2),
                 "Talk to Fenkenstrain's monster.");
 
         pickPocketFenkenstrain = new NPCStep(NpcID.DR_FENKENSTRAIN, new RSTile(3551, 3548, 0),
                 "Go back to Dr.Fenkenstrain, instead of talking to him right click and pickpocket him.");
+        pickPocketFenkenstrain.setInteractionString("Pickpocket");
     }
 
     public void getBodyParts() {
         if (hasDecapitatedHeadWithBrain.check() && hasArm.check() && hasLegs.check() && hasTorso.check()) {
             cQuesterV2.status = "Delivering body parts";
             deliverBodyParts.execute();
-        } else if (inGraveIsland.check()&&  hasDecapitatedHeadWithBrain.check() && hasArm.check() &&
+        } else if (inGraveIsland.check() && hasDecapitatedHeadWithBrain.check() && hasArm.check() &&
                 !hasLegs.check() && hasTorso.check()) {
             cQuesterV2.status = "Getting Leg";
             getLeg.execute();
-        } else if (inGraveIsland.check()&& hasDecapitatedHeadWithBrain.check() && !hasArm.check() &&
+        } else if (inGraveIsland.check() && hasDecapitatedHeadWithBrain.check() && !hasArm.check() &&
                 !hasLegs.check() && hasTorso.check()) {
             cQuesterV2.status = "Getting Arm";
             getArm.execute();
-        } else if (inGraveIsland.check()&&
+        } else if (inGraveIsland.check() &&
                 hasDecapitatedHeadWithBrain.check() && !hasArm.check() && !hasLegs.check() && !hasTorso.check()) {
             cQuesterV2.status = "Getting Torso";
             getTorso.execute();
@@ -353,6 +360,7 @@ public class CreatureOfFenkenstrain implements QuestTask {
             pickupKey.execute();
         } else if (inExperiementCave.check() && hasDecapitatedHeadWithBrain.check()) {
             cQuesterV2.status = "Killing experiment";
+            killExperiment.setAsKillNpcStep();
             killExperiment.execute();
         } else if (putStarOnGrave.check() && hasDecapitatedHeadWithBrain.check()) {
             cQuesterV2.status = "Entering cave";
@@ -368,11 +376,10 @@ public class CreatureOfFenkenstrain implements QuestTask {
             getPickledBrain.execute();
         } else if (inCastleFloor1.check() && hasStarAmulet.check()) {
             goDownstairsForStar.execute();
-         } else if (followingGardenerForHead.check()){
+        } else if (followingGardenerForHead.check()) {
             cQuesterV2.status = "Going to grave";
             goToHeadGrave.execute();
-        }
-        else if (hasStarAmulet.check()) {
+        } else if (hasStarAmulet.check()) {
             cQuesterV2.status = "Talking to Gardener for head";
             talkToGardenerForHead.execute();
         } else if (hasObsidianAmulet.check() && hasMarbleAmulet.check()) {
@@ -406,19 +413,40 @@ public class CreatureOfFenkenstrain implements QuestTask {
     public void execute() {
         setupConditions();
         setupSteps();
-        buyItems();
+
         if (Game.getSetting(399) == 0) {
+            if (!initialItemReqs.check())
+                buyItems();
+            cQuesterV2.status = "Starting Quest";
             talkToFrenkenstrain.execute();
         } else if (Game.getSetting(399) == 1) {
             getBodyParts();
-        } else if (Game.getSetting(399) == 2) {
+        } else if (new Conditions(LogicType.AND, brush, canes).check()) {
+            cQuesterV2.status = "Extending Brush";
+            extendBrushStep();
+        } else {
+            Map<Integer, QuestStep> steps = getQuestStep();
+            //get the step based on the game setting key in the map
+            Optional<QuestStep> step = Optional.ofNullable(steps.get(GameState.getSetting(399)));
 
+            // set status
+            cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
+
+            //do the actual step
+            step.ifPresent(QuestStep::execute);
         }
+
+        // handle any chats that are failed to be handled by the QuestStep (failsafe)
+        if (ChatScreen.isOpen()) {
+            NpcChat.handle("I'll buy one."); //for getting pickled brain
+        }
+        //slow down looping if it gets stuck
+        Waiting.waitNormal(200, 20);
     }
 
     @Override
     public String questName() {
-        return "Creature of Fenkenstrain";
+        return "Creature of Fenkenstrain (" + Game.getSetting(399) + ")";
     }
 
     @Override

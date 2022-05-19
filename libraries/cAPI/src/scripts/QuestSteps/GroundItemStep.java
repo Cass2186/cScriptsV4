@@ -3,7 +3,9 @@ package scripts.QuestSteps;
 import lombok.Getter;
 import org.tribot.api.General;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.query.Query;
+import scripts.NpcChat;
 import scripts.PathingUtil;
 import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
@@ -12,16 +14,14 @@ import scripts.Timer;
 import scripts.Utils;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class GroundItemStep extends QuestStep {
 
     private int itemID = -1;
     private String itemName;
     private RSTile locationTile;
+    private List<String> dialog;
 
     @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
@@ -88,20 +88,27 @@ public class GroundItemStep extends QuestStep {
     @Override
     public void execute() {
         this.pickUpItem();
+        if (this.dialog != null){
+            NpcChat.handle(true, this.dialog.toArray(String[]::new));
+        }
     }
 
     @Override
     public void addDialogStep(String... dialog) {
-
+        if (this.dialog == null)
+            this.dialog = new ArrayList<>(Arrays.asList(dialog));
+        else {
+            this.dialog.addAll(Arrays.asList(dialog));
+        }
     }
 
     @Override
     public void addSubSteps(QuestStep... substep) {
-
+        Log.warn("Add Sub Step has not been added to GroundItemStep");
     }
 
     @Override
     public void addSubSteps(Collection<QuestStep> substeps) {
-
+        Log.warn("Add Sub Step has not been added to GroundItemStep");
     }
 }

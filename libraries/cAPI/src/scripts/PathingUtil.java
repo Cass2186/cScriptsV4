@@ -11,21 +11,24 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Options;
+import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.api2007.util.DPathNavigator;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.util.TribotRandom;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import org.tribot.script.sdk.walking.WalkState;
@@ -138,7 +141,7 @@ public class PathingUtil {
                 return WalkState.FAILURE;
         }
 
-        if (MyPlayer.getRunEnergy() > 30 && !org.tribot.script.sdk.Options.isRunEnabled()){
+        if (MyPlayer.getRunEnergy() > 30 && !org.tribot.script.sdk.Options.isRunEnabled()) {
             org.tribot.script.sdk.Options.setRunEnabled(true);
         }
 
@@ -238,7 +241,7 @@ public class PathingUtil {
         val x = Utils.roundToNearest(norm.sample(), 1);
         val y = Utils.roundToNearest(norm.sample(), 1);
         Log.info("Generated a normally distributed WorldTile around center with X = "
-                + x+ " & Y = " + y);
+                + x + " & Y = " + y);
         return centre.translate(x, y);
     }
 
@@ -617,6 +620,38 @@ public class PathingUtil {
             return true;
 
         return false;
+    }
+
+    public static boolean walkToArea(Area area) {
+        checkRun();
+        int sleepMin = Game.isRunOn() ? 8000 : 15000;
+        int sleepMax = Game.isRunOn() ? 15000 : 23000;
+        setDaxPref();
+        if (!area.contains(MyPlayer.getTile())) {
+            for (int i = 0; i < 4; i++) {
+                WorldTile t =area.getCenter();
+
+
+                if (i > 1) //if we fail twice to walk to center, use a random tle
+                    t = area.getRandomTile();
+
+                Log.info("[PathingUtil]: Walking to Area (SDK)");
+                if (GlobalWalking.walkTo(t, PathingUtil::getWalkState) &&
+                        Waiting.waitUntil(1300, MyPlayer::isMoving)){
+                        Waiting.waitUntil(TribotRandom.uniform(sleepMin, sleepMax),
+                                450, () -> area.contains(MyPlayer.getTile()) ||
+                                        !MyPlayer.isMoving());
+
+
+                } else {
+                    Log.warn("[PathingUtil]: Failed to generate a path to Worldtile, waiting and trying again");
+                    General.sleep(2000, 3000);
+                }
+            }
+
+        }
+
+        return area.contains(MyPlayer.getTile());
     }
 
 

@@ -276,8 +276,8 @@ public class ObjectStep extends QuestStep {
                         new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getTile().getPlane());
 
                 Optional<LocalTile> bestInteractable = Query.tiles()
-                        .isReachable()
-                        .tileEquals(tile)
+                        //.isReachable()
+                        .inArea(Area.fromRadius(tile, 1))
                         .findBestInteractable();
                 Optional<LocalTile> walkable = bestInteractable.map(b -> PathingUtil.getWalkableTile(b))
                         .orElse(Optional.empty());
