@@ -119,6 +119,7 @@ import scripts.QuestPackages.ZogreFleshEaters.ZogreFleshEaters;
 import scripts.QuestPackages.kingsRansom.KingsRansom;
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
+import scripts.QuestPackages.recruitmentDrive.RecruitmentDrive;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.TaskSet;
 import scripts.QuestUtils.Vars;
@@ -738,6 +739,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("fremisles")) {
             General.println("[Args]: Added Fremennick Isles");
             taskList.add(FremennikIsles.get());
+        }
+        else if (arg.toLowerCase().contains("recruitment")) {
+            General.println("[Args]: Added Recruitment Drive");
+            taskList.add(RecruitmentDrive.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

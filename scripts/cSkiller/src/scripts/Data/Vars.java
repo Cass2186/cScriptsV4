@@ -128,7 +128,7 @@ public class Vars {
     //agility
     public boolean useWildernessAgility = true; //TODO currently only goes if you start at the course and <70
     public int useWildernessAgilityUntilLevel = 70;
-    public boolean useSummerPieBoost = false;
+    public boolean useSummerPieBoost = Skill.AGILITY.getActualLevel() >= 75;
     public int useSummerPieBoostWithinXLevels = 5;
     public int marksCollected = 0;
     public boolean donePriestInPeril = GameState.getSetting(302) >= 61;
