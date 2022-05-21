@@ -1,7 +1,5 @@
 package scripts.Tasks.Hunter.HunterData;
 
-import scripts.Tasks.Cooking.CookingVars;
-
 public class HunterVars {
 
     private static HunterVars vars;

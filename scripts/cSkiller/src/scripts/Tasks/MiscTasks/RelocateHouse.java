@@ -12,10 +12,8 @@ import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.PathingUtil;
-import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
-import scripts.Tasks.Construction.ConsData.Location;
+import scripts.Tasks.Construction.ConsData.HouseLocation;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public class RelocateHouse implements Task {
@@ -40,7 +38,7 @@ public class RelocateHouse implements Task {
         return Widgets.get(MENU_WIDGET_ID).isPresent();
     }
 
-    private boolean relocate(Location location) {
+    private boolean relocate(HouseLocation location) {
         if (location.isSetToThisLocation())
             return true;
 
@@ -64,12 +62,12 @@ public class RelocateHouse implements Task {
 
     @Override
     public boolean validate() {
-        return false;
+        return !HouseLocation.getCurrentHouseLocation().equals(HouseLocation.RIMMINGTON);
     }
 
     @Override
     public void execute() {
-        relocate(Location.RIMMINGTON);
+        relocate(HouseLocation.RIMMINGTON);
     }
 
     @Override

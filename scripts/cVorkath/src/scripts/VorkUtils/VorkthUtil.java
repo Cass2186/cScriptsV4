@@ -129,7 +129,7 @@ public class VorkthUtil {
                                    int timeout) {
         Point hover = hoverPoint.getHumanHoverPoint();
         int sd = timeout / 10;
-        return Waiting.waitUntil(General.randomSD(timeout, sd), 20, () -> {
+        return Waiting.waitUntil(General.randomSD(timeout, sd), 5, () -> {
             if (Mouse.getPos() != hover)
                 Mouse.move(hover);
             return waitUntilCondition.getAsBoolean();

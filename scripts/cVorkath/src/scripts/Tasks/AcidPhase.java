@@ -23,6 +23,7 @@ import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Utils;
 import scripts.VorkUtils.Vars;
 import scripts.VorkUtils.VorkthUtil;
+import scripts.VorkUtils.WalkQueue;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,8 +56,7 @@ public class AcidPhase implements Task {
     }
 
     public static Optional<Tile> getNextTile() {
-        Optional<org.tribot.script.sdk.types.Player> me = MyPlayer.get();
-        return me.map(m -> m.getNextTile()).orElse(Optional.of(MyPlayer.getTile().toLocalTile()));
+        return Optional.of( WalkQueue.getTruePositionWorldTile());
     }
 
     public void handleAcidPhase() {
@@ -80,7 +80,7 @@ public class AcidPhase implements Task {
 
                 if (i == 0 && VorkthUtil.walkToTile(topCentre, false)) {
                     Log.warn("Using next time");
-                    Waiting.waitUntil(2050, 20,
+                    Waiting.waitUntil(2050, 5,
                             () -> getNextTile().map(t -> t.equals(
                                             Utils.getWorldTileFromRSTile(topCentre)))
                                     .orElse(false));

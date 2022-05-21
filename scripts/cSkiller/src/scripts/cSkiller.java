@@ -5,20 +5,15 @@ import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
-import org.tribot.api2007.Objects;
-import org.tribot.api2007.types.*;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.*;
-import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Options;
-import org.tribot.script.sdk.painting.template.basic.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.Npc;
@@ -26,13 +21,9 @@ import org.tribot.util.Util;
 import scripts.API.SkillSwitchThread;
 import scripts.API.Task;
 import scripts.API.TaskSet;
-import scripts.Data.Const;
 import scripts.Data.Paint;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.EntitySelector.Entities;
-import scripts.EntitySelector.finders.prefabs.NpcEntity;
-import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.Agility.Tasks.Wilderness.WildernessAgility;
 import scripts.Tasks.Combat.CrabTasks.EatDrink;
@@ -47,7 +38,6 @@ import scripts.Tasks.KourendFavour.Hosidius.CashInCompost;
 import scripts.Tasks.KourendFavour.Hosidius.MixCompost;
 import scripts.Tasks.KourendFavour.Piscarlilius.FixCrane;
 import scripts.Tasks.MiscTasks.*;
-import scripts.Tasks.PestControl.PestTasks.AttackPortal;
 import scripts.Tasks.PestControl.PestTasks.DefendKnight;
 import scripts.Tasks.PestControl.PestTasks.EnterBoat;
 import scripts.Tasks.Prayer.Wilderness.GoToWildernessAltar;
@@ -55,10 +45,8 @@ import scripts.Tasks.Prayer.Wilderness.HopWorlds;
 import scripts.Tasks.Prayer.Wilderness.PlaceBonesOnWilderness;
 import scripts.Tasks.Prayer.Wilderness.WildyPrayerBank;
 import scripts.Tasks.Smithing.BlastFurnace.BfTasks.*;
-import scripts.Tasks.SorceressGarden.ElementalCollisionDetector;
 import scripts.dax.tracker.DaxTracker;
 import scripts.skillergui.GUI;
-import scripts.skillergui.SkillerGUI;
 import scripts.Tasks.Agility.Tasks.Canifis.CanifisCourse;
 import scripts.Tasks.Agility.Tasks.Canifis.GoToCanifis;
 import scripts.Tasks.Agility.Tasks.DraynorVillage.DraynorCourse;
@@ -79,8 +67,8 @@ import scripts.Tasks.Construction.BuyHouse;
 import scripts.Tasks.Construction.ConstructionBank;
 import scripts.Tasks.Construction.MakeFurniture;
 import scripts.Tasks.Construction.UnnotePlanks;
-import scripts.Tasks.Cooking.BankCook;
-import scripts.Tasks.Cooking.CookFood;
+import scripts.Tasks.Cooking.CookTasks.BankCook;
+import scripts.Tasks.Cooking.CookTasks.CookFood;
 import scripts.Tasks.Crafting.CraftBank;
 import scripts.Tasks.Crafting.MakeGlass;
 import scripts.Tasks.Firemaking.BankFireMaking;
@@ -94,14 +82,11 @@ import scripts.Tasks.Herblore.MixItemsHerblore;
 import scripts.Tasks.Hunter.CollectFailed;
 import scripts.Tasks.Hunter.CollectSuccessful;
 import scripts.Tasks.Hunter.Falconry;
-import scripts.Tasks.Hunter.HunterData.HunterConst;
 import scripts.Tasks.Hunter.SetTrap;
 import scripts.Tasks.Magic.Alch;
 import scripts.Tasks.Magic.EnchantJewelery;
 import scripts.Tasks.Magic.MagicBank;
 import scripts.Tasks.Mining.Tasks.*;
-import scripts.Tasks.Mining.Utils.MLMUtils;
-import scripts.Tasks.PestControl.PestUtils.PestUtils;
 import scripts.Tasks.Prayer.EnterHome;
 import scripts.Tasks.Prayer.PlaceBones;
 import scripts.Tasks.Prayer.PrayerBank;
@@ -112,8 +97,6 @@ import scripts.Tasks.Runecrafting.MindTiara;
 import scripts.Tasks.Runecrafting.RunecraftBank;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Tasks.Slayer.Tasks.*;
-import scripts.Tasks.Smithing.MakeCannonballs;
-import scripts.Tasks.Smithing.SmithBars;
 import scripts.Tasks.SorceressGarden.SpringRun;
 import scripts.Tasks.Thieving.NpcThieving;
 import scripts.Tasks.Thieving.StallThieving;
@@ -127,7 +110,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 
 @ScriptManifest(name = "cSkiller", authors = {"Cass2186"}, category = "Testing", description = "Current Version v0.1", version = 0.1)
@@ -349,7 +331,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new StartQuest(),
                 new PrayerBank(),
                 new SpringRun(),
-                new RelocateHouse(),
+                //new RelocateHouse(),
                 new MixCompost(),
                 new CashInCompost(),
                 new BankForCompost(),
@@ -372,7 +354,6 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         isRunning.set(true);
 
         while (isRunning.get()) {
-
             Waiting.waitUniform(40, 80);
 
             if (shouldEnd)
@@ -490,8 +471,8 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         for (Skills.SKILLS s : Skills.SKILLS.values()) {
             int startXp = Vars.get().skillStartXpMap.get(s);
             if (s.getXP() > startXp) {
-                Log.log("[Ending]: Gained " + (s.getXP() - startXp) + " " + s + " exp");
-                Log.log("[Ending]: updating xp map & dax");
+                Log.info("[Ending]: Gained " + (s.getXP() - startXp) + " " + s + " exp");
+                Log.info("[Ending]: updating xp map & dax");
                 Vars.get().daxTracker.trackData(s.toString(), (s.getXP() - startXp));
             }
         }
