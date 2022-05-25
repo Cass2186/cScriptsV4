@@ -349,6 +349,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         Paint.addSorceressPaint();
 
         Utils.setNPCAttackPreference();
+        SettingsUtil.turnEscToCloseOn();
 
         HashMap<Skills.SKILLS, Integer> startHashMap = Utils.getXpForAllSkills();
         isRunning.set(true);

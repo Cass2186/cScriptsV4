@@ -60,8 +60,10 @@ public class AgilUtils {
                 DaxCamera.focus(mark[0]);
 
             Log.info("Getting Mark of Grace");
-            if (clickGroundItem(Const.MARK_OF_GRACE_ID))
+            if (clickGroundItem(Const.MARK_OF_GRACE_ID)) {
+                Utils.idlePredictableAction();
                 Vars.get().marksCollected++;
+            }
         }
     }
 
@@ -82,7 +84,8 @@ public class AgilUtils {
             }
 
             if (AccurateMouse.click(gItem[0], "Take")) {
-                return Timing.waitCondition(() -> Inventory.find(ItemID).length > invItems.length, General.random(5000, 7000));
+                return Timing.waitCondition(() -> Inventory.find(ItemID).length > invItems.length,
+                        General.random(5000, 7000));
             }
         }
         return false;

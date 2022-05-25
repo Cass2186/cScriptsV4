@@ -98,12 +98,10 @@ public class Paint {
                         .condition(() ->
                                 Vars.get().currentTask != null &&
                                         Vars.get().currentTask.equals(SkillTasks.SLAYER))
-                        .value(()-> WorldHop.getPlayerCountInArea())
+                        .value(WorldHop::getPlayerCountInArea)
                         .build())
                 .row(template.toBuilder().label("Toggle Timers").onClick(() ->
                         Vars.get().showTimers = !Vars.get().showTimers).build())
-                .row(template.toBuilder().label("BF Bar Dispenser").value(() ->
-                        Utils.getVarBitValue(Varbits.BLAST_FURNACE_GOLD_BAR.getId())).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(g -> paint.render(g));

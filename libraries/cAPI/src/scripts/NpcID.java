@@ -181,7 +181,7 @@ public class NpcID {
     public static final int ICE_TROLL_MALE = 1875;
     public static final int ICE_TROLL_FEMALE = 1876;
     public static final int ICE_TROLL_GRUNT = 1877;
-    public static final int MAWNIS_BUROWGAR = 1878;
+    public static final int MAWNIS_BUROWGAR = 2979; // modified
     public static final int MAWNIS_BUROWGAR_1879 = 1879;
     public static final int FRIDLEIF_SHIELDSON = 1880;
     public static final int THAKKRAD_SIGMUNDSON = 1881;
@@ -749,7 +749,7 @@ public class NpcID {
     public static final int GHOST_3977 = 3977;
     public static final int LEGENDS_GUARD = 3951;
     public static final int LEGENDS_GUARD_3952 = 3952;
-    public static final int RADIMUS_ERKLE = 3953;
+    public static final int RADIMUS_ERKLE = 10712; //modified
     public static final int JUNGLE_FORESTER = 3954;
     public static final int JUNGLE_FORESTER_3955 = 3955;
     public static final int GUJUO = 3956;

@@ -10,6 +10,7 @@ import org.tribot.api2007.types.RSInterfaceChild;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 import scripts.InterfaceUtil;
@@ -96,7 +97,8 @@ public class MakeCharacter implements Task {
     }
 
     public boolean openSettingsTab() {
-        if (InterfaceUtil.clickInterfaceAction(164, "Settings"))
+        final int NTERFACE = General.isClientResizable() ? 164 : 548;
+        if (InterfaceUtil.clickInterfaceAction(NTERFACE, "Settings"))
             return Timer.abc2WaitCondition(() -> GameTab.getOpen() == GameTab.TABS.OPTIONS, 3500, 5000);
         return false;
     }

@@ -9,6 +9,8 @@ import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.Data.Const;
 import scripts.Tasks.Priority;
@@ -37,6 +39,8 @@ public class BankTask implements Task {
         RSInterface closeButton = Interfaces.findWhereAction("Close", 310);
         if (closeButton != null && closeButton.click()) {
             Timer.waitCondition(() -> Interfaces.get(310) == null, 2500, 4000);
+        } else {
+            Query.widgets().actionContains("Close").findFirst().map(Widget::click);
         }
         //if (Interfaces.get(310, 2, 11) != null) {
 

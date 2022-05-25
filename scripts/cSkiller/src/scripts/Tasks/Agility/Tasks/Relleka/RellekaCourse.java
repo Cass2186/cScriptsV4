@@ -60,21 +60,27 @@ public class RellekaCourse implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
-                AgilUtils.isWithinLevelRange(80,99);
+                AgilUtils.isWithinLevelRange(80, 99);
     }
 
     @Override
     public void execute() {
-        AgilUtils.eatSummerPie(80,0);
+        AgilUtils.eatSummerPie(80, 0);
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
-        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
-                obstacle.getObstacleName());
         obs.ifPresent(Obstacle::navigateObstacle);
     }
 
     @Override
+    public String toString() {
+        Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
+        obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
+                obstacle.getObstacleName());
+        return message;
+    }
+
+    @Override
     public String taskName() {
-        return "Agility - Relleka";
+        return "Agility";
     }
 
 }

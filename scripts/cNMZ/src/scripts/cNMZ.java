@@ -39,10 +39,14 @@ public class cNMZ extends CassScript implements TribotScript {
         AntiBan.create();
         super.initializeDax();
 
+        DrinkPotion.determinePotion();
+        //set up args if needed
+        handleInventoryArgs(args);
+
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
-        DrinkPotion.determinePotion();
+
         Paint.initializeDetailedPaint();
         Paint.addPaint();
 
@@ -54,8 +58,10 @@ public class cNMZ extends CassScript implements TribotScript {
                 new Afk(),
                 new AttackNpc(),
                 new DrinkPotion(),
-                new EnterDream()
+                new EnterDream(),
+                new InventorySetup()
         );
+
         Vars.get().endDreamNumber = getGameNumberFromArgs(args);
         isRunning.set(true);
         int dreams = 0;
@@ -88,13 +94,36 @@ public class cNMZ extends CassScript implements TribotScript {
 
     }
 
+
+    private void handleInventoryArgs(String args) {
+        //set up args if needed
+        if (args.toLowerCase().contains("overload")) {
+            Log.info("Using overload");
+            Vars.get().invRequirement = Optional.of(InventorySetup.getOverloadInvReq());
+        } else {
+            Vars.get().invRequirement = Optional.of(InventorySetup.getSuperCombatInv());
+        }
+    }
+
+
     private int getGameNumberFromArgs(String args) {
+        String[] split = args.split(";");
         int i = 0;
-        try {
-            i = Integer.parseInt(args);
-        } catch (IllegalArgumentException e) {
-            Log.error("Illegal args, use a number without spaces from 1-10");
-            Log.error(e.getMessage());
+        if (split.length > 0) {
+            try {
+                i = Integer.parseInt(split[0]);
+            } catch (IllegalArgumentException e) {
+                Log.error("Illegal args, use a number without spaces from 1-10");
+                Log.error(e.getMessage());
+            }
+
+        } else {
+            try {
+                i = Integer.parseInt(args);
+            } catch (IllegalArgumentException e) {
+                Log.error("Illegal args, use a number without spaces from 1-10");
+                Log.error(e.getMessage());
+            }
         }
         return i;
     }

@@ -1,9 +1,15 @@
 package scripts.QuestPackages.FremennikIsles;
 
+import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.EquipmentItem;
+import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ShiloVillage.ShilloVillage;
@@ -17,6 +23,7 @@ import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
 
+import java.security.Key;
 import java.util.*;
 
 public class FremennikIsles implements QuestTask {
@@ -39,14 +46,14 @@ public class FremennikIsles implements QuestTask {
     QuestStep talkToMord, travelToJatizso, talkToGjuki, continueTalkingToGjuki, bringOreToGjuki,
             talkToGjukiAfterOre, getJesterOutfit, talkToSlug, travelToNeitiznot, returnToRellekkaFromJatizso,
             goSpyOnMawnis, performForMawnis, tellSlugReport1, talkToMawnis, talkToMawnisWithLogs, talkToMawnisAfterItems,
-            repairBridge1, repairBridge2, repairBridge1Second, talkToMawnisAfterRepair, talkToGjukiToReport,
-            travelToJatizsoToReport, leaveNeitiznotToReport, collectFromHring, collectFromSkuli, collectFromVanligga, collectFromKeepa,
+            repairBridge1, repairBridge2, repairBridge1Second, talkToMawnisAfterRepair, talkToGjukiToReport, leaveNeitiznotToReport, collectFromHring, collectFromSkuli, collectFromVanligga, collectFromKeepa,
             talkToGjukiAfterCollection1, collectFromHringAgain, collectFromRaum, collectFromSkuliAgain, collectFromKeepaAgain, collectFromFlosi,
             talkToGjukiAfterCollection2, travelToNeitiznotToSpyAgain, talkToSlugToSpyAgain, returnToRellekkaFromJatizsoToSpyAgain, performForMawnisAgain,
             goSpyOnMawnisAgain, reportBackToSlugAgain, returnToRellekkaFromNeitiznotAfterSpy2, travelToJatizsoAfterSpy2, talkToGjukiAfterSpy2,
             returnToRellekkaFromJatizsoWithDecree, travelToNeitiznotWithDecree, talkToMawnisWithDecree, getYakArmour, returnToRellekkaFromJatizsoAfterDecree,
             travelToNeitiznotAfterDecree, talkToMawnisAfterDecree, makeShield, enterCave, killTrolls, enterKingRoom, killKing, decapitateKing, finishQuest, finishQuestGivenHead;
 
+    NPCStep travelToJatizsoToReport;
     //RSAreas
     RSArea islands, jatizso1, jatizso2, neitiznot1, neitiznot2, trollLands, trollCave, kingCave;
 
@@ -143,7 +150,8 @@ public class FremennikIsles implements QuestTask {
         ConditionalStep spyOnMawnisP2 = new ConditionalStep(travelToJatizso);
         spyOnMawnisP2.addStep(jestering1, performForMawnis);
         spyOnMawnisP2.addStep(new Conditions(hasJesterOutfit, inNeitiznot), goSpyOnMawnis);
-        spyOnMawnisP2.addStep(new Conditions(new Conditions(LogicType.OR, inJatizso, inTrollLands), hasJesterOutfit), returnToRellekkaFromJatizso);
+        spyOnMawnisP2.addStep(new Conditions(new Conditions(LogicType.OR, inJatizso, inTrollLands),
+                hasJesterOutfit), returnToRellekkaFromJatizso);
         spyOnMawnisP2.addStep(hasJesterOutfit, travelToNeitiznot);
         spyOnMawnisP2.addStep(inJatizso, getJesterOutfit);
 
@@ -379,14 +387,17 @@ public class FremennikIsles implements QuestTask {
         killedTrolls = new VarbitRequirement(3312, 0);
     }
 
+
     public void setupSteps() {
         talkToMord = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0),
-                "Talk to Mord Gunnars on a pier in north Rellekka.");
-        travelToJatizso = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0), "Travel to Jatizso with Mord.");
+                new String[]{"Yes,"});
+        travelToJatizso = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0),
+                "Travel to Jatizso with Mord.");
         travelToJatizso.addDialogStep("Can you ferry me to Jatizso?");
 
-        travelToNeitiznot = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0), "Travel to Neitiznot with Maria Gunnars.");
-
+        travelToNeitiznot = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0),
+                "Travel to Neitiznot with Maria Gunnars.");
+        travelToNeitiznot.addDialogStep("Can you ferry me to neitiznot?");
         talkToGjuki = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0),
                 tuna);
         continueTalkingToGjuki = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0), "Talk to King Gjuki Sorvott IV on Jatizso.");
@@ -402,7 +413,6 @@ public class FremennikIsles implements QuestTask {
         talkToSlug = new NPCStep(NpcID.SLUG_HEMLIGSSEN, new RSTile(2335, 3811, 0),
                 //    "Talk to Slug Hemligssen wearing nothing but your Silly Jester outfit.",
                 jesterHat, jesterTop, jesterTights, jesterBoots);
-        talkToSlug.addSubSteps(returnToRellekkaFromJatizso, travelToNeitiznot);
         talkToSlug.addDialogStep("Free stuff please.");
         talkToSlug.addDialogStep("I am ready.");
 
@@ -424,7 +434,8 @@ public class FremennikIsles implements QuestTask {
         tellSlugReport1.addDialogStep("Seventeen militia have been trained.");
         tellSlugReport1.addDialogStep("There are two bridges to repair.");
 
-        talkToMawnis = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Take off the jester outfit, and talk to Mawnis.");
+        talkToMawnis = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
+                "Take off the jester outfit, and talk to Mawnis.");
 
         talkToMawnisWithLogs = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
                 // "Bring Mawnis the 8 split logs, 8 rope, and a knife.",
@@ -434,23 +445,24 @@ public class FremennikIsles implements QuestTask {
         talkToMawnisWithLogs.addSubSteps(talkToMawnisAfterItems);
 
         repairBridge1 = new ObjectStep(ObjectID.ROPE_BRIDGE_21310, new RSTile(2314, 3840, 0), "Right-click " +
-                "repair the bridges to the north of Neitiznot. Protect from Missiles before doing this as you'll " +
-                "automatically cross the aggressive trolls.", splitLogs8, rope8, knife);
+                "Repair", MyPlayer.getTile().getY() > 3847, splitLogs8, rope8, knife);
         repairBridge1Second = new ObjectStep(ObjectID.ROPE_BRIDGE_21310, new RSTile(2314, 3840, 0),
-                "Right-click repair the bridges to the north of Neitiznot. Protect from Missiles before doing this as " +
-                        "you'll automatically cross the aggressive trolls. Protect from Missiles before doing this as you'll " +
-                        "automatically cross the aggressive trolls.", splitLogs4, rope4, knife);
+                "Repair", MyPlayer.getTile().getY() > 3847, splitLogs4, rope4, knife);
         repairBridge2 = new ObjectStep(ObjectID.ROPE_BRIDGE_21312, new RSTile(2355, 3840, 0),
-                "Right-click repair the bridges to the north of Neitiznot.", splitLogs4, rope4, knife);
+                "Repair", splitLogs4, rope4, knife);
         repairBridge1.addSubSteps(repairBridge1Second, repairBridge2);
 
         talkToMawnisAfterRepair = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Report back to Mawnis.");
 
         talkToGjukiToReport = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0), "Report back to King Gjuki Sorvott IV on Jatizso.");
-        travelToJatizsoToReport = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0), "Travel to Jatizso with Mord.");
-        leaveNeitiznotToReport = new NPCStep(NpcID.MARIA_GUNNARS, new RSTile(2311, 3781, 0), "Travel back to Rellekka with Maria.");
+        travelToJatizsoToReport = new NPCStep(NpcID.MORD_GUNNARS,
+                new RSTile(2644, 3709, 0), "Travel to Jatizso with Mord.");
+        travelToJatizsoToReport.setInteractionString("Jatizso");
+        leaveNeitiznotToReport = new NPCStep(NpcID.MARIA_GUNNARS,
+                new RSTile(2311, 3781, 0), "Travel back to Rellekka with Maria.");
+        leaveNeitiznotToReport.addDialogStep("Can you ferry me to Rellekka?");
 
-        talkToGjukiToReport.addSubSteps(travelToJatizsoToReport, leaveNeitiznotToReport);
+        //talkToGjukiToReport.addSubSteps(travelToJatizsoToReport, leaveNeitiznotToReport);
 
         collectFromHring = new NPCStep(NpcID.HRING_HRING, new RSTile(2397, 3797, 0), "Collect 8000 coins from Hring Hring in south west Jatizso.");
         collectFromHring.addDialogStep("But rules are rules. Pay up!");
@@ -474,12 +486,14 @@ public class FremennikIsles implements QuestTask {
         talkToGjukiAfterCollection2 = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0), "Report back to King Gjuki Sorvott IV on Jatizso.");
 
         travelToNeitiznotToSpyAgain = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0), "Travel to Neitiznot with Maria Gunnars.");
+        travelToNeitiznotToSpyAgain.addDialogStep("Can you ferry me to Neitiznot?");
         returnToRellekkaFromJatizsoToSpyAgain = new NPCStep(NpcID.MORD_GUNNARS_1940, new RSTile(2420, 3781, 0), "Return to Rellekka with Mord.");
         returnToRellekkaFromJatizsoToSpyAgain.addDialogStep("Can you ferry me to Rellekka?");
         talkToSlugToSpyAgain = new NPCStep(NpcID.SLUG_HEMLIGSSEN, new RSTile(2335, 3811, 0),
                 //   "Talk to Slug Hemligssen wearing nothing but your Silly Jester outfit.",
                 jesterHat, jesterTop, jesterTights, jesterBoots);
-        talkToSlugToSpyAgain.addSubSteps(travelToNeitiznotToSpyAgain, returnToRellekkaFromJatizsoToSpyAgain);
+
+        //  talkToSlugToSpyAgain.addSubSteps(travelToNeitiznotToSpyAgain, returnToRellekkaFromJatizsoToSpyAgain);
 
         performForMawnisAgain = new DetailedQuestStep("Perform the actions that Mawnis requests of you.");
 
@@ -491,19 +505,26 @@ public class FremennikIsles implements QuestTask {
         reportBackToSlugAgain = new NPCStep(NpcID.SLUG_HEMLIGSSEN, new RSTile(2335, 3811, 0), "Report to Slug Hemligssen.");
         reportBackToSlugAgain.addDialogStep("Yes, I am.", "They are in a secluded bay, near Etceteria.", "They will be given some potions.", "I have been helping Neitiznot.");
         returnToRellekkaFromNeitiznotAfterSpy2 = new NPCStep(NpcID.MARIA_GUNNARS, new RSTile(2311, 3781, 0), "Travel back to Rellekka with Maria.");
+        returnToRellekkaFromNeitiznotAfterSpy2.addDialogStep("Can you ferry me to Rellekka?");
+
         travelToJatizsoAfterSpy2 = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0), "Travel to Jatizso with Mord.");
+        travelToJatizsoAfterSpy2.addDialogStep("Can you ferry me to Jatizso?");
         talkToGjukiAfterSpy2 = new NPCStep(NpcID.KING_GJUKI_SORVOTT_IV, new RSTile(2407, 3804, 0), "Report back to King Gjuki Sorvott IV on Jatizso.");
-        talkToGjukiAfterSpy2.addSubSteps(returnToRellekkaFromNeitiznotAfterSpy2, travelToJatizsoAfterSpy2);
+        // talkToGjukiAfterSpy2.addSubSteps(returnToRellekkaFromNeitiznotAfterSpy2, travelToJatizsoAfterSpy2);
 
         returnToRellekkaFromJatizsoWithDecree = new NPCStep(NpcID.MORD_GUNNARS_1940, new RSTile(2420, 3781, 0),
                 royalDecree);
         returnToRellekkaFromJatizsoWithDecree.addDialogStep("Can you ferry me to Rellekka?");
 
-        returnToRellekkaFromJatizsoAfterDecree = new NPCStep(NpcID.MORD_GUNNARS_1940, new RSTile(2420, 3781, 0), "Return to Rellekka with Mord.");
+        returnToRellekkaFromJatizsoAfterDecree = new NPCStep(NpcID.MORD_GUNNARS_1940,
+                new RSTile(2420, 3781, 0), "Return to Rellekka with Mord.");
         returnToRellekkaFromJatizsoAfterDecree.addDialogStep("Can you ferry me to Rellekka?");
 
-        travelToNeitiznotWithDecree = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0),
+        travelToNeitiznotWithDecree = new NPCStep(NpcID.MARIA_GUNNARS_1883,
+                new RSTile(2644, 3710, 0),
                 royalDecree);
+        travelToNeitiznotWithDecree.addDialogStep("Can you ferry me to neitiznot?");
+
         travelToNeitiznotAfterDecree = new NPCStep(NpcID.MARIA_GUNNARS_1883, new RSTile(2644, 3710, 0), "Travel to Neitiznot with Maria Gunnars.");
 
         talkToMawnisWithDecree = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
@@ -520,7 +541,7 @@ public class FremennikIsles implements QuestTask {
                 roundShield);
 
         enterCave = new ObjectStep(ObjectID.CAVE_21584, new RSTile(2402, 3890, 0),
-                "Enter the cave in the north east of the islands. Be prepared in your yak armour, Neitiznot shield, and a melee weapon.", yakTopWorn, yakBottomWorn, shieldWorn, meleeWeapon, food);
+                "Open", yakTopWorn, yakBottomWorn, shieldWorn, meleeWeapon, food);
 
         //   killTrolls = new KillTrolls(this);
         enterKingRoom = new ObjectStep(ObjectID.ROPE_BRIDGE_21316, new RSTile(2385, 10263, 1), "Cross the rope bridge. Be prepared to fight the Ice Troll King. Use the Protect from Magic prayer for the fight.");
@@ -532,6 +553,98 @@ public class FremennikIsles implements QuestTask {
         finishQuest.addSubSteps(finishQuestGivenHead);
     }
 
+    private void handleJestering() {
+        int MAWNIS_ID_INSTANCE = 2980;
+        Optional<String> command = Optional.empty();
+        for (int i = 0; i < 100; i++) {
+            Waiting.waitUniform(40,60);
+            Optional<Npc> mawnis = Query.npcs().idEquals(MAWNIS_ID_INSTANCE).findBestInteractable();
+            if (GameState.isInInstance() && mawnis.isPresent()) {
+                if (Waiting.waitUntil(15000, 50, () -> mawnis
+                        .map(m -> !m.getOverheadMessage().isBlank())
+                        .orElse(false))) {
+                    command = mawnis.map(m -> m.getOverheadMessage());
+                    Log.info("Command is " + command);
+                }
+            }
+            if (command.map(c -> c.toLowerCase().contains("puppet")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Talk to puppet").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("dance")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Dance").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("juggle")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Juggle").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("skip")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Skip").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("pie")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Pie").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("jig")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Jig").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("Bow")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Bow").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                }
+            }
+            if (!GameState.isInInstance())
+                break;
+
+        }
+    }
+
+    private boolean clickJesterWidget(Optional<String> command) {
+        if (command.map(c -> c.toLowerCase().contains("jig")).orElse(false)) {
+            return Query.widgets().textContains("Jig").findFirst().map(w -> w.click()).orElse(false);
+        }
+        return false;
+    }
+
+    private boolean equipJester() {
+        List<InventoryItem> jester = Query.inventory().nameContains("Jester").toList();
+        for (InventoryItem eq : jester) {
+            if (eq.click()) {
+                Utils.idlePredictableAction();
+            }
+        }
+        return !Query.equipment().nameContains("Jester").isAny();
+    }
+
+    //TODO implement this
+    public void handleTaxStep(NPCStep step, String taxAmount) {
+        step.execute();
+        if (EnterInputScreen.isOpen() &&
+                EnterInputScreen.enter(taxAmount)) {
+            Waiting.waitUntil(4500, 500, () -> ChatScreen.isOpen());
+        }
+        NpcChat.handle("But rules are rules. Pay up!");
+    }
+
+    private boolean unequipJester() {
+        List<EquipmentItem> jester = Query.equipment().nameContains("Jester").toList();
+        for (EquipmentItem eq : jester) {
+            if (eq.remove()) {
+                Utils.idlePredictableAction();
+            }
+        }
+        return !Query.equipment().nameContains("Jester").isAny();
+    }
 
     public List<ItemRequirement> getItemRequirements() {
         return items;
@@ -576,6 +689,15 @@ public class FremennikIsles implements QuestTask {
             return;
         }
 
+        if (Utils.getVarBitValue(varbit) == 90) {
+            unequipJester();
+        }
+        if (Utils.getVarBitValue(varbit) == 230) {
+            equipJester();
+        } else if (Utils.getVarBitValue(varbit) == 240) {
+            unequipJester();
+        }
+
         //load questSteps into a map
         Map<Integer, QuestStep> steps = loadSteps();
         //get the step based on the game setting key in the map
@@ -588,12 +710,13 @@ public class FremennikIsles implements QuestTask {
         step.ifPresent(QuestStep::execute);
 
         // handle any chats that are failed to be handled by the QuestStep (failsafe)
-        if (ChatScreen.isOpen()) {
-            Log.debug("Handling chat screen -test");
-            ChatScreen.handle();
-            // NPCInteraction.handleConversation();
-        }
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
 
+        if (GameState.isInInstance() && Utils.getVarBitValue(varbit) < 310) {
+            Log.info("In instance, waiting 10-12s");
+            Waiting.waitUntil(12000, 500, () -> !GameState.isInInstance());
+        }
         //slow down looping if it gets stuck
         Waiting.waitNormal(200, 20);
 
@@ -602,7 +725,8 @@ public class FremennikIsles implements QuestTask {
     @Override
     public String questName() {
         return "Fremennick Isles (" + Utils.getVarBitValue(QuestVarbits.QUEST_THE_FREMENNIK_ISLES.getId())
-                + ")";
+                + " | " + Quest.THE_FREMENNIK_ISLES.getStep() +
+                ")";
     }
 
     @Override

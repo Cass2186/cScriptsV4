@@ -434,10 +434,9 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
 
         ScriptSettings settingsHandler = ScriptSettings.getDefault();
-        settingsHandler.load("last", Vars.class)
-                .ifPresent(s -> {
-                    Log.info("Loaded settings object: " + s);
-                });
+        settingsHandler.load("last", GuiVars.class)
+                .ifPresent(s ->
+                    Log.info("Loaded settings object: " + s));
         skillsImage.setImage(new Image("https://i.imgur.com/9WGq5Sy.png"));
         addCurrentLevels();
         switchSkillMinTime.setText(String.valueOf(Vars.get().skillSwitchMin / 60000));
@@ -508,7 +507,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
 
         Log.info("Settings dir: " + settingsHandler.getDirectory());
-        if (settingsHandler.save("lastTest", settings)) {
+        if (settingsHandler.save("last", settings)) {
             Log.info("Saved settings as last");
         } else {
             Log.error("FAILED to Save settings as last");

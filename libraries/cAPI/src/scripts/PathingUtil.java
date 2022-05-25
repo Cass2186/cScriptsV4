@@ -68,7 +68,7 @@ public class PathingUtil {
                         "Yes, I can think of nothing more exciting!",
                         "Yes, I want to climb over the rocks.")));
 
-                if (NPCInteraction.isConversationWindowUp()) {
+                if (ChatScreen.isOpen()) {
                     General.println("[DaxPref]: Chat is up");
                     NPCInteraction.handleConversation("Yes, I can think of nothing more exciting!",
                             "Yes, I want to climb over the rocks.");
@@ -211,7 +211,7 @@ public class PathingUtil {
     public static void setDaxTalkConditions(ArrayList<String> s) {
         DaxWalker.setGlobalWalkingCondition(() -> {
             String[] array = new String[s.size()];
-            if (NPCInteraction.isConversationWindowUp()) {
+            if (ChatScreen.isOpen()) {
                 NPCInteraction.handleConversation(s.toArray(array));
             }
             if (Combat.getHPRatio() <= eatAtPercent) {
@@ -371,7 +371,8 @@ public class PathingUtil {
         }
     }
 
-    public static boolean localNavigation(RSTile destination, RSObject[] overrideObjects, ArrayList<String> chatList) {
+    public static boolean localNavigation(RSTile destination, RSObject[] overrideObjects,
+                                          ArrayList<String> chatList) {
         nav.setAcceptAdjacent(true);
         nav.overrideDoorCache(true, overrideObjects);
         setDaxTalkConditions(chatList);
@@ -385,8 +386,8 @@ public class PathingUtil {
                 @Override
                 public State action() {
                     String[] array = new String[chatList.size()];
-                    if (NPCInteraction.isConversationWindowUp()) {
-                        NPCInteraction.handleConversation(chatList.toArray(array));
+                    if (ChatScreen.isOpen()) {
+                        ChatScreen.handle(chatList.toArray(array));
                     }
                     if (Combat.getHPRatio() <= eatAtPercent) {
                         General.println("[DaxPref]: Need to eat food");
@@ -415,15 +416,22 @@ public class PathingUtil {
         } else {
             General.println("[PathingUtil]: DPathNavigator generated a path, feeding to dax with cusxtom strings");
             setDaxPref();
-
-            WalkerEngine.getInstance().walkPath(Arrays.asList(path), () -> {
-                String[] array = new String[chatList.size()];
-                if (NPCInteraction.isConversationWindowUp()) {
-                    General.println("[Local] Chat is up");
-                    NPCInteraction.handleConversation(chatList.toArray(array));
+            WalkingCondition cond = new WalkingCondition() {
+                @Override
+                public State action() {
+                    String[] array = new String[chatList.size()];
+                    if (ChatScreen.isOpen()) {
+                        Log.info("handling chat with custom strings");
+                        ChatScreen.handle(chatList.toArray(array));
+                    }
+                    if (Combat.getHPRatio() <= eatAtPercent) {
+                        General.println("[DaxPref]: Need to eat food");
+                        EatUtil.eatFood();
+                    }
+                    return State.EXIT_OUT_WALKER_FAIL;
                 }
-                return WalkingCondition.State.EXIT_OUT_WALKER_FAIL;
-            });
+            };
+            WalkerEngine.getInstance().walkPath(Arrays.asList(path), cond);
             return true;
             //movementIdle();
 

@@ -104,14 +104,14 @@ public class GoToWildernessAltar implements Task {
             Log.info("Walking path to altar");
             LocalWalking.Map.builder().travelThroughDoors(true).build();
             if (LocalWalking.walkPath(PATH_TO_ALTAR))
-                Waiting.waitUntil(4500, 75, () -> !MyPlayer.isMoving());
+                Waiting.waitUntil(5500, 75, () -> altarBuilding.containsMyPlayer());
         } else if (GlobalWalking.walkTo(ALTAR_WALK_TARGET, () -> {
                     if (PkObserver.shouldHop())
                         return WalkState.FAILURE;
                     return WalkState.CONTINUE;
                 }
         ))
-            Waiting.waitUntil(4500, 75, () -> !MyPlayer.isMoving());
+            Waiting.waitUntil(5500, 75, () -> altarBuilding.containsMyPlayer());
     }
 
     @Override

@@ -15,6 +15,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Requirements.InventoryRequirement;
 import scripts.Requirements.ItemReq;
+import scripts.Tasks.Fishing.FishingData.FishingConst;
 import scripts.Tasks.MiscTasks.BuyItems;
 
 import java.util.ArrayList;
@@ -24,9 +25,7 @@ import java.util.List;
 public class Fish implements Task {
 
     String message = "";
-    int FISHING_NPC_ID = 1526;
-    int BARBARIAN_ROD = 11323;
-    RSTile BARB_FISHING_TILE = new RSTile(2499, 3506, 0);
+
 
     InventoryRequirement inventorySetUp;
 
@@ -35,7 +34,7 @@ public class Fish implements Task {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
                             new ItemReq(ItemID.FEATHER, (Utils.random(3, 7) * 1000), 50),
-                            new ItemReq(BARBARIAN_ROD, 1)
+                            new ItemReq(FishingConst.BARBARIAN_ROD, 1)
                     )));
         } else {
             inventorySetUp = new InventoryRequirement(new ArrayList<>(
@@ -82,12 +81,12 @@ public class Fish implements Task {
             }
         }
         if (isBarbFishing()) {
-            if (BARB_FISHING_TILE.distanceTo(Player.getPosition()) > 15) {
+            if (FishingConst.BARB_FISHING_TILE.distanceTo(Player.getPosition()) > 15) {
                 message = "Going to fishing spot - barb fishing";
                 General.println(message);
-                PathingUtil.walkToTile(BARB_FISHING_TILE, 3, false);
+                PathingUtil.walkToTile(FishingConst.BARB_FISHING_TILE, 3, false);
             }
-            return BARB_FISHING_TILE.distanceTo(Player.getPosition()) < 20;
+            return FishingConst.BARB_FISHING_TILE.distanceTo(Player.getPosition()) < 20;
         } else if (!isBarbFishing() && !Const.BARBARIAN_VILLAGE_FISHING_AREA.contains(Player.getPosition())) {
             message = "Going to fishing spot - barb village";
             PathingUtil.walkToArea(Const.BARBARIAN_VILLAGE_FISHING_AREA, false);
@@ -107,7 +106,7 @@ public class Fish implements Task {
                 if (isBarbFishing() && Utils.clickNPC("Fishing spot", "Use-rod"))
                     Timer.slowWaitCondition(() ->
                             Player.getAnimation() != -1, 6000, 7500);
-                else if (Utils.clickNPC(FISHING_NPC_ID, "Lure"))
+                else if (Utils.clickNPC(FishingConst.FISHING_NPC_ID, "Lure"))
                     Timer.slowWaitCondition(() ->
                             Player.getAnimation() != -1, 6000, 7500);
 
@@ -157,8 +156,6 @@ public class Fish implements Task {
     public void execute() {
         checkItems();
         catchFish();
-        if (Skills.getActualLevel(Skills.SKILLS.FISHING) >= SkillTasks.FISHING.getEndLevel())
-            Vars.get().currentTask = null;
     }
 
 

@@ -60,7 +60,8 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
                     new ItemReq(ItemID.BRONZE_SWORD, 1),
                     new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0),
                     new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
-                    new ItemReq(ItemID.LOBSTER, 10, 5)
+                    new ItemReq(ItemID.LOBSTER, 10, 5),
+                    new ItemReq(ItemID.DRAMEN_STAFF, 1, 0)
             ))
     );
 
@@ -268,10 +269,17 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
     InventoryRequirement fightInv = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
                     new ItemReq(ItemID.CHAOS_RUNE, 400, 50),
-                    new ItemReq(ItemID.LAVA_RUNE, 1200, 300),
+                    new ItemReq(ItemID.LAVA_RUNE, 0, 300),
                     new ItemReq(ItemID.WATER_RUNE, 1200, 300),
                     new ItemReq(ItemID.STAFF_OF_AIR, 1, 0),
                     new ItemReq(ItemID.LOBSTER, 15, 5),
+                    new ItemReq.Builder().id(ItemID.GAMES_NECKLACE[0])
+                            .alternateItemIDs(List.of(ItemID.GAMES_NECKLACE[1]))
+                            .alternateItemIDs(List.of(ItemID.GAMES_NECKLACE[2]))
+                            .alternateItemIDs(List.of(ItemID.GAMES_NECKLACE[3]))
+                            .alternateItemIDs(List.of(ItemID.GAMES_NECKLACE[4]))
+                            .build(),
+
                     // new ItemReq(ItemID.GAMES_NECKLACE[0], 1, 0, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
                     new ItemReq(ItemID.PRAYER_POTION[0], 3, 0)
@@ -293,7 +301,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
             // .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(1))
             .addInvItem(ItemID.PRAYER_POTION[0], Amount.of(3))
             .addInvItem(ItemID.COINS, Amount.of(25000))
-            .addInvItem(ItemID.LOBSTER, Amount.fill(1))
+            .addInvItem(ItemID.LOBSTER, Amount.range(8,10))
             .build();
 
     public boolean setSpell(Autocast spell) {
@@ -348,10 +356,10 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
             RSNPC[] dagFinal = NPCs.find("Dagannoth");
             if (dagFinal.length > 0) {
                 General.println("[Debug]: Dagganoth is present, waiting for interaction");
-                Timer.waitCondition(() -> dagFinal[0].isInteractingWithMe(), 5000, 6000);
+                Timer.waitCondition(() -> dagFinal[0].isInteractingWithMe(), 8000, 9000);
                 //wait is needed after it is interacting, otherwise fails to move
                 Log.debug("Waiting for healthbar visible");
-                Waiting.waitUntil(3000, 75, () -> MyPlayer.isHealthBarVisible());
+                Waiting.waitUntil(4000, 75, () -> MyPlayer.isHealthBarVisible());
             }
 
             moveToSafeArea();
@@ -540,10 +548,7 @@ public class HorrorFromTheDeep implements QuestTask, QuestInterface {
             if (Inventory.isFull())
                 EatUtil.eatFood();
             if (Utils.clickNPC("Jossik", "Talk-to")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Guthix");
-                NPCInteraction.handleConversation("Guthix");
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true,"Guthix");
             }
         }
     }

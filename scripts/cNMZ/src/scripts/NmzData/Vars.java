@@ -6,6 +6,8 @@ import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.antiban.PlayerPreferences;
+import org.tribot.script.sdk.util.TribotRandom;
+import scripts.Requirements.InventoryRequirement;
 import scripts.Timer;
 import scripts.Utils;
 import scripts.Varbits;
@@ -13,6 +15,7 @@ import scripts.Varbits;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class Vars {
     private static Vars vars;
@@ -40,9 +43,14 @@ public class Vars {
 
     public long lastAction = System.currentTimeMillis();
 
+
+    public Optional<InventoryRequirement> invRequirement = Optional.empty();
+
     /**
      * Integers
      */
+    public int overloadDosesToGet = 36;
+    public int absorptionDosesToGet = 72;
     public int endDreamNumber = 1;
     public int add = General.random(5, 10);
     public int drinkAt = General.random(7, 25);
@@ -108,7 +116,7 @@ public class Vars {
     public int superCombatPotionAddSd = PlayerPreferences.preference(
             "superCombatPotionAddSd", g -> getSuperBoostAddSd(Skill.STRENGTH));
 
-    public int superCombatAdd = General.randomSD(superCombatPotionAddMean, superCombatPotionAddSd);
+    public int superCombatAdd = TribotRandom.normal(superCombatPotionAddMean, superCombatPotionAddSd);
 
 
     public int getSuperBoostAddSd(Skill skill) {
@@ -118,19 +126,19 @@ public class Vars {
 
     // generates uniform distribution
     public int getSuperBoostAddMean(Skill skill) {
-        return (int) (Utils.getSuperLevelBoost(Skill.RANGED) *
-                Utils.random(0.3, 0.5));
+        return (int) (Utils.getSuperLevelBoost(skill) *
+                Utils.random(0.45, 0.60) +2);
     }
 
 
     public int getBoostAddSd(Skill skill) {
-        return (int) (Utils.getLevelBoost(Skill.RANGED) *
+        return (int) (Utils.getLevelBoost(skill) *
                 Utils.random(0.10, 0.25) + 1);
     }
 
     // generates uniform distribution
     public int getBoostAddMean(Skill skill) {
-        return (int) (Utils.getLevelBoost(Skill.RANGED) *
+        return (int) (Utils.getLevelBoost(skill) *
                 Utils.random(0.25, 0.5));
     }
 

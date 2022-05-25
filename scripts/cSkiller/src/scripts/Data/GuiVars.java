@@ -1,6 +1,8 @@
 package scripts.Data;
 
 import org.tribot.api.General;
+import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.Skill;
 import scripts.Timer;
 
 public class GuiVars {
@@ -44,6 +46,31 @@ public class GuiVars {
     public int miniBreakDurationSD; //3.5m
     public int miniBreakDurationMin; //2m
     public int miniBreakDurationMax;//20
+
+    //agility
+    public boolean useWildernessAgility = true; //TODO currently only goes if you start at the course and <70
+   // public int useWildernessAgilityUntilLevel = 70;
+    public boolean useSummerPieBoost = Skill.AGILITY.getActualLevel() >= 75;
+    public int useSummerPieBoostWithinXLevels = 5;
+    public boolean donePriestInPeril = GameState.getSetting(302) >= 61;
+    public boolean shouldAlchAgil = false;
+    public boolean overridingCourse = false;
+    public boolean growKittenDuringAgility = false;
+    public boolean spamClickAgility = true;
+
+    //crafting
+    public boolean doingDragonHide = Skill.CRAFTING.getActualLevel() > 62;
+
+
+    //KOUREND FAVOUR
+    public boolean hosaFavour = false;
+    public boolean shouldCashInCompost = false;
+
+    //MINING
+    public boolean useMLM = false;
+
+    //SMITHING
+    public boolean smeltCannonballs = true;
 
 
 }

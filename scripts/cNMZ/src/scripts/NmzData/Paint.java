@@ -126,7 +126,7 @@ public class Paint {
                         .build())
 
                 .row(template.toBuilder().label("Drink Super Cb at")
-                        .value(() -> Skill.STRENGTH.getActualLevel()  + Vars.get().superCombatAdd
+                        .value(() -> (Skill.STRENGTH.getActualLevel()  + Vars.get().superCombatAdd)
                         + " (" + Vars.get().superCombatPotionAddMean + "+/-" + Vars.get().superCombatPotionAddSd
                         + ")")
                         .condition(() -> Vars.get().showDetailedPaint &&

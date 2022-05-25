@@ -27,6 +27,7 @@ public class WildyPrayerBank implements Task {
 
     private void suicideWine() {
         if (Combat.isInWilderness()) {
+            Utils.idleNormalAction(true);
             Optional<GroundItem> wine = Query.groundItems()
                     .actionContains("Take")
                     .nameContains("Wine").findBestInteractable();

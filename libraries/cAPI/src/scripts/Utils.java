@@ -67,6 +67,26 @@ public class Utils {
         return list.stream().toArray();
     }
 
+    public static boolean turnEscToCloseOn(){
+        if (!Options.isEscapeClosingEnabled() && openSettingsWindow()){
+            Optional<Widget> escOption = Query.widgets().inIndexPath(134, 18)
+                    .textContains("Esc closes the current")
+                    .findFirst();
+            Log.warn("Turning on Esc to Close");
+            if (escOption.map(e->e.scrollTo() && e.click()).orElse(false) &&
+                Waiting.waitUntil(4000, 150,
+                        Options::isEscapeClosingEnabled)){
+                return Query.widgets()
+                        .actionContains("Close")
+                        .findFirst()
+                        .map(Widget::click)
+                        .orElse(false);
+            }
+
+        }
+        Log.warn("Turning on Esc to Close Failed");
+        return Options.isEscapeClosingEnabled();
+    }
 
     public static RSArea getObjectRSArea(RSObject object) {
 
@@ -1584,7 +1604,7 @@ public class Utils {
 
     public static int SETTINGS_TAB_PARENT_ID = 116;
     public static int SETTINGS_WINDOW_PARENT = 134;
-    public static int ALL_SETTINGS_BUTTON = 26;
+    public static int ALL_SETTINGS_BUTTON = 75;
 
     public static boolean openInterface(int parent, int child) {
         if (Interfaces.isInterfaceSubstantiated(parent, child))
@@ -1594,17 +1614,23 @@ public class Utils {
     }
 
     public static boolean openSettingsWindow() {
-        if (Interfaces.isInterfaceSubstantiated(SETTINGS_WINDOW_PARENT)) {
+        if (Widgets.isVisible(SETTINGS_WINDOW_PARENT)) {
+            Log.info("Settings is open");
             return true;
         } else {
+            Log.info("Opening Settings");
             if (GameTab.OPTIONS.open())
-                Utils.idlePredictableAction();
+                Waiting.waitUntil(3500, 400, ()-> GameTab.OPTIONS.isOpen());
 
             if (openInterface(SETTINGS_TAB_PARENT_ID, 59)) // clicks the tab with the gear on it
                 Utils.microSleep();
 
-            return openInterface(SETTINGS_TAB_PARENT_ID, ALL_SETTINGS_BUTTON);
+            if(Query.widgets().inIndexPath(SETTINGS_TAB_PARENT_ID, ALL_SETTINGS_BUTTON).textContains("All settings")
+                    .findFirst().map(Widget::click).orElse(false))
+                return Waiting.waitUntil(3500, 400, ()-> Widgets.isVisible(SETTINGS_WINDOW_PARENT));
+
         }
+        return Widgets.isVisible(SETTINGS_WINDOW_PARENT);
     }
 
 

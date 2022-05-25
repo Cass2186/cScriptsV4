@@ -3,7 +3,6 @@ package scripts.Requirements;
 import lombok.Getter;
 import lombok.Setter;
 import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Widget;
 import scripts.WidgetInfo;
@@ -68,23 +67,23 @@ public class WidgetTextRequirement implements Requirement {
 
 
     public boolean checkWidget() {
-        Optional<Widget> widget = Query.widgets().inIndexPath(groupId, childId).findFirst();
-
-        if (widget.isPresent()) {
+        List<Widget> widgets = Query.widgets().inIndexPath(groupId, childId).toList();
+        for (Widget w : widgets){
+            Optional<Widget> widget = Optional.of(w);
             if (childChildId != -1) {
-                widget = widget.get().getChild(childChildId);
+                widget = w.getChild(childChildId);
             }
             if (widget.isPresent()) {
-                //Log.debug("[WidgetTextReq]: widget is present");
                 for (String textOption : text) {
                     if (checkChildren) {
                         if (getChildren(widget.get(), textOption)) {
+                            Log.info("[WidgetTextReq]: Widget Text requirement has been validated true");
                             return true;
                         }
                     }
                     Optional<String> textOptional = widget.get().getText();
                     if (textOptional.isPresent() && textOptional.get().contains(textOption)) {
-                        Log.debug("[WidgetTextReq]: Widget Text requirement has been validated true");
+                        Log.info("[WidgetTextReq]: Widget Text requirement has been validated true");
                         return true;
                     }
                 }

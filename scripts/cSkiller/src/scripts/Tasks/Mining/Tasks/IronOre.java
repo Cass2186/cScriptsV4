@@ -113,7 +113,7 @@ public class IronOre implements Task {
     public void mineOre() {
         if (!ARDOUGNE_MINING_TILE.equals(MyPlayer.getTile())) {
             // go to mining tile
-            Log.log("[Debug]: Going to Ardougne mining tile");
+            Log.info("Going to Ardougne mining tile");
             if (PathingUtil.walkToTile(ARDOUGNE_MINING_TILE))
                 PathingUtil.movementIdle();
 
@@ -123,11 +123,10 @@ public class IronOre implements Task {
 
         } else {
             Utils.unselectItem();
-            cSkiller.status = "Mining Rocks";
             List<GameObject> rock = getRock();
             Area area = Area.fromRadius(ARDOUGNE_MINING_TILE, 1);
             if (Utils.getPlayerCountInArea(area) > 0) {
-                Log.log("[Debug]: Need to worldhop due to player on tile");
+                Log.info("Need to worldhop due to player on tile");
                 Optional<World> randomMembers = Worlds.getRandomMembers();
                 randomMembers.ifPresent(w -> WorldHopper.hop(w.getWorldNumber()));
                 return;
@@ -158,7 +157,7 @@ public class IronOre implements Task {
         }
         if (Inventory.isFull()) {
             int b = Mouse.getSpeed();
-            Mouse.setSpeed(General.random(200, 220));
+            Mouse.setSpeed(General.random(200, 250));
             cSkiller.status = "Dropping Rocks";
             Inventory.drop(ItemID.IRON_ORE, UNCUT_EMERALD, ItemID.UNCUT_SAPPHIRE, ItemID.UNCUT_RUBY);
             Mouse.setSpeed(b);
@@ -190,7 +189,12 @@ public class IronOre implements Task {
     }
 
     @Override
+    public String toString() {
+        return "Iron ore mining";
+    }
+
+    @Override
     public String taskName() {
-        return "Power Mining";
+        return "Mining";
     }
 }
