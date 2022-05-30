@@ -11,10 +11,7 @@ import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Skill;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.Npc;
@@ -137,7 +134,7 @@ public class Fight implements Task {
             }
 
             return (CrabUtils.lostAgro(Utils.getWorldTileFromRSTile(Vars.get().crabTile)) /*checkAggro()*/
-                    && !MyPlayer.isHealthBarVisible())
+                    && !MyPlayer.isHealthBarVisible()) || !Login.isLoggedIn()
                     || Combat.getHPRatio() < Vars.get().eatAt || Vars.get().shouldResetAggro;
         }, General.random(300000, 460000));
     }

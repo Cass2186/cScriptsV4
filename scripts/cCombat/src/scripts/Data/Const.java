@@ -20,4 +20,6 @@ public class Const {
     public  final static int startMageLvl = Skill.MAGIC.getActualLevel();
     public  final static int startHPLvl = Skill.HITPOINTS.getActualLevel();
 
+    public  final static int BRUTAL_BLACK_ID = 7275;
+
 }

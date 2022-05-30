@@ -1,4 +1,4 @@
-package scripts.Tasks;
+package scripts.Tasks.UndeadDruids;
 
 import org.tribot.api.General;
 import org.tribot.api2007.Player;
@@ -12,6 +12,8 @@ import org.tribot.script.sdk.types.Npc;
 import scripts.Data.Areas;
 import scripts.Data.Vars;
 import scripts.ItemID;
+import scripts.Tasks.Priority;
+import scripts.Tasks.Task;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -38,7 +40,7 @@ public class RechargePrayer implements Task {
 
     public void reengageTarget() {
         List<Npc> attackingMe = Query.npcs()
-                .nameContains(Vars.get().targets)
+                .nameContains(Vars.get().targets.toArray(String[]::new))
                 .isInteractingWithMe()
                 .toList();
 
@@ -48,7 +50,10 @@ public class RechargePrayer implements Task {
             }
         }
     }
-
+    @Override
+    public String toString() {
+        return "Recharging prayer";
+    }
     @Override
     public Priority priority() {
         return Priority.HIGHEST;
@@ -56,7 +61,7 @@ public class RechargePrayer implements Task {
 
     @Override
     public boolean validate() {
-        return Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()) &&
+        return Areas.UNDEAD_DRUID_AREA.containsMyPlayer() &&
                 Prayer.getPrayerPoints() < General.random(10, 17);
     }
 

@@ -2,12 +2,9 @@ package scripts.QuestPackages.makingHistory;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
+import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.ItemID;
-import scripts.NpcID;
-import scripts.ObjectID;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.Items.ItemCollections;
@@ -17,7 +14,6 @@ import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Requirements.Util.Operation;
 import scripts.Tasks.Priority;
-import scripts.cQuesterV2;
 
 import java.util.*;
 
@@ -130,7 +126,7 @@ public class MakingHistory implements QuestTask {
         //  ectophial.appendToTooltip("Slayer rings and the Kharyrll teleport can also be used.");
 
         ectoTokens = new ItemRequirement("Ecto-tokens", ItemID.ECTOTOKEN, 2);
-     //   ectoTokens.setTooltip("You do not need two ecto-tokens if you have completed Ghosts Ahoy.");
+        //   ectoTokens.setTooltip("You do not need two ecto-tokens if you have completed Ghosts Ahoy.");
         // ectoTokens.appendToTooltip("If you do not have 2 ecto-tokens bring 1 bone, 1 pot and 1 bucket to earn 5 ecto-tokens at the Ectofunctus.");
         //   ectoTokens.appendToTooltip("Additionally, you can also enter Port Phasmatys via Charter ship, but that costs up to 4,100 coins.");
 
@@ -289,7 +285,46 @@ public class MakingHistory implements QuestTask {
 
     @Override
     public void execute() {
+        int varbit = QuestVarbits.QUEST_MAKING_HISTORY.getId();
+        Log.info("Observatory Quest Game setting is " + Utils.getVarBitValue(varbit));
+        // done quest
+        if (isComplete()) {
+            Log.info("Observatory Quest is complete");
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
+        // buy initial items on quest start
+        if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
+            buyStep.buyItems();
+            initialItemReqs.withdrawItems();
+        }
 
+
+        // for end of quest
+        if (Utils.inCutScene()) {
+            cQuesterV2.status = "Cut Scene";
+            ChatScreen.handle();
+            Utils.cutScene();
+            Waiting.waitNormal(1000, 10);
+            return;
+        }
+        //load questSteps into a map
+        Map<Integer, QuestStep> steps = loadSteps();
+        //get the step based on the game setting key in the map
+        Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
+
+        // set status
+        cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
+
+        //do the actual step
+        step.ifPresent(QuestStep::execute);
+
+        // handle any chats that are failed to be handled by the QuestStep (failsafe)
+        if (ChatScreen.isOpen())
+            ChatScreen.handle();
+
+        //slow down looping if it gets stuck
+        Waiting.waitNormal(200, 20);
     }
 
     @Override

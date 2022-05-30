@@ -364,4 +364,22 @@ public class AgilityAreas {
                     new RSTile(2993, 3949, 0)
             }
     );
+
+    public static    RSArea ARDOUGNE_START_AREA  = new RSArea(
+            new RSTile[] {
+                    new RSTile(2666, 3298, 0),
+                    new RSTile(2666, 3294, 0),
+                    new RSTile(2676, 3294, 0),
+                    new RSTile(2676, 3299, 0),
+                    new RSTile(2669, 3299, 0)
+            }
+    );
+    public static  RSArea ARDOUGNE_AREA_ONE = new RSArea(new RSTile(2671, 3310, 3), new RSTile(2671, 3299, 3));
+    public static   RSArea ARDOUGNE_AREA_TWO = new RSArea(new RSTile(2665, 3318, 3), new RSTile(2660, 3318, 3));
+
+    public static    RSArea ARDOUGNE_AREA_THREE = new RSArea(new RSTile(2657, 3318, 3), new RSTile(2653, 3318, 3));
+    public static RSArea ARDOUGNE_AREA_FOUR = new RSArea(new RSTile(2653, 3310, 3), new RSTile(2650, 3314, 3));
+    public static RSArea ARDOUGNE_AREA_FIVE = new RSArea(new RSTile(2651, 3309, 3), new RSTile(2653, 3304, 3));
+    public static RSArea ARDOUGNE_AREA_SIX = new RSArea(new RSTile(2652, 3303, 3), new RSTile(2654, 3300, 3));
+    public static  RSArea ARDOUGNE_AREA_SEVEN = new RSArea(new RSTile(2655, 3297, 3), new RSTile(2657, 3291, 3));
 }

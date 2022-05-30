@@ -93,12 +93,14 @@ public class AgilUtils {
 
 
     public static void eatSummerPie(int minlevel, int allowance) {
-        if (Vars.get().useSummerPieBoost) {
+       // if (Vars.get().useSummerPieBoost) {
+
             int min = minlevel + (General.random(0, allowance));
+            Log.info("Eating summer pie at " + min);
             RSItem[] pie = Inventory.find(Const.SUMMER_PIE);
             Inventory.drop(Const.EMPTY_PIE_DISH);
             Utils.unselectItem();
-            if (Skills.getCurrentLevel(Skills.SKILLS.AGILITY) <= min) {
+            if (Skills.getCurrentLevel(Skills.SKILLS.AGILITY) < min) {
                 if (pie.length == 0) {
                     General.println("[Debug]: Out of summer pies, ending script");
                     cSkiller.isRunning.set(false);
@@ -108,7 +110,7 @@ public class AgilUtils {
                         Timer.waitCondition(() -> Player.getAnimation() != -1, 1500, 2000);
                 }
             }
-        }
+      //  }
     }
 
 }

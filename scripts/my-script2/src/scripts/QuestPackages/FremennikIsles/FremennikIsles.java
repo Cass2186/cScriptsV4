@@ -6,10 +6,8 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.types.EquipmentItem;
-import org.tribot.script.sdk.types.InventoryItem;
-import org.tribot.script.sdk.types.Npc;
-import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.*;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.ShiloVillage.ShilloVillage;
@@ -46,17 +44,46 @@ public class FremennikIsles implements QuestTask {
     QuestStep talkToMord, travelToJatizso, talkToGjuki, continueTalkingToGjuki, bringOreToGjuki,
             talkToGjukiAfterOre, getJesterOutfit, talkToSlug, travelToNeitiznot, returnToRellekkaFromJatizso,
             goSpyOnMawnis, performForMawnis, tellSlugReport1, talkToMawnis, talkToMawnisWithLogs, talkToMawnisAfterItems,
-            repairBridge1, repairBridge2, repairBridge1Second, talkToMawnisAfterRepair, talkToGjukiToReport, leaveNeitiznotToReport, collectFromHring, collectFromSkuli, collectFromVanligga, collectFromKeepa,
-            talkToGjukiAfterCollection1, collectFromHringAgain, collectFromRaum, collectFromSkuliAgain, collectFromKeepaAgain, collectFromFlosi,
+            repairBridge1, repairBridge2, repairBridge1Second, talkToMawnisAfterRepair, talkToGjukiToReport,
+            leaveNeitiznotToReport,
             talkToGjukiAfterCollection2, travelToNeitiznotToSpyAgain, talkToSlugToSpyAgain, returnToRellekkaFromJatizsoToSpyAgain, performForMawnisAgain,
             goSpyOnMawnisAgain, reportBackToSlugAgain, returnToRellekkaFromNeitiznotAfterSpy2, travelToJatizsoAfterSpy2, talkToGjukiAfterSpy2,
             returnToRellekkaFromJatizsoWithDecree, travelToNeitiznotWithDecree, talkToMawnisWithDecree, getYakArmour, returnToRellekkaFromJatizsoAfterDecree,
             travelToNeitiznotAfterDecree, talkToMawnisAfterDecree, makeShield, enterCave, killTrolls, enterKingRoom, killKing, decapitateKing, finishQuest, finishQuestGivenHead;
 
-    NPCStep travelToJatizsoToReport;
+
+    NPCStep travelToJatizsoToReport, collectFromHring, collectFromSkuli, collectFromVanligga, collectFromKeepa,
+            talkToGjukiAfterCollection1, collectFromHringAgain, collectFromRaum, collectFromSkuliAgain,
+            collectFromKeepaAgain, collectFromFlosi;
     //RSAreas
     RSArea islands, jatizso1, jatizso2, neitiznot1, neitiznot2, trollLands, trollCave, kingCave;
-
+    RSArea END_NEITIZNOT_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2308, 3870, 0),
+                    new RSTile(2308, 3847, 0),
+                    new RSTile(2329, 3847, 0),
+                    new RSTile(2341, 3855, 0),
+                    new RSTile(2352, 3846, 0),
+                    new RSTile(2359, 3846, 0),
+                    new RSTile(2364, 3855, 0),
+                    new RSTile(2360, 3877, 0)
+            }
+    );
+    RSArea MIDDLE_NEITIZNOT_AREA = new RSArea(
+            new RSTile[]{
+                    new RSTile(2307, 3841, 0),
+                    new RSTile(2308, 3832, 0),
+                    new RSTile(2319, 3830, 0),
+                    new RSTile(2327, 3824, 0),
+                    new RSTile(2333, 3824, 0),
+                    new RSTile(2340, 3829, 0),
+                    new RSTile(2344, 3829, 0),
+                    new RSTile(2354, 3821, 0),
+                    new RSTile(2362, 3822, 0),
+                    new RSTile(2367, 3828, 0),
+                    new RSTile(2366, 3841, 0)
+            }
+    );
 
     List<ItemRequirement> items;
 
@@ -88,25 +115,63 @@ public class FremennikIsles implements QuestTask {
                     new ItemReq(ItemID.CAMELOT_TELEPORT, 5),
                     new ItemReq(ItemID.YAKHIDE_ARMOUR, 1),
                     new ItemReq(ItemID.YAKHIDE_ARMOUR_10824, 1),
-                    new ItemReq(ItemID.MONKFISH, 3),
+                    new ItemReq(ItemID.MONKFISH, 3, 0),
                     new ItemReq(ItemID.AMULET_OF_GLORY4, 2, 0, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
-                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true),
-                    new ItemReq.Builder()
-                            .id(ItemID.MITHRIL_ORE)
-                            .isItemNoted(true)
-                            .amount(6)
-                            .build(),
-                    new ItemReq.Builder().id(ItemID.SPLIT_LOG)
-                            .isItemNoted(true)
-                            .amount(8)
-                            .build(),
-                    new ItemReq.Builder().id(ItemID.ROPE)
-                            .isItemNoted(true)
-                            .amount(8)
-                            .build()
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
+
+    InventoryRequirement ropeItemList = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 0),
+                    new ItemReq(ItemID.KNIFE, 1),
+                    new ItemReq(ItemID.ROPE, 8),
+                    new ItemReq(ItemID.SPLIT_LOG, 8),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
+            )
+    ));
+
+    WorldTile LEFT_MIDDLE_BRIDGE_TILE = new WorldTile(2314, 3838, 0);
+
+    private void repairBridges() {
+        if (!END_NEITIZNOT_AREA.contains(Player.getPosition()) &&
+                !MIDDLE_NEITIZNOT_AREA.contains(Player.getPosition())) {
+            // go to middle area
+            cQuesterV2.status = "going to middle area with Bridges";
+            Optional<GameObject> bridge = Query.gameObjects().actionContains("Walk-across").findClosest();
+        }
+        if (!END_NEITIZNOT_AREA.contains(Player.getPosition()) &&
+                MIDDLE_NEITIZNOT_AREA.contains(Player.getPosition())) {
+            // fix middle bridges
+            cQuesterV2.status = "Fixing Middle Bridges";
+            PathingUtil.localNav(LEFT_MIDDLE_BRIDGE_TILE);
+            Optional<GameObject> repair = Query.gameObjects().actionContains("Repair").findClosest();
+            if (repair.map(r -> r.interact("Repair")).orElse(false)) {
+                Waiting.waitUntil(15000, 1200, ()-> END_NEITIZNOT_AREA.contains(Player.getPosition()));
+            }
+        }
+
+
+    }
+
+
+    private void updateBankWithdrawls() {
+        if (Skill.MINING.getActualLevel() > 54)
+            initialItemReqs.add(new ItemReq.Builder()
+                    .id(ItemID.MITHRIL_ORE)
+                    .isItemNoted(true)
+                    .amount(6)
+                    .build());
+        else {
+            initialItemReqs.add(new ItemReq.Builder()
+                    .id(ItemID.COAL)
+                    .isItemNoted(true)
+                    .amount(7)
+                    .build());
+        }
+    }
 
     BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
@@ -390,7 +455,7 @@ public class FremennikIsles implements QuestTask {
 
     public void setupSteps() {
         talkToMord = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0),
-                new String[]{"Yes,"});
+                new String[]{"Yes."});
         travelToJatizso = new NPCStep(NpcID.MORD_GUNNARS, new RSTile(2644, 3709, 0),
                 "Travel to Jatizso with Mord.");
         travelToJatizso.addDialogStep("Can you ferry me to Jatizso?");
@@ -416,7 +481,8 @@ public class FremennikIsles implements QuestTask {
         talkToSlug.addDialogStep("Free stuff please.");
         talkToSlug.addDialogStep("I am ready.");
 
-        getJesterOutfit = new ObjectStep(ObjectID.CHEST_21299, new RSTile(2407, 3800, 0), "Search the chest behind Gjuki's throne for a silly jester outfit.");
+        getJesterOutfit = new ObjectStep(ObjectID.CHEST_21299, new RSTile(2407, 3800, 0),
+                "Open");
         getJesterOutfit.addDialogStep("Take the jester's hat.");
         getJesterOutfit.addDialogStep("Take the jester's top.");
         getJesterOutfit.addDialogStep("Take the jester's tights.");
@@ -441,7 +507,8 @@ public class FremennikIsles implements QuestTask {
                 // "Bring Mawnis the 8 split logs, 8 rope, and a knife.",
                 splitLogs8, rope8, knife);
 
-        talkToMawnisAfterItems = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Talk to Mawnis.");
+        talkToMawnisAfterItems = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
+                "Talk to Mawnis.");
         talkToMawnisWithLogs.addSubSteps(talkToMawnisAfterItems);
 
         repairBridge1 = new ObjectStep(ObjectID.ROPE_BRIDGE_21310, new RSTile(2314, 3840, 0), "Right-click " +
@@ -541,23 +608,66 @@ public class FremennikIsles implements QuestTask {
                 roundShield);
 
         enterCave = new ObjectStep(ObjectID.CAVE_21584, new RSTile(2402, 3890, 0),
-                "Open", yakTopWorn, yakBottomWorn, shieldWorn, meleeWeapon, food);
+                "Open", yakTopWorn, yakBottomWorn, shieldWorn);
 
         //   killTrolls = new KillTrolls(this);
         enterKingRoom = new ObjectStep(ObjectID.ROPE_BRIDGE_21316, new RSTile(2385, 10263, 1), "Cross the rope bridge. Be prepared to fight the Ice Troll King. Use the Protect from Magic prayer for the fight.");
         killKing = new NPCStep(NpcID.ICE_TROLL_KING, new RSTile(2386, 10249, 1), "Kill the king. Use the Protect from Magic prayer for the fight.");
-        decapitateKing = new ObjectStep(ObjectID.ICE_TROLL_KING, "Decapitate the king's head.");
+        decapitateKing = new ObjectStep(ObjectID.ICE_TROLL_KING, "Decapitate"
+                );
         finishQuest = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
                 head);
         finishQuestGivenHead = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Talk to Mawnis to complete the quest.");
         finishQuest.addSubSteps(finishQuestGivenHead);
     }
 
+    private void bossFight(){
+        Inventory.contains(ItemID.DECAPITATED_HEAD_10842);
+
+        Optional<Npc> king = Query.npcs().nameContains("Ice Troll King").findClosest();
+        if (king.isEmpty()){
+            Optional<GameObject> closest = Query.gameObjects().actionContains("Walk-across").findClosest();
+            if (closest.map(c->c.interact("Walk-across")).orElse(false)){
+                Waiting.waitUntil(7500, 500,
+                        ()->  Query.npcs().nameContains("Ice Troll King").isAny());
+            }
+        } else{
+            if (Prayer.getPrayerPoints() < TribotRandom.uniform(7,12)){
+                Utils.drinkPotion(ItemID.PRAYER_POTION);
+            }
+            Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC);
+            if (king.map(k-> !k.isHealthBarVisible() && k.interact("Attack")).orElse(false)){
+                Waiting.waitUntil(3500, 500,
+                        ()-> king.map(k-> !k.isHealthBarVisible()).orElse(false));
+            }
+            if (MyPlayer.getCurrentHealthPercent() < TribotRandom.uniform(40,60)){
+                EatUtil.eatFood(true);
+            }
+
+            if (king.map(k -> k.getHealthBarPercent() == 0).orElse(false)) {
+                //wait tyo decapitate
+                Waiting.waitUntil(8000, 750,
+                        ()-> Query.gameObjects().actionContains("Decapitate").isAny());
+            }
+            Waiting.waitNormal(250, 40);
+        }
+
+
+    }
+
     private void handleJestering() {
+        if (!GameState.isInInstance() && NpcChat.talkToNPC(NpcID.MAWNIS_BUROWGAR)) {
+            NpcChat.handle(true);
+            Waiting.waitUntil(5000, 500, () -> GameState.isInInstance());
+        }
         int MAWNIS_ID_INSTANCE = 2980;
         Optional<String> command = Optional.empty();
         for (int i = 0; i < 100; i++) {
-            Waiting.waitUniform(40,60);
+            if (ChatScreen.isOpen())
+                NpcChat.handle();
+
+            cQuesterV2.status = "Jestering";
+
             Optional<Npc> mawnis = Query.npcs().idEquals(MAWNIS_ID_INSTANCE).findBestInteractable();
             if (GameState.isInInstance() && mawnis.isPresent()) {
                 if (Waiting.waitUntil(15000, 50, () -> mawnis
@@ -570,51 +680,53 @@ public class FremennikIsles implements QuestTask {
             if (command.map(c -> c.toLowerCase().contains("puppet")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Talk to puppet").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             } else if (command.map(c -> c.toLowerCase().contains("dance")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Dance").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
+                }
+            } else if (command.map(c -> c.toLowerCase().contains("talk")).orElse(false)) {
+                Optional<Widget> widget = Query.widgets().textContains("Talk to").findFirst();
+                if (widget.map(w -> w.click()).orElse(false)) {
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             } else if (command.map(c -> c.toLowerCase().contains("juggle")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Juggle").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             } else if (command.map(c -> c.toLowerCase().contains("skip")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Skip").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             } else if (command.map(c -> c.toLowerCase().contains("pie")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Pie").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             } else if (command.map(c -> c.toLowerCase().contains("jig")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Jig").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             } else if (command.map(c -> c.toLowerCase().contains("Bow")).orElse(false)) {
                 Optional<Widget> widget = Query.widgets().textContains("Bow").findFirst();
                 if (widget.map(w -> w.click()).orElse(false)) {
-                    Waiting.waitUntil(1500,500, ()-> MyPlayer.getAnimation() != -1);
+                    Waiting.waitUntil(1500, 500, () -> MyPlayer.getAnimation() != -1);
                 }
             }
+            Waiting.waitUniform(150, 300);
             if (!GameState.isInInstance())
                 break;
 
         }
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
     }
 
-    private boolean clickJesterWidget(Optional<String> command) {
-        if (command.map(c -> c.toLowerCase().contains("jig")).orElse(false)) {
-            return Query.widgets().textContains("Jig").findFirst().map(w -> w.click()).orElse(false);
-        }
-        return false;
-    }
 
     private boolean equipJester() {
         List<InventoryItem> jester = Query.inventory().nameContains("Jester").toList();
@@ -626,14 +738,35 @@ public class FremennikIsles implements QuestTask {
         return !Query.equipment().nameContains("Jester").isAny();
     }
 
-    //TODO implement this
+    private void doInitialTaxes() {
+        if (new Conditions(inJatizso, collectedValigga, collectedKeepa, collectedSkuli,
+                collectedHring).check()) {
+            talkToGjukiAfterCollection1.execute();
+        }
+        else if (new Conditions(inJatizso, collectedValigga, collectedKeepa, collectedSkuli).check()) {
+            handleTaxStep(collectFromHring, "8000");
+        } else if (new Conditions(inJatizso, collectedValigga, collectedKeepa).check()) {
+            handleTaxStep(collectFromSkuli, "6000");
+        } else if (new Conditions(inJatizso, collectedKeepa).check()) {
+            handleTaxStep(collectFromVanligga, "5000");
+        } else if (inJatizso.check()) {
+            handleTaxStep(collectFromKeepa, "5000");
+        } else {
+            travelToJatizsoToReport.execute();
+        }
+    }
+
+
+
     public void handleTaxStep(NPCStep step, String taxAmount) {
+        Log.info("Doing tax step for " + taxAmount);
         step.execute();
         if (EnterInputScreen.isOpen() &&
                 EnterInputScreen.enter(taxAmount)) {
             Waiting.waitUntil(4500, 500, () -> ChatScreen.isOpen());
         }
-        NpcChat.handle("But rules are rules. Pay up!");
+        NpcChat.handle(true,"But, rules are rules. Pay up!");
+        NpcChat.handle(true,"But rules are rules. Pay up!");
     }
 
     private boolean unequipJester() {
@@ -657,6 +790,9 @@ public class FremennikIsles implements QuestTask {
         req.add(new QuestRequirement(Quest.THE_FREMENNIK_TRIALS, Quest.State.COMPLETE));
         req.add(new SkillRequirement(Skills.SKILLS.AGILITY, 40));
         req.add(new SkillRequirement(Skills.SKILLS.CONSTRUCTION, 20));
+        req.add(new SkillRequirement(Skills.SKILLS.PRAYER, 43)); //my req
+        req.add(new SkillRequirement(Skills.SKILLS.ATTACK, 60)); //my req
+        req.add(new SkillRequirement(Skills.SKILLS.STRENGTH, 60)); //my req
         return req;
     }
 
@@ -673,33 +809,49 @@ public class FremennikIsles implements QuestTask {
 
     @Override
     public void execute() {
-
-        int varbit = QuestVarbits.QUEST_THE_FREMENNIK_ISLES.getId();
-        Log.debug("Fremennik Isles Varbit is " + Utils.getVarBitValue(varbit));
-
-        // buy initial items on quest start
-        if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
-            buyStep.buyItems();
-            initialItemReqs.withdrawItems();
-        }
-
         // done quest
-        if (isComplete()) {
+        if (isComplete() || !checkRequirements()) {
+
+            Log.info("Done Frem Trials or don't meet requirements");
+            Log.info("40 agility, 20 Construction, 43 prayer, 60 attk/str");
             cQuesterV2.taskList.remove(this);
             return;
         }
 
-        if (Utils.getVarBitValue(varbit) == 90) {
+        int varbit = QuestVarbits.QUEST_THE_FREMENNIK_ISLES.getId();
+        Log.debug("Fremennik Isles Varbit is " + Utils.getVarBitValue(varbit));
+        //load questSteps into a map
+        Map<Integer, QuestStep> steps = loadSteps();
+        // buy initial items on quest start
+        if (Utils.getVarBitValue(varbit) == 0 && !initialItemReqs.check()) {
+            buyStep.buyItems();
+            updateBankWithdrawls();
+            initialItemReqs.withdrawItems();
+        } else if (Utils.getVarBitValue(varbit) == 50) {
+            if (!Inventory.contains(ItemID.SILLY_JESTER_HAT, ItemID.SILLY_JESTER_TOP,
+                    ItemID.SILLY_JESTER_TIGHTS, ItemID.SILLY_JESTER_BOOTS)) {
+
+            }
+        } else if (Utils.getVarBitValue(varbit) == 55 && GameState.isInInstance()) {
+            Log.info("Handling jester");
+            handleJestering();
+            return;
+        } else if (Utils.getVarBitValue(varbit) == 90) {
             unequipJester();
-        }
-        if (Utils.getVarBitValue(varbit) == 230) {
+        } else if (Utils.getVarBitValue(varbit) == 230) {
             equipJester();
+        } else if (Utils.getVarBitValue(varbit) == 235 && GameState.isInInstance()) {
+            Log.info("Handling jester");
+            handleJestering();
+            return;
+        } else if (Utils.getVarBitValue(varbit) == 200) {
+            doInitialTaxes();
+            return;
         } else if (Utils.getVarBitValue(varbit) == 240) {
             unequipJester();
         }
 
-        //load questSteps into a map
-        Map<Integer, QuestStep> steps = loadSteps();
+
         //get the step based on the game setting key in the map
         Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
 
@@ -715,7 +867,10 @@ public class FremennikIsles implements QuestTask {
 
         if (GameState.isInInstance() && Utils.getVarBitValue(varbit) < 310) {
             Log.info("In instance, waiting 10-12s");
-            Waiting.waitUntil(12000, 500, () -> !GameState.isInInstance());
+            Waiting.waitUntil(12000, 900, () -> !GameState.isInInstance());
+        }
+        if (MyPlayer.getAnimation() != -1) {
+            Waiting.waitUntil(5000, 500, () -> MyPlayer.getAnimation() == -1);
         }
         //slow down looping if it gets stuck
         Waiting.waitNormal(200, 20);
@@ -731,7 +886,7 @@ public class FremennikIsles implements QuestTask {
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return getGeneralRequirements().stream().allMatch(Requirement::check);
     }
 
 

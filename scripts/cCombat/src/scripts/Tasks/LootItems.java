@@ -49,43 +49,6 @@ public class LootItems implements Task {
 
     public RuneLitePriceService priceGetter = new RuneLitePriceService();
 
-    public boolean shouldLoot() {
-        RSGroundItem[] groundItems = GroundItems.getAll();
-        if (groundItems.length > 0) {
-            for (int i = 0; i < groundItems.length; i++) {
-                RSItemDefinition def = groundItems[i].getDefinition();
-                int id = groundItems[i].getID();
-                if (!Areas.UNDEAD_DRUID_AREA.contains(groundItems[i].getPosition()))
-                    continue;
-                for (int cust : customLootIds) {
-                    if (id == cust) {
-                        return true;
-                    }
-                }
-
-                if (def != null && def.isNoted()) {
-                    //General.println("Unnoted Id = " + id);
-                    id = def.getID() - 1;
-                }
-                if (GrandExchange.getPrice(id) > Vars.get().minLootValue) {
-                    return true;
-
-                } else if (def != null && (def.isStackable() || def.isNoted())) {
-                    int individualPrice = GrandExchange.getPrice(id);
-                    int amount = groundItems[i].getStack();
-                    int value = individualPrice * amount;
-
-                    if (value > Vars.get().minLootValue && new RSArea(Player.getPosition(), 5)
-                            .contains(groundItems[i]))
-                        if (groundItems[i].isClickable())
-                            return true;
-
-                }
-            }
-        }
-
-        return false;
-    }
 
     public static Optional<GroundItem> getLootItem() {
 
@@ -93,7 +56,7 @@ public class LootItems implements Task {
                 .inArea(Areas.UNDEAD_DRUID_AREA_SDK)
                 .nameNotContains("Burnt bones", "Ashes", "ashes")
                 .toList();
-           // Log.debug("grounditemlist.size(): " + groundItemList.size());
+        // Log.debug("grounditemlist.size(): " + groundItemList.size());
 
         if (Vars.get().killingScarabs)
             groundItemList = Query.groundItems()
@@ -103,8 +66,8 @@ public class LootItems implements Task {
 
         // Log.debug("grounditemlist.size(): " + groundItemList.size());
         for (GroundItem g : groundItemList) {
-        //    if (GrandExchange.getPrice(g.getId()) > 150)
-               // Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
+            //    if (GrandExchange.getPrice(g.getId()) > 150)
+            // Log.debug("[Loot] Item is " + g.getName() + " worthL: " + GrandExchange.getPrice(g.getId()));
             if (GrandExchange.getPrice(g.getId()) > Vars.get().minLootValue) {
                 //  Log.debug("[Loot] Item is " + g.getName());
                 return Optional.of(g);
@@ -112,12 +75,12 @@ public class LootItems implements Task {
                 int individualPrice = GrandExchange.getPrice(g.getId());
                 if (g.getDefinition().isNoted()) {
                     individualPrice = GrandExchange.getPrice((g.getId() - 1));
-                   // Log.debug("Getting Noted id price of " + individualPrice);
+                    // Log.debug("Getting Noted id price of " + individualPrice);
                 }
                 int amount = g.getStack();
                 int value = individualPrice * amount;
                 if (value > Vars.get().minLootValue) {
-                   // Log.debug("[Loot] Item is " + g.getName());
+                    // Log.debug("[Loot] Item is " + g.getName());
                     return Optional.of(g);
                 }
             } else if (g.getId() == 995 && g.getStack() > 500) {
@@ -179,8 +142,9 @@ public class LootItems implements Task {
     @Override
     public boolean validate() {
         return getLootItem().isPresent()
-                && (Vars.get().killingScarabs && Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition())
-                || (Vars.get().killingUndeadDruids) && Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()));
+                && ((Vars.get().killingScarabs && Areas.LARGE_SCARAB_FIGHT_AREA.containsMyPlayer())
+                || (Vars.get().killingUndeadDruids && Areas.UNDEAD_DRUID_AREA.containsMyPlayer())
+                || Vars.get().fightArea.containsMyPlayer());
 
     }
 

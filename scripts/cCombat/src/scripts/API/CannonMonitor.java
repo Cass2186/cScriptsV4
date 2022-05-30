@@ -8,9 +8,13 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSProjectile;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import scripts.Data.Vars;
 import scripts.Utils;
 import scripts.cCombat;
+
+import java.util.Optional;
 
 public class CannonMonitor implements Runnable {
 
@@ -19,27 +23,7 @@ public class CannonMonitor implements Runnable {
     public static int cballsLeft = 30;
     public static String BROKEN_CANNON_MESSAGE = "Your cannon has broken";
 
-    public void getProjectiles() {
-        RSProjectile[] obj = Projectiles.getAll();
-        RSObject[] cannon = Objects.findNearest(15, 6);
-        if (Vars.get().fightArea != null)
-            cannon = Objects.findNearest(15, Filters.Objects.idEquals(6).
-                    and(Filters.Objects.inArea(Vars.get().fightArea)));
 
-        if (cannon.length > 0) {
-            RSArea a = Utils.getObjectRSArea(cannon[0]);
-            for (RSProjectile i : obj) {
-                if (a.contains(i.getPosition()) && i.getGraphicID() == CANNON_BALL_PROJECTILE_ID) { //
-                    cballsLeft--;
-                    General.sleep(75);//was 500
-                    //General.println("[Cannon]: Detected Cannonball " + cballsLeft, Color.RED);
-                    Timing.waitCondition(() -> !a.contains(i.getPosition()), 550); //was 1200
-
-
-                }
-            }
-        }
-    }
 
     public static void handleCannonMessage(String message) {
         if (message.contains("load the cannon with")) {
@@ -81,7 +65,7 @@ public class CannonMonitor implements Runnable {
                         e.printStackTrace();
                     }
                 } else {
-                    getProjectiles();
+            ;
                     if (CannonMonitor.cballsLeft <= Vars.get().fill_cannon_at
                             && Vars.get().use_cannon && Vars.get().cannon_location != null) {
                         General.sleep(General.random(800, 7000));

@@ -4,6 +4,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.query.Query;
@@ -54,6 +55,9 @@ public class ConstructionBank implements Task {
 
         List<ItemReq>   newInv = SkillBank.withdraw(FURNITURE.getRequiredItemList());
         if (newInv != null && newInv.size() > 0) {
+            for (ItemReq r : newInv){
+                Log.warn("Missing " + r.getId() + " x " + r.getAmount());
+            }
             General.println("[Construction Training]: Creating buy list");
             BuyItems.itemsToBuy =     BuyItems.populateBuyList(FURNITURE.getRequiredItemList());
             return;

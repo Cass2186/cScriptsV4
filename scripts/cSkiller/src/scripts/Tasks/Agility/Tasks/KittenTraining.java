@@ -2,15 +2,23 @@ package scripts.Tasks.Agility.Tasks;
 
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
-import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.ItemID;
+import scripts.NpcChat;
 import scripts.Timer;
 import scripts.Utils;
+
+import java.util.Optional;
 
 public class KittenTraining implements Task {
 
@@ -24,25 +32,32 @@ public class KittenTraining implements Task {
     Timer feedTimer = new Timer(General.random(1200000, 1680000)); //20-28m
     Timer playTimer = new Timer(General.random(2400000, 2880000)); //40-48min
 
+
+    public boolean pickupKitten() {
+        Optional<Npc> kitten =  Query.npcs().isInteractingWithMe().nameContains("Kitten").findClosest();
+        return kitten.map(k->k.interact("Pick-up")).orElse(false) &&
+                Waiting.waitUntil(3500,500, ()-> Inventory.contains("Kitten"));
+    }
+
     public void playWithCat() {
-        RSItem[] wool = Inventory.find(BALL_OF_WOOL);
-        if (wool.length > 0 && Utils.useItemOnNPC(BALL_OF_WOOL, CAT_NAMES)) {
-            NPCInteraction.waitForConversationWindow();
+        Optional<InventoryItem> wool = Query.inventory().idEquals(ItemID.BALL_OF_WOOL).findClosestToMouse();
+        if (wool.map(f->  Utils.useItemOnNPC(f.getId(), CAT_NAMES)).orElse(false)) {
+            NpcChat.waitForChatScreen();
             playTimer.reset();
         } else {
-            //use interaction menu or  pick up
+            Optional<Npc> kitten =  Query.npcs().isInteractingWithMe().nameContains("Kitten").findClosest();
+            if (kitten.map(k->k.interact("Interact")).orElse(false)){ //TODO check string
+                NpcChat.handle(true); //todo update handling
+                playTimer.reset(); //todo update length
+            }
         }
-
     }
 
     public void feedCat() {
-        RSItem[] food = Inventory.find(Filters.Items.actionsContains("Eat"));
-        if (food.length > 0 && Utils.useItemOnNPC(food[0].getID(), CAT_NAMES)) {
-            NPCInteraction.waitForConversationWindow();
+        Optional<InventoryItem> food = Query.inventory().actionContains("Eat").findClosestToMouse();
+        if (food.map(f->  Utils.useItemOnNPC(f.getId(), CAT_NAMES)).orElse(false)) {
+            NpcChat.waitForChatScreen();
             feedTimer.reset();
-        } else {
-            // pick up
-
         }
 
     }

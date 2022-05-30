@@ -4,6 +4,7 @@ import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSInterface;
@@ -25,11 +26,9 @@ import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Requirements.ItemRequirement;
 import scripts.Tasks.Construction.ConsData.Furniture;
 import scripts.Tasks.Construction.ConsData.House;
+import scripts.Timer;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MakeFurniture implements Task {
 
@@ -164,7 +163,6 @@ public class MakeFurniture implements Task {
                     Timer.quickWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
                     Utils.idlePredictableAction();
                 } else {
-                    //Log.log("[Debug]: Force closing interfaces");
                     RSInterface close = Interfaces.findWhereAction("Close", PARENT_INTERFACE);
                     if (close != null && close.click()) {
                         Timer.quickWaitCondition(() -> !Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
@@ -172,7 +170,8 @@ public class MakeFurniture implements Task {
                     }
                 }
                 if (Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE)) {
-                    Keyboard.typeString(furniture.getKeyString());
+                    Log.info("Typing key " + furniture.getKeyString());
+                    Keyboard.typeString("" + furniture.getKeyString());
                     if (Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 6000))
                         Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 5500, 7250);
                 }
@@ -239,14 +238,15 @@ public class MakeFurniture implements Task {
     public void execute() {
         enterHouse();
         Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
+        currentItem.ifPresent(c -> Log.info("Building "+ c.toString().toLowerCase(Locale.ROOT)));
 
         if (currentItem.isPresent())
             currentItem.ifPresent(c -> buildFurniture(c));
-
        else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
             buildFurniture(FURNITURE.CRUDE_CHAIR);
 
         } else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.BOOKCASE.getReqLevl()) {
+
             buildFurniture(FURNITURE.WOODEN_CHAIR);
             ;
 

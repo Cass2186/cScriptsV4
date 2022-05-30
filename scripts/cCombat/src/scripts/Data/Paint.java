@@ -84,7 +84,10 @@ public class Paint {
                                 (Skill.HITPOINTS.getXp() - Const.startHPXP),
                                 PaintUtil.getXpHr(Skill.HITPOINTS, Vars.get().startHPXP, Vars.get().startTime)))
                         .build())
-
+                .row(template.toBuilder()
+                        .label("Killing Undead")
+                        .value(() -> Vars.get().killingUndeadDruids)
+                        .build())
 
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();

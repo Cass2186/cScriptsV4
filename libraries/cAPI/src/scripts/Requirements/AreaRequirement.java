@@ -3,6 +3,7 @@ package scripts.Requirements;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.Area;
 import scripts.QuestUtil;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 public class AreaRequirement implements Requirement {
 
     private List<RSArea> zones = new ArrayList<>();
+    private List<Area> zonesNew = new ArrayList<>();
     private final boolean checkInZone;
     private String displayText;
 
@@ -70,6 +72,10 @@ public class AreaRequirement implements Requirement {
         zones.add(area);
         this.checkInZone = true;
     }
+    public AreaRequirement(Area area) {
+        zonesNew.add(area);
+        this.checkInZone = true;
+    }
 
     private AreaRequirement(Builder builder) {
         zones = builder.zones;
@@ -81,6 +87,10 @@ public class AreaRequirement implements Requirement {
     public boolean check() {
         for (int i = 0; i < zones.size(); i++) {
             if (zones.get(i).contains(Player.getPosition()))
+                return true;
+        }
+        for (int i = 0; i < zonesNew.size(); i++) {
+            if (zonesNew.get(i).containsMyPlayer())
                 return true;
         }
         return false;

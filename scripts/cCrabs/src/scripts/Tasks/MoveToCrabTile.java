@@ -14,6 +14,8 @@ import scripts.PathingUtil;
 import scripts.Timer;
 import scripts.Utils;
 
+import java.nio.file.Path;
+
 public class MoveToCrabTile implements Task {
 
     public void moveToCrabTile(RSTile crabTile) {
@@ -37,15 +39,16 @@ public class MoveToCrabTile implements Task {
 
             if (Const.SANDCRAB_ISLAND.contains(Player.getPosition())) {
                 Vars.get().task = "Moving to Crab Tile - local walking";
-                if(PathingUtil.localNavigation(Vars.get().crabTile))
-                PathingUtil.movementIdle();
+                if (PathingUtil.localNavigation(Vars.get().crabTile))
+                    PathingUtil.movementIdle();
             }
             for (int i = 0; i < 3; i++) {
-                if (!crabTile.isOnScreen())
-                    PathingUtil.walkToTile(crabTile, 1, true);
+                if (!crabTile.isOnScreen() &&
+                    PathingUtil.walkToTile(crabTile, 1, false))
+                    PathingUtil.movementIdle();
 
-                else if (crabTile.isOnScreen() && Walking.clickTileMS(crabTile, "Walk here"))
-                    Timer.waitCondition(() -> Player.getPosition().equals(crabTile), 4500, 7500);
+                else if (Utils.getWorldTileFromRSTile(crabTile).interact("Walk here"))
+                    Timer.waitCondition(() -> Player.getPosition().equals(crabTile), 4500, 6500);
 
                 if (Player.getPosition().equals(crabTile))
                     break;
@@ -67,7 +70,7 @@ public class MoveToCrabTile implements Task {
 
     @Override
     public boolean validate() {
-        return  Login.getLoginState().equals(Login.STATE.INGAME) &&
+        return Login.getLoginState().equals(Login.STATE.INGAME) &&
                 !Player.getPosition().equals(Vars.get().crabTile);
     }
 

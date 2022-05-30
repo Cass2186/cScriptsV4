@@ -115,7 +115,7 @@ public class MakeFires implements Task {
         return ItemID.LOG_IDS[0];
     }
 
-    public void lightFire(int logIndex) {
+    public void lightFire(int logId) {
         RSItem[] t = Inventory.find(ItemID.TINDERBOX);
         Optional<InventoryItem> tinderbox = Query.inventory()
                 .idEquals(ItemID.TINDERBOX).findClosestToMouse();
@@ -123,7 +123,7 @@ public class MakeFires implements Task {
         Optional<InventoryItem> logs = Query.inventory()
                 .nameContains("Logs", "logs").findClosestToMouse();
 
-        RSItem[] invLogs = Inventory.find(ItemID.LOG_IDS[logIndex]);
+        RSItem[] invLogs = Inventory.find(logId);
         int invSize = Inventory.getAll().length;
 
         if (invLogs.length > 0 && t.length > 0) {
@@ -162,7 +162,7 @@ public class MakeFires implements Task {
                     Timer.waitCondition(() -> Inventory.getAll().length < invSize, 2500, 3500);
 
                 // hover next log
-                invLogs = Inventory.find(ItemID.LOG_IDS[logIndex]);
+                invLogs = Inventory.find(logId);
                 if (invLogs.length > 0 && t[0].click("Use")) {
                     AntiBan.waitItemInteractionDelay();
                     invLogs[0].hover();
@@ -195,20 +195,20 @@ public class MakeFires implements Task {
 
     @Override
     public void execute() {
-        if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) < 15) {
+        lightFire(getCurrentLogID());
+       /* if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) < 15) {
             lightFire(getCurrentLogID());
         } else if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) < 30) {
-            lightFire(1);
+            lightFire(getCurrentLogID());
         } else if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) < 45) {
-            lightFire(2);
+            lightFire(getCurrentLogID());
         } else if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) < 60) {
-            lightFire(3);
+            lightFire(getCurrentLogID());
         } else if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) < 99) {
-            lightFire(4);
-        } else if (Skills.getActualLevel(Skills.SKILLS.FIREMAKING) >= Vars.get().firemakingTargetLevel) {
-            cSkiller.isRunning.set(false); //ends script
-            General.println("[Debug]: Done firemaking");
+            lightFire(getCurrentLogID());
         }
+
+        */
     }
 
     @Override

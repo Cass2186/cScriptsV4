@@ -8,16 +8,17 @@ import lombok.Setter;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Magic;
+import org.tribot.api2007.Options;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSObjectDefinition;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Tribot;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.input.Mouse;
+import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
@@ -181,10 +182,10 @@ public class Obstacle {
     public boolean clickObject(Optional<GameObject> obj, String action, boolean accurateMouse, boolean abc2Wait) {
         int plane = MyPlayer.getTile().getPlane();
         int shouldAlch = Utils.random(0, 100);
-        int shouldSpam = TribotRandom.uniform(0,100);
+        int shouldSpam = TribotRandom.uniform(0, 100);
         for (int i = 0; i < 3; i++) { //tries 3 times
             // Log.info("Clicking " + this.obstacleAction + " " + getObstacleName() + " (ABC2 Sleep: " + abc2Wait + ")");
-            if (Vars.get().spamClickAgility && shouldSpam < TribotRandom.normal(64,4))  {
+            if (Vars.get().spamClickAgility && shouldSpam < TribotRandom.normal(64, 4)) {
                 int num = TribotRandom.normal(2, 6, 3, 1);
                 Log.info("Clicking " + num + " times");
                 for (int clicks = 0; clicks < num; clicks++) {
@@ -198,7 +199,18 @@ public class Obstacle {
                 Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
                 if (obj.map(o -> o.interact(action)).orElse(false))
                     Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
-
+            } else if (obj.map(o -> !o.isVisible()).orElse(false)) {
+                Log.info("Using clickable tile");
+                Optional<Positionable> furthestTile = PathingUtil
+                        .getFurthestClickableTile(obj.get().getTile().toLocalTile());
+                if (furthestTile.map(f -> f.getTile().interact("Walk here")).orElse(false)) {
+                    Waiting.waitUntil(3500, 125, () -> obj.map(o -> o.isVisible()).orElse(false));
+                    if (!obj.map(o -> o.interact(action)).orElse(false)) {
+                        Log.error("Miss clicked, i: " + i);
+                        Waiting.waitNormal(30, 7);
+                        continue;
+                    }
+                }
             } else if (!obj.map(o -> o.interact(action)).orElse(false)) {
                 Log.error("Miss clicked, i: " + i);
                 Waiting.waitNormal(30, 7);
@@ -219,11 +231,19 @@ public class Obstacle {
                                             t.distance() > 30),
                             timeOutMin, timeOutMin + 3000);
 
+                else if (Skill.AGILITY.getActualLevel() >= 85) //ardy
+                    return Timer.agilityWaitCondition(() -> (!MyPlayer.isMoving()
+                                    && this.nextObstacleArea.contains(Player.getPosition())
+                                    && MyPlayer.getAnimation() == -1) ||
+                                    (MyPlayer.getTile().getPlane() == plane &&
+                                            t.distance() > 30),
+                            timeOutMin, timeOutMin + 3000);
+
                 else
                     return Timer.agilityWaitCondition(() -> (!MyPlayer.isMoving()
                                     && this.nextObstacleArea.contains(Player.getPosition())
                                     && MyPlayer.getAnimation() == -1) ||
-                                    MyPlayer.getTile().getPlane() != plane ||
+                                    MyPlayer.getTile().getPlane() == 0 ||
                                     (MyPlayer.getTile().getPlane() == plane &&
                                             t.distance() > 30),
                             timeOutMin, timeOutMin + 3000);

@@ -342,6 +342,7 @@ public class MagicBank implements Task {
 
             BankManager.close(true);
         }
+        Utils.equipItem(ItemID.STAFF_OF_FIRE);
     }
 
 }

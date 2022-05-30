@@ -145,7 +145,6 @@ public class SkillBank {
 
     private static boolean withdrawItem(ItemReq i) {
         var itemId = i.getId();
-
         for (int b = 0; b < 4; b++) {
             Waiting.waitUniform(40, 60);
             Log.info("[SkillBank]: Attempting to withdraw item: " + i.getId() +

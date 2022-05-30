@@ -24,21 +24,21 @@ public class ItemRequirements extends ItemRequirement {
 
     public ItemRequirements(String name, ItemRequirement... itemRequirements)
     {
-        super(name, itemRequirements[0].getId(), -1);
+        super(name, itemRequirements[0].getId(), 1);
         this.itemRequirements.addAll(Arrays.asList(itemRequirements));
         this.logicType = LogicType.AND;
     }
 
     public ItemRequirements(LogicType logicType, String name, ItemRequirement... itemRequirements)
     {
-        super(name, itemRequirements[0].getId(), -1);
+        super(name, itemRequirements[0].getId(), 1);
         this.itemRequirements.addAll(Arrays.asList(itemRequirements));
         this.logicType = logicType;
     }
 
     public ItemRequirements(LogicType logicType, String name, List<ItemRequirement> itemRequirements)
     {
-        super(name, itemRequirements.get(0).getId(), -1);
+        super(name, itemRequirements.get(0).getId(), 1);
         this.itemRequirements.addAll(itemRequirements);
         this.logicType = logicType;
     }

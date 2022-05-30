@@ -48,7 +48,7 @@ public class GoToCanifis implements Task {
 
     @Override
     public String taskName() {
-        return "Agility - Canifis";
+        return "Agility";
     }
 
 }

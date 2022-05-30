@@ -181,7 +181,8 @@ public class TribalTotem implements QuestTask {
             cQuesterV2.status = "Buying & Getting items";
             buyInitial.buyItems();
             startInventory.withdrawItems();
-        } else if (Game.getSetting(200) == 0) {
+        }
+        if (Game.getSetting(QuestVarPlayer.QUEST_TRIBAL_TOTEM.getId()) == 0) {
             cQuesterV2.status = "Going to start";
             talkToKangaiMau.execute();
         } else if (Game.getSetting(200) == 1) {

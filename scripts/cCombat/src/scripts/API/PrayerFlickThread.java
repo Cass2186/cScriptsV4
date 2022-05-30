@@ -19,7 +19,7 @@ public class PrayerFlickThread extends Thread{
                 General.sleep(100,200);
 
             } else {
-                if (!Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition())) {
+                if (!Areas.LARGE_SCARAB_FIGHT_AREA.containsMyPlayer()) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {

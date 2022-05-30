@@ -99,6 +99,7 @@ public class Const {
     public static final int startWoodcuttingXP = Skill.WOODCUTTING.getXp();
     public static final int startFletchXp = Skill.FLETCHING.getXp();
     public static final int startSmithingXp = Skill.SMITHING.getXp();
+    public static final int startThievingXp = Skill.THIEVING.getXp();
 
     public static final int startSmithingLvl = Skill.SMITHING.getActualLevel();
     public static final int startFletchLvl = Skill.FLETCHING.getActualLevel();
@@ -121,4 +122,5 @@ public class Const {
     public static final int startSlayerLvl = Skill.SLAYER.getActualLevel();
     public static final int startStrLvl = Skill.STRENGTH.getActualLevel();
     public static final int startWoodcuttingLvl = Skill.WOODCUTTING.getActualLevel();
+    public static final int startThievingLvl = Skill.THIEVING.getActualLevel();
 }

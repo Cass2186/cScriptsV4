@@ -16,7 +16,10 @@ import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Prayer;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.util.ScriptSettings;
 
 import scripts.Data.Vars;
@@ -111,10 +114,10 @@ public class GUIController extends AbstractGUIController {
     @DoNotRename
     @FXML
     void updateCentreTile(ActionEvent event) {
-        RSTile tile = Player.getPosition();
+        WorldTile tile = MyPlayer.getTile();
         centreTileBox.setText(tile.getX() + "," + tile.getY() + "," + tile.getPlane());
         Vars.get().combatCentreTile = tile;
-        Vars.get().fightArea = new RSArea(Vars.get().combatCentreTile, Vars.get().areaRadius);
+        Vars.get().fightArea = Area.fromRadius(Vars.get().combatCentreTile, Vars.get().areaRadius);
     }
 
     @DoNotRename

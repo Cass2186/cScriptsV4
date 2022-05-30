@@ -8,6 +8,8 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.ItemID;
 import scripts.Timer;
 
@@ -30,8 +32,8 @@ public class Vars {
     /**
      * Strings
      */
-    public String[] targets = this.killingScarabs ?
-            new String[]{"Scarab mage", "Undead Druid"} : new String[]{"Scarab mage", "Undead Druid"};
+    public List<String> targets = this.killingScarabs ?
+            List.of("Scarab mage", "Undead Druid") : List.of("Scarab mage", "Undead Druid");
 
 
     public String status = "Initializing...";
@@ -40,9 +42,13 @@ public class Vars {
     public ArrayList<String> potionNames = new ArrayList<>();
 
     public HashMap<Integer, Integer> restockList = new HashMap<>();
+
     public boolean killingScarabs = false;
     public boolean killingUndeadDruids = true;
     public boolean killingSpidines = false;
+    public boolean killingBrutalBlacks = false;
+
+    public List<String> targetNames = new ArrayList<>();
 
     public HashMap<Skills.SKILLS, Integer> skillStartXpMap = new HashMap<>();
 
@@ -65,10 +71,10 @@ public class Vars {
 
     public RSTile safeTile = new RSTile(3208, 3812, 0);
 
-    public RSTile combatCentreTile;
+    public WorldTile combatCentreTile;
     public int areaRadius = 10;
 
-    public RSArea fightArea = Areas.UNDEAD_DRUID_AREA;
+    public Area fightArea = Areas.UNDEAD_DRUID_AREA;
 
     public List<Integer> gearIdList;
 
@@ -93,7 +99,7 @@ public class Vars {
 
     public int restockNumber = 6;
 
-    public int minLootValue = 700;
+    public int minLootValue = 800;
     public int kills = 0;
 
     public int afkLengthMin = 30000;
@@ -152,23 +158,9 @@ public class Vars {
 
     public boolean needDustyKey;
 
-    public boolean shouldWorldHop = false;
 
-    public boolean needsIceCoolers = false;
 
-    public boolean magicMeleeGear = false;
 
-    public boolean usingSpecialItem = false;
-
-    public boolean shouldSkipTask = false;
-
-    public boolean needRockHammer = false;
-
-    public boolean needsGem = false;
-
-    public boolean slayerShopRestock = false;
-
-    public boolean wallbeastTask = false;
 
 
     public boolean alchItems = Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55;

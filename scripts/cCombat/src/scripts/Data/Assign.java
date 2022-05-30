@@ -1,8 +1,8 @@
 package scripts.Data;
 
 import lombok.Getter;
-import org.tribot.api2007.types.RSArea;
-import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.types.Area;
 import scripts.ItemID;
 import scripts.PrayerType;
 import scripts.PrayerUtil;
@@ -15,7 +15,7 @@ public enum Assign {
     ABBERANT_SPECTRES(new Assign.Builder()
             .inArea(Areas.ABBERANT_SPECTRES_AREA)
             .usingCannon(true)
-            .useCannonTile(Areas.ABBERANT_SPECTRES_AREA.getRandomTile())
+            .useCannonTile(Areas.ABBERANT_SPECTRES_AREA.getCenter())
             .usePrayerType(PrayerType.MAGIC)
             .nameContains("Abberant spectre")
             .useGearType(GearType.MAGIC_MELEE)),
@@ -317,7 +317,7 @@ public enum Assign {
             .nameContains("Wyrm") //TODO CHECK
             .useGearType(GearType.MELEE));
     @Getter
-    private RSArea area;
+    private Area area;
     @Getter
     private boolean useCannon = false;
     @Getter
@@ -326,7 +326,7 @@ public enum Assign {
     @Getter
     private boolean useSpecialItem = false;
     @Getter
-    private RSTile cannonTile = null;
+    private WorldTile cannonTile = null;
 
     @Getter
     private List<String> nameList;
@@ -340,7 +340,7 @@ public enum Assign {
     private GearType gearType = GearType.MELEE;
 
     @Getter
-    private RSTile hopTile;
+    private WorldTile hopTile;
 
     private Assign(Builder builder) {
         this.area = builder.area;
@@ -357,18 +357,18 @@ public enum Assign {
 
 
     public static class Builder {
-        private RSArea area;
+        private Area area;
         private boolean useCannon;
         private PrayerType prayerType;
         private boolean useSpecialItem;
-        private RSTile cannonTile;
+        private WorldTile cannonTile;
         private List<String> nameList;
         private int specialItemID;
         private GearType gearType;
-        private RSTile hopTile;
+        private WorldTile hopTile;
         private List<Integer> customGearList;
 
-        public Builder inArea(RSArea area) {
+        public Builder inArea(Area area) {
             this.area = area;
             return this;
         }
@@ -398,7 +398,7 @@ public enum Assign {
             return this;
         }
 
-        public Builder useCannonTile(RSTile tile) {
+        public Builder useCannonTile(WorldTile tile) {
             this.cannonTile = tile;
             return this;
         }
@@ -412,7 +412,7 @@ public enum Assign {
             return this;
         }
 
-        public Builder useHopTile(RSTile tile) {
+        public Builder useHopTile(WorldTile tile) {
             this.hopTile = tile;
             return this;
         }

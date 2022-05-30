@@ -253,6 +253,11 @@ public class ObjectStep extends QuestStep {
         return Utils.getWorldTileFromRSTile(endTile).distance() < Utils.random(4, 6) || !MyPlayer.isMoving();
     }
 
+    private boolean useInteractionString(){
+
+        return true;
+    }
+
     @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {

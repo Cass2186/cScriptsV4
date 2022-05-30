@@ -139,12 +139,10 @@ public class DepositOre implements Task {
                 return Timer.abc2WaitCondition(() -> Inventory.getAll().length < 5, 10000, 15000);
 
             int c = Utils.random(0,100);
-            WorldTile t= Utils.getWorldTileFromRSTile(BfConst.BAR_COLLECTION_TILE);
-            return Waiting.waitUntil(14000, 15, () -> {
+            WorldTile t = Utils.getWorldTileFromRSTile(BfConst.BAR_COLLECTION_TILE);
+            return Waiting.waitUntil(14000, 55, () -> {
                         AntiBan.timedActions();
-                        if (c < 40 && t.getBounds().map(b-> !b.contains(Mouse.getPos())).orElse(false)){
-                            BfConst.BAR_COLLECTION_TILE.hover();
-                        }
+
                         return Inventory.getAll().length < 5;
                     });
         }

@@ -283,14 +283,15 @@ public class ShilloVillage implements QuestTask {
             if (f.length > 0) {
                 cQuesterV2.status = "Using Candle on Fissure";
                 if (Utils.useItemOnObject(LIT_CANDLE, "Fissure")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NpcChat.handle("Yes");
+                    NpcChat.handle(true, "Yes");
+                    NpcChat.handle(true, "Yes");
                 }
-                if (Utils.useItemOnObject(ROPE, "Fissure")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NpcChat.handle("Yes");
-                }
+
             }
+        }
+        if (Utils.useItemOnObject(ROPE, "Fissure")) {
+            NPCInteraction.waitForConversationWindow();
+            NpcChat.handle("Yes");
         }
     }
 
@@ -326,8 +327,7 @@ public class ShilloVillage implements QuestTask {
             if (!MyPlayer.getTile().equals(t) && t.interact("Walk here"))
                 PathingUtil.movementIdle();
             if (obj.length > 0 && Utils.clickObject(obj[0], "Search")) {
-                Waiting.waitUntil(2000, 25, () -> ChatScreen.isOpen());
-                NpcChat.handle("Yes, I'll wriggle through.");
+                NpcChat.handle(true, "Yes, I'll wriggle through.");
                 Timer.waitCondition(() -> AHZAHROON_SECOND_AREA.contains(Player.getPosition()), 8000, 12000);
             }
         }
@@ -337,8 +337,7 @@ public class ShilloVillage implements QuestTask {
             RSObject[] obj = Objects.findNearest(20, Filters.Objects.nameContains("Loose rocks"));
             cQuesterV2.status = "5: Searching Rocks";
             if (obj.length > 0 && Utils.clickObject(obj[0], "Search")) {
-                Waiting.waitUntil(2000, 25, () -> ChatScreen.isOpen());
-                NpcChat.handle("Yes, I'll carefully move the rocks to see what's behind them.");
+                NpcChat.handle(true, "Yes, I'll carefully move the rocks to see what's behind them.");
                 NpcChat.handle();
             }
         }
@@ -346,8 +345,7 @@ public class ShilloVillage implements QuestTask {
         if (s.length > 0 && Inventory.find(CRUMPLED_SCROLL).length == 0) {
             cQuesterV2.status = "5: Reading scroll";
             if (s[0].click("Read")) {
-                Waiting.waitUntil(2000, 25, () -> ChatScreen.isOpen());
-                NpcChat.handle("Yes please.");
+                NpcChat.handle(true, "Yes please.");
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(220, 16), 3000, 5000);
             }
             if (Interfaces.isInterfaceSubstantiated(220, 16)) {
@@ -445,16 +443,13 @@ public class ShilloVillage implements QuestTask {
 
             if (invReq.check()) {
                 cQuesterV2.status = "Burying corpse";
-                PathingUtil.walkToTile(STATUE_TILE, 2, true);
+                PathingUtil.walkToTile(STATUE_TILE, 1, true);
                 PathingUtil.movementIdle();
                 if (STATUE_TILE.distanceTo(Player.getPosition()) < 3) {
                     RSItem[] itm = Inventory.find(ZADIMUS_CORPSE);
-                    if (itm.length > 0) {
-                        if (itm[0].click("Bury")) {
-                            NPCInteraction.waitForConversationWindow();
-                            General.sleep(2500);
-                            NpcChat.handle();
-                        }
+                    if (itm.length > 0 && itm[0].click("Bury")) {
+                        NpcChat.handle(true);
+                        NpcChat.handle(true);
                     }
                 }
             }
@@ -471,7 +466,7 @@ public class ShilloVillage implements QuestTask {
                     && !CAIRN_ISLAND_AREA.contains(Player.getPosition()) &&
                     !CAIRN_ISLAND_DUNGEON_AREA.contains(Player.getPosition())) {
                 PathingUtil.walkToArea(BEFORE_ROCK_WALL_AREA, true);
-                clickScreenWalk(new WorldTile(2785, 2979,0));
+                clickScreenWalk(new WorldTile(2785, 2979, 0));
             }
             if (Utils.clickObj(2231, "Climb")) {
                 Timer.waitCondition(() -> AFTER_ROCK_WALL.contains(Player.getPosition()), 5000, 7000);
@@ -486,7 +481,7 @@ public class ShilloVillage implements QuestTask {
 
             if (AFTER_ROCK_WALL.contains(Player.getPosition())) {
                 if (Walking.blindWalkTo(CAIRN_ISLAND_AREA.getRandomTile())) {
-                    Timer.waitCondition(() -> CAIRN_ISLAND_AREA.contains(Player.getPosition()), 5000, 8000);
+                    Timer.waitCondition(() -> CAIRN_ISLAND_AREA.contains(Player.getPosition()), 9000, 12000);
                 }
             }
             if (CAIRN_ISLAND_AREA.contains(Player.getPosition())) {
@@ -692,6 +687,7 @@ public class ShilloVillage implements QuestTask {
 
 
     public void returnToIsland() {
+        org.tribot.script.sdk.Prayer.disableAll();
         if (CAIRN_ISLAND_DUNGEON_AREA.contains(Player.getPosition())) {
             if (!DOLMAN_AREA.contains(Player.getPosition()))
                 PathingUtil.localNavigation(DOLMAN_AREA.getRandomTile());
@@ -714,8 +710,8 @@ public class ShilloVillage implements QuestTask {
         General.sleep(50);
         if (GameState.getSetting(GAME_SETTING) == 0) {
             if (!initialItemReqs.check()) {
-                //  buyItems();
-                // getItems();
+                buyItems();
+                getItems();
             }
             startQuest();
             step2UseBeltOnTrufitus();
@@ -743,7 +739,6 @@ public class ShilloVillage implements QuestTask {
             goToBossFightPt2();
         } else if (GameState.getSetting(GAME_SETTING) == 11) { // changes from 10->11 after going through ancient metal gates in dungeon
             goToBossFightPt2();
-
         } else if (GameState.getSetting(GAME_SETTING) == 12) {
             goToBossFightPt2();
             killBoss();

@@ -2,6 +2,8 @@ package scripts.QuestPackages.MonkeyMadnessI;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.WorldTile;
 
 public class MMConst {
 
@@ -19,7 +21,7 @@ public class MMConst {
     public static RSTile preCaptureTile = new RSTile(2726, 2738, 0);
     public static RSTile inFrontOfFlames = new RSTile(2807, 9206, 0);
     public static RSTile apeAtollBeachTile = new RSTile(2799, 2703, 0);
-    public static RSTile OUTSIDE_JAIL_TILE = new RSTile(2762, 2804, 0);
+    public static WorldTile OUTSIDE_JAIL_TILE = new WorldTile(2762, 2804, 0);
     public static RSTile INSIDE_CELL_SAFE_TILE = new RSTile(2772, 2794, 0);
 
 
@@ -46,7 +48,8 @@ public class MMConst {
     public static RSArea JAIL_CELL_SAFE_AREA = new RSArea(new RSTile(2776, 2793, 0), new RSTile(2770, 2794, 0));
     public static RSArea JAIL_CELL_WAITING_AREA = new RSArea(new RSTile(2770, 2794, 0), new RSTile(2773, 2793, 0));
     public static RSArea JAIL_CELL = new RSArea(new RSTile(2770, 2795, 0), new RSTile(2776, 2793, 0));
-    public static RSArea OUTSIDE_CELL_SAFE_AREA = new RSArea(new RSTile(2766, 2795, 0), new RSTile(2769, 2793, 0));
+    public static Area OUTSIDE_CELL_SAFE_AREA = Area.fromRectangle(new WorldTile(2766, 2795, 0),
+            new WorldTile(2769, 2793, 0));
     public static RSArea wholeJailArea = new RSArea(new RSTile(2776, 2793, 0), new RSTile(2764, 2802, 0));
     // this is the whole Island EXCEPT the beach.
     public static RSArea WHOLE_ISLAND = new RSArea(

@@ -30,31 +30,32 @@ public class GoToRelleka implements Task {
                 Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
                 !AgilityAreas.RELLEKA_LARGE_START.contains(Player.getPosition()) &&
                 Player.getPosition().getPlane() == 0 &&
-                AgilUtils.isWithinLevelRange(80, 99);
+                AgilUtils.isWithinLevelRange(80, 85);
     }
 
     @Override
     public void execute() {
         Utils.idleNormalAction();
-        if (MyPlayer.getAnimation() != -1 ||MyPlayer.isMoving()) {
+        Log.info("Going to Relleka start");
+        if (MyPlayer.getAnimation() != -1 || MyPlayer.isMoving()) {
             Log.info("Waiting movement");
             Waiting.waitUntil(2500, 500, () -> MyPlayer.getAnimation() == -1 && !MyPlayer.isMoving());
-        }  if (!AgilityAreas.RELLEKA_FINISH_AREA.contains(Player.getPosition())){
+        }
+        if (!AgilityAreas.RELLEKA_FINISH_AREA.contains(Player.getPosition())) {
             Log.info("Waiting 2500ms");
-            Waiting.waitUntil(2100, 500, ()->
+            Waiting.waitUntil(2100, 500, () ->
                     AgilityAreas.RELLEKA_FINISH_AREA.contains(Player.getPosition()));
         }
-        General.println("[Debug]: Going to Relleka start");
-        if (AgilityAreas.RELLEKA_FINISH_AREA.contains(Player.getPosition())) {
-
+        for (int i = 0; i < 3; i++) {
             if (PathingUtil.localNav(Utils.getLocalTileFromRSTile(AgilityAreas.RELLEKA_START_TILE))) {
                 Timer.waitCondition(() ->
                         AgilityAreas.RELLEKA_LARGE_START.contains(Player.getPosition()), 8000, 10000);
                 return;
-            }
+            } else
+                Utils.idleNormalAction();
         }
-
         PathingUtil.walkToTile(AgilityAreas.RELLEKA_START_TILE, 3, false);
+
 
     }
 

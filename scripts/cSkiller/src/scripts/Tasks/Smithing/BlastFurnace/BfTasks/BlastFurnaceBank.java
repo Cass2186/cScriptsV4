@@ -83,7 +83,7 @@ public class BlastFurnaceBank implements Task {
         RSObject[] bank = Objects.findNearest(20, Filters.Objects.nameContains("Bank"));
         if (bank.length > 0) {
             if (!bank[0].isClickable()) {
-                Log.info("[Debug]: Walking to bank tile");
+                Log.info("Walking to bank tile");
                 Walking.blindWalkTo(BfConst.BANK_TILE);
             }
 
@@ -91,7 +91,7 @@ public class BlastFurnaceBank implements Task {
                 if (!Player.getPosition().equals(BfConst.BANK_TILE))
                     Walking.clickTileMS(BfConst.BANK_TILE, "Walk here");
                 AntiBan.waitItemInteractionDelay();
-                Log.info("[Debug]: Equiping goldsmith gauntlets");
+                Log.info("Equiping goldsmith gauntlets");
                 Utils.equipItem(BfConst.GOLDSMITH_GAUNTLETS, "Wear");
                 AntiBan.waitItemInteractionDelay();
             }
@@ -174,7 +174,7 @@ public class BlastFurnaceBank implements Task {
             if (Banking.find(BfConst.ICE_GLOVES).length == 0) {
                 return BfVars.get().usingIceGloves = false;
             } else {
-                Log.info("[Debug]: Getting Ice gloves");
+                Log.info("Getting Ice gloves");
                 BankManager.withdraw(1, true, BfConst.ICE_GLOVES);
                 Utils.equipItem(BfConst.ICE_GLOVES);
                 return true;

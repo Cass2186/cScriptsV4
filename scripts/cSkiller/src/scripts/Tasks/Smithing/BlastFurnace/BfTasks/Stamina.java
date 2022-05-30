@@ -53,7 +53,7 @@ public class Stamina implements Task {
             Waiting.waitNormal(400,75);
             int xp = Skill.SMITHING.getXp();
             if (Equipment.contains(ItemID.GOLDSMITH_GAUNTLETS)){
-                Waiting.waitUntil(2500, 5, ()-> Skill.SMITHING.getXp() > xp);
+                Waiting.waitUntil(1500, 25, ()-> Skill.SMITHING.getXp() > xp);
             }
         }
     }

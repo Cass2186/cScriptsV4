@@ -67,15 +67,15 @@ public class Utils {
         return list.stream().toArray();
     }
 
-    public static boolean turnEscToCloseOn(){
-        if (!Options.isEscapeClosingEnabled() && openSettingsWindow()){
+    public static boolean turnEscToCloseOn() {
+        if (!Options.isEscapeClosingEnabled() && openSettingsWindow()) {
             Optional<Widget> escOption = Query.widgets().inIndexPath(134, 18)
                     .textContains("Esc closes the current")
                     .findFirst();
             Log.warn("Turning on Esc to Close");
-            if (escOption.map(e->e.scrollTo() && e.click()).orElse(false) &&
-                Waiting.waitUntil(4000, 150,
-                        Options::isEscapeClosingEnabled)){
+            if (escOption.map(e -> e.scrollTo() && e.click()).orElse(false) &&
+                    Waiting.waitUntil(4000, 150,
+                            Options::isEscapeClosingEnabled)) {
                 return Query.widgets()
                         .actionContains("Close")
                         .findFirst()
@@ -121,6 +121,7 @@ public class Utils {
     public static LocalTile getLocalTileFromRSTile(RSTile tile) {
         return new LocalTile(tile.getX(), tile.getY(), tile.getPlane());
     }
+
     public static WorldTile getWorldTileFromRSTile(RSTile tile) {
         return new WorldTile(tile.getX(), tile.getY(), tile.getPlane());
     }
@@ -1076,40 +1077,13 @@ public class Utils {
     }
 
     public static void setNPCAttackPreference() {
-        //tries 3x to set
-        for (int i = 0; i < 3; i++) {
-            //already set, break;
-            if (GameState.getSetting(1306) == 2)
-                return;
 
-            Log.info("[Utils]: Setting NPC Attach preferences");
-            if (!GameTab.OPTIONS.isOpen() && GameTab.OPTIONS.open()) {
-                Waiting.wait(General.randomSD(100, 750, 400, 150));
-            }
+        //already set, break;
+        //  if (GameState.getSetting(1306) == 2)
+        //      return;
 
-            if (GameTab.OPTIONS.open()) {
-                // not in the right options tab (gear one)
-                if (Utils.getVarBitValue(9683) != 0) {
-                    if (Interfaces.get(109, 6) != null) { // selects tab in options
-                        Interfaces.get(109, 6).click();
-                        Timer.waitCondition(() -> Utils.getVarBitValue(9683) == 0, 1750, 2250);
-                    }
-                }
+        Options.AttackOption.setNpcAttackOption(Options.AttackOption.LEFT_CLICK_WHERE_AVAILABLE);
 
-                if (Interfaces.get(116, 7, 3) != null) { // selects drop down
-                    Interfaces.get(116, 7, 3).click();
-                    Waiting.wait(General.randomSD(100, 750, 400, 150));
-                }
-
-                Optional<Widget> first = Query.widgets()
-                        .textContains("Left-click where available").findFirst();
-                Log.debug("is button present: " + first.isPresent());
-                if (first.map(f -> f.click("Select")).orElse(false)) {
-                    Timer.waitCondition(() -> GameState.getSetting(1306) == 2, 2250, 2750);
-                    break;
-                }
-            }
-        }
     }
 
     public static boolean waitCondtion(BooleanSupplier condition) {
@@ -1254,11 +1228,12 @@ public class Utils {
         //System.out.println("[Debug]: Sleeping (predictable rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
+
     public static void idleNormalAction(boolean print) {
         int sleep = (int) ReactionGenerator.get().nextReactionTime(200, 50, 0.007, 0.2,
                 100, 2000);
         if (print)
-        Log.info("[Utils]: Sleeping (normal rxn) for: " + sleep);
+            Log.info("[Utils]: Sleeping (normal rxn) for: " + sleep);
         Waiting.wait(sleep);
     }
 
@@ -1620,14 +1595,14 @@ public class Utils {
         } else {
             Log.info("Opening Settings");
             if (GameTab.OPTIONS.open())
-                Waiting.waitUntil(3500, 400, ()-> GameTab.OPTIONS.isOpen());
+                Waiting.waitUntil(3500, 400, () -> GameTab.OPTIONS.isOpen());
 
             if (openInterface(SETTINGS_TAB_PARENT_ID, 59)) // clicks the tab with the gear on it
                 Utils.microSleep();
 
-            if(Query.widgets().inIndexPath(SETTINGS_TAB_PARENT_ID, ALL_SETTINGS_BUTTON).textContains("All settings")
+            if (Query.widgets().inIndexPath(SETTINGS_TAB_PARENT_ID, ALL_SETTINGS_BUTTON).textContains("All settings")
                     .findFirst().map(Widget::click).orElse(false))
-                return Waiting.waitUntil(3500, 400, ()-> Widgets.isVisible(SETTINGS_WINDOW_PARENT));
+                return Waiting.waitUntil(3500, 400, () -> Widgets.isVisible(SETTINGS_WINDOW_PARENT));
 
         }
         return Widgets.isVisible(SETTINGS_WINDOW_PARENT);
@@ -1728,12 +1703,12 @@ public class Utils {
                         .findClosestByPathDistance();
 
                 Log.info("[Utils]: Using: " + itemID);
-                if (gameObject.map(o->invItem.map(inv->inv.useOn(o)).orElse(false)).orElse(false)){
+                if (gameObject.map(o -> invItem.map(inv -> inv.useOn(o)).orElse(false)).orElse(false)) {
                     return true;
                 }
                 if (!isItemSelected(itemID)) {
 
-                    if (invItem.map(inv->inv.click("Use")).orElse(false))
+                    if (invItem.map(inv -> inv.click("Use")).orElse(false))
                         AntiBan.waitItemInteractionDelay();
 
                     if (!obj.isClickable() || i == 2)
@@ -1829,6 +1804,7 @@ public class Utils {
 
     /**
      * Rounds to nearest whole number specified
+     *
      * @param initial double provided
      * @param roundTo rounds to nearest specified value
      * @return the rounded number
@@ -1861,9 +1837,9 @@ public class Utils {
         String itemString = getItemName(itemID);
         Optional<Npc> npc = QueryUtils.getNpc(NPCName);
         Log.info("[Debug]: Using: " + itemString);
-        return npc.map(n-> invItem.map(i->i.useOn(n)).orElse(false)).orElse(false);
+        return npc.map(n -> invItem.map(i -> i.useOn(n)).orElse(false)).orElse(false);
 
-   }
+    }
 
 
     public static boolean useItemOnNPC(int itemID, RSNPC rsnpc) {
@@ -1917,7 +1893,7 @@ public class Utils {
         String itemString = getItemName(itemID);
         Optional<Npc> npc = Query.npcs().nameContains(NpcNames).findClosestByPathDistance();
         Log.info("[Utils]: Using: " + itemString);
-        return npc.map(n-> invItem.map(i->i.useOn(n)).orElse(false)).orElse(false);
+        return npc.map(n -> invItem.map(i -> i.useOn(n)).orElse(false)).orElse(false);
     }
 
     public static boolean useItemOnNPC(int ItemID, int npcId) {
@@ -1938,7 +1914,7 @@ public class Utils {
     public static boolean useItemOnNPC(int[] itemID, int NpcId) {
         Optional<InventoryItem> invItem = Query.inventory().idEquals(itemID).findClosestToMouse();
         Optional<Npc> npc = QueryUtils.getNpc(NpcId);
-        return npc.map(n-> invItem.map(i->i.useOn(n)).orElse(false)).orElse(false);
+        return npc.map(n -> invItem.map(i -> i.useOn(n)).orElse(false)).orElse(false);
     }
 
 

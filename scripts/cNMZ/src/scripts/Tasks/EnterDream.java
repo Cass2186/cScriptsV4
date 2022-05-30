@@ -11,7 +11,9 @@ import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.types.Widget;
 import scripts.InterfaceUtil;
 import scripts.NmzData.NmzConst;
+import scripts.NmzData.Vars;
 import scripts.NpcChat;
+import scripts.Requirements.InventoryRequirement;
 import scripts.Utils;
 import scripts.cNMZ;
 
@@ -122,7 +124,7 @@ public class EnterDream implements Task {
     @Override
     public boolean validate() {
         return !Game.isInInstance() && GameState.getVarbit(VARBIT_FOR_READY_DREAM) == 0 &&
-                isInventoryReady();
+                Vars.get().invRequirement.map(InventoryRequirement::check).orElse(false);
     }
 
     @Override

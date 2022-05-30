@@ -25,6 +25,7 @@ import java.util.Random;
 public class AttackNpc implements Task {
 
     private static int SCARAB_PRE_ATTACK_ANIMATION = 5443;
+    int abc2Chance = General.random(0, 100);
 
 
     public static void setPrayer(boolean on) {
@@ -51,7 +52,7 @@ public class AttackNpc implements Task {
         }
     }
 
-    public Optional<RSNPC> setCurrentTarget(String[] monsterStrings) {
+   /* public Optional<RSNPC> setCurrentTarget(String[] monsterStrings) {
         if (MyPlayer.isHealthBarVisible()) {
             RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
 
@@ -111,49 +112,45 @@ public class AttackNpc implements Task {
             }
         }
         return Optional.empty();
-    }
+    }*/
 
     public void fight() {
-
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
+        Optional<Npc> attackingMe = getNpcToAttack(Vars.get().fightArea);
 
-        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
-        Optional<RSNPC> targ = setCurrentTarget(Vars.get().targets);
-
-        if (!AntiPKThread.isWorldVisible(AntiPKThread.nextWorld)) {
-            AntiPKThread.scrollToWorldNoClick(AntiPKThread.nextWorld);
-        }
-        if (targ.isPresent()) {
-            Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC,
-                    Prayer.EAGLE_EYE);
-
-            if (CombatUtil.clickTarget(targ.get())) {
+        if (attackingMe.isPresent()) {
+            if (!attackingMe.get().isHealthBarVisible() && attackingMe.get().getHealthBarPercent() != 0 &&
+                    attackingMe.map(t -> t.interact("Attack")).orElse(false)) {
                 Vars.get().status = "Attacking Target";
                 Vars.get().currentTime = System.currentTimeMillis();
+                Waiting.waitUntil(4500, () -> attackingMe.get().isHealthBarVisible());
+            } else {
+
             }
             if (Vars.get().drinkPotions)
                 Utils.drinkPotion(Vars.get().potionNames);
 
+            if (waitUntilOutOfCombat()) {
+                int num = Utils.random(0, 100);
+                if (num < 22) {
+                    Utils.idleAfkAction();
+                } else
+                    Utils.idleNormalAction(true);
+            }
 
-            //  if (CombatUtil.waitUntilOutOfCombat(targ.get(), AntiBan.getEatAt(), 45000)) {
-            //    //  if (useSpecialItem)
-            //   sleep(targ.get());
-
-            // } else
-            Waiting.waitUniform(200, 400);
 
         } else {
-            //  General.println("Cannot find target");
-            Waiting.waitUniform(200, 400);
+            Timer.waitCondition(() -> getNpcToAttack(Vars.get().fightArea).isPresent(), 10000, 15000);
+            Utils.idleNormalAction();
         }
 
     }
 
     public Optional<Npc> getNpcToAttack(Area area) {
         Optional<Npc> bestIntractable = Query.npcs()
-                .nameContains(Vars.get().targets)
+                .nameContains(Vars.get().targets.toArray(String[]::new))
                 .inArea(area)
                 .isNotBeingInteractedWith()
                 .isNotInteractingWithCharacter()
@@ -161,7 +158,7 @@ public class AttackNpc implements Task {
                 .findBestInteractable();
 
         Optional<Npc> attackingMe = Query.npcs()
-                .nameContains(Vars.get().targets)
+                .nameContains(Vars.get().targets.toArray(String[]::new))
                 .inArea(area)
                 .isInteractingWithMe()
                 .findClosestByPathDistance();
@@ -190,12 +187,6 @@ public class AttackNpc implements Task {
         return Prayer.enableQuickPrayer();
     }
 
-    public static boolean shouldFlickPrayerOn() {
-        return Query.npcs()
-                .isAnimation(SCARAB_PRE_ATTACK_ANIMATION)
-                .inArea(Utils.getAreaFromRSArea(Areas.LARGE_SCARAB_FIGHT_AREA))
-                .isAny();
-    }
 
     public void killScarabMages() {
 
@@ -232,7 +223,7 @@ public class AttackNpc implements Task {
             if (!MyPlayer.isHealthBarVisible())
                 Prayer.disableQuickPrayer();
             else {
-                Waiting.waitUntil(2500,  ()->
+                Waiting.waitUntil(2500, () ->
                         getNpcToAttack(Areas.scarabFightAreaSdk).isPresent() ||
                                 !MyPlayer.isHealthBarVisible());
             }
@@ -254,6 +245,7 @@ public class AttackNpc implements Task {
         Optional<Npc> attackingMe = getNpcToAttack(Areas.UNDEAD_DRUID_AREA_SDK);
 
         if (attackingMe.isPresent()) {
+            Log.info("Attacking is present");
 
             Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC,
                     Prayer.EAGLE_EYE);
@@ -266,7 +258,7 @@ public class AttackNpc implements Task {
             } else {
 
             }
-            General.random(0, 0);
+
             if (Vars.get().drinkPotions)
                 Utils.drinkPotion(Vars.get().potionNames);
 
@@ -280,6 +272,7 @@ public class AttackNpc implements Task {
 
 
         } else {
+            Log.info("Attacking is NOT present");
             Timer.waitCondition(() -> getNpcToAttack(Areas.UNDEAD_DRUID_AREA_SDK).isPresent(), 10000, 15000);
             Utils.idleNormalAction();
         }
@@ -305,7 +298,7 @@ public class AttackNpc implements Task {
                 EatUtil.eatFood();
             }
             List<Npc> attackingMe = Query.npcs()
-                    .nameContains(Vars.get().targets)
+                    .nameContains(Vars.get().targets.toArray(String[]::new))
                     .isInteractingWithMe()
                     .toList();
 
@@ -316,53 +309,6 @@ public class AttackNpc implements Task {
         });
     }
 
-
-    public void killDragons() {
-
-        /**
-         * Add looting while in combat
-         * add alching in combat
-         * add leaving if out of food/antifire/pots
-         */
-        MoveToArea.activateRuneDragonPrayer();
-
-        Optional<RSNPC> targ = setCurrentTarget(Vars.get().targets);
-        if (targ.isEmpty()) return;
-
-
-        if (!Combat.isAutoRetaliateOn())
-            Combat.setAutoRetaliate(true);
-
-        if (Vars.get().drinkPotions)
-            Utils.drinkPotion(Vars.get().potionNames);
-
-        RSCharacter target = org.tribot.api2007.Combat.getTargetEntity();
-        if (!MyPlayer.isHealthBarVisible() && CombatUtil.clickTarget(targ.get())) {
-            Vars.get().status = "Attacking Target";
-            Vars.get().currentTime = System.currentTimeMillis();
-            Timer.waitCondition(org.tribot.api2007.Combat::isUnderAttack, 2500, 4000);
-        } else if (MyPlayer.isHealthBarVisible() || target != null) {
-            Vars.get().status = "Fighting Target";
-            Vars.get().currentTime = System.currentTimeMillis();
-        }
-
-
-        if (CombatUtil.waitUntilOutOfCombat(targ.get(), AntiBan.getEatAt(), 85000)) {
-            Utils.idle(200, 1700);
-            /// sleep(targ.get());
-        } else {
-
-            Waiting.waitNormal(750, 150);
-
-        }
-        int p = Prayer.getPrayerPoints();
-        Log.log("Recharging prayer");
-        if (p < 15 && Utils.clickObj("Altar", "Pray-at")) {
-            Timer.waitCondition(() -> Prayer.getPrayerPoints() > p, 7000, 9000);
-        }
-    }
-
-    int abc2Chance = General.random(0, 100);
 
     private void sleep(RSNPC currentTarget) {
         if (currentTarget != null && currentTarget.getHealthPercent() == 0) {
@@ -394,12 +340,10 @@ public class AttackNpc implements Task {
 
     @Override
     public boolean validate() {
-        if (Vars.get().killingScarabs) {
-            return Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition());
-        }
+        Log.info(Vars.get().killingUndeadDruids);
         return Vars.get().killingUndeadDruids ?
-                Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition()) :
-                Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition());//MoveToArea.RUNE_DRAGON_AREA.contains(Player.getPosition());
+                Areas.UNDEAD_DRUID_AREA.containsMyPlayer() :
+                Vars.get().fightArea.containsMyPlayer();//MoveToArea.RUNE_DRAGON_AREA.contains// ;
     }
 
     @Override
@@ -408,7 +352,10 @@ public class AttackNpc implements Task {
             killScarabMages();
         } else if (Vars.get().killingUndeadDruids)
             killUndeadDruids();
-        else
+        else {
             Log.error("No execute() found for AttackNpc Class");
+            fight();
+        }
+
     }
 }

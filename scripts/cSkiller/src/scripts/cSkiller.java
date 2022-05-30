@@ -25,6 +25,8 @@ import scripts.Data.Paint;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.ScriptUtils.ScriptTimer;
+import scripts.Tasks.Agility.Tasks.Ardougne.ArdougneCourse;
+import scripts.Tasks.Agility.Tasks.Ardougne.GoToArdougneAgility;
 import scripts.Tasks.Agility.Tasks.Wilderness.WildernessAgility;
 import scripts.Tasks.Combat.CrabTasks.EatDrink;
 import scripts.Tasks.Combat.CrabTasks.Fight;
@@ -333,6 +335,8 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new SpringRun(),
                 //new RelocateHouse(),
                 new MixCompost(),
+                new GoToArdougneAgility(),
+                new ArdougneCourse(),
                 new CashInCompost(),
                 new BankForCompost(),
                 new FixCrane(),

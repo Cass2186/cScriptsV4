@@ -79,8 +79,7 @@ public class Vars {
             General.randomSD(2, 6, 3, 2);
 
     public int getEatRockCakeAt(){
-        return  usingLocatorOrb ? General.randomSD(2, 6, 3, 1) :
-                General.randomSD(2, 6, 3, 2);
+        return General.randomSD(2, 6, 3, 1);
     }
 
     public Timer overloadTimer = new Timer(0);  //5 min

@@ -247,7 +247,13 @@ public class Paint {
                                 (Skill.SMITHING.getXp() - Const.startSmithingXp),
                                 PaintUtil.getXpHr(Skill.SMITHING, Const.startSmithingXp, Vars.get().startTime)))
                         .build())
-
+                .row(template.toBuilder().label("Thieving")
+                        .condition(() -> Skill.THIEVING.getXp() > Const.startThievingXp &&
+                                Vars.get().showExperienceGained)
+                        .value(() -> PaintUtil.formatSkillString(Skill.THIEVING, Const.startThievingLvl,
+                                (Skill.THIEVING.getXp() - Const.startThievingXp),
+                                PaintUtil.getXpHr(Skill.THIEVING, Const.startThievingXp, Vars.get().startTime)))
+                        .build())
                 .row(template.toBuilder().label("Woodcutting")
                         .condition(() -> Skill.WOODCUTTING.getXp() > Const.startWoodcuttingXP &&
                                 Vars.get().showExperienceGained)

@@ -12,14 +12,11 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.walking.LocalWalking;
+import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
-import scripts.InterfaceUtil;
-import scripts.PathingUtil;
-import scripts.Timer;
-import scripts.Utils;
 
 import java.util.Optional;
 
@@ -54,7 +51,7 @@ public class UnnotePlanks implements Task {
         }
 
         if (ChatScreen.isOpen()) {
-            if (InterfaceUtil.clickInterfaceText(219, 1, "Exchange All"))
+            if (NpcChat.handle("Exchange All"))
                 Timer.waitCondition(() -> Query.inventory().nameContains("plank")
                                 .isNotNoted().findFirst().isPresent(),
                         2000, 4000);
@@ -63,8 +60,8 @@ public class UnnotePlanks implements Task {
                                 .isNotNoted().findFirst().isPresent(),
                         2000, 4000);
 
-            if (NPCInteraction.isConversationWindowUp())
-                NPCInteraction.handleConversation();
+            if (ChatScreen.isOpen())
+                NpcChat.handle();
         }
     }
 
@@ -88,10 +85,10 @@ public class UnnotePlanks implements Task {
             Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
 
             if (currentItem.isPresent())
-            return currentItem.map(c -> Inventory.find(c.getPlankId()).length <
-                    c.getPlankNum()).orElse(false);
+                return currentItem.map(c -> Inventory.find(c.getPlankId()).length <
+                        c.getPlankNum()).orElse(false);
 
-             if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
+            if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
                 return Inventory.find(FURNITURE.CRUDE_CHAIR.getPlankId()).length < FURNITURE.CRUDE_CHAIR.getPlankNum();
 
             } else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.BOOKCASE.getReqLevl()) {

@@ -5,11 +5,9 @@ import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.api_lib.models.RunescapeBank;
 import dax.teleports.Teleport;
-import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Mouse;
-import org.tribot.api2007.Projection;
 import org.tribot.api2007.Skills;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
@@ -17,17 +15,13 @@ import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.WorldHopper;
-import org.tribot.script.sdk.painting.template.basic.*;
-import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.types.GroundItem;
-import org.tribot.script.sdk.types.Npc;
 import scripts.Data.Paint;
 import scripts.Data.Vars;
 import scripts.Listeners.PkObserver;
-import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.*;
 import scripts.Tasks.Spidines.KillSpidine;
 import scripts.Tasks.Spidines.SpawnSpidine;
+import scripts.Tasks.UndeadDruids.RechargePrayer;
 
 
 import java.awt.*;
@@ -81,7 +75,6 @@ public class cCombat extends Script implements Starting, Ending, Arguments, Mess
 
         while (isRunning.get()) {
             General.sleep(40, 60);
-
             if (!WorldHopper.isInMembersWorld())
                 break;
 
@@ -108,7 +101,7 @@ public class cCombat extends Script implements Starting, Ending, Arguments, Mess
                     String[] s = arg.split("target:");
                     if (s.length > 1) {
                         General.println("[Args]: Target is " + s[1]);
-                        Vars.get().targets = new String[]{s[1]};
+                        Vars.get().targets = List.of(s[1]);
                     }
                 }
                 if (arg.toLowerCase().contains("scarab")) {
@@ -122,7 +115,7 @@ public class cCombat extends Script implements Starting, Ending, Arguments, Mess
                     Vars.get().killingSpidines = true;
                 } else {
                     Log.debug("New Target = Undead Druid");
-                    Vars.get().targets = new String[]{"Undead Druid"};
+                    Vars.get().targets = List.of("Undead Druid");
                     Vars.get().minLootValue = 650;
                 }
 
@@ -245,7 +238,7 @@ public class cCombat extends Script implements Starting, Ending, Arguments, Mess
 
     @Override
     public void serverMessageReceived(String message) {
-        if (message.contains("are dead") || message.contains("died")) {
+        if (message.contains("are dead") || message.contains(" have died")) {
             Log.error("Died, ending script");
             isRunning.set(false);
             throw new NullPointerException();

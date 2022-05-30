@@ -22,7 +22,7 @@ public class InventorySetup implements Task {
 
     public static InventoryRequirement getSuperCombatInv() {
         InventoryRequirement req = new InventoryRequirement(new ArrayList<>(
-                List.of(new ItemReq(ItemID.SUPER_COMBAT_POTION4, 8, 6))));
+                List.of(new ItemReq(ItemID.SUPER_COMBAT_POTION4, 8, 4))));
 
         if (Vars.get().usingAbsorptions)
             req.add(new ItemReq(ItemID.ABSORPTION_4, (Vars.get().absorptionDosesToGet / 4)));
@@ -33,7 +33,7 @@ public class InventorySetup implements Task {
         if (Vars.get().usingLocatorOrb)
             req.add(new ItemReq(ItemID.LOCATOR_ORB, 1));
         else if (Vars.get().usingAbsorptions)
-            req.add(new ItemReq(ItemID.ROCK_CAKE, 1));
+            req.add(new ItemReq(ItemID.DWARVEN_ROCK_CAKE_7510, 1));
 
 
         return req;
@@ -50,7 +50,7 @@ public class InventorySetup implements Task {
         if (Vars.get().usingLocatorOrb) {
             req.add(new ItemReq(ItemID.LOCATOR_ORB, 1));
         } else {
-            req.add(new ItemReq(ItemID.ROCK_CAKE, 1));
+            req.add(new ItemReq(ItemID.DWARVEN_ROCK_CAKE_7510, 1));
         }
         return req;
     }
@@ -119,7 +119,7 @@ public class InventorySetup implements Task {
             if (getAbsorptions(getAbsorptionDosestoGet()))
                 Utils.idleNormalAction(true);
         }
-        if (getOverloadDosestoGet() > 0) {
+        if (Vars.get().usingOverloadPots && getOverloadDosestoGet() > 0) {
             if (getOverloads(getOverloadDosestoGet()))
                 Utils.idleNormalAction(true);
         }

@@ -121,6 +121,7 @@ import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
 import scripts.QuestPackages.recruitmentDrive.RecruitmentDrive;
 import scripts.QuestSteps.QuestTask;
+import scripts.QuestUtils.SupportedQuests;
 import scripts.QuestUtils.TaskSet;
 import scripts.QuestUtils.Vars;
 import scripts.QuestPackages.ShieldOfArrav.BlackArmsGang;
@@ -172,7 +173,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
 
             }
         });
-
+        SupportedQuests.getTotalQP();
     }
 
     @SneakyThrows
@@ -257,13 +258,13 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         }
     }
 
-    Area CASTLE_WARS =  Area.fromRectangle(new WorldTile(2437, 3093, 0), new WorldTile(2444, 3087, 0));
+    Area CASTLE_WARS = Area.fromRectangle(new WorldTile(2437, 3093, 0), new WorldTile(2444, 3087, 0));
     List<WorldTile> allTiles = CASTLE_WARS.getAllTiles();
     HashMap<WorldTile, Integer> tileMap = new HashMap<>();
 
-    public void populateMap(){
-        if (tileMap.size() == 0){
-            for (WorldTile t : allTiles){
+    public void populateMap() {
+        if (tileMap.size() == 0) {
+            for (WorldTile t : allTiles) {
                 tileMap.put(t, 0);
             }
         }
@@ -436,8 +437,9 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             General.println("[Args]: Added RfdCook Questline");
             //TODO add gertrudes cat, sea slug and fm training
             taskList.add(CooksAssistant.get());
-            taskList.add(GertrudesCat.get());
-            if (Skills.SKILLS.FIREMAKING.getActualLevel() >= 30)
+            if (Skill.COOKING.getActualLevel() < 10)
+                taskList.add(GertrudesCat.get());
+            if (Skill.FIREMAKING.getActualLevel() >= 30)
                 taskList.add(SeaSlug.get());
             taskList.add(FishingContest.get());
             taskList.add(RfdCook.get());
@@ -716,31 +718,25 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         } else if (arg.toLowerCase().contains("sheepshearer")) {
             General.println("[Args]: Added Sheep Shearer");
             taskList.add(SheepShearer.get());
-        }else if (arg.toLowerCase().contains("shilovillage")) {
+        } else if (arg.toLowerCase().contains("shilovillage")) {
             General.println("[Args]: Added Shilo Village ");
             taskList.add(ShilloVillage.get());
-        }
-        else if (arg.toLowerCase().contains("piratestreas")) {
+        } else if (arg.toLowerCase().contains("piratestreas")) {
             General.println("[Args]: Added Pirates Treasure ");
             taskList.add(PiratesTreasure.get());
-        }
-        else if (arg.toLowerCase().contains("deserttreas")) {
+        } else if (arg.toLowerCase().contains("deserttreas")) {
             General.println("[Args]: Added Desert Treasure ");
             taskList.add(DesertTreasure.get());
-        }
-        else if (arg.toLowerCase().contains("observ")) {
+        } else if (arg.toLowerCase().contains("observ")) {
             General.println("[Args]: Added Observatory Quest ");
             taskList.add(ObservatoryQuest.get());
-        }
-        else if (arg.toLowerCase().contains("kingsransom")) {
+        } else if (arg.toLowerCase().contains("kingsransom")) {
             General.println("[Args]: Added Kings Ransom ");
             taskList.add(KingsRansom.get());
-        }
-        else if (arg.toLowerCase().contains("fremisles")) {
+        } else if (arg.toLowerCase().contains("fremisles")) {
             General.println("[Args]: Added Fremennick Isles");
             taskList.add(FremennikIsles.get());
-        }
-        else if (arg.toLowerCase().contains("recruitment")) {
+        } else if (arg.toLowerCase().contains("recruitment")) {
             General.println("[Args]: Added Recruitment Drive");
             taskList.add(RecruitmentDrive.get());
         }

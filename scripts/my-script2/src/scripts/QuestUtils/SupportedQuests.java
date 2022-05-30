@@ -1,90 +1,7 @@
 package scripts.QuestUtils;
 
-import com.allatori.annotations.DoNotRename;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
-import scripts.QuestPackages.APorcineOfInterest.APorcineOfInterest;
-import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
-import scripts.QuestPackages.AscentOfArceuus.AscentOfArceuus;
-import scripts.QuestPackages.Barcrawl.BarCrawl;
-import scripts.QuestPackages.BigChompyBirdHunting.BigChompyBirdHunting;
-import scripts.QuestPackages.Biohazard.Biohazard;
-import scripts.QuestPackages.BlackKnightsFortress.BlackKnightsFortress;
-import scripts.QuestPackages.BoneVoyage.BoneVoyage;
-import scripts.QuestPackages.ClientOfKourend.ClientOfKourend;
-import scripts.QuestPackages.Contact.Contact;
-import scripts.QuestPackages.CooksAssistant.CooksAssistant;
-import scripts.QuestPackages.DeathPlateau.DeathPlateau;
-import scripts.QuestPackages.DemonSlayer.DemonSlayer;
-import scripts.QuestPackages.DepthsofDespair.DepthsOfDespair;
-import scripts.QuestPackages.DigSite.DigSite;
-import scripts.QuestPackages.DoricsQuest.DoricsQuest;
-import scripts.QuestPackages.DragonSlayer.DragonSlayer;
-import scripts.QuestPackages.DreamMentor.DreamMentor;
-import scripts.QuestPackages.DruidicRitual.DruidicRitual;
-import scripts.QuestPackages.DwarfCannon.DwarfCannon;
-import scripts.QuestPackages.ElementalWorkshopI.ElementalWorkshop;
-import scripts.QuestPackages.EnakhrasLament.EnakhrasLament;
-import scripts.QuestPackages.EnterTheAbyss.EnterTheAbyss;
-import scripts.QuestPackages.ErnestTheChicken.ErnestTheChicken;
-import scripts.QuestPackages.FairyTalePt1.FairyTalePt1;
-import scripts.QuestPackages.FamilyCrest.FamilyCrest;
-import scripts.QuestPackages.FightArena.FightArena;
-import scripts.QuestPackages.FishingContest.FishingContest;
-import scripts.QuestPackages.FremTrials.FremTrials;
-import scripts.QuestPackages.GertrudesCat.GertrudesCat;
-import scripts.QuestPackages.GhostsAhoy.GhostsAhoy;
-import scripts.QuestPackages.GoblinDiplomacy.GoblinDiplomacy;
-import scripts.QuestPackages.GrandTree.GrandTree;
-import scripts.QuestPackages.HauntedMine.HauntedMine;
-import scripts.QuestPackages.HazeelCult.HazeelCult;
-import scripts.QuestPackages.HeroesQuest.HeroesQuestBlackArmsGang;
-import scripts.QuestPackages.HolyGrail.HolyGrail;
-import scripts.QuestPackages.HorrorFromTheDeep.HorrorFromTheDeep;
-import scripts.QuestPackages.ImpCatcher.ImpCatcher;
-import scripts.QuestPackages.JunglePotion.JunglePotion;
-import scripts.QuestPackages.KnightsSword.KnightsSword;
-import scripts.QuestPackages.LostCity.LostCity;
-import scripts.QuestPackages.LostTribe.LostTribe;
-import scripts.QuestPackages.MerlinsCrystal.MerlinsCrystal;
-import scripts.QuestPackages.MonkeyMadnessI.MonkeyMadnessI;
-import scripts.QuestPackages.MonksFriend.MonksFriend;
-import scripts.QuestPackages.MountainDaughter.MountainDaughter;
-import scripts.QuestPackages.MurderMystery.MurderMystery;
-import scripts.QuestPackages.NatureSpirit.NatureSpirit;
-import scripts.QuestPackages.PlagueCity.PlagueCity;
-import scripts.QuestPackages.PriestInPeril.PriestInPeril;
-import scripts.QuestPackages.PrinceAliRescue.PrinceAliRescue;
-import scripts.QuestPackages.RestlessGhost.RestlessGhost;
-import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
-import scripts.QuestPackages.RuneMysteries.RuneMysteries;
-import scripts.QuestPackages.SeaSlug.SeaSlug;
-import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
-import scripts.QuestPackages.SheepShearer.SheepShearer;
-import scripts.QuestPackages.ShieldOfArrav.BlackArmsGang;
-import scripts.QuestPackages.TearsOfGuthix.TearsOfGuthix;
-import scripts.QuestPackages.TempleOfIkov.TempleOfIkov;
-import scripts.QuestPackages.TheFeud.TheFeud;
-import scripts.QuestPackages.TheGolem.TheGolem;
-import scripts.QuestPackages.TouristTrap.TouristTrap;
-import scripts.QuestPackages.TreeGnomeVillage.TreeGnomeVillage;
-import scripts.QuestPackages.TribalTotem.TribalTotem;
-import scripts.QuestPackages.TrollStronghold.TrollStronghold;
-import scripts.QuestPackages.UnderGroundPass.UndergroundPass;
-import scripts.QuestPackages.VampyreSlayer.VampyreSlayer;
-import scripts.QuestPackages.WaterfallQuest.WaterfallQuest;
-import scripts.QuestPackages.WitchsHouse.WitchsHouse;
-import scripts.QuestPackages.WitchsPotion.WitchsPotion;
-import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
-import scripts.QuestPackages.ZogreFleshEaters.ZogreFleshEaters;
-import scripts.QuestPackages.icthlarinslittlehelper.Icthlarinslittlehelper;
-import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
-import scripts.QuestSteps.QuestTask;
-
-import java.util.Locale;
 
 
 public enum SupportedQuests {
@@ -142,11 +59,11 @@ public enum SupportedQuests {
     // FAMILY_PEST(329, 5347, true),
     // FORGETTABLE_TALE(365, 822, true),
     // LEGENDS_QUEST(3145, 139, false),
-     LUNAR_DIPLOMACY(391, 2448, true),
+    LUNAR_DIPLOMACY(391, 2448, true),
     // MAGE_ARENA_II(330, 6067, true),
     // MAKING_HISTORY(393, 1383, true),
     // MISTHALIN_MYSTERY(309, 3468, true),
-    // PIRATES_TREASURE(310, 71, false),
+   PIRATES_TREASURE(310, 71, false, Quest.PIRATES_TREASURE, 2),
     // RAG_AND_BONE_MAN_I(3152, 714, false),
     // RATCATCHERS(412, 1404, true),
     // RECRUITMENT_DRIVE(414, 657, true),
@@ -172,92 +89,92 @@ public enum SupportedQuests {
     //TOWER_OF_LIFE(437, 3337, true),
     //WANTED(444, 1051, true),
     //WATCHTOWER(445, 212, false),
-    ALFRED_GRIMHANDS_BARCRAWL(322, 77, false), // new BarCrawl()),
-    ANIMAL_MAGNETISM(331, 3185, true), // new AnimalMagnetism()),
-    A_PORCINE_OF_INTEREST(3151, 10582, true), // new APorcineOfInterest()),
-    BIG_CHOMPY_BIRD_HUNTING(334, 293, false), //new BigChompyBirdHunting()),
-    BIOHAZARD(335, 68, false), //new Biohazard()),
-    BLACK_KNIGHTS_FORTRESS(299, 130, false), // new BlackKnightsFortress()),
-    BONE_VOYAGE(3135, 5795, true),// new BoneVoyage()),
-    CLIENT_OF_KOUREND(3136, 5619, true),
-    CONTACT(339, 3274, true),
-    COOKS_ASSISTANT(300, 29, false),
-    DEATH_PLATEAU(342, 314, false),
-    DEMON_SLAYER(302, 2561, true), //, DemonSlayer.get()),
-    DORICS_QUEST(3138, 31, false), //, DoricsQuest.get()),
-    DRAGON_SLAYER_I(3139, 176, false), //, DragonSlayer.get()),
-    DREAM_MENTOR(349, 3618, true), //, DreamMentor.get()),
-    DRUIDIC_RITUAL(350, 80, false), //, DruidicRitual.get()),
-    DWARF_CANNON(351, 0, false), //, DwarfCannon.get()),
-    ENAKHRAS_LAMENT(356, 1560, true), //, EnakhrasLament.get()),
+    ALFRED_GRIMHANDS_BARCRAWL(322, 77, false, 0), // new BarCrawl()),
+    ANIMAL_MAGNETISM(331, 3185, true, Quest.ANIMAL_MAGNETISM,1), // new AnimalMagnetism()),
+    A_PORCINE_OF_INTEREST(3151, 10582, true, Quest.A_PORCINE_OF_INTEREST, 1), // new APorcineOfInterest()),
+    BIG_CHOMPY_BIRD_HUNTING(334, 293, false, Quest.BIG_CHOMPY_BIRD_HUNTING, 2), //new BigChompyBirdHunting()),
+    BIOHAZARD(335, 68, false, Quest.BIOHAZARD, 3), //new Biohazard()),
+    BLACK_KNIGHTS_FORTRESS(299, 130, false, Quest.BLACK_KNIGHTS_FORTRESS, 3), // new BlackKnightsFortress()),
+    BONE_VOYAGE(3135, 5795, true, Quest.BONE_VOYAGE, 1),// new BoneVoyage()),
+    CLIENT_OF_KOUREND(3136, 5619, true, Quest.CLIENT_OF_KOUREND, 1),
+    CONTACT(339, 3274, true, Quest.CONTACT, 1),
+    COOKS_ASSISTANT(300, 29, false, Quest.COOKS_ASSISTANT, 1),
+    DEATH_PLATEAU(342, 314, false, Quest.DEATH_PLATEAU, 1),
+    DEMON_SLAYER(302, 2561, true, Quest.DEMON_SLAYER, 3), //, DemonSlayer.get()),
+    DORICS_QUEST(3138, 31, false, Quest.DORICS_QUEST, 1), //, DoricsQuest.get()),
+    DRAGON_SLAYER_I(3139, 176, false, Quest.DRAGON_SLAYER_I, 2 ), //, DragonSlayer.get()),
+    DREAM_MENTOR(349, 3618, true, Quest.DREAM_MENTOR, 2), //, DreamMentor.get()),
+    DRUIDIC_RITUAL(350, 80, false, Quest.DRUIDIC_RITUAL, 4), //, DruidicRitual.get()),
+    DWARF_CANNON(351, 0, false, Quest.DWARF_CANNON, 1), //, DwarfCannon.get()),
+    ENAKHRAS_LAMENT(356, 1560, true, Quest.ENAKHRAS_LAMENT, 2), //, EnakhrasLament.get()),
     ENTER_THE_ABYSS(3140, 492, false), //, EnterTheAbyss.get()),
-    ERNEST_THE_CHICKEN(305, 32, false), //, ErnestTheChicken.get()),
-    FAIRYTALE_I_GROWING_PAINS(359, 1803, true), //, FairyTalePt1.get()),
-    FAMILY_CREST(361, 148, false), //, FamilyCrest.get()),
-    FIGHT_ARENA(363, 17, false), //, FightArena.get()),
-    FISHING_CONTEST(364, 11, false), //, FishingContest.get()),
-    GERTRUDES_CAT(370, 180, false), //, GertrudesCat.get()),
-    GHOSTS_AHOY(371, 217, true), //, GhostsAhoy.get()),
-    GOBLIN_DIPLOMACY(306, 2378, true), //, GoblinDiplomacy.get()),
-    HAUNTED_MINE(378, 382, false), //, HauntedMine.get()),
-    HAZEEL_CULT(379, 223, false), //, HazeelCult.get()),
-    HEROES_QUEST(3142, 188, false), //, HeroesQuestBlackArmsGang.get()),
-    HOLY_GRAIL(381, 5, false), //, HolyGrail.get()),
+    ERNEST_THE_CHICKEN(305, 32, false, Quest.ERNEST_THE_CHICKEN, 4), //, ErnestTheChicken.get()),
+    FAIRYTALE_I_GROWING_PAINS(359, 1803, true, Quest.FAIRYTALE_I_GROWING_PAINS, 2), //, FairyTalePt1.get()),
+    FAMILY_CREST(361, 148, false, Quest.FAMILY_CREST, 1), //, FamilyCrest.get()),
+    FIGHT_ARENA(363, 17, false, Quest.FIGHT_ARENA, 2), //, FightArena.get()),
+    FISHING_CONTEST(364, 11, false, Quest.FISHING_CONTEST, 1), //, FishingContest.get()),
+    GERTRUDES_CAT(370, 180, false, Quest.GERTRUDES_CAT, 1), //, GertrudesCat.get()),
+    GHOSTS_AHOY(371, 217, true, Quest.GHOSTS_AHOY ,2 ), //, GhostsAhoy.get()),
+    GOBLIN_DIPLOMACY(306, 2378, true, Quest.GOBLIN_DIPLOMACY, 5), //, GoblinDiplomacy.get()),
+    HAUNTED_MINE(378, 382, false, Quest.HAUNTED_MINE, 2), //, HauntedMine.get()),
+    HAZEEL_CULT(379, 223, false, Quest.HAZEEL_CULT, 1), //, HazeelCult.get()),
+    HEROES_QUEST(3142, 188, false, Quest.HEROES_QUEST, 1), //, HeroesQuestBlackArmsGang.get()),
+    HOLY_GRAIL(381, 5, false, Quest.HOLY_GRAIL, 2), //, HolyGrail.get()),
 
-    HORROR_FROM_THE_DEEP(382, 34, true), //, HorrorFromTheDeep.get()),
-    ICTHLARINS_LITTLE_HELPER(383, 418, true), //, Icthlarinslittlehelper.get()),
-    IMP_CATCHER(307, 160, false), //, ImpCatcher.get()),
-    JUNGLE_POTION(386, 175, false), //, JunglePotion.get()),
+    HORROR_FROM_THE_DEEP(382, 34, true, Quest.HORROR_FROM_THE_DEEP ,2), //, HorrorFromTheDeep.get()),
+    ICTHLARINS_LITTLE_HELPER(383, 418, true, Quest.ICTHLARINS_LITTLE_HELPER ,2), //, Icthlarinslittlehelper.get()),
+    IMP_CATCHER(307, 160, false, Quest.IMP_CATCHER, 1), //, ImpCatcher.get()),
+    JUNGLE_POTION(386, 175, false, Quest.JUNGLE_POTION , 1), //, JunglePotion.get()),
     LAIR_OF_TARN_RAZORLOR(3144, 3290, true), //, TarnRoute.get()),
-    LOST_CITY(389, 147, false), //, LostCity.get()),
-    MERLINS_CRYSTAL(394, 14, false), //, MerlinsCrystal.get()),
-    MONKEY_MADNESS_I(395, 365, false), //, MonkeyMadnessI.get()),
-    MONKS_FRIEND(397, 30, false), //, MonksFriend.get()),
-    MOUNTAIN_DAUGHTER(398, 260, true), //, MountainDaughter.get()),
-    MURDER_MYSTERY(401, 192, false), //, MurderMystery.get()),
-    NATURE_SPIRIT(403, 307, false), //, NatureSpirit.get()),
-    OBSERVATORY_QUEST(3149, 112, false, Quest.OBSERVATORY_QUEST),
-    PLAGUE_CITY(407, 165, false, Quest.PLAGUE_CITY), //, PlagueCity.get()),
-    PRIEST_IN_PERIL(408, 302, false, Quest.PRIEST_IN_PERIL), //, PriestInPeril.get()),
-    PRINCE_ALI_RESCUE(311, 273, false, Quest.PRINCE_ALI_RESCUE), //, PrinceAliRescue.get()),
-    RFD_COOK(-1, -1, false, Quest.RECIPE_FOR_DISASTER), //, PrinceAliRescue.get()),
-    RFD_PIRATE_PETE(-1, -1, false, Quest.RECIPE_FOR_DISASTER), //, PrinceAliRescue.get()),
-    RFD_SKRATCH(-1, -1, false, Quest.RECIPE_FOR_DISASTER), //, PrinceAliRescue.get()),
-    ROMEO_JULIET(313, 144, false, Quest.ROMEO_JULIET), //, RomeoAndJuliet.get()),
-    RUNE_MYSTERIES(314, 63, false, Quest.RUNE_MYSTERIES), //, RuneMysteries.get()),
-    SEA_SLUG(420, 159, false, Quest.SEA_SLUG), //, SeaSlug.get()),
-    SHADOW_OF_THE_STORM(422, 1372, true, Quest.SHADOW_OF_THE_STORM), //, ShadowOfTheStorm.get()),
-    SHEEP_SHEARER(315, 179, false, Quest.SHEEP_SHEARER), //, SheepShearer.get()),
-    // SHILO_VILLAGE(424, 116, false, Shilo),
-    TEARS_OF_GUTHIX(433, 451, true, Quest.TEARS_OF_GUTHIX), //, TearsOfGuthix.get()),
-    TEMPLE_OF_IKOV(434, 26, false, Quest.TEMPLE_OF_IKOV), //, TempleOfIkov.get()),
-    THE_ASCENT_OF_ARCEUUS(542, 7856, true, Quest.THE_ASCENT_OF_ARCEUUS), //, AscentOfArceuus.get()),
+    LOST_CITY(389, 147, false, Quest.LOST_CITY, 3), //, LostCity.get()),
+    MERLINS_CRYSTAL(394, 14, false, Quest.MERLINS_CRYSTAL, 6), //, MerlinsCrystal.get()),
+    MONKEY_MADNESS_I(395, 365, false, Quest.MONKEY_MADNESS_I, 3), //, MonkeyMadnessI.get()),
+    MONKS_FRIEND(397, 30, false, Quest.MONKS_FRIEND, 1), //, MonksFriend.get()),
+    MOUNTAIN_DAUGHTER(398, 260, true, Quest.MOUNTAIN_DAUGHTER, 2), //, MountainDaughter.get()),
+    MURDER_MYSTERY(401, 192, false, Quest.MURDER_MYSTERY, 3), //, MurderMystery.get()),
+    NATURE_SPIRIT(403, 307, false, Quest.NATURE_SPIRIT, 2), //, NatureSpirit.get()),
+    OBSERVATORY_QUEST(3149, 112, false, Quest.OBSERVATORY_QUEST, 2),
+    PLAGUE_CITY(407, 165, false, Quest.PLAGUE_CITY ,1), //, PlagueCity.get()),
+    PRIEST_IN_PERIL(408, 302, false, Quest.PRIEST_IN_PERIL,1), //, PriestInPeril.get()),
+    PRINCE_ALI_RESCUE(311, 273, false, Quest.PRINCE_ALI_RESCUE,3), //, PrinceAliRescue.get()),
+    RFD_COOK(-1, -1, false, Quest.RECIPE_FOR_DISASTER, 1), //, PrinceAliRescue.get()),
+    RFD_PIRATE_PETE(-1, -1, false, Quest.RECIPE_FOR_DISASTER, 1), //, PrinceAliRescue.get()),
+    RFD_SKRATCH(-1, -1, false, Quest.RECIPE_FOR_DISASTER, 1), //, PrinceAliRescue.get()),
+    ROMEO_JULIET(313, 144, false, Quest.ROMEO_JULIET, 5), //, RomeoAndJuliet.get()),
+    RUNE_MYSTERIES(314, 63, false, Quest.RUNE_MYSTERIES,1 ), //, RuneMysteries.get()),
+    SEA_SLUG(420, 159, false, Quest.SEA_SLUG, 1), //, SeaSlug.get()),
+    SHADOW_OF_THE_STORM(422, 1372, true, Quest.SHADOW_OF_THE_STORM, 1), //, ShadowOfTheStorm.get()),
+    SHEEP_SHEARER(315, 179, false, Quest.SHEEP_SHEARER, 1), //, SheepShearer.get()),
+    SHILO_VILLAGE(424, 116, false, Quest.SHILO_VILLAGE, 2),
+    TEARS_OF_GUTHIX(433, 451, true, Quest.TEARS_OF_GUTHIX, 1), //, TearsOfGuthix.get()),
+    TEMPLE_OF_IKOV(434, 26, false, Quest.TEMPLE_OF_IKOV ,1 ), //, TempleOfIkov.get()),
+    THE_ASCENT_OF_ARCEUUS(542, 7856, true, Quest.THE_ASCENT_OF_ARCEUUS, 1), //, AscentOfArceuus.get()),
     // THE_CORSAIR_CURSE(301, 6071, true),
-    THE_DEPTHS_OF_DESPAIR(344, 6027, true, Quest.THE_DEPTHS_OF_DESPAIR), //, DepthsOfDespair.get()),
-    THE_DIG_SITE(347, 131, false, Quest.THE_DIG_SITE), //, DigSite.get()),
-    THE_FEUD(362, 334, true, Quest.THE_FEUD), //, TheFeud.get()),
-    THE_FREMENNIK_TRIALS(368, 347, false, Quest.THE_FREMENNIK_TRIALS), //, FremTrials.get()),
-    THE_GOLEM(373, 346, true, Quest.THE_GOLEM), //, TheGolem.get()),
-    THE_GRAND_TREE(374, 150, false, Quest.THE_GRAND_TREE), //, GrandTree.get()),
-    THE_KNIGHTS_SWORD(308, 122, false, Quest.THE_KNIGHTS_SWORD), //, KnightsSword.get()),
-    THE_LOST_TRIBE(390, 532, true, Quest.THE_LOST_TRIBE), //, LostTribe.get()),
-    THE_RESTLESS_GHOST(312, 107, false, Quest.THE_RESTLESS_GHOST), //, RestlessGhost.get()),
-    THE_TOURIST_TRAP(436, 197, false, Quest.THE_TOURIST_TRAP), //, TouristTrap.get()),
-    TREE_GNOME_VILLAGE(438, 111, false, Quest.TREE_GNOME_VILLAGE), //, TreeGnomeVillage.get()),
-    TRIBAL_TOTEM(439, 200, false, Quest.TRIBAL_TOTEM), //, TribalTotem.get()),
-    TROLL_STRONGHOLD(441, 317, false, Quest.TROLL_STRONGHOLD), //, TrollStronghold.get()),
-    UNDERGROUND_PASS(442, 161, false, Quest.UNDERGROUND_PASS), //, UndergroundPass.get()),
-    VAMPYRE_SLAYER(1278, 178, false, Quest.VAMPYRE_SLAYER), //, VampyreSlayer.get()),
-    WATERFALL_QUEST(3154, 65, false, Quest.WATERFALL_QUEST), //, WaterfallQuest.get()),
-    WITCHS_HOUSE(448, 226, false, Quest.WITCHS_HOUSE), //, WitchsHouse.get()),
-    WITCHS_POTION(318, 67, false, Quest.WITCHS_POTION), //, WitchsPotion.get()),
-    X_MARKS_THE_SPOT(3155, 8063, true, Quest.X_MARKS_THE_SPOT), //, XMarksTheSpot.get()),*/
-    ZOGRE_FLESH_EATERS(449, 487, true, Quest.ZOGRE_FLESH_EATERS), // new ZogreFleshEaters()),
+    THE_DEPTHS_OF_DESPAIR(344, 6027, true, Quest.THE_DEPTHS_OF_DESPAIR, 1), //, DepthsOfDespair.get()),
+    THE_DIG_SITE(347, 131, false, Quest.THE_DIG_SITE, 2), //, DigSite.get()),
+    THE_FEUD(362, 334, true, Quest.THE_FEUD ,1 ), //, TheFeud.get()),
+    THE_FREMENNIK_TRIALS(368, 347, false, Quest.THE_FREMENNIK_TRIALS, 3), //, FremTrials.get()),
+    THE_GOLEM(373, 346, true, Quest.THE_GOLEM, 1), //, TheGolem.get()),
+    THE_GRAND_TREE(374, 150, false, Quest.THE_GRAND_TREE, 5), //, GrandTree.get()),
+    THE_KNIGHTS_SWORD(308, 122, false, Quest.THE_KNIGHTS_SWORD , 1), //, KnightsSword.get()),
+    THE_LOST_TRIBE(390, 532, true, Quest.THE_LOST_TRIBE, 1), //, LostTribe.get()),
+    THE_RESTLESS_GHOST(312, 107, false, Quest.THE_RESTLESS_GHOST, 1), //, RestlessGhost.get()),
+    THE_TOURIST_TRAP(436, 197, false, Quest.THE_TOURIST_TRAP, 2), //, TouristTrap.get()),
+    TREE_GNOME_VILLAGE(438, 111, false, Quest.TREE_GNOME_VILLAGE, 2), //, TreeGnomeVillage.get()),
+    TRIBAL_TOTEM(439, 200, false, Quest.TRIBAL_TOTEM, 1), //, TribalTotem.get()),
+    TROLL_STRONGHOLD(441, 317, false, Quest.TROLL_STRONGHOLD, 1), //, TrollStronghold.get()),
+    UNDERGROUND_PASS(442, 161, false, Quest.UNDERGROUND_PASS, 5), //, UndergroundPass.get()),
+    VAMPYRE_SLAYER(1278, 178, false, Quest.VAMPYRE_SLAYER, 3), //, VampyreSlayer.get()),
+    WATERFALL_QUEST(3154, 65, false, Quest.WATERFALL_QUEST, 1), //, WaterfallQuest.get()),
+    WITCHS_HOUSE(448, 226, false, Quest.WITCHS_HOUSE, 1), //, WitchsHouse.get()),
+    WITCHS_POTION(318, 67, false, Quest.WITCHS_POTION, 1), //, WitchsPotion.get()),
+    X_MARKS_THE_SPOT(3155, 8063, true, Quest.X_MARKS_THE_SPOT, 1), //, XMarksTheSpot.get()),*/
+    ZOGRE_FLESH_EATERS(449, 487, true, Quest.ZOGRE_FLESH_EATERS, 1), // new ZogreFleshEaters()),
 
     // special cases not picked up by parser
     // see link at getStateException()
-    SHIELD_OF_ARRAV(316, 145, false, Quest.SHIELD_OF_ARRAV), // BlackArmsGang.get()),
-    ELEMENTAL_WORKSHOP_I(354, 299, false, Quest.ELEMENTAL_WORKSHOP_I), // ElementalWorkshop.get())
+    SHIELD_OF_ARRAV(316, 145, false, Quest.SHIELD_OF_ARRAV, 1), // BlackArmsGang.get()),
+    ELEMENTAL_WORKSHOP_I(354, 299, false, Quest.ELEMENTAL_WORKSHOP_I, 1), // ElementalWorkshop.get())
     //CURSE_OF_THE_EMPTY_LORD(3137, 821, true),
     // THE_ENCHANTED_KEY(324, 1391, true),
     ;
@@ -266,6 +183,7 @@ public enum SupportedQuests {
     private final int configId;
     private final boolean isVarbit;
     private Quest quest;
+    private int questPoints = 1;
 
     // @Getter
     //private final QuestTask task;
@@ -278,6 +196,15 @@ public enum SupportedQuests {
         this.quest = Quest.valueOf(this.toString());
     }
 
+    SupportedQuests(int id, int configId, boolean isVarbit, int questPoints) {
+        this.id = id;
+        this.configId = configId;
+        this.isVarbit = isVarbit;
+
+        this.quest = Quest.valueOf(this.toString());
+        this.questPoints = questPoints;
+    }
+
     SupportedQuests(int id, int configId, boolean isVarbit, Quest quest) {
         this.id = id;
         this.configId = configId;
@@ -285,12 +212,22 @@ public enum SupportedQuests {
         this.quest = quest;
     }
 
+    SupportedQuests(int id, int configId, boolean isVarbit, Quest quest, int questPoints) {
+        this.id = id;
+        this.configId = configId;
+        this.isVarbit = isVarbit;
+        this.quest = quest;
+        this.questPoints = questPoints;
+    }
+
+
     SupportedQuests(int id, int configId, boolean isVarbit, Quest quest, boolean isCompleteCheckOverride) {
         this.id = id;
         this.configId = configId;
         this.isVarbit = isVarbit;
         this.quest = quest;
     }
+
     public String getQuestName() {
         return this.toString().toLowerCase().replace("_", " ");
     }
@@ -300,6 +237,15 @@ public enum SupportedQuests {
             return quest.getState().equals(Quest.State.COMPLETE);
 
         return false;
+    }
+
+    public static int getTotalQP(){
+        int i = 0;
+        for (SupportedQuests q : SupportedQuests.values()){
+            i = i + q.questPoints;
+        }
+        Log.info("Supports " + i + " total QP");
+        return i;
     }
 
 

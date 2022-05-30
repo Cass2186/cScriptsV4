@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="568.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
+<VBox prefHeight="568.0" prefWidth="787.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -334,7 +334,7 @@
                                                 <CheckBox layoutX="401.0" layoutY="45.0" mnemonicParsing="false" text="Make Tar at &gt;30? (cheaper)" />
                                                 <CheckBox fx:id="enableWildernessCourseBox" layoutX="23.0" layoutY="45.0" mnemonicParsing="false" text="Enable Wilderness Course" />
                                                 <CheckBox fx:id="enableAlchingAgilityBox" disable="true" layoutX="23.0" layoutY="72.0" mnemonicParsing="false" text="Enable Alching of Yew Longbows" />
-                                                <CheckBox fx:id="enableSummerPieBoostingBox" disable="true" layoutX="23.0" layoutY="117.0" mnemonicParsing="false" text="Enable Summer Pie Boosting" />
+                                                <CheckBox fx:id="enableSummerPieBoostingBox" disable="true" layoutX="23.0" layoutY="117.0" mnemonicParsing="false" selected="true" text="Enable Summer Pie Boosting" />
                                                 <Label disable="true" layoutX="51.0" layoutY="90.0" text="(Requires 55 Magic)">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
@@ -587,6 +587,21 @@
                                              </children>
                                           </AnchorPane>
                                        </content>
+                                    </Tab>
+                                    <Tab text="Prayer">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <CheckBox layoutX="28.0" layoutY="44.0" mnemonicParsing="false" text="Use Wilderness Altar" />
+                                                <Label layoutX="28.0" layoutY="14.0" text="Prayer">
+                                                   <font>
+                                                      <Font name="System Bold" size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox layoutX="28.0" layoutY="82.0" prefWidth="150.0" promptText="Bones" />
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
                                     </Tab>
                                 </tabs>
                               </TabPane>

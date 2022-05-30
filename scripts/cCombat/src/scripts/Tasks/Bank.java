@@ -107,7 +107,7 @@ public class Bank implements Task {
         Prayer.disableAll();
         Prayer.disableAll(Prayer.EAGLE_EYE, Prayer.PROTECT_FROM_MAGIC);
         Log.log("[Bank]: Banking");
-        if (Areas.WHOLE_WILDERNESS.contains(Player.getPosition())) {
+        if (Areas.WHOLE_WILDERNESS.containsMyPlayer()) {
             PathingUtil.walkToArea(Areas.lavaTeleArea);
             PathingUtil.walkToTile(RunescapeBank.EDGEVILLE.getPosition());
         }

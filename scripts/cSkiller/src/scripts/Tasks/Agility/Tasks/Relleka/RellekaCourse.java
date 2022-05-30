@@ -60,7 +60,7 @@ public class RellekaCourse implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
-                AgilUtils.isWithinLevelRange(80, 99);
+                AgilUtils.isWithinLevelRange(80, 85);
     }
 
     @Override

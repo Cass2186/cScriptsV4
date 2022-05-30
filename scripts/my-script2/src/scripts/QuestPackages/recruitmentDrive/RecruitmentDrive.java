@@ -87,6 +87,11 @@ public class RecruitmentDrive implements QuestTask {
         BankManager.close(true);
     }
 
+
+    private boolean isFemale() {
+        return GameState.getSetting(261) == 1;
+    }
+
     public void startQuest() {
         cQuesterV2.status = "Starting Quest";
         Log.info(cQuesterV2.status);
@@ -95,47 +100,51 @@ public class RecruitmentDrive implements QuestTask {
             NpcChat.handle(true, "Yes please", "Yes.", "Ok, I'll do my best.");
         }
 
+
     }
 
     public void step2() {
-        cQuesterV2.status = "Step 2 - Changing Sex";
-        Log.info(cQuesterV2.status);
-        PathingUtil.walkToArea(MAKEOVER_MAGE);
-        if (MAKEOVER_MAGE.containsMyPlayer()) {
-            if (Utils.clickNPC("Makeover mage", "Makeover")) {
-                NpcChat.handle("Pay 3,000 coins");
-                NPCInteraction.handleConversation();
-                Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(205, 6), 4000, 8000);
-            }
-            Optional<Widget> female = Query.widgets().inIndexPath(205).actionContains("Female").findFirst();
-            if (Interfaces.isInterfaceSubstantiated(205, 6)) {
-                if (female.map(c -> c.click()).orElse(false)) {
-                    Waiting.waitNormal(1500, 125);
+        if (!isFemale()) {
+            cQuesterV2.status = "Step 2 - Changing Sex";
+            Log.info(cQuesterV2.status);
+            PathingUtil.walkToArea(MAKEOVER_MAGE);
+            if (MAKEOVER_MAGE.containsMyPlayer()) {
+                if (Utils.clickNPC("Makeover mage", "Makeover")) {
+                    NpcChat.handle("Pay 3,000 coins");
+                    Timer.waitCondition(() -> Widgets.isVisible(205), 4000, 8000);
                 }
-                Optional<Widget> confirm = Query.widgets().inIndexPath(205).actionContains("Confirm").findFirst();
-                if (confirm.map(c -> c.click()).orElse(false)) {
-                    Waiting.waitUntil(3500, 500, () -> Widgets.isVisible(205));
+                if (Widgets.isVisible(205, 6)) {
+                    Optional<Widget> female = Query.widgets().inIndexPath(205).actionContains("Female").findFirst();
+                    if (female.map(c -> c.click()).orElse(false)) {
+                        Waiting.waitNormal(1500, 125);
+                    }
+                    Optional<Widget> confirm = Query.widgets().inIndexPath(205).actionContains("Confirm").findFirst();
+                    if (confirm.map(c -> c.click()).orElse(false)) {
+                        Waiting.waitUntil(3500, 500, () -> Widgets.isVisible(205));
+                    }
                 }
             }
         }
     }
 
     public void step3() {
-        if (!WHOLE_AREA.containsMyPlayer()) {
-            if (!FALADOR_PARK.containsMyPlayer()) {
-                cQuesterV2.status = "Step 3 - Going to falador park";
-                Log.info(cQuesterV2.status);
-                PathingUtil.walkToArea(FALADOR_PARK);
+        if (isFemale()) {
+            if (!WHOLE_AREA.containsMyPlayer()) {
+                if (!FALADOR_PARK.containsMyPlayer()) {
+                    cQuesterV2.status = "Step 3 - Going to falador park";
+                    Log.info(cQuesterV2.status);
+                    PathingUtil.walkToArea(FALADOR_PARK);
+                }
             }
-        }
-        if (FALADOR_PARK.containsMyPlayer()) {
-            cQuesterV2.status = "Talking to Tiffy Cashien";
-            Log.info(cQuesterV2.status);
+            if (FALADOR_PARK.containsMyPlayer()) {
+                cQuesterV2.status = "Talking to Tiffy Cashien";
+                Log.info(cQuesterV2.status);
 
-            if (NpcChat.talkToNPC("Sir Tiffy Cashien")) {
-                NpcChat.handle(true, "Yes, let's go!");
-                Utils.modSleep();
-                NpcChat.handle(true);
+                if (NpcChat.talkToNPC("Sir Tiffy Cashien")) {
+                    NpcChat.handle(true, "Yes, let's go!");
+                    Utils.modSleep();
+                    NpcChat.handle(true);
+                }
             }
         }
     }
@@ -151,15 +160,20 @@ public class RecruitmentDrive implements QuestTask {
             }
             if (Utils.clickObj(7320, "Open")) {
                 Waiting.waitUntil(10000, 1250, () -> !TRAINING_ROOM_1.containsMyPlayer());
-                Waiting.waitNormal(2000,200);
+                Waiting.waitNormal(2000, 200);
             }
         }
     }
 
+    private boolean hasMissCheeversItems() {
+        return Inventory.contains(CUPRIC_SULFATE, VIAL_OF_LIQUID,
+                PAN, GYPSUM, CUPRIC_ORE_POWDER);
+    }
+
+    int OPEN_DOOR_ONE_CHEEVERS = 7342;
 
     public void missCheevers() {
         if (MISS_CHEEVERS_AREA.containsMyPlayer()) {
-
             Utils.idle(1200, 2500);
             cQuesterV2.status = "Miss Cheevers";
             Log.info(cQuesterV2.status);// first door opened
@@ -179,70 +193,81 @@ public class RecruitmentDrive implements QuestTask {
                         Objects.findNearest(25, i)[0].adjustCameraTo();
                     }
                     if (AccurateMouse.click(Objects.findNearest(25, i)[0], "Search")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation("YES");
-                        General.sleep(General.random(500, 2000));
+                        NpcChat.handle(true, "YES");
+                        Utils.idleNormalAction(true);
                     }
                 }
             }
             for (int i = 7333; i < 7341; i++) {
-                if (Objects.findNearest(25, i).length > 0) {
-                    if (!Objects.findNearest(25, i)[0].isClickable()) {
-                        Objects.findNearest(25, i)[0].adjustCameraTo();
-                    }
-                    if (AccurateMouse.click(Objects.findNearest(25, i)[0], "Search")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation("YES", "Take both vials.", "Take all three vials");
-                        General.sleep(General.random(500, 2000));
-                    }
+                Optional<GameObject> obj = Query.gameObjects().idEquals(i).findClosest();
+                if (obj.map(o -> o.interact("Search")).orElse(false)) {
+                    NPCInteraction.waitForConversationWindow();
+                    NPCInteraction.handleConversation("YES", "Take both vials.", "Take all three vials");
+                    Utils.idleNormalAction(true);
                 }
             }
-            searchItem(7347, 0);
-            searchItem(7348, 0);
-            // searchItem(7348, 1);
-            searchItem(7349, 0);
-            // searchItem(7347, 1);
-            searchItem(7348, 0);
-            searchItem(7349, 0);
-            searchItem(7350, "Open");
-            searchItem(7351, "Search");
+
+            if (!hasMissCheeversItems()) {
+                searchItem(7347, 0);
+                searchItem(7348, 0);
+                // searchItem(7348, 1);
+                searchItem(7349, 0);
+                // searchItem(7347, 1);
+                //   searchItem(7348, 0);
+                //   searchItem(7349, 0);
+                searchItem(7350, "Open");
+                searchItem(7351, "Search");
+            }
             if (Utils.useItemOnObject(METAL_SPADE, BUNSEN_BURNER))
                 Timer.waitCondition(() -> Inventory.contains(SPADE_WITHOUT_HANDLE), 7000);
+
             if (Utils.useItemOnObject(SPADE_WITHOUT_HANDLE, STONE_DOOR)) {
                 Timer.waitCondition(() -> !Inventory.contains(SPADE_WITHOUT_HANDLE), 7000);
-                General.sleep(General.random(1500, 3000));
+                Utils.idleNormalAction(true);
             }
             if (Utils.useItemOnObject(CUPRIC_SULFATE, STONE_DOOR)) {
                 Timer.waitCondition(() -> !Inventory.contains(CUPRIC_SULFATE), 7000);
-                General.sleep(General.random(1500, 3000));
+                Utils.idleNormalAction(true);
             }
 
             int invLiquid = Inventory.getCount(VIAL_OF_LIQUID);
             if (Utils.useItemOnObject(VIAL_OF_LIQUID, STONE_DOOR)) {
                 Timer.waitCondition(() -> Inventory.getCount(CUPRIC_SULFATE) < invLiquid, 7000);
-                General.sleep(General.random(1500, 3000));
+                Utils.idleNormalAction(true);
             }
 
-            if (AccurateMouse.click(Objects.findNearest(20, STONE_DOOR)[0], "Pull-spade"))
-                General.sleep(General.random(1500, 3000));
+            Optional<GameObject> door = Query.gameObjects()
+                    .idEquals(STONE_DOOR)
+                    .actionContains("Pull-spade").findClosest();
+            if (door.map(d -> d.interact("Pull-spade")).orElse(false))
+                Waiting.waitUntil(5500, 800, () ->
+                        Query.gameObjects().idEquals(OPEN_DOOR_ONE_CHEEVERS).isAny());
         }
-        if (Objects.findNearest(20, 7342).length > 0) { // first door opened
-            Utils.useItemOnItem(PAN, VIAL_OF_LIQUID);
-            General.sleep(General.random(500, 3000));
-            Utils.useItemOnItem(PAN, GYPSUM);
-            General.sleep(General.random(500, 3000));
-            Utils.useItemOnObject(5593, 7346);
-            Timer.waitCondition(() -> Inventory.contains(PAN_WITH_KEY_IMPRINT), 10000);
-            Utils.useItemOnItem(PAN_WITH_KEY_IMPRINT, CUPRIC_ORE_POWDER);
-            General.sleep(General.random(500, 3000));
-            Utils.useItemOnItem(5596, TIN_ORE_POWDER);
-            General.sleep(General.random(500, 3000));
-            Utils.useItemOnObject(TIN_WITH_ORES, BUNSEN_BURNER);
-            Timer.waitCondition(() -> Inventory.contains(5598), 10000);
-            General.sleep(General.random(500, 3000));
-            Utils.useItemOnItem(CHISEL, 5598);
-            Utils.useItemOnItem(KNIFE, 5598);
-            Timer.waitCondition(() -> Inventory.contains(KEY), 10000);
+
+        if (Query.gameObjects().idEquals(OPEN_DOOR_ONE_CHEEVERS).isAny()) { // first door opened
+            if (Utils.useItemOnItem(PAN, VIAL_OF_LIQUID))
+                General.sleep(1500, 3000);
+
+            if (Utils.useItemOnItem(PAN, GYPSUM))
+                General.sleep(1500, 3000);
+
+            if (Utils.useItemOnObject(5593, 7346))
+                Timer.waitCondition(() -> Inventory.contains(PAN_WITH_KEY_IMPRINT), 10000);
+
+            if (Utils.useItemOnItem(PAN_WITH_KEY_IMPRINT, CUPRIC_ORE_POWDER))
+                General.sleep(General.random(500, 3000));
+
+            if (Utils.useItemOnItem(5596, TIN_ORE_POWDER))
+                General.sleep(General.random(500, 3000));
+
+            if (Utils.useItemOnObject(TIN_WITH_ORES, BUNSEN_BURNER))
+                Timer.waitCondition(() -> Inventory.contains(5598), 10000);
+
+            if (Utils.useItemOnItem(CHISEL, 5598))
+                Utils.idleNormalAction(true);
+
+            if (Utils.useItemOnItem(KNIFE, 5598))
+                Timer.waitCondition(() -> Inventory.contains(KEY), 10000);
 
             Optional<GameObject> walk = Query.gameObjects().idEquals(7342).findClosest();
             if (walk.map(w -> w.interact("Walk-through")).orElse(false)) {
@@ -260,11 +285,11 @@ public class RecruitmentDrive implements QuestTask {
         List<GameObject> gameObjects = Query.gameObjects().idEquals(id).sortedByDistance().toList();
         for (GameObject g : gameObjects) {
             int inv = Inventory.getAll().size();
-            if (g.interact("Search")){
-                Waiting.waitUntil(4000, 700, ()-> g.getTile().distance() < 2);
-                Waiting.waitUntil(1000, 125, ()-> Inventory.getAll().size() > inv );
+            if (g.interact("Search")) {
+                Waiting.waitUntil(4000, 700, () -> g.getTile().distance() < 2);
+                Waiting.waitUntil(2000, 125, () -> Inventory.getAll().size() > inv);
             }
-              //  General.sleep(4000, 5000);
+            //  General.sleep(4000, 5000);
         }
       /*  if (gameObjects.size() > 0) {
 
@@ -296,12 +321,14 @@ public class RecruitmentDrive implements QuestTask {
 
             int missing = 0;
             GameObject missingStatue;
+            int[] statueIDs = {7290, 7291, 7292, 7293, 7294, 7295, 7296, 7297, 7298, 7299, 7300, 7301};
             List<GameObject> initial = Query.gameObjects().inArea(Area.fromRectangle(new WorldTile(2458, 4976, 0),
                             new WorldTile(2448, 4982, 0)))
                     .nameContains("Null")
+                    .idEquals(statueIDs)
                     .toList();
             Log.info("Initial filter identified " + initial.size() + " objects that fit criteria.");
-            int[] statueIDs = {7290, 7291, 7292, 7293, 7294, 7295, 7296, 7297, 7298, 7299, 7300, 7301};
+
             for (int i = 0; i < initial.size(); i++) {
                 for (int b = 0; b < statueIDs.length; b++) {
                     if (initial.get(i).getId() == statueIDs[b])
@@ -315,9 +342,9 @@ public class RecruitmentDrive implements QuestTask {
             Timer.waitCondition(() -> ChatScreen.getMessage().isPresent() &&
                             ChatScreen.getMessage().get()
                                     .contains("Please touch the statue you think") ||
-                    Query.widgets().inIndexPath(231).textContains("Please touch the statue you think").isAny(),
+                            Query.widgets().inIndexPath(231).textContains("Please touch the statue you think").isAny(),
                     35000, 40000);
-           // Utils.longSleep();
+            // Utils.longSleep();
 
             Optional<GameObject> missingObj = Query.gameObjects().idEquals(missing).findClosest();
 
@@ -423,7 +450,7 @@ public class RecruitmentDrive implements QuestTask {
                 Log.info("Is Obj equiped? " + Equipment.contains(objectString));
             }
             Optional<GameObject> cross = Query.gameObjects().actionContains("Cross").findClosest();
-            if (Equipment.contains(objectString) && cross.map(c->c.interact("Cross")).orElse(false))
+            if (Equipment.contains(objectString) && cross.map(c -> c.interact("Cross")).orElse(false))
                 Timer.abc2WaitCondition(() -> AFTER_BRIDGE.containsMyPlayer(), 13000, 15000);
 
 
@@ -440,7 +467,7 @@ public class RecruitmentDrive implements QuestTask {
     public void moveBackEmpty() {
         if (AFTER_BRIDGE.containsMyPlayer()) {
             Optional<GameObject> cross = Query.gameObjects().actionContains("Cross").findClosest();
-            if ( cross.map(c->c.interact("Cross")).orElse(false))
+            if (cross.map(c -> c.interact("Cross")).orElse(false))
                 Timer.waitCondition(() -> BEFORE_BRIDGE.containsMyPlayer(), 15000);
 
             Utils.idle(1500, 2500);
@@ -454,7 +481,7 @@ public class RecruitmentDrive implements QuestTask {
                 Timer.waitCondition(() -> Equipment.contains(object), 7000);
 
             Optional<GameObject> cross = Query.gameObjects().actionContains("Cross").findClosest();
-            if (Equipment.contains(object) && cross.map(c->c.interact("Cross")).orElse(false))
+            if (Equipment.contains(object) && cross.map(c -> c.interact("Cross")).orElse(false))
                 Timer.abc2WaitCondition(() -> AFTER_BRIDGE.containsMyPlayer(), 13000, 15000);
         }
 
@@ -537,8 +564,11 @@ public class RecruitmentDrive implements QuestTask {
                             .idEquals(7356).findBestInteractable();
 
                     if (open.map(o -> o.interact("Open")).orElse(false))
-                        General.sleep(3000, 4000);
+                        NpcChat.handle(true);
                 }
+            }
+            if (ChatScreen.isOpen()){
+                NpcChat.handle();
             }
             if (exitDoor.map(e -> e.interact("Open")).orElse(false))
                 Waiting.waitUntil(5500, 500, () -> !SIR_REN_AREA.containsMyPlayer());
@@ -583,6 +613,7 @@ public class RecruitmentDrive implements QuestTask {
         if (isComplete()) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
+            return;
         }
 
         if (GameState.getSetting(496) == 0) {

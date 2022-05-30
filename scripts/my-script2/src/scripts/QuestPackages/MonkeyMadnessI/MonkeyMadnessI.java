@@ -76,7 +76,6 @@ public class MonkeyMadnessI implements QuestTask {
     };
     int TENTH_SQUAD_SIGIL = 4035;
 
-
     final int[] STAMINA_POTION = {12625, 12627, 12629, 12631};
     final int[] PRAYER_POTION = {2434, 139, 141, 143};
 
@@ -290,8 +289,34 @@ public class MonkeyMadnessI implements QuestTask {
     // RSArea BOSS_AREA = new RSArea(new RSTile(2711, 9179, 1), 25);
     int SIGIL = TENTH_SQUAD_SIGIL;
     RSArea SOUTH_WEST_CORNER = new RSArea(new RSTile(2696, 9174, 1), new RSTile(2703, 9167, 1));
-
-
+    Area NORTH_OF_LADDER_TO_BASEMENT = Area.fromPolygon(
+            new WorldTile(2808, 2786, 0),
+            new WorldTile(2808, 2787, 0),
+            new WorldTile(2810, 2789, 0),
+            new WorldTile(2810, 2793, 0),
+            new WorldTile(2807, 2796, 0),
+            new WorldTile(2804, 2796, 0),
+            new WorldTile(2803, 2794, 0),
+            new WorldTile(2803, 2786, 0)
+    );
+    Area NORTH_LADDER_SAFE_AREA = Area.fromPolygon(
+            new WorldTile(2803, 2795, 0),
+            new WorldTile(2803, 2790, 0),
+            new WorldTile(2810, 2788, 0),
+            new WorldTile(2809, 2796, 0)
+    );
+    WorldTile First_North_Walk_Tile = new WorldTile(2808, 2791, 0);
+    WorldTile Second_North_Walk_Tile = new WorldTile(2805, 2794, 0);
+    WorldTile outsideMonkeyTempleTile = new WorldTile(2785, 2786, 0);
+    Area outsideMonkeyTempleArea = Area.fromPolygon(
+            new WorldTile(2783, 2793, 0),
+            new WorldTile(2785, 2793, 0),
+            new WorldTile(2788, 2789, 0),
+            new WorldTile(2788, 2783, 0),
+            new WorldTile(2783, 2783, 0)
+    );
+    Area ELDER_GUARD_AREA = Area.fromRectangle(new WorldTile(2800, 2758, 0),
+            new WorldTile(2804, 2756, 0));
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
                     new GEItem(ItemID.BALL_OF_WOOL, 1, 500),
@@ -913,24 +938,20 @@ public class MonkeyMadnessI implements QuestTask {
             RSItem[] invItem1 = Inventory.find(amuletmould);
             RSItem[] invItem2 = Inventory.find(monkeyDentures);
             RSItem[] invItem3 = Inventory.find(goldBar);
-            zooknock = NPCs.findNearest(7193);
-            if (invItem1.length > 0 && zooknock.length > 0) {
-                if (Utils.useItemOnNPC(amuletmould, 7193)) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                }
-            }
-            if (Inventory.find(monkeyDentures).length > 0) {
-                Utils.useItemOnNPC(monkeyDentures, 7193);
+            zooknock = NPCs.findNearest(ZOOKNOCK_ID);
+            if (invItem1.length > 0 &&
+                    Utils.useItemOnNPC(amuletmould, ZOOKNOCK_ID)) {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
             }
-            if (Inventory.find(goldBar).length > 0) {
-                if (Utils.useItemOnNPC(goldBar, 7193)) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                    Utils.modSleep();
-                }
+            if (Inventory.find(monkeyDentures).length > 0 && Utils.useItemOnNPC(monkeyDentures, ZOOKNOCK_ID)) {
+                NpcChat.handle(true);
+            }
+            if (Inventory.find(goldBar).length > 0 &&
+                    Utils.useItemOnNPC(goldBar, ZOOKNOCK_ID)) {
+                NpcChat.handle(true);
+                Utils.modSleep();
+
             }
             Timer.waitCondition(() -> Inventory.find(enchantedBar).length > 0, 9000, 12000);
             Utils.shortSleep();
@@ -979,7 +1000,7 @@ public class MonkeyMadnessI implements QuestTask {
 
     public void worldHop() { // may be better to wait it out, they evetually stop attacking after 5-10m
         int world = WorldHopper.getRandomWorld(true);
-        WorldHopper.changeWorld(world);
+        org.tribot.script.sdk.WorldHopper.hop(world);
     }
 
     public void navigatingMeleeMonkeys() {
@@ -1047,14 +1068,20 @@ public class MonkeyMadnessI implements QuestTask {
             while (!MMConst.outsideJailArea1.contains(Player.getPosition()) && !MMConst.outsideJailArea2.contains(Player.getPosition())) {
                 General.sleep(200);
                 cQuesterV2.status = "Waiting";
+                aberab = NPCs.findNearest("Aberab");
+                trefaji = NPCs.findNearest("Trefaji");
+                if (aberab.length == 0 || trefaji.length == 0) {
+                    Waiting.wait(800);
+                    continue;
+                }
                 if (Combat.getHPRatio() < General.random(40, 60) && Inventory.find(FOOD_IDS).length > 0) {
                     AccurateMouse.click(Inventory.find(FOOD_IDS)[0], "Eat");
                     General.sleep(General.random(200, 800));
                 }
-                if (Game.getSetting(102) > 0 && Inventory.find(ANTIDOTE_ID).length > 0) {
-                    AccurateMouse.click(Inventory.find(ANTIDOTE_ID)[0], "Drink");
-                    General.sleep(General.random(200, 800));
-                }
+                if (Game.getSetting(102) > 0 && Inventory.find(ANTIDOTE_ID).length > 0)
+                    Utils.drinkPotion(ANTIDOTE_ID);
+                ;
+
                 if ((!MMConst.JAIL_CELL_WAITING_AREA.contains(Player.getPosition()) &&
                         MMConst.JAIL_CELL.contains(Player.getPosition()))
                         && (!TRIGGER_AREA.contains(aberab[0].getPosition()) || !TRIGGER_AREA.contains(trefaji[0].getPosition()))) {
@@ -1064,26 +1091,26 @@ public class MonkeyMadnessI implements QuestTask {
                     Timer.waitCondition(() -> (MMConst.TRIGGER_AREA.contains(aberab[0].getPosition())
                             && MMConst.TRIGGER_AREA.contains(trefaji[0].getPosition())), 18000, 22000);
                 }
-                aberab = NPCs.findNearest("Aberab");
-                trefaji = NPCs.findNearest("Trefaji");
+
                 if (MMConst.TRIGGER_AREA.contains(aberab[0].getPosition()) && MMConst.TRIGGER_AREA.contains(trefaji[0].getPosition())) {
                     General.println("[Debug]: Monkeys are in safe position");
-                    if (OUTSIDE_CELL_SAFE_AREA.contains(Player.getPosition()) && MMConst.TRIGGER_AREA.contains(aberab[0].getPosition()) && MMConst.TRIGGER_AREA.contains(trefaji[0].getPosition())) {
-                        cQuesterV2.status = "Running out from the safe area.";
-                        Log.info(cQuesterV2.status);
-                        Walking.blindWalkTo(MMConst.OUTSIDE_JAIL_TILE);
-                        General.sleep(General.random(4000, 6000));
-                        Timer.waitCondition(() -> !Player.isMoving(), 7000, 9000);
+                    if (OUTSIDE_CELL_SAFE_AREA.contains(Player.getPosition()) &&
+                            MMConst.TRIGGER_AREA.contains(aberab[0].getPosition()) &&
+                            MMConst.TRIGGER_AREA.contains(trefaji[0].getPosition())) {
+                        updateStatus("Running out from the safe area.");
+                        if (MMConst.OUTSIDE_JAIL_TILE.interact("Walk here"))
+                            PathingUtil.movementIdle();
                     } else if (MMConst.JAIL_CELL.contains(Player.getPosition())) {
                         jailDoor = Objects.findNearest(10, "Jail door");
-                        cQuesterV2.status = "Picking lock.";
-                        Log.info(cQuesterV2.status);
-                        AccurateMouse.click(jailDoor[0], "Pick-lock");
-                        Timer.waitCondition(() -> MMConst.outsideJailDoor.contains(Player.getPosition()), 4500, 6000);
+                        updateStatus("Picking lock.");
+                        if (AccurateMouse.click(jailDoor[0], "Pick-lock"))
+                            Timer.waitCondition(() -> MMConst.outsideJailDoor.contains(Player.getPosition()), 4500, 6000);
                         if (MMConst.outsideJailDoor.contains(Player.getPosition())) {
-                            General.println("[Debug]: if outside jail door contains player");
-                            Walking.clickTileMS(MMConst.OUTSIDE_CELL_SAFE_AREA.getRandomTile(), "Walk here");
-                            General.sleep(General.random(4500, 7000));
+                            if (MMConst.OUTSIDE_CELL_SAFE_AREA.getCenter().interact("Walk here"))
+                                PathingUtil.movementIdle();
+                        }
+                        if (MMConst.OUTSIDE_CELL_SAFE_AREA.containsMyPlayer()) {
+                            updateStatus("Waiting...");
                             Timer.waitCondition(() -> !TRIGGER_AREA.contains(aberab[0].getPosition())
                                     || !TRIGGER_AREA.contains(trefaji[0].getPosition()), 13000, 17000);
                         }
@@ -1104,33 +1131,11 @@ public class MonkeyMadnessI implements QuestTask {
         }
     }
 
+    private void updateStatus(String status) {
+        cQuesterV2.status = status;
+        Log.info(cQuesterV2.status);
+    }
 
-    Area NORTH_OF_LADDER_TO_BASEMENT = Area.fromPolygon(
-            new WorldTile(2808, 2786, 0),
-            new WorldTile(2808, 2787, 0),
-            new WorldTile(2810, 2789, 0),
-            new WorldTile(2810, 2793, 0),
-            new WorldTile(2807, 2796, 0),
-            new WorldTile(2804, 2796, 0),
-            new WorldTile(2803, 2794, 0),
-            new WorldTile(2803, 2786, 0)
-    );
-    Area NORTH_LADDER_SAFE_AREA = Area.fromPolygon(
-            new WorldTile(2803, 2795, 0),
-            new WorldTile(2803, 2790, 0),
-            new WorldTile(2810, 2788, 0),
-            new WorldTile(2809, 2796, 0)
-    );
-    WorldTile First_North_Walk_Tile = new WorldTile(2808, 2791, 0);
-    WorldTile Second_North_Walk_Tile = new WorldTile(2805, 2794, 0);
-    WorldTile outsideMonkeyTempleTile = new WorldTile(2785, 2786, 0);
-    Area outsideMonkeyTempleArea = Area.fromPolygon(
-            new WorldTile(2783, 2793, 0),
-            new WorldTile(2785, 2793, 0),
-            new WorldTile(2788, 2789, 0),
-            new WorldTile(2788, 2783, 0),
-            new WorldTile(2783, 2783, 0)
-    );
 
     private void handleNorthEscape() {
         if (NORTH_OF_LADDER_TO_BASEMENT.containsMyPlayer()) {
@@ -1465,7 +1470,7 @@ public class MonkeyMadnessI implements QuestTask {
                 if (Utils.clickObj("Bamboo Gate", "Open")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
-                    General.sleep(General.random(2500, 5000));
+                    General.sleep(3500, 5000);
                 }
             }
             Walking.walkPath(pathToElderGuard);
@@ -1482,46 +1487,45 @@ public class MonkeyMadnessI implements QuestTask {
     }
 
 
-    public void stepX12() {
-        if (ISLAND_AREA.contains(Player.getPosition())) {
-            if (!ZOO_AREA.contains(Player.getPosition())) {
-                if (!KING_AREA.contains(Player.getPosition())) {
-                    cQuesterV2.status = "Going to Awowogei";
-                    Log.info(cQuesterV2.status);
-                    elderGuard = NPCs.findNearest("Elder Guard");
-                    RSItem[] invItem1 = Inventory.find(mSpeakAmulet);
-                    if (Inventory.find(mSpeakAmulet).length > 0) {
-                        Inventory.find(mSpeakAmulet)[0].click("Wear");
-                    }
-                    if (NpcChat.talkToNPC("Elder Guard")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation();
-                    }
-                    cQuesterV2.status = "Going to Kruk";
-                    Log.info(cQuesterV2.status);
-                    Walking.blindWalkTo(new RSTile(2803, 2756, 0)); // avoids the elder guard which otherwise blocks movement
-                    Utils.drinkPotion(ItemID.STAMINA_POTION);
-                    Walking.walkPath(pathToKrukPt1);
-                    PathingUtil.movementIdle();
+    public void goToKruk() {
 
-                    if (LADDER_AREA1.contains(Player.getPosition())) {
-                        if (Utils.clickObj(4775, "Climb-up")) {
-                            General.sleep(General.random(6000, 8000));
-                            Walking.walkPath(pathToKrukPt2);
-                            PathingUtil.movementIdle();
-                            General.sleep(General.random(3000, 5000));
-                        }
-                    }
-                    if (Utils.clickObj(4776, "Climb-down")) {
-                        General.sleep(General.random(5000, 8000));
-                    }
-                    if (NpcChat.talkToNPC("Kruk")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation();
-                        General.sleep(General.random(9000, 12000));
-                    }
-                }
+        if (ISLAND_AREA.contains(Player.getPosition()) && !ZOO_AREA.contains(Player.getPosition()) &&
+                !KING_AREA.contains(Player.getPosition())) {
+
+            Utils.equipItem(mSpeakAmulet);
+            //talks to guard first before going to kruk
+            Optional<Npc> guard = Query.npcs().nameContains("Elder Guard")
+                    .inArea(ELDER_GUARD_AREA).findBestInteractable();
+            if (guard.map(g -> g.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
             }
+            cQuesterV2.status = "Going to Kruk";
+            Log.info(cQuesterV2.status);
+
+            if (Walking.blindWalkTo(new RSTile(2803, 2756, 0)))
+                PathingUtil.movementIdle(); // avoids the elder guard which otherwise blocks movement
+            Utils.drinkPotion(ItemID.STAMINA_POTION);
+
+            Walking.walkPath(pathToKrukPt1);
+            PathingUtil.movementIdle();
+
+            if (LADDER_AREA1.contains(Player.getPosition()) && MyPlayer.getTile().getPlane() == 0) {
+                if (Utils.clickObj(4775, "Climb-up"))
+                    Waiting.waitUntil(8000, 850, () -> MyPlayer.getTile().getPlane() == 1);
+            }
+
+            if (MyPlayer.getTile().getPlane() == 1) {
+                Walking.walkPath(pathToKrukPt2);
+                PathingUtil.movementIdle();
+                if (Utils.clickObj(4776, "Climb-down"))
+                    Waiting.waitUntil(8000, 850, () -> MyPlayer.getTile().getPlane() == 0);
+            }
+
+            if (NpcChat.talkToNPC("Kruk")) {
+                NpcChat.handle(true);
+                General.sleep(10000, 12000);
+            }
+
         }
     }
 
@@ -1532,10 +1536,7 @@ public class MonkeyMadnessI implements QuestTask {
                 cQuesterV2.status = "Talking to Awowogei";
                 Log.info(cQuesterV2.status);
                 if (Utils.clickObj(4771, "Talk-to")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                    NPCInteraction.handleConversation();
-                    NPCInteraction.handleConversation();
+                    NpcChat.handle(true);
                 }
             }
         }
@@ -1561,8 +1562,7 @@ public class MonkeyMadnessI implements QuestTask {
                         cQuesterV2.status = "Getting Caged";
                         Log.info(cQuesterV2.status);
                         if (NpcChat.talkToNPC("Monkey minder")) {
-                            NPCInteraction.waitForConversationWindow();
-                            NPCInteraction.handleConversation();
+                            NpcChat.handle(true);
                             Timer.slowWaitCondition(() -> MONKEY_ENCOLSURE.contains(Player.getPosition()), 6000, 8000);
                         }
                     }
@@ -1571,10 +1571,7 @@ public class MonkeyMadnessI implements QuestTask {
                     cQuesterV2.status = "Talking to Monkey";
                     Log.info(cQuesterV2.status);
                     if (NpcChat.talkToNPC(5279)) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation();
-                        NPCInteraction.handleConversation();
-                        NPCInteraction.handleConversation();
+                        NpcChat.handle(true);
                         Timer.waitCondition(() -> Inventory.find(4033).length > 0, 6000, 8000); // 4033 is the monkey itself
                         General.sleep(General.random(500, 2000));
                     }
@@ -1585,21 +1582,19 @@ public class MonkeyMadnessI implements QuestTask {
     }
 
     public void stepX15() {
-        if (!ISLAND_AREA.contains(Player.getPosition())) {
-            if (Inventory.find(4033).length > 0) { // checks if monkey is in inventory
-                if (MONKEY_ENCOLSURE.contains(Player.getPosition())) {
-                    cQuesterV2.status = "Leaving cage";
-                    if (Equipment.find(greegree).length > 0) {
-                        Equipment.find(greegree)[0].click("Remove");
-                        Timer.waitCondition(() -> Inventory.find(greegree).length > 0, 6000, 8000);
-                    }
-                    //have to use this, not NPCChat
-                    if (Utils.clickNPC("Monkey minder", "Talk-to")) {
-                        NpcChat.handle(true);
-                        Waiting.waitUntil(4500, 500,
-                                () -> !MONKEY_ENCOLSURE.contains(Player.getPosition()));
-                        NpcChat.handle(true);
-                    }
+        if (!ISLAND_AREA.contains(Player.getPosition()) && Inventory.find(4033).length > 0) { // checks if monkey is in inventory
+            if (MONKEY_ENCOLSURE.contains(Player.getPosition())) {
+                cQuesterV2.status = "Leaving cage";
+                if (Equipment.find(greegree).length > 0) {
+                    Equipment.find(greegree)[0].click("Remove");
+                    Timer.waitCondition(() -> Inventory.find(greegree).length > 0, 6000, 8000);
+                }
+                //have to use this, not NPCChat
+                if (Utils.clickNPC("Monkey minder", "Talk-to")) {
+                    NpcChat.handle(true);
+                    Waiting.waitUntil(4500, 500,
+                            () -> !MONKEY_ENCOLSURE.contains(Player.getPosition()));
+                    NpcChat.handle(true);
                 }
             }
         }
@@ -1626,7 +1621,7 @@ public class MonkeyMadnessI implements QuestTask {
 
                 // walk a bit further north before making a global walking call to avoid teleports;
                 PathingUtil.localNav(new LocalTile(2468, 3486, 0));
-                General.sleep(3000, 5000);
+                General.sleep(4000, 5000);
 
                 // code above avoided teleporting by using local navigation and hardcoded paths
                 // Im trying this where we just blacklist teleports and then walk. (Works for 2x tests)
@@ -1658,10 +1653,8 @@ public class MonkeyMadnessI implements QuestTask {
             if (GATE_AREA.contains(Player.getPosition())) {
                 gate = Objects.findNearest(20, "Bamboo Gate");
                 if (gate.length > 0 && AccurateMouse.click(gate[0], "Open")) {
-                    NPCInteraction.handleConversation();
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation();
-                    General.sleep(3500, 5000); //sleep as we walk through the gate
+                    NpcChat.handle(true);
+                    General.sleep(3500, 5000);//sleep as we walk through the gate
                 }
 
                 if (!aowowgeiAreaOutside.contains(Player.getPosition())) {
@@ -1672,8 +1665,7 @@ public class MonkeyMadnessI implements QuestTask {
         }
     }
 
-    Area ELDER_GUARD_AREA = Area.fromRectangle(new WorldTile(2800, 2758, 0),
-            new WorldTile(2804, 2756, 0));
+
 
     public void talkToAwowogei() {
         if (aowowgeiAreaOutside.contains(Player.getPosition())) {
@@ -1732,8 +1724,7 @@ public class MonkeyMadnessI implements QuestTask {
 
             // talk to again to get the sigil
             if (NpcChat.talkToNPC("Garkor")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
             }
         }
     }
@@ -1776,14 +1767,12 @@ public class MonkeyMadnessI implements QuestTask {
                 General.sleep(General.randomSD(400, 900, 600, 100));
 
             if (invItem1.length > 0 && invItem1[0].click("Wear")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes");
+                NpcChat.handle(true, "Yes");
                 General.sleep(9000, 12000);
             }
             Prayer.enable(Prayer.PRAYERS.PROTECT_FROM_MAGIC);
             Timer.waitCondition(NPCInteraction::isConversationWindowUp, 19000, 22000);
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true);
             Timer.waitCondition(() -> NPCs.findNearest("Jungle demon").length > 0, 6000, 9000);
         }
         if (BOSS_AREA.contains(Player.getPosition())) {
@@ -1856,9 +1845,7 @@ public class MonkeyMadnessI implements QuestTask {
             PathingUtil.walkToTile(kingTile);
             General.sleep(General.random(2000, 4000));
             if (NpcChat.talkToNPC("King Narnode Shareen")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes");
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true, "Yes");
                 Timer.waitCondition(() -> Interfaces.get(225, 14) != null, 3500, 5000);
 
                 // closes quest window (its a unique interface)
@@ -2033,7 +2020,7 @@ public class MonkeyMadnessI implements QuestTask {
             if (RSVarBit.get(123).getValue() == 7 && RSVarBit.get(124).getValue() == 1
                     && RSVarBit.get(125).getValue() == 3 && RSVarBit.get(126).getValue() == 4
                     && RSVarBit.get(127).getValue() == 6 && RSVarBit.get(128).getValue() == 1) {
-                stepX12(); // goes to awowogei and kruk
+                goToKruk(); // goes to awowogei and kruk
                 stepX13(); // nothing changes after talking to awowogei - talks to awowogei
                 stepX14(); // goes to zoo and gets monkey
                 stepX15(); // leaves monkey cage

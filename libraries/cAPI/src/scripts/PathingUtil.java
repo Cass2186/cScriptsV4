@@ -34,11 +34,11 @@ import org.tribot.script.sdk.walking.LocalWalking;
 import org.tribot.script.sdk.walking.WalkState;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PathingUtil {
 
@@ -132,11 +132,19 @@ public class PathingUtil {
                 .findBestInteractable();
     }
 
+    public static Optional<Positionable> getFurthestClickableTile(LocalTile destination) {
+        var path = LocalWalking.Map.builder().travelThroughDoors(true)
+                .build().getPath(destination);
+        List<Positionable> list = path.stream().sorted(Comparator.comparingInt(Positionable::distance).reversed())
+                .filter(l->l.getTile().isVisible())
+                .collect(Collectors.toList());
+        return list.stream().filter(l->l.getTile().isVisible()).findFirst();
+    }
 
     public static WalkState getWalkState() {
         // for horror from the deep rock area
         if (stonesArea.contains(Player.getPosition())) {
-            Log.info("[DaxPref]: In stone area");
+            Log.info("[WalkPref]: In stone area");
             if (!handleFood())
                 return WalkState.FAILURE;
         }

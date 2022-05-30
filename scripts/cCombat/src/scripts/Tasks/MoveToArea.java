@@ -314,7 +314,7 @@ public class MoveToArea implements Task {
             if (inDungeon.check()) {
                 checkPrayer(true);
 
-                if (!Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition())) {
+                if (!Areas.LARGE_SCARAB_FIGHT_AREA.containsMyPlayer()) {
                     if (MAZE_PART_ONE.contains(Player.getPosition()) &&
                             PathingUtil.localNavigation(BEFORE_FIRST_TRAP.getRandomTile(), 1)) {
                         General.println("[MoveToArea]: Going to first trap");
@@ -378,10 +378,10 @@ public class MoveToArea implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().killingScarabs)
-            return !Areas.LARGE_SCARAB_FIGHT_AREA.contains(Player.getPosition()) &&
-                    !Areas.scarabFightAreaSdk.contains(MyPlayer.getPosition());
+            return !Areas.LARGE_SCARAB_FIGHT_AREA.containsMyPlayer() &&
+                    !Areas.scarabFightAreaSdk.containsMyPlayer();
         return
-                !Areas.UNDEAD_DRUID_AREA.contains(Player.getPosition());//!Areas.dkArea.check();//!Vars.get().safeTile.equals(Player.getPosition());
+                !Areas.UNDEAD_DRUID_AREA.containsMyPlayer();//!Areas.dkArea.check();//!Vars.get().safeTile.equals(Player.getPosition());
 
     }
 
@@ -399,6 +399,7 @@ public class MoveToArea implements Task {
             PathingUtil.walkToArea(Areas.UNDEAD_DRUID_AREA);
         } else {
             Log.error("Failed to get area to move to, check vars");
+            PathingUtil.walkToTile(Vars.get().fightArea.getCenter());
         }
         //goToRuneDragons();
         //navigateWaterBirthDungeon();

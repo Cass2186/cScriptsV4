@@ -70,14 +70,17 @@ public enum FURNITURE {
         int xpTillMax = Skills.getXPToLevel(skill, SkillTasks.CONSTRUCTION.getEndLevel());
         if (max < SkillTasks.CONSTRUCTION.getEndLevel()) {
             xpTillMax = Skills.getXPToLevel(skill, this.maxLevel);
+        } else {
+
         }
-        General.println("[Construction] DetermineResourcesToNextItem: " + ((xpTillMax / this.xpPer) * this.plankNum));
+        Log.info("[Construction] DetermineResourcesToNextItem: " + ((xpTillMax / this.xpPer) * this.plankNum));
         return (int) ((xpTillMax / this.xpPer) * this.plankNum) + 10;
     }
 
     public static Optional<FURNITURE> getCurrentItem() {
         for (FURNITURE i : values()) {
-            if (Skills.getActualLevel(skill) < i.maxLevel) {
+            if (Skills.getActualLevel(skill) < i.maxLevel &&
+                    Skills.getActualLevel(skill) > i.reqLevl) {
                 return Optional.of(i);
             }
         }
@@ -91,16 +94,16 @@ public enum FURNITURE {
         for (FURNITURE furn : FURNITURE.values()) {
 
             // skip the furniture piece if we're past it's max level
-            if (Skill.CONSTRUCTION.getActualLevel() >= furn.maxLevel)// ||
-                //  SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
+            if (Skill.CONSTRUCTION.getActualLevel() >= furn.maxLevel ||
+                    SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
                 continue;
 
-            Log.debug("[Debug]: Item is " + furn.toString());
+            Log.info("[Construction Items]: Item is " + furn.toString());
             int plankNum = furn.determineResourcesToNextItem();
             // add planks
             if (furn.getMaxLevel() < 23 && Skill.CONSTRUCTION.getActualLevel() < 22) {
                 numOfRegPlanks = numOfRegPlanks + plankNum;
-                General.println("[Construction Items]: We need " + numOfRegPlanks + " regular planks");
+                Log.info("[Construction Items]: We need " + numOfRegPlanks + " regular planks");
             } else if (furn.getPlankId() == ItemID.MAHOGANY_PLANK) {
                 i.add(new ItemReq.Builder()
                         .id(ItemID.MAHOGANY_PLANK)
@@ -108,7 +111,7 @@ public enum FURNITURE {
                         .amount(furn.determineResourcesToNextItem()).build());
             } else {
                 numOfOakPlanks = numOfOakPlanks + plankNum;
-                General.println("[Construction Items]: We need " + numOfRegPlanks +
+                Log.info("[Construction Items]: We need " + numOfRegPlanks +
                         " Oak planks for " + furn.getObjectName());
             }
 
@@ -121,26 +124,20 @@ public enum FURNITURE {
                     .amount(numOfRegPlanks).build());
             i.add(new ItemReq(ItemID.STEEL_NAILS, numOfRegPlanks * 5));
         }
-
+        Log.warn("[Construction Items]: We need " + numOfRegPlanks + " regular planks");
         //make req for oak planks items
-        i.add(new ItemReq.Builder()
-                .id(ItemID.OAK_PLANK)
-                .isItemNoted(true)
-                .amount(numOfOakPlanks).build());
-
-        //make req for oak planks items
-       /* i.add(new ItemReq.Builder()
-                .id(ItemID.MAHOGANY_PLANK)
-                .isItemNoted(true)
-                .amount(numOfOakPlanks).build());*/
+        if (numOfOakPlanks > 0)
+            i.add(new ItemReq.Builder()
+                    .id(ItemID.OAK_PLANK)
+                    .isItemNoted(true)
+                    .amount(numOfOakPlanks).build());
 
 
         // ADD Hammer and saw
-
         i.add(new ItemReq(ItemID.HAMMER, 1));
         i.add(new ItemReq(ItemID.SAW, 1));
         i.add(new ItemReq(ItemID.TELEPORT_TO_HOUSE, 1));
-        General.println("[ConstructionItems]: We need " + i.size() + " sized list for construction items", Color.BLACK);
+        Log.info("[ConstructionItems]: We need " + i.size() + " sized list for construction items");
         return i;
     }
 }

@@ -170,7 +170,7 @@ public class ItemRequirement implements Requirement {
         RSItem[] i = Inventory.find(this.getId());
         RSItemDefinition def = RSItemDefinition.get(this.getId());
         if (Equipment.isEquipped(this.getId())) {
-            Log.debug("Has item equipped w/ ID of " + this.getId());
+            Log.info("Has item equipped w/ ID of " + this.getId());
             return true;
         }
 
