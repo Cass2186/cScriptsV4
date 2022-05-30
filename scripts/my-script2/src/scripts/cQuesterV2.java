@@ -105,6 +105,7 @@ import scripts.QuestPackages.TearsOfGuthix.TearsOfGuthix;
 import scripts.QuestPackages.TempleOfIkov.TempleOfIkov;
 import scripts.QuestPackages.TheFeud.TheFeud;
 import scripts.QuestPackages.TheGolem.TheGolem;
+import scripts.QuestPackages.TheHandInTheSand.TheHandInTheSand;
 import scripts.QuestPackages.TouristTrap.TouristTrap;
 import scripts.QuestPackages.TreeGnomeVillage.TreeGnomeVillage;
 import scripts.QuestPackages.TrollStronghold.TrollStronghold;
@@ -739,6 +740,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         } else if (arg.toLowerCase().contains("recruitment")) {
             General.println("[Args]: Added Recruitment Drive");
             taskList.add(RecruitmentDrive.get());
+        }
+        else if (arg.toLowerCase().contains("sand")) {
+            General.println("[Args]: Added hand in the sand");
+            taskList.add(TheHandInTheSand.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

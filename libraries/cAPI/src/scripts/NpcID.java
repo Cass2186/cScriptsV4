@@ -178,7 +178,7 @@ public class NpcID {
     public static final int BOB_4221 = 4221;
     public static final int KKLIK = 1873;
     public static final int ICE_TROLL_RUNT = 1874;
-    public static final int ICE_TROLL_MALE = 1875;
+    public static final int ICE_TROLL_MALBERTE = 1875;
     public static final int ICE_TROLL_FEMALE = 1876;
     public static final int ICE_TROLL_GRUNT = 1877;
     public static final int MAWNIS_BUROWGAR = 2979; // modified
@@ -228,7 +228,7 @@ public class NpcID {
     public static final int BRUNDT_THE_CHIEFTAIN_9268 = 9268;
     public static final int DWARF_5904 = 5904;
     public static final int BETTY_5905 = 5905;
-    public static final int SANDY = 5384;
+    public static final int SANDY = 6405; //modified
     public static final int MOUNTAIN_GOAT_4117 = 4117;
     public static final int RASOLO = 679;
     public static final int GIANT_SKELETON = 680;
@@ -393,7 +393,7 @@ public class NpcID {
     public static final int SUROK_MAGIS = 4159;
     public static final int SANDY_5385 = 5385;
     public static final int MAZION = 5386;
-    public static final int BERT = 5815;
+    public static final int BERT = 5382; //modified
     public static final int YAK = 5816;
     public static final int ICEBERG = 5817;
     public static final int ICEBERG_5818 = 5818;
