@@ -239,6 +239,9 @@ public class TheHandInTheSand implements QuestTask {
         talkToSandyWithPotion = new NPCStep(NpcID.SANDY, new RSTile(2790, 3175, 0),
                 //    "Talk to Sandy in Brimhaven again with the truth serum. Select distractions until one works.",
                 truthSerum);
+        talkToSandyWithPotion.addDialogStep("There's a herd of huge mutant herring about to drop from the sky!");
+        talkToSandyWithPotion.addDialogStep("But the pygmy shrews have eaten all the sand!");
+        talkToSandyWithPotion.addDialogStep("A small parrot with a pink banana is sitting outside your window!");
         useSerumOnCoffee = new UseItemOnObjectStep(ItemID.TRUTH_SERUM, 10806, new RSTile(2789, 3176, 0),
                 "Use the truth serum on Sandy's coffee mug.", truthSerum);
 
@@ -305,6 +308,9 @@ public class TheHandInTheSand implements QuestTask {
         }
         if (Quest.THE_HAND_IN_THE_SAND.getStep() == 0 && !startInv.check()) {
             buyStep.buyItems();
+            if (Quest.PLAGUE_CITY.getState().equals(Quest.State.COMPLETE)){
+                startInv.add(new ItemReq(ItemID.ARDOUGNE_TELEPORT, 2,0));
+            }
             startInv.withdrawItems();
         }
         Log.info("[Debug]: The Hand in the Sand Varbit is " + varbit);
