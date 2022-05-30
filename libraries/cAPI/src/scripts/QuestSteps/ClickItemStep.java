@@ -7,9 +7,12 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.NpcChat;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
+import scripts.Utils;
 
 import java.util.*;
 
@@ -19,6 +22,7 @@ public class ClickItemStep extends QuestStep {
     private String itemName;
     private String interactionString;
     private RSTile tile;
+    private WorldTile worldtTile;
     private List<String> dialog;
 
 
@@ -29,6 +33,7 @@ public class ClickItemStep extends QuestStep {
         this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = Player.getPosition();
+        this.worldtTile = Utils.getWorldTileFromRSTile( this.tile);
     }
 
     public ClickItemStep(int ItemID, String interactionString, Requirement... reqs) {
@@ -42,13 +47,16 @@ public class ClickItemStep extends QuestStep {
         this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = tile;
+        this.worldtTile = Utils.getWorldTileFromRSTile( this.tile);
     }
 
     public ClickItemStep(int ItemID, String interactionString, RSTile tile, Requirement... reqs) {
         this.ItemID = ItemID;
         this.interactionString = interactionString;
         this.tile = tile;
+        this.worldtTile = Utils.getWorldTileFromRSTile( this.tile);
         this.requirements.addAll(Arrays.asList(reqs));
+
     }
 
 
@@ -57,6 +65,7 @@ public class ClickItemStep extends QuestStep {
         this.itemName = itemName;
         this.interactionString = interactionString;
         this.tile = tile;
+        this.worldtTile = Utils.getWorldTileFromRSTile( this.tile);
         this.requirements.addAll(Arrays.asList(reqs));
     }
 
@@ -96,7 +105,7 @@ public class ClickItemStep extends QuestStep {
         if (this.ItemID != -1) {
             RSItem[] item = Inventory.find(this.ItemID);
             if (item.length > 0) {
-                if (this.tile != null && PathingUtil.localNavigation(this.tile)) {
+                if (this.tile != null && PathingUtil.localNav(Utils.getLocalTileFromRSTile(this.tile))) {
                     PathingUtil.movementIdle();
                 } else if (this.tile != null && PathingUtil.walkToTile(this.tile)) {
                     PathingUtil.movementIdle();
@@ -137,6 +146,8 @@ public class ClickItemStep extends QuestStep {
                     NPCInteraction.handleConversation(this.interactionString);
                 }
             }
+            if (ChatScreen.isOpen())
+                NpcChat.handle();
         }
 
     }

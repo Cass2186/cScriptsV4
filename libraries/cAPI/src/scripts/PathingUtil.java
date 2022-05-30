@@ -136,9 +136,9 @@ public class PathingUtil {
         var path = LocalWalking.Map.builder().travelThroughDoors(true)
                 .build().getPath(destination);
         List<Positionable> list = path.stream().sorted(Comparator.comparingInt(Positionable::distance).reversed())
-                .filter(l->l.getTile().isVisible())
+                .filter(l -> l.getTile().isVisible())
                 .collect(Collectors.toList());
-        return list.stream().filter(l->l.getTile().isVisible()).findFirst();
+        return list.stream().filter(l -> l.getTile().isVisible()).findFirst();
     }
 
     public static WalkState getWalkState() {
@@ -257,7 +257,8 @@ public class PathingUtil {
     public static boolean localNav(WorldTile destination, Supplier<WalkState> state) {
         var path = LocalWalking.Map.builder().travelThroughDoors(true)
                 .build().getPath(destination);
-        Log.info("[PathingUtil] Local walking V2 - Worldtile");
+        if (path.size() > 0)
+            Log.info("[PathingUtil] Local walking V2 - Worldtile");
         return LocalWalking.walkPath(path, state);
     }
 
@@ -268,7 +269,9 @@ public class PathingUtil {
     public static boolean localNav(LocalTile destination, Supplier<WalkState> state) {
         var path = LocalWalking.Map.builder().travelThroughDoors(true)
                 .build().getPath(destination);
-        Log.info("[PathingUtil] Local walking V2 - LocalTile");
+        if (path.size() > 0)
+
+            Log.info("[PathingUtil] Local walking V2 - LocalTile");
         return LocalWalking.walkPath(path, state);
     }
 
@@ -276,7 +279,9 @@ public class PathingUtil {
         var path = LocalWalking.Map.builder()
                 .travelThroughDoors(travelThroughDoors)
                 .build().getPath(destination);
-        Log.info("[PathingUtil] Local walking V2 - LocalTile (doors = " + travelThroughDoors + ")");
+        if (path.size() > 0)
+
+            Log.info("[PathingUtil] Local walking V2 - LocalTile (doors = " + travelThroughDoors + ")");
         return LocalWalking.walkPath(path, PathingUtil::getWalkState);
     }
 
@@ -287,7 +292,7 @@ public class PathingUtil {
     public static boolean movementIdle() {
         int timeout = Game.isRunOn() ? 10000 : 15000;
         if (Waiting.waitUntil(1750, 75, MyPlayer::isMoving))
-            return Waiting.waitUntil(timeout, 200, () -> !MyPlayer.isMoving());
+            return Waiting.waitUntil(timeout, Utils.random(700,1200), () -> !MyPlayer.isMoving());
         return false;
     }
 
@@ -295,7 +300,7 @@ public class PathingUtil {
         int timeout = Game.isRunOn() ? 10000 : 15000;
 
         if (Waiting.waitUntil(1750, 75, MyPlayer::isMoving))
-            return Waiting.waitUntil(timeout, 175, () -> !MyPlayer.isMoving() ||
+            return Waiting.waitUntil(timeout, Utils.random(700,1200), () -> !MyPlayer.isMoving() ||
                     destination.distanceTo(MyPlayer.getTile()) < 5);
         else return
                 destination.distanceTo(MyPlayer.getTile()) < 5;
@@ -305,7 +310,8 @@ public class PathingUtil {
 
     public static boolean movementIdle(int longWaitTimeout) {
         Timer.waitCondition(Player::isMoving, 1500, 2200);
-        return Timer.waitCondition(() -> !Player.isMoving(), longWaitTimeout, longWaitTimeout + 1500);
+        return Timer.waitCondition(() -> !MyPlayer.isMoving(), longWaitTimeout,
+                longWaitTimeout + 1500);
     }
 
     public static boolean localNavigation(RSTile destination) {
@@ -645,7 +651,7 @@ public class PathingUtil {
         setDaxPref();
         if (!area.contains(MyPlayer.getTile())) {
             for (int i = 0; i < 4; i++) {
-                WorldTile t =area.getCenter();
+                WorldTile t = area.getCenter();
 
 
                 if (i > 1) //if we fail twice to walk to center, use a random tle
@@ -653,10 +659,10 @@ public class PathingUtil {
 
                 Log.info("[PathingUtil]: Walking to Area (SDK)");
                 if (GlobalWalking.walkTo(t, PathingUtil::getWalkState) &&
-                        Waiting.waitUntil(1300, MyPlayer::isMoving)){
-                        Waiting.waitUntil(TribotRandom.uniform(sleepMin, sleepMax),
-                                450, () -> area.contains(MyPlayer.getTile()) ||
-                                        !MyPlayer.isMoving());
+                        Waiting.waitUntil(1300, MyPlayer::isMoving)) {
+                    Waiting.waitUntil(TribotRandom.uniform(sleepMin, sleepMax),
+                            450, () -> area.contains(MyPlayer.getTile()) ||
+                                    !MyPlayer.isMoving());
 
 
                 } else {

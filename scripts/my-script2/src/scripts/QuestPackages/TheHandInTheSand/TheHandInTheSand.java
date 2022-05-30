@@ -245,7 +245,7 @@ public class TheHandInTheSand implements QuestTask {
         useSerumOnCoffee = new UseItemOnObjectStep(ItemID.TRUTH_SERUM, 10806, new RSTile(2789, 3176, 0),
                 "Use the truth serum on Sandy's coffee mug.", truthSerum);
 
-        activateMagicalOrb = new ClickItemStep(ItemID.MAGICAL_ORB, "Activate", new RSTile(2789, 3176, 0), magicalOrb);
+        activateMagicalOrb = new ClickItemStep(ItemID.MAGICAL_ORB, "Activate", new RSTile(2789, 3175, 0), magicalOrb);
 
         interrogateSandy = new NPCStep(NpcID.SANDY, new RSTile(2790, 3175, 0), activatedOrb);
         interrogateSandy.addDialogStep("Why is Bert's rota different from the original?",
@@ -321,7 +321,11 @@ public class TheHandInTheSand implements QuestTask {
             talkToBertAboutScroll.execute();
             return;
         }
-
+        if (Quest.THE_HAND_IN_THE_SAND.getStep() == 130 && GameState.isInInstance()){
+            NpcChat.handle(true);
+            Waiting.waitUntil(8000, 500, ()->!GameState.isInInstance() || ChatScreen.isOpen());
+            return;
+        }
         step.ifPresent(QuestStep::execute);
         if (Quest.THE_HAND_IN_THE_SAND.getStep() == 70 && !Inventory.contains(ItemID.TRUTH_SERUM)){
             WorldTile t = new WorldTile(3016, 3259,0);
@@ -332,6 +336,7 @@ public class TheHandInTheSand implements QuestTask {
                 NpcChat.handle(true);
             }
         }
+
 
         if (ChatScreen.isOpen())
             NpcChat.handle();
