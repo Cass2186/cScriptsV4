@@ -119,7 +119,7 @@ public class CollectBars implements Task {
         return "Smithing - BF";
     }
 
-    private boolean shouldCollectBars(){
+    public static boolean shouldCollectBars(){
         if (BfVars.get().useGoldSmith){
             return Utils.getVarBitValue(Varbits.BLAST_FURNACE_GOLD_BAR.getId()) >0 ;
         }

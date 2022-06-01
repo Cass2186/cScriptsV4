@@ -124,7 +124,7 @@ public class RfdGoblin implements QuestTask {
         cQuesterV2.status = "Going to Start";
         if (enterRfdInstance() &&
                 Utils.clickObj(WARTFACE_OBJ_ID, "Inspect") && NpcChat.waitForChatScreen()) {
-            ChatScreen.handle("Yes.");
+            NpcChat.handle("Yes.");
             Utils.modSleep();
         }
     }
@@ -152,9 +152,9 @@ public class RfdGoblin implements QuestTask {
     public void goToGoblinVillage() {
         cQuesterV2.status = "Talking to cook";
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID_4850) && NpcChat.waitForChatScreen()) {
-            ChatScreen.handle("I need your help...");
-            ChatScreen.handle("What do you need? Maybe I can get it for you.");
-            ChatScreen.handle();
+            NpcChat.handle("I need your help...");
+            NpcChat.handle("What do you need? Maybe I can get it for you.");
+            NpcChat.handle();
             Utils.modSleep();
         }
     }
@@ -162,8 +162,8 @@ public class RfdGoblin implements QuestTask {
     public void talkToCook2() {
         cQuesterV2.status = "Talking to cook (#2)";
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID_4850) && NpcChat.waitForChatScreen()) {
-            ChatScreen.handle("I've got the charcoal you were after.");
-            ChatScreen.handle();
+            NpcChat.handle("I've got the charcoal you were after.");
+            NpcChat.handle();
             // General.sleep(General.random(20000, 30000));
         }
         if (Waiting.waitUntil(4000, 500, Utils::inCutScene))
@@ -175,8 +175,8 @@ public class RfdGoblin implements QuestTask {
         cQuesterV2.status = "Talking to cook (#3)";
         General.println("[Debug: " + cQuesterV2.status);
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID) && NpcChat.waitForChatScreen()) {
-            ChatScreen.handle("I need your help...");
-            ChatScreen.handle();
+            NpcChat.handle("I need your help...");
+            NpcChat.handle();
         }
     }
 
@@ -214,7 +214,7 @@ public class RfdGoblin implements QuestTask {
 
     public void talkToChef4() {
         if (goToGoblinCook() && NpcChat.talkToNPC(GOBLIN_COOK_ID) && NpcChat.waitForChatScreen()) {
-            ChatScreen.handle("I've got the ingredients we need...");
+            NpcChat.handle("I've got the ingredients we need...");
             Timer.waitCondition(() -> Inventory.contains(ItemID.SLOP_OF_COMPROMISE), 5000, 10000);
             Utils.shortSleep();
         }
@@ -234,7 +234,7 @@ public class RfdGoblin implements QuestTask {
                 }
                 if (Utils.useItemOnObject(ItemID.SLOP_OF_COMPROMISE, WARTFACE_OBJ_ID)) {
                     NPCInteraction.waitForConversationWindow();
-                    ChatScreen.handle();
+                    NpcChat.handle();
                     Utils.modSleep();
                 }
             }
@@ -244,26 +244,29 @@ public class RfdGoblin implements QuestTask {
 
     @Override
     public void execute() {
-        if (Game.getSetting(679) == 510) {
+        int vb = QuestVarbits.QUEST_RECIPE_FOR_DISASTER_WARTFACE_AND_BENTNOZE.getId();
+        if (Game.getSetting(679) == 510 || Utils.getVarBitValue(vb) == 0) {
             buyItems();
             getItems();
             goToStart();
-        } else if (Game.getSetting(679) == 3070) {
+
+        } else if (Game.getSetting(679) == 3070  || Utils.getVarBitValue(vb) == 5) {
             goToGoblinVillage();
-        } else if (Game.getSetting(679) == 5630) {
+        } else if (Game.getSetting(679) == 5630  || Utils.getVarBitValue(vb) == 10) {
             talkToCook2();
-        } else if (Game.getSetting(679) == 8190) {
+        } else if (Game.getSetting(679) == 8190  || Utils.getVarBitValue(vb) == 15) {
             cQuesterV2.status = "RFD Goblin: Cut scene";
-            Timer.waitCondition(() -> Game.getSetting(679) != 8190, 40000);
+            //Timer.waitCondition(() -> Utils.getVarBitValue(vb) ==20 || Utils.inCutScene(), 40000);
             Utils.cutScene();
-        } else if (Game.getSetting(679) == 73726) {
             talkToChef3();
-        } else if (Game.getSetting(679) == 81406) {
+        } else if (Game.getSetting(679) == 73726  || Utils.getVarBitValue(vb) == 20) {
+            talkToChef3();
+        } else if (Game.getSetting(679) == 81406  || Utils.getVarBitValue(vb) == 30) {
             foodPrep();
             talkToChef4();
-        } else if (Game.getSetting(679) == 83966) {
+        } else if (Game.getSetting(679) == 83966  || Utils.getVarBitValue(vb) == 35) {
             finishQuest();
-        } else if (Game.getSetting(679) == 86524) {
+        } else if (Game.getSetting(679) == 86524  || Utils.getVarBitValue(vb) == 40) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
         }
@@ -283,7 +286,7 @@ public class RfdGoblin implements QuestTask {
 
     @Override
     public String questName() {
-        return "RFD: Goblin Generals";
+        return "RFD: Goblin Generals (" + Utils.getVarBitValue(QuestVarbits.QUEST_RECIPE_FOR_DISASTER_WARTFACE_AND_BENTNOZE.getId())+")";
     }
 
     @Override

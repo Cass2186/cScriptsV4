@@ -205,7 +205,7 @@ public enum Assign {
             .useGearType(GearType.MELEE)),
 
     DUST_DEVIL(new Builder()
-           //.inArea(Areas.DUST_DEVIL_AREA)
+           .inArea(Areas.DUST_DEVIL_AREA)
             .nameContains("Dust devil")
             .useSpecialItem(true)
             .specialItemID(ItemID.FACEMASK)
@@ -314,6 +314,12 @@ public enum Assign {
             .inArea(Areas.ICEFIEND_AREA)
             .nameContains("Icefiend")
             .setHopPlayerThreshold(2)
+            .useGearType(GearType.MELEE)),
+    INFERNAL_MAGE(new Builder()
+            .inArea(Areas.INFERNAL_MAGE_AREA)
+            .nameContains("Infernal mage")
+            .setHopPlayerThreshold(2)
+            .usePrayerType(PrayerType.MAGIC)
             .useGearType(GearType.MELEE)),
 
     JELLY(new Builder()

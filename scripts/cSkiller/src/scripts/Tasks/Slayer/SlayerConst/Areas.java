@@ -181,6 +181,7 @@ public class Areas {
                     new WorldTile(3044, 9572, 0),
                     new WorldTile(3039, 9575, 0)
             )));
+    public static Area  DUST_DEVIL_AREA = Area.fromRectangle(new WorldTile(1710, 10036, 0), new WorldTile(1720, 10028, 0));
     public static Area DAGGANOTH_AREA = Area.fromRectangle(new WorldTile(2510, 10036, 0), new WorldTile(2541, 10011, 0));
     public static Area DWARF_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(

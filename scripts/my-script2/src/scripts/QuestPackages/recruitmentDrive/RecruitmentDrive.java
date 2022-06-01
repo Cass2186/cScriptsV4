@@ -110,7 +110,7 @@ public class RecruitmentDrive implements QuestTask {
             PathingUtil.walkToArea(MAKEOVER_MAGE);
             if (MAKEOVER_MAGE.containsMyPlayer()) {
                 if (Utils.clickNPC("Makeover mage", "Makeover")) {
-                    NpcChat.handle("Pay 3,000 coins");
+                    NpcChat.handle(true, "Pay 3,000 coins" ,"Pay 3000 coins");
                     Timer.waitCondition(() -> Widgets.isVisible(205), 4000, 8000);
                 }
                 if (Widgets.isVisible(205, 6)) {

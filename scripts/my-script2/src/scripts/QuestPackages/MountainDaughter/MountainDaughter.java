@@ -673,6 +673,8 @@ public class MountainDaughter implements QuestTask {
 
             } else
                 Utils.modSleep();
+        } else {
+            PathingUtil.localNav(Utils.getLocalTileFromRSTile(KENDAL_SAFE_SPOT_AREA.getRandomTile()));
         }
     }
 
@@ -789,7 +791,6 @@ public class MountainDaughter implements QuestTask {
     }
 
 
-    int GAME_SETTING = 423;
 
     @Override
     public void execute() {
@@ -816,7 +817,7 @@ public class MountainDaughter implements QuestTask {
             goToHamal();
             talkToHamal();
         }
-        if (RSVarBit.get(262).getValue() == 10 || Game.getSetting(423) == 1053972) {
+        if (RSVarBit.get(262).getValue() == 10) {
             locateSvidi();
         }
         if (RSVarBit.get(262).getValue() == 20) {
@@ -855,10 +856,10 @@ public class MountainDaughter implements QuestTask {
             getCorpse();
             goToHamalFour();
         }
-        if (RSVarBit.get(260).getValue() == 60 || Game.getSetting(423) == -2015725252) {
+        if (RSVarBit.get(260).getValue() == 60) {
             buryCorpse();
         }
-        if (RSVarBit.get(260).getValue() == 70 || Game.getSetting(423) == -807765690) {
+        if (RSVarBit.get(260).getValue() == 70) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
         }
@@ -878,7 +879,7 @@ public class MountainDaughter implements QuestTask {
 
     @Override
     public String questName() {
-        return "Mountain Daughter";
+        return "Mountain Daughter (" + RSVarBit.get(260).getValue() + ")";
     }
 
     @Override

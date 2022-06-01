@@ -52,8 +52,7 @@ public class AttackNpc implements Task {
     }
 
     private static boolean checkAggro() {
-        return
-            Waiting.waitUntil(500, 5, () ->
+        return Waiting.waitUntil(Utils.random(25,450), 5, () ->
                 Query.npcs().isMyPlayerInteractingWith().isAny());
     }
 
@@ -232,7 +231,7 @@ public class AttackNpc implements Task {
     public static boolean waitUntilOutOfCombatNew(Optional<Npc> npcOptional, int eatAt, int longTimeOut) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
         Assign assign = SlayerVars.get().assignment;
-        return Waiting.waitUntil(longTimeOut, 45, () -> {
+        return Waiting.waitUntil(longTimeOut, 25, () -> {
 
             AntiBan.timedActions();
 
@@ -259,7 +258,7 @@ public class AttackNpc implements Task {
             if (assign != null && assign.isUseSpecialItem() && npcOptional.isPresent()) {
                 //  Log.log("Using special item");
                 if (checkSpecialItem())
-                    Waiting.waitNormal(1500, 340);
+                    Waiting.waitNormal(1100, 150);
 
             }
             return
@@ -277,7 +276,7 @@ public class AttackNpc implements Task {
         Optional<Npc> n = Query.npcs().isInteractingWithMe().stream().findFirst();
         return n.map(npc -> npc.getHealthBarPercent() <= 0.15 &&
                 i.map(item -> item.useOn(npc)).orElse(false)).orElse(false) &&
-                Waiting.waitUntil(700, 50, () -> MyPlayer.getAnimation() != -1);
+                Waiting.waitUntil(790, 150, () -> MyPlayer.getAnimation() != -1);
     }
 
 
@@ -294,11 +293,7 @@ public class AttackNpc implements Task {
 
             } else {
                 SlayerVars.get().status = "Sleeping...";
-                // int sleep = General.random(150, 3000);
                 Utils.idleNormalAction(true);
-                //int sleepSD = General.randomSD(150, 4000, 1150, 325);
-                // Log.debug("[AttackNpc]: Sleeping for " + sleepSD);
-                // Waiting.wait(sleepSD);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
             }
         }

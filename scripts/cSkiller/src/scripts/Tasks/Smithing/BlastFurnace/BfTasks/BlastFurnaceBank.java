@@ -126,6 +126,13 @@ public class BlastFurnaceBank implements Task {
                         && Inventory.find(995).length == 0)
                     BankManager.withdraw(0, true, 995);
 
+                if (CollectBars. shouldCollectBars()) {
+                    Log.warn("need to collect bars");
+                    BankManager.close(true);
+                    return true;
+                }
+
+
                 RSItem[] bars = Inventory.find(Filters.Items.nameContains("bar"));
                 if (bars.length > 0) {
                     Log.warn("[Bank]: Depositing bars failsafe");

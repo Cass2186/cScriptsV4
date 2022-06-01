@@ -636,6 +636,14 @@ public class SlayerBank implements Task {
 
     }
 
+    /*****************************
+     * **NPC-Specific Inventories**
+     ******************************/
+    public void infernalMagesInventory() {
+        generalInventorySetup(ItemID.VARROCK_TELEPORT, 10);
+        BankManager.withdrawArray(ItemID.PRAYER_POTION, 10);
+        }
+
     private boolean equipItem(int ItemID) {
         Optional<InventoryItem> inv =
                 Query.inventory().idEquals(ItemID).findClosestToMouse();
@@ -1277,6 +1285,10 @@ public class SlayerBank implements Task {
             } else if (NPC.contains("fire giant"))
                 generalInventorySetup(ItemID.VARROCK_TELEPORT, true, true);
 
+            else if (NPC.contains("dust devil"))
+                generalInventorySetup(ItemID.VARROCK_TELEPORT, false,
+                        new ItemRequirement(ItemID.SKILLS_NECKLACE4, 1, 0));
+
             else if (NPC.contains("gargoyle")) {
                 SlayerVars.get().useExpeditiousBracelet = false;
                 SlayerVars.get().useBraceletOfSlaughter = true;
@@ -1294,11 +1306,12 @@ public class SlayerBank implements Task {
                 generalInventorySetup(ItemID.VARROCK_TELEPORT, true, true);
 
             else if (NPC.contains("hobgloblin"))
-                generalInventorySetup(ItemID.VARROCK_TELEPORT, true, false,
-                        -1, false, ItemID.BRASS_KEY);
+                generalInventorySetup(ItemID.VARROCK_TELEPORT, true,
+                        new ItemRequirement(ItemID.BRASS_KEY, 1));
 
             else if (NPC.contains("infernal mage"))
-                SlayerVars.get().shouldSkipTask = true;
+                generalInventorySetup(ItemID.SALVE_GRAVEYARD_TELEPORT, true,
+                        new ItemRequirement(ItemID.PRAYER_POTION4, 10));
 
             else if (NPC.contains("jelly") || NPC.contains("jellie"))
                 generalInventorySetup(ItemID.CAMELOT_TELEPORT, true, false,
