@@ -49,10 +49,17 @@ public class PathingUtil {
     }
 
     public static DPathNavigator nav = new DPathNavigator();
-
+    private static RSArea stonesArea = new RSArea(
+            new RSTile[] {
+                    new RSTile(2525, 3592, 0),
+                    new RSTile(2517, 3591, 0),
+                    new RSTile(2520, 3604, 0),
+                    new RSTile(2526, 3603, 0)
+            }
+    );
     private static int nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);
     private static int eatAtPercent = General.randomSD(45, 70, 60, 5);
-    private static RSArea stonesArea = new RSArea(new RSTile(2521, 3595, 0), 5);
+    //private static RSArea stonesArea = new RSArea(new RSTile(2521, 3595, 0), 5);
 
     private static void setDaxPref() {
         DaxWalker.setGlobalWalkingCondition(() -> {
@@ -236,8 +243,10 @@ public class PathingUtil {
             if (!GlobalWalking.walkTo(destination, PathingUtil::getWalkState)) {
                 Log.warn("[PathingUtil]  GlobalWalking failed to generate a path, sleeping ~1-2s");
                 Waiting.waitNormal(1700, 200);
-            } else
+            } else {
+                humanMovementIdle(destination);
                 return true;
+            }
         }
         return false;
     }

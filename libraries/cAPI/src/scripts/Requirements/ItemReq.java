@@ -388,7 +388,7 @@ public class ItemReq implements Requirement {
         private boolean acceptEquipped;
         private boolean shouldEquip;
         private boolean isStackable;
-        private int minimumDosesNeeded;
+        private int minimumDosesNeeded = 4;
 
         public Builder() {
 

@@ -283,7 +283,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
                     Utils.idle(2000, 4000);
                     Keyboard.typeString(bet);
 
-                    Utils.idle(100, 300);
+                    Utils.idle(250, 600);
                     Keyboard.pressEnter();
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
@@ -312,8 +312,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
     public void readIOU() {
         RSItem[] iouInv = Inventory.find(IOU);
         if (iouInv.length > 0 && iouInv[0].click("Read")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true);
         }
     }
 
@@ -338,12 +337,16 @@ public class DeathPlateau implements QuestTask, ChatListener {
 
         RSItem[] invBall = Inventory.find(ballID);
         if (invBall.length > 0) {
-            if (!tile.isClickable())
-                tile.adjustCameraTo();
+            for (int i = 0; i < 3; i++) {
+                if (!tile.isClickable())
+                    tile.adjustCameraTo();
 
-            if (DynamicClicking.clickRSTile(tile, "Walk here"))
-                PathingUtil.movementIdle();
+                if (DynamicClicking.clickRSTile(tile, "Walk here"))
+                    PathingUtil.movementIdle();
 
+                if (Player.getPosition().equals(tile))
+                    break;
+            }
             if (Utils.useItemOnObject(ballID, placeID)) {
                 Timer.slowWaitCondition(() -> Inventory.find(ballID).length == 0, 5000, 7000);
             }
@@ -356,8 +359,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
         goToHarold();
         if (BAR_UPPER_FLOOR.contains(Player.getPosition()) && inHaroldsRoom.check()) {
             NpcChat.talkToNPC("Harold");
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true);
 
             Utils.idle(1500, 3000);
             NPCInteraction.waitForConversationWindow();
@@ -372,6 +374,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
     }
 
     public void goToPuzzle() {
+        cQuesterV2.status = "Doing puzzle";
         PathingUtil.walkToArea(PUZZLE_AREA);
         if (PUZZLE_AREA.contains(Player.getPosition())) {
             if (!isYellowStoneDone.check())
@@ -389,7 +392,8 @@ public class DeathPlateau implements QuestTask, ChatListener {
 
     public void goIntoEquipmentRoom() {
         cQuesterV2.status = "Talking to Archer";
-        if (!EQUIPMENT_ROOM.contains(Player.getPosition()) && !ARCHER_AREA.contains(Player.getPosition())) {
+        if (!EQUIPMENT_ROOM.contains(Player.getPosition()) &&
+                !ARCHER_AREA.contains(Player.getPosition())) {
             Walking.blindWalkTo(new RSTile(2894, 3566, 0));
             Utils.idle(3000, 5000);
 
@@ -408,20 +412,26 @@ public class DeathPlateau implements QuestTask, ChatListener {
                 NPCInteraction.waitForConversationWindow();
                 NPCInteraction.handleConversation();
             }
+            leaveArcherArea();
+        }
+    }
+
+    public void leaveArcherArea() {
+        if (ARCHER_AREA.contains(Player.getPosition())) {
             if (Utils.clickObj("Ladder", "Climb-down"))
                 Timer.abc2WaitCondition(() -> EQUIPMENT_ROOM.contains(Player.getPosition()), 8000, 12000);
 
             RSObject[] door = Objects.findNearest(20, 3743);
-            if (door.length > 0) {
-                if (AccurateMouse.click(door[0], "Open"))
-                    Timer.waitCondition(() -> !EQUIPMENT_ROOM.contains(Player.getPosition()), 8000, 10000);
+            if (Utils.clickObj(3743, "Open")) {
+                Timer.waitCondition(() -> !EQUIPMENT_ROOM.contains(Player.getPosition()), 8000, 10000);
             }
         }
     }
 
     public void goToCave() {
         if (Inventory.find(CLIMBING_BOOTS).length < 1) {
-
+            cQuesterV2.status = "Going to cave";
+            leaveArcherArea();
             if (!CAVE_OUTSIDE.contains(Player.getPosition()) && !INSIDE_CAVE.contains(Player.getPosition()))
                 PathingUtil.walkToArea(CAVE_OUTSIDE);
 
@@ -456,9 +466,7 @@ public class DeathPlateau implements QuestTask, ChatListener {
             if (Inventory.find(CLIMBING_BOOTS).length < 1) {
                 PathingUtil.walkToTile(TENZING_HOUSE_TILE);
                 if (NpcChat.talkToNPC("Tenzing")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation("OK, I'll get those for you.");
-                    NPCInteraction.handleConversation();
+                    NpcChat.handle(true, "OK, I'll get those for you.");
                 }
             }
         }

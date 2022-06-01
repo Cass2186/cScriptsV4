@@ -26,6 +26,10 @@ public class InventoryRequirement implements Requirement {
 
     @Getter
     @Setter
+    private boolean depositEquipment = false;
+
+    @Getter
+    @Setter
     private ArrayList<ItemRequirement> itemRequirementList = new ArrayList<>();
 
     public InventoryRequirement(ArrayList<ItemReq> invList) {
@@ -152,6 +156,9 @@ public class InventoryRequirement implements Requirement {
             Log.info("[InventoryReq]: Missing size is " + missing.size());
             BankManager.open(true);
             BankManager.depositAll(true);
+            if (this.depositEquipment){
+                BankManager.depositEquipment();
+            }
             missing = getMissingBankItemsList(); // adds everything that might have been in the inv to begin with
         }
         for (ItemReq i : missing) {
@@ -211,6 +218,7 @@ public class InventoryRequirement implements Requirement {
         BankManager.close(true);
 
     }
+
 
     public void remove(int index) {
         invList.remove(index);

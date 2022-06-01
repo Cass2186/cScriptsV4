@@ -52,7 +52,7 @@ public class TheHandInTheSand implements QuestTask {
                     new GEItem(ItemID.EARTH_RUNE, 5, 25),
                     new GEItem(ItemID.BUCKET_OF_SAND, 1, 500),
                     new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
-                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 15),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
                     new GEItem(ItemID.RING_OF_DUELING[0], 1, 35)
             )
@@ -71,9 +71,9 @@ public class TheHandInTheSand implements QuestTask {
                     new ItemReq(ItemID.BUCKET_OF_SAND, 1),
                     new ItemReq(ItemID.COINS, 10000),
                     new ItemReq(ItemID.RING_OF_DUELING[0], 1, 0),
-                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 2, 0, true, true),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, true, true),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0)
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0)
             ))
     );
 
@@ -311,6 +311,7 @@ public class TheHandInTheSand implements QuestTask {
             if (Quest.PLAGUE_CITY.getState().equals(Quest.State.COMPLETE)){
                 startInv.add(new ItemReq(ItemID.ARDOUGNE_TELEPORT, 2,0));
             }
+            startInv.setDepositEquipment(true);
             startInv.withdrawItems();
         }
         Log.info("[Debug]: The Hand in the Sand Varbit is " + varbit);
