@@ -44,7 +44,7 @@ public class PlaceBonesOnWilderness implements Task {
         }
         if (Waiting.waitUntil(75000, 50, () -> {
                     if (MyPlayer.getAnimation() == -1 &&
-                            !Waiting.waitUntil(900, 10, () ->
+                            !Waiting.waitUntil(1200, 15, () ->
                                     PkObserver.shouldHop() ||  //TODO make sure this works
                                             MyPlayer.getAnimation() != -1)) {
                         return true;

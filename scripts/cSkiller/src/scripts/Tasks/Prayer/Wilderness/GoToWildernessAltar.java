@@ -59,7 +59,7 @@ public class GoToWildernessAltar implements Task {
     WorldTile ALTAR_WALK_TARGET = new WorldTile(2949, 3821, 0);
 
     private boolean shouldGoToAltar() {
-        return Inventory.contains(ItemID.DRAGON_BONES) &&
+        return Inventory.getCount(ItemID.DRAGON_BONES) >3 &&
                 Equipment.getAll().size() <= 1 &&
                 !altarBuilding.containsMyPlayer();
     }

@@ -39,10 +39,10 @@ public class WildyPrayerBank implements Task {
 
                 if (wine.map(w -> w.interact("Take")).orElse(false)) {
                     if (i == 0) //first click
-                        Waiting.waitUntil(2000, 0, () ->
+                        Waiting.waitUntil(2000, 35, () ->
                                 MyPlayer.getCurrentHealth() < health);
                     else
-                        Waiting.waitNormal(125, 25);
+                        Waiting.waitNormal(235, 45);
                 }
             }
         }
@@ -64,9 +64,12 @@ public class WildyPrayerBank implements Task {
                 }
             }
             BankManager.withdraw(0, true, ItemID.DRAGON_BONES);
-
+            if (!Inventory.contains(ItemID.DRAGON_BONES)){
+                throw new NullPointerException();
+            }
         }
         BankManager.close(true);
+
     }
 
     @Override

@@ -199,17 +199,11 @@ public class EnakhrasLament implements QuestTask {
         fireSpellRunes = new ItemRequirement("Runes to cast Fire Bolt or stronger", -1, -1);
         crumbleUndeadRunes = new ItemRequirement("Runes for crumble undead spell", -1, -1);
 
-
         log = new ItemRequirement("Logs", ItemID.LOGS);
-
         mapleLog = new ItemRequirement("Maple logs", ItemID.MAPLE_LOGS);
-
         willowLog = new ItemRequirement("Willow logs", ItemID.WILLOW_LOGS);
-
         oakLog = new ItemRequirement("Oak logs", ItemID.OAK_LOGS);
-
         coal = new ItemRequirement("Coal", ItemID.COAL);
-
         candle = new ItemRequirement("Candle", ItemID.CANDLE);
 
 
@@ -666,10 +660,9 @@ public class EnakhrasLament implements QuestTask {
         step.ifPresent(QuestStep::execute);
 
         // handle any chats that are failed to be handled by the QuestStep (failsafe)
-        if (NPCInteraction.isConversationWindowUp()) {
-            Keyboard.typeString(" "); //for aggie step
-            NPCInteraction.handleConversation();
-        }
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
+
         if (Utils.inCutScene())
             Utils.cutScene();
         //slow down looping if it gets stuck
