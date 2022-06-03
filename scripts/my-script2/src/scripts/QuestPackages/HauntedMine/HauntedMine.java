@@ -863,11 +863,11 @@ public class HauntedMine implements QuestTask {
     @Override
     public void execute() {
         int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_HAUNTED_MINE.getId());
-        if (gameSetting == 11) {
+        if (isComplete()) {
             cQuesterV2.taskList.remove(this);
             return;
         }
-        if (gameSetting == 0) {
+        if (gameSetting == 0 && !Inventory.contains(ItemID.ZEALOTS_KEY)) {
             Log.debug("Staring quest");
             talkToZealot.execute();
         }

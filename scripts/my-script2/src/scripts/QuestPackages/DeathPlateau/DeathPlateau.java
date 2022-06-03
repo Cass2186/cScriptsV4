@@ -443,11 +443,8 @@ public class DeathPlateau implements QuestTask, ChatListener {
             }
 
             if (INSIDE_CAVE.contains(Player.getPosition())) {
-                NpcChat.talkToNPC("Saba");
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Do you know of another way up Death Plateau?");
-                NPCInteraction.handleConversation();
-                NPCInteraction.handleConversation();
+                if (NpcChat.talkToNPC("Saba"))
+                    NpcChat.handle(true, "Do you know of another way up Death Plateau?");
 
                 if (Utils.clickObj(3736, "Exit"))
                     Timer.abc2WaitCondition(() -> CAVE_OUTSIDE.contains(Player.getPosition()), 8000, 12000);

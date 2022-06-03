@@ -5,6 +5,7 @@ import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.EquipmentItem;
+import org.tribot.script.sdk.types.World;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
@@ -59,7 +60,7 @@ public class GoToWildernessAltar implements Task {
     WorldTile ALTAR_WALK_TARGET = new WorldTile(2949, 3821, 0);
 
     private boolean shouldGoToAltar() {
-        return Inventory.getCount(ItemID.DRAGON_BONES) >3 &&
+        return Inventory.getCount(ItemID.DRAGON_BONES) > 3 &&
                 Equipment.getAll().size() <= 1 &&
                 !altarBuilding.containsMyPlayer();
     }
@@ -103,11 +104,27 @@ public class GoToWildernessAltar implements Task {
             Waiting.waitNormal(400, 15); //otherwise tries to tele agail
             Log.info("Walking path to altar");
             LocalWalking.Map.builder().travelThroughDoors(true).build();
-            if (LocalWalking.walkPath(PATH_TO_ALTAR))
+            if (LocalWalking.walkPath(PATH_TO_ALTAR, () -> {
+                if (PkObserver.shouldHop()) {
+                    Log.warn("Should hop (local)");
+                    if (WorldHopper.hop(PkObserver.nextWorld)) {
+                        PkObserver.nextWorld = HopWorlds.getNextWorld();
+                    }
+                    return WalkState.FAILURE;
+                }
+
+                return WalkState.CONTINUE;
+            }))
                 Waiting.waitUntil(5500, 75, () -> altarBuilding.containsMyPlayer());
         } else if (GlobalWalking.walkTo(ALTAR_WALK_TARGET, () -> {
-                    if (PkObserver.shouldHop())
+                    if (PkObserver.shouldHop()) {
+                        Log.warn("Should hop");
+                        if (WorldHopper.hop(PkObserver.nextWorld)) {
+                            PkObserver.nextWorld = HopWorlds.getNextWorld();
+                        }
                         return WalkState.FAILURE;
+                    }
+
                     return WalkState.CONTINUE;
                 }
         ))

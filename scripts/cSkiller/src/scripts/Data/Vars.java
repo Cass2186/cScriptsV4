@@ -174,6 +174,9 @@ public class Vars {
     //mining
     public int oreDeposits = 0;
 
+    //mining
+    public int prayerBonesId = 0;
+
     //woodcutting
     public List<WcLocations> wcLocationsList = new ArrayList<>(List.of(
             WcLocations.VARROCK_WEST_TREES,

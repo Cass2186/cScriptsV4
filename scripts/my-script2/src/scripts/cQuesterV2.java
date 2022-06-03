@@ -18,6 +18,9 @@ import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.World;
 import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.walking.GlobalWalking;
+import org.tribot.script.sdk.walking.adapter.DaxWalkerAdapter;
+import org.tribot.script.sdk.walking.adapter.GlobalWalkerAdapter;
 import scripts.MoneyMaking.ClockWorks.MakeClockWork;
 import scripts.QuestPackages.APorcineOfInterest.APorcineOfInterest;
 import scripts.QuestPackages.AnimalMagnetism.AnimalMagnetism;
@@ -174,6 +177,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
 
             }
         });
+        GlobalWalking.setEngine(new DaxWalkerAdapter("sub_H0C2eULZfbWeoF", "acb35610-d868-4ce8-8797-0d2e659f87f4"));
         SupportedQuests.getTotalQP();
     }
 

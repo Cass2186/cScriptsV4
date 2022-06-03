@@ -64,7 +64,7 @@ public class WildyPrayerBank implements Task {
                 }
             }
             BankManager.withdraw(0, true, ItemID.DRAGON_BONES);
-            if (!Inventory.contains(ItemID.DRAGON_BONES)){
+            if (!Inventory.contains(ItemID.DRAGON_BONES)) {
                 throw new NullPointerException();
             }
         }
@@ -79,14 +79,15 @@ public class WildyPrayerBank implements Task {
 
     @Override
     public boolean validate() {
-        Optional<InventoryItem> item = Query.inventory()
+        Optional<InventoryItem> bones = Query.inventory()
                 .nameContains("bones").isNotNoted().findFirst();
 
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.PRAYER) &&
                 Vars.get().useWildernessAltar &&
-                item.isEmpty();// &&
-        // Inventory.isEmpty();
+                (bones.isEmpty() ||
+                        (!Combat.isInWilderness() &&
+                                Inventory.getCount(ItemID.DRAGON_BONES) < 5));
     }
 
     @Override

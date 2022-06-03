@@ -1,20 +1,36 @@
 package scripts.Tasks.Prayer.Wilderness;
 
+import obf.F;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.Combat;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.WorldHopper;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.World;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 
+import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 public class HopWorlds implements Task {
 
+    public static int getNextWorld() {
+        Optional<World> first = Query.worlds().isNotCurrentWorld()
+                .isMembers().
+                isNotAllTypes(World.Type.PVP)
+                .isLowPing()
+                .findRandom();
+        Optional<World> second = Query.worlds().isNotCurrentWorld()
+                .isMembers().
+                isNotAllTypes(World.Type.PVP)
+                .findRandom();
+        return first.map(World::getWorldNumber).orElse(second.map(World::getWorldNumber).orElse(-1));
+    }
 
     @Override
     public Priority priority() {
@@ -34,8 +50,9 @@ public class HopWorlds implements Task {
     public void execute() {
         Mouse.setSpeed(250);
         Log.warn("Hopping worlds");
-        if (WorldHopper.hop(PkObserver.nextWorld))
-            PkObserver.nextWorld = org.tribot.api2007.WorldHopper.getRandomWorld(true, false);
+        if (WorldHopper.hop(PkObserver.nextWorld)) {
+            PkObserver.nextWorld = getNextWorld();
+        }
 
     }
 
