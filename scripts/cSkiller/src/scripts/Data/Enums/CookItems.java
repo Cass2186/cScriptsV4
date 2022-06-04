@@ -73,7 +73,7 @@ public enum CookItems {
             }
 
         }
-        i.add(new ItemReq(ItemID.CAMELOT_TELEPORT, 5, 40));
+        i.add(new ItemReq(ItemID.CAMELOT_TELEPORT, 5));
         Log.info("[CookItems]: getRequiredRawFood ListSize is " + i.size());
         return i;
     }
