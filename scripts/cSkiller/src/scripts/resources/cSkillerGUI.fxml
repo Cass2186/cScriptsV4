@@ -334,7 +334,7 @@
                                                 <CheckBox layoutX="401.0" layoutY="45.0" mnemonicParsing="false" text="Make Tar at &gt;30? (cheaper)" />
                                                 <CheckBox fx:id="enableWildernessCourseBox" layoutX="23.0" layoutY="45.0" mnemonicParsing="false" text="Enable Wilderness Course" />
                                                 <CheckBox fx:id="enableAlchingAgilityBox" disable="true" layoutX="23.0" layoutY="72.0" mnemonicParsing="false" text="Enable Alching of Yew Longbows" />
-                                                <CheckBox fx:id="enableSummerPieBoostingBox" disable="true" layoutX="23.0" layoutY="117.0" mnemonicParsing="false" selected="true" text="Enable Summer Pie Boosting" />
+                                                <CheckBox fx:id="enableSummerPieBoostingBox" layoutX="23.0" layoutY="117.0" mnemonicParsing="false" text="Enable Summer Pie Boosting" />
                                                 <Label disable="true" layoutX="51.0" layoutY="90.0" text="(Requires 55 Magic)">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
