@@ -554,7 +554,7 @@ public class HeroesQuestBlackArmsGang implements QuestTask {
                 Log.log("[Debug]: starting quest");
                 talkToAchietties.execute();
             }
-        } else if (Game.getSetting(188)  ==12) { //was == 1
+        } else if (Game.getSetting(188)  ==1) { //was == 1
             iceGloves.setAcceptEquipped(true);
             if (!iceGloves.check()) {
                 GetIceGloves.get().execute();

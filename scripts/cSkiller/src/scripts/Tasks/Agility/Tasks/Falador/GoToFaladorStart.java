@@ -1,6 +1,7 @@
 package scripts.Tasks.Agility.Tasks.Falador;
 
 import org.tribot.api2007.Player;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -36,6 +37,9 @@ public class GoToFaladorStart implements Task {
     public void execute() {
         if (!PathingUtil.localNav(new WorldTile(3036, 3340, 0)))
             PathingUtil.walkToArea(AgilityAreas.FALADOR_FINISH_AREA, false);
+        else {
+            Waiting.waitNormal(2500, 400);
+        }
     }
 
     @Override

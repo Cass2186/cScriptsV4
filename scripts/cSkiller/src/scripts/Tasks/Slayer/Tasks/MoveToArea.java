@@ -617,12 +617,14 @@ public class MoveToArea implements Task {
             return;
         }
         if (SlayerVars.get().fightArea.equals(Areas.ELF_AREA)) {
+            if (!PathingUtil.localNav(SlayerVars.get().fightArea.getCenter().toLocalTile()))
             goToElves();
             return;
         }
         if (PathingUtil.localNav(SlayerVars.get().fightArea.getCenter().toLocalTile()) &&
                 Waiting.waitUntil(1500, 500, MyPlayer::isMoving)) {
-            Waiting.waitUntil(8000, 500, () -> SlayerVars.get().fightArea.containsMyPlayer());
+            Waiting.waitUntil(8000, 500, () -> SlayerVars.get().fightArea != null &&
+                    SlayerVars.get().fightArea.containsMyPlayer());
         } else {
             PathingUtil.walkToTile(SlayerVars.get().fightArea.getCenter());
             shouldMoveDoubleCheck();

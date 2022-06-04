@@ -42,7 +42,8 @@ public class PheonixGang implements QuestTask, QuestInterface {
     RSArea STRAVEN_AREA = new RSArea(new RSTile(3247, 9781, 0), 10);
 
 
-    NPCStep startQuest = new NPCStep(RELDO, new RSTile(3210, 3494, 0));
+    NPCStep startQuest = new NPCStep(RELDO, new RSTile(3210, 3494, 0),
+            new String[]{"Yes."});
 
     ObjectStep searchBookcase = new ObjectStep(2402,
             new RSTile(3212, 3494, 0),
@@ -53,7 +54,7 @@ public class PheonixGang implements QuestTask, QuestInterface {
     Predicate<RSObject> predicate = Filters.Objects
             .tileEquals(new RSTile(3244, 3383, 0));
 
-    ObjectStep goDownToPhoenixGang = new ObjectStep(predicate,
+    ObjectStep goDownToPhoenixGang = new ObjectStep(11803,
             new RSTile(3243, 3383, 0),
             Player.getAnimation() != -1,
             "Climb-down", false);
