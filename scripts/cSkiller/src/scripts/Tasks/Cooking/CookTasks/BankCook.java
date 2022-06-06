@@ -58,23 +58,24 @@ public class BankCook implements Task {
             BankManager.open(true);
         }
         BankManager.depositAll(true);
-        if (CATHERBY_BANK_TILE.distance() > 20 && checkBankCache(inv)){
+        if (Skill.COOKING.getActualLevel() < 35 && CATHERBY_BANK_TILE.distance() > 20 &&
+                checkBankCache(inv)) {
             BankManager.depositAll(true);
             Log.warn("Updating cache");
             BankCache.update();
             return;
         }
 
-            List<ItemReq> newInv = SkillBank.withdraw(inv);
-            if (newInv != null && newInv.size() > 0) {
-                General.println("[Cooking Training]: Creating buy list");
-                BuyItems.itemsToBuy = BuyItems.populateBuyList(CookItems.getRequiredRawFood());
-                BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
-                RSItem[] wealth = Inventory.find(Filters.Items.nameContains("wealth"));
-                if (wealth.length > 0)
-                    Utils.equipItem(wealth[0].getID());
-                return;
-            }
+        List<ItemReq> newInv = SkillBank.withdraw(inv);
+        if (newInv != null && newInv.size() > 0) {
+            General.println("[Cooking Training]: Creating buy list");
+            BuyItems.itemsToBuy = BuyItems.populateBuyList(CookItems.getRequiredRawFood());
+            BankManager.withdrawArray(ItemID.RING_OF_WEALTH_REVERSED, 1);
+            RSItem[] wealth = Inventory.find(Filters.Items.nameContains("wealth"));
+            if (wealth.length > 0)
+                Utils.equipItem(wealth[0].getID());
+            return;
+        }
 
         BankManager.close(true);
         // if (!CookFood.hasRawFood())

@@ -19,7 +19,9 @@ public class Const {
 
     public static List<Integer> FISHING_ANIMATION = List.of(
             621, // net fishing
-            623 // rod fishing
+            623, // rod fishing
+            9349,
+            9350
     );
 
     public static RSArea OTTOS_GROTTO_FISHING_AREA = new RSArea(

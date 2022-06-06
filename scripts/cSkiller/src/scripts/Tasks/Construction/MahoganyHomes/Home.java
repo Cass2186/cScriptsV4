@@ -15,8 +15,10 @@ public enum Home
     // Ardy
     JESS(Area.fromRadius(new WorldTile(2611, 3290, 0), 7), "Upstairs of the building south of the church in East Ardougne",
             NpcID.JESS, new WorldTile(2621, 3292, 0), new RequiredMaterials(12, 15, 0, 1), 17026, 16685),
-    NOELLA(Area.fromRadius(new WorldTile(2652, 3317,0), 8), "North of East Ardougne market",
-            NpcID.NOELLA, new WorldTile(2659, 3322, 0), new RequiredMaterials(11, 15, 0, 0), 17026, 16685, 15645, 15648),
+    NOELLA(Area.fromRadius(new WorldTile(2652, 3317,1), 8), "North of East Ardougne market",
+            NpcID.NOELLA, new WorldTile(2659, 3322, 0),
+            new RequiredMaterials(11, 15, 0, 0),
+            17026, 16685, 15645, 15648),
     ROSS(Area.fromRadius(new WorldTile(2609, 3313,0), 6), "North of the church in East Ardougne",
             NpcID.ROSS, new WorldTile(2613, 3316, 0), new RequiredMaterials(8, 11, 0, 1), 16683, 16679),
 

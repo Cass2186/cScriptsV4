@@ -58,7 +58,7 @@ public class cTabs extends CassScript implements TribotScript {
         URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cOrbCharger/src/scripts/gui/cTabsGui.fxml");
         GUI gui = new GUI(lcn);
 
-        Log.debug("Loading GUI");
+        Log.info("Loading GUI");
         gui.show();
         while (gui.isOpen())
             Waiting.wait(500);

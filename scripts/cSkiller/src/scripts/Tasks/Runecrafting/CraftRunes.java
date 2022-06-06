@@ -7,14 +7,23 @@ import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.BirdHouseRuns.Nodes.Wait;
 import scripts.Tasks.Runecrafting.RunecraftData.RcVars;
 
 import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.Optional;
 
 public class CraftRunes implements Task {
 
@@ -24,33 +33,31 @@ public class CraftRunes implements Task {
         return Inventory.find(Filters.Items.nameContains("pouch")).length > 0;
     }
 
+    private void focusOnObject(Optional<GameObject> obj) {
+        if (obj.map(a -> !a.isVisible()).orElse(false)) {
+            Utils.setCamera(90, 40, 330, 40);
+        }
+    }
+
+
     public boolean craftRunesAltar() {
-        General.sleep(500);
-        RSObject[] altar = Objects.findNearest(20, "Altar");
+        Waiting.waitNormal(500,35);
+        Optional<GameObject> altar = QueryUtils.getObject("Altar");
 
         if (!Inventory.isFull())
             emptyPouches();
 
-        if (altar.length > 0) {
+        focusOnObject(altar);
+        if (altar.map(a -> !a.interact("Craft-rune")).orElse(false) &&
+                Timer.slowWaitCondition(() -> MyPlayer.getAnimation() != -1, 9000, 15000)) {
+            return Timer.waitCondition(() -> MyPlayer.getAnimation() == -1, 3000, 5000);
 
-            if (!altar[0].isClickable()) {
-                Utils.setCamera(90, 40, 330, 40);
-                message = "Walking to altar";
-                if (PathingUtil.localNavigation(altar[0].getPosition().translate(-1, 1)))
-                    Timer.waitCondition(() -> altar[0].isClickable(), 7000, 12000);
-            }
-
-
-            if (Utils.clickObject("Altar", "Craft-rune", false)) {
-                Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 9000, 15000);
-                return Timer.waitCondition(() -> Player.getAnimation() == -1, 3000, 5000);
-            }
         }
         return false;
     }
 
     public void craftRunesAltar(RSArea altarTile) {
-        General.sleep(500);
+        Waiting.waitNormal(500,35);
         RSObject[] altar = Objects.findNearest(30, "Altar");
         if (altar.length > 0) {
             Walking.blindWalkTo(altarTile.getRandomTile());
@@ -62,21 +69,20 @@ public class CraftRunes implements Task {
     }
 
     public boolean emptyPouches() {
+        List<InventoryItem> pouch = Query.inventory().nameContains("pouch").toList();
         RSItem[] p = Inventory.find(Filters.Items.nameContains("pouch"));
-        if (p.length > 0) {
+        if (pouch.size() > 0) {
+            Log.info("Opening pouches");
             Keyboard.sendPress((char) KeyEvent.VK_SHIFT, 16);
-            for (RSItem item : p) {
-                General.println("Opening pouches");
-
-                if (item.click("Empty")) {
-                    General.sleep(General.random(45, 150));
-                }
-
+            for (InventoryItem item : pouch) {
+                if (item.click("Empty"))
+                    Waiting.waitNormal(120, 30);
             }
             Keyboard.sendRelease((char) KeyEvent.VK_SHIFT, 16);
-            General.sleep(General.random(250, 500));
+            Utils.idlePredictableAction();
+            return true;
         }
-        return true;
+        return false;
     }
 
 
@@ -89,7 +95,7 @@ public class CraftRunes implements Task {
             if (!altar[0].isClickable()) {
                 Utils.setCamera(90, 10, 330, 30);
                 message = "Walking to Altar";
-                General.println("Walking to altar");
+                Log.info("Walking to altar");
                 if (PathingUtil.localNavigation(altar[0].getPosition().translate(-1, 1))) {
                     if (!RcVars.get().usingLunarImbue)
                         GameTab.open(GameTab.TABS.INVENTORY);
@@ -102,7 +108,7 @@ public class CraftRunes implements Task {
             }
             message = "Crafting Runes";
 
-            General.println("here - line 104");
+            Log.info("here - line 104");
             if (Inventory.find(ItemID.PURE_ESSENCE).length > 0
                     && Utils.useItemOnObject(runeId, "Altar")) {
 
@@ -129,14 +135,14 @@ public class CraftRunes implements Task {
             if (!RcVars.get().abyssCrafting && (!altar[0].isClickable() ||
                     altar[0].getPosition().distanceTo(Player.getPosition()) > 8)) {
                 message = "Walking to Altar";
-                General.println("[Debug]: " + message);
+                Log.info("[Debug]: " + message);
                 if (Walking.blindWalkTo(altar[0].getPosition().translate(-1, 1)))
                     Timer.waitCondition(() -> altar[0].isClickable(), 7000, 12000);
 
             }
 
             message = "Crafting Runes";
-            General.println("[Debug]: " + message);
+            Log.info("[Debug]: " + message);
             if (Utils.clickObject("Altar", "Craft-rune", false)) {
                 expTimer.reset();
                 if (RcVars.get().abyssCrafting || RcVars.get().zanarisCrafting) {

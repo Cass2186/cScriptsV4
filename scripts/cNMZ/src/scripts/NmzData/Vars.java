@@ -72,6 +72,10 @@ public class Vars {
     public boolean usingRangingPotion = false;
     public boolean usingOverloadPots = false;
     public boolean usingLocatorOrb = false;
+    public boolean usingMeleeBoost = false;
+    public boolean usingRangingBoost = false;
+    public boolean usingMagicBoost = false;
+
     public boolean isOverloadActive = false;
     public boolean showDetailedPaint = false;
 

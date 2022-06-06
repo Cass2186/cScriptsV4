@@ -4,6 +4,7 @@ import dax.api_lib.WebWalkerServerApi;
 import dax.api_lib.models.DaxCredentials;
 import dax.api_lib.models.DaxCredentialsProvider;
 import dax.teleports.Teleport;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.tribot.api.General;
@@ -17,6 +18,7 @@ import org.tribot.script.interfaces.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.script.ScriptRuntimeInfo;
 import org.tribot.script.sdk.script.TribotScript;
+import scripts.GUI.GUI;
 import scripts.NmzData.Const;
 import scripts.NmzData.Paint;
 import scripts.NmzData.Vars;
@@ -25,6 +27,7 @@ import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.*;
 
 import java.awt.*;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class cNMZ extends CassScript implements TribotScript {
 
 
+    @SneakyThrows
     @Override
     public void execute(@NotNull String args) {
         AntiBan.create();
@@ -46,6 +50,14 @@ public class cNMZ extends CassScript implements TribotScript {
         if (!Combat.isAutoRetaliateOn())
             Combat.setAutoRetaliate(true);
 
+        URL lcn = new URL("https://raw.githubusercontent.com/Cass2186/cScriptsV4/main/scripts/cNMZ/src/scripts/GUI/cNMZ_GUI.fxml");
+        GUI gui = new GUI(lcn);
+
+        Log.info("Loading GUI");
+        gui.show();
+
+        while (gui.isOpen())
+            Waiting.wait(500);
 
         Paint.initializeDetailedPaint();
         Paint.addPaint();

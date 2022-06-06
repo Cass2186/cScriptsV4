@@ -115,7 +115,7 @@ public class NpcChat extends NPCChat {
 
     public static boolean waitForChatScreen() {
         int timeout = Game.isRunOn() ? 8000 : 13000;
-        return Waiting.waitUntil(timeout, 325, () -> ChatScreen.isOpen());
+        return Waiting.waitUntil(timeout, Utils.random(75,300), () -> ChatScreen.isOpen());
     }
 
     /**
