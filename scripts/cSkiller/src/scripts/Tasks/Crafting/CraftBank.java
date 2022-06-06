@@ -35,11 +35,7 @@ public class CraftBank implements Task {
         if (Inventory.find(ItemID.MOLTEN_GLASS).length == 0 ||
                 Inventory.find(ItemID.GLASSBLOWING_PIPE).length == 0) {
             BankManager.open(true);
-            if (Banking.isBankScreenOpen() && Banking.find(ItemID.MOLTEN_GLASS).length < 1) {
-                General.println("[Debug]: Missing molten glass.");
-                //  cSkiller.changeRunningBool(false); //ends script
-            }
-            if (BankManager.depositAllExcept(false, ItemID.GLASSBLOWING_PIPE))
+            if (BankManager.depositAllExceptNew(false, ItemID.GLASSBLOWING_PIPE))
                 Timer.waitCondition(() -> Inventory.getAll().length == 1, 2500, 3500); // this is faster than making deposite true
             List<ItemReq> inv;
             if (Inventory.find(ItemID.GLASSBLOWING_PIPE).length < 1) {

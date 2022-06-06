@@ -5,16 +5,15 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
+import scripts.GEManager.GEItem;
 import scripts.QuestPackages.icthlarinslittlehelper.Icthlarinslittlehelper;
 import scripts.QuestSteps.*;
-import scripts.Requirements.AreaRequirement;
-import scripts.Requirements.ItemRequirement;
+import scripts.Requirements.*;
 import scripts.Requirements.Items.ItemCollections;
-import scripts.Requirements.Requirement;
-import scripts.Requirements.SkillRequirement;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
@@ -30,6 +29,53 @@ public class GettingAhead implements QuestTask {
         return quest == null ? quest = new GettingAhead() : quest;
     }
 
+    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.BEAR_FUR, 1, 500),
+                    new GEItem(ItemID.SOFT_CLAY, 1, 50),
+                    new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.SKILLS_NECKLACE[2], 1, 25),
+                    new GEItem(ItemID.SAW, 1, 250),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
+                    new GEItem(ItemID.HAMMER, 1, 250),
+                    new GEItem(ItemID.KNIFE, 1, 250),
+                    new GEItem(ItemID.RED_DYE, 1, 250),
+                    new GEItem(ItemID.POT_OF_FLOUR, 1, 250),
+                    new GEItem(ItemID.NEEDLE, 1, 250),
+                    new GEItem(ItemID.THREAD, 1, 250),
+                    new GEItem(ItemID.PLANK, 2, 25),
+                    new GEItem(ItemID.STEEL_NAILS, 40, 50)
+            )
+    );
+
+    InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.BEAR_FUR, 1),
+                    new ItemReq(ItemID.SOFT_CLAY, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.SAW, 1),
+                    new ItemReq(ItemID.HAMMER, 1),
+                    new ItemReq(ItemID.KNIFE, 1),
+                    new ItemReq(ItemID.RED_DYE, 1),
+                    new ItemReq(ItemID.POT_OF_FLOUR, 1),
+                    new ItemReq(ItemID.NEEDLE, 1),
+                    new ItemReq(ItemID.THREAD, 1),
+                    new ItemReq(ItemID.PLANK, 2),
+                    new ItemReq(ItemID.STEEL_NAILS, 40, 6),
+                    new ItemReq(ItemID.SKILLS_NECKLACE[2], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
+            )
+    ));
+
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+
+    public void buyItems() {
+        cQuesterV2.status = "Buying items";
+        if (!initialItemReqs.check()) {
+            buyStep.buyItems();
+            initialItemReqs.withdrawItems();
+        }
+    }
 
     //Items Required
     ItemRequirement bearFur, softClay, hammer, saw, planks, nails, knife, redDye, potOfFlour, needle, thread;
@@ -214,13 +260,16 @@ public class GettingAhead implements QuestTask {
         talkToMary = new NPCStep(NpcID.MARY_10502, new RSTile(1237, 3678, 0), "Talk to Mary inside the main building, west of Gordon.");
 
         //Killing the beast
-        goUpstairsHouse = new ObjectStep(ObjectID.STAIRCASE_34502, new RSTile(1240, 3686, 0), "Climb up the nearby house's staircase.");
+        goUpstairsHouse = new ObjectStep(ObjectID.STAIRCASE_34502, new RSTile(1240, 3686, 0),
+                "Climb-up");
         takePot = new GroundItemStep(ItemID.POT_OF_FLOUR, new RSTile(1240, 3686, 0), potOfFlour);
-        goDownstairsHouse = new ObjectStep(ObjectID.STAIRCASE_34503, new RSTile(1240, 3686, 1), "Go back downstairs.");
+        goDownstairsHouse = new ObjectStep(ObjectID.STAIRCASE_34503, new RSTile(1240, 3686, 1),
+                "Climb-down");
 
         usePotOfFlour = new ObjectStep(NullObjectID.NULL_40427, new RSTile(1257, 3686, 0), "", potOfFlour);
 
-        goToMine = new ObjectStep(ObjectID.CAVE_20852, new RSTile(1212, 3647, 0), "Enter the Kebos Lowlands mine just west of the bridge and kill the Headless Beast (level 82).");
+        goToMine = new ObjectStep(ObjectID.CAVE_20852, new RSTile(1212, 3647, 0),
+                "Enter the Kebos Lowlands mine just west of the bridge and kill the Headless Beast (level 82).");
         goToMine.addDialogStep("Yes.");
         killBeast = new NPCStep(NpcID.HEADLESS_BEAST_10506, new RSTile(1191, 10021, 0), "Kill the headless " +
                 "beast. You can safespot it from the south west corner of the pond in the cave.");
@@ -237,22 +286,29 @@ public class GettingAhead implements QuestTask {
         talkToGordonGen3 = new NPCStep(NpcID.GORDON, new RSTile(1248, 3686, 0), bloodyHead);
 
         talkToMary2 = new NPCStep(NpcID.MARY_10502, new RSTile(1237, 3678, 0), "Talk to Mary inside the house.");
-        takePickaxe = new ObjectStep(ObjectID.ROCKS_40365, new RSTile(1222, 3653, 0), "Take the pickaxe in the mine.");
-        mineClay = new ObjectStep(ObjectID.ROCKS_11362, new RSTile(1217, 3657, 0), "Mine some clay.", pickaxe);
+        takePickaxe = new ObjectStep(ObjectID.ROCKS_40365, new RSTile(1222, 3653, 0),
+                "Take the pickaxe in the mine.");
+        mineClay = new ObjectStep(ObjectID.ROCKS_11362, new RSTile(1217, 3657, 0),
+                "Mine", pickaxe);
         takeKnife = new GroundItemStep(ItemID.KNIFE, new RSTile(1241, 3679, 0),
                 knife);
         takeBucket = new GroundItemStep(ItemID.BUCKET, new RSTile(1244, 3682, 0), bucket);
 
         fillBucket = new ObjectStep(ObjectID.SINK_1763, new RSTile(1240, 3677, 0), "Fill the bucket on the sink.", bucket);
-        // wetClay = new DetailedQuestStep( "Use the bucket of water on the clay.", bucketOfWater, clay);
-        // useKnifeOnClay = new DetailedQuestStep( "", knife, softClay);
+        wetClay = new UseItemOnItemStep(ItemID.BUCKET_OF_WATER, ItemID.CLAY,
+                !Inventory.contains(ItemID.CLAY), bucketOfWater, clay);
+        useKnifeOnClay = new UseItemOnItemStep(ItemID.KNIFE,
+                ItemID.SOFT_CLAY, !Inventory.contains(ItemID.SOFT_CLAY), knife, softClay);
         useKnifeOnClay.addDialogStep("Yes.");
 
         getNeedle = new GroundItemStep(ItemID.NEEDLE, new RSTile(1244, 3685, 1),
                 needle);
         getThread = new GroundItemStep(ItemID.THREAD, new RSTile(1244, 3684, 1),
                 thread);
-        //useFurOnHead = new DetailedQuestStep( "Use the bear fur on the clay head then talk to Gordon.", bearFur, clayHeadHighlighted, thread, needle);
+
+        useFurOnHead = new UseItemOnItemStep(ItemID.BEAR_FUR, ItemID.CLAY_HEAD,
+                !Inventory.contains(ItemID.BEAR_FUR),
+                bearFur, clayHeadHighlighted, thread, needle);
         useFurOnHead.addDialogStep("Yes.");
 
         takeDye = new ObjectStep(ObjectID.SHELVES_40362, new RSTile(1240, 3688, 0), "Get some red dye from the shelves in the farm house.");
@@ -305,19 +361,27 @@ public class GettingAhead implements QuestTask {
 
     @Override
     public boolean validate() {
-        return cQuesterV2.taskList.get(0).equals(this);
+        return cQuesterV2.taskList.size() > 0 &&
+                cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
     public void execute() {
+        if (isComplete() || !checkRequirements()) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
+        if (Quest.GETTING_AHEAD.getStep() == 0) {
+            buyItems();
+        }
         int varbit = QuestVarbits.QUEST_GETTING_AHEAD.getId();
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
         cQuesterV2.status = step.map(s -> s.toString()).orElse("Unknown Step Name");
         step.ifPresent(QuestStep::execute);
 
-        if (NPCInteraction.isConversationWindowUp()) {
-            NPCInteraction.handleConversation();
+        if (ChatScreen.isOpen()) {
+            NpcChat.handle();
         }
     }
 
@@ -332,7 +396,6 @@ public class GettingAhead implements QuestTask {
         List<Requirement> reqs = getGeneralRequirements();
         return reqs.stream().allMatch(Requirement::check);
     }
-
 
 
     @Override
