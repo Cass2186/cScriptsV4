@@ -707,7 +707,9 @@ public class RunecraftBank implements Task {
     public boolean validate() {
         RSItem[] tiaras = Inventory.find(ItemID.TIARA);
         RSItem[] talisman = Inventory.find(Filters.Items.nameContains("talisman"));
-        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING)) {
+        if (Vars.get().currentTask != null &&
+                Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING) &&
+                !RcVars.get().usingOuraniaAlter) {
             General.println("Abyss: " + RcVars.get().abyssCrafting + " ; Lunars: " +
                     RcVars.get().usingLunarImbue + " ; Zanaris: "
                     + RcVars.get().zanarisCrafting);

@@ -6,6 +6,7 @@ import dax.walker.utils.TribotUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
+import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Bank;
@@ -483,7 +484,13 @@ public class BankManager {
     }
 
     public static boolean close(boolean shouldWait) {
-        return !Banking.close() || !shouldWait || Timer.waitCondition(() -> !Banking.isBankScreenOpen(), 3000);
+        if (org.tribot.script.sdk.Options.isEscapeClosingEnabled()) {
+            Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
+            return !shouldWait || Timer.waitCondition(() ->
+                    !Bank.isOpen(), 3000);
+        }
+        return !Bank.close() || !shouldWait || Timer.waitCondition(() ->
+                !Bank.isOpen(), 3000);
     }
 
     private static boolean isBankNearby() {
@@ -575,15 +582,14 @@ public class BankManager {
     public static boolean depositAllExceptNew(boolean shouldWait, int... id) {
         closeHelpWindow();
         List<InventoryItem> all = org.tribot.script.sdk.Inventory.getAll();
-        for (int i : id){
-           all = all.stream().filter(inv -> inv.getId() != i).collect(Collectors.toList());
+        for (int i : id) {
+            all = all.stream().filter(inv -> inv.getId() != i).collect(Collectors.toList());
         }
         Log.info("Depositing all");
-        all.stream().forEach(a->Bank.depositAll(a));
+        all.stream().forEach(a -> Bank.depositAll(a));
         Log.info("done");
         return Banking.depositAllExcept(id) <= 0 || !shouldWait || Timer.waitCondition(() -> inventoryChange(false), 5000);
     }
-
 
 
     public static boolean withdrawArray(int[] array, int num) {

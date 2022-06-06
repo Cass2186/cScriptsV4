@@ -14,6 +14,7 @@ import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.ItemID;
+import scripts.Tasks.Runecrafting.RunecraftData.RcVars;
 import scripts.Timer;
 import scripts.Utils;
 
@@ -65,7 +66,8 @@ public class MindTiara implements Task {
         RSItem[] tiaras = Inventory.find(ItemID.TIARA);
         RSItem[] talisman = Inventory.find(Filters.Items.nameContains("talisman"));
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING) &&
-                tiaras.length > 0 && talisman.length > 0;
+                tiaras.length > 0 && talisman.length > 0  &&
+                !RcVars.get().usingOuraniaAlter;
     }
 
     @Override

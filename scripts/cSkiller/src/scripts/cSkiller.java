@@ -48,6 +48,9 @@ import scripts.Tasks.Prayer.Wilderness.GoToWildernessAltar;
 import scripts.Tasks.Prayer.Wilderness.HopWorlds;
 import scripts.Tasks.Prayer.Wilderness.PlaceBonesOnWilderness;
 import scripts.Tasks.Prayer.Wilderness.WildyPrayerBank;
+import scripts.Tasks.Runecrafting.*;
+import scripts.Tasks.Runecrafting.Ourania.BankOurania;
+import scripts.Tasks.Runecrafting.Ourania.GoToAltar;
 import scripts.Tasks.Smithing.BlastFurnace.BfTasks.*;
 import scripts.dax.tracker.DaxTracker;
 import scripts.skillergui.GUI;
@@ -95,10 +98,6 @@ import scripts.Tasks.Prayer.EnterHome;
 import scripts.Tasks.Prayer.PlaceBones;
 import scripts.Tasks.Prayer.PrayerBank;
 import scripts.Tasks.Prayer.UnnoteBones;
-import scripts.Tasks.Runecrafting.CraftRunes;
-import scripts.Tasks.Runecrafting.GoToRcAltar;
-import scripts.Tasks.Runecrafting.MindTiara;
-import scripts.Tasks.Runecrafting.RunecraftBank;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Tasks.Slayer.Tasks.*;
 import scripts.Tasks.SorceressGarden.SpringRun;
@@ -344,7 +343,10 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new CashInCompost(),
                 new BankForCompost(),
                 new FixCrane(),
-                new UnnotePlanks()
+                new UnnotePlanks(),
+                new BankOurania(),
+                new GoToAltar(),
+                new RepairPouches()
                 //MiniBreak.get(),
                 // new MakeCannonballs()
 

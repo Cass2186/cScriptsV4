@@ -217,7 +217,8 @@ public class CraftRunes implements Task {
 
     @Override
     public boolean validate() {
-        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING)) {
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING) &&
+        !RcVars.get().usingOuraniaAlter) {
             // Lava and NOT imbue
             if (RcVars.get().lava && !RcVars.get().usingLunarImbue) {
                 return atAltar() && Inventory.find(ItemID.PURE_ESSENCE).length > 0

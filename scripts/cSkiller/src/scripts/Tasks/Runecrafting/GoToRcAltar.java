@@ -108,7 +108,9 @@ public class GoToRcAltar implements Task {
 
     @Override
     public boolean validate() {
-        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING)) {
+        if (Vars.get().currentTask != null &&
+                Vars.get().currentTask.equals(SkillTasks.RUNECRAFTING) &&
+                !RcVars.get().usingOuraniaAlter) {
             if (RcVars.get().abyssCrafting)
                 return false;
             if (!RcVars.get().usingLunarImbue && RunecraftBank.getLevel() < 14) {

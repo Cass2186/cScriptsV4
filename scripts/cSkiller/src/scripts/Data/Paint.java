@@ -225,6 +225,13 @@ public class Paint {
                                 (Skill.RANGED.getXp() - Const.startRangeXp),
                                 PaintUtil.getXpHr(Skill.RANGED, Const.startRangeXp, Vars.get().startTime)))
                         .build())
+                .row(template.toBuilder().label("Runecrafting")
+                        .condition(() -> Skill.RUNECRAFT.getXp() > Const.startRunecraftXp &&
+                                Vars.get().showExperienceGained)
+                        .value(() -> PaintUtil.formatSkillString(Skill.RUNECRAFT, Const.startRunecraftLvl,
+                                (Skill.RUNECRAFT.getXp() - Const.startRunecraftXp),
+                                PaintUtil.getXpHr(Skill.RUNECRAFT, Const.startRunecraftXp, Vars.get().startTime)))
+                        .build())
                 .row(template.toBuilder().label("Slayer")
                         .condition(() -> Skill.SLAYER.getXp() > Const.startSlayerXP &&
                                 Vars.get().showExperienceGained)

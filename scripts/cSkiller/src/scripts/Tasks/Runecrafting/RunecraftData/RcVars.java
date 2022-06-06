@@ -25,6 +25,8 @@ public class RcVars {
 
     public long startTime;
 
+    public boolean usingOuraniaAlter = true;
+
     public boolean useStamina = true;
 
     public boolean lava = false;

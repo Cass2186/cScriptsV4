@@ -96,6 +96,7 @@ public class Const {
     public static final int startMiningXP = Skill.MINING.getXp();
     public static final int startPrayerXP = Skill.PRAYER.getXp();
     public static final int startRangeXp = Skill.RANGED.getXp();
+    public static final int startRunecraftXp = Skill.RUNECRAFT.getXp();
     public static final int startSlayerXP = Skill.SLAYER.getXp();
     public static final int startStrXp = Skill.STRENGTH.getXp();
     public static final int startWoodcuttingXP = Skill.WOODCUTTING.getXp();
@@ -121,6 +122,7 @@ public class Const {
     public static final int startMiningLvl = Skill.MINING.getActualLevel();
     public static final int startPrayerLvl = Skill.PRAYER.getActualLevel();
     public static final int startRangeLvl = Skill.RANGED.getActualLevel();
+    public static final int startRunecraftLvl = Skill.RUNECRAFT.getActualLevel();
     public static final int startSlayerLvl = Skill.SLAYER.getActualLevel();
     public static final int startStrLvl = Skill.STRENGTH.getActualLevel();
     public static final int startWoodcuttingLvl = Skill.WOODCUTTING.getActualLevel();
