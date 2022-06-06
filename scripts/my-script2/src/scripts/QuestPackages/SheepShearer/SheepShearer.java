@@ -1,13 +1,18 @@
 package scripts.QuestPackages.SheepShearer;
 
+import org.tribot.api.General;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
+import scripts.GEManager.GEItem;
+import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestStep;
 import scripts.QuestSteps.QuestTask;
+import scripts.Requirements.InventoryRequirement;
+import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Requirement;
 import scripts.Tasks.Priority;
@@ -25,6 +30,31 @@ public class SheepShearer implements QuestTask {
     ItemRequirement twentyBallsOfWool, shears;
 
     QuestStep startStep;
+    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.BALL_OF_WOOL, 20, 500),
+                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, 1, 40),
+                    new GEItem(ItemID.STAMINA_POTION[0], 1, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
+            )
+    );
+    InventoryRequirement startInventory = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.BALL_OF_WOOL, 20),
+                    new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0)
+            )
+    ));
+
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
+
+    public void buyItems() {
+        cQuesterV2.status = "Buying Items";
+        General.println("[Debug]: " + cQuesterV2.status);
+        buyStep.buyItems();
+        startInventory.withdrawItems();
+    }
 
     public Map<Integer, QuestStep> loadSteps() {
         Map<Integer, QuestStep> steps = new HashMap<>();
@@ -35,20 +65,21 @@ public class SheepShearer implements QuestTask {
         shears = new ItemRequirement("Shears if you plan on collecting wool yourself", ItemID.SHEARS);
 
         startStep = new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
+                new String[]{"Yes."},
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 20));
 
         steps.put(0, startStep);
 
         steps.put(1, steps.get(0));
-        steps.put(2, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
+        steps.put(2, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,      new String[]{"Yes."},
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 19)));
-        steps.put(3, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
+        steps.put(3, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,      new String[]{"Yes."},
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 18)));
-        steps.put(4, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
+        steps.put(4, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,      new String[]{"Yes."},
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 17)));
-        steps.put(5, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
+        steps.put(5, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,      new String[]{"Yes."},
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 16)));
-        steps.put(6, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
+        steps.put(6, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,      new String[]{"Yes."},
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 15)));
         steps.put(7, new NPCStep(NpcID.FRED_THE_FARMER, farmerFredPoint,
                 new ItemRequirement("Ball of wool", ItemID.BALL_OF_WOOL, 14)));
@@ -109,6 +140,8 @@ public class SheepShearer implements QuestTask {
         if (Quest.SHEEP_SHEARER.getState() == Quest.State.COMPLETE) {
             cQuesterV2.taskList.remove(this);
             return;
+        } else if (Quest.SHEEP_SHEARER.getStep() == 0 && !startInventory.check()){
+            buyItems();
         }
         int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_SHEEP_SHEARER.getId());
         Map<Integer, QuestStep> steps = loadSteps();

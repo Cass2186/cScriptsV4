@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -66,7 +67,32 @@ public class Utils {
         Collections.reverse(list);
         return list.stream().toArray();
     }
+    private static final Pattern TAG_REGEXP = Pattern.compile("<[^>]*>");
+    /**
+     * Removes all tags from the given string.
+     *
+     * @param str The string to remove tags from.
+     * @return The given string with all tags removed from it.
+     */
+    public static String removeTags(String str)
+    {
+        return TAG_REGEXP.matcher(str).replaceAll("");
+    }
 
+    /**
+     * In addition to removing all tags, replaces all &lt;br&gt; delimited text with spaces and all multiple continuous
+     * spaces with single space
+     *
+     * @param str The string to sanitize
+     * @return sanitized string
+     */
+    public static String sanitizeMultilineText(String str)
+    {
+        return removeTags(str
+                .replaceAll("-<br>", "-")
+                .replaceAll("<br>", " ")
+                .replaceAll("[ ]+", " "));
+    }
     public static boolean turnEscToCloseOn() {
         if (!Options.isEscapeClosingEnabled() && openSettingsWindow()) {
             Optional<Widget> escOption = Query.widgets().inIndexPath(134, 18)

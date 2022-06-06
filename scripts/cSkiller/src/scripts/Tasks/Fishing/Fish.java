@@ -3,6 +3,7 @@ package scripts.Tasks.Fishing;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
@@ -72,6 +73,15 @@ public class Fish implements Task {
 
 
     public boolean goToFishingSpot() {
+        if (isBarbFishing()) {
+            Log.info("Walking to barb fishing tile");
+            if (FishingConst.BARB_FISHING_TILE.distanceTo(Player.getPosition()) > 15) {
+                message = "Going to fishing spot - barb fishing";
+                General.println(message);
+                PathingUtil.walkToTile(FishingConst.BARB_FISHING_TILE, 1, false);
+            }
+            return FishingConst.BARB_FISHING_TILE.distanceTo(Player.getPosition()) < 20;
+        }
         if (Vars.get().fishingLocation != null &&
                 Vars.get().fishingLocation.getRequiredLevel() <= Skill.FISHING.getActualLevel()) {
             if (!Vars.get().fishingLocation.getArea().contains(Player.getPosition())) {
@@ -80,14 +90,8 @@ public class Fish implements Task {
                 return Vars.get().fishingLocation.getArea().contains(Player.getPosition());
             }
         }
-        if (isBarbFishing()) {
-            if (FishingConst.BARB_FISHING_TILE.distanceTo(Player.getPosition()) > 15) {
-                message = "Going to fishing spot - barb fishing";
-                General.println(message);
-                PathingUtil.walkToTile(FishingConst.BARB_FISHING_TILE, 3, false);
-            }
-            return FishingConst.BARB_FISHING_TILE.distanceTo(Player.getPosition()) < 20;
-        } else if (!isBarbFishing() && !Const.BARBARIAN_VILLAGE_FISHING_AREA.contains(Player.getPosition())) {
+        else if (!isBarbFishing() && !Const.BARBARIAN_VILLAGE_FISHING_AREA.contains(Player.getPosition())) {
+            Log.info("Walking to barb village fishing tile");
             message = "Going to fishing spot - barb village";
             PathingUtil.walkToArea(Const.BARBARIAN_VILLAGE_FISHING_AREA, false);
             return Const.BARBARIAN_VILLAGE_FISHING_AREA.contains(Player.getPosition());

@@ -26,6 +26,7 @@ import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.Requirements.ItemRequirement;
 import scripts.Tasks.Construction.ConsData.Furniture;
 import scripts.Tasks.Construction.ConsData.House;
+import scripts.Tasks.Construction.MahoganyHomes.ConsVars;
 import scripts.Timer;
 
 import java.util.*;
@@ -40,7 +41,6 @@ public class MakeFurniture implements Task {
     private final int CONSTRUCTION_MASTER = 458;
 
     public static EnumSet<Furniture> furnitureSet = EnumSet.noneOf(Furniture.class);
-
 
 
     int PARENT_INTERFACE = 458;
@@ -71,27 +71,27 @@ public class MakeFurniture implements Task {
     }
 
     public void makeRoom(String roomName) {
-        if (openHouseOptions()){
-            Log.log("[Debug]: Making room");
+        if (openHouseOptions()) {
+            Log.info("Making room");
             RSInterface viewButton = Interfaces.findWhereAction("Viewer", roomViewerInterface);
-            if (viewButton != null && viewButton.click()){
+            if (viewButton != null && viewButton.click()) {
                 //do stuff
-                 }
+            }
             RSInterface addRoom = Interfaces.get(addRoomInterface, 5, 12);
-            Log.log("[Debug]: Adding room");
-            if (addRoom != null && addRoom.click(rsMenuNode ->  rsMenuNode.contains("Add room"))){
-                Timer.waitCondition(()-> Interfaces.isInterfaceSubstantiated(selectRoomInterface),
-                        3500,5000);
+            Log.log("Adding room");
+            if (addRoom != null && addRoom.click(rsMenuNode -> rsMenuNode.contains("Add room"))) {
+                Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(selectRoomInterface),
+                        3500, 5000);
 
             }
             RSInterface roomInter = Interfaces.findWhereAction(roomName, selectRoomInterface);
-            if (roomInter != null && roomInter.click()){
-                Timer.waitCondition(()-> Interfaces.isInterfaceSubstantiated(addRoomInterface), 3500,5000);
+            if (roomInter != null && roomInter.click()) {
+                Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(addRoomInterface), 3500, 5000);
 
             }
             roomInter = Interfaces.findWhereAction("Done", addRoomInterface);
-            if (roomInter != null && roomInter.click()){
-                Waiting.waitNormal(7500,750);
+            if (roomInter != null && roomInter.click()) {
+                Waiting.waitNormal(7500, 750);
             }
         }
     }
@@ -101,7 +101,7 @@ public class MakeFurniture implements Task {
         if (obj.length > 0)
             return true;
 
-        Log.log("[Debug]: Turning on building mode");
+        Log.info("Turning on building mode");
         GameTab.open(GameTab.TABS.OPTIONS);
         if (InterfaceUtil.clickInterfaceAction(116, "View House Options")) {
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(370, 5), 3000, 5000);
@@ -124,19 +124,21 @@ public class MakeFurniture implements Task {
                 .nameContains(objectName)
                 .actionsContains("Remove")
                 .getFirstResult();
+        Optional<GameObject> remove = Query.gameObjects().nameContains(objectName)
+                .actionContains("Remove")
+                .findClosest();
 
-        if (obj != null && Utils.clickObject(obj, "Remove")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Yes");
+        if (remove.map(r -> r.interact("Remove")).orElse(false)) {
+            NpcChat.handle(true, "Yes");
         }
     }
 
     public void buildFurniture(FURNITURE furniture) {
         // extremely short wait in case we are still animating,
         // but briefly went -1 on the previous itteration
-        if (Waiting.waitUntil(120,()-> MyPlayer.getAnimation() != -1)){
-            Log.debug("Still animating, waiting");
-            Waiting.waitUntil(1800,()-> MyPlayer.getAnimation() == -1);
+        if (Waiting.waitUntil(120, () -> MyPlayer.getAnimation() != -1)) {
+            Log.info("Still animating, waiting");
+            Waiting.waitUntil(1800, () -> MyPlayer.getAnimation() == -1);
             return;
         }
         RSObject[] furnitureObject =
@@ -145,12 +147,10 @@ public class MakeFurniture implements Task {
         RSObject[] furnitureSpace =
                 org.tribot.api2007.Objects.findNearest(30, furniture.getSpaceId());
 
-        if (furnitureObject.length > 0){
-          //  Log.info("Removing furniture");
+        if (furnitureObject.length > 0) {
+            //  Log.info("Removing furniture");
             removeFurniture(furniture.getObjectName());
-        }
-
-       else if (furnitureSpace.length > 0) {
+        } else if (furnitureSpace.length > 0) {
             if (Inventory.find(furniture.getPlankId()).length >= furniture.getPlankNum()) {
                 if (House.isViewerOpen())
                     House.closeViewer();
@@ -159,7 +159,7 @@ public class MakeFurniture implements Task {
                         .idEquals(furniture.getSpaceId())
                         .actionContains("Build")
                         .findBestInteractable();
-                if (gameObj.map(o->o.interact("Build")).orElse(false)){
+                if (gameObj.map(o -> o.interact("Build")).orElse(false)) {
                     Timer.quickWaitCondition(() -> Interfaces.isInterfaceSubstantiated(PARENT_INTERFACE), 4500, 6000);
                     Utils.idlePredictableAction();
                 } else {
@@ -176,7 +176,7 @@ public class MakeFurniture implements Task {
                         Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 5500, 7250);
                 }
             }
-        }else {
+        } else {
             Log.info("Need to build rooms");
             House.buildRoom(furniture.getRoom());
         }
@@ -190,7 +190,7 @@ public class MakeFurniture implements Task {
                     .getFirstResult();
             if (obj != null && Utils.clickObject(obj, "Build mode")) {
                 Timer.slowWaitCondition(() -> Game.isInInstance(), 6500, 7000);
-                Waiting.waitNormal(2900,250);
+                Waiting.waitNormal(2900, 250);
             }
         }
     }
@@ -208,7 +208,8 @@ public class MakeFurniture implements Task {
 
     @Override
     public boolean validate() {
-        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION)) {
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION) &&
+                !ConsVars.get().isDoingHomes) {
             Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
 
             if (currentItem.isPresent())
@@ -238,11 +239,11 @@ public class MakeFurniture implements Task {
     public void execute() {
         enterHouse();
         Optional<FURNITURE> currentItem = FURNITURE.getCurrentItem();
-        currentItem.ifPresent(c -> Log.info("Building "+ c.toString().toLowerCase(Locale.ROOT)));
+        currentItem.ifPresent(c -> Log.info("Building " + c.toString().toLowerCase(Locale.ROOT)));
 
         if (currentItem.isPresent())
             currentItem.ifPresent(c -> buildFurniture(c));
-       else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
+        else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.WOODEN_CHAIR.getReqLevl()) {
             buildFurniture(FURNITURE.CRUDE_CHAIR);
 
         } else if (Skills.getActualLevel(Skills.SKILLS.CONSTRUCTION) < FURNITURE.BOOKCASE.getReqLevl()) {
@@ -279,6 +280,6 @@ public class MakeFurniture implements Task {
                     Waiting.waitUntil(() -> furnitureObject[0].isOnScreen());
             }
         }// else
-           // House.buildRoom(furniture.getRoom());
+        // House.buildRoom(furniture.getRoom());
     }
 }

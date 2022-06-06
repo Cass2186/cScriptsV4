@@ -75,7 +75,7 @@ public class cNmzGuiController extends AbstractGUIController {
             Vars.get().usingRangingBoost = true;
         }
         if (usePrayMeleeButton.isSelected()) {
-            Vars.get().usingOverloadPots = true;
+            Vars.get().usingPrayerPots = true;
         }
         if (useOverloadButton.isSelected()) {
             Vars.get().usingOverloadPots = true;
@@ -97,7 +97,7 @@ public class cNmzGuiController extends AbstractGUIController {
         this.getGUI().close();
     }
 
-    @DoNotRename
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         DrinkPotion.determinePotion();

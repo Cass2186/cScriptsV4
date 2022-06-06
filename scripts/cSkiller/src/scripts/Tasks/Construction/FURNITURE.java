@@ -80,7 +80,7 @@ public enum FURNITURE {
     public static Optional<FURNITURE> getCurrentItem() {
         for (FURNITURE i : values()) {
             if (Skills.getActualLevel(skill) < i.maxLevel &&
-                    Skills.getActualLevel(skill) > i.reqLevl) {
+                    Skills.getActualLevel(skill) >= i.reqLevl) {
                 return Optional.of(i);
             }
         }
@@ -95,7 +95,7 @@ public enum FURNITURE {
 
             // skip the furniture piece if we're past it's max level
             if (Skill.CONSTRUCTION.getActualLevel() >= furn.maxLevel ||
-                    SkillTasks.CONSTRUCTION.getEndLevel() <= furn.maxLevel)
+                    SkillTasks.CONSTRUCTION.getEndLevel() < furn.reqLevl)
                 continue;
 
             Log.info("[Construction Items]: Item is " + furn.toString());

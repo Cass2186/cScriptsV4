@@ -17,6 +17,7 @@ import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
+import scripts.Tasks.Construction.MahoganyHomes.ConsVars;
 
 import java.util.Optional;
 
@@ -38,7 +39,10 @@ public class UnnotePlanks implements Task {
                 .idEquals(plankId + 1)
                 .isNoted()
                 .findFirst();
-        Optional<Npc> phials = Query.npcs().nameContains("Phials").stream().findFirst();
+        if (item.isEmpty())
+            Log.warn("No planks");
+
+        Optional<Npc> phials = Query.npcs().nameContains("Phials").findFirst();
         // walk closer if needed
         if (phials.map(p -> !p.isVisible() &&
                         LocalWalking.walkTo(p.getTile().translate(0, 1)))
@@ -48,6 +52,8 @@ public class UnnotePlanks implements Task {
         if (phials.map(p -> item.map(i -> i.useOn(p)).orElse(false)).orElse(false)
                 && Timer.waitCondition(Player::isMoving, 1200, 1800)) {
             Timer.waitCondition(ChatScreen::isOpen, 6000, 8000);
+        } else {
+            Log.warn("Failed");
         }
 
         if (ChatScreen.isOpen()) {
@@ -78,7 +84,8 @@ public class UnnotePlanks implements Task {
 
     @Override
     public boolean validate() {
-        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION)) {
+        if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION) &&
+                !ConsVars.get().isDoingHomes) {
             Optional<InventoryItem> item = Query.inventory().nameContains("plank").isNoted().findFirst();
             if (item.isEmpty())
                 return false;

@@ -21,6 +21,7 @@ import scripts.Data.Vars;
 import scripts.ItemID;
 import scripts.Requirements.ItemReq;
 import scripts.Requirements.ItemRequirement;
+import scripts.Tasks.Construction.MahoganyHomes.ConsVars;
 import scripts.Tasks.MiscTasks.BuyItems;
 import scripts.Timer;
 import scripts.Utils;
@@ -89,6 +90,7 @@ public class ConstructionBank implements Task {
         int item = Query.inventory().nameContains("plank").count();
         int noted = Query.inventory().nameContains("plank").isNoted().count();
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.CONSTRUCTION) &&
+                !ConsVars.get().isDoingHomes &&
                 ((item < 5 && noted == 0 && Utils.getVarBitValue(2187) != 0) ||
                 !hammer.check() || !saw.check() || !coins.check());
     }

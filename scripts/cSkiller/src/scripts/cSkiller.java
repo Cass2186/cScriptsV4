@@ -32,6 +32,8 @@ import scripts.Tasks.Combat.CrabTasks.EatDrink;
 import scripts.Tasks.Combat.CrabTasks.Fight;
 import scripts.Tasks.Combat.CrabTasks.MoveToCrabTile;
 import scripts.Tasks.Combat.CrabTasks.ResetAggro;
+import scripts.Tasks.Construction.MahoganyHomes.GetAssignment;
+import scripts.Tasks.Construction.MahoganyHomes.HandleHome;
 import scripts.Tasks.Crafting.Armour.DragonHide;
 import scripts.Tasks.Herblore.MixTar;
 import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
@@ -309,6 +311,8 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new UnnotePlanks(),
                 new MakeFurniture(),
                 new ConstructionBank(),
+                new HandleHome(),
+                new GetAssignment(),
                 new AttackNpc(),
                 new SlayerShop(),
                 new MoveToArea(),
