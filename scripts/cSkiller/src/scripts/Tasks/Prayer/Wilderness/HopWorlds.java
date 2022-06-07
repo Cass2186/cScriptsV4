@@ -19,18 +19,7 @@ import java.util.Optional;
 
 public class HopWorlds implements Task {
 
-    public static int getNextWorld() {
-        Optional<World> first = Query.worlds().isNotCurrentWorld()
-                .isMembers().
-                isNotAllTypes(World.Type.PVP)
-                .isLowPing()
-                .findRandom();
-        Optional<World> second = Query.worlds().isNotCurrentWorld()
-                .isMembers().
-                isNotAllTypes(World.Type.PVP)
-                .findRandom();
-        return first.map(World::getWorldNumber).orElse(second.map(World::getWorldNumber).orElse(-1));
-    }
+
 
     @Override
     public Priority priority() {
@@ -51,7 +40,7 @@ public class HopWorlds implements Task {
         Mouse.setSpeed(250);
         Log.warn("Hopping worlds");
         if (WorldHopper.hop(PkObserver.nextWorld)) {
-            PkObserver.nextWorld = getNextWorld();
+            PkObserver.nextWorld = PkObserver.getNextWorld();
         }
 
     }

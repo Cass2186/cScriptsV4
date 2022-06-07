@@ -10,6 +10,7 @@ import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Player;
 import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.World;
 import scripts.Timer;
 
 import java.awt.*;
@@ -36,10 +37,28 @@ public class PkObserver {
     public static int combatMax = ourCombatLevel + org.tribot.api2007.Combat.getWildernessLevel();
     public static int pointThreshold = 200;
     public static int points = 0;
-    public static int nextWorld = org.tribot.api2007.WorldHopper.getRandomWorld(true, false);
+    public static int nextWorld =
+            getNextWorld();
     public static int PARENT = 69;
     public static int WHOLE_BOX = 5;
 
+
+    public static int getNextWorld() {
+        Optional<World> first = Query.worlds().isNotCurrentWorld()
+                .isMembers().
+                isNotAllTypes(World.Type.PVP)
+                .isLowPing()
+                .isMainGame()
+                .isRequirementsMet()
+                .findRandom();
+        Optional<World> second = Query.worlds().isNotCurrentWorld()
+                .isMembers()
+                .isRequirementsMet()
+                .isMainGame()
+                .isNotAllTypes(World.Type.PVP)
+                .findRandom();
+        return first.map(World::getWorldNumber).orElse(second.map(World::getWorldNumber).orElse(-1));
+    }
     public static boolean isWorldVisible(int world) {
         RSInterface worldInter = Interfaces.get(PARENT, 16, world);
         RSInterface boxInter = Interfaces.get(PARENT, WHOLE_BOX);

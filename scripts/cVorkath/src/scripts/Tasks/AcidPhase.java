@@ -12,6 +12,7 @@ import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.interfaces.Tile;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;

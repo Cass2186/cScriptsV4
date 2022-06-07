@@ -100,7 +100,7 @@ public class GoToWildernessAltar implements Task {
 
     @Override
     public void execute() {
-        if (useBurning()) {
+        if (!Combat.isInWilderness() && useBurning()) {
             Waiting.waitNormal(400, 15); //otherwise tries to tele agail
             Log.info("Walking path to altar");
             LocalWalking.Map.builder().travelThroughDoors(true).build();
@@ -108,7 +108,7 @@ public class GoToWildernessAltar implements Task {
                 if (PkObserver.shouldHop()) {
                     Log.warn("Should hop (local)");
                     if (WorldHopper.hop(PkObserver.nextWorld)) {
-                        PkObserver.nextWorld = HopWorlds.getNextWorld();
+                        PkObserver.nextWorld = PkObserver.getNextWorld();
                     }
                     return WalkState.FAILURE;
                 }
@@ -120,7 +120,7 @@ public class GoToWildernessAltar implements Task {
                     if (PkObserver.shouldHop()) {
                         Log.warn("Should hop");
                         if (WorldHopper.hop(PkObserver.nextWorld)) {
-                            PkObserver.nextWorld = HopWorlds.getNextWorld();
+                            PkObserver.nextWorld = PkObserver.getNextWorld();
                         }
                         return WalkState.FAILURE;
                     }
