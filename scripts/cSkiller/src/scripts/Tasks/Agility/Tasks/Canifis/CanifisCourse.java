@@ -47,8 +47,8 @@ public class CanifisCourse implements Task {
             AgilityAreas.CANIFIS_FINISHED_AREA);
 
     List<Obstacle> allObstacles = new ArrayList<>(Arrays.asList(
-            TREE_CLIMB,
-            TREE_CLIMB_2,
+           TREE_CLIMB,
+         //   TREE_CLIMB_2,
             GAP_ONE,
             GAP_TWO,
             GAP_THREE,

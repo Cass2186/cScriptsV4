@@ -99,7 +99,15 @@ public class AgilityAreas {
                     new RSTile(3511, 3486, 0)
             }
     );
-    public static RSArea CANIFIS_LARGE_START = new RSArea(new RSTile(3510, 3487, 0), new RSTile(3502, 3490, 0));
+    public static RSArea CANIFIS_LARGE_START  = new RSArea(
+            new RSTile[] {
+                    new RSTile(3517, 3484, 0),
+                    new RSTile(3510, 3491, 0),
+                    new RSTile(3502, 3491, 0),
+                    new RSTile(3503, 3484, 0)
+            }
+    );
+  //  public static RSArea CANIFIS_LARGE_START = new RSArea(new RSTile(3510, 3487, 0), new RSTile(3502, 3490, 0));
     // public static RSArea CANIFIS_SMALL_START = new RSArea(new RSTile(3508, 3488, 0), new RSTile(3504, 3490, 0));
     public static RSArea ALL_CANIFIS = new RSArea(new RSTile(3469, 3509, 0), new RSTile(3526, 3462, 0));
     public static RSArea CANIFIS_OBSTACLE_1 = new RSArea(new RSTile(3511, 3489, 2), new RSTile(3503, 3499, 2));
