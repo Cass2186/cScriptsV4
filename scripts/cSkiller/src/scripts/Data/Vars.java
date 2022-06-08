@@ -188,6 +188,9 @@ public class Vars {
     // Prayer
     public boolean useWildernessAltar = true;
 
+    // other
+    public boolean getDefenders = true;
+
     public DaxTracker daxTracker;
 
 

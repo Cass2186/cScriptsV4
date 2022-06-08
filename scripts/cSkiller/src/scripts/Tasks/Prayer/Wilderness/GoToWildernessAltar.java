@@ -124,7 +124,6 @@ public class GoToWildernessAltar implements Task {
                         }
                         return WalkState.FAILURE;
                     }
-
                     return WalkState.CONTINUE;
                 }
         ))

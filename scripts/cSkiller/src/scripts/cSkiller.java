@@ -35,6 +35,9 @@ import scripts.Tasks.Combat.CrabTasks.ResetAggro;
 import scripts.Tasks.Construction.MahoganyHomes.GetAssignment;
 import scripts.Tasks.Construction.MahoganyHomes.HandleHome;
 import scripts.Tasks.Crafting.Armour.DragonHide;
+import scripts.Tasks.Defender.BankDefender;
+import scripts.Tasks.Defender.KillCyclopsBasement;
+import scripts.Tasks.Defender.KillCyclopsUpstairs;
 import scripts.Tasks.Herblore.MixTar;
 import scripts.Tasks.KourendFavour.ArceuusLibrary.State;
 import scripts.Tasks.KourendFavour.Hosidius.BankForCompost;
@@ -346,7 +349,10 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new UnnotePlanks(),
                 new BankOurania(),
                 new GoToAltar(),
-                new RepairPouches()
+                new RepairPouches(),
+                new BankDefender(),
+                new GetTask(),
+                new KillCyclopsUpstairs()
                 //MiniBreak.get(),
                 // new MakeCannonballs()
 
@@ -450,7 +456,12 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                     Vars.get().shouldShowGUI = false;
                     SkillTasks.PEST_CONTROL.setStartLevel(1);
                     Vars.get().currentTask = SkillTasks.PEST_CONTROL;
-                }   else if (arg.toLowerCase().contains("hosa")) {
+                }  else if (arg.toLowerCase().contains("defender")) {
+                    Log.info("[Args]: Getting Defenders");
+                    Vars.get().shouldShowGUI = false;
+                    SkillTasks.DEFENDERS.setStartLevel(1);
+                    Vars.get().currentTask = SkillTasks.DEFENDERS;
+                }  else if (arg.toLowerCase().contains("hosa")) {
                     General.println("[Args]: Training Hosa favour");
                     Vars.get().shouldShowGUI = false;
                     Vars.get().hosaFavour = true;

@@ -9,6 +9,7 @@ import org.tribot.script.sdk.query.Query;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
+import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Defender.Data.DefenderConst;
 import scripts.Tasks.Defender.Data.DefenderVars;
@@ -38,33 +39,35 @@ public class GetTokens implements Task {
             Vars.get().currentTime = System.currentTimeMillis();
             if (CombatUtil.waitUntilOutOfCombat(General.random(40, 60)))
                 Utils.abc2ReactionSleep(Vars.get().currentTime);
-        } if (!MyPlayer.isHealthBarVisible() &&
-                Query.groundItems().idEquals(ItemID.WARRIOR_GUILD_TOKEN).isAny()
-                || Query.groundItems().idEquals(gearIds).isAny()) {
-            Log.info("Looting tokens");;
+        }
+        lootArmor(gearIds);
+    }
 
-            if (Utils.clickGroundItem(ItemID.BLACK_PLATEBODY))
-                Timer.waitCondition(() -> !Query.groundItems().idEquals(ItemID.BLACK_PLATELEGS).isAny(), 3000, 5000);
-            if (Utils.clickGroundItem(ItemID.BLACK_PLATELEGS))
-                Timer.waitCondition(() -> !Query.groundItems().idEquals(ItemID.BLACK_PLATELEGS).isAny(), 3000, 5000);
-            if (Utils.clickGroundItem(ItemID.BLACK_FULL_HELM))
-                Timer.waitCondition(() -> !Query.groundItems().idEquals(ItemID.BLACK_FULL_HELM).isAny(), 2000, 5000);
-            if (Inventory.isFull())
-                EatUtil.eatFood();
+    private void lootArmor(int... gearIds) {
+        if (Query.groundItems().idEquals(ItemID.WARRIOR_GUILD_TOKEN).isAny()
+                || Query.groundItems().idEquals(gearIds).isAny()) {
+            Log.info("Looting tokens and armor");
+            for (int i : gearIds){
+                Utils.clickGroundItem(i);
+            }
             Utils.clickGroundItem(ItemID.WARRIOR_GUILD_TOKEN);
-            Utils.shortSleep();
         }
     }
 
 
     @Override
     public Priority priority() {
-        return null;
+        return Priority.MEDIUM;
     }
 
     @Override
     public boolean validate() {
-        return false;
+        if (!Vars.get().getDefenders ||
+                Vars.get().currentTask == null ||
+                !Vars.get().currentTask.equals(SkillTasks.DEFENDERS))
+            return false;
+
+        return Vars.get().getDefenders;
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
+import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Defender.Data.DefenderConst;
 import scripts.Tasks.Defender.Data.DefenderVars;
@@ -118,7 +119,7 @@ public class KillCyclopsUpstairs implements Task {
                 }
             }
             if (Utils.clickObj("Door", "Open")) {
-                Waiting.waitUntil(5000, 550, ()->DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer());
+                Waiting.waitUntil(5000, 550, () -> DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer());
             }
         }
     }
@@ -131,6 +132,11 @@ public class KillCyclopsUpstairs implements Task {
 
     @Override
     public boolean validate() {
+        if (!Vars.get().getDefenders ||
+                Vars.get().currentTask == null ||
+                !Vars.get().currentTask.equals(SkillTasks.DEFENDERS))
+            return false;
+
         if ((DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer() ||
                 DefenderConst.DRAGON_DEFENDER_AREA.contains(MyPlayer.getTile()))) {
             // in a defender area, so check token count > 0

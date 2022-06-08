@@ -2,6 +2,7 @@ package scripts.Tasks.Defender;
 
 import scripts.API.Priority;
 import scripts.API.Task;
+import scripts.Data.Vars;
 
 public class KillCyclopsBasement implements Task {
 
@@ -12,13 +13,14 @@ public class KillCyclopsBasement implements Task {
 
     @Override
     public boolean validate() {
-        return false;
+        return Vars.get().getDefenders;
     }
 
     @Override
     public void execute() {
 
     }
+
     @Override
     public String toString() {
         return "Killing Basement Cyclops";
