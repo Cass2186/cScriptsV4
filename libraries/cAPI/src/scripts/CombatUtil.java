@@ -301,7 +301,8 @@ public class CombatUtil {
                 return !Combat.isUnderAttack() || !EatUtil.hasFood()
                         || (isPraying() && Prayer.getPrayerPoints() < 5);
 
-            return !Combat.isUnderAttack() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
+            return !Query.npcs().isMyPlayerInteractingWith().isAny() ||
+                    !Combat.isUnderAttack() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
         }, General.random(longTimeOut - 5000, longTimeOut)))
             return false;
 
@@ -325,7 +326,7 @@ public class CombatUtil {
         if (ChooseOption.isOpen() && !Combat.isUnderAttack() && EatUtil.hasFood()) {
             CombatUtil.clickAttack();
         }
-        return !Combat.isUnderAttack();
+        return !Query.npcs().isMyPlayerInteractingWith().isAny();
     }
 
 
@@ -354,7 +355,7 @@ public class CombatUtil {
                 return !Combat.isUnderAttack() || !EatUtil.hasFood()
                         || (isPraying() && Prayer.getPrayerPoints() < 5);
 
-            return !Combat.isUnderAttack() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
+            return !Query.npcs().isMyPlayerInteractingWith().isAny() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
         }, General.random(20000, 40000));
 
         AntiBan.resetShouldOpenMenu();
@@ -368,7 +369,7 @@ public class CombatUtil {
         if (ChooseOption.isOpen() && !Combat.isUnderAttack() && EatUtil.hasFood()) {
             CombatUtil.clickAttack();
         }
-        return !Combat.isUnderAttack();
+        return !Query.npcs().isMyPlayerInteractingWith().isAny();
     }
 
     public static RSNPC getTarget(String[] monsterStrings) {

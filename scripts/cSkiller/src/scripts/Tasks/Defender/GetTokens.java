@@ -1,10 +1,7 @@
 package scripts.Tasks.Defender;
 
 import org.tribot.api.General;
-import org.tribot.script.sdk.Combat;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import scripts.*;
 import scripts.API.Priority;
@@ -29,13 +26,10 @@ public class GetTokens implements Task {
                 PathingUtil.walkToTile(DefenderConst.LEFT_ANIMATOR_TILE);
 
             if (Utils.clickObj(DefenderConst.LEFT_ANIMATOR_ID, "Animate"))
-                Timer.waitCondition(() -> MyPlayer.isHealthBarVisible(), 10000, 15000);
+                Timer.waitCondition(() -> Query.npcs().isMyPlayerInteractingWith().isAny() ||
+                        MyPlayer.isHealthBarVisible(), 13000, 16000);
         }
-        if (MyPlayer.getCurrentHealthPercent() < DefenderVars.get().eatAtPercent) {
-            EatUtil.eatFood();
-            DefenderVars.get().eatAtPercent = Utils.random(35, 65);
-        }
-        if (MyPlayer.isHealthBarVisible()) {
+        else if (MyPlayer.isHealthBarVisible()) {
             Vars.get().currentTime = System.currentTimeMillis();
             if (CombatUtil.waitUntilOutOfCombat(General.random(40, 60)))
                 Utils.abc2ReactionSleep(Vars.get().currentTime);
@@ -48,7 +42,9 @@ public class GetTokens implements Task {
                 || Query.groundItems().idEquals(gearIds).isAny()) {
             Log.info("Looting tokens and armor");
             for (int i : gearIds){
-                Utils.clickGroundItem(i);
+                if(Query.groundItems().idEquals(i).isReachable()
+                        .findClosest().map(item->item.interact("Take")).orElse(false))
+                    Waiting.waitUntil(5000,500, ()-> Inventory.contains(i));
             }
             Utils.clickGroundItem(ItemID.WARRIOR_GUILD_TOKEN);
         }
@@ -67,12 +63,12 @@ public class GetTokens implements Task {
                 !Vars.get().currentTask.equals(SkillTasks.DEFENDERS))
             return false;
 
-        return Vars.get().getDefenders;
+        return Vars.get().getDefenders && Inventory.getCount(ItemID.WARRIOR_GUILD_TOKEN) < 500;
     }
 
     @Override
     public void execute() {
-        animate();
+        animate(ItemID.BLACK_PLATEBODY, ItemID.BLACK_PLATELEGS, ItemID.BLACK_FULL_HELM);
     }
 
     @Override

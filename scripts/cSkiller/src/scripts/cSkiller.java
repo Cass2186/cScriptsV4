@@ -36,6 +36,7 @@ import scripts.Tasks.Construction.MahoganyHomes.GetAssignment;
 import scripts.Tasks.Construction.MahoganyHomes.HandleHome;
 import scripts.Tasks.Crafting.Armour.DragonHide;
 import scripts.Tasks.Defender.BankDefender;
+import scripts.Tasks.Defender.GetTokens;
 import scripts.Tasks.Defender.KillCyclopsBasement;
 import scripts.Tasks.Defender.KillCyclopsUpstairs;
 import scripts.Tasks.Herblore.MixTar;
@@ -351,7 +352,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 new GoToAltar(),
                 new RepairPouches(),
                 new BankDefender(),
-                new GetTask(),
+                new GetTokens(),
                 new KillCyclopsUpstairs()
                 //MiniBreak.get(),
                 // new MakeCannonballs()
@@ -459,6 +460,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                 }  else if (arg.toLowerCase().contains("defender")) {
                     Log.info("[Args]: Getting Defenders");
                     Vars.get().shouldShowGUI = false;
+                    Vars.get().getDefenders = true;
                     SkillTasks.DEFENDERS.setStartLevel(1);
                     Vars.get().currentTask = SkillTasks.DEFENDERS;
                 }  else if (arg.toLowerCase().contains("hosa")) {

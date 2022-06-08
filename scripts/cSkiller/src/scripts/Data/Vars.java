@@ -189,7 +189,7 @@ public class Vars {
     public boolean useWildernessAltar = true;
 
     // other
-    public boolean getDefenders = true;
+    public boolean getDefenders = false;
 
     public DaxTracker daxTracker;
 
