@@ -21,15 +21,21 @@ import java.util.Optional;
 public class KillCyclopsUpstairs implements Task {
 
     int kills = 0;
+    //changes after showing to person
+    int CURRENT_DEFENDER_VARBIT = 2448; //1 = bronze, 2 = iron etc
+    int HAS_SHOWN_DEFENDER_VARBIT = 5983; // 1 = true
+
+
 
     private boolean moveToArea() {
         if (Inventory.getCount(DefenderConst.DEFENDERS[1]) > 0) {
             PathingUtil.walkToTile(DefenderConst.DRAGON_DEFENDER_AREA.getCenter());
             return DefenderConst.DRAGON_DEFENDER_AREA.containsMyPlayer();
-        } else {
+        } else if (!DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer()){
             PathingUtil.walkToTile(DefenderConst.UPPER_CYCLOPS_AREA.getCenter());
             return DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer();
         }
+        return DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer();
     }
 
     public void killCyclops() {
@@ -39,20 +45,30 @@ public class KillCyclopsUpstairs implements Task {
             checkEat();
             Optional<Npc> interacting = Query.npcs().nameContains("Cyclops")
                     .isInteractingWithMe()
+                    .isHealthBarNotEmpty()
                     .findBestInteractable();
-            Optional<Npc> target = Query.npcs().nameContains("Cyclops").findBestInteractable();
+            Optional<Npc> target = Query.npcs()
+                    .nameContains("Cyclops")
+                    .isNotBeingInteractedWith()
+                    .findBestInteractable();
 
             if (!MyPlayer.isHealthBarVisible() &&
-                    interacting.map(t -> t.interact("Attack")).orElse(false) ||
-                    target.map(t -> t.interact("Attack")).orElse(false)) {
+                    interacting.map(t -> t.getHealthBarPercent() != 0 &&
+                            t.interact("Attack")).orElse(false) ||
+                    target.map(t -> t.getHealthBarPercent() != 0 &&t.interact("Attack")).orElse(false)) {
+                Waiting.waitUntil(4500, 500,
+                        ()-> Query.npcs().isInteractingWithMe().isMyPlayerInteractingWith().isAny());
                 Vars.get().currentTime = System.currentTimeMillis();
                 if (CombatUtil.waitUntilOutOfCombat("Cyclops", General.random(40, 60))) {
                     kills++;
                     Log.info("Kills = " + kills);
                     Utils.idleNormalAction();
+                    checkEat();
+                    checkForDefenders();
+                    return;
                 }
 
-            } else if (CombatUtil.waitUntilOutOfCombat("Cyclops", General.random(40, 60))) {
+            } else if (MyPlayer.isHealthBarVisible() && CombatUtil.waitUntilOutOfCombat("Cyclops", General.random(40, 60))) {
                 kills++;
                 Log.info("[Debug]: Kills = " + kills);
                 Utils.idleAfkAction();
@@ -83,19 +99,33 @@ public class KillCyclopsUpstairs implements Task {
     }
 
     public int determineHighestDefender() {
-        for (int i : DefenderConst.DEFENDERS) {
-            if (Inventory.contains(i)) {
-                return i;
-            }
+        switch (Utils.getVarBitValue(CURRENT_DEFENDER_VARBIT)){
+            case(1):
+                return ItemID.BRONZE_DEFENDER;
+            case(2):
+                return ItemID.IRON_DEFENDER;
+            case(3):
+                return ItemID.STEEL_DEFENDER;
+            case(4):
+                return ItemID.BLACK_DEFENDER;
+            case(5):
+                return ItemID.MITHRIL_DEFENDER;
+            case(6):
+                return ItemID.ADAMANT_DEFENDER;
+            case(7):
+                return ItemID.RUNE_DEFENDER;
+            case(8):
+                return ItemID.DRAGON_DEFENDER;
         }
         return -1;
     }
+
 
     public void showDefender() {
         if (DefenderVars.get().shouldShowDefender ||
                 (kills >= Utils.random(75, 85) && !Inventory.contains(ItemID.RUNE_DEFENDER))) {
             Log.info("Showing defender");
-            if (kills >= 80 && !Inventory.contains(ItemID.RUNE_DEFENDER))
+            if (kills >= 75 && !Inventory.contains(ItemID.RUNE_DEFENDER))
                 General.println("[Debug]: Showing defender due to high kill count without drop", Color.red);
             else
                 General.println("[Debug]: Showing defender", Color.red);
@@ -150,6 +180,7 @@ public class KillCyclopsUpstairs implements Task {
     @Override
     public void execute() {
         killCyclops();
+        showDefender();
     }
 
     @Override

@@ -51,6 +51,10 @@ public class WildyPrayerBank implements Task {
 
     private void bank() {
         if (!Combat.isInWilderness()) {
+            Optional<InventoryItem> amulet = Query.inventory().nameContains("Burning amulet").findFirst();
+            if (amulet.map(a -> Utils.equipItem(a.getId())).orElse(false)) {
+                Utils.idleNormalAction();
+            }
             List<EquipmentItem> equipList = Query.equipment().nameNotContains("Burning amulet").toList();
             if (equipList.size() > 0)
                 BankManager.depositEquipment();
@@ -58,7 +62,7 @@ public class WildyPrayerBank implements Task {
             if (!Query.equipment()
                     .nameContains("Burning amulet").isAny()) {
                 BankManager.withdrawArray(ItemID.BURNING_AMULET, 1);
-                Optional<InventoryItem> amulet = Query.inventory().nameContains("Burning amulet").findFirst();
+               amulet = Query.inventory().nameContains("Burning amulet").findFirst();
                 if (amulet.map(a -> Utils.equipItem(a.getId())).orElse(false)) {
                     Utils.idleNormalAction();
                 }

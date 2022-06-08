@@ -111,6 +111,8 @@ public class GoToWildernessAltar implements Task {
                         PkObserver.nextWorld = PkObserver.getNextWorld();
                     }
                     return WalkState.FAILURE;
+                }else {
+                    Log.info("No PKers");
                 }
 
                 return WalkState.CONTINUE;
@@ -123,6 +125,8 @@ public class GoToWildernessAltar implements Task {
                             PkObserver.nextWorld = PkObserver.getNextWorld();
                         }
                         return WalkState.FAILURE;
+                    } else {
+                        Log.info("No PKers");
                     }
                     return WalkState.CONTINUE;
                 }

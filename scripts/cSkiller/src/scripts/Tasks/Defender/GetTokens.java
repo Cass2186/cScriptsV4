@@ -63,6 +63,13 @@ public class GetTokens implements Task {
                 !Vars.get().currentTask.equals(SkillTasks.DEFENDERS))
             return false;
 
+        if ((DefenderConst.UPPER_CYCLOPS_AREA.containsMyPlayer() ||
+                DefenderConst.DRAGON_DEFENDER_AREA.contains(MyPlayer.getTile()))) {
+            // in a defender area, so check token count > 0
+            return Inventory.getCount(ItemID.WARRIOR_GUILD_TOKEN) <= 10;
+
+        } else
+
         return Vars.get().getDefenders && Inventory.getCount(ItemID.WARRIOR_GUILD_TOKEN) < 500;
     }
 
