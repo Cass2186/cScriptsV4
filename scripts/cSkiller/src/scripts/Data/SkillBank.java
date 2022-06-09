@@ -136,6 +136,10 @@ public class SkillBank {
 
                 Log.warn("[SkillBank]: Failed with withdraw ItemID: " + i.getId() + " -> Missing itemList size: " +
                         itemList.size());
+            } else {
+                if (i.isShouldEquip()){
+                    Utils.equipItem(i.getId());
+                }
             }
 
         }
