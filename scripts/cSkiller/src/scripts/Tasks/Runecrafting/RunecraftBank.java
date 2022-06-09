@@ -8,6 +8,10 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.BankSettings;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
@@ -16,6 +20,7 @@ import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.Enums.RunecraftItems;
+import scripts.Data.SkillBank;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Requirements.InventoryRequirement;
@@ -72,16 +77,101 @@ public class RunecraftBank implements Task {
 
     }
 
+    public InventoryRequirement getInvReqForComboRune(RunecraftItems rune) {
+        Optional<RunecraftItems> itemOptional = RunecraftItems.getCurrentItem();
+        if (itemOptional.isEmpty())
+            throw new NullPointerException();
+
+        if (itemOptional.get().equals(RunecraftItems.STEAM_RUNE)) {
+            InventoryRequirement inv = new InventoryRequirement(new ArrayList<>(java.util.List.of(
+                    new ItemReq(rune.getTiaraId(), 1, true, true),
+                    new ItemReq(ItemID.BINDING_NECKLACE, 1, true, true)
+            )));
+            if (!Query.equipment().nameContains("Ring of dueling").isAny() ||
+                    Query.equipment().nameContains("dueling(1)").isAny())
+                inv.add(new ItemReq.Builder()
+                        .id(ItemID.RING_OF_DUELING8)
+                        .alternateItemIDs(java.util.List.of(ItemID.RING_OF_DUELING7, ItemID.RING_OF_DUELING6,
+                                ItemID.RING_OF_DUELING5,
+                                ItemID.RING_OF_DUELING4,
+                                ItemID.RING_OF_DUELING3,
+                                ItemID.RING_OF_DUELING2))
+                        .shouldEquip(true)
+                        .equip(true)
+                        .amount(1).build());
+            if (RcVars.get().useStamina)
+                inv.add(new ItemReq.Builder()
+                        .id(ItemID.STAMINA_POTION4)
+                        .alternateItemIDs(java.util.List.of(
+                                ItemID.STAMINA_POTION3,
+                                ItemID.STAMINA_POTION2,
+                                ItemID.STAMINA_POTION1))
+                        .amount(1).build());
+            inv.add(new ItemReq(rune.getCombiningRuneId(), 0));
+            inv.add(new ItemReq(rune.getAdditionalTalisman(), 1));
+            inv.add(new ItemReq(ItemID.PURE_ESSENCE, 0));
+            return inv;
+        } else if (itemOptional.get().equals(RunecraftItems.FIRE_RUNE)) {
+            InventoryRequirement inv = new InventoryRequirement(new ArrayList<>(java.util.List.of(
+                    new ItemReq(rune.getTiaraId(), 1, true, true),
+                    new ItemReq(ItemID.BINDING_NECKLACE, 1, true, true)
+            )));
+            inv.add(new ItemReq.Builder()
+                    .id(ItemID.RING_OF_DUELING8)
+                    .alternateItemIDs(java.util.List.of(ItemID.RING_OF_DUELING7, ItemID.RING_OF_DUELING6,
+                            ItemID.RING_OF_DUELING5,
+                            ItemID.RING_OF_DUELING4,
+                            ItemID.RING_OF_DUELING3,
+                            ItemID.RING_OF_DUELING2))
+                    .equip(true)
+                    .amount(1).build());
+            inv.add(new ItemReq(ItemID.PURE_ESSENCE, 0));
+            return inv;
+        }
+        InventoryRequirement inv = new InventoryRequirement(new ArrayList<>(java.util.List.of(
+                new ItemReq(rune.getTiaraId(), 1, true, true),
+                new ItemReq(ItemID.BINDING_NECKLACE, 1, true, true)
+        )));
+        inv.add(new ItemReq.Builder()
+                .id(ItemID.RING_OF_DUELING8)
+                .alternateItemIDs(java.util.List.of(ItemID.RING_OF_DUELING7, ItemID.RING_OF_DUELING6,
+                        ItemID.RING_OF_DUELING5,
+                        ItemID.RING_OF_DUELING4,
+                        ItemID.RING_OF_DUELING3,
+                        ItemID.RING_OF_DUELING2))
+                .equip(true)
+                .amount(1).build());
+        inv.add(new ItemReq(rune.getTeleportId(), 2));
+        inv.add(new ItemReq(rune.getAdditionalTalisman(), 1));
+        inv.add(new ItemReq(ItemID.PURE_ESSENCE, 0));
+        return inv;
+
+    }
+
     public void progressive() {
         Optional<RunecraftItems> itemOptional = RunecraftItems.getCurrentItem();
         if (itemOptional.isPresent()) {
+
             PathingUtil.walkToTile(itemOptional.get().getBank().getPosition());
 
-            BankTask task = getBankTaskFromComboRune(itemOptional.get());
+            BankManager.open(true);
+            BankManager.depositAll(true);
+            Banking.setScrollMethod(Banking.SCROLL_METHOD.CLICK);
+            java.util.List<ItemReq> newInv = SkillBank.withdraw(getInvReqForComboRune(itemOptional.get()).getInvList());
+
+            if ((newInv != null && newInv.size() > 0)) {
+                General.println("[Prayer Training]: Creating buy list");
+                BuyItems.itemsToBuy = BuyItems.populateBuyList(RunecraftItems.getRequiredItemList());
+                return;
+            }
+            BankManager.close(true);
+            Log.warn("done my banking");
+
+            /*BankTask task = getBankTaskFromComboRune(itemOptional.get());
 
             Optional<BankTaskError> err = task.execute();
             if (err.isPresent())
-                BuyItems.itemsToBuy = BuyItems.populateBuyList(RunecraftItems.getRequiredItemList());
+                BuyItems.itemsToBuy = BuyItems.populateBuyList(RunecraftItems.getRequiredItemList());*/
         }
     }
 

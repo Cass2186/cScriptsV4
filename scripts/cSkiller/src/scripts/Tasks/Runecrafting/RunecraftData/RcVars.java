@@ -1,5 +1,7 @@
 package scripts.Tasks.Runecrafting.RunecraftData;
 
+import org.tribot.script.sdk.Skill;
+
 public class RcVars {
     private static RcVars vars;
 
@@ -25,7 +27,7 @@ public class RcVars {
 
     public long startTime;
 
-    public boolean usingOuraniaAlter = true;
+    public boolean usingOuraniaAlter = Skill.RUNECRAFT.getActualLevel() > 70;
 
     public boolean useStamina = true;
 
