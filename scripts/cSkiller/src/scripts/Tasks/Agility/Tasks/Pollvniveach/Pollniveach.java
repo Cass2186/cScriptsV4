@@ -1,6 +1,8 @@
 package scripts.Tasks.Agility.Tasks.Pollvniveach;
 
 
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.AgilityAreas;
@@ -19,7 +21,7 @@ import java.util.Optional;
 public class Pollniveach implements Task {
 
 
-     Obstacle POLV_START_OBS = new Obstacle(14935, "Climb-on",
+    Obstacle POLV_START_OBS = new Obstacle(14935, "Climb-on",
             AgilityAreas.POLV_LARGE_START_AREA,
             AgilityAreas.POLV_OBS_1_AREA);
     public Obstacle POLV_1 = new Obstacle(14936, "Jump-on",
@@ -37,7 +39,7 @@ public class Pollniveach implements Task {
     public Obstacle POLV_5 = new Obstacle(14940, "Climb",
             AgilityAreas.POLV_OBS_5_AREA,
             AgilityAreas.POLV_OBS_6_AREA);
-    public Obstacle POLV_6 = new Obstacle(14941,"Cross",
+    public Obstacle POLV_6 = new Obstacle(14941, "Cross",
             AgilityAreas.POLV_OBS_6_AREA,
             AgilityAreas.POLV_OBS_7_AREA);
     public Obstacle POLV_7 = new Obstacle(14944, "Jump-on",
@@ -60,11 +62,10 @@ public class Pollniveach implements Task {
     ));
 
 
-
     String message = "";
 
     @Override
-    public String toString(){
+    public String toString() {
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
         obs.ifPresent(obstacle -> message = obstacle.getObstacleAction() + " " +
                 obstacle.getObstacleName());
@@ -80,15 +81,16 @@ public class Pollniveach implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null &&
                 Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
-                AgilUtils.isWithinLevelRange(70,80);
+                AgilUtils.isWithinLevelRange(70, 80);
     }
 
 
     @Override
     public void execute() {
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
-        obs.ifPresent(Obstacle::navigateObstacle);
-        Utils.idleNormalAction();
+        if (obs.map(o -> o.navigateObstacle()).orElse(false) && MyPlayer.getTile().getPlane() == 0) {
+            Waiting.waitUntil(4500, 400, () -> MyPlayer.getTile().getPlane() != 0);
+        }
     }
 
     @Override

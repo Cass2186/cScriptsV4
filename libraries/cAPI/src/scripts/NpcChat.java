@@ -115,7 +115,7 @@ public class NpcChat extends NPCChat {
 
     public static boolean waitForChatScreen() {
         int timeout = Game.isRunOn() ? 8000 : 13000;
-        return Waiting.waitUntil(timeout, Utils.random(75,300), () -> ChatScreen.isOpen());
+        return Waiting.waitUntil(timeout, Utils.random(75, 300), () -> ChatScreen.isOpen());
     }
 
     /**
@@ -142,6 +142,9 @@ public class NpcChat extends NPCChat {
             for (int i = 0; i < 3; i++) {
                 Log.info("[NpcChat]: Distance to npc is " + targetNPC.getPosition().distanceTo(Player.getPosition()));
                 // if we're right beside the npc reachable gives an issue so we check if were right beside them first
+                if (interactionString.contains("Pickpocket")){
+                    return AccurateMouse.click(targetNPC, interactionString);
+                }
                 if (AccurateMouse.click(targetNPC, interactionString) &&
                         NpcChat.waitForChatScreen())
                     return true;
@@ -199,6 +202,8 @@ public class NpcChat extends NPCChat {
             Log.info("[NpcChat]: Distance to npc is " + targetNPC.get().distance());
             // if we're right beside the npc reachable gives an issue so we check if were right beside them first
             if (interactionString.equalsIgnoreCase("attack")) {
+                return targetNPC.get().interact(interactionString);
+            } else if (interactionString.equalsIgnoreCase("pickpocket")) {
                 return targetNPC.get().interact(interactionString);
             } else if (targetNPC.get().interact(interactionString) &&
                     NpcChat.waitForChatScreen()) {

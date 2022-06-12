@@ -279,7 +279,6 @@ public class PathingUtil {
         var path = LocalWalking.Map.builder().travelThroughDoors(true)
                 .build().getPath(destination);
         if (path.size() > 0)
-
             Log.info("[PathingUtil] Local walking V2 - LocalTile");
         return LocalWalking.walkPath(path, state);
     }

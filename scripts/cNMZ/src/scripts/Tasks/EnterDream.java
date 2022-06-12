@@ -98,16 +98,16 @@ public class EnterDream implements Task {
             if (!isDreamScreenOpen() &&
                     potion.map(p->p.interact("Drink")).orElse(false) &&
                 Waiting.waitUntil(3500,225, this::isDreamScreenOpen)){
-
+                Utils.idleNormalAction(true);
             }
             Optional<Widget> acceptButton = Query.widgets()
                     .inIndexPath(BOSS_SELECTION_WIDGET_PARENT)
                     .textContains("Accept").findFirst();
             if (acceptButton.map(b-> b.click()).orElse(false)){
-                return Waiting.waitUntil(4500, 200, GameState::isInInstance);
+                return Waiting.waitUntil(5500, 500, GameState::isInInstance);
             }
         }
-        return Waiting.waitUntil(2500, 200, GameState::isInInstance);
+        return Waiting.waitUntil(3500, 500, GameState::isInInstance);
     }
 
 
@@ -129,6 +129,7 @@ public class EnterDream implements Task {
 
     @Override
     public void execute() {
-        enterDream();
+        if(enterDream())
+            Waiting.waitNormal(800,50);
     }
 }

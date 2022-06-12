@@ -125,6 +125,7 @@ import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
 import scripts.QuestPackages.recruitmentDrive.RecruitmentDrive;
 import scripts.QuestSteps.QuestTask;
+import scripts.QuestUtils.SafetyThread;
 import scripts.QuestUtils.SupportedQuests;
 import scripts.QuestUtils.TaskSet;
 import scripts.QuestUtils.Vars;
@@ -150,6 +151,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
     public static String status = "Initializing";
     public static int gameSettingInt = 0;
     public static List<QuestTask> taskList = new ArrayList<>();
+    private SafetyThread safetyThread = new SafetyThread();
 
     public cQuesterV2() {
         try {
@@ -209,6 +211,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             Combat.setAutoRetaliate(true);
 
         Vars.get().startingQuestPoints = MyPlayer.getQuestPoints();
+
+        safetyThread.start();
 
         TaskSet tasks;
         if (taskList == null) {

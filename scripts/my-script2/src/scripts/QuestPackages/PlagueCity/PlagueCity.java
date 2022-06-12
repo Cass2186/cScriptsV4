@@ -170,12 +170,13 @@ public class PlagueCity implements QuestTask {
         if (Inventory.find(ItemID.PICTURE).length < 1) {
             cQuesterV2.status = "Getting picture";
             General.println("[Debug]: " + cQuesterV2.status);
-            PathingUtil.walkToTile(new RSTile(2576, 3334, 0));
+            if(!PathingUtil.localNav(new LocalTile(2575, 3334, 0)))
+                PathingUtil.walkToTile(new WorldTile(2575, 3334, 0));
             grabPictureOfElena.execute();
         }
     }
 
-    public void step4() {
+    public void talkToEdmondTwo() {
         if (Inventory.find(ItemID.PICTURE).length > 0) {
             cQuesterV2.status = "Talking to Edmond";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -524,7 +525,7 @@ public class PlagueCity implements QuestTask {
         }
         if (Game.getSetting(165) == 2) {
             getPicture();
-            step4();
+            talkToEdmondTwo();
         }
         if (Game.getSetting(165) == 3 ||
                 Game.getSetting(165) == 4 || Game.getSetting(165) == 5
