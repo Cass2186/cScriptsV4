@@ -8,9 +8,12 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
+import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
+import scripts.Requirements.Conditional.NpcCondition;
 import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
@@ -24,6 +27,11 @@ import java.util.Optional;
 
 public class OneSmallFavour implements QuestTask {
 
+    private static OneSmallFavour quest;
+
+    public static OneSmallFavour get() {
+        return quest == null ? quest = new OneSmallFavour() : quest;
+    }
 
     RSArea sanfewRoom = new RSArea(new RSTile(2893, 3423, 1), new RSTile(2903, 3433, 1));
     RSArea hamBase = new RSArea(new RSTile(3140, 9600, 0), new RSTile(3190, 9655, 0));
@@ -87,9 +95,7 @@ public class OneSmallFavour implements QuestTask {
     ItemRequirement guam2MarrTea = new ItemRequirement(ItemID.HERB_TEA_MIX_4480);
     ItemRequirement guam2HarrTea = new ItemRequirement(ItemID.HERB_TEA_MIX_4482);
     ItemRequirement herbTeaMix = new ItemRequirement(ItemID.HERB_TEA_MIX);
-    //	herbTeaMix.addAlternates(ItemID.HERB_TEA_MIX_4466,ItemID.HERB_TEA_MIX_4468,ItemID.HERB_TEA_MIX_4470,
-    //  ItemID.HERB_TEA_MIX_4472,ItemID.HERB_TEA_MIX_4474,ItemID.HERB_TEA_MIX_4476,
-    //  ItemID.HERB_TEA_MIX_4478,ItemID.HERB_TEA_MIX_4480,ItemID.HERB_TEA_MIX_4482);
+
 
     ItemRequirement guthixRest = new ItemRequirement(ItemID.GUTHIX_REST3);
     ItemRequirement sapphire = new ItemRequirement(ItemID.SAPPHIRE);
@@ -125,7 +131,7 @@ public class OneSmallFavour implements QuestTask {
     NPCStep returnToArhein = new NPCStep(NpcID.ARHEIN, new RSTile(2804, 3432, 0),
             new String[]{"I have the weather report for you."}, weatherReport);
 
-    NPCStep returnToBleemadge = new NPCStep("Captain Bleemadge", new RSTile(2847, 3498, 0),
+    NPCStep returnToBleemadge = new NPCStep(6090, new RSTile(2847, 3498, 0),
             new String[]{"Hey there, did you get your T.R.A.S.H?"});
 
     ObjectStep returnUpToSanfew = new ObjectStep(16671, new RSTile(2899, 3429, 0), "Climb-up", Player.getPosition().getPlane() == 1);
@@ -133,7 +139,8 @@ public class OneSmallFavour implements QuestTask {
     NPCStep returnToSanfew = new NPCStep("Sanfew", new RSTile(2899, 3429, 1),
             new String[]{"Hi there, the Gnome Pilot has agreed to take you to see the ogres!"});
 
-    ObjectStep goDownToHammerspikeAgain = new ObjectStep(11867, new RSTile(3019, 3450, 0));
+    ObjectStep goDownToHammerspikeAgain = new ObjectStep(11867, new RSTile(3019, 3450, 0),
+            "Climb-down");
     NPCStep returnToHammerspike = new NPCStep(NpcID.HAMMERSPIKE_STOUTBEARD, new RSTile(2968, 9811, 0));
 
     NPCStep killGangMembers = new NPCStep(NpcID.DWARF_GANG_MEMBER,
@@ -188,9 +195,11 @@ public class OneSmallFavour implements QuestTask {
     NPCStep talkToSeth = new NPCStep(NpcID.SETH_GROATS, new RSTile(3228, 3291, 0), "Talk to Seth Groats in the farm north east of Lumbridge, across the river.");
     NPCStep talkToHorvik = new NPCStep(NpcID.HORVIK, new RSTile(3229, 3437, 0), steelBars3);
     NPCStep talkToApoth = new NPCStep(NpcID.APOTHECARY, new RSTile(3196, 3404, 0), "Talk to the Apothecary in west Varrock.");
-    NPCStep talkToTassie = new NPCStep(NpcID.TASSIE_SLIPCAST, new RSTile(3085, 3409, 0), "Talk to Tassie Slipcast in the Barbarian Village pottery building.");
+    NPCStep talkToTassie = new NPCStep(NpcID.TASSIE_SLIPCAST, new RSTile(3085, 3409, 0),
+            "Talk to Tassie Slipcast in the Barbarian Village pottery building.");
     NPCStep talkToHammerspike = new NPCStep(NpcID.HAMMERSPIKE_STOUTBEARD, new RSTile(2968, 9811, 0), "Talk to Hammerspike Stoutbeard in the west cavern of the Dwarven Mine.");
-    NPCStep talkToSanfew = new NPCStep(NpcID.SANFEW, new RSTile(2899, 3429, 1), "Talk to Sanfew upstairs in the Taverley herblore store.");
+    NPCStep talkToSanfew = new NPCStep(NpcID.SANFEW, new RSTile(2899, 3429, 1),
+            "Talk to Sanfew upstairs in the Taverley herblore store.");
     ObjectStep goDownToJohanhus = new ObjectStep(5492, new RSTile(3166, 3252, 0),
             "Enter the H.A.M hideout west of Lumbridge and talk to Johanhus Ulsbrecht in there.");
 
@@ -198,11 +207,11 @@ public class OneSmallFavour implements QuestTask {
     QuestStep goDownToHammerspike, goUpToSanfew, makeGuthixRest, talkToBleemadge, talkToArhein, talkToPhantuwti, enterGoblinCave,
             searchWall, talkToCromperty, talkToTindel, talkToRantz, talkToGnormadium, talkToBleemadgeNoTea, take1, take2, take3, take4, take5, take6, take7, take8,
             cutSaph, cutJade, cutTopaz, cutOpal, put1, put2, put3, put4, put5, put6, put7, put8, talkToGnormadiumAgain, returnToRantz, returnToTindel, returnToCromperty, getPigeonCages,
-            enterGoblinCaveAgain, standNextToSculpture, readScroll, killSlagilith, readScrollAgain, talkToPetra, returnToPhantuwti, goUpLadder, goUpToRoof, searchVane, useHammerOnVane,
+            enterGoblinCaveAgain, standNextToSculpture, readScroll, killSlagilith, readScrollAgain, talkToPetra, returnToPhantuwti, goUpLadder, goUpToRoof, useHammerOnVane,
             goDownFromRoof, goDownLadderToSeers, useVane123OnAnvil, useVane2OnAnvil, useVane3OnAnvil, goBackUpLadder, goBackUpToRoof, useVane1, useVane2, useVane3,
             goFromRoofToPhantuwti, goDownLadderToPhantuwti, finishWithPhantuwti, returnToPhantuwti2, useVane12OnAnvil, useVane13OnAnvil,
-            useVane23OnAnvil, useVane1OnAnvil, fixAllLamps, searchVaneAgain;
-
+            useVane23OnAnvil, useVane1OnAnvil, fixAllLamps;
+    ObjectStep searchVaneAgain, searchVane;
     UseItemOnItemStep useBowlOnCup, useHerbsOnCup;
 
     public void makePotLid() {
@@ -258,18 +267,66 @@ public class OneSmallFavour implements QuestTask {
     VarbitRequirement addedOrnaments = new VarbitRequirement(255, 1);
     VarbitRequirement addedDirectionals = new VarbitRequirement(254, 1);
     VarbitRequirement addedWeathervanePillar = new VarbitRequirement(253, 1);
-
+    Conditions hasOrUsedDirectionals, hasOrUsedOrnament, hasOrUsedWeathervanePillar;
     Requirement slagilithNearby, petraNearby;
 
 
     public void setupConditions() {
-        //    slagilithNearby = new NpcCondition(NpcID.SLAGILITH);
-        // petraNearby = new NpcCondition(NpcID.PETRA_FIYED);
-        //  hasOrUsedDirectionals = new Conditions(LogicType.OR, addedDirectionals, directionals);
-        // hasOrUsedOrnament = new Conditions(LogicType.OR, addedOrnaments, ornament);
-        //   hasOrUsedWeathervanePillar = new Conditions(LogicType.OR, addedWeathervanePillar, weathervanePillar);
+        slagilithNearby = new NpcCondition(NpcID.SLAGILITH);
+        petraNearby = new NpcCondition(NpcID.PETRA_FIYED);
+        hasOrUsedDirectionals = new Conditions(LogicType.OR, addedDirectionals, directionals);
+        hasOrUsedOrnament = new Conditions(LogicType.OR, addedOrnaments, ornament);
+        hasOrUsedWeathervanePillar = new Conditions(LogicType.OR, addedWeathervanePillar, weathervanePillar);
+        herbTeaMix.addAlternateItemIDs(ItemID.HERB_TEA_MIX_4466, ItemID.HERB_TEA_MIX_4468, ItemID.HERB_TEA_MIX_4470,
+                ItemID.HERB_TEA_MIX_4472, ItemID.HERB_TEA_MIX_4474, ItemID.HERB_TEA_MIX_4476,
+                ItemID.HERB_TEA_MIX_4478, ItemID.HERB_TEA_MIX_4480, ItemID.HERB_TEA_MIX_4482);
     }
 
+    private void makeGuthixRest() {
+        if (org.tribot.script.sdk.Inventory.contains(ItemID.BOWL_OF_HOT_WATER, ItemID.EMPTY_CUP) &&
+                Utils.useItemOnItem(ItemID.BOWL_OF_HOT_WATER, ItemID.EMPTY_CUP)) {
+            Utils.idleNormalAction(true);
+
+        }
+        if (org.tribot.script.sdk.Inventory.contains(ItemID.CUP_OF_HOT_WATER, ItemID.HARRALANDER) &&
+                Utils.useItemOnItem(ItemID.CUP_OF_HOT_WATER, ItemID.HARRALANDER)) {
+            Waiting.waitUntil(2000, 400, () -> org.tribot.script.sdk.Inventory.contains(ItemID.HERB_TEA_MIX));
+            Utils.idleNormalAction(true);
+
+        }
+        if (org.tribot.script.sdk.Inventory.contains(ItemID.HERB_TEA_MIX, ItemID.MARRENTILL) &&
+                Utils.useItemOnItem(ItemID.HERB_TEA_MIX, ItemID.MARRENTILL)) {
+            Waiting.waitUntil(2000, 400, () -> org.tribot.script.sdk.Inventory.contains(ItemID.HERB_TEA_MIX_4470));
+            Utils.idleNormalAction(true);
+
+        }
+        if (Utils.useItemOnItem(ItemID.HERB_TEA_MIX_4470, ItemID.GUAM_LEAF)) {
+            Waiting.waitUntil(2000, 400, () -> org.tribot.script.sdk.Inventory.contains(ItemID.HERB_TEA_MIX_4478));
+            Utils.idleNormalAction(true);
+        }
+        if (Utils.useItemOnItem(ItemID.HERB_TEA_MIX_4478, ItemID.GUAM_LEAF)) {
+            Waiting.waitUntil(2000, 400, () -> org.tribot.script.sdk.Inventory.contains(ItemID.GUTHIX_REST4));
+            Utils.idleNormalAction(true);
+        }
+    }
+
+    private void killSlagilith() {
+        WorldTile castTile = new WorldTile(2616, 9835, 0);
+        enterGoblinCaveAgain = new ObjectStep(ObjectID.CAVE_ENTRANCE, new RSTile(2624, 3391, 0),
+                "Enter", pigeonCages5, animateRockScroll);
+        standNextToSculpture = new UseItemOnObjectStep(ItemID.ANIMATE_ROCK_SCROLL, -1,
+                new RSTile(2616, 9835, 0),
+                "Use the animate rock scroll next to the sculpture in the north east cavern.", animateRockScroll);
+        readScroll = new ClickItemStep(ItemID.ANIMATE_ROCK_SCROLL, "Read");
+        if (PathingUtil.walkToTile(castTile)) {
+            PathingUtil.movementIdle();
+        }
+        if (!castTile.equals(MyPlayer.getTile()) && castTile.interact("Walk here")) {
+            PathingUtil.movementIdle();
+        }
+
+        standNextToSculpture.addSubSteps(readScroll);
+    }
 
     public void setupSteps() {
         talkToYanni.addDialogStep("Is there anything else interesting to do around here?", "Ok, see you in a tick!");
@@ -300,14 +357,16 @@ public class OneSmallFavour implements QuestTask {
 
         talkToTassie.addDialogStep("Ok, I'll deal with Hammerspike!");
 
-        // goDownToHammerspike = new ObjectStep(ObjectID.TRAPDOOR_11867, new RSTile(3019, 3450, 0), "Go into the Dwarven Mine and talk to Hammerspike Stoutbeard in the west side.");
+        goDownToHammerspike = new ObjectStep(ObjectID.TRAPDOOR_11867, new RSTile(3019, 3450, 0),
+                "Climb-down");
         talkToHammerspike.addDialogStep("Have you always been a gangster?");
         talkToHammerspike.addDialogStep("Ok, another favour...I think I can manage that.");
         //  talkToHammerspike.addSubSteps(goDownToHammerspike);
 
         //  goUpToSanfew = new ObjectStep(ObjectID.STAIRCASE_16671, new RSTile(2899, 3429, 0), "Talk to Sanfew upstairs in the Taverley herblore store.");
         talkToSanfew.addDialogStep("Are you taking any new initiates?");
-        talkToSanfew.addDialogStepWithExclusion("Do you accept dwarves?", "A dwarf I know wants to become an initiate.");
+        talkToSanfew.addDialogStep("A dwarf I know wants to become an initiate.", "Do you accept dwarves?");
+        // "A dwarf I know wants to become an initiate.");
         talkToSanfew.addDialogStep("A dwarf I know wants to become an initiate.", "Yep, it's a deal.");
 
         UseItemOnItemStep useBowlOnCup = new UseItemOnItemStep(hotWaterBowl.getId(),
@@ -328,14 +387,15 @@ public class OneSmallFavour implements QuestTask {
                 herbTeaMix.hideConditioned(new Conditions(LogicType.NOR, guamTea, harrTea, marrTea, harrMarrTea,
                         guamHarrTea, guam2Tea, guam2MarrTea, guamMarrTea, guam2HarrTea, guamHarrMarrTea)).highlighted());
         makeGuthixRest = new DetailedQuestStep("Make Guthix Rest by using a bowl of hot water on an empty tea cup, then using 2 guams, a marrentill and a harralander on it.", emptyCup, hotWaterBowl, guam2, marrentill, harralander);
-        makeGuthixRest.addSubSteps(useBowlOnCup, useHerbsOnCup);
-        NPCStep   talkToBleemadge = new NPCStep(NpcID.CAPTAIN_BLEEMADGE, new RSTile(2847, 3498, 0), "Talk to Captain Bleemadge on White Wolf Mountain.", guthixRest);
+        makeGuthixRest.addSubSteps(useBowlOnCup, useHerbsOnCup);**/
+        talkToBleemadge = new NPCStep("Captain Bleemadge", new RSTile(2847, 3498, 0), guthixRest);
         ((NPCStep) talkToBleemadge).addAlternateNpcs(NpcID.CAPTAIN_BLEEMADGE_10461, NpcID.CAPTAIN_BLEEMADGE_10462,
                 NpcID.CAPTAIN_BLEEMADGE_10463, NpcID.CAPTAIN_BLEEMADGE_10464, NpcID.CAPTAIN_BLEEMADGE_10465,
                 NpcID.CAPTAIN_BLEEMADGE_10466);
         talkToBleemadge.addDialogStep("I have a special tea here for you from Sanfew!");
+        talkToBleemadge.addDialogStep("Ok, I'll go and get you some T.R.A.S.H.");
 
-        NPCStep  talkToBleemadgeNoTea = new NPCStep(NpcID.CAPTAIN_BLEEMADGE, new RSTile(2847, 3498, 0), "Talk to Captain Bleemadge on White Wolf Mountain.");
+        talkToBleemadgeNoTea = new NPCStep("Captain Bleemadge", new RSTile(2847, 3498, 0));
         ((NPCStep) talkToBleemadgeNoTea).addAlternateNpcs(NpcID.CAPTAIN_BLEEMADGE_10461, NpcID.CAPTAIN_BLEEMADGE_10462,
                 NpcID.CAPTAIN_BLEEMADGE_10463, NpcID.CAPTAIN_BLEEMADGE_10464, NpcID.CAPTAIN_BLEEMADGE_10465,
                 NpcID.CAPTAIN_BLEEMADGE_10466);
@@ -344,54 +404,73 @@ public class OneSmallFavour implements QuestTask {
 
         talkToBleemadge.addSubSteps(talkToBleemadgeNoTea);
 
-        NPCStep  talkToArhein = new NPCStep(NpcID.ARHEIN, new RSTile(2804, 3432, 0), "Talk to Arhein in Catherby.");
+        talkToArhein = new NPCStep(NpcID.ARHEIN, new RSTile(2804, 3432, 0), "Talk to Arhein in Catherby.");
         talkToArhein.addDialogStep("I need to talk T.R.A.S.H to you.");
         talkToArhein.addDialogStep("Yes, Ok, I'll do it!");
 
-        NPCStep  talkToPhantuwti = new NPCStep(NpcID.PHANTUWTI_FANSTUWI_FARSIGHT, new RSTile(2702, 3473, 0), "Talk to Phantuwti in the south west house of Seers' Village.");
+        talkToPhantuwti = new NPCStep(NpcID.PHANTUWTI_FANSTUWI_FARSIGHT, new RSTile(2702, 3473, 0), "Talk to Phantuwti in the south west house of Seers' Village.");
         talkToPhantuwti.addDialogStep("Hi, can you give me a weather forecast?");
         talkToPhantuwti.addDialogStep("What can I do to help?");
         talkToPhantuwti.addDialogStep("Yes, Ok, I'll do it.");
 
-        ObjectStep   enterGoblinCave = new ObjectStep(ObjectID.CAVE_ENTRANCE, new RSTile(2624, 3393, 0), "Enter the cave south east of the Fishing Guild.");
-        ObjectStep  searchWall = new ObjectStep(ObjectID.SCULPTURE, new RSTile(2621, 9835, 0), "Right-click search the sculpture in the wall in the north east corner of the cave.");
+        enterGoblinCave = new ObjectStep(ObjectID.CAVE_ENTRANCE, new RSTile(2624, 3392, 0),
+                "Enter");
+        searchWall = new ObjectStep(ObjectID.SCULPTURE, new RSTile(2621, 9835, 0),
+                "Search");
 
-        NPCStep talkToCromperty = new NPCStep(NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0),
+        talkToCromperty = new NPCStep(NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0),
                 "Talk to Wizard Cromperty in north east Ardougne.");
         talkToCromperty.addDialogStep("I need to talk to you about a girl stuck in some rock!");
         talkToCromperty.addDialogStep("Oh! Ok, one more 'small favour' isn't going to kill me...I hope!");
 
-        NPCStep talkToTindel = new NPCStep(NpcID.TINDEL_MARCHANT, new RSTile(2678, 3153, 0), "Talk to Tindel Marchant in Port Khazard.");
+        talkToTindel = new NPCStep(NpcID.TINDEL_MARCHANT, new RSTile(2678, 3153, 0),
+                "Talk to Tindel Marchant in Port Khazard.");
         talkToTindel.addDialogStep("Wizard Cromperty sent me to get some iron oxide.", "Ask about iron oxide.", "Okay, I'll do it!");
 
-        NPCStep talkToRantz = new NPCStep("Rantz", new RSTile(2631, 2969, 0));
+        talkToRantz = new NPCStep("Rantz", new RSTile(2631, 2969, 0));
         talkToRantz.addDialogStep("I need to talk to you about a mattress.");
         talkToRantz.addDialogStep("Ok, I'll see what I can do.");
 
-        NPCStep talkToGnormadium = new NPCStep(NpcID.GNORMADIUM_AVLAFRIM, new RSTile(2542, 2968, 0), "Talk to Gnormadium Avlafrim west of Rantz.");
+        talkToGnormadium = new NPCStep("Gnormadium Avlafrim", new RSTile(2542, 2968, 0));
         talkToGnormadium.addDialogStep("Rantz said I should help you finish this project.");
         talkToGnormadium.addDialogStep("Yes, I'll take a look at them.");
-**/
-        take1 = new ObjectStep(NullObjectID.NULL_5820, new RSTile(2554, 2974, 0), "Take a jade from the north east landing light.");
-        take2 = new ObjectStep(NullObjectID.NULL_5822, new RSTile(2551, 2974, 0), "Take a red topaz from the landing light.");
-        take3 = new ObjectStep(NullObjectID.NULL_5821, new RSTile(2548, 2974, 0), "Take an opal from the landing light.");
-        take4 = new ObjectStep(NullObjectID.NULL_5823, new RSTile(2545, 2974, 0), "Take a sapphire from the landing light.");
 
-        take5 = new ObjectStep(NullObjectID.NULL_5820, new RSTile(2554, 2969, 0), "Take a jade from the landing light.");
-        take6 = new ObjectStep(NullObjectID.NULL_5822, new RSTile(2551, 2969, 0), "Take a red topaz from the landing light.");
-        take7 = new ObjectStep(NullObjectID.NULL_5821, new RSTile(2548, 2969, 0), "Take an opal from the landing light.");
-        take8 = new ObjectStep(NullObjectID.NULL_5823, new RSTile(2545, 2969, 0), "Take a sapphire from the landing light.");
+        take1 = new ObjectStep(NullObjectID.NULL_5820, new RSTile(2554, 2975, 0),
+                "Search");
+        take2 = new ObjectStep(NullObjectID.NULL_5822, new RSTile(2551, 2975, 0),
+                "Search");
+        take3 = new ObjectStep(NullObjectID.NULL_5821, new RSTile(2548, 2975, 0),
+                "Search");
+        take4 = new ObjectStep(NullObjectID.NULL_5823, new RSTile(2545, 2975, 0),
+                "Search");
 
-        put1 = new ObjectStep(NullObjectID.NULL_5820, new RSTile(2554, 2974, 0), "Put a jade from the north east landing light.", jade);
-        put2 = new ObjectStep(NullObjectID.NULL_5822, new RSTile(2551, 2974, 0), "Put a red topaz from the landing light.", redTopaz);
-        put3 = new ObjectStep(NullObjectID.NULL_5821, new RSTile(2548, 2974, 0), "Put an opal from the landing light.", opal);
-        put4 = new ObjectStep(NullObjectID.NULL_5823, new RSTile(2545, 2974, 0), "Put a sapphire from the landing light.", sapphire);
+        take5 = new ObjectStep(NullObjectID.NULL_5820, new RSTile(2554, 2970, 0),
+                "Search");
+        take6 = new ObjectStep(NullObjectID.NULL_5822, new RSTile(2551, 2970, 0),
+                "Search");
+        take7 = new ObjectStep(NullObjectID.NULL_5821, new RSTile(2548, 2970, 0),
+                "Search");
+        take8 = new ObjectStep(NullObjectID.NULL_5823, new RSTile(2545, 2970, 0),
+                "Search");
+
+        put1 = new UseItemOnObjectStep(ItemID.JADE, NullObjectID.NULL_5820, new RSTile(2554, 2975, 0),
+                "Put a jade from the north east landing light.", jade);
+        put2 = new UseItemOnObjectStep(ItemID.RED_TOPAZ, NullObjectID.NULL_5822, new RSTile(2551, 2975, 0),
+                "Put a red topaz from the landing light.", redTopaz);
+        put3 = new UseItemOnObjectStep(ItemID.OPAL, NullObjectID.NULL_5821, new RSTile(2548, 2975, 0),
+                "Put an opal from the landing light.", opal);
+        put4 = new UseItemOnObjectStep(ItemID.SAPPHIRE, NullObjectID.NULL_5823, new RSTile(2545, 2975, 0),
+                "Put a sapphire from the landing light.", sapphire);
 
 
-        put5 = new ObjectStep(NullObjectID.NULL_5820, new RSTile(2554, 2969, 0), "Put a jade from the landing light.", jade);
-        put6 = new ObjectStep(NullObjectID.NULL_5822, new RSTile(2551, 2969, 0), "Put a red topaz from the landing light.", redTopaz);
-        put7 = new ObjectStep(NullObjectID.NULL_5821, new RSTile(2548, 2969, 0), "Put an opal from the landing light.", opal);
-        put8 = new ObjectStep(NullObjectID.NULL_5823, new RSTile(2545, 2969, 0), "Put a sapphire from the landing light.", sapphire);
+        put5 = new UseItemOnObjectStep(ItemID.JADE, NullObjectID.NULL_5820, new RSTile(2554, 2970, 0),
+                ChatScreen.isOpen(), jade);
+        put6 = new UseItemOnObjectStep(ItemID.RED_TOPAZ, NullObjectID.NULL_5822, new RSTile(2551, 2970, 0),
+                ChatScreen.isOpen(), redTopaz);
+        put7 = new UseItemOnObjectStep(ItemID.OPAL, NullObjectID.NULL_5821, new RSTile(2548, 2970, 0),
+                ChatScreen.isOpen(), opal);
+        put8 = new UseItemOnObjectStep(ItemID.SAPPHIRE, NullObjectID.NULL_5823, new RSTile(2545, 2970, 0),
+                ChatScreen.isOpen(), sapphire);
 
         cutJade = new UseItemOnItemStep(chisel.getId(), uncutJade.getId(),
                 MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.UNCUT_JADE));
@@ -418,9 +497,10 @@ public class OneSmallFavour implements QuestTask {
                 ironOxide);
         returnToCromperty.addDialogStep("I have that iron oxide you asked for!");
 
-        getPigeonCages = new GroundItemStep(ItemID.PIGEON_CAGE, new RSTile(2618, 3325, 0), pigeonCages5);
+        getPigeonCages = new GroundItemStep(ItemID.PIGEON_CAGE, new RSTile(2618, 3325, 0));
 
-        enterGoblinCaveAgain = new ObjectStep(ObjectID.CAVE_ENTRANCE, new RSTile(2624, 3393, 0), "Enter the cave south east of the Fishing Guild. Be prepared to fight the Slagilith (level 92).", pigeonCages5, animateRockScroll);
+        enterGoblinCaveAgain = new ObjectStep(ObjectID.CAVE_ENTRANCE, new RSTile(2624, 3391, 0),
+                "Enter", pigeonCages5, animateRockScroll);
         standNextToSculpture = new UseItemOnObjectStep(ItemID.ANIMATE_ROCK_SCROLL, -1,
                 new RSTile(2616, 9835, 0),
                 "Use the animate rock scroll next to the sculpture in the north east cavern.", animateRockScroll);
@@ -428,7 +508,8 @@ public class OneSmallFavour implements QuestTask {
 
         standNextToSculpture.addSubSteps(readScroll);
 
-        killSlagilith = new NPCStep(NpcID.SLAGILITH, new RSTile(2617, 9837, 0), "Kill the Slagilith.");
+        killSlagilith = new NPCStep(NpcID.SLAGILITH, new RSTile(2617, 9837, 0),
+                "Kill the Slagilith.");
         readScrollAgain = new ClickItemStep(ItemID.ANIMATE_ROCK_SCROLL, "Read");
         talkToPetra = new NPCStep(NpcID.PETRA_FIYED, new RSTile(2617, 9837, 0), "Talk to Petra Fiyed.");
 
@@ -438,49 +519,80 @@ public class OneSmallFavour implements QuestTask {
         //  returnToPhantuwti.addDialogStepWithExclusion("Why can't you get a clear picture?", "I'll run you through if you don't give me that weather report.");
 
         returnToPhantuwti2 = new NPCStep(NpcID.PHANTUWTI_FANSTUWI_FARSIGHT, new RSTile(2702, 3473, 0), "Return to Phantuwti in the south west house of Seers' Village.");
-        returnToPhantuwti2.addDialogStep("I'll run you through if you don't give me that weather report.");
-        //   returnToPhantuwti2.addDialogStepWithExclusion("Why can't you get a clear picture?", "I'll run you through if you don't give me that weather report.");
+        //returnToPhantuwti2.("I'll run you through if you don't give me that weather report.");
+        returnToPhantuwti2.addDialogStep("I'll run you through if you don't give me that weather report.",
+                "Why can't you get a clear picture?"
+        );
         returnToPhantuwti2.addDialogStep("Which special Seers tools do you mean?");
         returnToPhantuwti2.addDialogStep("What do you mean, 'special combination of items'?");
 
         returnToPhantuwti.addSubSteps(returnToPhantuwti2);
 
-        goUpLadder = new ObjectStep(ObjectID.LADDER_25941, new RSTile(2699, 3476, 0), "Go up the ladder nearby.");
-        goUpToRoof = new ObjectStep(ObjectID.LADDER_26118, new RSTile(2715, 3472, 1), "Go up to the roof.");
-        searchVane = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3476, 3), "Right-click search the weathervane on top of the Seers' building.");
+        goUpLadder = new ObjectStep(ObjectID.LADDER_25941, new RSTile(2699, 3475, 0),
+                "Climb-up");
+        goUpToRoof = new ObjectStep(ObjectID.LADDER_26118, new RSTile(2714, 3472, 1),
+                "Climb-up");
+        searchVane = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3475, 3),
+                "Search");
+        searchVane.setUseLocalNav(true);
         searchVane.addSubSteps(goUpLadder, goUpToRoof);
-        useHammerOnVane = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3476, 3), "Use a hammer on the weathervane.", hammerHighlight);
+        useHammerOnVane = new UseItemOnObjectStep(ItemID.HAMMER,
+                NullObjectID.NULL_5811, new RSTile(2702, 3475, 3),
+                "Use a hammer on the weathervane.", hammerHighlight);
 
-        searchVaneAgain = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3476, 3), "Right-click search the weathervane on top of the Seers' building again.");
+        searchVaneAgain = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3475, 3),
+                "Search");
+        searchVaneAgain.setUseLocalNav(true);
 
         goDownFromRoof = new ObjectStep(ObjectID.TRAPDOOR_26119, new RSTile(2715, 3472, 3), "Climb down from the roof.");
         goDownLadderToSeers = new ObjectStep(ObjectID.LADDER_25939, new RSTile(2715, 3470, 1), "Repair the vane parts on the anvil in north Seers' Village.");
-        useVane123OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane1, brokenVane2, brokenVane3, hammer, steelBar, ironBar, bronzeBar);
-        useVane12OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane1, brokenVane2, hammer, steelBar, bronzeBar);
-        useVane13OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane1, brokenVane3, hammer, ironBar, bronzeBar);
-        useVane23OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane2, brokenVane3, hammer, ironBar, bronzeBar);
-        useVane1OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane1, hammer, steelBar);
-        useVane2OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane2, hammer, bronzeBar);
-        useVane3OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3495, 0), "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane3, hammer, ironBar);
+        useVane123OnAnvil = new UseItemOnObjectStep(ItemID.BROKEN_VANE_PART, ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.",
+                brokenVane1, brokenVane2, brokenVane3, hammer, steelBar, ironBar, bronzeBar);
+        useVane12OnAnvil = new UseItemOnObjectStep(ItemID.BROKEN_VANE_PART_4431, ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.",
+                brokenVane1, brokenVane2, hammer, steelBar, bronzeBar);
+        useVane13OnAnvil = new UseItemOnObjectStep(ItemID.BROKEN_VANE_PART_4433, ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane1, brokenVane3, hammer, ironBar, bronzeBar);
+        useVane23OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.",
+                brokenVane2, brokenVane3, hammer, ironBar, bronzeBar);
+        useVane1OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.",
+                brokenVane1, hammer, steelBar);
+        useVane2OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane2, hammer, bronzeBar);
+        useVane3OnAnvil = new ObjectStep(ObjectID.ANVIL_2097, new RSTile(2712, 3494, 0),
+                "Repair the vane parts on an anvil. You can find one in the north of Seers' Village.", brokenVane3, hammer, ironBar);
         useVane123OnAnvil.addSubSteps(goDownFromRoof, goDownLadderToSeers, useVane1OnAnvil, useVane2OnAnvil, useVane3OnAnvil, useVane12OnAnvil, useVane13OnAnvil, useVane23OnAnvil);
 
-        goBackUpLadder = new ObjectStep(ObjectID.LADDER_25941, new RSTile(2699, 3476, 0), "Go back up to the Seers' roof and fix the vane.");
-        goBackUpToRoof = new ObjectStep(ObjectID.LADDER_26118, new RSTile(2715, 3472, 1), "Go back up to the Seers' roof and fix the vane.");
-        useVane1 = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3476, 3), "Use the ornament on the weathervane.", ornament);
-        useVane2 = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3476, 3), "Use the directionals on the weathervane.", directionals);
-        useVane3 = new ObjectStep(NullObjectID.NULL_5811, new RSTile(2702, 3476, 3), "Use the weathervane pillar on the weathervane.", weathervanePillar);
+        goBackUpLadder = new ObjectStep(ObjectID.LADDER_25941, new RSTile(2699, 3475, 0),
+                "Climb-up");
+        goBackUpToRoof = new ObjectStep(ObjectID.LADDER_26118, new RSTile(2714, 3472, 1),
+                "Climb-up");
+        useVane1 = new UseItemOnObjectStep(ItemID.ORNAMENT, NullObjectID.NULL_5811, new RSTile(2702, 3474, 3),
+                "Use the ornament on the weathervane.", ornament);
+        useVane2 = new UseItemOnObjectStep(directionals.getId(), NullObjectID.NULL_5811, new RSTile(2702, 3474, 3),
+                "Use the directionals on the weathervane.", directionals);
+        useVane3 = new UseItemOnObjectStep(weathervanePillar.getId(), NullObjectID.NULL_5811,
+                new RSTile(2702, 3474, 3),
+                "Use the weathervane pillar on the weathervane.", weathervanePillar);
         goBackUpLadder.addSubSteps(goBackUpToRoof, useVane1, useVane2, useVane3);
 
-        goFromRoofToPhantuwti = new ObjectStep(ObjectID.TRAPDOOR_26119, new RSTile(2715, 3472, 3), "Return to Phantuwti.");
-        goDownLadderToPhantuwti = new ObjectStep(ObjectID.LADDER_25940, new RSTile(2699, 3476, 1), "Return to Phantuwti.");
-        finishWithPhantuwti = new NPCStep(NpcID.PHANTUWTI_FANSTUWI_FARSIGHT, new RSTile(2702, 3473, 0), "Return to Phantuwti in the south west house of Seers' Village.");
+        goFromRoofToPhantuwti = new ObjectStep(ObjectID.TRAPDOOR_26119, new RSTile(2715, 3471, 3),
+                "Climb-down");
+        goDownLadderToPhantuwti = new ObjectStep(ObjectID.LADDER_25940, new RSTile(2699, 3475, 1),
+                "Climb-down");
+        finishWithPhantuwti = new NPCStep(NpcID.PHANTUWTI_FANSTUWI_FARSIGHT, new RSTile(2702, 3473, 0),
+                "Return to Phantuwti in the south west house of Seers' Village.");
         finishWithPhantuwti.addSubSteps(goFromRoofToPhantuwti, goDownLadderToPhantuwti);
         finishWithPhantuwti.addDialogStep("I've fixed the weather vane!");
 
         returnToArhein = new NPCStep(NpcID.ARHEIN, new RSTile(2804, 3432, 0), weatherReport);
         returnToArhein.addDialogStep("I have the weather report for you.");
 
-        returnToBleemadge = new NPCStep(NpcID.CAPTAIN_BLEEMADGE, new RSTile(2847, 3498, 0), "Talk to Captain Bleemadge on White Wolf Mountain.");
+        returnToBleemadge = new NPCStep(6090, new RSTile(2847, 3498, 0),
+                "Talk to Captain Bleemadge on White Wolf Mountain.");
         returnToBleemadge.addDialogStep("Hey there, did you get your T.R.A.S.H?");
         ((NPCStep) returnToBleemadge).addAlternateNpcs(NpcID.CAPTAIN_BLEEMADGE_10461, NpcID.CAPTAIN_BLEEMADGE_10462,
                 NpcID.CAPTAIN_BLEEMADGE_10463, NpcID.CAPTAIN_BLEEMADGE_10464, NpcID.CAPTAIN_BLEEMADGE_10465,
@@ -494,9 +606,13 @@ public class OneSmallFavour implements QuestTask {
         returnToHammerspike = new NPCStep(NpcID.HAMMERSPIKE_STOUTBEARD, new RSTile(2968, 9811, 0), "Return to Hammerspike Stoutbeard in the west cavern of the Dwarven Mine.");
         // returnToHammerspike.addSubSteps(goDownToHammerspikeAgain);
 
-        killGangMembers = new NPCStep(NpcID.DWARF_GANG_MEMBER, new RSTile(2968, 9811, 0), "Kill dwarf gang members until Hammerspike gives in.");
+        killGangMembers = new NPCStep(NpcID.DWARF_GANG_MEMBER, new RSTile(2968, 9811, 0),
+                "Kill dwarf gang members until Hammerspike gives in.");
+        killGangMembers.setInteractionString("Attack");
+
         talkToHammerspikeFinal = new NPCStep(NpcID.HAMMERSPIKE_STOUTBEARD, new RSTile(2968, 9811, 0), "Return to Hammerspike Stoutbeard in the west cavern of the Dwarven Mine.");
-        returnToTassie = new NPCStep(NpcID.TASSIE_SLIPCAST, new RSTile(3085, 3409, 0), "Return to Tassie Slipcast in the Barbarian Village pottery building.");
+        returnToTassie = new NPCStep(NpcID.TASSIE_SLIPCAST, new RSTile(3085, 3409, 0),
+                "Return to Tassie Slipcast in the Barbarian Village pottery building.");
 
 
         returnToApothecary = new NPCStep(NpcID.APOTHECARY, new RSTile(3196, 3404, 0), potWithLid);
@@ -516,17 +632,19 @@ public class OneSmallFavour implements QuestTask {
                 "Return to Brian in the Port Sarim axe shop.");
         returnToBrian.addDialogStep("I've returned with good news.");
 
-        returnToForester.addDialogStep("Good news, I have your sharpened axe!");
-        returnToYanni.addDialogStep("Here's the red mahogany you asked for.");
+        // returnToForester.addDialogStep("Good news, I have your sharpened axe!");
+        //  returnToYanni.addDialogStep("Here's the red mahogany you asked for.");
     }
 
     public void finishQuest() {
         returnToYanni.execute();
         for (int i = 0; i < 4; i++) {
-            NPCInteraction.waitForConversationWindow();
+            Waiting.waitUntil(3500, 500, () -> ChatScreen.isOpen());
 
-            if (NPCInteraction.isConversationWindowUp())
-                NPCInteraction.handleConversation();
+            if (ChatScreen.isOpen()) {
+                NpcChat.handle(true);
+                Waiting.waitUntil(3500, 500, () -> !ChatScreen.isOpen());
+            }
 
         }
     }
@@ -563,16 +681,16 @@ public class OneSmallFavour implements QuestTask {
 
         steps.put(65, talkToTassie);
 
-        ConditionalStep goTalkToHammerspike = new ConditionalStep( goDownToHammerspike);
-        goTalkToHammerspike.addStep(inDwarvenMine, talkToHammerspike);
-        steps.put(70, goTalkToHammerspike);
+        //ConditionalStep goTalkToHammerspike = new ConditionalStep(goDownToHammerspike);
+        //   goTalkToHammerspike.addStep(inDwarvenMine, talkToHammerspike);
+        steps.put(70, talkToHammerspike);
 
-        ConditionalStep goTalkToSanfew = new ConditionalStep( goUpToSanfew);
-        goTalkToSanfew.addStep(inSanfewRoom, talkToSanfew);
+        // ConditionalStep goTalkToSanfew = new ConditionalStep(goUpToSanfew);
+        //    goTalkToSanfew.addStep(inSanfewRoom, talkToSanfew);
 
-        steps.put(75, goTalkToSanfew);
+        steps.put(75, talkToSanfew);
 
-        ConditionalStep makeGuthixRestForGnome = new ConditionalStep( useBowlOnCup);
+        ConditionalStep makeGuthixRestForGnome = new ConditionalStep(useBowlOnCup);
         makeGuthixRestForGnome.addStep(guthixRest, talkToBleemadge);
         makeGuthixRestForGnome.addStep(new Conditions(LogicType.OR, herbTeaMix, cupOfWater), useHerbsOnCup);
 
@@ -580,7 +698,7 @@ public class OneSmallFavour implements QuestTask {
         steps.put(81, makeGuthixRestForGnome);
         steps.put(82, makeGuthixRestForGnome);
         steps.put(83, makeGuthixRestForGnome);
-        steps.put(84, makeGuthixRestForGnome);
+        steps.put(84, talkToBleemadge);
 
         steps.put(86, talkToBleemadgeNoTea);
 
@@ -588,7 +706,7 @@ public class OneSmallFavour implements QuestTask {
 
         steps.put(90, talkToPhantuwti);
 
-        ConditionalStep investigateWall = new ConditionalStep( enterGoblinCave);
+        ConditionalStep investigateWall = new ConditionalStep(enterGoblinCave);
         investigateWall.addStep(inGoblinCave, searchWall);
 
         steps.put(95, investigateWall);
@@ -601,7 +719,7 @@ public class OneSmallFavour implements QuestTask {
 
         steps.put(115, talkToGnormadium);
 
-        ConditionalStep repairLights = new ConditionalStep( take1);
+        ConditionalStep repairLights = new ConditionalStep(take1);
         repairLights.addStep(new Conditions(lamp1Full, lamp2Full, lamp3Full, lamp4Full, lamp5Full, lamp6Full, lamp7Full, lamp8Empty, sapphire), put8);
         repairLights.addStep(new Conditions(lamp1Full, lamp2Full, lamp3Full, lamp4Full, lamp5Full, lamp6Full, lamp7Full, lamp8Empty), cutSaph);
         repairLights.addStep(new Conditions(lamp1Full, lamp2Full, lamp3Full, lamp4Full, lamp5Full, lamp6Full, lamp7Full), take8);
@@ -637,7 +755,7 @@ public class OneSmallFavour implements QuestTask {
 
         steps.put(140, returnToCromperty);
 
-        ConditionalStep fightSlagilith = new ConditionalStep( getPigeonCages);
+        ConditionalStep fightSlagilith = new ConditionalStep(getPigeonCages);
         fightSlagilith.addStep(slagilithNearby, killSlagilith);
         fightSlagilith.addStep(inScrollSpot, readScroll);
         fightSlagilith.addStep(inGoblinCave, standNextToSculpture);
@@ -646,7 +764,7 @@ public class OneSmallFavour implements QuestTask {
         steps.put(145, fightSlagilith);
         steps.put(150, fightSlagilith);
 
-        ConditionalStep freePetra = new ConditionalStep( getPigeonCages);
+        ConditionalStep freePetra = new ConditionalStep(getPigeonCages);
         freePetra.addStep(petraNearby, talkToPetra);
         freePetra.addStep(inScrollSpot, readScroll);
         freePetra.addStep(inGoblinCave, standNextToSculpture);
@@ -659,26 +777,26 @@ public class OneSmallFavour implements QuestTask {
         steps.put(165, returnToPhantuwti2);
         steps.put(170, returnToPhantuwti2);
 
-        ConditionalStep repairVane = new ConditionalStep( goUpLadder);
+        ConditionalStep repairVane = new ConditionalStep(goUpLadder);
         repairVane.addStep(onRoof, searchVane);
         repairVane.addStep(inSeersVillageUpstairs, goUpToRoof);
 
         steps.put(175, repairVane);
 
-        ConditionalStep hitVane = new ConditionalStep( goUpLadder);
+        ConditionalStep hitVane = new ConditionalStep(goUpLadder);
         hitVane.addStep(onRoof, useHammerOnVane);
         hitVane.addStep(inSeersVillageUpstairs, goUpToRoof);
 
         steps.put(176, hitVane);
 
-        ConditionalStep getVaneBits = new ConditionalStep( goUpLadder);
+        ConditionalStep getVaneBits = new ConditionalStep(goUpLadder);
         getVaneBits.addStep(onRoof, searchVaneAgain);
         getVaneBits.addStep(inSeersVillageUpstairs, goUpToRoof);
 
         steps.put(177, getVaneBits);
 
-        ConditionalStep repairVaneParts = new ConditionalStep( useVane123OnAnvil);
-/*
+        ConditionalStep repairVaneParts = new ConditionalStep(useVane123OnAnvil);
+
         repairVaneParts.addStep(new Conditions(addedOrnaments, addedDirectionals, weathervanePillar, onRoof), useVane3);
         repairVaneParts.addStep(new Conditions(addedOrnaments, directionals, onRoof), useVane2);
         repairVaneParts.addStep(new Conditions(ornament, onRoof), useVane1);
@@ -694,8 +812,8 @@ public class OneSmallFavour implements QuestTask {
         repairVaneParts.addStep(hasOrUsedDirectionals, useVane23OnAnvil);
 
         steps.put(180, repairVaneParts);
-*/
-        ConditionalStep reportBackToPhantuwti = new ConditionalStep( finishWithPhantuwti);
+
+        ConditionalStep reportBackToPhantuwti = new ConditionalStep(finishWithPhantuwti);
         reportBackToPhantuwti.addStep(inSeersVillageUpstairs, goDownLadderToPhantuwti);
         reportBackToPhantuwti.addStep(onRoof, goFromRoofToPhantuwti);
 
@@ -738,10 +856,10 @@ public class OneSmallFavour implements QuestTask {
 
         steps.put(250, returnToSeth);
 
-        ConditionalStep goFinishWithJohanhus = new ConditionalStep(returnDownToJohnahus);
-        goFinishWithJohanhus.addStep(inHamBase, returnToJohnahus);
+        //  ConditionalStep goFinishWithJohanhus = new ConditionalStep(returnDownToJohnahus);
+        // goFinishWithJohanhus.addStep(inHamBase, returnToJohnahus);
 
-        steps.put(255, goFinishWithJohanhus);
+        steps.put(255, returnToJohnahus);
 
         steps.put(260, returnToAggie);
 
@@ -777,8 +895,7 @@ public class OneSmallFavour implements QuestTask {
         cQuesterV2.status = "Returning to hammerspike";
         returnToHammerspike.execute();
         cQuesterV2.status = "Killing gang members";
-         killGangMembers.setInteractionString("Attack");
-            killGangMembers.execute();
+
         cQuesterV2.status = "Returning to Hammerspike final";
         talkToHammerspikeFinal.execute();
         cQuesterV2.status = "Returning to Tassie";
@@ -793,18 +910,30 @@ public class OneSmallFavour implements QuestTask {
         returnToBrian.execute();
         returnToForester.execute();
 
-        finishQuest();*/
+       */
+
         int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_ONE_SMALL_FAVOUR.getId());
         if (!checkRequirements() || isComplete()) {
             Log.info("Complete or Missing requirement(s) for One small favour");
             cQuesterV2.taskList.remove(this);
             return;
         }
+        if (gameSetting == 80) {
+            Log.info("Making Guthix rest");
+            makeGuthixRest();
+            return;
+        } else if (gameSetting == 235) {
+            makePotLid();
+            gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_ONE_SMALL_FAVOUR.getId());
+        } else if (gameSetting == 275) {
+            finishQuest();
+        }
 
-        Log.info("[Debug]: The One small favour game setting is " + gameSetting);
+
+        Log.info("The One small favour game setting is " + gameSetting);
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
-
+        step.ifPresent(QuestStep::execute);
         if (ChatScreen.isOpen())
             NpcChat.handle();
 
@@ -813,12 +942,12 @@ public class OneSmallFavour implements QuestTask {
 
     @Override
     public String questName() {
-        return "One small Favour (" + GameState.getSetting(QuestVarPlayer.QUEST_ONE_SMALL_FAVOUR.getId())+ ")";
+        return "One small Favour (" + GameState.getSetting(QuestVarPlayer.QUEST_ONE_SMALL_FAVOUR.getId()) + ")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
     }
 
     @Override

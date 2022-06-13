@@ -236,8 +236,8 @@ public class NPCStep extends DetailedQuestStep {
             listChatOptions = new ArrayList<>();
         }
         // Log.debug("Adding dialog " + dialog);
-        listChatOptions.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
-        //  Collections.addAll(listChatOptions, dialog);
+       // listChatOptions.addAll(Arrays.stream(dialog).collect(Collectors.toList()));
+        Collections.addAll(listChatOptions, dialog);
     }
 
 

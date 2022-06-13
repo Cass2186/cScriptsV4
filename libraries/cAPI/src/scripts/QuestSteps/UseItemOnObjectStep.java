@@ -8,6 +8,8 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSObjectDefinition;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
+import scripts.NpcChat;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
@@ -153,7 +155,7 @@ public class UseItemOnObjectStep extends QuestStep{
         }
         if (Player.getPosition().distanceTo(this.tile) > this.tileRadius) {
             General.println("[Debug]: Moving to object");
-            if (!PathingUtil.localNavigation(this.tile))
+            if (!PathingUtil.localNav(Utils.getLocalTileFromRSTile(this.tile)))
                 PathingUtil.walkToTile(this.tile, this.tileRadius, false);
             else
                 PathingUtil.movementIdle();
@@ -161,15 +163,14 @@ public class UseItemOnObjectStep extends QuestStep{
         if (this.objectId != -1 && Utils.useItemOnObject(this.ItemID, this.objectId)) {
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes", "Yes.");
+                NpcChat.handle(true, "Yes", "Yes.");
             }
+            Log.info("[UseItemOnObj]: Waiting for waid cond");
             return Timer.waitCondition(() -> waitCond, 5000, 8000);
         } else if (Utils.useItemOnObject(this.ItemID, this.objectName)) {
             if (this.handleChat) {
                 General.println("[Debug]: Waiting for chat to handle");
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes");
+                NpcChat.handle(true, "Yes", "Yes.");
             }
             return Timer.waitCondition(() -> waitCond, 5000, 8000);
         }

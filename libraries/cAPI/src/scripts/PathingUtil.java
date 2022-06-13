@@ -162,7 +162,7 @@ public class PathingUtil {
 
         // handle stamina
         if (Utils.getVarBitValue(25) == 0 && MyPlayer.getRunEnergy() <= nextStaminaPotionUse) {
-            Log.info("[DaxPref]: Should Drink stamina");
+           // Log.info("[DaxPref]: Should Drink stamina");
             Optional<InventoryItem> invStam = Query.inventory().idEquals(ItemID.STAMINA_POTION).findClosestToMouse();
             if (invStam.map(s -> s.click("Drink")).orElse(false)) {
                 nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);

@@ -413,7 +413,7 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
                     new NumberChallenge()));
         } else if (arg.toLowerCase().contains("onesmall")) {
             General.println("[Args]: Added One small favour");
-            //   taskList.addAll(Arrays.asList(new OneSmallFavour()));
+            taskList.addAll(Arrays.asList( OneSmallFavour.get()));
         } else if (arg.toLowerCase().contains("pheonix")) {
             General.println("[Args]: Added Shield of Arav Pheonix Gang");
             taskList.addAll(Arrays.asList(PheonixGang.get()));

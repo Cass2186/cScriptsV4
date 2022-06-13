@@ -89,7 +89,8 @@ public class Pollniveach implements Task {
     public void execute() {
         Optional<Obstacle> obs = AgilUtils.getCurrentObstacle(allObstacles);
         if (obs.map(o -> o.navigateObstacle()).orElse(false) && MyPlayer.getTile().getPlane() == 0) {
-            Waiting.waitUntil(4500, 400, () -> MyPlayer.getTile().getPlane() != 0);
+            Waiting.waitUntil(5500, 750, () -> MyPlayer.getTile().getPlane() != 0 && MyPlayer.getAnimation() == -1);
+            Utils.idleNormalAction(true);
         }
     }
 
