@@ -174,7 +174,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
 
     @Override
     public void onStart() {
-        General.println("Version: " + super.getScriptVersion());
+        Log.info("Version: " + super.getScriptVersion());
 
         AntiBan.create();
         populateInitialMap();
@@ -197,18 +197,18 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         String user = Tribot.getUsername();
         URL lcn = new URL("https://raw.githubusercontent.com/Whipz/guis/main/cSkillerGUI.fxml");
         //String lcn = "https://raw.githubusercontent.com/Cass2186/cScriptsV2/main/cSkillerGUI.fxml";
-        Log.log("Username is " + user);
-        Log.log("Location is " + lcn);
+        Log.info("Username is " + user);
+     //   Log.info("Location is " + lcn);
 
         if (Tribot.getUsername().equalsIgnoreCase("cass2186") || Tribot.getUsername().equalsIgnoreCase("Whipz")
                 || Tribot.getUsername().equalsIgnoreCase("SkrrtNick") || Tribot.getUsername().equalsIgnoreCase("Destinbrown1225")) {
 
         } else {
-            Log.log("[Debug]: Username is not permitted");
+            Log.error("Username is not permitted");
             return;
         }
 
-        General.println("[Debug]: setting fxml || workingDir is " + Util.getHomeDirectory());
+        Log.info("setting fxml || workingDir is " + Util.getHomeDirectory());
 
         InputStream stream = getClass().getClassLoader()
                 .getResourceAsStream("scripts/resources/cSkillerGUI.fxml");
@@ -220,7 +220,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
         GUI gui = new GUI(lcn);
 
         if (Vars.get().shouldShowGUI) {
-            Log.debug("Loading GUI");
+            Log.info("Loading GUI");
             gui.show();
             while (gui.isOpen())
                 sleep(500);

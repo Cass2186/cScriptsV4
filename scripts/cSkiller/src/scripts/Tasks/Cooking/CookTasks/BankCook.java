@@ -8,6 +8,8 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.cache.BankCache;
+import org.tribot.script.sdk.tasks.Amount;
+import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import scripts.API.Priority;
@@ -27,6 +29,11 @@ import java.util.List;
 public class BankCook implements Task {
 
     WorldTile CATHERBY_BANK_TILE = new WorldTile(2809, 3441, 0);
+
+    BankTask wineTask = BankTask.builder()
+            .addInvItem(ItemID.GRAPES, Amount.of(14))
+            .addInvItem(ItemID.JUG_OF_WATER, Amount.of(14))
+            .build();
 
     public void bank() {
         List<ItemReq> inv;
@@ -64,6 +71,14 @@ public class BankCook implements Task {
             Log.warn("Updating cache");
             BankCache.update();
             return;
+        }
+        if (Skill.COOKING.getActualLevel() >= 35) {
+            wineTask.execute();
+            if (wineTask.isSatisfied()) {
+                BankManager.close(true);
+                Log.info("Closed");
+                return;
+            }
         }
 
         List<ItemReq> newInv = SkillBank.withdraw(inv);

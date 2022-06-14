@@ -43,8 +43,8 @@ public class DepositOre implements Task {
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SMITHING)) {
             return (Inventory.find(Filters.Items.nameContains("ore")).length > 5
-                    || Inventory.find(Filters.Items.nameContains("coal")).length > 5)
-                    && Game.getSetting(261) == 0; //coal bag setting, it's 16 when empty and 0 when >0 items
+                    || Inventory.find(Filters.Items.nameContains("coal")).length > 5);
+                   // && Game.getSetting(261) == 0; //coal bag setting, it's 16 when empty and 0 when >0 items
         }
         return false;
     }

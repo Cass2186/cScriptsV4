@@ -6,8 +6,10 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MakeScreen;
+import org.tribot.script.sdk.Waiting;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.BankManager;
@@ -60,12 +62,15 @@ public class CookFood implements Task {
         if (Utils.useItemOnItem(ItemID.GRAPES, ItemID.JUG_OF_WATER))
             Timer.waitCondition(MakeScreen::isOpen, 2500, 4500);
 
-        if (MakeScreen.isOpen())
-            Keyboard.typeString(" ");
-
-        Timer.abc2SkillingWaitCondition(() -> Inventory.find(Filters.Items.nameContains("Grapes")).length < 1
-                || Inventory.find("Jug of water").length < 1, 65000, 75000);
-
+        if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.UNFERMENTED_WINE) &&
+                Waiting.waitUntil(40000, Utils.random(400, 800), () ->
+                        Inventory.find(ItemID.GRAPES).length < 1 || ChatScreen.isOpen()
+                                || Inventory.find("Jug of water").length < 1)) {
+            if (Utils.random(0, 100) < 65) //65% chance for normal idle
+                Utils.idleNormalAction(true);
+            else
+                Utils.idleAfkAction();
+        }
     }
 
 
@@ -88,6 +93,7 @@ public class CookFood implements Task {
     public void execute() {
         if (Skills.getActualLevel(Skills.SKILLS.COOKING) >= 35) {
             //can modify abc2 delay here
+            Utils.FACTOR = 0.25;
             makeWine();
         } else
             cook();
