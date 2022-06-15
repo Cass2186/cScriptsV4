@@ -45,10 +45,11 @@ public class BlastFurnaceBank implements Task {
     @Override
     public boolean validate() {
         if (Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SMITHING)) {
-            return Inventory.find(Filters.Items.nameContains("ore")).length < 5
+            return (Inventory.find(Filters.Items.nameContains("ore")).length < 5 &&
+                    Inventory.find(ItemID.COAL).length < 5)
                     && Utils.getVarBitValue(Varbits.BAR_DISPENSER.getId()) == 0
                     || (Inventory.getAll().length > 25 &&
-                    Inventory.find(Filters.Items.nameContains("bar")).length > 5);
+                    Inventory.find(Filters.Items.nameContains("bar")).length > 8);
         }
         return false;
     }
@@ -153,7 +154,8 @@ public class BlastFurnaceBank implements Task {
                 if (Bank.isOpen())
                     BankManager.close(true);
 
-                if (!BfVars.get().useGoldSmith && Inventory.find(BfConst.IRON_ORE).length < 15) {
+                if (!BfVars.get().useGoldSmith && Inventory.find(BfConst.IRON_ORE).length < 15
+                && Inventory.find(BfConst.COAL).length < 15) {
                     failNum++;
                     if (failNum > 2) {
                         Log.warn("[Bank]: Ending due to lack of iron ore");

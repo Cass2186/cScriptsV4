@@ -6,17 +6,17 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.ChatScreen;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.EquipmentItem;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -24,6 +24,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.Tasks.Slayer.SlayerConst.Areas;
 import scripts.Tasks.Slayer.SlayerConst.Assign;
+import scripts.Tasks.Slayer.SlayerConst.Masters;
 import scripts.Tasks.Slayer.SlayerConst.SlayerConst;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 
@@ -142,11 +143,11 @@ public class GetTask implements Task {
                             SlayerVars.get().targets = assign.getNameList().toArray(String[]::new);
                             SlayerVars.get().assignment = assign;
                         }
-                        General.println("[Debug]: TargArray[1] = " + targArray[1]);
+                        Log.info("TargArray[1] = " + targArray[1]);
                         String s = targArray[1];
                         SlayerVars.get().remainingKills = Integer.parseInt(s.split(" more")[0]);
 
-                        General.println("[Debug]: Current Task : " + SlayerVars.get().targets[0] +
+                        Log.info("Current Task : " + SlayerVars.get().targets[0] +
                                 " || only " + SlayerVars.get().remainingKills + " left");
                         General.sleep(General.randomSD(500, 3000, 1500, 250));
                         // SlayerVars.get().npcItemID = GetTask.convertTaskToNPCImageId(SlayerVars.get().targets[0]);
@@ -202,23 +203,16 @@ public class GetTask implements Task {
             //   CannonHandler.pickupCannon();
             PathingUtil.walkToArea(NIEVE_AREA, false);
             // goToNieve();
-            RSNPC[] nieve = NPCs.findNearest("Nieve");
-            if (nieve.length > 0) {
 
-                if (!nieve[0].isClickable())
-                    nieve[0].adjustCameraTo();
+            if (Utils.clickNPC("Nieve", "Assignment")) {
+                NpcChat.handle(true);
+                determineTask();
 
-                if (AccurateMouse.click(nieve[0], "Assignment")) {
-                    NPCInteraction.waitForConversationWindow();
-                    Timer.waitCondition(() -> Interfaces.get(231, 4) != null, 15000);
-                    General.sleep(General.random(500, 3000));
-                    SlayerVars.get().shouldBank = true;
-                    General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
-                    determineTask();
-                    if (NPCInteraction.isConversationWindowUp()) {
-                        NPCInteraction.handleConversation(initialTaskStrings);
-                    }
-                }
+                SlayerVars.get().shouldBank = true;
+                SlayerVars.get().getTask = false;
+                General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
+            } else if (Utils.clickNPC("Steve", "Assignment")) {
+                NpcChat.handle(true);
                 SlayerVars.get().shouldBank = true;
                 SlayerVars.get().getTask = false;
                 General.println("SlayerVars.get().shouldBank = " + SlayerVars.get().shouldBank, Color.RED);
@@ -252,30 +246,30 @@ public class GetTask implements Task {
             Optional<String> taskOptional = ChatScreen.getMessage();
             if (taskOptional.isPresent()) {
                 String[] task = taskOptional.get().split("kill ");
-                General.println("[GetTask]: Split to get task = " + task[1]);
+                Log.info("[GetTask]: Split to get task = " + task[1]);
                 String[] t = task[1].split(" ", 1);
-                General.println("[GetTask]: Split to get t = " + t[0] + "|| Length = " + t.length);
+                Log.info("[GetTask]: Split to get t = " + t[0] + "|| Length = " + t.length);
                 String[] potentialNum = t[0].split(" ");
-                General.println("[GetTask]: Split to get potential num = " + potentialNum[0]);
+                Log.info("[GetTask]: Split to get potential num = " + potentialNum[0]);
                 int num = Integer.parseInt(potentialNum[0]);
                 String tsk = potentialNum[1].trim();
 
                 tsk = tsk.replace(".", "");
-                General.println("[Get Task]: We are assigned to kill " + tsk + " x" + num);
+                Log.info("[Get Task]: We are assigned to kill " + tsk + " x" + num);
                 SlayerVars.get().targets = new String[]{tsk.toLowerCase()};
                 SlayerVars.get().remainingKills = num;
                 SlayerVars.get().shouldBank = true;
-                General.println("[Debug]: Current Task : " + SlayerVars.get().targets.toString());
+                Log.info("Current Task : " + SlayerVars.get().targets.toString());
                 SlayerVars.get().fightArea = null;
                 General.sleep(General.randomSD(500, 3000, 1500, 250));
                 checkGem();
             } else {
-                General.println("[GetTask]: failed to split string");
+                Log.warn("Failed to split string");
                 checkGem();
             }
         } catch (Exception e) {
             SlayerVars.get().targets = null;
-            General.println("[Debug]: Failed to read task dialogue");
+            Log.warn("Failed to read task dialogue");
             checkGem();
         }
 
@@ -286,7 +280,7 @@ public class GetTask implements Task {
         if (SlayerVars.get().getTask) {
             getDramenStaff();
             if (!Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile())) {
-                General.println("[Debug]: Getting Task.");
+                Log.info("Getting Task.");
                 PathingUtil.walkToArea(Areas.SWAMP_AREA, false);
                 if (Utils.clickObject(2406, "Open", false)) {
                     Timer.waitCondition(() -> Areas.WHOLE_ZANARIS.contains(MyPlayer.getTile()), 7000, 12000);
@@ -340,7 +334,7 @@ public class GetTask implements Task {
                         SlayerVars.get().shouldRestock = true;
                     BankManager.withdraw(1, true, ItemID.VARROCK_TELEPORT);
                     BankManager.close(true);
-                    General.println("[Debug]: Getting Task From Turael.");
+                    Log.info("Getting Task From Turael.");
 
                 }
             }
@@ -372,7 +366,7 @@ public class GetTask implements Task {
 
     public void getTaskVannaka() {
         if (SlayerVars.get().getTask) {
-            General.println("[Debug]: Going to get task (Vannaka).");
+            Log.info("Going to get task (Vannaka).");
 
             if (!Areas.VANNAKA_AREA.contains(MyPlayer.getTile()))
                 PathingUtil.walkToArea(Areas.VANNAKA_AREA, false);
@@ -385,21 +379,19 @@ public class GetTask implements Task {
                     DaxCamera.focus(vannaka[0]);
 
                 if (AccurateMouse.click(vannaka[0], "Assignment")) {
-                    NPCInteraction.waitForConversationWindow();
-                    Timer.waitCondition(() -> Interfaces.get(231, 4) != null, 15000);
-                    General.sleep(General.random(1000, 3000));
+                    NpcChat.waitForChatScreen();
 
                     if (Interfaces.get(231, 4) != null) {
                         try {
                             String[] task = Interfaces.get(231, 4).getText().split("kill");
                             if (task.length > 0) {
                                 SlayerVars.get().targets = new String[]{task[0].split(";")[1]};
-                                General.println("[Debug]: Current Task : " + SlayerVars.get().targets[0]);
+                                Log.info("Current Task : " + SlayerVars.get().targets[0]);
                                 General.sleep(General.randomSD(500, 3000, 1500, 250));
                             }
                         } catch (Exception e) {
                             SlayerVars.get().targets = null;
-                            General.println("[Debug]: Failed to read task dialogue");
+                            Log.info("Failed to read task dialogue");
                             checkGem();
                         }
                     }
@@ -413,8 +405,21 @@ public class GetTask implements Task {
         }
     }
 
-    public void skipTask() {
+    public void skipTask(Masters master) {
+        if (master.equals(Masters.NIEVE)){
+            //go to area
+            PathingUtil.walkToArea(NIEVE_AREA, false);
 
+            Optional<Npc> npc = Query.npcs().nameContains("eve")
+                    .actionContains("Rewards").findBestInteractable();
+            if (npc.map(n->n.interact("Rewards")).orElse(false)){
+                //wait for screen
+                Waiting.waitUntil(6500, 600, ()-> Widgets.isVisible(426));
+            }
+        }
+        if (Widgets.isVisible(426)){
+
+        }
     }
 
 
@@ -440,7 +445,7 @@ public class GetTask implements Task {
 
     @Override
     public void execute() {
-        General.println("[GetTask]: Node validated");
+        Log.info("[GetTask]: Node validated");
         checkGem();
         //  CannonHandler.pickupCannon();
 
@@ -453,7 +458,7 @@ public class GetTask implements Task {
 
             // if (SlayerVars.get().use_cannon)
             //    CannonHandler.pickupCannon();
-
+            org.tribot.script.sdk.Prayer.disableAll(org.tribot.script.sdk.Prayer.values());
             AttackNpc.setPrayer();
 
             if (!SlayerVars.get().pointBoosting && Utils.getCombatLevel() >= 89 || (Equipment.isEquipped(

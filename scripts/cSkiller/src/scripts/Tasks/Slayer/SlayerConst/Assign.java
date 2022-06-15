@@ -19,10 +19,10 @@ public enum Assign {
 
     ABBERANT_SPECTRES(new Builder()
             .inArea(Areas.ABBERANT_SPECTRES_AREA)
-            .usingCannon(true)
-            .useCannonTile(Areas.ABBERANT_SPECTRES_AREA.getRandomTile())
+         //   .usingCannon(true)
+           // .useCannonTile(Areas.ABBERANT_SPECTRES_AREA.getRandomTile())
             .usePrayerType(PrayerType.MAGIC)
-            .nameContains("Abberant spectre")
+            .nameContains("Aberrant spectre")
             .useGearType(GearType.MAGIC_MELEE)),
 
     ABYSSAL_DEMON(new Builder()
@@ -563,6 +563,7 @@ public enum Assign {
             .nameContains("Wyrm")
             .specialItemID(ItemID.BOOTS_OF_STONE)
             .setHopPlayerThreshold(3)
+            .usePrayerType(PrayerType.MAGIC)
             .useHopTile(Areas.WYRM_HOP_TILE)
             .useGearType(GearType.MELEE)),
 
