@@ -5,12 +5,16 @@ import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSTile;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.World;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.BlackKnightsFortress.BlackKnightsFortress;
 import scripts.QuestSteps.*;
+import scripts.Requirements.Conditional.NpcCondition;
 import scripts.Requirements.ItemRequirement;
 import scripts.Requirements.Items.FollowerItemRequirement;
 import scripts.Requirements.Items.ItemCollections;
@@ -60,6 +64,7 @@ public class ATailOfTwoCats implements QuestTask {
         buyStep.buyItems();
 
     }
+
     ItemRequirement catspeak, catspeakE, deathRune5, chocolateCake, logs, tinderbox, milk, shears,
             potatoSeed4, rake, dibber, vialOfWater, desertTop, desertBottom, hat, catspeakEWorn, cat;
 
@@ -69,8 +74,7 @@ public class ATailOfTwoCats implements QuestTask {
             useChocolateCakeOnTable, useMilkOnTable, useShearsOnUnferth, reportToUnferth, talkToApoth, talkToUnferthAsDoctor, findBobToFinish, talkToBobToFinish, talkToUnferthToFinish, waitForPotatoesToGrow;
 
 
-    public Map<Integer, QuestStep> loadSteps()
-    {
+    public Map<Integer, QuestStep> loadSteps() {
         setupItemRequirements();
         setupConditions();
         setupSteps();
@@ -81,7 +85,7 @@ public class ATailOfTwoCats implements QuestTask {
         steps.put(5, talkToHild);
         steps.put(10, talkToHild);
 
-        ConditionalStep findbob1 = new ConditionalStep( findBob);
+        ConditionalStep findbob1 = new ConditionalStep(findBob);
         findbob1.addStep(bobNearby, talkToBob);
 
         steps.put(15, findbob1);
@@ -91,14 +95,14 @@ public class ATailOfTwoCats implements QuestTask {
         steps.put(25, talkToReldo);
         steps.put(28, talkToReldo);
 
-        ConditionalStep findbob2 = new ConditionalStep( findBobAgain);
+        ConditionalStep findbob2 = new ConditionalStep(findBobAgain);
         findbob2.addStep(bobNearby, talkToBobAgain);
 
         steps.put(30, findbob2);
 
         steps.put(35, talkToSphinx);
 
-        ConditionalStep doChores = new ConditionalStep( useRake);
+        ConditionalStep doChores = new ConditionalStep(useRake);
         doChores.addStep(new Conditions(plantedSeed, madeBed, litLogs, placedMilk, usedShears), waitForPotatoesToGrow);
         doChores.addStep(new Conditions(plantedSeed, madeBed, litLogs, placedMilk), useShearsOnUnferth);
         doChores.addStep(new Conditions(plantedSeed, madeBed, litLogs, placedCake), useMilkOnTable);
@@ -116,7 +120,7 @@ public class ATailOfTwoCats implements QuestTask {
 
         steps.put(55, talkToUnferthAsDoctor);
 
-        ConditionalStep findbob3 = new ConditionalStep( findBobToFinish);
+        ConditionalStep findbob3 = new ConditionalStep(findBobToFinish);
         findbob3.addStep(bobNearby, talkToBobToFinish);
         steps.put(60, findbob3);
 
@@ -126,14 +130,14 @@ public class ATailOfTwoCats implements QuestTask {
     }
 
     public void setupItemRequirements() {
-        catspeak = new ItemRequirement( ItemID.CATSPEAK_AMULET, 1, true);
-       // catspeak.setTooltip("You can get another from the Sphinx in Sophanem");
+        catspeak = new ItemRequirement(ItemID.CATSPEAK_AMULET, 1, true);
+        // catspeak.setTooltip("You can get another from the Sphinx in Sophanem");
         catspeakE = new ItemRequirement("Catspeak amulet (e)", ItemID.CATSPEAK_AMULETE);
         catspeakEWorn = new ItemRequirement(ItemID.CATSPEAK_AMULETE, 1, true);
 
         deathRune5 = new ItemRequirement("Death runes", ItemID.DEATH_RUNE, 5);
         cat = new FollowerItemRequirement("A cat",
-                  ItemCollections.getCats(),
+                ItemCollections.getCats(),
                 NpcCollections.getCats());
 
         chocolateCake = new ItemRequirement("Chocolate cake", ItemID.CHOCOLATE_CAKE);
@@ -152,17 +156,16 @@ public class ATailOfTwoCats implements QuestTask {
 
         dibber = new ItemRequirement("Seed dibber", ItemID.SEED_DIBBER);
 
-        vialOfWater = new ItemRequirement( ItemID.VIAL_OF_WATER);
-        desertBottom = new ItemRequirement( ItemID.DESERT_ROBE, 1, true);
-        desertTop = new ItemRequirement( ItemID.DESERT_SHIRT, 1, true);
+        vialOfWater = new ItemRequirement(ItemID.VIAL_OF_WATER);
+        desertBottom = new ItemRequirement(ItemID.DESERT_ROBE, 1, true);
+        desertTop = new ItemRequirement(ItemID.DESERT_SHIRT, 1, true);
         hat = new ItemRequirement(ItemID.DOCTORS_HAT, 1, true);
         hat.addAlternateItemID(ItemID.NURSE_HAT);
         hat.setDisplayMatchedItemName(true);
     }
 
-    public void setupConditions()
-    {
-       // bobNearby = new NpcCondition(NpcID.BOB_8034);
+    public void setupConditions() {
+        bobNearby = new NpcCondition(NpcID.BOB_8034);
 
         rakedPatch = new VarbitRequirement(1033, 3);
         plantedSeed = new VarbitRequirement(1033, 4, Operation.GREATER_EQUAL);
@@ -175,31 +178,35 @@ public class ATailOfTwoCats implements QuestTask {
         usedShears = new VarbitRequirement(1032, 8);
     }
 
-    public void setupSteps()
-    {
-        talkToUnferth = new NPCStep( NpcID.UNFERTH, new RSTile(2919, 3559, 0), cat, catspeak);
+    public void setupSteps() {
+        talkToUnferth = new NPCStep(NpcID.UNFERTH, new RSTile(2919, 3559, 0), cat, catspeak);
         talkToUnferth.addDialogStep("I'll help you.");
-        talkToHild = new NPCStep( NpcID.HILD_4112, new RSTile(2930, 3568, 0),
-               deathRune5, catspeak);
-    //    findBob = new DetailedQuestStep( "Operate the catspeak amulet (e) to locate Bob the Cat. He's often in Catherby Archery Shop or at the Varrock Anvil.", catspeakE);
-    //    talkToBob = new NPCStep( NpcID.BOB_8034, cat, catspeakEWorn);
-        talkToGertrude = new NPCStep( NpcID.GERTRUDE_7723, new RSTile(3151, 3413, 0),
-               cat, catspeakEWorn);
+        talkToHild = new NPCStep(NpcID.HILD_4112, new RSTile(2930, 3568, 0),
+                deathRune5, catspeak);
+        //    findBob = new DetailedQuestStep( "Operate the catspeak amulet (e) to locate Bob the Cat. He's often in Catherby Archery Shop or at the Varrock Anvil.", catspeakE);
+        //    talkToBob = new NPCStep( NpcID.BOB_8034, cat, catspeakEWorn);
+        talkToGertrude = new NPCStep(NpcID.GERTRUDE_7723, new RSTile(3151, 3413, 0),
+                cat, catspeakEWorn);
         talkToGertrude.addDialogStep("Ask about Bob's parents.");
 
-        talkToReldo = new NPCStep( NpcID.RELDO_4243, new RSTile(3211, 3494, 0),
+        talkToReldo = new NPCStep(NpcID.RELDO_4243, new RSTile(3211, 3494, 0),
                 cat, catspeakEWorn);
         talkToReldo.addDialogStep("Ask about Robert the Strong.");
-   //     findBobAgain = new DetailedQuestStep( "Use the catspeak amulet (e) again to locate Bob the Cat.", catspeakE);
- //       talkToBobAgain = new NPCStep( NpcID.BOB_8034, cat, catspeakEWorn);
-        talkToSphinx = new NPCStep( NpcID.SPHINX_4209, new RSTile(3302, 2784, 0),
-               cat, catspeakEWorn);
+        //     findBobAgain = new DetailedQuestStep( "Use the catspeak amulet (e) again to locate Bob the Cat.", catspeakE);
+        //       talkToBobAgain = new NPCStep( NpcID.BOB_8034, cat, catspeakEWorn);
+        talkToSphinx = new NPCStep(NpcID.SPHINX_4209, new RSTile(3302, 2784, 0),
+                cat, catspeakEWorn);
         talkToSphinx.addDialogStep("Ask the Sphinx for help for Bob.");
-        useRake = new ObjectStep(9399, new RSTile(2919, 3562, 0), "Rake", rake);
+        useRake = new ObjectStep(9399, new RSTile(2919, 3562, 0),
+                "Rake",
+                !Query.gameObjects().actionContains("Rake").idEquals(9399).isAny(),
+                rake);
 
         //TODO FIX
-        plantSeeds = new ObjectStep(9399, new RSTile(2919, 3562, 0), "Plant",
-          dibber, potatoSeed4);
+        plantSeeds = new UseItemOnObjectStep(ItemID.POTATO_SEED,
+                9399, new RSTile(2919, 3562, 0),
+                MyPlayer.getAnimation() != -1,
+                dibber, potatoSeed4);
 
         makeBed = new ObjectStep(9438, new RSTile(2917, 3557, 0), "Make");
         useLogsOnFireplace = new ObjectStep(9442, new RSTile(2919, 3557, 0),
@@ -214,27 +221,48 @@ public class ATailOfTwoCats implements QuestTask {
         useMilkOnTable = new ObjectStep(9435, new RSTile(2921, 3556, 0),
                 "Use a bucket of milk on Unferth's table.", milk);
 
-       // useShearsOnUnferth = new NPCStep( NpcID.UNFERTH_4241, new RSTile(2919, 3559, 0),
-     //           "Use some shears on Unferth in north east Burthorpe.", shears);
-   //     ((NPCStep) (useShearsOnUnferth)).addAlternateNpcs(NpcID.UNFERTH, NpcID.UNFERTH_4238, NpcID.UNFERTH_4239, NpcID.UNFERTH_4240);
+        // useShearsOnUnferth = new NPCStep( NpcID.UNFERTH_4241, new RSTile(2919, 3559, 0),
+        //           "Use some shears on Unferth in north east Burthorpe.", shears);
+        //     ((NPCStep) (useShearsOnUnferth)).addAlternateNpcs(NpcID.UNFERTH, NpcID.UNFERTH_4238, NpcID.UNFERTH_4239, NpcID.UNFERTH_4240);
 
 
-       // waitForPotatoesToGrow = new DetailedQuestStep( "You now need to wait 15-35 minutes for the potatoes to grow.");
+        // waitForPotatoesToGrow = new DetailedQuestStep( "You now need to wait 15-35 minutes for the potatoes to grow.");
 
-        reportToUnferth = new NPCStep( NpcID.UNFERTH, new RSTile(2919, 3559, 0),
-          cat, catspeakEWorn);
-        talkToApoth = new NPCStep( NpcID.APOTHECARY, new RSTile(3195, 3405, 0),
-              cat, catspeakEWorn);
+        reportToUnferth = new NPCStep(NpcID.UNFERTH, new RSTile(2919, 3559, 0),
+                cat, catspeakEWorn);
+        talkToApoth = new NPCStep(NpcID.APOTHECARY, new RSTile(3195, 3405, 0),
+                cat, catspeakEWorn);
         talkToApoth.addDialogStep("Talk about A Tail of Two Cats.");
 
-        talkToUnferthAsDoctor = new NPCStep( NpcID.UNFERTH, new RSTile(2919, 3559, 0),cat, catspeakEWorn, hat, desertTop, desertBottom, vialOfWater);
-              //  "Talk to Unferth whilst wearing the doctor/nurse hat, a desert shirt and a desert robe, " +
-                    //    "and no weapon/shield.",
-      //  findBobToFinish = new DetailedQuestStep( "Use the catspeak amulet (e) to locate Bob once more.", catspeakE);
-       // talkToBobToFinish = new NPCStep( NpcID.BOB_8034,  cat, catspeakEWorn);
-        talkToUnferthToFinish = new NPCStep( NpcID.UNFERTH, new RSTile(2919, 3559, 0), "Talk to Unferth to complete the quest.");
+        talkToUnferthAsDoctor = new NPCStep(NpcID.UNFERTH, new RSTile(2919, 3559, 0), cat, catspeakEWorn, hat, desertTop, desertBottom, vialOfWater);
+        //  "Talk to Unferth whilst wearing the doctor/nurse hat, a desert shirt and a desert robe, " +
+        //    "and no weapon/shield.",
+        //  findBobToFinish = new DetailedQuestStep( "Use the catspeak amulet (e) to locate Bob once more.", catspeakE);
+        // talkToBobToFinish = new NPCStep( NpcID.BOB_8034,  cat, catspeakEWorn);
+        talkToUnferthToFinish = new NPCStep(NpcID.UNFERTH, new RSTile(2919, 3559, 0), "Talk to Unferth to complete the quest.");
     }
 
+
+    private void hopWorldsForBob() {
+        List<World> worlds = Query.worlds().isRequirementsMet().isMembers()
+                .isMainGame().isNotDangerous().toList();
+        // go to tile
+        WorldTile hopTile = new WorldTile(3188, 3423, 0);
+        PathingUtil.walkToTile(hopTile);
+        if (hopTile.distance() < 4) {
+            for (World w : worlds) {
+                if (Query.npcs().nameContains("Bob")
+                        .inArea(Area.fromRadius(MyPlayer.getTile(), 6))
+                        .isAny()) {
+                    Log.info("Found bob");
+                    break;
+                } else if (WorldHopper.hop(w.getWorldNumber())) {
+                    Log.info("Hopped Worlds");
+                    Utils.idleNormalAction();
+                }
+            }
+        }
+    }
 
     @Override
     public Priority priority() {
@@ -243,13 +271,15 @@ public class ATailOfTwoCats implements QuestTask {
 
     @Override
     public boolean validate() {
-        return cQuesterV2.taskList.get(0).equals(this);
+        return cQuesterV2.taskList.size() > 0 &&
+                cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
     public void execute() {
         int varBitValue = Utils.getVarBitValue(QuestVarbits.QUEST_A_TAIL_OF_TWO_CATS.getId());
-        if (varBitValue == 4) {
+        Log.info("A Tail of Two Cats Varbit is " + varBitValue);
+        if (isComplete()) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
             return;
@@ -257,25 +287,28 @@ public class ATailOfTwoCats implements QuestTask {
         if (varBitValue == 0) {
             buyItems();
             //getItems();
+        } else if (varBitValue == 15) {
+            hopWorldsForBob();
         }
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(varBitValue));
         step.ifPresent(QuestStep::execute);
 
-        if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation();
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
         else
-            Waiting.waitNormal(150,25);
+            Waiting.waitNormal(150, 25);
     }
 
     @Override
     public String questName() {
-        return "A Tail Of Two Cats";
+        return "A Tail Of Two Cats (" +
+                Utils.getVarBitValue(QuestVarbits.QUEST_A_TAIL_OF_TWO_CATS.getId()) + ")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return true;
     }
 
     @Override
@@ -287,6 +320,7 @@ public class ATailOfTwoCats implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
     @Override
     public boolean isComplete() {
         return Quest.A_TAIL_OF_TWO_CATS.getState().equals(Quest.State.COMPLETE);
