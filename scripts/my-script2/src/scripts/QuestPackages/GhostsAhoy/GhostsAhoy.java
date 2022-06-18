@@ -7,13 +7,13 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
@@ -113,7 +113,7 @@ public class GhostsAhoy implements QuestTask {
                     new GEItem(ItemID.STAFF_OF_FIRE, 1, 35),
                     new GEItem(ItemID.MIND_RUNE, 350, 35),
                     new GEItem(ItemID.AIR_RUNE, 700, 35),
-                    new GEItem(ItemID.STAMINA_POTION[0], 4, 35),
+                    new GEItem(ItemID.STAMINA_POTION[0], 5, 35),
                     new GEItem(ItemID.VARROCK_TELEPORT, 10, 35)
             )
     );
@@ -136,7 +136,7 @@ public class GhostsAhoy implements QuestTask {
                     new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1, 1, true),
                     new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 0, 0),
                     new ItemReq(ItemID.VARROCK_TELEPORT, 0, 0),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
 
                     new ItemReq(ItemID.BUCKET_OF_SLIME, 1),
                     new ItemReq(ItemID.ECTOTOKEN, 35, 10),
@@ -161,7 +161,7 @@ public class GhostsAhoy implements QuestTask {
                     new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1),
                     new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 0),
                     new ItemReq(ItemID.VARROCK_TELEPORT, 0),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2),
 
                     new ItemReq(ItemID.MODEL_SHIP, 1),
                     new ItemReq(ItemID.NEEDLE, 1),
@@ -371,7 +371,9 @@ public class GhostsAhoy implements QuestTask {
                             .inArea(nettleArea)
                             .nameContains("Nettle")
                             .getFirstResult();
-
+                    nettles = Inventory.find(ItemID.NETTLES, ItemID.NETTLE_TEA);
+                    if (nettles.length >= 3)
+                        break;
                     int b = i;
                     General.println("[Debug]: Picknettles b = " + b);
                     if (net != null && Utils.clickObject(net, "Pick", false))
@@ -641,8 +643,12 @@ public class GhostsAhoy implements QuestTask {
                 Timer.waitCondition(() -> Player.getPosition().getPlane() == 0, 5000, 7000);
             }
             if (Player.getPosition().getPlane() == 0) {
-                cQuesterV2.status = "Getting Map scrap 2 - finding lobster";
                 if (!Combat.isUnderAttack()) {
+                    cQuesterV2.status = "Getting Map scrap 2 - finding lobster";
+                    Optional<GameObject> chest = Query.gameObjects()
+                            .tileEquals(new WorldTile(3618, 3542, 0))
+                            .nameContains("Chest")
+                            .findClosest();
                     RSObject chests = Entities.find(ObjectEntity::new)
                             .nameContains("Chest")
                             .tileEquals(new RSTile(3618, 3542, 0))
@@ -793,9 +799,12 @@ public class GhostsAhoy implements QuestTask {
             if (Interfaces.get(9) == null)
                 break;
         }
-        if (NPCInteraction.isConversationWindowUp()) {
+        if (ChatScreen.isOpen()) {
             NPCInteraction.handleConversation("Yes, I'll give you a game.");
-
+        } else if (!Waiting.waitUntil(1500,250, ()-> Interfaces.get(9) != null
+        || ChatScreen.isOpen())){
+            talkToRobin.setRadius(10);
+            talkToRobin.execute();
         }
 
     }
@@ -1084,13 +1093,13 @@ public class GhostsAhoy implements QuestTask {
     public void execute() {
         Teleport.blacklistTeleports(Teleport.GLORY_KARAMJA);
         if (!checkRequirements()) {
-            Log.log("[Debug]: Missing Restless ghost or 20 cooking requirement");
+            Log.warn("Missing Restless ghost or 20 cooking requirement");
             cQuesterV2.taskList.remove(GhostsAhoy.get());
             return;
         }
         General.sleep(30, 50);
-        General.println("[Debug]: VARBIT 217: " + Utils.getVarBitValue(VARBIT));
-        General.println("[Debug]: VARBIT 214: " + Utils.getVarBitValue(214));
+        Log.info("VARBIT 217: " + Utils.getVarBitValue(VARBIT));
+        Log.info("VARBIT 214: " + Utils.getVarBitValue(214));
 
         if (Utils.getVarBitValue(VARBIT) == 0) {
             buyAndGetItems();
@@ -1110,12 +1119,9 @@ public class GhostsAhoy implements QuestTask {
             makeNettleTea();
             croneStep3();
             mixTeaSteps();
-           // makeCupOfTea();
-          //  useTeaOnCrone();
             croneStep4.execute();
         } else if (Utils.getVarBitValue(VARBIT) == 4 &&
                 Utils.getVarBitValue(214) == 0) {
-            General.println("At line 1030");
             RSItem[] dyes = Entities.find(ItemEntity::new)
                     .nameContains("dye")
                     .getResults();
@@ -1261,7 +1267,7 @@ public class GhostsAhoy implements QuestTask {
 
     @Override
     public String questName() {
-        return "Ghosts Ahoy";
+        return "Ghosts Ahoy (" + Quest.GHOSTS_AHOY.getStep() + ")";
     }
 
     @Override
