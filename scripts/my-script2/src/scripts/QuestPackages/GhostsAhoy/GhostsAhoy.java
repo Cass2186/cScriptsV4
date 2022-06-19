@@ -47,6 +47,9 @@ public class GhostsAhoy implements QuestTask {
     String message;
     int VARBIT = 217;
 
+    RSTile DIG_TILE = new RSTile(3803, 3530, 0);
+    WorldTile DIG_WORLD_TILE = new WorldTile(3803, 3530, 0);
+
     HashMap<Integer, Integer> invMap = new HashMap<>();
     ItemReq intialEctoTokens = new ItemReq(ItemID.ECTOTOKEN, 35, 30);
 
@@ -71,16 +74,17 @@ public class GhostsAhoy implements QuestTask {
     NPCStep talkToGravingas = new NPCStep(5858, new RSTile(3660, 3499, 0),
             new String[]{"After hearing Velorina's story I will be happy to help out."});
 
+    NPCStep claimEctoTokens = new NPCStep("Ghost disciple", GhostsAhoyConst.NECROVOUS_TILE);
+
     UseItemOnObjectStep openChest1 = new UseItemOnObjectStep(GhostsAhoyConst.CHEST_KEY, "Closed chest",
             new RSTile(3619, 3544, 1), Inventory.find(GhostsAhoyConst.CHEST_KEY).length == 0);
 
 
-    public boolean checkSkillReqs() {
+    private boolean checkSkillReqs() {
         SkillRequirement agil = new SkillRequirement(Skills.SKILLS.AGILITY, 25);
         SkillRequirement cook = new SkillRequirement(Skills.SKILLS.COOKING, 20);
         return agil.meetsSkillRequirement() && cook.meetsSkillRequirement();
     }
-
 
     private boolean hasRequirements() {
         return checkSkillReqs() &&
@@ -197,19 +201,28 @@ public class GhostsAhoy implements QuestTask {
     public static boolean handleEnergyBarrier() {
         if (!GhostsAhoyConst.PORT_PHYSMATIS.contains(Player.getPosition())) {
             if (Utils.clickObject("Energy Barrier", "Pay-toll(2-Ecto)", true)) {
-                General.println("[Debug]: Clicking Energy barrier");
-                Timer.waitCondition(() -> GhostsAhoyConst.PORT_PHYSMATIS.contains(Player.getPosition()), 6000, 8000);
+                Log.info("Clicking Energy barrier");
+                Timer.waitCondition(() -> GhostsAhoyConst.PORT_PHYSMATIS.contains(Player.getPosition()), 8000,
+                        10000);
             }
         }
         return GhostsAhoyConst.PORT_PHYSMATIS.contains(Player.getPosition());
     }
 
+
     public static boolean enterPortPhysmatis() {
         if (!GhostsAhoyConst.PORT_PHYSMATIS.contains(Player.getPosition())) {
-            General.println("[Debug]: Going to Port Physmatis");
+            Log.info("Going to Port Physmatis");
             PathingUtil.walkToArea(GhostsAhoyConst.OUTSIDE_ENERGY_BARRIER, true);
         }
         return handleEnergyBarrier();
+    }
+
+
+    private boolean hasEctotokens(int amount) {
+        int inv = org.tribot.script.sdk.Inventory.getCount(ItemID.ECTOTOKEN);
+        return BankCache.getStack(ItemID.ECTOTOKEN) >= amount || inv >= amount;
+
     }
 
     private void getItems3() {
@@ -239,88 +252,90 @@ public class GhostsAhoy implements QuestTask {
 
     public void buyAndGetItems() {
         scripts.cQuesterV2.status = "Buying items";
-        General.println("[Debug]: Buying Items");
-        if (!itemsForTokens.check()) {
-
+        Log.info("Buying Items");
+        if (itemsForTokens.check()) {
+            return;
         }
         buyStep.buyItems();
         scripts.cQuesterV2.status = "Withdrawing items";
-        General.println("[Debug]: Withdrawing Items");
+        Log.info("Withdrawing Items");
         itemsForTokens.withdrawItems();
     }
 
 
     public void getEctoFundus() {
         if (itemsForTokens.check() && !intialEctoTokens.check()) {
+            for (int b = 0; b < 3; b++) {
+                if (!GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length > 0 &&
+                        Inventory.find(ItemID.BONEMEAL).length < 1) {
+                    scripts.cQuesterV2.status = "Going to Ectofuntus";
+                    Log.info("" + scripts.cQuesterV2.status);
+                    PathingUtil.walkToTile(new WorldTile(3683, 9888, 0));
+                    Timer.waitCondition(() -> GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()), 15000, 20000);
+                }
+                if (GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length > 0 &&
+                        Inventory.find(ItemID.BONEMEAL).length < 1) {
+                    scripts.cQuesterV2.status = "Getting Slime";
+                    Log.info("" + scripts.cQuesterV2.status);
 
-            if (!GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length > 0 &&
-                    Inventory.find(ItemID.BONEMEAL).length < 1) {
-                scripts.cQuesterV2.status = "Going to Ectofuntus";
-                General.println("[Debug]: " + scripts.cQuesterV2.status);
-                PathingUtil.walkToTile(new RSTile(3683, 9888, 0), 2, false);
-                Timer.waitCondition(() -> GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()), 15000, 20000);
-            }
-            if (GhostsAhoyConst.SLIME_LEVEL1.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length > 0 &&
-                    Inventory.find(ItemID.BONEMEAL).length < 1) {
-                scripts.cQuesterV2.status = "Getting Slime";
-                General.println("[Debug]: " + scripts.cQuesterV2.status);
+                    if (Utils.useItemOnObject(ItemID.BUCKET, "Pool of Slime"))
+                        Timer.abc2WaitCondition(() -> Inventory.find(ItemID.BUCKET).length < 1, 20000, 25000);
+                }
 
-                if (Utils.useItemOnObject(ItemID.BUCKET, "Pool of Slime"))
-                    Timer.abc2WaitCondition(() -> Inventory.find(ItemID.BUCKET).length < 1, 20000, 25000);
-            }
+                if (!GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length < 1 &&
+                        Inventory.find(ItemID.BONES).length > 0) {
+                    scripts.cQuesterV2.status = "Going to grinder";
+                    Log.info("" + scripts.cQuesterV2.status);
+                    PathingUtil.walkToArea(GhostsAhoyConst.BONE_CRUSHER_AREA, false);
+                }
+                if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BONEMEAL).length < 7) {
+                    scripts.cQuesterV2.status = "Getting bonemeal";
+                    Log.info("" + scripts.cQuesterV2.status);
+                    if (Utils.clickObject("Bin", "Empty", false))
+                        PathingUtil.movementIdle();
 
-            if (!GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BUCKET).length < 1 &&
-                    Inventory.find(ItemID.BONES).length > 0) {
-                scripts.cQuesterV2.status = "Going to grinder";
-                General.println("[Debug]: " + scripts.cQuesterV2.status);
-                PathingUtil.walkToArea(GhostsAhoyConst.BONE_CRUSHER_AREA, false);
-            }
-            if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BONEMEAL).length < 7) {
-                scripts.cQuesterV2.status = "Getting bonemeal";
-                General.println("[Debug]: " + scripts.cQuesterV2.status);
-                if (Utils.clickObject("Bin", "Empty", false))
-                    PathingUtil.movementIdle();
+                    if (Utils.useItemOnObject(ItemID.BONES, "Loader"))
+                        Timer.abc2WaitCondition(() ->
+                                        Inventory.find(Filters.Items.nameContains("onemeal")).length == 7,
+                                85000, 95000);
+                    Waiting.waitNormal(500, 50);
+                }
 
-                if (Utils.useItemOnObject(ItemID.BONES, "Loader"))
-                    Timer.abc2WaitCondition(() ->
-                                    Inventory.find(Filters.Items.nameContains("onemeal")).length == 7,
-                            85000, 95000);
-                Waiting.waitNormal(500, 50);
-            }
+                if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BONES).length < 1) {
+                    scripts.cQuesterV2.status = "Worshiping Ectofuntus";
+                    Log.info("" + scripts.cQuesterV2.status);
+                    PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
+                }
 
-            if (GhostsAhoyConst.BONE_CRUSHER_AREA.contains(Player.getPosition()) && Inventory.find(ItemID.BONES).length < 1) {
-                scripts.cQuesterV2.status = "Worshiping Ectofuntus";
-                General.println("[Debug]: " + scripts.cQuesterV2.status);
-                PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
-            }
+                if (Inventory.find(ItemID.BONEMEAL).length > 0) {
+                    scripts.cQuesterV2.status = "Worshiping Ectofuntus";
+                    Log.info("" + scripts.cQuesterV2.status);
+                    PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
 
-            if (Inventory.find(ItemID.BONEMEAL).length > 0) {
-                scripts.cQuesterV2.status = "Worshiping Ectofuntus";
-                General.println("[Debug]: " + scripts.cQuesterV2.status);
-                PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
+                    for (int i = 0; i < 7; i++) {
+                        RSItem[] invBoneMeal = Inventory.find(ItemID.BONEMEAL);
 
-                for (int i = 0; i < 7; i++) {
-                    RSItem[] invBoneMeal = Inventory.find(ItemID.BONEMEAL);
+                        if (Utils.clickObject("Ectofuntus", "Worship", false))
+                            Timer.waitCondition(() -> Inventory.find(ItemID.BONEMEAL).length < invBoneMeal.length, 4000, 9000);
 
-                    if (Utils.clickObject("Ectofuntus", "Worship", false))
-                        Timer.waitCondition(() -> Inventory.find(ItemID.BONEMEAL).length < invBoneMeal.length, 4000, 9000);
+                    }
+                    Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
 
                 }
-                Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
+                claimEctoTokens();
 
+                if (org.tribot.script.sdk.Inventory.getCount(ItemID.ECTOTOKEN) > 30) {
+                    break;
+                }
             }
-            claimEctoTokens();
-
         }
     }
-
-    NPCStep claimEctoTokens = new NPCStep("Ghost disciple", GhostsAhoyConst.NECROVOUS_TILE);
 
 
     public void claimEctoTokens() {
         if (Inventory.find(ItemID.BONES).length < 1 && Inventory.find(ItemID.ECTOTOKEN).length < 1) {
             scripts.cQuesterV2.status = "Going to claim ecto-tokens";
-            General.println("[Debug]: " + scripts.cQuesterV2.status);
+            Log.info("" + scripts.cQuesterV2.status);
             PathingUtil.walkToArea(GhostsAhoyConst.ECTOFUNTUS, false);
             Utils.equipItem(ItemID.GHOSTSPEAK_AMULET);
             claimEctoTokens.execute();
@@ -367,19 +382,16 @@ public class GhostsAhoy implements QuestTask {
                 RSArea nettleArea = new RSArea(new RSTile(3089, 3468, 0), new RSTile(3091, 3468, 0));
                 PathingUtil.walkToTile(GhostsAhoyConst.NETTLE_TILE, 2, false);
                 for (int i = 0; i < 5; i++) {
-                    RSObject net = Entities.find(ObjectEntity::new)
-                            .inArea(nettleArea)
-                            .nameContains("Nettle")
-                            .getFirstResult();
+                    Optional<GameObject> nettle = Query.gameObjects().nameContains("Nettle")
+                            .findBestInteractable();
                     nettles = Inventory.find(ItemID.NETTLES, ItemID.NETTLE_TEA);
                     if (nettles.length >= 3)
                         break;
                     int b = i;
-                    General.println("[Debug]: Picknettles b = " + b);
-                    if (net != null && Utils.clickObject(net, "Pick", false))
+                    Log.info("Picknettles b = " + b);
+                    if (nettle.map(n -> n.interact("Pick")).orElse(false))
                         Timer.waitCondition(() -> Inventory.find(ItemID.NETTLES).length > b, 3500, 4500);
-
-                    General.sleep(1200, 1750);
+                    Utils.idleNormalAction(true);
                 }
             }
         }
@@ -411,8 +423,7 @@ public class GhostsAhoy implements QuestTask {
         if (crone.map(c -> cupOfTeaWithMilk.map(
                 t -> t.useOn(c)).orElse(false)).orElse(false)) {
             Log.info("Used tea w/ milk on crone");
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true);
         } else {
             makeCupOfTea();
         }
@@ -437,15 +448,14 @@ public class GhostsAhoy implements QuestTask {
             Timer.waitCondition(() -> Inventory.find(ItemID.CUP_OF_TEA_W_MILK).length > 0, 1500, 2000);
 
         if (Utils.useItemOnNPC(ItemID.CUP_OF_TEA_W_MILK, GhostsAhoyConst.CRONE_ID)) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true);
         }
     }
 
 
     public void repairShip() {
         cQuesterV2.status = Inventory.find(ItemID.REPAIRED_SHIP).length == 0 ?
-                 "Repairing Ship" : "";
+                "Repairing Ship" : "";
         if (Utils.useItemOnItem(ItemID.THREAD, ItemID.MODEL_SHIP))
             Timer.waitCondition(() -> Inventory.find(ItemID.REPAIRED_SHIP).length > 0, 1500, 2500);
     }
@@ -475,7 +485,7 @@ public class GhostsAhoy implements QuestTask {
         if (GhostsAhoyConst.skull == null || GhostsAhoyConst.bottomHalf == null || GhostsAhoyConst.topHalf == null) {
 
             for (int i = 0; i < 10; i++) {
-                General.println("[Debug]: Checking mast - i = " + i);
+                Log.info("Checking mast - i = " + i);
                 if (Utils.getVarBitValue(WIND_SPEED_VARBIT) != 1) {
                     scripts.cQuesterV2.status = "Waiting on windspeed";
                     Timer.waitCondition(() -> Utils.getVarBitValue(WIND_SPEED_VARBIT) == 1, 15000, 20000);
@@ -485,17 +495,17 @@ public class GhostsAhoy implements QuestTask {
                     Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(229, 1), 1500, 3000);
                     if (Interfaces.isInterfaceSubstantiated(229, 1)) {
                         String msg = Interfaces.get(229, 1).getText();
-                        //General.println("[Debug]: scripts.cQuesterV2.status: " + msg);
+                        //Log.info("scripts.cQuesterV2.status: " + msg);
                         if (msg != null) {
                             if (msg.contains("top half")) {
                                 GhostsAhoyConst.topHalf = determineColor();
-                                General.println("[Debug]: Top half is " + GhostsAhoyConst.topHalf.toString());
+                                Log.info("Top half is " + GhostsAhoyConst.topHalf.toString());
                             } else if (msg.contains("bottom half")) {
                                 GhostsAhoyConst.bottomHalf = determineColor();
-                                General.println("[Debug]: Bottom half is " + GhostsAhoyConst.bottomHalf.toString());
+                                Log.info("Bottom half is " + GhostsAhoyConst.bottomHalf.toString());
                             } else if (msg.contains("skull")) {
                                 GhostsAhoyConst.skull = determineColor();
-                                General.println("[Debug]: Skull is " + GhostsAhoyConst.skull.toString());
+                                Log.info("Skull is " + GhostsAhoyConst.skull.toString());
                             }
                         }
                         if (Player.getPosition().click())// gets rid of dialog box
@@ -504,7 +514,7 @@ public class GhostsAhoy implements QuestTask {
                     }
                 }
                 if (GhostsAhoyConst.skull != null && GhostsAhoyConst.bottomHalf != null && GhostsAhoyConst.topHalf != null) {
-                    General.println("[Debug]: We have all the colors");
+                    Log.info("We have all the colors");
                     break;
                 }
                 General.sleep(300, 1200);
@@ -516,7 +526,7 @@ public class GhostsAhoy implements QuestTask {
     public GhostsAhoyConst.COLOR determineColor() {
         if (Interfaces.isInterfaceSubstantiated(229, 1)) {
             String msg = Interfaces.get(229, 1).getText();
-            General.println("[Debug]: scripts.cQuesterV2.status: " + msg);
+            Log.info("scripts.cQuesterV2.status: " + msg);
             if (msg != null) {
                 if (msg.contains("red.")) { //need period
                     return GhostsAhoyConst.COLOR.RED;
@@ -550,7 +560,7 @@ public class GhostsAhoy implements QuestTask {
         if (Inventory.find(finalDye).length >= 1 &&
                 Utils.useItemOnItem(finalDye, ItemID.REPAIRED_SHIP)) {
             Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(219, 1), 2000, 4000);
-            General.println("[DyeShip]: Coloring boat part: " + partName);
+            Log.info("[DyeShip]: Coloring boat part: " + partName);
             int dyeNum = Inventory.find(finalDye).length;
             if (InterfaceUtil.clickInterfaceText(219, 1, partName)) {
                 Timer.waitCondition(() -> Inventory.find(finalDye).length < dyeNum, 2000, 4000);
@@ -561,20 +571,20 @@ public class GhostsAhoy implements QuestTask {
     public void colorBoat(GhostsAhoyConst.COLOR part, String partName) {
         if (GhostsAhoyConst.skull != null && GhostsAhoyConst.bottomHalf != null && GhostsAhoyConst.topHalf != null) {
             scripts.cQuesterV2.status = "Coloring boat";
-            General.println("[Debug]: Coloring boat part: " + partName);
-            General.println("[Debug]: Bottomhalf: " + GhostsAhoyConst.bottomHalf);
-            General.println("[Debug]: Skull: " + GhostsAhoyConst.skull);
-            General.println("[Debug]: TopHalf: " + GhostsAhoyConst.topHalf);
+            Log.info("Coloring boat part: " + partName);
+            Log.info("Bottomhalf: " + GhostsAhoyConst.bottomHalf);
+            Log.info("Skull: " + GhostsAhoyConst.skull);
+            Log.info("TopHalf: " + GhostsAhoyConst.topHalf);
 
             if (part != null) {
                 if (part.equals(GhostsAhoyConst.COLOR.ORANGE)) {
-                    General.println("[Debug]: Making orange");
+                    Log.info("Making orange");
                     makeAndDye(ItemID.YELLOW_DYE, ItemID.RED_DYE, ItemID.ORANGE_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.PURPLE)) {
-                    General.println("[Debug]: Making Purple");
+                    Log.info("Making Purple");
                     makeAndDye(ItemID.BLUE_DYE, ItemID.RED_DYE, ItemID.PURPLE_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.GREEN)) {
-                    General.println("[Debug]: Making green");
+                    Log.info("Making green");
                     makeAndDye(ItemID.BLUE_DYE, ItemID.YELLOW_DYE, ItemID.GREEN_DYE, partName);
                 } else if (part.equals(GhostsAhoyConst.COLOR.YELLOW)) {
                     dyeShip(ItemID.YELLOW_DYE, partName);
@@ -627,11 +637,11 @@ public class GhostsAhoy implements QuestTask {
     }
 
     public boolean searchChestForPiece3() {
-        RSObject chests = Entities.find(ObjectEntity::new)
+        Optional<GameObject> chest = Query.gameObjects()
+                .tileEquals(new WorldTile(3618, 3542, 0))
                 .idEquals(16119)
-                .tileEquals(new RSTile(3618, 3542, 0))
-                .getFirstResult();
-        return chests != null && Utils.clickObject(chests, "Search");
+                .findClosest();
+        return chest.map(c -> c.interact("Search")).orElse(false);
     }
 
     public void goToLobster() {
@@ -649,11 +659,7 @@ public class GhostsAhoy implements QuestTask {
                             .tileEquals(new WorldTile(3618, 3542, 0))
                             .nameContains("Chest")
                             .findClosest();
-                    RSObject chests = Entities.find(ObjectEntity::new)
-                            .nameContains("Chest")
-                            .tileEquals(new RSTile(3618, 3542, 0))
-                            .getFirstResult();
-                    if (chests != null && Utils.clickObject(chests, "Open")) {
+                    if (chest.map(c -> c.interact("Open")).orElse(false)) {
                         Timer.waitCondition(() -> Entities.find(ObjectEntity::new)
                                 .idEquals(16119)
                                 .tileEquals(new RSTile(3618, 3542, 0))
@@ -682,7 +688,7 @@ public class GhostsAhoy implements QuestTask {
 
     public void takeRowboat() {
         // need 25 ectotokens, this currently doesn't check
-        if (!bookOfHoraciaReq.check()) {
+        if (!bookOfHoraciaReq.check() && hasEctotokens(25)) {
             if (itemsForBookOfHoracio.check()) {
                 if (!GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition())) {
                     enterPortPhysmatis();
@@ -693,29 +699,31 @@ public class GhostsAhoy implements QuestTask {
             }
             if (GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition())) {
                 cQuesterV2.status = "Going to dig";
-                General.println("[Debug]: Going to dig");
-                if (PathingUtil.localNavigation(DIG_TILE))
+                Log.info("Going to dig");
+                if (PathingUtil.localNav(DIG_WORLD_TILE))
                     PathingUtil.movementIdle();
 
-                if (AccurateMouse.walkScreenTile(DIG_TILE))
+                if (DIG_WORLD_TILE.interact("Walk here"))
                     PathingUtil.movementIdle();
 
-                if (Utils.clickInventoryItem(ItemID.SPADE)) {
-                    Timer.slowWaitCondition(() -> Inventory.find(GhostsAhoyConst.BOOK_OF_HORACIO)
-                            .length == 1, 5500, 6500);
+                if (DIG_WORLD_TILE.equals(MyPlayer.getTile()) &&
+                        Utils.clickInventoryItem(ItemID.SPADE)) {
+                    Waiting.waitUntil(6000, 550, () -> Inventory.find(GhostsAhoyConst.BOOK_OF_HORACIO)
+                            .length == 1);
+                    Utils.idleNormalAction(true);
                 }
             }
         }
     }
 
-    RSTile DIG_TILE = new RSTile(3803, 3530, 0);
 
     public void leaveDragontoothIsland() {
         if (GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition()) && bookOfHoraciaReq.check()) {
             cQuesterV2.status = "Going rowboat";
-            General.println("[Debug]: Going to dig");
-            if (PathingUtil.localNavigation(new RSTile(3792, 3559, 0)))
+            Log.info("Going to dig");
+            if (PathingUtil.localNav(new WorldTile(3792, 3559, 0)))
                 PathingUtil.movementIdle();
+
             if (Utils.clickNPC("Ghost captain", "Travel")) {
                 Timer.waitCondition(() -> !GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition()), 4500, 5000);
             }
@@ -725,8 +733,8 @@ public class GhostsAhoy implements QuestTask {
 
     //NPCStep talkToAkHaranu = new NPCStep(NpcID.AKHARANU, new RSTile(3689, 3499, 0), "Okay, wait here - I'll get you your bow.");
     public void setTalkToAkHaranu() {
-        cQuesterV2.status = "Going to AkHaranu";
         if (!GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition()) && bookOfHoraciaReq.check()) {
+            cQuesterV2.status = "Going to AkHaranu";
             talkToAkHaranu.setRadius(7);
             talkToAkHaranu.execute();
         }
@@ -740,7 +748,6 @@ public class GhostsAhoy implements QuestTask {
             talkToRobin.setRadius(10);
             talkToRobin.execute();
         }
-        General.println("here");
         Timer.waitCondition(() -> Interfaces.get(9) != null, 4000, 6000);
         playRuneDraw();
     }
@@ -752,7 +759,8 @@ public class GhostsAhoy implements QuestTask {
             if (enterPortPhysmatis()) {
                 if (PathingUtil.localNavigation(new RSTile(3675, 3495, 0)))
                     PathingUtil.movementIdle();
-                General.println("Talking to dude");
+                cQuesterV2.status = "Talking to Inn keeper";
+                Log.info("Talking to Inn keeper");
                 talkToInnkeeper.setRadius(7);
                 talkToInnkeeper.execute();
             }
@@ -762,6 +770,8 @@ public class GhostsAhoy implements QuestTask {
     public void makeGhostSheet() {
         if (Inventory.find(GhostsAhoyConst.SHEET).length == 1 &&
                 Utils.useItemOnItem(ItemID.BUCKET_OF_SLIME, GhostsAhoyConst.SHEET)) {
+            cQuesterV2.status = "Making sheet";
+            Log.info("Making sheet");
             Timer.waitCondition(() -> Inventory.find(GhostsAhoyConst.GHOST_SHEET).length == 1, 3500, 5000);
         }
         if (!Equipment.isEquipped(GhostsAhoyConst.GHOST_SHEET)) {
@@ -772,7 +782,7 @@ public class GhostsAhoy implements QuestTask {
     public void playRuneDraw() {
         for (int i = 0; i < 10; i++) {
             cQuesterV2.status = "Playing runedraw- i = " + i;
-            General.println("Playing runedraw- i = " + i);
+            Log.info("Playing runedraw- i = " + i);
             Timer.waitCondition(() -> Interfaces.get(9) != null, 4000, 6000);
             if (Interfaces.get(9) != null) {
                 if (i == 1 && InterfaceUtil.click(9, 5)) {
@@ -785,7 +795,7 @@ public class GhostsAhoy implements QuestTask {
                 }
                 if ((InterfaceUtil.checkText(9, 28, "You win!") ||
                         InterfaceUtil.checkText(9, 28, "You lose!"))) {
-                    General.println("Closing interfaces");
+                    Log.info("Closing interfaces");
                     RSInterface close = Interfaces.get(9, 35);
                     if (close != null && close.click())
                         Timer.waitCondition(() -> Interfaces.get(9) == null, 3500, 5000);
@@ -801,8 +811,8 @@ public class GhostsAhoy implements QuestTask {
         }
         if (ChatScreen.isOpen()) {
             NPCInteraction.handleConversation("Yes, I'll give you a game.");
-        } else if (!Waiting.waitUntil(1500,250, ()-> Interfaces.get(9) != null
-        || ChatScreen.isOpen())){
+        } else if (!Waiting.waitUntil(1500, 250, () -> Interfaces.get(9) != null
+                || ChatScreen.isOpen())) {
             talkToRobin.setRadius(10);
             talkToRobin.execute();
         }
@@ -813,7 +823,7 @@ public class GhostsAhoy implements QuestTask {
     public void returnBow() {
         cQuesterV2.status = "Returning Bow";
         if (GhostsAhoyConst.BAR_AREA.contains(Player.getPosition())) {
-            General.println("[Debug]: Leaving bar");
+            Log.info("Leaving bar");
             PathingUtil.localNavigation(new RSTile(3668, 3497, 0));
             PathingUtil.movementIdle();
         }
@@ -828,7 +838,7 @@ public class GhostsAhoy implements QuestTask {
         } else {
             cQuesterV2.status = "Going to Gravingas";
             if (GhostsAhoyConst.BAR_AREA.contains(Player.getPosition())) {
-                General.println("[Debug]: Leaving bar");
+                Log.info("Leaving bar");
                 PathingUtil.localNavigation(new RSTile(3668, 3497, 0));
                 PathingUtil.movementIdle();
             }
@@ -849,7 +859,7 @@ public class GhostsAhoy implements QuestTask {
             handleInnKeeper();
         }
         if (GhostsAhoyConst.BAR_AREA.contains(Player.getPosition())) {
-            General.println("[Debug]: Leaving bar");
+            Log.info("Leaving bar");
             PathingUtil.localNavigation(new RSTile(3668, 3497, 0));
             PathingUtil.movementIdle();
         }
@@ -928,7 +938,7 @@ public class GhostsAhoy implements QuestTask {
     public void giveCroneRobes() {
         if (Inventory.find(GhostsAhoyConst.ROBES).length == 1) {
             cQuesterV2.status = "Going to Crone";
-            General.println("[Debug]: going to give crone robes");
+            Log.info("going to give crone robes");
             if (equipGhostspeakAmulet())
                 croneStepNoDialogOptions.execute();
         }
@@ -993,12 +1003,12 @@ public class GhostsAhoy implements QuestTask {
     );
 
 
-    private void navigatePath(List<WorldTile> tileList){
-        for (WorldTile t : tileList){
+    private void navigatePath(List<WorldTile> tileList) {
+        for (WorldTile t : tileList) {
             Optional<GameObject> obj = Query.gameObjects().tileEquals(t).isReachable()
                     .actionContains("Jump-to").findClosest();
-            if (obj.map(o-> o.interact("Jump-to")).orElse(false)){
-                Waiting.waitUntil(3500, 350, ()-> MyPlayer.isAnimating());
+            if (obj.map(o -> o.interact("Jump-to")).orElse(false)) {
+                Waiting.waitUntil(3500, 350, () -> MyPlayer.isAnimating());
             }
         }
     }
@@ -1115,7 +1125,6 @@ public class GhostsAhoy implements QuestTask {
             enterPortPhysmatis();
             velorinaStep2.execute();
         } else if (Utils.getVarBitValue(VARBIT) == 3) {
-            General.println("At line 1067");
             makeNettleTea();
             croneStep3();
             mixTeaSteps();
@@ -1198,7 +1207,7 @@ public class GhostsAhoy implements QuestTask {
                 Utils.getVarBitValue(214) == 3 &&
                 Utils.getVarBitValue(215) == 1 &&
                 Utils.getVarBitValue(217) == 4) {
-            General.println("[Debug]: Get Signatures");
+            Log.info("Get Signatures");
             getSignatures();
         } else if (Utils.getVarBitValue(209) == 11 &&
                 Utils.getVarBitValue(211) == 3 &&
