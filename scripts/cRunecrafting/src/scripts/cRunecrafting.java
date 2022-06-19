@@ -55,7 +55,7 @@ public class cRunecrafting extends CassScript implements TribotScript {
         Vars.get().startRcLevel = Skill.RUNECRAFT.getCurrentLevel();
         Vars.get().startRcXp = Skill.RUNECRAFT.getXp();
 
-
+        Mouse.setSpeed(150);
         Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
         //Tasks
         TaskSet tasks = new TaskSet(

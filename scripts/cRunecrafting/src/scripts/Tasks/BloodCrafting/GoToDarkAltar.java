@@ -97,7 +97,7 @@ public class GoToDarkAltar implements Task {
 
             int last = ess.size() -1;
             if (chisel.map(c -> c.useOn(ess.get(last))).orElse(false)) {
-                Waiting.waitNormal(55, 15);
+                Waiting.waitNormal(45, 12);
             }
         }
         Waiting.waitUniform(300, 600);

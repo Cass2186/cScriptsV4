@@ -20,7 +20,7 @@ public enum WcLocations {
     SEERS_WILLOWS(WoodCuttingConst.SEERS_MAPLES_AREA, "Willow", 31, 55),
     CASTLE_WARS_TEAKS(WoodCuttingConst.TEAK_AREA, "Teak", 55, 61),
    SEERS_MAPLES(WoodCuttingConst.SEERS_MAPLES_AREA, "Maple",  61, 61),
-    WC_GUILD_WILLOWS(WoodCuttingConst.WC_GUILD_MAPLE_AREA, "Willow",
+    WC_GUILD_WILLOWS(WoodCuttingConst.WC_GUILD_WILLOW_AREA, "Willow",
             Utils.getVarBitValue(Varbits.KOUREND_FAVOR_HOSIDIUS.getId()) > 750,
             55, 80),
     WC_GUILD_MAPLES(WoodCuttingConst.WC_GUILD_MAPLE_AREA, "Maple",

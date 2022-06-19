@@ -7,6 +7,10 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
 import scripts.Data.Const;
 import scripts.Data.Enums.Trees;
 import scripts.Data.Vars;
@@ -19,6 +23,7 @@ import scripts.Utils;
 
 
 import java.awt.*;
+import java.util.Optional;
 
 public class Plant implements Task {
 
@@ -36,14 +41,23 @@ public class Plant implements Task {
     }
 
     public static void clearDeadPlants(int patchId) {
-        RSObject[] weeds = Objects.findNearest(20, Filters.Objects.actionsContains("Clear").and(Filters.Objects.idEquals(patchId)));
-        if (weeds.length > 0) {
+        Optional<GameObject> deadPlant = Query.gameObjects()
+                .nameContains("Dead")
+                .actionContains("Clear")
+                .actionContains("Inspect")
+                //.idEquals(patchId)
+                .maxDistance(10)
+                .findClosestByPathDistance();
+        if (deadPlant.map(d -> d.interact("Clear")).orElse(false) &&
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 5000, 7000)) {
             Vars.get().status = "Clearing dead plants";
-            if (Utils.clickObject(patchId, "Clear", false)) {
-                Timer.waitCondition(() -> Player.getAnimation() != -1, 5000, 7000);
-                Timer.waitCondition(() -> Objects.findNearest(20, Filters.Objects.actionsContains("Clear").and(Filters.Objects.idEquals(patchId))).length <
-                        weeds.length, 20000, 30000);
-            }
+            Timer.waitCondition(() -> Query.gameObjects()
+                    .nameContains("Dead")
+                    .actionContains("Clear")
+                    .actionContains("Inspect")
+                    .maxDistance(5)
+                    //   .idEquals(patchId)
+                    .findClosestByPathDistance().isEmpty(), 20000, 30000);
         }
     }
 
@@ -116,16 +130,17 @@ public class Plant implements Task {
 
     public boolean plantTreePatch(int herbId, int patchId) {
         rakeWeeds(patchId);
-        RSObject[] patch = Objects.findNearest(20, Filters.Objects.nameContains("Tree patch").and(Filters.Objects.idEquals(patchId)));
-        if (patch.length > 0) {
-            Vars.get().status = "Planting herbs";
-            if (Utils.useItemOnObject(herbId, patchId)) {
-                Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
-                Timer.abc2WaitCondition(() -> Player.getAnimation() == -1, 4000, 8000);
-                return true;
-            }
+        Optional<GameObject> patch = Query.gameObjects().nameContains("Tree patch")
+                .idEquals(patchId)
+                .maxDistance(10)
+                .findClosestByPathDistance();
+        Vars.get().status = "Planting tree";
+        if (patch.isPresent() && Utils.useItemOnObject(herbId, patchId) &&
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000)) {
+            Timer.waitCondition(() -> Player.getAnimation() == -1, 5000, 8000);
+            return true;
         }
-        return true;
+        return false;
     }
 
     public boolean plantAllotmentPatch(int seedId, int patchId) {
