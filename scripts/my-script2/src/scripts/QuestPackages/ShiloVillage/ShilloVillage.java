@@ -4,24 +4,22 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.Equipment;
-import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.Prayer;
-import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Widget;
 import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
-import scripts.QuestPackages.SheepShearer.SheepShearer;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.*;
-import scripts.Requirements.Items.ItemRequirements;
 import scripts.Requirements.Quest.QuestRequirement;
 import scripts.Tasks.Priority;
 import scripts.Timer;
@@ -206,10 +204,10 @@ public class ShilloVillage implements QuestTask {
 
     public boolean lightCandle() {
         if (Utils.useItemOnItem(ItemID.CANDLE, ItemID.TINDERBOX)) {
-            return Waiting.waitUntil(1500, 125,
-                    () -> Inventory.find(ItemID.LIT_CANDLE).length > 0);
+            return Waiting.waitUntil(1500, 600,
+                    () -> Inventory.contains(ItemID.LIT_CANDLE));
         }
-        return Inventory.find(ItemID.LIT_CANDLE).length > 0;
+        return Inventory.contains(ItemID.LIT_CANDLE);
     }
 
     public void getItems() {
@@ -231,7 +229,7 @@ public class ShilloVillage implements QuestTask {
     }
 
     public void startQuest() {
-        if (Inventory.find(WAMPUM_BELT).length == 0) {
+        if (!Inventory.contains(WAMPUM_BELT)) {
             cQuesterV2.status = "Going to start";
             PathingUtil.walkToArea(START_AREA, false);
 
@@ -246,7 +244,7 @@ public class ShilloVillage implements QuestTask {
     }
 
     public void step2UseBeltOnTrufitus() {
-        if (Inventory.find(WAMPUM_BELT).length > 0) {
+        if (Inventory.contains(WAMPUM_BELT)) {
             cQuesterV2.status = "Going to Trufitus";
             PathingUtil.walkToArea(TRUFITUS_HOUSE, true);
             if (Utils.useItemOnNPC(WAMPUM_BELT, "Trufitus")) {
@@ -331,8 +329,8 @@ public class ShilloVillage implements QuestTask {
                 Timer.waitCondition(() -> AHZAHROON_SECOND_AREA.contains(Player.getPosition()), 8000, 12000);
             }
         }
-        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.find(TATTERED_SCROLL).length == 0) {
-            if (PathingUtil.localNav(LOOSE_ROCKS_TILE))
+        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && !Inventory.contains(TATTERED_SCROLL)) {
+            if (PathingUtil.blindWalkToTile(Utils.getRSTileFromLocalTile(LOOSE_ROCKS_TILE)))
                 Timer.waitCondition(() -> LOOSE_ROCKS_TILE.distance() < 4, 5000, 8000);
             RSObject[] obj = Objects.findNearest(20, Filters.Objects.nameContains("Loose rocks"));
             cQuesterV2.status = "5: Searching Rocks";
@@ -341,10 +339,10 @@ public class ShilloVillage implements QuestTask {
                 NpcChat.handle();
             }
         }
-        RSItem[] s = Inventory.find(TATTERED_SCROLL);
-        if (s.length > 0 && Inventory.find(CRUMPLED_SCROLL).length == 0) {
+        Optional<InventoryItem> s = Query.inventory().idEquals(TATTERED_SCROLL).findClosestToMouse();
+        if (s.isPresent() && !Inventory.contains(CRUMPLED_SCROLL)) {
             cQuesterV2.status = "5: Reading scroll";
-            if (s[0].click("Read")) {
+            if (s.map(sc -> sc.click("Read")).orElse(false)) {
                 NpcChat.handle(true, "Yes please.");
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(220, 16), 3000, 5000);
             }
@@ -355,8 +353,8 @@ public class ShilloVillage implements QuestTask {
     }
 
     public void goToOldSacks() {
-        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.find(TATTERED_SCROLL).length > 0
-                && Inventory.find(CRUMPLED_SCROLL).length == 0 && Inventory.find(ZADIMUS_CORPSE).length == 0) {
+        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.contains(TATTERED_SCROLL)
+                && !Inventory.contains(CRUMPLED_SCROLL) && !Inventory.contains(ZADIMUS_CORPSE)) {
             cQuesterV2.status = "5: Searching Old Sacks";
             if (Walking.blindWalkTo(OLD_SACK_TILE))
                 Timer.waitCondition(() -> OLD_SACK_TILE.distanceTo(Player.getPosition()) < 4, 5000, 8000);
@@ -366,14 +364,14 @@ public class ShilloVillage implements QuestTask {
                 NpcChat.handle();
             }
         }
-        RSItem[] s = Inventory.find(CRUMPLED_SCROLL);
-        if (s.length > 0) {
+        Optional<InventoryItem> scroll = Query.inventory().idEquals(CRUMPLED_SCROLL).findClosestToMouse();
+        if (scroll.isPresent()) {
             cQuesterV2.status = "5: Reading scroll";
             WorldTile t = new WorldTile(2940, 9285, 0);
             if (!MyPlayer.getTile().equals(t) && t.interact("Walk here"))
                 PathingUtil.movementIdle();
 
-            if (s[0].click("Read")) {
+            if (scroll.map(s -> s.click("Read")).orElse(false)) {
                 Waiting.waitUntil(2000, 25, () -> ChatScreen.isOpen());
                 NpcChat.handle("Yes please.");
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(220, 16), 3000, 5000);
@@ -393,8 +391,8 @@ public class ShilloVillage implements QuestTask {
     }
 
     public void goToGallows() {
-        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.find(TATTERED_SCROLL).length > 0
-                && Inventory.find(CRUMPLED_SCROLL).length > 0 && Inventory.find(ZADIMUS_CORPSE).length == 0) {
+        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.contains(TATTERED_SCROLL)
+                && Inventory.contains(CRUMPLED_SCROLL) && !Inventory.contains(ZADIMUS_CORPSE)) {
             cQuesterV2.status = "5: Going to Ancient Gallows";
             if (Walking.blindWalkTo(GALLOWS_TILE))
                 Timer.waitCondition(() -> GALLOWS_TILE.distanceTo(Player.getPosition()) < 4, 5000, 8000);
@@ -410,8 +408,8 @@ public class ShilloVillage implements QuestTask {
     }
 
     public void goBackToDude() {
-        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.find(TATTERED_SCROLL).length > 0
-                && Inventory.find(CRUMPLED_SCROLL).length > 0 && Inventory.find(ZADIMUS_CORPSE).length > 0) {
+        if (AHZAHROON_SECOND_AREA.contains(Player.getPosition()) && Inventory.contains(TATTERED_SCROLL)
+                && Inventory.contains(CRUMPLED_SCROLL) && Inventory.contains(ZADIMUS_CORPSE)) {
             cQuesterV2.status = "Going to Trufitus";
             PathingUtil.walkToArea(TRUFITUS_HOUSE, true);
             if (Utils.useItemOnNPC(CRUMPLED_SCROLL, "Trufitus")) {
@@ -433,7 +431,7 @@ public class ShilloVillage implements QuestTask {
 
 
     public void buryCorpse() {
-        if (Inventory.find(BONE_SHARD, BONE_KEY).length == 0) {
+        if (!Inventory.contains(BONE_SHARD, BONE_KEY)) {
             InventoryRequirement invReq = new InventoryRequirement(new ArrayList<>(
                     Arrays.asList(
                             new ItemReq(ZADIMUS_CORPSE, 1)
@@ -446,8 +444,8 @@ public class ShilloVillage implements QuestTask {
                 PathingUtil.walkToTile(STATUE_TILE, 1, true);
                 PathingUtil.movementIdle();
                 if (STATUE_TILE.distanceTo(Player.getPosition()) < 3) {
-                    RSItem[] itm = Inventory.find(ZADIMUS_CORPSE);
-                    if (itm.length > 0 && itm[0].click("Bury")) {
+                    Optional<InventoryItem> itm = Query.inventory().indexEquals(ZADIMUS_CORPSE).findClosestToMouse();
+                    if (itm.map(i -> i.click("Bury")).orElse(false)) {
                         NpcChat.handle(true);
                         NpcChat.handle(true);
                     }
@@ -498,12 +496,12 @@ public class ShilloVillage implements QuestTask {
 
     public void getBeadsAndNecklace() {
         if ((!Equipment.isEquipped(BEADS_OF_THE_DEAD) &&
-                Inventory.find(BEADS_OF_THE_DEAD).length == 0)) {
+                !Inventory.contains(BEADS_OF_THE_DEAD))) {
             goToIsland();
             if (CAIRN_ISLAND_DUNGEON_AREA.contains(Player.getPosition())) {
                 cQuesterV2.status = "Navigating Dungeon";
                 for (int i = 0; i < 15; i++) {
-                    if (Inventory.getAll().length <= 25) {
+                    if (Inventory.getAll().size() <= 25) {
                         break;
                     }
                     EatUtil.eatFood();
@@ -520,11 +518,11 @@ public class ShilloVillage implements QuestTask {
                 if (Utils.useItemOnItem(CHISEL, SWORD_POMMEL)) {
                     NPCInteraction.waitForConversationWindow();
                     NpcChat.handle();
-                    Timer.waitCondition(() -> Inventory.find(BEADS).length > 0, 3000, 5000);
+                    Timer.waitCondition(() -> Inventory.contains(BEADS), 3000, 5000);
                 }
                 if (Utils.useItemOnItem(BEADS, BRONZE_WIRE)) {
                     NPCInteraction.waitForConversationWindow();
-                    Timer.waitCondition(() -> Inventory.find(BEADS_OF_THE_DEAD).length > 0, 3000, 5000);
+                    Timer.waitCondition(() -> Inventory.contains(BEADS_OF_THE_DEAD), 3000, 5000);
                 }
                 Utils.equipItem(BEADS_OF_THE_DEAD);
             }
@@ -535,8 +533,8 @@ public class ShilloVillage implements QuestTask {
     public void goToBossFight() {
         buryCorpse();
         if ((Equipment.isEquipped(BEADS_OF_THE_DEAD) ||
-                Inventory.find(BEADS_OF_THE_DEAD).length > 0) &&
-                Inventory.find(BONE_KEY, BONE_SHARD).length > 0) {
+                Inventory.contains(BEADS_OF_THE_DEAD)) &&
+                Inventory.contains(BONE_KEY, BONE_SHARD)) {
             cQuesterV2.status = "Going to boss fight";
             PathingUtil.walkToArea(DKP_FAIRY_RING_AREA, true);
             if (!Autocast.isAutocastEnabled(Autocast.FIRE_STRIKE)) {
@@ -551,8 +549,8 @@ public class ShilloVillage implements QuestTask {
                 NpcChat.handle();
             }
 
-            if (Inventory.find(BONE_KEY).length == 0 && Utils.useItemOnItem(CHISEL, BONE_SHARD))
-                Timer.waitCondition(() -> Inventory.find(BONE_KEY).length > 0, 3300);
+            if (!Inventory.contains(BONE_KEY) && Utils.useItemOnItem(CHISEL, BONE_SHARD))
+                Timer.waitCondition(() -> Inventory.contains(BONE_KEY), 3300);
 
             if (Utils.useItemOnObject(BONE_KEY, "Carved Doors")) {
                 NPCInteraction.waitForConversationWindow();
@@ -678,7 +676,7 @@ public class ShilloVillage implements QuestTask {
         if (CombatUtil.isPraying())
             Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
 
-        if (Inventory.find(RASHILIYIA_CORPSE).length > 0)
+        if (Inventory.contains(RASHILIYIA_CORPSE))
             return true;
 
         return Utils.clickGroundItem(RASHILIYIA_CORPSE);
