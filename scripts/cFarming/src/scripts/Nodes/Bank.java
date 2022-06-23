@@ -7,6 +7,7 @@ import org.tribot.api2007.Login;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.cache.BankCache;
 import scripts.BankManager;
 import scripts.Data.Const;
 import scripts.Data.Methods;
@@ -42,6 +43,16 @@ public class Bank implements Task {
         }
 
         return Vars.get().usingMagicSecateurs = false;
+    }
+
+    private boolean hasBottomlessCompost(){
+        if (org.tribot.script.sdk.Inventory.contains(ItemID.BOTTOMLESS_COMPOST_BUCKET)){
+            return true;
+        } else if (!BankCache.isInitialized()){
+            BankManager.open(true);
+            BankCache.update();
+        }
+        return BankCache.getStack(ItemID.BOTTOMLESS_COMPOST_BUCKET) > 0;
     }
 
     public boolean checkBottomlessCompost() {
@@ -215,10 +226,15 @@ public class Bank implements Task {
 
 
 
-        treeSetUp.withdrawItemsNew();
-        if (!checkBottomlessCompost()) {
+
+        if (!hasBottomlessCompost()) {
             treeSetUp.add(new ItemRequirement(ItemID.ULTRACOMPOST, treeNum, 0));
+        } else {
+            treeSetUp.add(new ItemRequirement(ItemID.BOTTOMLESS_COMPOST_BUCKET, 1, 0));
         }
+
+        treeSetUp.withdrawItemsNew();
+
         if (!treeSetUp.check()) {
             Log.info("[FarmBank]: Creating buy list");
             Vars.get().shouldRestock = true;

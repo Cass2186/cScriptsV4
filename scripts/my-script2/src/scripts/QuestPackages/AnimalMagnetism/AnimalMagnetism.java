@@ -78,7 +78,7 @@ public class AnimalMagnetism implements QuestTask {
     public boolean checkLevel() {
         if (Skills.getActualLevel(Skills.SKILLS.SLAYER) < 18) {
             Log.log("[Debug]: Missing Slayer level of 18 for animal magnetism");
-           return false;
+            return false;
         }
         if (Skills.getActualLevel(Skills.SKILLS.WOODCUTTING) < 35) {
             Log.log("[Debug]: Missing woodcutting level of 35 for animal magnetism");
@@ -193,7 +193,7 @@ public class AnimalMagnetism implements QuestTask {
                 cQuesterV2.status = "Getting bonemeal";
                 General.println("[Debug]: " + cQuesterV2.status);
                 if (Utils.useItemOnObject(DRAGON_BONES, "Loader"))
-                    Timer.abc2WaitCondition(() -> Inventory.find(BONEMEAL).length ==5 ,
+                    Timer.abc2WaitCondition(() -> Inventory.find(BONEMEAL).length == 5,
                             85000, 95000);
             }
 
@@ -308,7 +308,7 @@ public class AnimalMagnetism implements QuestTask {
 
             if (NpcChat.talkToNPC("Alice's husband")) {
                 NPCInteraction.waitForConversationWindow();
-                 NPCInteraction.handleConversation(); // need this
+                NPCInteraction.handleConversation(); // need this
                 NPCInteraction.handleConversation("Could I buy those chickens now, then?",
                         "Could I buy 2 chickens?");
                 NPCInteraction.handleConversation("Could I buy 2 chickens?");
@@ -428,7 +428,7 @@ public class AnimalMagnetism implements QuestTask {
             RSNPC[] tree = NPCs.findNearest(4418);
             if (tree.length > 0) {
                 AccurateMouse.click(tree[0], "Chop");
-                Timer.waitCondition(()-> Player.getAnimation() != -1, 4500,6500);
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 4500, 6500);
             }
             Utils.idle(3000, 5000);
             Walking.blindWalkTo(new RSTile(3115, 3350, 0)); // prevents getting stuck on tree
@@ -471,15 +471,7 @@ public class AnimalMagnetism implements QuestTask {
             Timer.abc2WaitCondition(() -> TURAEL_AREA.contains(Player.getPosition()), 9000, 15000);
         }
         if (NpcChat.talkToNPC("Turael")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("I'm here about a quest.");
-            NPCInteraction.handleConversation();
-        }
-        if (NpcChat.talkToNPC("Turael")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Hello, I'm here about those trees again.");
-            NPCInteraction.handleConversation("I'd love one, thanks.");
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true,"I'm here about a quest.", "Hello, I'm here about those trees again.","I'd love one, thanks.");
         }
     }
 

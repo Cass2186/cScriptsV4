@@ -293,6 +293,7 @@ public class AttackNpc implements Task {
 
             } else {
                 SlayerVars.get().status = "Sleeping...";
+                Waiting.waitNormal(100,10); //adds ~100ms to the base sleep, which is fast
                 Utils.idleNormalAction(true);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
             }
