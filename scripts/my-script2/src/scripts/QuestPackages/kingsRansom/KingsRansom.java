@@ -230,7 +230,7 @@ public class KingsRansom implements QuestTask {
         telegrab = new ItemRequirements("Telegrab runes", new ItemRequirement("Law rune", ItemID.LAW_RUNE),
                 new ItemRequirements(LogicType.OR, "Air runes or staff", new ItemRequirement("Air runes", ItemCollections.getAirRune()), new ItemRequirement("Air staff", ItemCollections.getAirStaff())));
 
-        grabOrLockpick = new ItemRequirements(LogicType.OR, "Runes for telekinetic grab or a lockpick", new ItemRequirement("Lockpick", ItemID.LOCKPICK), telegrab);
+       // grabOrLockpick = new ItemRequirements(LogicType.OR, "Runes for telekinetic grab or a lockpick", new ItemRequirement("Lockpick", ItemID.LOCKPICK), telegrab);
 
         hairclipOrLockpick = new ItemRequirement("Hair clip or Lockpick", ItemID.LOCKPICK);
         hairclipOrLockpick.addAlternateItemIDs(ItemID.HAIR_CLIP);
@@ -297,21 +297,27 @@ public class KingsRansom implements QuestTask {
     }
 
     public void setupSteps() {
-        talkToGossip = new NPCStep(NpcID.GOSSIP, new RSTile(2741, 3557, 0), "Talk to Gossip, just south of the Sinclair Mansion.");
-        talkToGossip.addDialogStep("How curious. Maybe I should investigate it.");
+        talkToGossip = new NPCStep(NpcID.GOSSIP, new RSTile(2741, 3557, 0),
+                "Talk to Gossip, just south of the Sinclair Mansion.");
+        talkToGossip.addDialogStep("How curious. Maybe I should investigate it.", "Yes.");
         talkToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0), "Talk to the Guard in the Sinclair Manor.");
 
         breakWindow = new ObjectStep(26123, new RSTile(2749, 3577, 0), "Break");
-        goUpstairsManor = new ObjectStep(ObjectID.STAIRCASE_25682, new RSTile(2737, 3582, 0), "Climb-up");
+        goUpstairsManor = new ObjectStep(ObjectID.STAIRCASE_25682,
+                new RSTile(2737, 3581, 0), "Climb-up",
+                MyPlayer.getTile().getPlane() != 0);
 
-        goDownstairsForPaper = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Take");
+        goDownstairsForPaper = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3580, 1),
+                "Climb-down", MyPlayer.getTile().getPlane() == 0);
         grabPaper = new GroundItemStep(ItemID.SCRAP_PAPER, new RSTile(2746, 3580, 0));
         grabPaper.addSubSteps(goDownstairsForPaper);
 
         takeForm = new GroundItemStep(ItemID.ADDRESS_FORM, new RSTile(2740, 3581, 1));
         searchBookcase = new ObjectStep(ObjectID.BOOKCASE_26053, new RSTile(2738, 3581, 1), "Search");
-        goDownstairsManor = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3581, 1), "Climb-down");
-        leaveWindow = new ObjectStep(26123, new RSTile(2748, 3577, 0), "Step out of the window.");
+        goDownstairsManor = new ObjectStep(ObjectID.STAIRCASE_25683, new RSTile(2736, 3580, 1),
+                "Climb-down", MyPlayer.getTile().getPlane() == 0);
+        leaveWindow = new ObjectStep(26123, new RSTile(2746, 3578, 0),
+                "Break");
         returnToGuard = new NPCStep(4218, new RSTile(2741, 3561, 0), "Return to the guard with the 3 items.");
         returnToGuard.addDialogStep("I have proof that the Sinclairs have left.", "I have proof that links the Sinclairs to Camelot.", "I have proof of foul play.");
 
@@ -368,10 +374,11 @@ public class KingsRansom implements QuestTask {
         leaveCourt = new ObjectStep(ObjectID.GATE_26042,
                 "Exit");
 
-        talkToAnnaAfterTrial = new NPCStep(NpcID.ANNA, new RSTile(2737, 3466, 0), "Talk to Anna in the Seers' Village Court House.");
+        talkToAnnaAfterTrial = new NPCStep(NpcID.ANNA, new RSTile(2737, 3466, 0),
+                "Talk to Anna in the Seers' Village Court House.");
 
         enterStatue = new ObjectStep(ObjectID.STATUE_26073, new RSTile(2780, 3508, 0),
-                "Search", Utils.inCutScene(), grabOrLockpick);
+                "Search", Utils.inCutScene(), telegrab);
 
         talkToMerlin = new NPCStep(4341, new RSTile(1907, 4281, 0), "Talk to Merlin.");
         talkToMerlin.addDialogStep("What do we do now?");
@@ -408,7 +415,8 @@ public class KingsRansom implements QuestTask {
         //   selectPurpleBox = new WidgetStep( "Take the purple round box.", 390, 16);
         searchTable.addSubSteps(selectPurpleBox);
 
-        talkToCromperty = new NPCStep(NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0), "Talk to Wizard Cromperty in East Ardougne.");
+        talkToCromperty = new NPCStep(NpcID.WIZARD_CROMPERTY, new RSTile(2684, 3323, 0),
+                "Talk to Wizard Cromperty in East Ardougne.");
         talkToCromperty.addAlternateNpcs(NpcID.WIZARD_CROMPERTY_8481);
         talkToCromperty.addDialogStep("Chat.");
 
@@ -432,17 +440,17 @@ public class KingsRansom implements QuestTask {
     }
 
     private void freeArthur() {
-        if (inSecretRoom.check()) {
-            freeArthur = new ObjectStep(25943, new RSTile(1867, 4233, 0),
-                    "Free King Arthur " +
-                            "by using the animate rock scroll.", Utils.inCutScene(), animateRock, holyGrail, granite);
+        if (inBasement.check()) {
+            Log.info("Free arthur");
             Optional<GameObject> arthur = Query.gameObjects().idEquals(25943).findBestInteractable();
             Optional<InventoryItem> scroll = Query.inventory().idNotEquals(ItemID.ANIMATE_ROCK_SCROLL).findClosestToMouse();
             if (Utils.useItemOnObject(scroll, arthur))
                 Waiting.waitUntil(6500, 500, Utils::inCutScene);
 
-            if (Utils.inCutScene())
+            if (Utils.inCutScene()) {
                 Utils.cutScene();
+                Utils.idleNormalAction(true);
+            }
             Log.info("Talking to Arthur");
             talkToArthur = new NPCStep(NpcID.KING_ARTHUR, new RSTile(1867, 4235, 0), bronzeMed, ironChain);
             talkToArthur.execute();
@@ -451,7 +459,7 @@ public class KingsRansom implements QuestTask {
 
 
     public List<ItemRequirement> getItemRequirements() {
-        return Arrays.asList(grabOrLockpick, granite, blackKnightHelm, blackKnightBody, blackKnightLeg, bronzeMed, ironChain);
+        return Arrays.asList(telegrab, granite, blackKnightHelm, blackKnightBody, blackKnightLeg, bronzeMed, ironChain);
     }
 
 
@@ -468,35 +476,53 @@ public class KingsRansom implements QuestTask {
     );
 
     private boolean breakWindow() {
-        if (!inDownstairsManor.check() && !inUpstairsManor.check()) {
-            cQuesterV2.status = "Going to break window";
-            WorldTile tile = new WorldTile(2748, 3575, 0);
-            if (PathingUtil.walkToTile(tile)) {
-                Utils.idleNormalAction(true);
-            }
+        if (!Inventory.contains(ItemID.SCRAP_PAPER, ItemID.ADDRESS_FORM)) {
+            if (!inDownstairsManor.check() && !inUpstairsManor.check()) {
+                cQuesterV2.status = "Going to break window";
+                WorldTile tile = new WorldTile(2748, 3575, 0);
+                if (PathingUtil.walkToTile(tile)) {
+                    Utils.idleNormalAction(true);
+                }
 
-            Optional<GameObject> window = Query.gameObjects()
-                    .actionContains("Break")
-                    .nameContains("window")
-                    .findBestInteractable();
-            cQuesterV2.status = "Breaking window";
-            if (window.map(w -> w.interact("Break")).orElse(false)) {
-                Waiting.waitUntil(7000, 250, () -> ChatScreen.isOpen() ||
-                        FIRST_TWO_ROOMS_NEAR_WINDOW.containsMyPlayer());
+                Optional<GameObject> window = Query.gameObjects()
+                        .actionContains("Break")
+                        .nameContains("window")
+                        .findBestInteractable();
+                cQuesterV2.status = "Breaking window";
+                if (window.map(w -> w.interact("Break")).orElse(false)) {
+                    Waiting.waitUntil(7000, 250, () -> ChatScreen.isOpen() ||
+                            FIRST_TWO_ROOMS_NEAR_WINDOW.containsMyPlayer());
+                }
             }
         }
-        return inDownstairsManor.check() || inUpstairsManor.check();
+        return inDownstairsManor.check() || inUpstairsManor.check() ||
+                Inventory.contains(ItemID.SCRAP_PAPER, ItemID.ADDRESS_FORM);
     }
 
     private void pickUpPaper() {
-        cQuesterV2.status = "Getting paper";
-        Log.info(cQuesterV2.status);
-        LocalTile paperTile = new LocalTile(2746, 3580, 0);
-        PathingUtil.localNav(paperTile);
-        grabPaper.execute();
+        if (!Inventory.contains(ItemID.SCRAP_PAPER)) {
+            cQuesterV2.status = "Getting paper";
+            Log.info(cQuesterV2.status);
+            RSTile paperTile = new RSTile(2746, 3580, 0);
+            if (!PathingUtil.localNavigation(paperTile)) { //localwalking doesn't seem to work
+                Log.warn("Failed to walk");
+            }
+            grabPaper.execute();
+        }
     }
 
 
+    private void telegrab(){
+        if (inPrison.check() && hasTelegrabItems.check()){
+            Log.info("Telegrabbing");
+            Optional<Npc> npc = Query.npcs().idEquals(4332).findClosestByPathDistance();
+            if (npc.map(n-> Magic.castOn("Telekinetic Grab", n)).orElse(false)){
+                Waiting.waitUntil(20000,1250,
+                        ()-> Inventory.contains(ItemID.HAIR_CLIP));
+            }
+
+        }
+    }
     private boolean solveTumbler() {
         updateSolvedPositionState();
         Optional<Widget> first = Query.widgets().inIndexPath(588, highlightChildID).findFirst();
@@ -605,16 +631,17 @@ public class KingsRansom implements QuestTask {
         if (!GameState.isInInstance()) {
             talkToAnna.execute();
             goIntoTrial.execute();
-            Waiting.waitUntil(15000, 500, () -> GameState.isInInstance() && ChatScreen.isOpen());
+            Waiting.waitUntil(20000, 1200, () -> GameState.isInInstance() &&
+                    ChatScreen.isOpen());
             if (ChatScreen.isOpen())
                 ChatScreen.handle();
 
         }
 
-
         if (GameState.isInInstance()) {
             if (new Conditions(askedAboutPoison, askedAboutDagger, askedAboutNight, askedAboutThread).check()) {
                 Log.info("Waiting for verdict");
+                Waiting.waitNormal(11000,750);
                 waitForVerdict.execute();
             } else if (new Conditions(criminalsThread, askedAboutPoison, askedAboutDagger, askedAboutNight).check()) {
                 Log.info("Call about Thread");
@@ -630,14 +657,14 @@ public class KingsRansom implements QuestTask {
                 ChatScreen.handle("Maid", "Next page");
             } else if (new Conditions(criminalsThread, askedAboutPoison, butlerInRoom).check()) {
                 Log.info("talk to butler about dagger");
-            //    talkToButlerAboutDagger.execute();
+                //    talkToButlerAboutDagger.execute();
                 if (clickNpc(NpcID.PIERRE))
                     NpcChat.handle("Ask about the dagger");
             } else if (new Conditions(criminalsThread, askedAboutPoison).check()) {
                 Log.info("Call butler about dagger");
-              //  callButlerAboutDagger.execute();
+                //  callButlerAboutDagger.execute();
                 talkToJudge();
-                    NpcChat.handle("Butler", "Previous page");
+                NpcChat.handle("Butler", "Previous page");
             } else if (new Conditions(criminalsThread, handlerInRoom).check()) {
                 Log.info("Talk to hander about poison");
                 if (clickNpc(NpcID.PIERRE))
@@ -648,6 +675,10 @@ public class KingsRansom implements QuestTask {
                 talkToJudge();
                 NpcChat.handle("Dog handler", "Previous page");
             }
+        }
+        if (Quest.KINGS_RANSOM.getStep() ==35){
+            Log.info("Leaving court");
+            leaveCourt.execute();;
         }
     }
  /*   @Override
@@ -669,6 +700,9 @@ public class KingsRansom implements QuestTask {
     {
         return Collections.singletonList(new ItemReward("5,000 Experience Lamp (any skill over 50).", ItemID.ANTIQUE_LAMP, 1)); //4447 is Placeholder
     }*/
+
+
+
 
     @Override
     public Priority priority() {
@@ -709,7 +743,7 @@ public class KingsRansom implements QuestTask {
         } else {
             handleBoxWidget();
         }
-        if (Utils.getVarBitValue(varbit) > 50) {
+        if (Utils.getVarBitValue(varbit) > 70) {
             for (int i = 0; i < 5; i++) {
                 Log.info("Handling fortress");
                 if (handleFortress()) {
@@ -718,7 +752,7 @@ public class KingsRansom implements QuestTask {
                 }
                 Waiting.waitNormal(600, 75);
             }
-        } else    if (Utils.getVarBitValue(varbit) <35) {
+        } else if (Utils.getVarBitValue(varbit) < 35 && Utils.getVarBitValue(varbit) > 25) {
             for (int i = 0; i < 7; i++) {
                 Log.info("Handling Trial");
                 handleTrial();
@@ -732,7 +766,9 @@ public class KingsRansom implements QuestTask {
         Map<Integer, QuestStep> steps = loadSteps();
         //get the step based on the game setting key in the map
         Optional<QuestStep> step = Optional.ofNullable(steps.get(Utils.getVarBitValue(varbit)));
-
+        if (inPrison.check() && Quest.KINGS_RANSOM.getStep() == 60) {
+            telegrab();
+        }
         // set status
         cQuesterV2.status = step.map(Object::toString).orElse("Unknown Step Name");
 
@@ -750,7 +786,7 @@ public class KingsRansom implements QuestTask {
 
     @Override
     public String questName() {
-        return "King's Ransom (" + Utils.getVarBitValue(QuestVarbits.QUEST_KINGS_RANSOM.getId()) + ")";
+        return "King's Ransom (" + Quest.KINGS_RANSOM.getStep() + ")";
     }
 
     @Override

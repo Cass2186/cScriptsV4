@@ -22,10 +22,14 @@ public class GroundItemStep extends QuestStep {
     private String itemName;
     private RSTile locationTile;
     private List<String> dialog;
+    @Getter
+    private final List<QuestStep> substeps = new ArrayList<>();
 
     @Getter
     protected final List<Requirement> requirements = new ArrayList<>();
 
+
+    //Constructors
     public GroundItemStep(int ItemID) {
         this.itemID = ItemID;
     }
@@ -60,9 +64,9 @@ public class GroundItemStep extends QuestStep {
 
     public boolean isItemOnGround() {
         if (this.itemID != -1)
-            return Query.groundItems().idEquals(this.itemID).stream().findAny().isPresent();
+            return Query.groundItems().idEquals(this.itemID).isAny();
         if (this.itemName != null)
-            return Query.groundItems().nameContains(this.itemName).stream().findAny().isPresent();
+            return Query.groundItems().nameContains(this.itemName).isAny();
         return false;
     }
 
@@ -71,15 +75,23 @@ public class GroundItemStep extends QuestStep {
             General.println("[GroundItemStep]: We failed a requirement to execute this step");
             return false;
         }
+        for (QuestStep sub : substeps){
+            Log.info("Executing substep for this GroundItemStep");
+        }
         if (this.locationTile != null) {
-            if (!this.locationTile.isOnScreen()) {
-                General.println("[GroundItemStep] Navigating to ground item");
-                if (PathingUtil.localNavigation(locationTile)) {
+           // if (!this.locationTile.isOnScreen()) {
+                Log.info("[GroundItemStep] Navigating to ground item");
+                if (PathingUtil.localNav(Utils.getLocalTileFromRSTile(locationTile))) {
+                    Log.info("Local nav to tile worked");
+                    PathingUtil.movementIdle();
+                }
+                else if(PathingUtil.localNavigation(locationTile)) {
+                    Log.info("Local navigation to tile worked");
                     PathingUtil.movementIdle();
                 } else if (PathingUtil.walkToTile(locationTile, 2, false)) {
                     Timer.waitCondition(() -> this.locationTile.isOnScreen(), 6000, 7000);
                 }
-            }
+           // }
         }
         General.println("[GroundItemStep] Picking up ground Item");
         return itemID != -1 ? Utils.clickGroundItem(itemID) : Utils.clickGroundItem(itemName);
@@ -88,7 +100,7 @@ public class GroundItemStep extends QuestStep {
     @Override
     public void execute() {
         this.pickUpItem();
-        if (this.dialog != null){
+        if (this.dialog != null) {
             NpcChat.handle(true, this.dialog.toArray(String[]::new));
         }
     }
@@ -104,11 +116,11 @@ public class GroundItemStep extends QuestStep {
 
     @Override
     public void addSubSteps(QuestStep... substep) {
-        Log.warn("Add Sub Step has not been added to GroundItemStep");
+        this.substeps.addAll(Arrays.asList(substep));
     }
 
     @Override
     public void addSubSteps(Collection<QuestStep> substeps) {
-        Log.warn("Add Sub Step has not been added to GroundItemStep");
+        this.substeps.addAll(substeps);
     }
 }

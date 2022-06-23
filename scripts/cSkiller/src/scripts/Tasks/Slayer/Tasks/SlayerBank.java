@@ -120,6 +120,21 @@ public class SlayerBank implements Task {
         BankManager.withdrawArray(arrayItem, 1);
     }
 
+    private ItemReq getBestDhideTop() {
+        if (!canUseDHide())
+            return null;
+        if (Skill.RANGED.getActualLevel() >= 70) {
+            return new ItemReq(ItemID.BLACK_DHIDE_BODY, 1, true, true);
+        } else if (Skill.RANGED.getActualLevel() >= 60) {
+            return new ItemReq(ItemID.RED_DHIDE_BODY, 1, true, true);
+        } else if (Skill.RANGED.getActualLevel() >= 50) {
+            return new ItemReq(ItemID.BLUE_DHIDE_BODY, 1, true, true);
+        } else
+            return new ItemReq(ItemID.GREEN_DHIDE_BODY, 1, true, true);
+
+    }
+
+
     public void newInventorySetup(int teleItem, boolean useExpeditious,
                                   ItemReq... itemRequirements) {
 
@@ -642,7 +657,7 @@ public class SlayerBank implements Task {
     public void infernalMagesInventory() {
         generalInventorySetup(ItemID.VARROCK_TELEPORT, 10);
         BankManager.withdrawArray(ItemID.PRAYER_POTION, 10);
-        }
+    }
 
     private boolean equipItem(int ItemID) {
         Optional<InventoryItem> inv =
@@ -978,6 +993,10 @@ public class SlayerBank implements Task {
 
     };
 
+    private static boolean canUseDHide() {
+        return Skill.RANGED.getActualLevel() > 40 && Skill.DEFENCE.getActualLevel() > 40;
+    }
+
     public static void checkSpecial() {
         if (SlayerVars.get().targets != null) {
             String NPC = SlayerVars.get().targets[0].toLowerCase();
@@ -1010,8 +1029,8 @@ public class SlayerBank implements Task {
                 Log.debug("[Bank]: Using a special item for this Assignment");
                 SlayerVars.get().usingSpecialItem = true;
 
-            } else if (NPC.contains("bloodveld") &&
-                    !Query.equipment().nameContains("d'hide").isAny()) {
+            } else if (NPC.contains("bloodveld") && (canUseDHide() &&
+                    !Query.equipment().nameContains("d'hide").isAny())) {
                 Log.debug("[Debug]: Need to bank for Bloodveld item (D'hide)");
                 SlayerVars.get().shouldBank = true;
                 SlayerVars.get().usingSpecialItem = true;
@@ -1254,7 +1273,7 @@ public class SlayerBank implements Task {
                 blueDragonInventory();
 
             } else if (NPC.contains("bloodveld")) {
-                newInventorySetup(ItemID.VARROCK_TELEPORT, false);
+                newInventorySetup(ItemID.VARROCK_TELEPORT, false, getBestDhideTop());
 
             } else if (NPC.contains("green dragon")) {
                 greenDragonInventory();
