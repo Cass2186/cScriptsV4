@@ -238,15 +238,21 @@ public class ShadowOfTheStorm implements QuestTask {
     }
 
     public void step3() {
-        if (!Equipment.isEquipped(DARK_SILVERLIGHT))
+        if (!EquipmentUtil.isAllEquipped(DARK_SILVERLIGHT, ItemID.BLACK_CAPE,
+                ItemID.BLACK_DESERT_ROBE, ItemID.BLACK_DESERT_ROBE)) {
             makeBlackSilverLightAndEquip();
+            return;
+        }
 
         cQuesterV2.status = "Going to Evil Dave";
 
-        if (NPCs.findNearest("Evil Dave").length == 0)
+        if (NPCs.findNearest("Evil Dave").length == 0) {
+            Log.info("Going to top of stairs");
             PathingUtil.walkToArea(topOfStairs, false);
+        }
 
-        if (Utils.clickObj("Staircase", "Climb-down"))
+        if (!bottomOfStairs.contains(Player.getPosition()) &&
+                Utils.clickObj("Staircase", "Climb-down"))
             Timer.waitCondition(() -> bottomOfStairs.contains(Player.getPosition()), 7000, 9000);
 
         if (bottomOfStairs.contains(Player.getPosition()))
@@ -268,9 +274,8 @@ public class ShadowOfTheStorm implements QuestTask {
         Utils.cutScene();
 
         cQuesterV2.status = "Getting code";
-        NPCInteraction.waitForConversationWindow();
-        if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation("What do I have to do?");
+
+        NpcChat.handle(true, "What do I have to do?");
 
         if (!NPCInteraction.isConversationWindowUp()) {
             // talk to person, likely disconnected
@@ -1109,6 +1114,7 @@ public class ShadowOfTheStorm implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
     @Override
     public boolean isComplete() {
         return Quest.SHADOW_OF_THE_STORM.getState().equals(Quest.State.COMPLETE);

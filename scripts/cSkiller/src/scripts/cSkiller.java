@@ -579,6 +579,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
             //CannonMonitor.handleCannonMessage(message);
             endOnMessage(message, "iron dragon");
             endOnMessage(message, "steel dragon");
+            endOnMessage(message, "spiritual creature");
 
         }
         if (message.contains("green dragon "))
@@ -590,7 +591,7 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                     State.get().getLibrary().mark(tile, null);
                     State.get().setLastBookcaseTile(null);
                 } else {
-                    Log.log("Misclicked bookcase");
+                    Log.info("Misclicked bookcase");
                     State.get().setLastBookcaseTile(null);
                 }
             });

@@ -691,8 +691,9 @@ public class ShilloVillage implements QuestTask {
                 PathingUtil.localNavigation(DOLMAN_AREA.getRandomTile());
 
             if (Utils.useItemOnObject(RASHILIYIA_CORPSE, "Tomb dolmen")) {
-                NPCInteraction.waitForConversationWindow();
-                NpcChat.handle();
+                NpcChat.handle(true);
+                //need another
+                NpcChat.handle(true);
             }
         }
 
@@ -703,9 +704,7 @@ public class ShilloVillage implements QuestTask {
 
     @Override
     public void execute() {
-
-
-        General.sleep(50);
+        General.sleep(40,60);
         if (GameState.getSetting(GAME_SETTING) == 0) {
             if (!initialItemReqs.check()) {
                 buyItems();

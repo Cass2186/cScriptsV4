@@ -213,12 +213,12 @@ public class Bank implements Task {
                 new ItemRequirement(ItemID.STAMINA_POTION[0], 1, 0)
         )), 1);
 
+
+
+        treeSetUp.withdrawItemsNew();
         if (!checkBottomlessCompost()) {
             treeSetUp.add(new ItemRequirement(ItemID.ULTRACOMPOST, treeNum, 0));
         }
-
-        treeSetUp.withdrawItemsNew();
-
         if (!treeSetUp.check()) {
             Log.info("[FarmBank]: Creating buy list");
             Vars.get().shouldRestock = true;

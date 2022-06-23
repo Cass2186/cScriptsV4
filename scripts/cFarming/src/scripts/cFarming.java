@@ -49,14 +49,6 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
 
     public static AtomicBoolean isRunning = new AtomicBoolean(true);
     public static String status = "Initializing";
-    public static String gameSetting = "Initializing";
-    public static int gameSettingInt = 0;
-    public static String currentQuest = "Initializing";
-    public java.util.List<Task> taskList = new ArrayList<>();
-    public java.util.List<Quests> questList = new ArrayList<>();
-    public int nextStaminaPotionUse = General.randomSD(50, 85, 75, 5);
-
-    Skills.SKILLS currentSkill = Skills.SKILLS.STRENGTH;
 
 
     @Override

@@ -124,12 +124,12 @@ public class GhostsAhoy implements QuestTask {
 
     InventoryRequirement itemsForTokens = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
-                    new ItemReq(ItemID.BONES, 7, 0),
-                    new ItemReq(ItemID.POT, 7, 0),
-                    new ItemReq(ItemID.BUCKET, 8, 0),
+                    new ItemReq(ItemID.BONES, 7, 7),
+                    new ItemReq(ItemID.POT, 7, 7),
+                    new ItemReq(ItemID.BUCKET, 8, 8),
                     new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
                     new ItemReq(ItemID.ECTOTOKEN, 35, 0),
-                    new ItemReq(ItemID.VARROCK_TELEPORT, 0),
+                    new ItemReq(ItemID.VARROCK_TELEPORT, 2, 1),
                     new ItemReq(ItemID.SALVE_GRAVEYARD_TELEPORT, 0),
                     new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1, 0, true)
             ))
@@ -222,8 +222,8 @@ public class GhostsAhoy implements QuestTask {
     private boolean hasEctotokens(int amount) {
         int inv = org.tribot.script.sdk.Inventory.getCount(ItemID.ECTOTOKEN);
         return BankCache.getStack(ItemID.ECTOTOKEN) >= amount || inv >= amount;
-
     }
+
 
     private void getItems3() {
         BankManager.open(true);
@@ -247,15 +247,16 @@ public class GhostsAhoy implements QuestTask {
         }
     }
 
-    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
+    BuyItemsStep buyStep = new BuyItemsStep(itemsToBuy);
 
     public void buyAndGetItems() {
         scripts.cQuesterV2.status = "Buying items";
-        Log.info("Buying Items");
         if (itemsForTokens.check()) {
+            Log.info("Already have items");
             return;
         }
+        Log.info("Buying Items");
         buyStep.buyItems();
         scripts.cQuesterV2.status = "Withdrawing items";
         Log.info("Withdrawing Items");
@@ -346,8 +347,10 @@ public class GhostsAhoy implements QuestTask {
     public void makeNettleTea() {
         RSItem[] nettleTea = Inventory.find(ItemID.NETTLE_TEA);
         if (nettleTea.length == 0) {
+            if (!org.tribot.script.sdk.Inventory.contains(ItemID.NETTLES)) {
+                pickNettles();
+            }
             scripts.cQuesterV2.status = "Making Nettle tea";
-
             if (Utils.useItemOnItem(ItemID.NETTLES, ItemID.BOWL_OF_WATER)) {
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(270), 1500, 2000);
                 if (Interfaces.isInterfaceSubstantiated(270)) {
@@ -687,7 +690,6 @@ public class GhostsAhoy implements QuestTask {
 
 
     public void takeRowboat() {
-        // need 25 ectotokens, this currently doesn't check
         if (!bookOfHoraciaReq.check() && hasEctotokens(25)) {
             if (itemsForBookOfHoracio.check()) {
                 if (!GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition())) {
@@ -697,23 +699,28 @@ public class GhostsAhoy implements QuestTask {
                     Timer.waitCondition(() -> GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition()), 6000, 9000);
                 }
             }
-            if (GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition())) {
-                cQuesterV2.status = "Going to dig";
-                Log.info("Going to dig");
-                if (PathingUtil.localNav(DIG_WORLD_TILE))
-                    PathingUtil.movementIdle();
-
-                if (DIG_WORLD_TILE.interact("Walk here"))
-                    PathingUtil.movementIdle();
-
-                if (DIG_WORLD_TILE.equals(MyPlayer.getTile()) &&
-                        Utils.clickInventoryItem(ItemID.SPADE)) {
-                    Waiting.waitUntil(6000, 550, () -> Inventory.find(GhostsAhoyConst.BOOK_OF_HORACIO)
-                            .length == 1);
-                    Utils.idleNormalAction(true);
-                }
-            }
         }
+        if (!bookOfHoraciaReq.check() && GhostsAhoyConst.DRAGONTOOTH_ISLAND.contains(Player.getPosition())) {
+            cQuesterV2.status = "Going to dig";
+            Log.info("Going to dig");
+            if (PathingUtil.localNav(DIG_WORLD_TILE))
+                PathingUtil.movementIdle();
+
+
+            if (DIG_WORLD_TILE.interact("Walk here")) {
+                Log.warn("Clicked tile");
+                PathingUtil.movementIdle();
+            }
+
+            if (DIG_WORLD_TILE.equals(MyPlayer.getTile()) &&
+                    Utils.clickInventoryItem(ItemID.SPADE)) {
+                Waiting.waitUntil(6000, 550, () -> Inventory.find(GhostsAhoyConst.BOOK_OF_HORACIO)
+                        .length == 1);
+                Utils.idleNormalAction(true);
+            } else
+                Utils.idlePredictableAction();
+        }
+
     }
 
 

@@ -7,6 +7,7 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.query.Query;
 import scripts.Data.*;
 
 import scripts.Data.Enums.Patches;
@@ -28,24 +29,27 @@ public class Move implements Task {
     }
 
     private static boolean checkForTreePatchId(int patchId) {
-        RSObject[] obj = Objects.findNearest(20, Filters.Objects.idEquals(patchId));
-        Log.log("[Move]: Are we near a tree patch with ID " + patchId + "  " + (obj.length > 0));
-        return (obj.length > 0);
+        Log.info("[Move]: Are we near a tree patch with ID " + patchId + "  " + ( Query.gameObjects()
+                .idEquals(patchId).isAny()));
+        return ( Query.gameObjects().idEquals(patchId).isAny());
     }
 
     private static boolean checkForObj(String action, int patchId) {
-        RSObject[] obj = Objects.findNearest(10, Filters.Objects.actionsContains(action).
-                and(Filters.Objects.idEquals(patchId)).and(Filters.Objects.actionsNotContains("Pick")));
-        //General.println("[Move]: Check for obj length = " + obj.length);
-        return (obj.length > 0);
+        return Query.gameObjects()
+                .idEquals(patchId)
+                .actionNotContains("Pick")
+                .maxDistance(10)
+                .actionContains(action).isAny();
     }
 
     private static boolean checkForObj(String action, int patchId, String name) {
-        RSObject[] obj = Objects.findNearest(10, Filters.Objects.actionsContains(action).
-                and(Filters.Objects.idEquals(patchId)).and(Filters.Objects.actionsNotContains("Pick"))
-                .and(Filters.Objects.nameContains(name)));
-        //General.println("[Move]: Check for obj length = " + obj.length);
-        return (obj.length > 0);
+        return Query.gameObjects()
+                .idEquals(patchId)
+                .nameContains(name)
+                .actionNotContains("Pick")
+                .maxDistance(10)
+                .actionContains(action)
+                .isAny();
     }
 
     private static boolean shouldMoveFromPatch(int patchId) {
@@ -54,6 +58,7 @@ public class Move implements Task {
 
     private static boolean shouldMoveFromTree(int patchId) {
         return (checkForObj("Inspect", patchId)
+                && !checkForObj("Clear", patchId)
                 && !checkForObj("Check-health", patchId)
                 && !checkForObj("Rake", patchId));
     }
@@ -208,7 +213,8 @@ public class Move implements Task {
                     return true;
                 }
 
-            } else if (checkForPatchId(Const.MORYTANIA_HERB_PATCH_ID, Const.MORYTANIA_FLOWER_PATCH_ID)) {
+            } else if (checkForPatchId(Const.MORYTANIA_HERB_PATCH_ID,
+                    Const.MORYTANIA_FLOWER_PATCH_ID)) {
                 // we are at falador patches
                 if (shouldMoveFromPatch(Const.MORYTANIA_HERB_PATCH_ID)) {
                     General.println("[Debug]: Removed Morytania patch from list");
@@ -269,10 +275,11 @@ public class Move implements Task {
                     return true;
                 }
 
-            } else if (checkForPatchId(Const.MORYTANIA_N_ALLOTMENT_ID, Const.MORYTANIA_S_ALLOTMENT_ID)) {
+            } else if (checkForPatchId(Const.MORYTANIA_N_ALLOTMENT_ID,
+                    Const.MORYTANIA_S_ALLOTMENT_ID)) {
                 if (shouldMoveFromAllotment(Const.MORYTANIA_N_ALLOTMENT_ID)
                         && shouldMoveFromAllotment(Const.MORYTANIA_S_ALLOTMENT_ID)) {
-                    // remove it from list of patches to visit
+                    Log.warn("Removing morytania allotment patch");
                     Vars.get().patchesLeftToVisit.remove(Patches.MORYTANIA_ALLOTMENT_PATCH);
                     return true;
                 }
@@ -390,12 +397,6 @@ public class Move implements Task {
 
     @Override
     public boolean validate() {
-        RSObject[] trees = Objects.findNearest(20, Filters.Objects.actionsContains("Chop down").
-                or(Filters.Objects.actionsContains("Pick-")).
-                and(Filters.Objects.actionsContains("Guide")//guide filters out random trees
-                        .and(Filters.Objects.actionsNotContains("Rake"))));
-        RSObject[] herbs = Objects.findNearest(15, Filters.Objects.actionsContains("Pick")
-                .and(Filters.Objects.actionsContains("Inspect")));
         if (Login.getLoginState() == Login.STATE.INGAME)
             return !Vars.get().shouldRestock
                     && !Vars.get().shouldBank

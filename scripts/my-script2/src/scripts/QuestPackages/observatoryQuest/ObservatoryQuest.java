@@ -180,9 +180,12 @@ public class ObservatoryQuest implements QuestTask {
 
     private void searchChests() {
         if (!Inventory.contains(ItemID.LENS_MOULD, ItemID.GOBLIN_KITCHEN_KEY)) {
-            List<GameObject> closedChest = Query.gameObjects().actionContains("Open").idEquals(25385, CLOSED_CHEST, 25386, 25388, 25389)
+            List<GameObject> closedChest = Query
+                    .gameObjects().actionContains("Open").idEquals(25385,
+                            CLOSED_CHEST, 25386, 25388, 25389)
                     .sortedByPathDistance().toList();
             for (GameObject object : closedChest) {
+                Log.info("Opening chest");
                 if (object.interact("Open")) {
                     if (MyPlayer.isMoving()) {
                         Waiting.waitUntil(4000, 500, () -> !MyPlayer.isMoving());
@@ -202,6 +205,9 @@ public class ObservatoryQuest implements QuestTask {
                 if (openChest.map(chest -> chest.interact("Search")).orElse(false)) {
                     Waiting.waitUntil(3000, 500, () -> ChatScreen.isOpen());
                     ChatScreen.handle();
+                }
+                if (Inventory.contains(ItemID.GOBLIN_KITCHEN_KEY)) {
+                    break;
                 }
             }
         }
@@ -249,7 +255,7 @@ public class ObservatoryQuest implements QuestTask {
 
         // prodGuard.addTileMarker(new RSTile()(2327, 9399, 0), SpriteID.BARBARIAN_ASSAULT_HORN_FOR_HEALER_ICON);
         inspectStove = new ObjectStep(25442, new RSTile(2327, 9389, 0),
-                "Either kill or trap the guard on the marked tile to the north, then search the goblin stove.");
+                "Search ");
         //  inspectStove.addTileMarker(new RSTile(2327, 9399, 0), SpriteID.BARBARIAN_ASSAULT_HORN_FOR_HEALER_ICON);
         leaveDungeon = new ObjectStep(ObjectID.STAIRS_25429, new RSTile(2355, 9396, 0),
                 "Climb up");

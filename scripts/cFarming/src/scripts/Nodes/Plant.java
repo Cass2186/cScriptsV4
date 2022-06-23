@@ -7,6 +7,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItemDefinition;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
@@ -78,18 +79,20 @@ public class Plant implements Task {
     }
 
     public static void useCompostAllotment(int patchId) {
-        RSObject[] patch = Objects.findNearest(20, Filters.Objects.nameContains("Allotment").
-                and(Filters.Objects.idEquals(patchId)));
-        if (patch.length > 0) {
-            General.println("[Planting]: Adding compost");
+        Optional<GameObject> allotment = Query.gameObjects()
+                .nameContains("Allotment")
+                .idEquals(patchId)
+                .findClosestByPathDistance();
+        if (allotment.isPresent()) {
+            Log.info("[Planting]: Adding compost");
             Vars.get().status = "Using Ultracompost";
             if (Vars.get().usingBottomless || Inventory.find(Const.BOTTOMLESS_COMPOST).length > 0) {
-                if (Utils.useItemOnObject(Const.BOTTOMLESS_COMPOST, patchId)) {
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
+                if (Utils.useItemOnObject(Const.BOTTOMLESS_COMPOST, allotment)) {
+                    Timer.waitCondition(() -> Player.getAnimation() != -1, 5000, 8000);
                     Utils.shortSleep();
                 }
-            } else if (Utils.useItemOnObject(Const.ULTRACOMPOST, patchId)) {
-                Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
+            } else if (Utils.useItemOnObject(Const.ULTRACOMPOST, allotment)) {
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 5000, 8000);
                 Utils.shortSleep();
             }
         }
@@ -97,15 +100,17 @@ public class Plant implements Task {
 
 
     public static void useCompostTree(int patchId) {
-        RSObject[] patch = Objects.findNearest(20, Filters.Objects.nameContains("Tree patch").and(Filters.Objects.idEquals(patchId)));
-        if (patch.length > 0) {
+        Optional<GameObject> tree = Query.gameObjects()
+                .nameContains("Tree patch")
+                .idEquals(patchId)
+                .findClosestByPathDistance();
+        if (tree.isPresent()) {
             Vars.get().status = "Using Ultracompost";
-            if (Inventory.find(Const.BOTTOMLESS_COMPOST).length > 0) {
-                if (Utils.useItemOnObject(Const.BOTTOMLESS_COMPOST, patchId)) {
-                    Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
-                    Utils.shortSleep();
-                }
-            } else if (Utils.useItemOnObject(Const.ULTRACOMPOST, patchId)) {
+            if (Inventory.find(Const.BOTTOMLESS_COMPOST).length > 0 &&
+                    Utils.useItemOnObject(Const.BOTTOMLESS_COMPOST, tree)) {
+                Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
+                Utils.shortSleep();
+            } else if (Utils.useItemOnObject(Const.ULTRACOMPOST, tree)) {
                 Timer.waitCondition(() -> Player.getAnimation() != -1, 4000, 8000);
                 Utils.shortSleep();
             }
