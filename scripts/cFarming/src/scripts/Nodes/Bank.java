@@ -230,6 +230,7 @@ public class Bank implements Task {
         if (!hasBottomlessCompost()) {
             treeSetUp.add(new ItemRequirement(ItemID.ULTRACOMPOST, treeNum, 0));
         } else {
+            Log.info("Adding bottomless compost");
             treeSetUp.add(new ItemRequirement(ItemID.BOTTOMLESS_COMPOST_BUCKET, 1, 0));
         }
 

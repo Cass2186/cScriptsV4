@@ -1685,8 +1685,7 @@ public class Utils {
                 if (!GameState.isAnyItemSelected()) {
                     if (!obj.get().isVisible() || i == 2)
                         obj.get().adjustCameraTo();
-                    if (invItem.get().useOn(obj.get()))
-                        return true;
+                    return obj.map(o-> invItem.map(it-> it.useOn(o)).orElse(false)).orElse(false);
 
                 } else if (isItemSelected(invItem.get().getId())) {
                     Log.info("[Utils]: Item is already selected");
