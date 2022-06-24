@@ -359,7 +359,8 @@ public class GhostsAhoy implements QuestTask {
                 }
             }
 
-            if (Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.LOGS))
+            if (org.tribot.script.sdk.Inventory.contains(ItemID.NETTLEWATER) &&
+                    Utils.useItemOnItem(ItemID.TINDERBOX, ItemID.LOGS))
                 Timer.waitCondition(() -> Objects.findNearest(3, "Fire").length > 0, 7000, 10000);
 
             if (Utils.useItemOnObject(ItemID.NETTLEWATER, "Fire")) {

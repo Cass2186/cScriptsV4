@@ -124,6 +124,7 @@ import scripts.QuestPackages.kingsRansom.KingsRansom;
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
 import scripts.QuestPackages.recruitmentDrive.RecruitmentDrive;
+import scripts.QuestPackages.skippyandthemogres.SkippyAndTheMogres;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.SafetyThread;
 import scripts.QuestUtils.SupportedQuests;
@@ -752,6 +753,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("sand")) {
             General.println("[Args]: Added hand in the sand");
             taskList.add(TheHandInTheSand.get());
+        }
+        else if (arg.toLowerCase().contains("skippy")) {
+            General.println("[Args]: Added Skippy & The Mogres");
+            taskList.add(SkippyAndTheMogres.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

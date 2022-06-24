@@ -46,13 +46,16 @@ public class Bank implements Task {
     }
 
     private boolean hasBottomlessCompost(){
-        if (org.tribot.script.sdk.Inventory.contains(ItemID.BOTTOMLESS_COMPOST_BUCKET)){
-            return true;
+        if (org.tribot.script.sdk.Inventory.contains(ItemID.BOTTOMLESS_COMPOST_BUCKET_22997)){
+            Log.warn("Has Bottomless in inventory");
+            return Vars.get().usingBottomless = true;
         } else if (!BankCache.isInitialized()){
+            Log.warn("Initializing bank cache");
             BankManager.open(true);
             BankCache.update();
         }
-        return BankCache.getStack(ItemID.BOTTOMLESS_COMPOST_BUCKET) > 0;
+        Log.warn("Has bottomless?" + (BankCache.getStack(ItemID.BOTTOMLESS_COMPOST_BUCKET_22997) > 0));
+        return Vars.get().usingBottomless = BankCache.getStack(ItemID.BOTTOMLESS_COMPOST_BUCKET_22997) > 0;
     }
 
     public boolean checkBottomlessCompost() {
@@ -231,7 +234,7 @@ public class Bank implements Task {
             treeSetUp.add(new ItemRequirement(ItemID.ULTRACOMPOST, treeNum, 0));
         } else {
             Log.info("Adding bottomless compost");
-            treeSetUp.add(new ItemRequirement(ItemID.BOTTOMLESS_COMPOST_BUCKET, 1, 0));
+            treeSetUp.add(new ItemRequirement(ItemID.BOTTOMLESS_COMPOST_BUCKET_22997, 1, 0));
         }
 
         treeSetUp.withdrawItemsNew();
