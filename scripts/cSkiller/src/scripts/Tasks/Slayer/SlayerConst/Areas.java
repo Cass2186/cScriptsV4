@@ -41,6 +41,18 @@ public class Areas {
             )
             ));
 
+    public static Area FOSSIL_ISLAND_WYVERN_AREA = Area.fromPolygon(
+            new WorldTile(3616, 10287, 0),
+            new WorldTile(3611, 10287, 0),
+            new WorldTile(3602, 10279, 0),
+            new WorldTile(3600, 10276, 0),
+            new WorldTile(3601, 10267, 0),
+            new WorldTile(3616, 10267, 0),
+            new WorldTile(3620, 10273, 0),
+            new WorldTile(3620, 10282, 0)
+
+    );
+
     public static Area BABY_GREEN_DRAGON_AREA = Area.fromPolygon(
             new WorldTile(2659, 9587, 2),
             new WorldTile(2658, 9582, 2),
@@ -181,7 +193,7 @@ public class Areas {
                     new WorldTile(3044, 9572, 0),
                     new WorldTile(3039, 9575, 0)
             )));
-    public static Area  DUST_DEVIL_AREA = Area.fromRectangle(new WorldTile(1710, 10036, 0), new WorldTile(1720, 10028, 0));
+    public static Area DUST_DEVIL_AREA = Area.fromRectangle(new WorldTile(1710, 10036, 0), new WorldTile(1720, 10028, 0));
     public static Area DAGGANOTH_AREA = Area.fromRectangle(new WorldTile(2510, 10036, 0), new WorldTile(2541, 10011, 0));
     public static Area DWARF_AREA = Area.fromPolygon(
             new ArrayList<>(Arrays.asList(

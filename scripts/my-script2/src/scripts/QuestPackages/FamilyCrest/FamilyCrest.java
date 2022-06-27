@@ -9,8 +9,10 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.CooksAssistant.CooksAssistant;
@@ -446,7 +448,7 @@ public class FamilyCrest implements QuestTask {
                         .actionContains("Mine")
                         .sortedByPathDistance()
                         .findClosest();
-                if (mine.map(ore->ore.interact("Mine")).orElse(false)){
+                if (mine.map(ore -> ore.interact("Mine")).orElse(false)) {
                     if (Timer.waitCondition(() -> Player.getAnimation() != -1, 1800, 3300))
                         Timer.waitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_ORE).length > num,
                                 2200, 3800);
@@ -481,19 +483,20 @@ public class FamilyCrest implements QuestTask {
             getItems2();
             PathingUtil.walkToArea(EDGEVILLE_FURNACE);
         }
-        if (Utils.useItemOnObject(ItemID.PERFECT_GOLD_BAR, 16469))
-            Timer.waitCondition(() -> Interfaces.get(446, 10) != null, 6000, 9000);
-        if (Interfaces.get(446, 10) != null) {
-            if (Interfaces.get(446, 10).click())
-                Timer.waitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_BAR).length < 2, 20000, 25000);
+        if (!Widgets.isVisible(446) &&
+                Utils.useItemOnObject(ItemID.PERFECT_GOLD_BAR, 16469))
+            Timer.waitCondition(() -> Widgets.isVisible(446), 6000, 9000);
+        Optional<Widget> ruby_ring = Query.widgets().inIndexPath(446).actionContains("Ruby ring").findFirst();
+        if (ruby_ring.map(r -> r.click()).orElse(false)) {
+            Timer.waitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_BAR).length < 2, 20000, 25000);
         }
 
 
-        if (Utils.useItemOnObject(ItemID.PERFECT_GOLD_BAR, 16469))
-            Timer.waitCondition(() -> Interfaces.get(446, 24) != null, 7000, 9000);
-        if (Interfaces.get(446, 24) != null) {
-            if (Interfaces.get(446, 24).click())
-                Timer.abc2SkillingWaitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_BAR).length < 1, 20000, 25000);
+        if (!Widgets.isVisible(446) && Utils.useItemOnObject(ItemID.PERFECT_GOLD_BAR, 16469))
+            Timer.waitCondition(() -> Widgets.isVisible(446), 7000, 9000);
+        Optional<Widget> ruby_necklace = Query.widgets().inIndexPath(446).actionContains("Ruby necklace").findFirst();
+        if (ruby_necklace.map(r -> r.click()).orElse(false)) {
+            Timer.abc2SkillingWaitCondition(() -> Inventory.find(ItemID.PERFECT_GOLD_BAR).length < 1, 20000, 25000);
         }
 
     }
@@ -870,7 +873,7 @@ public class FamilyCrest implements QuestTask {
 
     @Override
     public void execute() {
-        Waiting.waitUniform(50,100);
+        Waiting.waitUniform(50, 100);
         if (!checkRequirements()) {
             cQuesterV2.taskList.remove(this);
             return;

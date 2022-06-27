@@ -58,10 +58,10 @@ public class MagicBank implements Task {
             teleBank(-1);// teleItems();
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75) {
             alchBank(Vars.get().alchItem.getId());
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 99) {
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75) {
             teleAlchBank(Vars.get().alchItem.getId());
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 57) { //wont execute on purpose
-            myEnchBank2(diamondBraceletTAsk);
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 75) { //wont execute on purpose
+            myEnchBank2(dragonstoneBraceletTask);
         }
     }
 
@@ -86,6 +86,12 @@ public class MagicBank implements Task {
             .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.MUD_BATTLESTAFF, Amount.of(1)))
             .addInvItem(ItemID.COSMIC_RUNE, Amount.fill(1))
             .addInvItem(ItemID.DIAMOND_BRACELET, Amount.fill(1))
+            .build();
+
+    BankTask dragonstoneBraceletTask = BankTask.builder()
+            .addEquipmentItem(EquipmentReq.slot(Equipment.Slot.WEAPON).item(ItemID.MUD_BATTLESTAFF, Amount.of(1)))
+            .addInvItem(ItemID.COSMIC_RUNE, Amount.fill(1))
+            .addInvItem(ItemID.DRAGONSTONE_BRACELET, Amount.fill(1))
             .build();
 
     List<ItemReq> teleAlchItems = new ArrayList<>(

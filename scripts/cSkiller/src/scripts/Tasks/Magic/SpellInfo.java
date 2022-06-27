@@ -53,10 +53,13 @@ public enum SpellInfo {
                 put(ItemID.NATURE_RUNE, 1);
                // put(ItemID.YEW_LONGBOW, 1);
             }},
-            ItemID.STAFF_OF_AIR, 75, 99),
+            ItemID.STAFF_OF_AIR, 75, 80),
 
     DIAMOND_ENCHANT("Lvl-4 Enchant", SPELL_TYPE.ENCHANT, 67, ItemID.COSMIC_RUNE,
-            ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, SkillTasks.MAGIC.getEndLevel());
+            ItemID.DIAMOND_BRACELET, ItemID.MUD_BATTLESTAFF, 57, 75),
+
+    DRAGONSTONE_ENCHANT("Lvl-5 Enchant", SPELL_TYPE.ENCHANT, 78, ItemID.COSMIC_RUNE,
+                    ItemID.DRAGONSTONE_BRACELET, ItemID.MUD_BATTLESTAFF, 68, SkillTasks.MAGIC.getEndLevel());
 
 
     SpellInfo(String spellString, SPELL_TYPE spellType, double expGained, int rune, int ItemId,

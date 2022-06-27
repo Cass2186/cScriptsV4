@@ -130,7 +130,7 @@ public class Alch implements Task {
     public boolean validate() {
         return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.MAGIC) &&
                 Skills.getActualLevel(Skills.SKILLS.MAGIC) >= 55 &&
-                //  Skills.getActualLevel(Skills.SKILLS.MAGIC) < 75 &&
+                 Skills.getActualLevel(Skills.SKILLS.MAGIC) < 77 &&
                 (Inventory.contains(getNotedId(Vars.get().alchItem.getId())) &&
                         Inventory.contains(ItemID.NATURE_RUNE));
     }

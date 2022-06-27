@@ -153,7 +153,7 @@ public class SkippyAndTheMogres implements QuestTask {
 
     public void setupSteps() {
         soberSkippy = new NPCStep("Skippy", new RSTile(2982, 3194, 0), bucketOfWater);
-        soberSkippy.setInteractionString("Sober-up");
+        soberSkippy.setInteractionString("Sober-Up");
         soberSkippy.addDialogStep("Throw the water!");
         useTeaOnSkippy = new NPCStep("Skippy", new RSTile(2982, 3194, 0), nettleTea);
         useChocolateDustOnMilk = new UseItemOnItemStep(ItemID.CHOCOLATE_DUST, ItemID.BUCKET_OF_MILK,
@@ -188,6 +188,10 @@ public class SkippyAndTheMogres implements QuestTask {
 
     @Override
     public void execute() {
+        if (isComplete()) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
         //get items
         if (Quest.SKIPPY_AND_THE_MOGRES.getStep() == 0 && !startInventory.check()) {
             buyStep.buyItems();

@@ -103,6 +103,7 @@ public class Plant implements Task {
         Optional<GameObject> tree = Query.gameObjects()
                 .nameContains("Tree patch")
                 .idEquals(patchId)
+                .maxDistance(10)
                 .findClosest();
         if (tree.isPresent()) {
             Vars.get().status = "Using Ultracompost";

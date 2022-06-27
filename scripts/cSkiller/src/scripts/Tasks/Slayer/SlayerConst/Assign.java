@@ -230,6 +230,14 @@ public enum Assign {
             .nameContains("Fire giant")
             .useGearType(GearType.MELEE)),
 
+    FOSSIL_ISLAND_WYVERN(new Builder()
+            .inArea(Areas.FOSSIL_ISLAND_WYVERN_AREA)
+            .nameContains("Fossil island wyvern")
+            .nameContains("Spitting Wyvern")
+            .useSpecialItem(true)
+            .addCustomGear(List.of(ItemID.ELEMENTAL_SHIELD))
+            .setHopPlayerThreshold(2)
+            .useGearType(GearType.MELEE)),
 
     GARGOYLE(new Builder()
             .inArea(Areas.GARGOYLE_AREA)

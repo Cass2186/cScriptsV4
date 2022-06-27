@@ -7,6 +7,7 @@ import org.tribot.api2007.*;
 import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.GameTab;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.tasks.BankTask;
@@ -35,15 +36,14 @@ public class EnchantJewelery implements Task {
             RSItem[] enchItem = Inventory.find(spell.getItemId());
             int clickAllChance = General.random(0, 100);
             if (clickAllChance < Vars.get().clickAllJeweleryChance) {
-                General.println("[Debug]: Clicking all enchants");
+                Log.info("Clicking all enchants");
 
                 for (RSItem i : enchItem) {
                     if (clickSpell(spell.getSpellString())) {
 
                         if (Timer.waitCondition(() -> {
                             General.sleep(General.randomSD(75, 30));
-                            return GameTab.getOpen() ==
-                                    GameTab.TABS.INVENTORY;
+                            return GameTab.INVENTORY.isOpen();
                         }, 1550, 2200) && i.click()) {
 
                             Rectangle hoverPoint = MagicMethods.getScreenPosition(spell.getSpellString());
@@ -52,24 +52,23 @@ public class EnchantJewelery implements Task {
 
                             Timer.waitCondition(() -> {
                                         AntiBan.timedActions();
-                                        General.sleep(General.randomSD(160, 30));
-                                        return GameTab.getOpen().equals(GameTab.TABS.MAGIC);
+                                        General.sleep(General.randomSD(180, 30));
+                                        return GameTab.MAGIC.isOpen();
                                     }
                                     , 2500, 3250);
                         }
                     }
                 }
             } else if (clickSpell(spell.getSpellString())) {
-                Timer.waitCondition(() -> GameTab.getOpen().equals(GameTab.TABS.INVENTORY), 2500, 3250);
-
+                Waiting.waitUntil(3250, 275,
+                        GameTab.INVENTORY::isOpen);
                 if (enchItem[0].click()) {
-                    Waiting.waitNormal(60, 30);
+                    Waiting.waitNormal(70, 30);
                     General.println("[Debug]: Slow enchanting");
                     Mouse.leaveGame();
                     Timer.abc2SkillingWaitCondition(() -> !bnk.isSatisfied(), 80000, 90000);
                 }
             }
-
         } else {
             bnk.execute();
         }
@@ -124,8 +123,8 @@ public class EnchantJewelery implements Task {
             enchantItems(SpellInfo.EMERALD_ENCHANT);
         } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) < 57) {
             enchantItems(SpellInfo.EMERALD_ENCHANT);
-        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) > 57) {
-            enchantItems(SpellInfo.DIAMOND_ENCHANT);
+        } else if (Skills.getActualLevel(Skills.SKILLS.MAGIC) > 75) {
+            enchantItems(SpellInfo.DRAGONSTONE_ENCHANT);
         }
     }
 
