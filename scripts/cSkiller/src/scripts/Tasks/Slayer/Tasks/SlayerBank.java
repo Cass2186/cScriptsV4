@@ -23,6 +23,7 @@ import scripts.Requirements.ItemRequirement;
 import scripts.Tasks.MiscTasks.BuyItems;
 import scripts.Tasks.Slayer.SlayerConst.Areas;
 import scripts.Tasks.Slayer.SlayerConst.Assign;
+import scripts.Tasks.Slayer.SlayerUtils.SlayerUtils;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 import scripts.Timer;
 
@@ -175,7 +176,7 @@ public class SlayerBank implements Task {
         java.util.List<ItemReq> newInv = SkillBank.withdraw(myInv);
         if (newInv != null && newInv.size() > 0) {
             Log.debug("[Slayer Training]: Creating buy list");
-            BuyItems.itemsToBuy = SlayerRestock.getRetockList();
+            BuyItems.itemsToBuy = SlayerUtils.getPurchaseList();
         }
     }
 

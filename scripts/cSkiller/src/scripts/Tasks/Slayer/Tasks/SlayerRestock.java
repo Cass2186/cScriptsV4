@@ -18,6 +18,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
+import scripts.Tasks.Slayer.SlayerUtils.SlayerUtils;
 import scripts.Tasks.Slayer.SlayerUtils.SlayerVars;
 
 import java.awt.event.KeyEvent;
@@ -133,68 +134,10 @@ public class SlayerRestock implements Task {
             BankManager.depositAll(true);
     }
 
-   private static ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
-            Arrays.asList(
-                    new GEItem(ItemID.SALVE_GRAVEYARD_TELEPORT, 6, 50),
-                    new GEItem(ItemID.CANDLE, 1, 500),
-                    new GEItem(ItemID.PRAYER_POTION[0], SlayerVars.get().restockNumber + 5, 15),
-                    new GEItem(ItemID.EXPEDITIOUS_BRACELET, 10, 50),
-                    new GEItem(ItemID.FALADOR_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemID.VARROCK_TELEPORT, SlayerVars.get().restockNumber * 5, 50),
-                    new GEItem(ItemID.CAMELOT_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemID.ARDOUGNE_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemID.LUMBRIDGE_TELEPORT, SlayerVars.get().restockNumber * 2, 50),
-                    new GEItem(ItemID.SHANTAY_PASS, 20, 550),
-                    new GEItem(ItemID.BRASS_KEY, 1, 250),
-                    new GEItem(ItemID.ROPE, 1, 250),
-                    new GEItem(ItemID.MIRROR_SHIELD, 1, 250),
-                    new GEItem(ItemID.BOOTS_OF_STONE, 1, 250),
-                    new GEItem(ItemID.MONKFISH, SlayerVars.get().restockNumber* 15, 25),
-                    new GEItem(ItemID.SUPER_COMBAT_POTION[0], SlayerVars.get().restockNumber / 2, 15),
-                    new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], SlayerVars.get().restockNumber / 4, 50),
-                    new GEItem(ItemID.MONKFISH, SlayerVars.get().restockNumber * General.random(30, 40), 50),
-                    new GEItem(ItemID.AMULET_OF_GLORY[2],  SlayerVars.get().restockNumber / 3, 20),
-                    new GEItem(ItemID.STAMINA_POTION[0], SlayerVars.get().restockNumber / 2, 15),
-                    new GEItem(ItemID.RING_OF_DUELING[0], SlayerVars.get().restockNumber / 3, 25),
-                    new GEItem(ItemID.GAMES_NECKLACE[0], SlayerVars.get().restockNumber / 3, 25),
-                    new GEItem(ItemID.SKILLS_NECKLACE[0], SlayerVars.get().restockNumber / 4, 25),
-                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
-                    new GEItem(ItemID.IORWERTH_CAMP_TELEPORT, 5, 30),
-                    new GEItem(ItemID.LUNAR_ISLE_TELEPORT, 5, 30),
-              new GEItem(ItemID.TINDERBOX, 1, 500)
-            )
-    );
-
-    public static  ArrayList<GEItem> getRetockList(){
-
-        if (!Equipment.isEquipped(ItemID.SLAYER_HELMET) || !Equipment.isEquipped(ItemID.SLAYER_HELMET_I)) {
-            itemsToBuy.add(new GEItem(ItemID.EARMUFFS, 1, 300));
-            itemsToBuy.add(new GEItem(ItemID.SPINY_HELMET, 1, 300));
-        }
-
-        if (SlayerVars.get().use_cannon){
-
-        }
-        itemsToBuy.add(new GEItem(ItemID.ROPE, 1, 300));
-        itemsToBuy.add(new GEItem(ItemID.BAG_OF_SALT, 250, 30));
-        itemsToBuy.add(new GEItem(ItemID.WATERSKIN[0], 15, 300));
-
-        if (Skills.getActualLevel(Skills.SKILLS.SLAYER) >= 55) {
-            if (Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 65) {
-                itemsToBuy.add(new GEItem(ItemID.LEAFBLADED_BATTLEAXE, 1, 30));
-            } else {
-                itemsToBuy.add(new GEItem(ItemID.LEAFBLADED_SWORD, 1, 50));
-
-            }
-        }
-
-        return  itemsToBuy;
-    }
-
     public void buyItems() {
         SlayerVars.get().status = "Restocking";
-        Log.log("[Debug]: Restocking");
-        BuyItemsStep buyStep = new BuyItemsStep(getRetockList());
+        Log.info("Restocking");
+        BuyItemsStep buyStep = new BuyItemsStep(SlayerUtils.getPurchaseList());
         buyStep.buyItems();
         BankManager.open(true);
         BankManager.depositAll(true);
