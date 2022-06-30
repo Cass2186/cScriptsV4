@@ -787,7 +787,7 @@ public class FremennikIsles implements QuestTask {
     @Override
     public List<Requirement> getGeneralRequirements() {
         ArrayList<Requirement> req = new ArrayList<>();
-        req.add(new QuestRequirement(Quest.THE_FREMENNIK_TRIALS, Quest.State.COMPLETE));
+       // req.add(new QuestRequirement(Quest.THE_FREMENNIK_TRIALS, Quest.State.COMPLETE));
         req.add(new SkillRequirement(Skills.SKILLS.AGILITY, 40));
         req.add(new SkillRequirement(Skills.SKILLS.CONSTRUCTION, 20));
         req.add(new SkillRequirement(Skills.SKILLS.PRAYER, 43)); //my req
@@ -810,8 +810,7 @@ public class FremennikIsles implements QuestTask {
     @Override
     public void execute() {
         // done quest
-        if (isComplete() || !checkRequirements()) {
-
+        if (!checkRequirements()) {
             Log.info("Done Frem Trials or don't meet requirements");
             Log.info("40 agility, 20 Construction, 43 prayer, 60 attk/str");
             cQuesterV2.taskList.remove(this);
@@ -874,6 +873,8 @@ public class FremennikIsles implements QuestTask {
         }
         //slow down looping if it gets stuck
         Waiting.waitNormal(200, 20);
+        if (Quest.THE_FREMENNIK_TRIALS.getStep() >= 340)
+            cQuesterV2.taskList.remove(this);
 
     }
 

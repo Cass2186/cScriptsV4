@@ -8,6 +8,7 @@ import org.tribot.api2007.types.RSInterface;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.InventoryItem;
 import scripts.*;
@@ -37,9 +38,9 @@ public class SmithBars implements Task {
     public static RSTile ANVIL_TILE = new RSTile(3188, 3425, 0);
     //   public static RSTile bankTile = new RSTile(3185, 3435, 0);
 
-    public void smithItem(SmithItems.genericSmithItems item, int barId) {
+    private void smithItem(SmithItems.genericSmithItems item, int barId) {
         RSItem[] invItem1 = Inventory.find(barId);
-        Log.log("Bar ID is " + barId);
+        Log.info("Bar ID is " + barId);
         if (invItem1.length >= item.getNumBars()) {
             if (!ANVIL_TILE.isClickable()) {
                 PathingUtil.walkToTile(ANVIL_TILE, 2, false);
@@ -70,7 +71,7 @@ public class SmithBars implements Task {
 
             BankManager.open(true);
             BankManager.depositAllExcept(false, ItemID.HAMMER);
-            Timer.waitCondition(()-> Inventory.getAll().length == 1, 2500,4000);
+            Timer.waitCondition(() -> Inventory.getAll().length == 1, 2500, 4000);
 
             List<ItemReq> newInv = SkillBank.withdraw(inv);
             if (newInv != null && newInv.size() > 0) {
@@ -87,7 +88,7 @@ public class SmithBars implements Task {
 
         List<InventoryItem> all = org.tribot.script.sdk.Inventory.getAll();
 
-        Waiting.waitUntil(5000, ()-> org.tribot.script.sdk.Inventory.getAll().size() > all.size());
+        Waiting.waitUntil(5000, () -> org.tribot.script.sdk.Inventory.getAll().size() > all.size());
 
         if (barId == ItemID.BRONZE_BAR) {
             return 12.5;
@@ -118,8 +119,10 @@ public class SmithBars implements Task {
 
     @Override
     public boolean validate() {
-        return Vars.get().currentTask != null && Vars.get().currentTask.equals(SkillTasks.SMITHING);
-       // && !Vars.get().smeltCannonballs;
+        return Vars.get().currentTask != null &&
+                Vars.get().currentTask.equals(SkillTasks.SMITHING)
+                && Skill.SMITHING.getActualLevel() < 35;
+        // && !Vars.get().smeltCannonballs;
     }
 
     @Override

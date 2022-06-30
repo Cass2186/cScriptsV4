@@ -2,9 +2,12 @@ package scripts.Data.Enums;
 
 import lombok.Getter;
 import org.tribot.api.General;
+import org.tribot.api.input.Keyboard;
 import org.tribot.api2007.Skills;
+import org.tribot.script.sdk.*;
 import scripts.Data.SkillTasks;
 import scripts.*;
+import scripts.Data.Vars;
 import scripts.Requirements.ItemReq;
 
 
@@ -17,7 +20,7 @@ import java.util.Optional;
 public enum HerbloreItems {
 
     ATTACK_POTION(25, scripts.ItemID.EYE_OF_NEWT, scripts.ItemID.GUAM_POTION_UNF, 3, 12),
-    STRENGTH_POTION(50,scripts. ItemID.LIMPWURT_ROOT, scripts.ItemID.TARROMIN_POTION_UNF, 12, 22),
+    STRENGTH_POTION(50, scripts.ItemID.LIMPWURT_ROOT, scripts.ItemID.TARROMIN_POTION_UNF, 12, 22),
     RESTORE_POTION(62.5, scripts.ItemID.RED_SPIDERS_EGGS, scripts.ItemID.HARRALANDER_POTION_UNF, 22, 26),
     ENERGY_POTION(67.5, scripts.ItemID.CHOCOLATE_DUST, scripts.ItemID.HARRALANDER_POTION_UNF, 26, 38),
     PRAYER_POTION(87.5, scripts.ItemID.SNAPE_GRASS, scripts.ItemID.RANARR_POTION_UNF, 38, 45),
@@ -29,15 +32,15 @@ public enum HerbloreItems {
 
     private double xpPer;
     @Getter
-    private int ItemID;
+    private int ItemId;
     @Getter
     private int unfPotionId;
     private int minLevel;
     private int maxLevel;
 
-    HerbloreItems(double xpPer, int ItemID, int unfPotionId, int minLevel, int levelMax) {
+    HerbloreItems(double xpPer, int ItemId, int unfPotionId, int minLevel, int levelMax) {
         this.xpPer = xpPer;
-        this.ItemID = ItemID;
+        this.ItemId = ItemId;
         this.unfPotionId = unfPotionId;
         this.minLevel = minLevel;
         this.maxLevel = levelMax;
@@ -69,7 +72,7 @@ public enum HerbloreItems {
     public static List<ItemReq> getRequiredItemList() {
         List<ItemReq> i = new ArrayList<>();
         if (getCurrentItem().isPresent()) {
-            getCurrentItem().ifPresent(h -> i.add(new ItemReq(h.getItemID(), h.determineResourcesToNextItem())));
+            getCurrentItem().ifPresent(h -> i.add(new ItemReq(h.getItemId(), h.determineResourcesToNextItem())));
             getCurrentItem().ifPresent(h -> i.add(new ItemReq(h.unfPotionId, h.determineResourcesToNextItem())));
             General.println("[HerbloreItems]: We need " + getCurrentItem().get().determineResourcesToNextItem() +
                     " items", Color.BLACK);
@@ -78,5 +81,27 @@ public enum HerbloreItems {
         }
         return i;
     }
+
+    public void makePotion() {
+        if (Bank.isOpen())
+            BankManager.close(true);
+
+        if (Utils.useItemOnItem(this.getItemId(), this.getUnfPotionId()) &&
+                Waiting.waitUntil(3250, 5, MakeScreen::isOpen))
+            Utils.idlePredictableAction();
+
+        if (MakeScreen.isOpen()) {
+            Keyboard.typeString(" ");
+            Timer.abc2SkillingWaitCondition(() -> ChatScreen.isOpen()
+                    || !Inventory.contains(this.getItemId())
+                    || !Inventory.contains(this.getUnfPotionId())
+                    , 30000, 45000);
+
+        }
+        if (!SkillTasks.HERBLORE.isWithinLevelRange())
+            Vars.get().currentTask = null;
+    }
+
+
 }
 

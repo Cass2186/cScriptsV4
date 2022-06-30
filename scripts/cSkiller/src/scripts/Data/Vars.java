@@ -170,6 +170,7 @@ public class Vars {
     //Magic
     public int clickAllJeweleryChance = General.random(25, 45);
     public boolean preferJeweleryOverTeleports = false;
+    public boolean makeOrbs = Skill.MAGIC.getActualLevel() > 66;
 
     //mining
     public int oreDeposits = 0;

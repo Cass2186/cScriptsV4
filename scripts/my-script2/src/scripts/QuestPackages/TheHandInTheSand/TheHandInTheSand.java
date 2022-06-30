@@ -99,8 +99,8 @@ public class TheHandInTheSand implements QuestTask {
         ConditionalStep goToBetty = new ConditionalStep(talkToBetty);
         goToBetty.addStep(madeTruthSerum, talkToBettyOnceMore);
         //don't need as i handle in the execute() method
-      //  goToBetty.addStep(new Conditions(roseLens, vialPlaced, inLightSpot), useLensOnCounter);
-      //  goToBetty.addStep(new Conditions(roseLens, vialPlaced), standInDoorway);
+        //goToBetty.addStep(new Conditions(roseLens, vialPlaced, inLightSpot), useLensOnCounter);
+        //  goToBetty.addStep(new Conditions(roseLens, vialPlaced), standInDoorway);
         goToBetty.addStep(roseLens, talkToBettyAgain);
         goToBetty.addStep(pinkDye, useDyeOnLanternLens);
         goToBetty.addStep(redberryJuice, addWhiteberries);
@@ -200,6 +200,8 @@ public class TheHandInTheSand implements QuestTask {
         giveCaptainABeer = new NPCStep(NpcID.GUARD_CAPTAIN, new RSTile(2552, 3080, 0), beer);
         ringBell = new ObjectStep(ObjectID.BELL_6847, new RSTile(2598, 3085, 0),
                 "Ring", beerHand);
+        ringBell.addDialogStep("I have a rather sandy problem that I'd like to palm off on you.");
+
         talkToBertAboutRota = new NPCStep(NpcID.BERT, new RSTile(2551, 3099, 0),
                 "Return to Bert in west Yanille.");
 
@@ -214,6 +216,7 @@ public class TheHandInTheSand implements QuestTask {
 
         ringBellAgain = new ObjectStep(ObjectID.BELL_6847, new RSTile(2598, 3085, 0), "Ring", magicScroll);
         talkToRarveAgain = new ObjectStep(ObjectID.BELL_6847, new RSTile(2598, 3085, 0), "Ring", vial);
+        talkToRarveAgain.addDialogStep("I have a rather sandy problem that I'd like to palm off on you.");
         talkToRarveAgain.addDialogStep("Can you help me more?");
         talkToRarveAgain.addDialogStep("Yes, that would be great!");
 
@@ -301,15 +304,20 @@ public class TheHandInTheSand implements QuestTask {
     @Override
     public void execute() {
         int varbit = Utils.getVarBitValue(QuestVarbits.QUEST_THE_HAND_IN_THE_SAND.getId());
-        if (!checkRequirements() || isComplete()) {
-            Log.info("Complete or Missing requirement(s) for the hand in the sand (17 thieving and 49 crafting)");
+        if (isComplete() || Quest.THE_HAND_IN_THE_SAND.getStep() == 160) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
+
+        if (!checkRequirements()) {
+            Log.info("Missing requirement(s) for the hand in the sand (17 thieving and 49 crafting)");
             cQuesterV2.taskList.remove(this);
             return;
         }
         if (Quest.THE_HAND_IN_THE_SAND.getStep() == 0 && !startInv.check()) {
             buyStep.buyItems();
-            if (Quest.PLAGUE_CITY.getState().equals(Quest.State.COMPLETE)){
-                startInv.add(new ItemReq(ItemID.ARDOUGNE_TELEPORT, 2,0));
+            if (Quest.PLAGUE_CITY.getState().equals(Quest.State.COMPLETE)) {
+                startInv.add(new ItemReq(ItemID.ARDOUGNE_TELEPORT, 2, 0));
             }
             startInv.setDepositEquipment(true);
             startInv.withdrawItems();
@@ -322,32 +330,42 @@ public class TheHandInTheSand implements QuestTask {
             talkToBertAboutScroll.execute();
             return;
         }
-        if (Quest.THE_HAND_IN_THE_SAND.getStep() == 130 && GameState.isInInstance()){
+        if (Quest.THE_HAND_IN_THE_SAND.getStep() == 130 && GameState.isInInstance()) {
             NpcChat.handle(true);
-            Waiting.waitUntil(8000, 500, ()->!GameState.isInInstance() || ChatScreen.isOpen());
+            Waiting.waitUntil(8000, 500, () -> !GameState.isInInstance() || ChatScreen.isOpen());
             return;
         }
-        step.ifPresent(QuestStep::execute);
-        if (Quest.THE_HAND_IN_THE_SAND.getStep() == 70 && !Inventory.contains(ItemID.TRUTH_SERUM)){
-            WorldTile t = new WorldTile(3016, 3259,0);
-            if (t.distance() < 20 && t.interact("Walk here")){
+
+        if (Quest.THE_HAND_IN_THE_SAND.getStep() == 70 &&
+                !Inventory.contains(ItemID.TRUTH_SERUM)) {
+            ;
+            WorldTile t = new WorldTile(3016, 3259, 0);
+            if (t.distance() < 20 && !MyPlayer.getTile().equals(t) &&
+                    t.interact("Walk here")) {
                 PathingUtil.movementIdle();
             }
-            if (Utils.useItemOnObject(ItemID.ROSE_TINTED_LENS, ObjectID.COUNTER)){
+            Log.info("Using lens on counter");
+            if (Utils.useItemOnObject(ItemID.ROSE_TINTED_LENS, "Counter")) {
                 NpcChat.handle(true);
             }
         }
 
-
+        step.ifPresent(QuestStep::execute);
+        if (!Inventory.contains(ItemID.SAND) && Quest.THE_HAND_IN_THE_SAND.getStep() >=30
+        && Quest.THE_HAND_IN_THE_SAND.getStep() <= 70) {
+            Log.info("going to pickpocket sandy");
+            pickpocketSandy.execute();
+        }
         if (ChatScreen.isOpen())
-            NpcChat.handle();
+            NpcChat.handle("I have a rather sandy problem that I'd like to palm off on you.");
+
         Waiting.waitNormal(200, 20);
     }
 
     @Override
     public String questName() {
         return "The Hand in the Sand (" +
-                Utils.getVarBitValue(QuestVarbits.QUEST_THE_HAND_IN_THE_SAND.getId()) + "|" + Quest.THE_HAND_IN_THE_SAND.getStep()+ ")";
+                Utils.getVarBitValue(QuestVarbits.QUEST_THE_HAND_IN_THE_SAND.getId()) + "|" + Quest.THE_HAND_IN_THE_SAND.getStep() + ")";
     }
 
     @Override

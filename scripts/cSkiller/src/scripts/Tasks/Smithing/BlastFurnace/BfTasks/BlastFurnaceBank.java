@@ -15,6 +15,7 @@ import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.types.Widget;
 import scripts.*;
 import scripts.API.Priority;
 import scripts.API.Task;
@@ -56,6 +57,13 @@ public class BlastFurnaceBank implements Task {
 
     @Override
     public void execute() {
+        if (Bank.isDepositBoxOpen() &&
+                Query.widgets()
+                        .actionContains("Close").findFirst()
+                        .map(Widget::click)
+                        .orElse(false)) {
+            Waiting.waitUntil(2000, 250, () -> !Bank.isDepositBoxOpen());
+        }
         Log.debug("Banking: BlastFurnace");
         if (BfVars.get().useGoldSmith)
             bank(BfConst.GOLD_ORE);
@@ -127,7 +135,7 @@ public class BlastFurnaceBank implements Task {
                         && Inventory.find(995).length == 0)
                     BankManager.withdraw(0, true, 995);
 
-                if (CollectBars. shouldCollectBars()) {
+                if (CollectBars.shouldCollectBars()) {
                     Log.warn("need to collect bars");
                     BankManager.close(true);
                     return true;
@@ -146,7 +154,7 @@ public class BlastFurnaceBank implements Task {
                 } else
                     BankManager.withdraw(0, true, oreId);
                 Optional<GameObject> bestInteractable = Query.gameObjects().idEquals(9100).findBestInteractable();
-                bestInteractable.ifPresent(b->b.hover());
+                bestInteractable.ifPresent(b -> b.hover());
                 if (org.tribot.script.sdk.Options.isEscapeClosingEnabled()) {
                     Keyboard.pressKeys(KeyEvent.VK_ESCAPE);
                     Timer.waitCondition(() -> !Bank.isOpen(), 500, 750);
@@ -155,7 +163,7 @@ public class BlastFurnaceBank implements Task {
                     BankManager.close(true);
 
                 if (!BfVars.get().useGoldSmith && Inventory.find(BfConst.IRON_ORE).length < 15
-                && Inventory.find(BfConst.COAL).length < 15) {
+                        && Inventory.find(BfConst.COAL).length < 15) {
                     failNum++;
                     if (failNum > 2) {
                         Log.warn("[Bank]: Ending due to lack of iron ore");
@@ -197,8 +205,8 @@ public class BlastFurnaceBank implements Task {
             Optional<InventoryItem> full = Query.inventory().actionContains("Empty")
                     .idEquals(BfConst.ALL_COAL_BAG)
                     .findClosestToMouse();
-            if (full.map(f->f.click("Empty")).orElse(false)){
-                Waiting.waitUntil(3000, 150, ()-> Query.inventory()
+            if (full.map(f -> f.click("Empty")).orElse(false)) {
+                Waiting.waitUntil(3000, 150, () -> Query.inventory()
                         .actionContains("Fill")
                         .isAny());
             }

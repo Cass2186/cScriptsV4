@@ -16,6 +16,7 @@ public class Paint {
                 .row(PaintRows.scriptName(template.toBuilder()))
                 .row(PaintRows.runtime(template.toBuilder()))
                 .row(template.toBuilder().label("Task").value(() -> Vars.get().status).build())
+                .row(template.toBuilder().label("Wave").value(Wave::getCurrentWave).build())
                 .row(template.toBuilder().condition(() -> Skill.RANGED.getXp() > Const.START_RANGED_XP)
                         .label("Ranged XP")
                         .value(() -> PaintUtil.formatSkillString(Skill.RANGED, Const.START_RANGED_XP,

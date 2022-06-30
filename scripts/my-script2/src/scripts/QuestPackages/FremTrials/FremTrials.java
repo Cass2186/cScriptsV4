@@ -14,6 +14,7 @@ import org.tribot.api2007.Equipment;
 import org.tribot.api2007.GameTab;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Options;
+import org.tribot.api2007.Player;
 import org.tribot.api2007.Prayer;
 import org.tribot.api2007.WorldHopper;
 import org.tribot.api2007.ext.Doors;
@@ -21,9 +22,7 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Combat;
 import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.types.InventoryItem;
-import org.tribot.script.sdk.types.Npc;
-import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.*;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
@@ -194,7 +193,7 @@ public class FremTrials implements QuestTask {
 
 
     //Tiles
-    public RSTile lanzigSafeTle = new RSTile(2670, 3665);
+    public WorldTile lanzigSafeTle = new WorldTile(2670, 3665);
     public RSTile inFrontOfBeer = new RSTile(2658, 3675);
     public RSTile bar = new RSTile(2694, 3492);
     public RSTile bridge = new RSTile(2653, 3591);
@@ -218,7 +217,7 @@ public class FremTrials implements QuestTask {
     public RSTile koscheiTile = new RSTile(2646, 10085, 2);
 
     //Areas
-    public RSArea lanzigSafeArea = new RSArea(lanzigSafeTle, 1);
+    public RSArea lanzigSafeArea = new RSArea(new RSTile(2670, 3665), 1);
     public RSArea kosheiArea = new RSArea(koscheiTile, 20);
     public RSArea bottomRoom = new RSArea(new RSTile(2629, 3666, 0), new RSTile(2633, 3659, 0));
     public RSArea room1 = new RSArea(new RSTile(2631, 10004, 0), 2);
@@ -375,6 +374,8 @@ public class FremTrials implements QuestTask {
                     Clicking.click("Eat", invItem1);
                 }
 
+            } if (!org.tribot.script.sdk.Equipment.contains(ItemID.RING_OF_RECOIL)){
+                Utils.equipItem(ItemID.RING_OF_RECOIL);
             }
         }
         if (ChatScreen.isOpen())
@@ -1161,12 +1162,8 @@ public class FremTrials implements QuestTask {
         gotoAskeladden();
         cQuesterV2.status = "Talking to Askeladden";
         if (NpcChat.talkToNPC("Askeladden")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Ask about the Merchant's trial");
-            if (NPCInteraction.isConversationWindowUp())
+            if (NpcChat.handle(true, "Ask about the Merchant's trial", "Yes"))
                 ASKELADDEN = true;
-            NPCInteraction.handleConversation("Yes");
-            NPCInteraction.handleConversation();
         }
     }
 
@@ -1301,13 +1298,15 @@ public class FremTrials implements QuestTask {
     public void combatIdle() {
         cQuesterV2.status = "Fight Idle";
         General.println("[Debug]: Fight idle.");
-        while (MyPlayer.isHealthBarVisible()) {
-            if (!lanzigSafeArea.contains(Player.getPosition()) && lanzigSafeTle.isClickable()) {
-                Walking.clickTileMS(lanzigSafeTle, "Walk here");
-            } else if (!lanzigSafeTle.isClickable()) {
+        while (Query.npcs().isMyPlayerInteractingWith().isHealthBarVisible().isAny()) {
+            if (!lanzigSafeArea.contains(Player.getPosition()) &&
+                    lanzigSafeTle.isVisible() &&
+                    lanzigSafeTle.interact("Walk here")) {
+                PathingUtil.movementIdle();
+            } else if (!lanzigSafeTle.isVisible()) {
                 PathingUtil.walkToTile(lanzigSafeTle);
             }
-            General.sleep(General.random(1000, 2000));
+
             if (MyPlayer.getCurrentHealthPercent() < General.random(40, 65)) {
                 RSItem[] invItem1 = Inventory.find(lobster);
                 if (invItem1.length > 0) {
@@ -1318,6 +1317,7 @@ public class FremTrials implements QuestTask {
                     Banking.close();
                 }
             }
+            General.sleep(1500, 2000);
         }
     }
 
@@ -1360,6 +1360,12 @@ public class FremTrials implements QuestTask {
         }
     }
 
+    private int getPlayerCount() {
+        return Query.players()
+                .inArea(Area.fromRadius(MyPlayer.getTile(), 3))
+                .count();
+    }
+
     public void killLanzig() { // need a door check
         if (!BankManager.checkInventoryItems(ItemID.MIND_RUNE, ItemID.AIR_RUNE, ItemID.LOBSTER) ||
                 Equipment.find(ItemID.STAFF_OF_FIRE).length < 1) {
@@ -1383,10 +1389,10 @@ public class FremTrials implements QuestTask {
             if (door.length > 0 && Doors.handleDoor(door[0], true))
                 General.sleep(800, 1600);
 
-            if (!SAFE_AREA.contains(Player.getPosition()) && lanzigSafeTle.isClickable()) {
-                if (PathingUtil.clickScreenWalk(lanzigSafeTle))
+            if (!SAFE_AREA.contains(Player.getPosition()) && lanzigSafeTle.isVisible()) {
+                if (lanzigSafeTle.interact("Walk here"))
                     PathingUtil.movementIdle();
-            } else if (!lanzigSafeTle.isClickable()) {
+            } else if (!lanzigSafeTle.isVisible()) {
                 PathingUtil.walkToTile(lanzigSafeTle);
             }
 
@@ -1402,36 +1408,36 @@ public class FremTrials implements QuestTask {
                 if (!lanzig[0].isInCombat() && Utils.clickNPC("Lanzig", "Attack")) {
                     Timer.waitCondition(() -> lanzig[0].isInCombat(), 3000, 5000);
                     if (!SAFE_AREA.contains(Player.getPosition())) {
-                        if (lanzigSafeTle.isClickable())
-                            AccurateMouse.walkScreenTile(lanzigSafeTle);
-                        else
-                            Walking.blindWalkTo(lanzigSafeTle);
+                        if (lanzigSafeTle.isVisible() &&
+                                lanzigSafeTle.interact("Walk here"))
+                            PathingUtil.movementIdle();
+                        else if (lanzigSafeTle.interact("Walk here"))
+                            PathingUtil.movementIdle();
                         Timer.waitCondition(() -> SAFE_AREA.contains(Player.getPosition()), 3500, 50);
                     }
                     if (CombatUtil.waitUntilOutOfCombat(General.random(40, 60)))
                         Timer.waitCondition(() -> lanzig[0] == null, 3000, 5000);
                 }
 
-                groundLyre = GroundItems.find(LYRE);
-                if (groundLyre.length > 0) {
-                    cQuesterV2.status = "Looting LYRE";
-                    General.println("[Debug]: " + cQuesterV2.status);
-                    if (Utils.clickGroundItem(LYRE) &&
-                            Timer.waitCondition(() -> Inventory.find(LYRE).length > 0, 10000, 12000))
-                        break;
+                Optional<GroundItem> lyre = Query.groundItems()
+                        .idEquals(LYRE).findClosest();
+                if (lyre.map(l -> l.interact("Take")).orElse(false)) {
+                    Timer.waitCondition(() -> Inventory.find(LYRE).length > 0, 10000, 12000);
+                    break;
                 }
                 if (!SAFE_AREA.contains(Player.getPosition())) {
                     cQuesterV2.status = "Moving to safe tile.";
-                    if (lanzigSafeTle.isClickable())
-                        AccurateMouse.walkScreenTile(lanzigSafeTle);
-                    else
-                        Walking.blindWalkTo(lanzigSafeTle);
+                    if (lanzigSafeTle.isVisible() &&
+                            lanzigSafeTle.interact("Walk here"))
+                        PathingUtil.movementIdle();
+                    else if (lanzigSafeTle.interact("Walk here"))
+                        PathingUtil.movementIdle();
                     Timer.waitCondition(() -> SAFE_AREA.contains(Player.getPosition()), 3500, 5000);
                 }
             } else {
                 cQuesterV2.status = "Waiting for Lanzig to spawn";
                 AntiBan.timedActions();
-                General.sleep(General.random(1000, 5000));
+                General.sleep(1000, 3000);
             }
         }
     }

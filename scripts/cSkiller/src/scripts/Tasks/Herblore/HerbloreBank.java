@@ -90,7 +90,7 @@ public class HerbloreBank implements Task {
 
       //      Log.log("Using ItemID of " + item.get().toString());
             ItemID = Entities.find(ItemEntity::new) //check if noted
-                    .idEquals(item.get().getItemID())
+                    .idEquals(item.get().getItemId())
                     .getFirstResult();
         //    Log.log("Is ItemID null?  " + (ItemID == null));
         }
@@ -109,7 +109,7 @@ public class HerbloreBank implements Task {
     @Override
     public void execute() {
         Optional<HerbloreItems> itemOptional = HerbloreItems.getCurrentItem();
-        itemOptional.ifPresent(itm -> getItemsAmuletOfChemistry(itm.getItemID(), itm.getUnfPotionId()));
+        itemOptional.ifPresent(itm -> getItemsAmuletOfChemistry(itm.getItemId(), itm.getUnfPotionId()));
     }
 
     @Override

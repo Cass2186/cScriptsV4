@@ -34,7 +34,7 @@ public class MixTar implements Task {
         GUAM(19, 31, 249, 30),
         MARRENTILL(31, 39, 251, 42.5),
         TARROMIN(39, 44, 253, 55),
-        HARRALANDER(44, 99, 255, 72.5);
+        HARRALANDER(44, 45, 255, 72.5);
 
         TARS(int levelReq, int maxLevel, int herbId, double expGained) {
             this.levelReq = levelReq;

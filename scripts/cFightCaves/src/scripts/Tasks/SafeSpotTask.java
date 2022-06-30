@@ -69,8 +69,7 @@ public class SafeSpotTask implements Task {
             Log.info("We're moving to the closest path");
             Log.info("Min Distance " + minDistance);
 //            Log.info("Distance to closest", Player07.distanceTo(getClosestPath().get(upperLimit)));
-            if (dist.isPresent())
-                Log.info("Distance from NPC " + dist);
+            Log.info("Distance from NPC " + dist);
             //setComplete();
         }
     }
