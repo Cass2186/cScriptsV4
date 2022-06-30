@@ -2,11 +2,14 @@ package scripts.Tasks;
 
 import dax.walker_engine.WalkerEngine;
 import org.tribot.api.General;
+import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.api2007.util.DPathNavigator;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.interfaces.Positionable;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
@@ -14,6 +17,7 @@ import org.tribot.script.sdk.types.WorldTile;
 import scripts.Data.Const;
 import scripts.Data.Vars;
 import scripts.QueryUtils;
+import scripts.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,12 +33,13 @@ public class GenerateMap implements Task {
     DPathNavigator fightWalker = new DPathNavigator();
     List<RSTile> path = null;
 
-    public static WorldTile getTileInDirection(int angle, int radius) {
+    public static LocalTile getTileInDirection(int angle, int radius) {
         WorldTile currentTile = MyPlayer.getTile();
         double x = radius * Math.round(Math.sin(Math.PI * 2 * angle / 360));
         double y = radius * Math.cos(Math.PI * 2 * angle / 360);
-        return currentTile.translate((int) x, (int) y);
+        return currentTile.translate((int) x, (int) y).toLocalTile();
     }
+
 
     Area createMappedArea(Optional<LocalTile> anchor, int x1, int y1, int x2, int y2) {
         if (anchor.isEmpty()) {
@@ -66,27 +71,29 @@ public class GenerateMap implements Task {
 
     @Override
     public Priority priority() {
-        return null;
+        return Priority.HIGH;
     }
 
     @Override
     public boolean validate() {
-        return false;
+        return GameState.isInInstance();
     }
 
     @Override
     public void execute() {
+        Log.info("Generating Cave Map VALIDATED");
      /*   if (prayerEvent.isPendingCompletion()) {
             prayerEvent.execute();
             prayerEvent.reset();
         }*/
         Vars.get().caveObject = QueryUtils.getObject(Const.CAVE_ENTRANCE_ID);
         if (Vars.get().caveObject.isPresent()) {
-           // path = Arrays.asList(fightWalker.findPath(getTileInDirection(General.random(0, 50), General.random(5, 10))));
+            path = Arrays.asList(fightWalker.findPath(Utils.getRSTileFromLocalTile(getTileInDirection(General.random(0, 50),
+                    General.random(5, 10)))));
             if (WalkerEngine.getInstance().walkPath(path)) {
                 Log.info("Generating Cave Map");
-               /* Sleep.until(() -> Interaction.getObject(Const.CAVE_ENTRANCE_ID) != null ||
-                        Player07.distanceTo(path.get(path.size() - 1)) < General.random(0, 5));*/
+                Waiting.waitUntil(() -> QueryUtils.getObject(Const.CAVE_ENTRANCE_ID).isPresent() ||
+                     (path.get(path.size() - 1).distanceTo(Player.getPosition())) < General.random(0, 5));
             }
             if (QueryUtils.getObject(Const.CAVE_ENTRANCE_ID).isPresent() && !MyPlayer.isMoving()) {
                 fightWalker.traverse(General.random(1, 30));
@@ -103,6 +110,8 @@ public class GenerateMap implements Task {
 //                Vars.get().clawRockWestTile = caveObjectTile.translate(-21, -12);
 //                Vars.get().clawRockEastTile = caveObjectTile.translate(-8, -11);
 
+                Vars.get().ITALY_ROCK_EAST =  Vars.get().caveObject.map(c -> c.getTile().toLocalTile().translate(1, -24));
+                Vars.get().ITALY_ROCK_WEST =  Vars.get().caveObject.map(c -> c.getTile().toLocalTile().translate(5, -29));
                 Vars.get().endPhase = createMappedArea(Vars.get().caveObjectTile, 3, -4, 9, -17);
                 Vars.get().NW = createMappedArea(Vars.get().caveObjectTile, -36, -7, 23, -18);
                 Vars.get().C = createMappedArea(Vars.get().caveObjectTile, -18, -25, 6, -32);

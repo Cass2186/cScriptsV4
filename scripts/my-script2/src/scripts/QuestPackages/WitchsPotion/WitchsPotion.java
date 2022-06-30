@@ -6,6 +6,8 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Npc;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.WitchsHouse.WitchsHouse;
@@ -19,6 +21,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class WitchsPotion implements QuestTask {
 
@@ -56,7 +59,7 @@ public class WitchsPotion implements QuestTask {
 
     NPCStep talkToWitch = new NPCStep("Hetty", new RSTile(2968, 3205, 0),
             new String[]{"I am in search of a quest.",
-                    "Yes, help me become one with my darker side." ,"Yes."},
+                    "Yes, help me become one with my darker side.", "Yes."},
             onion, eyeOfNewt, cookedMeat);
 
     NPCStep returnToWitch = new NPCStep("Hetty", new RSTile(2968, 3205, 0),
@@ -75,7 +78,8 @@ public class WitchsPotion implements QuestTask {
 
             PathingUtil.walkToTile(new RSTile(2956, 3203, 0), 4, false);
 
-            if (Utils.clickNPC("Rat", "Attack"))
+            Optional<Npc> rat = Query.npcs().nameContains("Rat").isNotBeingInteractedWith().findClosestByPathDistance();
+            if (rat.map(r -> r.interact("Attack")).orElse(false))
                 Timer.abc2WaitCondition(() -> GroundItems.find(ratTail.getId()).length > 0, 35000, 45000);
 
             Utils.clickGroundItem(ratTail.getId());
@@ -97,13 +101,13 @@ public class WitchsPotion implements QuestTask {
     public boolean validate() {
         return Game.getSetting(67) <= 3
                 &&
-        cQuesterV2.taskList.get(0).equals(this);
+                cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
     public void execute() {
         if (Game.getSetting(67) == 0) {
-            if (!initialItemReqs.check()){
+            if (!initialItemReqs.check()) {
                 cQuesterV2.status = "Buying items";
                 buyStep.buyItems();
                 cQuesterV2.status = "Getting items";
@@ -125,7 +129,8 @@ public class WitchsPotion implements QuestTask {
             cQuesterV2.status = "Drinking Potion";
             drinkPotion.execute();
 
-        }  if (Game.getSetting(67) >= 3) {
+        }
+        if (Game.getSetting(67) >= 3) {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(WitchsPotion.get());
         }

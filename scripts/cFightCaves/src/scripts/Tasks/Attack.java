@@ -4,10 +4,8 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
 import org.tribot.api2007.util.DPathNavigator;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Combat;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.interfaces.Character;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
@@ -23,42 +21,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class Attack {
+public class Attack implements Task {
     public static ArrayList<LocalTile> safespots = new ArrayList<>();
 
-   // SafespotFinder safespotFinder = new SafespotFinder();
+    // SafespotFinder safespotFinder = new SafespotFinder();
     DPathNavigator walker = new DPathNavigator();
     Timer timer = new Timer(12000);
 
     public void step() throws InterruptedException, IOException {
-        //Core.setStatus(this.toString());
-        /*if (!isPendingCompletion() || safeSpotEvent.isPendingCompletion()) {
-            setComplete();
-        }
-        if (!isOrbEnabled() && !isSpecialAttackEnabled() && getPercent() > General.random(40, 99)) {
+        if (!isOrbEnabled() && !Combat.isSpecialAttackEnabled() &&
+                getPercent() > General.random(40, 99)) {
             useSpecialAttack(false);
         }
         setAutoRetaliate();
-        if (!safeSpotEvent.isPendingCompletion()) {
-            attackNPC();
-        } else {
-            setComplete();
-        }*/
+        // if (!safeSpotEvent.isPendingCompletion())
+        attackNPC();
+
         General.sleep(20, 40);
     }
+
 
     @Override
     public String toString() {
         return "Attacking";
     }
 
-
-    public boolean isPendingCompletion() {
-        return !Query.npcs().isMyPlayerInteractingWith().isAny()
-                || (isBeingRanged() || isBeingMaged())
-//                && Arrays.stream(NPCs.getAll()).filter(i -> Player07.distanceTo(i) < 15).toArray().length > 0;
-                && Arrays.stream(NPCs.getAll()).filter(i -> Player.getPosition().distanceTo(i) < 16).toArray().length > 0;
-    }
 
     public int nearbyNpcs() {
         return NPCs.getAll().length;
@@ -67,15 +54,11 @@ public class Attack {
     boolean setAutoRetaliate() {
         if (CaveNPCs.shouldLure(Wave.getCurrentWave())) {
             if (Combat.isAutoRetaliateOn()) {
-                if (Combat.setAutoRetaliate(false)) {
-                    return !Combat.isAutoRetaliateOn();
-                }
+                return Combat.setAutoRetaliate(false);
             }
         } else {
             if (!Combat.isAutoRetaliateOn()) {
-                if (Combat.setAutoRetaliate(true)) {
-                    return Combat.isAutoRetaliateOn();
-                }
+                return Combat.setAutoRetaliate(true);
             }
         }
         return false;
@@ -86,7 +69,7 @@ public class Attack {
     }
 
     int getPercent() {
-       return Combat.getSpecialAttackPercent();
+        return Combat.getSpecialAttackPercent();
     }
 
     boolean useSpecialAttack(boolean wait) {
@@ -100,22 +83,26 @@ public class Attack {
 
 
     boolean shouldMoveToRangers() {
-        RSNPC[] range = NPCs.findNearest(CaveNPCs.XIL.getName());
+        List<Npc> range = Query.npcs().nameContains(CaveNPCs.XIL.getName()).toList();
         Optional<Npc> interacting = Query.npcs().isMyPlayerInteractingWith().findClosest();
-        if (isBeingRanged() && (range.length == 0 || interacting != null && !interacting.equals(range[0]))) {
+        if (isBeingRanged() && (range.size() == 0 || interacting.map(i ->
+                !i.equals(range.get(0))).orElse(false))) {
             Log.info("Is being ranged" + isBeingRanged());
-            Log.info("Ranger length" + range.length);
+            Log.info("Ranger size() " + range.size());
         }
-        return isBeingRanged() && (range.length == 0 || interacting != null && !interacting.equals(range[0]));
+        return isBeingRanged() && (range.size() == 0 || interacting.map(i ->
+                !i.equals(range.get(0))).orElse(false));
     }
 
     boolean shouldMoveToMagers() {
-        RSNPC[] mage = NPCs.findNearest(CaveNPCs.ZEK.getName());
+        List<Npc> mage = Query.npcs().nameContains(CaveNPCs.ZEK.getName()).toList();
         Optional<Npc> interacting = Query.npcs().isMyPlayerInteractingWith().findClosest();
-        if (isBeingMaged() && (mage.length == 0 || interacting != null && !interacting.equals(mage[0]))) {
+        if (isBeingMaged() && (mage.size() == 0 ||
+                interacting.map(i -> !i.equals(mage.get(0))).orElse(false))) {
             Log.info("We should move to mage");
         }
-        return isBeingMaged() && (mage.length == 0 || interacting != null && !interacting.equals(mage[0]));
+        return isBeingMaged() && (mage.size() == 0 ||
+                interacting.map(i -> !i.equals(mage.get(0))).orElse(false));
     }
 
     boolean moveToMagers() {
@@ -190,19 +177,19 @@ public class Attack {
         if (!CaveNPCs.shouldProtectRange(Wave.getCurrentWave())) {
             return false;
         }
-        RSProjectile[] projectiles = Projectiles.getAll();
-        if (projectiles.length > 0) {
-            for (RSProjectile projectile : projectiles) {
-                if (projectile.isTargetingMe()) {
-                    for (CaveNPCs npc : CaveNPCs.values()) {
-                        if (npc.getProjectileAnimation() == projectile.getGraphicID() && npc.isShouldPrayRange()) {
-                            Log.info("Ranged Projectile Coming from " + npc.getName());
-                            return true;
-                        }
+        List<Projectile> projectiles = Query.projectiles().toList();
+        for (Projectile projectile : projectiles) {
+            if (projectile.isTargetingMe()) {
+                for (CaveNPCs npc : CaveNPCs.values()) {
+                    if (npc.getProjectileAnimation() == projectile.getGraphicId() &&
+                            npc.isShouldPrayRange()) {
+                        Log.info("Ranged Projectile Coming from " + npc.getName());
+                        return true;
                     }
                 }
             }
         }
+
         return false;
     }
 
@@ -212,15 +199,13 @@ public class Attack {
                 (tile != null && MyPlayer.getTile().distanceTo(tile) < 4)) {
             return false;
         }
-        RSProjectile[] projectiles = Projectiles.getAll();
-        if (projectiles.length > 0) {
-            for (RSProjectile projectile : projectiles) {
-                if (projectile.isTargetingMe()) {
-                    for (CaveNPCs npc : CaveNPCs.values()) {
-                        if (npc.getProjectileAnimation() == projectile.getGraphicID() && npc.isShouldPrayMage()) {
-                            Log.info("Mage Projectile Coming from " + npc.getName());
-                            return true;
-                        }
+        List<Projectile> projectiles = Query.projectiles().toList();
+        for (Projectile projectile : projectiles) {
+            if (projectile.isTargetingMe()) {
+                for (CaveNPCs npc : CaveNPCs.values()) {
+                    if (npc.getProjectileAnimation() == projectile.getGraphicId() && npc.isShouldPrayMage()) {
+                        Log.info("Mage Projectile Coming from " + npc.getName());
+                        return true;
                     }
                 }
             }
@@ -243,8 +228,8 @@ public class Attack {
                 characterName = character.getName();
             }
             if (character == null) {
-               // if (timer.getStartTime() == 0)
-                  //  timer.start();
+                // if (timer.getStartTime() == 0)
+                //  timer.start();
 
             } else {
                 timer.reset();
@@ -273,12 +258,15 @@ public class Attack {
 //                Log.info("NPC is on screen", highestPriority.isOnScreen());
 //                Log.info("NPC is valid", highestPriority.isValid());
                 if (MyPlayer.isHealthBarVisible() && Player.getPosition().distanceTo(highestPriority.getPosition()) < General.random(7, 17)) {
-                    if (Utils.clickNPC(highestPriority.getName(), actions[0] + " " + highestPriority.getName())) {
+                    Optional<Npc> target = Query.npcs().nameContains(highestPriority.getName()).findClosestByPathDistance();
+
+                    if (clickAttack(target)) {
                         Waiting.waitUntil(highestPriority::isInCombat);
                     }
-                } else if ((character == null || !characterName.equals(name))
-                        && Utils.clickNPC(highestPriority.getName(), actions[0] + " " + highestPriority.getName())) {
-                    Waiting.waitUntil(highestPriority::isInCombat);
+                } else if ((character == null || !characterName.equals(name))) {
+                    Optional<Npc> target = Query.npcs().nameContains(highestPriority.getName()).findClosestByPathDistance();
+                    if (clickAttack(target))
+                        Waiting.waitUntil(highestPriority::isInCombat);
                 }
             }
             if (highestPriority.isInteractingWithMe() && highestPriority.isInCombat()) {
@@ -286,6 +274,17 @@ public class Attack {
 //                Log.info("We are interacting with the highest priority NPC (" + highestPriority.getName() + ")");
             }
         }
+    }
+
+    private boolean clickAttack(Optional<Npc> target) {
+        if (target.map(t -> t.isVisible() && t.click("Attack")).orElse(false)) {
+            return true;
+        } else if (target.map(t ->
+                !t.isVisible() && t.adjustCameraTo()
+                        && t.click("Attack")).orElse(false)) {
+            return true;
+        }
+        return false;
     }
 
     static RSNPC getHighestPriorityNearbyNPC() {
@@ -314,39 +313,61 @@ public class Attack {
         return temp;
     }
 
-  /*  boolean moveBehind() {
+    boolean moveBehind() {
         LocalTile destination = null;
 
         Optional<Character.WalkingDirection> direction =
                 MyPlayer.get().get().getWalkingDirection();
+
         if (direction.isEmpty())
             return false;
 
-        switch (direction.get()) {
+        if (direction.get().equals(Character.WalkingDirection.WEST)) {
+            destination = GenerateMap.getTileInDirection(General.random(0, 180), General.random(2, 5));
 
-            case WEST:, EAST -> {
-                //0 - 180 degrees
-                destination = MappingEvent.getTileInDirection(General.random(0, 180), General.random(2, 5));
-            }
-            case NW -> {
-                //50 - 220 degrees
-                destination = MappingEvent.getTileInDirection(General.random(50, 220), General.random(2, 5));
-            }
-            case NE, SW -> {
-                //310 - 130 degrees
-                destination = MappingEvent.getTileInDirection(General.random(130, 310), General.random(2, 5));
-            }
-            case S, N -> {
-                //90-270 degrees
-                destination = MappingEvent.getTileInDirection(General.random(90, 270), General.random(2, 5));
-            }
-            case SE -> {
-                //45 - 230 degrees
-                destination = MappingEvent.getTileInDirection(General.random(45, 230), General.random(2, 5));
-            }
+        } else if (direction.get().equals(Character.WalkingDirection.EAST)) {
+            destination = GenerateMap.getTileInDirection(General.random(0, 180), General.random(2, 5));
+        } else if (direction.get().equals(Character.WalkingDirection.NORTHWEST)) {
+            destination = GenerateMap.getTileInDirection(General.random(50, 220), General.random(2, 5));
+        } else if (direction.get().equals(Character.WalkingDirection.NORTHEAST)) {          //310 - 130 degrees
+            destination = GenerateMap.getTileInDirection(General.random(130, 310), General.random(2, 5));
+        } else if (direction.get().equals(Character.WalkingDirection.SOUTHWEST)) {        //310 - 130 degrees
+            destination = GenerateMap.getTileInDirection(General.random(130, 310), General.random(2, 5));
+        } else if (direction.get().equals(Character.WalkingDirection.SOUTH)) {   //90-270 degrees
+            destination = GenerateMap.getTileInDirection(General.random(90, 270), General.random(2, 5));
+        } else if (direction.get().equals(Character.WalkingDirection.NORTH)) {     //90-270 degrees
+            destination = GenerateMap.getTileInDirection(General.random(90, 270), General.random(2, 5));
+        } else if (direction.get().equals(Character.WalkingDirection.SOUTHEAST)) {    //45 - 230 degrees
+            destination = GenerateMap.getTileInDirection(General.random(45, 230), General.random(2, 5));
         }
-        return destination.click();
-    }*/
+
+        return destination != null && destination.interact("Walk here");
+    }
 
 
+    @Override
+    public Priority priority() {
+        return Priority.LOW;
+    }
+
+    @Override
+    public boolean validate() {
+        return GameState.isInInstance() &&
+                !Query.npcs().isMyPlayerInteractingWith().isAny()
+                || (isBeingRanged() || isBeingMaged())
+                && Query.npcs().maxDistance(14).isAny();
+    }
+
+    @Override
+    public void execute() {
+        if (!isOrbEnabled() && !Combat.isSpecialAttackEnabled() &&
+                getPercent() > General.random(40, 99)) {
+            useSpecialAttack(false);
+        }
+        setAutoRetaliate();
+        // if (!safeSpotEvent.isPendingCompletion())
+        attackNPC();
+
+        General.sleep(20, 40);
+    }
 }

@@ -6,12 +6,13 @@ import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
+import org.tribot.script.sdk.script.TribotScriptManifest;
 import scripts.Data.Paint;
 import scripts.Data.Vars;
 import scripts.ScriptUtils.CassScript;
 import scripts.Tasks.Task;
 import scripts.Tasks.TaskSet;
-
+@TribotScriptManifest(author = "Cass2186", name = "cHerbRuns", category = "Testing")
 public class cHerbRuns extends CassScript implements TribotScript {
 
     @Override

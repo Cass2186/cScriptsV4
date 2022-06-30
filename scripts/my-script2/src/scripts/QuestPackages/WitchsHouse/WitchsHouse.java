@@ -117,7 +117,7 @@ public class WitchsHouse implements QuestTask {
 
     public void getItems() {
         cQuesterV2.status = "Getting Items";
-        General.println("[Debug]: " + cQuesterV2.status);
+        Log.info("" + cQuesterV2.status);
         General.sleep(200);
         BankManager.open(true);
         BankManager.depositEquipment();
@@ -255,17 +255,17 @@ public class WitchsHouse implements QuestTask {
             cQuesterV2.status = "Going to mouse";
             if (Inventory.find(magnet).length > 0) {
                 if (postGate.contains(Player.getPosition())) {
-                    General.println("[Debug]: Going upstairs - navigating gate");
+                    Log.info("Going upstairs - navigating gate");
                     Utils.clickObject("Gate", "Open", false);
                     Timer.waitCondition(() -> preGate.contains(Player.getPosition()), 7000, 9000);
                 }
                 if (preGate.contains(Player.getPosition())) {
-                    General.println("[Debug]: Going upstairs - navigating ladder");
+                    Log.info("Going upstairs - navigating ladder");
                     if (Utils.clickObject("Ladder", "Climb-up", false))
                         Timer.abc2WaitCondition(() -> insideHouse.contains(Player.getPosition()), 7000, 9000);
                 }
                 if (insideHouse.contains(Player.getPosition())) {
-                    General.println("[Debug]: Going to mouse");
+                    Log.info("Going to mouse");
                     if (PathingUtil.localNavigation(cheeseDropTile))
                         PathingUtil.movementIdle();
                 }
@@ -314,7 +314,7 @@ public class WitchsHouse implements QuestTask {
                 navigateToKey();
 
             else
-                General.println("[Debug]: Waiting");
+                Log.info("Waiting");
         }
     }
 
@@ -331,7 +331,7 @@ public class WitchsHouse implements QuestTask {
                 General.println("Trigger 2");
                 navigateToShed();
             } else {
-                General.println("[Debug]: Waiting");
+                Log.info("Waiting");
             }
         }
     }
@@ -339,37 +339,37 @@ public class WitchsHouse implements QuestTask {
     public void navigateToKey() {
         cQuesterV2.status = "Navigating to Shed";
         if (bush1Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Bush 2");
+            Log.info("Witch is >5 tiles away, moving to Bush 2");
             Walking.blindWalkTo(bush2);
             Timer.waitCondition(() -> bush2.equals(Player.getPosition()), 5000, 8000);
         } else if (bush2Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Bush 3");
+            Log.info("Witch is >5 tiles away, moving to Bush 3");
             Walking.blindWalkTo(bush3);
             Timer.waitCondition(() -> bush3.equals(Player.getPosition()), 5000, 8000);
         } else if (bush3Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Bush 4");
+            Log.info("Witch is >5 tiles away, moving to Bush 4");
             Walking.blindWalkTo(bush4);
             Timer.waitCondition(() -> bush4.equals(Player.getPosition()), 5000, 8000);
         } else if (bush4Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Bush 5");
+            Log.info("Witch is >5 tiles away, moving to Bush 5");
             Walking.blindWalkTo(new RSTile(2933, 3460, 0));
             General.sleep(General.random(4000, 6000));
             Walking.blindWalkTo(bush5);
             Timer.waitCondition(() -> bush5.equals(Player.getPosition()), 5000, 8000);
         } else if (bush5Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Bush 6");
+            Log.info("Witch is >5 tiles away, moving to Bush 6");
             Walking.blindWalkTo(bush6);
             Timer.waitCondition(() -> bush6.equals(Player.getPosition()), 5000, 8000);
         } else if (bush6Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Fountain");
+            Log.info("Witch is >5 tiles away, moving to Fountain");
             Walking.blindWalkTo(bush7);
             Timer.waitCondition(() -> bush7.equals(Player.getPosition()), 5000, 8000);
         } else if (bush7Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving to Fountain");
+            Log.info("Witch is >5 tiles away, moving to Fountain");
             Walking.blindWalkTo(fountainTile);
             General.sleep(General.random(4000, 7000));
         } else if (fountainArea.contains(Player.getPosition())) {
-            General.println("[Debug]: Getting Key from Fountain");
+            Log.info("Getting Key from Fountain");
             RSObject[] fountain = Objects.findNearest(20, "Fountain");
 
             if (fountain.length > 0) {
@@ -395,21 +395,21 @@ public class WitchsHouse implements QuestTask {
     public void navigateToShed() {
         cQuesterV2.status = "Navigating to Shed";
         if (fountainArea.contains(Player.getPosition()) && !fountainEndTileArea.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving...");
+            Log.info("Witch is >5 tiles away, moving...");
             Walking.blindWalkTo(fountainEndTileArea.getRandomTile());
             Timer.waitCondition(() -> fountainEndTileArea.contains(Player.getPosition()), 5000, 7000);
             General.sleep(General.random(2000, 3000));
         } else if (fountainEndTileArea.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving...");
+            Log.info("Witch is >5 tiles away, moving...");
             Walking.blindWalkTo(bush2Return);
             Timer.waitCondition(() -> bush2ReturnArea.contains(Player.getPosition()), 5000, 7000);
             General.sleep(General.random(2000, 3000));
         } else if (bush7Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving...");
+            Log.info("Witch is >5 tiles away, moving...");
             Walking.blindWalkTo(bush3Return);
             General.sleep(General.random(3000, 5000));
         } else if (bush6Area.contains(Player.getPosition())) {
-            General.println("[Debug]: Witch is >5 tiles away, moving...");
+            Log.info("Witch is >5 tiles away, moving...");
             Walking.blindWalkTo(doorToShed);
             General.sleep(General.random(3000, 5000));
         } else if (shedDoorArea.contains(Player.getPosition())) {
@@ -434,7 +434,7 @@ public class WitchsHouse implements QuestTask {
 
     public void failSafe() {
         if (OUTSIDE_HOUSE_FAIL.contains(Player.getPosition()) && Inventory.find(BALL).length < 1) {
-            General.println("[Debug]: Retrying");
+            Log.info("Retrying");
             Utils.shortSleep();
             if (Inventory.find(
                     ItemID.CHEESE).length < 1) {

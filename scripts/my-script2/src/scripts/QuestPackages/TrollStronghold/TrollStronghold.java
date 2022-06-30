@@ -11,19 +11,24 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Skill;
+import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.QuestTask;
-import scripts.Requirements.ItemRequirement;
-import scripts.Requirements.Requirement;
-import scripts.Requirements.SkillRequirement;
+import scripts.Requirements.*;
+import scripts.Requirements.Util.Operation;
 import scripts.Tasks.Priority;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class TrollStronghold implements QuestTask {
     private static TrollStronghold quest;
@@ -40,6 +45,22 @@ public class TrollStronghold implements QuestTask {
     int CELL_DOOR_2_ID = 3765;
     int CELL_DOOR_1_ID = 3767;
 
+    RSArea TROLLHEIM_AREA = new RSArea(new RSTile(2912, 3653, 0), new RSTile(2823, 3709, 0));
+    Area tenzingHut = Area.fromRectangle(new WorldTile(2814, 3553, 0), new WorldTile(2822, 3562, 0));
+    RSArea mountainPath1 = new RSArea(new RSTile(2814, 3563, 0), new RSTile(2823, 3593, 0));
+    RSArea mountainPath2 = new RSArea(new RSTile(2824, 3589, 0), new RSTile(2831, 3599, 0));
+    RSArea mountainPath3 = new RSArea(new RSTile(2832, 3595, 0), new RSTile(2836, 3603, 0));
+    RSArea mountainPath4 = new RSArea(new RSTile(2837, 3601, 0), new RSTile(2843, 3607, 0));
+    RSArea mountainPath5 = new RSArea(new RSTile(2844, 3607, 0), new RSTile(2876, 3611, 0));
+    Area trollArea1 = Area.fromRectangle(new WorldTile(2822, 3613, 0), new WorldTile(2896, 3637, 0));
+    Area arena = Area.fromRectangle(new WorldTile(2897, 3598, 0), new WorldTile(2924, 3628, 0));
+    Area northArena = Area.fromRectangle(new WorldTile(2898, 3629, 0), new WorldTile(2927, 3644, 0));
+    Area arenaCave = Area.fromRectangle(new WorldTile(2904, 10019, 0), new WorldTile(2927, 10035, 0));
+    Area trollheimArea = Area.fromRectangle(new WorldTile(2836, 3651, 0), new WorldTile(2934, 3773, 0));
+    Area strongholdFloor1 = Area.fromRectangle(new WorldTile(2820, 10048, 1), new WorldTile(2862, 10110, 1));
+    Area strongholdFloor2 = Area.fromRectangle(new WorldTile(2820, 10048, 2), new WorldTile(2862, 10110, 2));
+    Area prisonStairsRoom = Area.fromRectangle(new WorldTile(2848, 10104, 1), new WorldTile(2857, 10110, 1));
+    Area prison = Area.fromRectangle(new WorldTile(2822, 10049, 0), new WorldTile(2859, 10110, 0));
 
     RSArea START_AREA = new RSArea(new RSTile(2899, 3527, 0), new RSTile(2893, 3529, 0));
     RSArea PATH_STEP_1 = new RSArea(new RSTile(2818, 3563, 0), new RSTile(2815, 3566, 0));
@@ -71,14 +92,34 @@ public class TrollStronghold implements QuestTask {
     RSArea DOOR_AREA = new RSArea(new RSTile(2847, 10108, 1), new RSTile(2846, 10105, 1));
     RSArea KITCHEN_AREA = new RSArea(new RSTile(2831, 10062, 1), new RSTile(2863, 10048, 1));
     RSArea AFTER_DOOR_AREA = new RSArea(new RSTile(2848, 10111, 1), new RSTile(2857, 10103, 1));
-
     RSArea WHOLE_STRONGHOLD_LEVEL_0 = new RSArea(new RSTile(2820, 10112, 0), new RSTile(2873, 10046, 0));
     RSArea OUTSIDE_CELL_2 = new RSArea(new RSTile(2832, 10085, 0), new RSTile(2835, 10088, 0));
     RSArea DUNSTAN_AREA = new RSArea(new RSTile(2917, 3577, 0), new RSTile(2923, 3572, 0));
-
     RSTile[] PATH_TO_START_PRAYER_AREA = new RSTile[]{new RSTile(2908, 3654, 0), new RSTile(2908, 3657, 0), new RSTile(2909, 3660, 0), new RSTile(2910, 3663, 0), new RSTile(2911, 3666, 0), new RSTile(2912, 3669, 0), new RSTile(2913, 3672, 0), new RSTile(2913, 3675, 0), new RSTile(2914, 3678, 0), new RSTile(2914, 3681, 0), new RSTile(2914, 3684, 0), new RSTile(2913, 3687, 0)};
     RSTile[] PATH_TO_STOP_PRAY_AREA = new RSTile[]{new RSTile(2913, 3687, 0), new RSTile(2912, 3690, 0), new RSTile(2910, 3693, 0), new RSTile(2908, 3696, 0), new RSTile(2905, 3699, 0), new RSTile(2902, 3700, 0), new RSTile(2899, 3701, 0), new RSTile(2896, 3702, 0), new RSTile(2893, 3702, 0), new RSTile(2889, 3702, 0), new RSTile(2886, 3702, 0), new RSTile(2883, 3700, 0), new RSTile(2880, 3697, 0), new RSTile(2879, 3694, 0), new RSTile(2876, 3693, 0), new RSTile(2873, 3690, 0)};
     RSTile[] PATH_TO_STRONHOLD = new RSTile[]{new RSTile(2873, 3690, 0), new RSTile(2870, 3687, 0), new RSTile(2868, 3684, 0), new RSTile(2868, 3681, 0), new RSTile(2868, 3678, 0), new RSTile(2868, 3675, 0), new RSTile(2868, 3672, 0), new RSTile(2868, 3669, 0), new RSTile(2865, 3666, 0), new RSTile(2862, 3663, 0), new RSTile(2859, 3663, 0), new RSTile(2856, 3665, 0), new RSTile(2853, 3668, 0), new RSTile(2851, 3671, 0), new RSTile(2851, 3674, 0), new RSTile(2850, 3677, 0), new RSTile(2853, 3681, 0), new RSTile(2857, 3685, 0), new RSTile(2858, 3688, 0), new RSTile(2858, 3691, 0), new RSTile(2855, 3693, 0), new RSTile(2852, 3694, 0), new RSTile(2849, 3694, 0), new RSTile(2846, 3694, 0), new RSTile(2843, 3691, 0), new RSTile(2840, 3690, 0)};
+
+
+    AreaRequirement inTenzingHut = new AreaRequirement(tenzingHut);
+    AreaRequirement onMountainPath = new AreaRequirement(mountainPath1,
+            mountainPath2, mountainPath3, mountainPath4, mountainPath5);
+    AreaRequirement inTrollArea1 = new AreaRequirement(trollArea1);
+    AreaRequirement inArena = new AreaRequirement(arena);
+    AreaRequirement inNorthArena = new AreaRequirement(northArena);
+    VarplayerRequirement beatenDad = new VarplayerRequirement(317, 20, Operation.GREATER_EQUAL);
+    VarplayerRequirement prisonDoorUnlocked = new VarplayerRequirement(317, 30, Operation.GREATER_EQUAL);
+    AreaRequirement inArenaCave = new AreaRequirement(arenaCave);
+    AreaRequirement inTrollheimArea = new AreaRequirement(trollheimArea);
+    AreaRequirement inStrongholdFloor1 = new AreaRequirement(strongholdFloor1);
+    AreaRequirement inStrongholdFloor2 = new AreaRequirement(strongholdFloor2);
+    AreaRequirement inPrisonStairsRoom = new AreaRequirement(prisonStairsRoom);
+    AreaRequirement inPrison = new AreaRequirement(prison);
+    ItemOnTileRequirement prisonKeyNearby = new ItemOnTileRequirement(ItemID.PRISON_KEY);
+    // ItemOnTileRequirement  cellKey1Nearby = new ItemOnTileRequirement(cellKey1);
+    // ItemOnTileRequirement   cellKey2Nearby = new ItemOnTileRequirement(cellKey2);
+    VarbitRequirement freedEadgar = new VarbitRequirement(0, 1);
+    VarplayerRequirement freedGodric = new VarplayerRequirement(317, 40);
+
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
@@ -129,11 +170,10 @@ public class TrollStronghold implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(START_AREA);
         if (NpcChat.talkToNPC("Denulth")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("How goes your Fight with the trolls?");
-            NPCInteraction.handleConversation("Is there anything I can do to help?");
-            NPCInteraction.handleConversation("I'll get Godric back!", "Yes.");
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true, "How goes your Fight with the trolls?",
+                    "Is there anything I can do to help?", "I'll get Godric back!", "Yes.");
+            // NPCInteraction.handleConversation("Is there anything I can do to help?");
+            //NPCInteraction.handleConversation("I'll get Godric back!", "Yes.");
         }
     }
 
@@ -147,12 +187,21 @@ public class TrollStronghold implements QuestTask {
             buyItems();
             getItems();
         }
-        cQuesterV2.status = "Going to Dad";
-        General.println("[Debug]: " + cQuesterV2.status);
-        if (!BEFORE_ROCKS.contains(Player.getPosition()) && !AFTER_ROCKS.contains(Player.getPosition())
+
+        if (!BEFORE_ROCKS.contains(Player.getPosition()) &&
+                !AFTER_ROCKS.contains(Player.getPosition())
+                && !onMountainPath.check()
+                && !inTrollArea1.check()
+                && !INSIDE_CAVE.contains(Player.getPosition())
+                && !TROLLHEIM_AREA.contains(Player.getPosition())
+                && !WHOLE_STRONGHOLD_LEVEL_0.contains(Player.getPosition())
+                && !WHOLE_STRONGHOLD_LEVEL1.contains(Player.getPosition())
+                && !WHOLE_STRONGHOLD_LEVEL2.contains(Player.getPosition())
                 && !AFTER_ROCKS_2_TO_ROCKS_3.contains(Player.getPosition())
                 && !AFTER_ROCKS_3_TO_GATE.contains(Player.getPosition())
+                && !AFTER_ARENA_EXIT.contains(Player.getPosition())
                 && !DAD_AREA.contains(Player.getPosition())) {
+
             cQuesterV2.status = "Going to First set of Rocks";
             General.println("[Debug]: " + cQuesterV2.status);
 
@@ -165,9 +214,14 @@ public class TrollStronghold implements QuestTask {
             Utils.idle(2200, 5000);
         }
         if (BEFORE_ROCKS.contains(Player.getPosition())) {
+            Optional<GameObject> rocks = Query.gameObjects().nameContains("Rocks")
+                    .idEquals(3748)
+                    .tileEquals(new WorldTile(2856, 3612))
+                    .maxDistance(8)
+                    .findClosestByPathDistance();
             cQuesterV2.status = "Climbing rocks";
             General.println("[Debug]: " + cQuesterV2.status);
-            if (Utils.clickObj(ROCK_ID, "Climb")) {
+            if (Utils.clickObj(rocks, "Climb")) {
                 Timer.waitCondition(() -> AFTER_ROCKS.contains(Player.getPosition()), 12000);
                 Utils.idle(2200, 5000);
             }
@@ -180,7 +234,7 @@ public class TrollStronghold implements QuestTask {
                 Utils.idle(2000, 6000);
             }
 
-            if (Utils.clickObj("Rocks", "Climb")) {
+            if (Utils.clickObj(3790, "Climb")) {
                 Timer.waitCondition(() -> AFTER_ROCKS_2_TO_ROCKS_3.contains(Player.getPosition()), 12000);
                 Utils.idle(2000, 6000);
             }
@@ -190,7 +244,7 @@ public class TrollStronghold implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (PathingUtil.localNavigation(new RSTile(2877, 3622, 0)))
                 PathingUtil.movementIdle();
-            else if (PathingUtil.blindWalkToTile(new RSTile(2877, 3622, 0))){
+            else if (PathingUtil.blindWalkToTile(new RSTile(2877, 3622, 0))) {
                 PathingUtil.movementIdle();
             }
             if (Utils.clickObj("Rocks", "Climb")) {
@@ -201,10 +255,11 @@ public class TrollStronghold implements QuestTask {
         if (AFTER_ROCKS_3_TO_GATE.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to gate.";
             General.println("[Debug]: " + cQuesterV2.status);
-            if (PathingUtil.localNavigation(BEFORE_ARENA_GATE))
+            if (PathingUtil.localNavigation(new RSTile(2895, 3618, 0)))
                 PathingUtil.movementIdle();
 
-            if (Utils.clickObj("Arena Entrance", "Open")) {
+            if (BEFORE_ARENA_GATE.contains(Player.getPosition()) &&
+                    Utils.clickObj("Arena Entrance", "Open")) {
                 Timer.waitCondition(() -> SAFE_AREA.contains(Player.getPosition()), 12000);
                 Utils.idle(500, 4000);
             }
@@ -216,23 +271,23 @@ public class TrollStronghold implements QuestTask {
             cQuesterV2.status = "Fighting Dad";
             General.println("[Debug]: " + cQuesterV2.status);
             if (NPCInteraction.isConversationWindowUp())
-            NPCInteraction.handleConversation();
+                NPCInteraction.handleConversation();
 
             RSNPC[] dad = NPCs.findNearest("Dad");
-            if (dad.length > 0 && !dad[0].isInCombat() && Utils.clickNPC("Dad", "Attack")) {
-                NPCInteraction.handleConversation();
+            if (!beatenDad.check() &&
+                    dad.length > 0 && !dad[0].isInCombat() &&
+                    Utils.clickNPC("Dad", "Attack")) {
+                NpcChat.handle();
                 Timer.waitCondition(() -> Combat.isUnderAttack() || !SAFE_AREA.contains(Player.getPosition()), 3500, 5000);
                 cQuesterV2.status = "Waiting...";
                 Timer.waitCondition(() -> !Combat.isUnderAttack() || !SAFE_AREA.contains(Player.getPosition()), 60000);
             }
             if (!SAFE_AREA.contains(Player.getPosition())) {
                 Walking.blindWalkTo(new RSTile(2987, 3618, 0));
-                Utils.idle(2000, 6000);
+                PathingUtil.movementIdle();
             }
             if (!Combat.isUnderAttack()) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("I'll be going now.");
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true, "I'll be going now.");
             }
         }
     }
@@ -260,7 +315,7 @@ public class TrollStronghold implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             if (PathingUtil.localNavigation(CAVE_EXIT))
                 PathingUtil.movementIdle();
-            else if (PathingUtil.blindWalkToArea(CAVE_EXIT)){
+            else if (PathingUtil.blindWalkToArea(CAVE_EXIT)) {
                 PathingUtil.movementIdle();
             }
 
@@ -272,7 +327,10 @@ public class TrollStronghold implements QuestTask {
 
 
     public void navigateStronghold() {
-        if (!WHOLE_STRONGHOLD_LEVEL2.contains(Player.getPosition()) && Inventory.find(PRISON_KEY).length < 1 && !WHOLE_STRONGHOLD_LEVEL1.contains(Player.getPosition())) {
+        if (!WHOLE_STRONGHOLD_LEVEL2.contains(Player.getPosition()) &&
+                Inventory.find(PRISON_KEY).length < 1
+                && TROLLHEIM_AREA.contains(Player.getPosition())
+                && !WHOLE_STRONGHOLD_LEVEL1.contains(Player.getPosition())) {
             cQuesterV2.status = "Going to stronghold";
             General.println("[Debug]: " + cQuesterV2.status);
 
@@ -284,6 +342,7 @@ public class TrollStronghold implements QuestTask {
 
             drinkStamina();
 
+            Log.info("Walking to stop prayer area");
             if (Walking.walkPath(PATH_TO_STOP_PRAY_AREA))
                 PathingUtil.movementIdle();
 
@@ -311,7 +370,6 @@ public class TrollStronghold implements QuestTask {
 
             if (Walking.blindWalkTo(new RSTile(2821, 10070, 2)))
                 PathingUtil.movementIdle();
-
 
 
             if (Utils.clickNPC("Troll General", "Attack")) {
@@ -345,7 +403,8 @@ public class TrollStronghold implements QuestTask {
 
 
     public void step5() {
-        if (WHOLE_STRONGHOLD_LEVEL1.contains(Player.getPosition()) && Inventory.find(PRISON_KEY).length > 0) {
+        if (WHOLE_STRONGHOLD_LEVEL1.contains(Player.getPosition()) &&
+                Inventory.find(PRISON_KEY).length > 0) {
             cQuesterV2.status = "Walking to North Door, floor 1";
             if (KITCHEN_AREA.contains(Player.getPosition())) {
                 if (Walking.blindWalkTo(new RSTile(2837, 10063, 1)))
@@ -355,7 +414,7 @@ public class TrollStronghold implements QuestTask {
                     Utils.idle(2000, 4000);
             }
 
-            if(PathingUtil.localNavigation(DOOR_AREA))
+            if (PathingUtil.localNavigation(DOOR_AREA))
                 PathingUtil.movementIdle();
             else if (PathingUtil.blindWalkToArea(DOOR_AREA))
                 PathingUtil.movementIdle();
@@ -420,10 +479,10 @@ public class TrollStronghold implements QuestTask {
                 NPCInteraction.handleConversation();
             }
         }
-        if (WHOLE_STRONGHOLD_LEVEL_0.contains(Player.getPosition()) && Inventory.find(CELL_KEY_1).length > 0) {
+        if (WHOLE_STRONGHOLD_LEVEL_0.contains(Player.getPosition()) &&
+                Inventory.find(CELL_KEY_1).length > 0) {
             if (Utils.useItemOnObject(CELL_KEY_1, CELL_DOOR_1_ID)) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
             }
             cQuesterV2.status = "Leaving";
             if (Walking.blindWalkTo(new RSTile(2826, 10051, 0)))
@@ -440,8 +499,7 @@ public class TrollStronghold implements QuestTask {
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(DUNSTAN_AREA);
         if (NpcChat.talkToNPC("Dunstan")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
+            NpcChat.handle(true);
         }
     }
 
@@ -460,34 +518,37 @@ public class TrollStronghold implements QuestTask {
 
     @Override
     public void execute() {
+        if (isComplete()) {
+            Utils.closeQuestCompletionWindow();
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
         if (!checkRequirements()) {
             Log.log("[Debug]; Missing a requirement for Troll Stronghold (death plateau & 15 agility)");
             cQuesterV2.taskList.remove(this);
             return;
         }
+        if (Query.npcs().isMyPlayerInteractingWith()
+                .isHealthBarVisible().nameContains("Dad").isAny()) {
+            Waiting.waitNormal(700, 50); //slows down loop
+        }
         if (Game.getSetting(317) == 0) {
             buyItems();
             getItems();
             startQuest();
-        }
-        if (Game.getSetting(317) == 10) {
+        } else if (Game.getSetting(317) == 10) {
             goToDadFight();
-        }
-        if (Game.getSetting(317) == 20) {
+        } else if (Game.getSetting(317) == 20) {
+            goToDadFight();
             navigateCavesToStronghold();
             navigateStronghold();
             step5();
-        }
-        if (Game.getSetting(317) == 30) {
+        } else if (Game.getSetting(317) == 30) {
             freePrisoners();
-        }
-        if (Game.getSetting(317) == 40) {
+        } else if (Game.getSetting(317) == 40) {
             step7();
         }
-        if (Game.getSetting(317) == 50) {
-            Utils.closeQuestCompletionWindow();
-            cQuesterV2.taskList.remove(this);
-        }
+        Waiting.waitNormal(100, 10);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Equipment;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
 import scripts.*;
@@ -17,6 +18,7 @@ import scripts.QuestSteps.BuyItemsStep;
 import scripts.QuestSteps.NPCStep;
 import scripts.QuestSteps.QuestTask;
 import scripts.Requirements.*;
+import scripts.Requirements.Util.Conditions;
 import scripts.Tasks.Priority;
 
 import java.util.ArrayList;
@@ -82,7 +84,7 @@ public class RfdPiratePete implements QuestTask {
     NPCStep talkToNung = new NPCStep("Nung", new RSTile(2975, 9510, 1));
 
     //TODO get teh rest of these
-    VarbitRequirement canGrindCod = new VarbitRequirement(1877, 1);
+
 
     InventoryRequirement startInv = new InventoryRequirement(new ArrayList<>(
             Arrays.asList(
@@ -92,13 +94,26 @@ public class RfdPiratePete implements QuestTask {
                     new ItemReq(ItemID.BRONZE_WIRE, 3),
                     new ItemReq(ItemID.LOBSTER, 12),
                     new ItemReq(ItemID.NEEDLE, 1),
-                    new ItemReq(ItemID.FISHBOWL, 1),
+                    new ItemReq(ItemID.EMPTY_FISHBOWL, 1),
                     new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 5),
                     new ItemReq(ItemID.CAMELOT_TELEPORT, 2),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 1, 0)
             ))
     );
+
+    VarbitRequirement walkingUnderwater = new VarbitRequirement(1871, 1);
+    RSArea  underwater = new RSArea(new RSTile(2944, 9472, 1), new RSTile(3007, 9534, 1));
+
+    VarbitRequirement canGrindCod = new VarbitRequirement(1877, 1);
+
+    Conditions askedCookOptions = new Conditions(
+			new VarbitRequirement(1873, 1),
+			new VarbitRequirement(1876, 1),
+			new VarbitRequirement(1877, 1));
+
+    AreaRequirement inUnderWater = new AreaRequirement(underwater);
+    VarbitRequirement  hasEnoughRocks = new VarbitRequirement(1869, 5);
 
 
     public void checkLevel() {
@@ -112,7 +127,7 @@ public class RfdPiratePete implements QuestTask {
                     new GEItem(ItemID.BREAD, 3, 400),
                     new GEItem(ItemID.KNIFE, 1, 400),
                     new GEItem(ItemID.RAW_COD, 3, 400),
-                    new GEItem(ItemID.FISHBOWL, 1, 400),
+                    new GEItem(ItemID.EMPTY_FISHBOWL, 1, 400),
                     new GEItem(ItemID.NEEDLE, 1, 400),
                     new GEItem(ItemID.BRONZE_WIRE, 3, 400),
                     new GEItem(ItemID.LOBSTER, 15, 40),
@@ -168,7 +183,7 @@ public class RfdPiratePete implements QuestTask {
     public void goToStart() {
         cQuesterV2.status = "Going to Start";
         if (!BankManager.checkInventoryItems(ItemID.FALADOR_TELEPORT, bread, knife,
-                ItemID.LUMBRIDGE_TELEPORT, bronzeWire, ItemID.LOBSTER, ItemID.NEEDLE, ItemID.CAMELOT_TELEPORT, fishBowl) && !BankManager.checkInventoryItems(FISH_CAKE)) {
+                ItemID.LUMBRIDGE_TELEPORT, bronzeWire, ItemID.LOBSTER, ItemID.NEEDLE, ItemID.CAMELOT_TELEPORT, ItemID.EMPTY_FISHBOWL) && !BankManager.checkInventoryItems(FISH_CAKE)) {
             buyItems();
             getItems();
         } else {
@@ -187,9 +202,8 @@ public class RfdPiratePete implements QuestTask {
         Log.info(cQuesterV2.status);
 
         if (Utils.clickObj(12337, "Inspect")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation();
-            Utils.modSleep();
+            NpcChat.handle(true);
+            Utils.idleNormalAction(true);
         }
     }
 
@@ -229,16 +243,16 @@ public class RfdPiratePete implements QuestTask {
             Log.info(cQuesterV2.status);
             PathingUtil.walkToArea(portKhazardArea);
             if (NpcChat.talkToNPC("Murphy")) {
-                NpcChat.handle("Talk about Recipe for Disaster.");
+                NpcChat.handle(true, "Talk about Recipe for Disaster.");
             }
         }
     }
 
     public void equipSwimGear() {
         if (Utils.equipItem(fishbowlHelmet))
-            Utils.microSleep();
+            Waiting.waitUntil(2500, 750, ()-> Equipment.contains(fishbowlHelmet));
         if (Utils.equipItem(divingApparatus))
-            Utils.shortSleep();
+            Waiting.waitUntil(2500, 750, ()-> Equipment.contains(divingApparatus));
     }
 
     public void goDiving() {
@@ -253,7 +267,7 @@ public class RfdPiratePete implements QuestTask {
                 }
             }
             Utils.cutScene();
-            Timer.waitCondition(() -> oceanStartArea.contains(Player.getPosition()), 22000, 26000);
+            Timer.waitCondition(() -> inUnderWater.check(), 22000, 26000);
         }
     }
 
@@ -321,7 +335,7 @@ public class RfdPiratePete implements QuestTask {
             }
             if (Utils.clickObj("Underwater Cavern Entrance", "Enter"))
                 Timer.waitCondition(() -> mudskipperArea.containsMyPlayer() &&
-                        isStanding(), 9000, 15000);
+                        isStanding(), 11000, 15000);
         }
     }
 
