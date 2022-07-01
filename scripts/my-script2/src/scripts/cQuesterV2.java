@@ -99,6 +99,7 @@ import scripts.QuestPackages.RfdMonkey.RfdMonkey;
 import scripts.QuestPackages.RfdPiratePete.RfdPiratePete;
 import scripts.QuestPackages.RfdSkratch.RfdSkratch;
 import scripts.QuestPackages.RomeoAndJuliet.RomeoAndJuliet;
+import scripts.QuestPackages.RumDeal.RumDeal;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
 import scripts.QuestPackages.SeaSlug.SeaSlug;
 import scripts.QuestPackages.ShadowOfTheStorm.ShadowOfTheStorm;
@@ -125,6 +126,7 @@ import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
 import scripts.QuestPackages.recruitmentDrive.RecruitmentDrive;
 import scripts.QuestPackages.skippyandthemogres.SkippyAndTheMogres;
+import scripts.QuestPackages.templeOfTheEye.TempleOfTheEye;
 import scripts.QuestSteps.QuestTask;
 import scripts.QuestUtils.SafetyThread;
 import scripts.QuestUtils.SupportedQuests;
@@ -757,6 +759,14 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("skippy")) {
             General.println("[Args]: Added Skippy & The Mogres");
             taskList.add(SkippyAndTheMogres.get());
+        }
+        else if (arg.toLowerCase().contains("rumdeal")) {
+            General.println("[Args]: Added Rum deal");
+            taskList.add(RumDeal.get());
+        }
+        else if (arg.toLowerCase().contains("templeoftheeye")) {
+            General.println("[Args]: Added Temple of the Eye");
+            taskList.add(TempleOfTheEye.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

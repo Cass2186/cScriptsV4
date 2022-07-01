@@ -1,6 +1,8 @@
 package scripts.Data;
 
 
+import org.tribot.script.sdk.Inventory;
+import org.tribot.script.sdk.query.Query;
 import scripts.Data.Enums.Patches;
 import scripts.Timer;
 
@@ -15,7 +17,7 @@ public class Vars {
         return vars == null ? vars = new Vars() : vars;
     }
 
-
+    public boolean doingTithe = Query.inventory().nameContains("Watering can").isAny();
 
     public static void reset() {
         vars = new Vars();
@@ -41,11 +43,11 @@ public class Vars {
 
     public boolean doingTrees = false;
 
-    public boolean doingHerbs= false;
+    public boolean doingHerbs = false;
 
-    public boolean doingFruitTrees= false;
+    public boolean doingFruitTrees = false;
 
-    public boolean doingAllotments= false;// change to un
+    public boolean doingAllotments = false;// change to un
 
     public int currentHerbId, treeId, fruitTreeId;
     public int currentAllotmentId;

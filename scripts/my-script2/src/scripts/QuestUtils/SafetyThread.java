@@ -6,6 +6,7 @@ import org.tribot.script.sdk.Login;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.WorldTile;
+import scripts.QuestPackages.KourendFavour.MakeCompost;
 import scripts.Timer;
 import scripts.cQuesterV2;
 
@@ -23,7 +24,9 @@ public class SafetyThread extends Thread {
             if (!Login.isLoggedIn()) {
                 General.sleep(5000, 10000);
             } else if (!MyPlayer.getTile().equals(myTile) || //we have moved or fighting someone
-                    Query.npcs().isMyPlayerInteractingWith().isAny()) {
+                    Query.npcs().isMyPlayerInteractingWith().isAny() ||
+                    (cQuesterV2.taskList.size() > 0 &&
+                            cQuesterV2.taskList.get(0).equals(MakeCompost.get()))) {
                 myTile = MyPlayer.getTile(); //update tile
                 timer.reset();
             }

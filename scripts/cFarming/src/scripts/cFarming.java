@@ -21,6 +21,11 @@ import scripts.Data.Const;
 import scripts.Data.FarmingUtils;
 import scripts.Data.Vars;
 import scripts.Nodes.*;
+import scripts.Nodes.TitheFarm.GetWater;
+import scripts.Nodes.TitheFarm.HarvestTithe;
+import scripts.Nodes.TitheFarm.PlantSeeds;
+import scripts.Nodes.TitheFarm.TitheData.TitheVars;
+import scripts.Nodes.TitheFarm.WaterSeeds;
 import scripts.Tasks.Task;
 import scripts.Tasks.TaskSet;
 
@@ -38,7 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
         "Trees - trees, scales with level || " +
         "Allotments - scales with level")
 public class cFarming extends Script implements Painting, Starting, Arguments, Ending {
-
 
 
     final int startFarmLevel = Skills.getActualLevel(Skills.SKILLS.FARMING);
@@ -71,7 +75,17 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
 
         );
 
-        if (Vars.get().doingTrees)
+        if (Vars.get().doingTithe) {
+            TitheVars.get().workingArea = PlantSeeds.getWorkingAreaWestSmall();
+            tasks.clear();
+            tasks = new TaskSet(
+                    new GetWater(),
+                    new PlantSeeds(),
+                    new WaterSeeds(),
+                    new HarvestTithe()
+            );
+        }
+       else if (Vars.get().doingTrees)
             FarmingUtils.populateTreePatches();
 
         else if (Vars.get().doingFruitTrees)
@@ -85,13 +99,13 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
 
         isRunning.set(true);
         while (isRunning.get()) {
-            General.sleep(50, 150);
-            if (Game.isInInstance()) //died
+            General.sleep(50, 100);
+            if (Game.isInInstance() && !Vars.get().doingTithe) //died
                 break;
 
             Task task = tasks.getValidTask();
             if (task != null) {
-                status = task.toString();
+                Vars.get().status = task.toString();
                 task.execute();
             }
 
@@ -136,11 +150,13 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
             }
         }
     }
+
     public static String reportGainedXp(int gainedXp, int gainedLvl, int gainedXpHr) {
         String string = String.format("Gained XP: %s (%s) / %s/h", Utils.addCommaToNum(gainedXp),
                 gainedLvl, Utils.addCommaToNum(gainedXpHr));
         return string;
     }
+
     @Override
     public void onEnd() {
         General.println("[Ending]: Profit: " + Utils.addCommaToNum(profit));
@@ -170,12 +186,12 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
         RSPlayer p = Player.getRSPlayer();
 
         if (p != null) {
-          RSCharacter ch =  p.getInteractingCharacter();
-          if (ch != null){
-              g.setColor(Color.WHITE);
-              Polygon pp = Projection.getTileBoundsPoly(ch, 0);
-              g.drawPolygon(pp);
-          }
+            RSCharacter ch = p.getInteractingCharacter();
+            if (ch != null) {
+                g.setColor(Color.WHITE);
+                Polygon pp = Projection.getTileBoundsPoly(ch, 0);
+                g.drawPolygon(pp);
+            }
 
         }
         PaintUtil.createPaint(g, myString.toArray(String[]::new));

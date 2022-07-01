@@ -67,15 +67,16 @@ public class Utils {
         Collections.reverse(list);
         return list.stream().toArray();
     }
+
     private static final Pattern TAG_REGEXP = Pattern.compile("<[^>]*>");
+
     /**
      * Removes all tags from the given string.
      *
      * @param str The string to remove tags from.
      * @return The given string with all tags removed from it.
      */
-    public static String removeTags(String str)
-    {
+    public static String removeTags(String str) {
         return TAG_REGEXP.matcher(str).replaceAll("");
     }
 
@@ -86,13 +87,13 @@ public class Utils {
      * @param str The string to sanitize
      * @return sanitized string
      */
-    public static String sanitizeMultilineText(String str)
-    {
+    public static String sanitizeMultilineText(String str) {
         return removeTags(str
                 .replaceAll("-<br>", "-")
                 .replaceAll("<br>", " ")
                 .replaceAll("[ ]+", " "));
     }
+
     public static boolean turnEscToCloseOn() {
         if (!Options.isEscapeClosingEnabled() && openSettingsWindow()) {
             Optional<Widget> escOption = Query.widgets().inIndexPath(134, 18)
@@ -681,15 +682,28 @@ public class Utils {
         }
     }
 
-    public static boolean useItemOnItem(int ItemID, int ItemID2) {
-        Optional<InventoryItem> item1 = Query.inventory().idEquals(ItemID).findClosestToMouse();
-        Optional<InventoryItem> item2 = Query.inventory().idEquals(ItemID2).findFirst();
+    public static boolean useItemOnItem(int ItemId, int ItemId2) {
+        Optional<InventoryItem> item1 = Query.inventory().idEquals(ItemId).findClosestToMouse();
+        Optional<InventoryItem> item2 = Query.inventory().idEquals(ItemId2).findRandom();
         if (item1.isEmpty() || item2.isEmpty()) {
-            Log.info("[Utils]: Missing item with either id: " + ItemID + " or ID: " + ItemID2);
+            Log.info("[Utils]: Missing item with either id: " + ItemId + " or ID: " + ItemId2);
             return false;
         }
-        Log.info("[Utils]: Using " + getItemName(ItemID) + " on " + getItemName(ItemID2));
-        return item1.map(i -> i.useOn(item2.get())).orElse(false);
+        Log.info("[Utils]: Using " + getItemName(ItemId) + " on " + getItemName(ItemId2));
+        return item2.map(i2 -> item1.map(i1 -> i1.useOn(i2)).orElse(false)).orElse(false);
+    }
+
+    public static boolean useItemOnItem(int ItemId, int ItemId2, boolean useRandom) {
+        Optional<InventoryItem> item1 =
+                Query.inventory().idEquals(ItemId).findClosestToMouse();
+        Optional<InventoryItem> item2 =
+                Query.inventory().idEquals(ItemId2).findClosestToMouse();
+        if (item1.isEmpty() || item2.isEmpty()) {
+            Log.info("[Utils]: Missing item with either id: " + ItemId + " or ID: " + ItemId2);
+            return false;
+        }
+    Log.info("[Utils]: Using " + getItemName(ItemId) + " on " + getItemName(ItemId2));
+        return item2.map(i2 -> item1.map(i1 -> i1.useOn(i2)).orElse(false)).orElse(false);
     }
 
 
@@ -1685,7 +1699,7 @@ public class Utils {
                 if (!GameState.isAnyItemSelected()) {
                     if (!obj.get().isVisible() || i == 2)
                         obj.get().adjustCameraTo();
-                    return obj.map(o-> invItem.map(it-> it.useOn(o)).orElse(false)).orElse(false);
+                    return obj.map(o -> invItem.map(it -> it.useOn(o)).orElse(false)).orElse(false);
 
                 } else if (isItemSelected(invItem.get().getId())) {
                     Log.info("[Utils]: Item is already selected");

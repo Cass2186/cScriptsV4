@@ -29,6 +29,12 @@ public final class ItemID {
             21173,
             21175
     };
+    public static final int GREATISH_GUARDIAN = 26899;
+    public static final int ABYSSAL_PROTECTOR = 26901;
+    public static final int EYE_AMULET = 26903;
+    public static final int STRONG_CUP_OF_TEA = 26904;
+    public static final int ABYSSAL_INCANTATION = 26905;
+    public static final int COLOSSAL_POUCH_26906 = 26906;
     public static final int[] LOG_IDS = {
             1511, //logs
             1521, //oak logs

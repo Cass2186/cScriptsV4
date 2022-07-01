@@ -1,6 +1,29 @@
 package scripts;
 
 public class NpcID {
+    public static final int ARCHMAGE_SEDRIDOR = 11432;
+    public static final int ARCHMAGE_SEDRIDOR_11433 = 11433;
+    public static final int WIZARD_PERSTEN = 11436;
+    public static final int WIZARD_PERSTEN_11437 = 11437;
+    public static final int WIZARD_PERSTEN_11438 = 11438;
+    public static final int WIZARD_PERSTEN_11439 = 11439;
+    public static final int APPRENTICE_TAMARA = 11440;
+    public static final int APPRENTICE_TAMARA_11441 = 11441;
+    public static final int APPRENTICE_TAMARA_11442 = 11442;
+    public static final int APPRENTICE_CORDELIA_11443 = 11443;
+    public static final int APPRENTICE_CORDELIA_11444 = 11444;
+    public static final int APPRENTICE_CORDELIA_11445 = 11445;
+    public static final int APPRENTICE_FELIX_11446 = 11446;
+    public static final int APPRENTICE_FELIX_11447 = 11447;
+    public static final int APPRENTICE_FELIX_11448 = 11448;
+    public static final int WIZARD_TRAIBORN_11449 = 11449;
+    public static final int ARCHMAGE_SEDRIDOR_11450 = 11450;
+    public static final int MYSTERIOUS_VOICE_11451 = 11451;
+    public static final int MYSTERIOUS_VOICE_11452 = 11452;
+    public static final int ABYSSAL_GUARDIAN_11453 = 11453;
+    public static final int ABYSSAL_WALKER_11454 = 11454;
+    public static final int THE_GREAT_GUARDIAN_11455 = 11455;
+    public static final int THE_GREAT_GUARDIAN_11456 = 11456;
     public static final int THORA_THE_BARKEEP = 3932;
     public static final int MARLO = 10408;
     public static final int DAVEY = 605;

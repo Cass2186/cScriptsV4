@@ -4,6 +4,7 @@ import org.tribot.api.General;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.types.RSItem;
+import org.tribot.script.sdk.ChatScreen;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.QuestPackages.DeathsOffice.DeathsOffice;
@@ -28,16 +29,16 @@ public class MakeCompost implements QuestTask {
     int SALTPETRE = 13421;
 
     public void mixCompostAndSaltpierre() {
-        cQuesterV2.status = "Making compost";
         bank();
-        RSItem[] salt = Inventory.find(SALTPETRE);
-        RSItem[] comp = Inventory.find(COMPOST);
+        cQuesterV2.status = "Making compost";
         if (Utils.useItemOnItem(COMPOST, SALTPETRE))
-            Timer.slowWaitCondition(() -> Inventory.find(COMPOST).length < 1, 28000, 36000);
+            Timer.slowWaitCondition(() -> Inventory.find(COMPOST).length < 1
+                    || ChatScreen.isOpen(), 32000, 36000);
     }
 
     public void bank() {
         if (Inventory.find(COMPOST).length < 1 || Inventory.find(SALTPETRE).length < 1) {
+            cQuesterV2.status = "Banking for compost";
             BankManager.open(true);
             BankManager.depositAll(false);
             if (Banking.find(SALTPETRE).length < 1 || Banking.find(COMPOST).length < 1) {
@@ -45,8 +46,8 @@ public class MakeCompost implements QuestTask {
                 cQuesterV2.taskList.remove(this);
                 return;
             }
-            BankManager.withdraw(14, true, SALTPETRE);
             BankManager.withdraw(14, true, COMPOST);
+            BankManager.withdraw(14, true, SALTPETRE);
             BankManager.close(true);
         }
     }

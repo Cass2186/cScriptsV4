@@ -23,9 +23,8 @@ import java.awt.*;
 public class Move implements Task {
 
     private static boolean checkForPatchId(int patchId, int flowerPatchId) {
-        RSObject[] obj = Objects.findNearest(20, Filters.Objects.idEquals(patchId));
-        RSObject[] obj2 = Objects.findNearest(20, Filters.Objects.idEquals(flowerPatchId));
-        return (obj.length > 0 || obj2.length > 0);
+        return Query.gameObjects().idEquals(patchId).isAny() ||
+                Query.gameObjects().idEquals(flowerPatchId).isAny();
     }
 
     private static boolean checkForTreePatchId(int patchId) {
@@ -42,15 +41,17 @@ public class Move implements Task {
                 .actionContains(action).isAny();
     }
 
-    private static boolean checkForObj(String action, int patchId, String name) {
+    private static boolean checkForObj(String name, int patchId, String... actions) {
         return Query.gameObjects()
                 .idEquals(patchId)
                 .nameContains(name)
                 .actionNotContains("Pick")
                 .maxDistance(10)
-                .actionContains(action)
+                .actionContains(actions)
                 .isAny();
     }
+
+
 
     private static boolean shouldMoveFromPatch(int patchId) {
         return checkForObj("Inspect", patchId);
