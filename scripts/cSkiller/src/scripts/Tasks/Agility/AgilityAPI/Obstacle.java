@@ -197,8 +197,10 @@ public class Obstacle {
                 }
             } else if (accurateMouse) {
                 Mouse.setClickMethod(Mouse.ClickMethod.ACCURATE_MOUSE);
-                if (obj.map(o -> o.interact(action)).orElse(false))
+                if (obj.map(o -> o.interact(action)).orElse(false)) {
+                    Log.info("Accurate clicked");
                     Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
+                }
             } else if (obj.map(o -> !o.isVisible()).orElse(false) && MyPlayer.getTile().getPlane() != 0) {
                 Log.info("Using clickable tile");
                 Optional<Positionable> furthestTile = PathingUtil
@@ -215,13 +217,16 @@ public class Obstacle {
                 Log.error("Miss clicked, i: " + i);
                 Waiting.waitNormal(70, 12);
                 continue;
+            } else {
+                Log.info("interacted clicked");
             }
             if (Vars.get().shouldAlchAgil && shouldAlch < 62) {
                 Magic.selectSpell("High Level Alchemy");
                 Waiting.waitNormal(350, 75);
             }
             WorldTile t = MyPlayer.getTile();
-            if (Waiting.waitUntil(1200, 25, MyPlayer::isMoving)) {
+            if (Waiting.waitUntil(1500, 25, MyPlayer::isMoving)) {
+               // Log.info("Waiting after moving");
                 if (abc2Wait)
                     return Timer.abc2WaitCondition(() -> (!MyPlayer.isMoving()
                                     && this.nextObstacleArea.contains(Player.getPosition())
@@ -240,12 +245,12 @@ public class Obstacle {
                             timeOutMin, timeOutMin + 3000);
 
                 else
-                    return Timer.agilityWaitCondition(() -> (!MyPlayer.isMoving()
-                                    && this.nextObstacleArea.contains(Player.getPosition())
-                                    && MyPlayer.getAnimation() == -1) ||
-                                    MyPlayer.getTile().getPlane() == 0 ||
-                                    (MyPlayer.getTile().getPlane() == plane &&
-                                            t.distance() > 30),
+                    return Timer.agilityWaitCondition(() ->
+                                    (!MyPlayer.isMoving() && this.nextObstacleArea.contains(Player.getPosition())
+                                            && MyPlayer.getAnimation() == -1) ||
+                                            MyPlayer.getTile().getPlane() != plane 
+                                            || (MyPlayer.getTile().getPlane() == plane &&
+                                                    t.distance() > 30),
                             timeOutMin, timeOutMin + 3000);
 
 

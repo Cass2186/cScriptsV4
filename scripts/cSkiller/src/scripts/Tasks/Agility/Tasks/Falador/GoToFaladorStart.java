@@ -30,6 +30,7 @@ public class GoToFaladorStart implements Task {
                 Vars.get().currentTask.equals(SkillTasks.AGILITY) &&
                 AgilUtils.isWithinLevelRange(50, 60) &&
                 Player.getPosition().getPlane() == 0 &&
+                !Vars.get().useWildernessAgility &&
                 !AgilityAreas.FALADOR_FINISH_AREA.contains(Player.getPosition());
     }
 
