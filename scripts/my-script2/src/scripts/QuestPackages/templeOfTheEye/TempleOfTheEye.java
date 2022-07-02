@@ -4,7 +4,10 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Skill;
 import scripts.*;
 import scripts.QuestPackages.HeroesQuest.HeroesQuestBlackArmsGang;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
@@ -57,22 +60,27 @@ public class TempleOfTheEye implements QuestTask {
     public void execute() {
        //buyAndGetItems();
 
-        int gameSetting = Game.getSetting(QuestVarPlayer.QUEST_SCORPION_CATCHER.getId());
+        int varbit = GameState.getVarbit(QuestVarbits.QUEST_TEMPLE_OF_THE_EYE.getId());
         Map<Integer, QuestStep> steps = loadSteps();
+        if (varbit == 15 && Inventory.contains(ItemID.STRONG_CUP_OF_TEA)){
+           // talkToMage2.execute();
+           // return;
+        }
 
-        Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
-        cQuesterV2.status = step.map(s -> s.toString()).orElse("Unknown Step Name");
+
+        Optional<QuestStep> step = Optional.ofNullable(steps.get(varbit));
+        cQuesterV2.status = step.map(s -> s.toString()).orElse("Unknown Step Name: Varbit = " +varbit);
         step.ifPresent(QuestStep::execute);
     }
 
     @Override
     public String questName() {
-        return "Temple of the Eye";
+        return "Temple of the Eye (" + GameState.getVarbit(QuestVarbits.QUEST_TEMPLE_OF_THE_EYE.getId()) +")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return true;
+        return Skill.RUNECRAFT.getActualLevel() >= 10;
     }
 
 
@@ -333,7 +341,7 @@ public class TempleOfTheEye implements QuestTask {
         teleportToArchmage.addDialogStep("Yes.");
 
         goDownToArchmage = new ObjectStep(ObjectID.LADDER_2147, new RSTile(3104, 3162, 0),
-                "Bring the Abyssal Incantation to Sedridor in the Wizard Tower's basement.", abyssalIncantation);
+                "Climb-down", abyssalIncantation);
 
         talktoArchmage1 = new NPCStep(NpcID.ARCHMAGE_SEDRIDOR_11433, new RSTile(3104, 9571, 0), abyssalIncantation);
         talktoArchmage1.addDialogStep("I need your help with an incantation.");
@@ -368,24 +376,22 @@ public class TempleOfTheEye implements QuestTask {
         talktoTrailborn2.addDialogStep("I think I know what a thingummywut is!");
 
         goDownToArchmageFloorOne = new ObjectStep(ObjectID.STAIRCASE_12537, new RSTile(3103, 3159, 1),
-                "Speak to Archmage Sedridor in the Wizard's Tower basement.");
-        goDownToArchmageFloorOne.addDialogStep("Down");
+                "Climb-down");
+        goDownToArchmageFloorOne.addDialogStep("Climb-down");
 
         goDownToArchmage2 = new ObjectStep(ObjectID.LADDER_2147, new RSTile(3104, 3162, 0),
-                "Speak to Archmage Sedridor in the Wizard's Tower basement.");
+                "Climb-down");
 
-        talktoArchmage2 = new NPCStep(NpcID.ARCHMAGE_SEDRIDOR_11433, new RSTile(3104, 9571, 0),
-                "Speak to Archmage Sedridor in the Wizard's Tower basement.");
+        talktoArchmage2 = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0));
 
         talktoArchmage2.addSubSteps(goDownToArchmageFloorOne, goDownToArchmage2);
 
-        performIncantation = new NPCStep(NpcID.ARCHMAGE_SEDRIDOR_11433, new RSTile(3104, 9571, 0),
-                "Speak to Archmage Sedridor to begin the incantation.");
+        performIncantation = new NPCStep("Archmage Sedridor", new RSTile(3104, 9571, 0));
         performIncantation.addDialogStep("Let's do it.");
         performIncantation.addDialogStep("So we're ready to perform the incantation?");
 
         enterWizardBasement = new ObjectStep(ObjectID.LADDER_2147, new RSTile(3104, 3162, 0),
-                "Go to the Wizard's Tower basement.");
+                "Climb-down");
 
         enterPortal = new ObjectStep(43765, new RSTile(3104, 9574, 0),
                 "Enter");
@@ -393,15 +399,14 @@ public class TempleOfTheEye implements QuestTask {
         templeCutscene1 = new DetailedQuestStep("Enter the Temple of the Eye.");
         templeCutscene1.addSubSteps(enterPortal);
 
-        talkToFelix2 = new NPCStep(NpcID.APPRENTICE_FELIX_11448, new RSTile(2401, 5643, 0),
+        talkToFelix2 = new NPCStep(11461, new RSTile(2401, 5643, 0),
                 "Talk to Apprentice Felix.");
-        talkToTamara2 = new NPCStep(NpcID.APPRENTICE_TAMARA_11442, new RSTile(2385, 5659, 0),
+        talkToTamara2 = new NPCStep(11459, new RSTile(2385, 5659, 0),
                 "Talk to Apprentice Tamara.");
-        talkToCordelia2 = new NPCStep(NpcID.APPRENTICE_CORDELIA_11445, new RSTile(2397, 5677, 0),
+        talkToCordelia2 = new NPCStep(11460, new RSTile(2397, 5677, 0),
                 "Talk to Apprentice Cordelia.");
 
-        talkToPersten3 = new NPCStep(NpcID.WIZARD_PERSTEN_11439, new RSTile(2400, 5667, 0),
-                "Speak with Wizard Persten.");
+        talkToPersten3 = new NPCStep("Wizard Persten", new RSTile(2400, 5667, 0));
 
         templeCutscene2 = new DetailedQuestStep("Experience the vision.");
         debrief = new DetailedQuestStep("Debrief with Wizard Persten and the apprentices.");

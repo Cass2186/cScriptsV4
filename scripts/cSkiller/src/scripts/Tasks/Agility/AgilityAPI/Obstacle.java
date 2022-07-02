@@ -248,7 +248,7 @@ public class Obstacle {
                     return Timer.agilityWaitCondition(() ->
                                     (!MyPlayer.isMoving() && this.nextObstacleArea.contains(Player.getPosition())
                                             && MyPlayer.getAnimation() == -1) ||
-                                            MyPlayer.getTile().getPlane() != plane 
+                                            MyPlayer.getTile().getPlane() != plane
                                             || (MyPlayer.getTile().getPlane() == plane &&
                                                     t.distance() > 30),
                             timeOutMin, timeOutMin + 3000);
