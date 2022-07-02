@@ -2,10 +2,7 @@ package scripts;
 
 import org.apache.commons.lang3.StringUtils;
 import org.tribot.script.interfaces.MessageListening07;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.MessageListening;
-import org.tribot.script.sdk.Skill;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
@@ -20,6 +17,8 @@ import scripts.Tasks.*;
 
 @TribotScriptManifest(author = "Cass2186", name = "cFightCaves", category = "Testing")
 public class cFightCaves extends CassScript implements TribotScript {
+
+    GenerateMap map = new GenerateMap();
 
     @Override
     public void configure(ScriptConfig config) {
@@ -61,6 +60,10 @@ public class cFightCaves extends CassScript implements TribotScript {
         });
 
         while (super.isRunning.get()) {
+            if (GameState.isInInstance() &&  Vars.get().nePath == null){
+                Log.warn("Making map, started in instance");
+                map.execute();
+            }
             //fast loop
             Waiting.waitNormal(35, 5);
 

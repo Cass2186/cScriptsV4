@@ -14,6 +14,7 @@ import scripts.Data.Wave;
 import scripts.GameSettings;
 import scripts.PathingUtil;
 import scripts.QueryUtils;
+import scripts.Utils;
 
 import java.io.IOException;
 
@@ -43,6 +44,7 @@ public class StartCavesTask implements Task{
     public void execute() {
         if (GameState.isInInstance()) {
             Log.warn("In instance already");
+            Utils.idleNormalAction(true);
             return;
         }
         if (PathingUtil.walkToArea(Const.START_AREA)) {

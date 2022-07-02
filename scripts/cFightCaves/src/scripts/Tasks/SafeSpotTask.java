@@ -1,10 +1,13 @@
 package scripts.Tasks;
 
 import obf.N;
+import obf.Pa;
 import org.tribot.api.General;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Options;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.MyPlayer;
+import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.api2007.util.DPathNavigator;
 import org.tribot.script.sdk.types.LocalTile;
@@ -14,8 +17,10 @@ import scripts.Data.CaveNPCs;
 import scripts.Data.NavHelper;
 import scripts.Data.Vars;
 import scripts.Data.Wave;
+import scripts.PathingUtil;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,17 +64,20 @@ public class SafeSpotTask implements Task {
                     getNextClosestPath().get(upperLimit).distance());
 //            Log.info("Distance from NPC", Player07.distanceTo(CaveNPCs.getTileOfDangerousNPC(Wave.getCurrentWave())));
             if (safeSpot.walkToTile(getDestinationPath().get(0), getWalkState())) {
+                PathingUtil.movementIdle();
                 return;
             }
         }
         upperLimit = General.random(0, getClosestPath().size() - 1);
         if (safeSpot.walkToTile(getClosestPath().get(upperLimit), getWalkState())) {
+            Waiting.waitUntil(1500, 200, ()-> MyPlayer.isMoving());
             Optional<Integer> dist = Optional.ofNullable(
                     CaveNPCs.getTileOfDangerousNPC(Wave.getCurrentWave()).distance());
             Log.info("We're moving to the closest path");
             Log.info("Min Distance " + minDistance);
 //            Log.info("Distance to closest", Player07.distanceTo(getClosestPath().get(upperLimit)));
             Log.info("Distance from NPC " + dist);
+            PathingUtil.movementIdle();
             //setComplete();
         }
     }
@@ -111,6 +119,11 @@ public class SafeSpotTask implements Task {
             //setComplete();
         }
 
+    }
+
+    private boolean shouldRotateSpotOnItalyRock(){
+
+        return false;
     }
 
 

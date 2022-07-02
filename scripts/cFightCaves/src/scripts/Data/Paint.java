@@ -1,5 +1,7 @@
 package scripts.Data;
 
+import org.tribot.api2007.Game;
+import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
@@ -23,10 +25,12 @@ public class Paint {
                                 Vars.get().getGainedRangedXp(),
                                 PaintUtil.getXpHr(Skill.RANGED, Const.START_RANGED_XP, Vars.get().startTime)))
                         .build())
-
+                .row(template.toBuilder().label("Rotation").value(Rotations::getRotation).build())
+                .row(template.toBuilder().label("Should Lure").value(()->CaveNPCs.shouldLure(Wave.getCurrentWave())).build())
+                .row(template.toBuilder().label("Should Prayer Range").value(()-> CaveNPCs.shouldProtectRange(Wave.getCurrentWave())).build())
+                .row(template.toBuilder().label("Highest Priority Mob").value(()->  CaveNPCs.getNPCPriority(Wave.getCurrentWave()).entrySet().stream().findFirst()).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
-
         org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
     }
 

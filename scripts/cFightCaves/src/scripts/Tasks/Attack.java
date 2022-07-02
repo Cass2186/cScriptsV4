@@ -17,7 +17,6 @@ import scripts.Data.Wave;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -215,11 +214,11 @@ public class Attack implements Task {
     }
 
     public void attackNPC() {
-        RSNPC highestPriority = getHighestPriorityNearbyNPC();
+        Npc highestPriority = getHighestPriorityNearbyNPC();
         RSPlayer me = Player.getRSPlayer();
 //        if (highestPriority != null && (((highestPriority.getPosition().getY() - Game.getBaseY() <= 64 || highestPriority.getPosition().getX() - Game.getBaseX() <= 64) || Player07.distanceTo(highestPriority.getPosition()) < General.random(7, 16)))) {
         if (highestPriority != null) {
-            String[] actions = highestPriority.getActions();
+            List<String> actions = highestPriority.getActions();
             String name = highestPriority.getName();
             String characterName = null;
             RSCharacter character = me.getInteractingCharacter();
@@ -239,11 +238,9 @@ public class Attack implements Task {
                 timer.setEndIn(General.randomSD(10000, 2500));
                 timer.reset();
             }
-            if (name != null
-                    && actions.length > 0
+            if (actions.size() > 0
                     && (character == null
-                    || !character.getName().equals(name))
-                    && highestPriority.getHealthPercent() > 0) {
+                    || !character.getName().equals(name))) {
 //                if (!CaveNPCs.underAttack(Wave.getCurrentWave())) {
 //                    Antiban.generateTrackers(Antiban.getReactionTime());
 //                    Waiting.waitUntil(() -> CaveNPCs.underAttack(Wave.getCurrentWave()), Reactions.getNormal());
@@ -257,26 +254,33 @@ public class Attack implements Task {
 //                Log.info("NPC is Clickable", highestPriority.isClickable());
 //                Log.info("NPC is on screen", highestPriority.isOnScreen());
 //                Log.info("NPC is valid", highestPriority.isValid());
-                if (MyPlayer.isHealthBarVisible() && Player.getPosition().distanceTo(highestPriority.getPosition()) < General.random(7, 17)) {
-                    Optional<Npc> target = Query.npcs().nameContains(highestPriority.getName()).findClosestByPathDistance();
+                if (MyPlayer.isHealthBarVisible() && highestPriority.distance() < General.random(7, 17)) {
+                    Optional<Npc> target =
+                            Query.npcs().nameContains(highestPriority.getName())
+                                    .findClosestByPathDistance();
 
                     if (clickAttack(target)) {
-                        Waiting.waitUntil(highestPriority::isInCombat);
+                        Waiting.waitUntil(highestPriority::isHealthBarVisible);
                     }
                 } else if ((character == null || !characterName.equals(name))) {
                     Optional<Npc> target = Query.npcs().nameContains(highestPriority.getName()).findClosestByPathDistance();
                     if (clickAttack(target))
-                        Waiting.waitUntil(highestPriority::isInCombat);
+                        Waiting.waitUntil(highestPriority::isHealthBarVisible);
                 }
             }
-            if (highestPriority.isInteractingWithMe() && highestPriority.isInCombat()) {
+            if (highestPriority.isInteractingWithMe() && highestPriority.isHealthBarVisible()) {
                 AntiBan.timedActions();
 //                Log.info("We are interacting with the highest priority NPC (" + highestPriority.getName() + ")");
             }
         }
     }
 
+    //blow pipesrange is 5 tile
     private boolean clickAttack(Optional<Npc> target) {
+        if (Waiting.waitUntil(Utils.random(2250, 4500), 75, () -> target.map(t ->
+                t.isVisible() && t.distance() < 7).orElse(false))) {
+            return target.map(t -> t.isVisible() && t.click("Attack")).orElse(false);
+        }
         if (target.map(t -> t.isVisible() && t.click("Attack")).orElse(false)) {
             return true;
         } else if (target.map(t ->
@@ -287,28 +291,26 @@ public class Attack implements Task {
         return false;
     }
 
-    static RSNPC getHighestPriorityNearbyNPC() {
+    static Npc getHighestPriorityNearbyNPC() {
 //        RSNPC[] npcs = Arrays.stream(NPCs.getAll()).filter(i -> Player07.distanceTo(i) <= 17).toArray(RSNPC[]::new);
-        RSNPC[] npcs = NPCs.getAll();
+        // RSNPC[] npcs = NPCs.getAll();
+        List<Npc> npcs = Query.npcs().toList();
         int priority = 0;
-        RSNPC temp = null;
-        if (npcs.length > 0) {
-            for (RSNPC npc : npcs) {
-                String name = npc.getName();
-                if (name != null) {
-                    for (CaveNPCs caveNPC : CaveNPCs.values()) {
-                        if (!name.equals(caveNPC.getName())) {
-                            continue;
-                        }
-                        if (caveNPC.getPriority() > priority || temp == null) {
-                            Log.info("Priority: " + caveNPC);
-                            temp = npc;
-                            Log.info("Current highest priority: " + temp.getName());
-                            priority = caveNPC.getPriority();
-                        }
-                    }
+        Npc temp = null;
+        for (Npc npc : npcs) {
+            String name = npc.getName();
+            for (CaveNPCs caveNPC : CaveNPCs.values()) {
+                if (!name.contains(caveNPC.getName())) {
+                    continue;
+                }
+                if (caveNPC.getPriority() > priority || temp == null) {
+                    // Log.info("Priority: " + caveNPC);
+                    temp = npc;
+                    //Log.info("Current highest priority: " + temp.getName());
+                    priority = caveNPC.getPriority();
                 }
             }
+
         }
         return temp;
     }

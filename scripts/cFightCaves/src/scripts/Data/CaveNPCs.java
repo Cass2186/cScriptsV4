@@ -15,8 +15,8 @@ public enum CaveNPCs {
     KIH("Tz-Kih", 0, 0, false, false, false, 5, 1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19, 20, 23, 24, 26, 27, 32, 33, 35, 36, 39, 40, 42, 43, 47, 48, 50, 51, 54, 55, 57, 58),
     KEK("Tz-Kek", 0, 0, false, false, false, 1, 3, 4, 5, 6, 10, 11, 12, 13, 18, 19, 20, 21, 25, 26, 27, 28, 34, 35, 36, 37, 41, 42, 43, 44, 49, 50, 51, 52, 56, 57, 58, 59),
     KEK_2("Tz-Kek", 0, 0, false, false, false, 1, 3, 4, 5, 6, 10, 11, 12, 13, 18, 19, 20, 21, 25, 26, 27, 28, 34, 35, 36, 37, 41, 42, 43, 44, 49, 50, 51, 52, 56, 57, 58, 59),
-    MEJKOT("Yt-MejKot", 2637, 0, false, false, true, 3, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61),
-    XIL("Tok-Xil", 0, 443, false, true, false, 4, 7, 8, 9, 10, 11, 12, 13, 14, 22, 23, 24, 25, 26, 27, 28, 29, 38, 39, 40, 41, 42, 43, 44, 45, 53, 54, 55, 56, 57, 58, 59, 60),
+    MEJKOT("Yt-MejKot", 2637, 0, false, false, true, 4, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61),
+    XIL("Tok-Xil", 0, 443, false, true, false, 3, 7, 8, 9, 10, 11, 12, 13, 14, 22, 23, 24, 25, 26, 27, 28, 29, 38, 39, 40, 41, 42, 43, 44, 45, 53, 54, 55, 56, 57, 58, 59, 60),
     ZEK("Ket-Zek", 2644, 445, true, false, true, 2, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62),
     HURKOT("Yt-HurKot", 0, 0, false, false, false, 5, 63),
     JAD("TzTok-Jad", 0, 0, false, false, false, 4, 63);
@@ -146,7 +146,8 @@ public enum CaveNPCs {
                     if (dangerousNPCs.size() > 0) {
                         Log.info("Avoidable Animation: " + (dangerousNPCs.get(0).getAnimation() == npc.attackAnimation));
                         Log.info("NPCs Moving and Distance is < 4: " + (dangerousNPCs.get(0).isMoving() && dangerousNPCs.get(0).distance() < 4));
-                        Log.info("NPCs too close to player: " + (dangerousNPCs.get(0).distance() < 2));
+                        Log.info("NPCs too close to player: " +
+                                (dangerousNPCs.get(0).distance() < 2));
                         General.sleep(60);
                         return (dangerousNPCs.get(0).getAnimation() == npc.attackAnimation
                                 || (dangerousNPCs.get(0).isMoving() && dangerousNPCs.get(0).distance() < 4)

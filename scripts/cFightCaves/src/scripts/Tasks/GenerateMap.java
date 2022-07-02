@@ -48,7 +48,7 @@ public class GenerateMap implements Task {
         return Area.fromRectangle(anchor.get().translate(x1, y1), anchor.get().translate(x2, y2));
     }
 
-    List<WorldTile> createMappedPath(LocalTile anchor, WorldTile... tiles) {
+    List<LocalTile> createMappedPath(LocalTile anchor, LocalTile... tiles) {
         return new ArrayList<>(Arrays.asList(tiles));
     }
 
@@ -119,11 +119,12 @@ public class GenerateMap implements Task {
                 Vars.get().S = createMappedArea(Vars.get().caveObjectTile, -14, -43, 7, -50);
                 Vars.get().SE = createMappedArea(Vars.get().caveObjectTile, 1, -33, 10, -40);
 
-                //Vars.get().nePath = createMappedPath(Vars.get().caveObjectTile, Vars.get().caveObjectTile.translate(5, -18), caveObjectTile.translate(2, -17), caveObjectTile.translate(3, -29), caveObjectTile.translate(7, -30));
+                Vars.get().nePath = createMappedPath(Vars.get().caveObjectTile.get(),
+                        Vars.get().caveObjectTile.get().translate(5, -18), Vars.get().caveObjectTile.get().translate(2, -17), Vars.get().caveObjectTile.get().translate(3, -29), Vars.get().caveObjectTile.get().translate(7, -30));
 
-                //Vars.get().nwPath = createMappedPath(Vars.get().caveObjectTile, Vars.get().caveObjectTile.translate(-21, -3), caveObjectTile.translate(-22, -8), caveObjectTile.translate(-21, -11), caveObjectTile.translate(-21, -18), caveObjectTile.translate(-14, -14), caveObjectTile.translate(-8, -11), caveObjectTile.translate(-8, -5));
-                //Vars.get().swPath = createMappedPath(Vars.get().caveObjectTile, Vars.get().caveObjectTile.translate(-27, -26), caveObjectTile.translate(-27, -35), caveObjectTile.translate(-29, -38));
-                //Vars.get().sePath = createMappedPath(Vars.get().caveObjectTile, Vars.get().caveObjectTile.translate(6, -43), caveObjectTile.translate(2, -42), caveObjectTile.translate(0, -46), caveObjectTile.translate(0, -49));
+                Vars.get().nwPath = createMappedPath(Vars.get().caveObjectTile.get(), Vars.get().caveObjectTile.get().translate(-21, -3), Vars.get().caveObjectTile.get().translate(-22, -8), Vars.get().caveObjectTile.get().translate(-21, -11), Vars.get().caveObjectTile.get().translate(-21, -18), Vars.get().caveObjectTile.get().translate(-14, -14), Vars.get().caveObjectTile.get().translate(-8, -11), Vars.get().caveObjectTile.get().translate(-8, -5));
+                Vars.get().swPath = createMappedPath(Vars.get().caveObjectTile.get(), Vars.get().caveObjectTile.get().translate(-27, -26), Vars.get().caveObjectTile.get().translate(-27, -35), Vars.get().caveObjectTile.get().translate(-29, -38));
+                Vars.get().sePath = createMappedPath(Vars.get().caveObjectTile.get(), Vars.get().caveObjectTile.get().translate(6, -43), Vars.get().caveObjectTile.get().translate(2, -42), Vars.get().caveObjectTile.get().translate(0, -46), Vars.get().caveObjectTile.get().translate(0, -49));
                 //setComplete();
             }
         }
