@@ -240,6 +240,8 @@ public class PathingUtil {
     public static boolean walkToTile(WorldTile destination) {
         Log.info("[PathingUtil] Global Walking V2 - Worldtile");
         for (int i = 0; i < 3; i++) {
+            if (i > 0 && Game.isInInstance())
+                break;
             if (!GlobalWalking.walkTo(destination, PathingUtil::getWalkState)) {
                 Log.warn("[PathingUtil]  GlobalWalking failed to generate a path, sleeping ~1-2s");
                 Waiting.waitNormal(1700, 200);

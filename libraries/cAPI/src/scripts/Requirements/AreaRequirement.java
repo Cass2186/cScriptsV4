@@ -1,8 +1,11 @@
 package scripts.Requirements;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.types.Area;
 import scripts.QuestUtil;
 
@@ -16,6 +19,10 @@ import java.util.stream.Stream;
  * https://github.com/Zoinkwiz/quest-helper/blob/54aff3ddd0bfee9fc629b46a399ffa062357332d/src/main/java/com/questhelper/requirements/ZoneRequirement.java#L40
  */
 public class AreaRequirement implements Requirement {
+
+    @Getter
+    @Setter
+    private boolean isInstanced = false;
 
     private List<RSArea> zones = new ArrayList<>();
     private List<Area> zonesNew = new ArrayList<>();
@@ -93,6 +100,9 @@ public class AreaRequirement implements Requirement {
             if (zonesNew.get(i).containsMyPlayer())
                 return true;
         }
+        if (this.isInstanced && GameState.isInInstance())
+            return true;
+
         return false;
     }
 
