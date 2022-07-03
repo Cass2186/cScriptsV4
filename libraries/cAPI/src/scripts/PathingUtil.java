@@ -238,7 +238,7 @@ public class PathingUtil {
     }
 
     public static boolean walkToTile(WorldTile destination) {
-        Log.info("[PathingUtil] Global Walking V2 - Worldtile");
+        Log.info("[PathingUtil] Global Walking V2 - Worldtile: " + destination);
         for (int i = 0; i < 3; i++) {
             if (i > 0 && Game.isInInstance())
                 break;

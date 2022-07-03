@@ -4,6 +4,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.jfree.chart.entity.TitleEntity;
 import org.tribot.api.General;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
@@ -253,7 +254,7 @@ public class ObjectStep extends QuestStep {
         return Utils.getWorldTileFromRSTile(endTile).distance() < Utils.random(4, 6) || !MyPlayer.isMoving();
     }
 
-    private boolean useInteractionString(){
+    private boolean useInteractionString() {
 
         return true;
     }
@@ -278,25 +279,32 @@ public class ObjectStep extends QuestStep {
             if (!objArea.contains(Player.getPosition())) {
                 Log.debug("[ObjectStep]: Navigating to object area: ID " + this.objectId);
                 LocalTile tile =
-                        new LocalTile(this.tile.getX(), this.tile.getY(), MyPlayer.getTile().getPlane());
+                        new LocalTile(this.tile.getX(), this.tile.getY(), this.tile.getPlane());
 
                 Optional<LocalTile> bestInteractable = Query.tiles()
-                        //.isReachable()
                         .inArea(Area.fromRadius(tile, 1))
-                        .findBestInteractable();
-                Optional<LocalTile> walkable = bestInteractable.map(b -> PathingUtil.getWalkableTile(b))
-                        .orElse(Optional.empty());
-
+                        .filter(t -> t.isWalkable())
+                        .findClosest();
+                Optional<LocalTile> walkable =
+                        bestInteractable.map(b -> PathingUtil.getWalkableTile(b))
+                                .orElse(Optional.empty());
+                Log.warn("Is bestInteractable.Present(): " + bestInteractable.isPresent());
+                Log.warn("Is walkable.Present(): " + walkable.isPresent());
                 if (bestInteractable.map(PathingUtil::localNav).orElse(false)) {
-                    Log.debug("[ObjectStep]: Navigating to object area - local SDK (best interactable)");
+                    Log.info("[ObjectStep]: Navigating to object area - LocalWalking to bestInteractable");
                     humanWalkIdle(tile.toWorldTile());
                 } else if (walkable.map(PathingUtil::localNav).orElse(false)) {
-                    Log.debug("[ObjectStep]: Navigating to object area - local SDK (walkable)");
+                    Log.info("[ObjectStep]: Navigating to object area - local SDK (walkable)");
                     humanWalkIdle(walkable.get().toWorldTile());
-                }else if (PathingUtil.localNavigation(this.tile)) {
-                    Log.debug("[ObjectStep]: Navigating to object area - local");
+                }
+                if (bestInteractable.map(t -> PathingUtil.localNavigation(
+                        Utils.getRSTileFromLocalTile(t))).orElse(false)) {
+                    Log.info("[ObjectStep]: Navigating to object area - DPath to walkable tile");
+                    humanWalkIdle(tile.toWorldTile());
+                } else if (PathingUtil.localNavigation(this.tile)) {
+                    Log.info("[ObjectStep]: Navigating to object area - local DPathNav");
                     humanWalkIdle(this.tile);
-                }  else if (PathingUtil.walkToTile(this.tile)) {
+                } else if (PathingUtil.walkToTile(this.tile)) {
                     humanWalkIdle(this.tile);
                 }
             }
@@ -327,6 +335,16 @@ public class ObjectStep extends QuestStep {
                     .isReachable()
                     .sortedByPathDistance()
                     .findBestInteractable();
+            if (this.objectAction.length() >= 15) {
+                object = Query.gameObjects()
+                        .idEquals(this.objectId)
+                        // .actionContains(this.objectAction)
+                        .isReachable()
+                        .sortedByPathDistance()
+                        .findBestInteractable();
+                this.objectAction = object.map(obj -> obj.getActions().get(0)).orElse(this.objectAction);
+                Log.info("Using action of " + this.objectAction);
+            }
 
             if (object.map(obj -> obj.interact(this.objectAction)).orElse(false)) {
                 handleSuccessfulClick();
@@ -348,14 +366,26 @@ public class ObjectStep extends QuestStep {
                 Log.error("Failed to handle object with a null tile");
                 return;
             }
-        } else  {
+        } else {
             Optional<GameObject> object = Query.gameObjects()
                     .idEquals(this.objectId)
                     .actionContains(this.objectAction)
                     .isReachable()
                     .sortedByPathDistance()
                     .findBestInteractable();
-            if (PathingUtil.localNav(this.localTile)){
+            if (this.objectAction.length() >= 15) {
+                object = Query.gameObjects()
+                        .idEquals(this.objectId)
+                        // .actionContains(this.objectAction)
+                        .isReachable()
+                        .sortedByPathDistance()
+                        .findBestInteractable();
+                if (object.isPresent() && object.get().getActions().size() > 0)
+                    this.objectAction = object.map(obj ->
+                            obj.getActions().get(0)).orElse(this.objectAction);
+                Log.info("Using action of " + this.objectAction);
+            }
+            if (PathingUtil.localNav(this.localTile)) {
                 Log.info("Walking to local tile");
                 PathingUtil.movementIdle();
             }

@@ -3,6 +3,7 @@ package scripts.QuestSteps;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
@@ -23,6 +24,8 @@ public class DetailedQuestStep extends QuestStep {
 
     @Getter
     protected DialogChoiceSteps choices = new DialogChoiceSteps();
+
+
 
 
     @Getter
@@ -139,6 +142,11 @@ public class DetailedQuestStep extends QuestStep {
 
     @Override
     public void execute() {
+        if (requirements.stream().anyMatch(r->!r.check())){
+            Log.warn("Missing requirement for this Detailed Quest Step");
+            return;
+        }
+        Log.error("Detailed quest step is not set up, update code");
 
     }
 

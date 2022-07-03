@@ -1,9 +1,15 @@
 package scripts.QuestPackages.RumDeal;
 
+import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
+import org.tribot.api2007.Walking;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RuneMysteries.RuneMysteries;
@@ -15,6 +21,7 @@ import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Tasks.Priority;
 
+import java.nio.file.Path;
 import java.util.*;
 
 public class RumDeal implements QuestTask {
@@ -32,13 +39,27 @@ public class RumDeal implements QuestTask {
                     new GEItem(ItemID.SEED_DIBBER, 1, 500),
                     new GEItem(ItemID.SHARK, 25, 20),
                     new GEItem(ItemID.BUCKET, 1, 500),
-
-                    new GEItem(ItemID.MORTTON_TELEPORT, 1, 30),
-                    new GEItem(ItemID.STAMINA_POTION[0], 4, 15),
+                    new GEItem(ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 5, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
+    InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.RAKE, 1),
+                    new ItemReq(ItemID.SEED_DIBBER, 1),
+                    new ItemReq(ItemID.SHARK, 20, 1),
+                    new ItemReq(ItemID.BUCKET, 1),
+                    new ItemReq(ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 5, 1),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
+                    new ItemReq(ItemID.RING_OF_DUELING[0], 1, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
+            )
+    ));
+
+    BuyItemsStep buyitems = new BuyItemsStep(itemsToBuy);
 
     ItemRequirement combatGear, dibber, rake, slayerGloves, blindweedSeed, rakeHighlight, blindweedSeedHighlight, blindweed, blindweedHighlight, bucket, bucketHighlight,
             stagnantWater, stagnantWaterHighlight, netBowl, sluglings5, holyWrench, wrench, spiderCarcass, spiderCarcassHighlight, swill;
@@ -89,10 +110,10 @@ public class RumDeal implements QuestTask {
         steps.put(4, growBlindweed);
 
         ConditionalStep bringPlant = new ConditionalStep(talkToPeteWithPlant);
-        bringPlant.addStep(inSpiderRoom, goUpFromSpiders);
+        //bringPlant.addStep(inSpiderRoom, goUpFromSpiders);
         bringPlant.addStep(new Conditions(onIslandF1), talkToBraindeathWithPlant);
-        bringPlant.addStep(new Conditions(onIslandF0), goUpStairsWithPlant);
-        bringPlant.addStep(onIslandF2, goDownFromTop);
+        // bringPlant.addStep(new Conditions(onIslandF0), goUpStairsWithPlant);
+        // bringPlant.addStep(onIslandF2, goDownFromTop);
 
         steps.put(5, bringPlant);
 
@@ -293,14 +314,17 @@ public class RumDeal implements QuestTask {
 
     public void setupSteps() {
         talkToPete = new NPCStep(NpcID.PIRATE_PETE, new RSTile(3680, 3537, 0), "Talk to Pirate Pete north east of the Ectofuntus.");
-        talkToPete.addDialogStep("Yes!", "Of course, I fear no demon!", "Nonsense! Keep the money!", "I've decided to help you for free.", "Okay!");
+        talkToPete.addDialogStep("Yes.", "Of course, I fear no demon!",
+                "Nonsense! Keep the money!", "I've decided to help you for free.", "Yes.");
         talkToBraindeath = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
 
         goDownFromTop = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5092, 2), "Go down the ladder.");
         goUpFromBottom = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5088, 0), "Go up to the first floor.");
 
-        goDownstairs = new ObjectStep(ObjectID.WOODEN_STAIR_10137, new RSTile(2150, 5088, 1), "Go down to the island's farming patch to plant the blindweed seed.", blindweedSeed, rake, dibber);
-        rakePatch = new ObjectStep(10096, new RSTile(2163, 5070, 0), "Rake", rakeHighlight);
+        goDownstairs = new ObjectStep(ObjectID.WOODEN_STAIR_10137,
+                new RSTile(2150, 5090, 1), "Go down to the island's farming patch to plant the blindweed seed.", blindweedSeed, rake, dibber);
+        rakePatch = new UseItemOnObjectStep(ItemID.RAKE, 10096, new RSTile(2163, 5071, 0),
+                "Raking Patch", rakeHighlight);
 
 
         plantSeed = new UseItemOnObjectStep(ItemID.BLINDWEED_SEED, 10096, new RSTile(2163, 5070, 0), "Plant the seed in the blindweed patch.", blindweedSeedHighlight, dibber);
@@ -312,60 +336,66 @@ public class RumDeal implements QuestTask {
 
         goUpStairsWithPlant = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5088, 0), "Take the blindweed back to Captain Braindeath.", blindweed);
 
-        talkToBraindeathWithPlant = new NPCStep(NpcID.CAPTAIN_BRAINDEATH,
+        talkToBraindeathWithPlant = new NPCStep("Captain Braindeath",
                 new RSTile(2145, 5108, 1), blindweed);
+
         talkToPeteWithPlant = new NPCStep(NpcID.PIRATE_PETE,
                 new RSTile(3680, 3537, 0), blindweed);
-        goUpStairsWithPlant.addSubSteps(talkToPeteWithPlant, talkToBraindeathWithPlant);
+        // goUpStairsWithPlant.addSubSteps(talkToPeteWithPlant, talkToBraindeathWithPlant);
 
-        climbUpToDropPlant = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2163, 5092, 1),
+        climbUpToDropPlant = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2163, 5093, 1),
                 "Go to the top floor and put the blindweed into the hopper.", blindweed);
 
-        dropPlant = new ObjectStep(ObjectID.HOPPER_10170, new RSTile(2142, 5102, 2),
+        dropPlant = new UseItemOnObjectStep(ItemID.BLINDWEED, ObjectID.HOPPER_10170, new RSTile(2142, 5102, 2),
                 "Go to the top floor and put the blindweed into the hopper.", blindweedHighlight);
         dropPlant.addSubSteps(climbUpToDropPlant);
 
-        goDownFromDropPlant = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5092, 2), "Return to Captain Braindeath.");
+        goDownFromDropPlant = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5093, 2), "Return to Captain Braindeath.");
 
         talkToBraindeathAfterPlant = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
-        talkToBraindeathAfterPlant.addSubSteps(goDownFromDropPlant);
+        //talkToBraindeathAfterPlant.addSubSteps(goDownFromDropPlant);
 
-        goDownForWater = new ObjectStep(ObjectID.WOODEN_STAIR_10137, new RSTile(2138, 5088, 1), "Go to the north part of the island and get some stagnant water.", bucket);
-        openGate = new ObjectStep(ObjectID.GATE_10172, new RSTile(2120, 5098, 0), "Go to the north part of the island and get some stagnant water.", bucket);
+        goDownForWater = new ObjectStep(ObjectID.WOODEN_STAIR_10137, new RSTile(2138, 5090, 1), "Go to the north part of the island and get some stagnant water.", bucket);
+        openGate = new ObjectStep(ObjectID.GATE_10172, new RSTile(2120, 5098, 0),
+                "Go to the north part of the island and get some stagnant water.", bucket);
+        openGate.addDialogStep(" ");
 
-        useBucketOnWater = new ObjectStep(ObjectID.STAGNANT_LAKE, new RSTile(2135, 5161, 0), "Go to the north part of the island and get some stagnant water.", bucketHighlight);
-        useBucketOnWater.addSubSteps(goDownForWater, openGate);
+        useBucketOnWater = new UseItemOnObjectStep(ItemID.BUCKET, ObjectID.STAGNANT_LAKE, new RSTile(2135, 5161, 0), "Go to the north part of the island and get some stagnant water.", bucketHighlight);
+        // useBucketOnWater.addSubSteps(goDownForWater, openGate);
 
-        goUpWithWater = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5088, 0), "Take the water back to the hopper on the top floor.", stagnantWater);
+        goUpWithWater = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5090, 0), "Take the water back to the hopper on the top floor.", stagnantWater);
 
         goUpToDropWater = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2163, 5092, 1),
-                "Take the water back to the hopper on the top floor.", stagnantWater);
+                "Climb-up", stagnantWater);
         goUpToDropWater.addDialogStep("What exactly do you want me to do?");
 
         dropWater = new ObjectStep(ObjectID.HOPPER_10170, new RSTile(2142, 5102, 2),
                 "Take the water back to the hopper on the top floor.", stagnantWaterHighlight);
-        dropWater.addSubSteps(goUpWithWater, goUpToDropWater);
+        //dropWater.addSubSteps(goUpWithWater, goUpToDropWater);
 
         goDownFromTopAfterDropWater = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5092, 2), "Return to Captain Braindeath.");
 
         talkToBraindeathAfterWater = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
         talkToBraindeathAfterWater.addSubSteps(goDownFromTopAfterDropWater);
 
-        //getSlugs = new SlugSteps(this);
+        getSlugs = new SlugSteps();
 
         goDownAfterSlugs = new ObjectStep(ObjectID.LADDER_10168,
                 new RSTile(2163, 5092, 2), "Climb-down",
                 MyPlayer.getTile().getPlane() != 2);
         talkToBraindeathAfterSlugs = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
-        talkToBraindeathAfterSlugs.addSubSteps(goDownAfterSlugs);
+        // talkToBraindeathAfterSlugs.addSubSteps(goDownAfterSlugs);
         talkToDavey = new NPCStep(NpcID.DAVEY, new RSTile(2132, 5100, 1), wrench, prayerPoints47);
-        useWrenchOnControl = new ObjectStep(10104, new RSTile(2144, 5101, 1), "Use the holy wrench on the brewing control. Be prepared to fight an evil spirit.", holyWrench);
+        useWrenchOnControl = new UseItemOnObjectStep(ItemID.HOLY_WRENCH,
+                10104, new RSTile(2144, 5101, 1),
+                MyPlayer.isHealthBarVisible(), holyWrench);
 
         //TODO fix this guess on tile
         killSpirit = new NPCStep(NpcID.EVIL_SPIRIT, new RSTile(2144, 5101, 1), prayerPoints47);
-        killSpider.setAsKillNpcStep();
+        killSpirit.setAsKillNpcStep();
 
-        goUpFromSpiders = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2139, 5105, 0), "Go up the ladder.");
+        goUpFromSpiders = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2139, 5105, 0), "" +
+                "Go up the ladder.");
 
         talkToBraindeathAfterSpirit = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
         goDownToSpiders = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2139, 5105, 1), "Go into the brewery's basement and kill a fever spider. If you're not wearing slayer gloves they'll afflict you with disease.", slayerGloves);
@@ -376,61 +406,135 @@ public class RumDeal implements QuestTask {
         killSpider.setInteractionString("Attack");
 
         pickUpCarcass = new GroundItemStep(ItemID.FEVER_SPIDER_BODY);
-        goUpFromSpidersWithCorpse = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2139, 5105, 0), "Add the spider body to the hopper on the top floor.", spiderCarcass);
+        goUpFromSpidersWithCorpse = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2139, 5105, 0),
+                "Add the spider body to the hopper on the top floor.", spiderCarcass);
         goUpToDropSpider = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2163, 5092, 1), "Add the spider body to the hopper on the top floor.", spiderCarcass);
-        dropSpider = new ObjectStep(ObjectID.HOPPER_10170, new RSTile(2142, 5102, 2), "Add the spider body to the hopper on the top floor.", spiderCarcassHighlight);
-        dropSpider.addSubSteps(goUpFromSpidersWithCorpse, goUpToDropSpider);
+        dropSpider = new UseItemOnObjectStep(ItemID.FEVER_SPIDER_BODY, ObjectID.HOPPER_10170, new RSTile(2142, 5103, 2), "Add the spider body to the hopper on the top floor.", spiderCarcassHighlight);
+        //dropSpider.addSubSteps(goUpFromSpidersWithCorpse, goUpToDropSpider);
 
         goDownAfterSpider = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5092, 2), "Return to Captain Braindeath.");
         talkToBraindeathAfterSpider = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
-        talkToBraindeathAfterSpider.addSubSteps(goDownAfterSpider);
+     //   talkToBraindeathAfterSpider.addSubSteps(goDownAfterSpider);
 
-        useBucketOnTap = new ObjectStep(ObjectID.OUTPUT_TAP, new RSTile(2142, 5093, 1), "Fill a bucket from the output tap in the south west of the brewery.", bucket);
+        useBucketOnTap = new UseItemOnObjectStep(ItemID.BUCKET, ObjectID.OUTPUT_TAP, new RSTile(2142, 5093, 1), "Fill a bucket from the output tap in the south west of the brewery.", bucket);
 
         goDownToDonnie = new ObjectStep(ObjectID.WOODEN_STAIR_10137, new RSTile(2150, 5088, 1), "Bring the unsanitary swill to Captain Donnie south of the Brewery.", swill);
-        talkToDonnie = new NPCStep(NpcID.CAPTAIN_DONNIE, new RSTile(2152, 5078, 0), swill);
-        talkToDonnie.addSubSteps(goDownToDonnie);
+        talkToDonnie = new NPCStep(NpcID.CAPTAIN_DONNIE, new RSTile(2153, 5078, 0), swill);
+        //talkToDonnie.addSubSteps(goDownToDonnie);
 
         goUpToBraindeathToFinish = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5088, 0), "Return to Captain Braindeath to finish.");
         talkToBraindeathToFinish = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath to finish.");
-        talkToBraindeathToFinish.addSubSteps(goUpToBraindeathToFinish);
+       // talkToBraindeathToFinish.addSubSteps(goUpToBraindeathToFinish);
 
     }
-  /*
-    @Override
-    public List<ItemRequirement> getItemRequirements()
-    {
-        return Arrays.asList(combatGear, dibber, rake, slayerGloves);
+
+    /*
+      @Override
+      public List<ItemRequirement> getItemRequirements()
+      {
+          return Arrays.asList(combatGear, dibber, rake, slayerGloves);
+      }
+
+
+      @Override
+      public List<String> getCombatRequirements()
+      {
+          return Arrays.asList("Evil spirit (level 150)", "Fever spider (level 49)");
+      }
+
+      @Override
+      public QuestPointReward getQuestPointReward()
+      {
+          return new QuestPointReward(2);
+      }
+
+
+      public List<ExperienceReward> getExperienceRewards()
+      {
+          return Arrays.asList(
+                  new ExperienceReward(Skill.FISHING, 7000),
+                  new ExperienceReward(Skill.PRAYER, 7000),
+                  new ExperienceReward(Skill.FARMING, 7000));
+      }*/
+    //everything past the gate
+    Area STAGNANT_WATER_ISLAND_AREA = Area.fromPolygon(
+            new WorldTile(2117, 5099, 0),
+            new WorldTile(2127, 5099, 0),
+            new WorldTile(2127, 5128, 0),
+            new WorldTile(2174, 5131, 0),
+            new WorldTile(2174, 5182, 0),
+            new WorldTile(2114, 5181, 0)
+    );
+
+    private void getStagnantWater() {
+        if (!STAGNANT_WATER_ISLAND_AREA.containsMyPlayer()) {
+            openGate = new ObjectStep(ObjectID.GATE_10172, new RSTile(2120, 5098, 0),
+                    "Go to the north part of the island and get some stagnant water.", bucket);
+            openGate.addDialogStep(" ");
+            openGate.execute();
+            Waiting.waitUntil(5000, 500, () -> STAGNANT_WATER_ISLAND_AREA.containsMyPlayer());
+        }
+        if (STAGNANT_WATER_ISLAND_AREA.containsMyPlayer()) {
+            RSTile waterTile = new RSTile(2135, 5161, 0);
+            cQuesterV2.status = "Blind walking to stagnant water";
+            Log.info(cQuesterV2.status);
+            Walking.blindWalkTo(waterTile);
+            for (int i = 0; i < 3; i++) //long walk so loop this
+                if (MyPlayer.isMoving())
+                    PathingUtil.movementIdle();
+
+            if (waterTile.distanceTo(Player.getPosition()) < 4 &&
+                    Utils.useItemOnObject(ItemID.BUCKET, ObjectID.STAGNANT_LAKE)) {
+
+            }
+        }
+        useBucketOnWater = new UseItemOnObjectStep(ItemID.BUCKET, ObjectID.STAGNANT_LAKE, new RSTile(2135, 5161, 0), "Go to the north part of the island and get some stagnant water.", bucketHighlight);
+        // useBucketOnWater.addSubSteps(goDownForWater, openGate);
+
     }
 
+    int[] shopWidgetPath = {300, 16};
 
-    @Override
-    public List<String> getCombatRequirements()
-    {
-        return Arrays.asList("Evil spirit (level 150)", "Fever spider (level 49)");
+    private boolean getSlayerGloves() {
+        if (Equipment.contains(ItemID.SLAYER_GLOVES_6720))
+            return true;
+        //TODO, ensure you have GP (200)
+        if (Inventory.getCount(ItemID.COINS_995) < 200) {
+            Log.info("Getting Coins for Slayer Gloves");
+            BankManager.open(true);
+            BankManager.withdraw(200, true, ItemID.COINS_995);
+            BankManager.close(true);
+        }
+
+
+        Log.info("Getting Slayer Gloves");
+        WorldTile shopTile = new WorldTile(3109, 3514, 0);
+        if (ShoppingUtil.openShop(shopTile, "Krystilia")) {
+            Log.info("Buying gloves");
+            for (int i = 0; i < 5; i++) {
+                if (Shop.buy(Shop.Quantity.ONE, ItemID.SLAYER_GLOVES_6720) &&
+                        Waiting.waitUntil(2000, 500, () -> Inventory.contains(ItemID.SLAYER_GLOVES_6720))) {
+                    Log.info("Bought");
+                    break;
+                } else if (Inventory.contains(ItemID.SLAYER_GLOVES_6720))
+                    break;
+                else Waiting.waitNormal(500, 50);
+            }
+            Shop.close();
+        }
+        if (Utils.equipItem(ItemID.SLAYER_GLOVES_6720))
+            return Waiting.waitUntil(500, 50, () ->
+                    Equipment.contains(ItemID.SLAYER_GLOVES_6720));
+
+        return Equipment.contains(ItemID.SLAYER_GLOVES_6720);
     }
-
-    @Override
-    public QuestPointReward getQuestPointReward()
-    {
-        return new QuestPointReward(2);
-    }
-
-
-    public List<ExperienceReward> getExperienceRewards()
-    {
-        return Arrays.asList(
-                new ExperienceReward(Skill.FISHING, 7000),
-                new ExperienceReward(Skill.PRAYER, 7000),
-                new ExperienceReward(Skill.FARMING, 7000));
-    }*/
 
 
     @Override
     public List<Requirement> getGeneralRequirements() {
         ArrayList<Requirement> req = new ArrayList<>();
-        req.add(new QuestRequirement(Quest.ZOGRE_FLESH_EATERS, Quest.State.COMPLETE));
-        req.add(new QuestRequirement(Quest.PRIEST_IN_PERIL, Quest.State.COMPLETE));
+        // req.add(new QuestRequirement(Quest.ZOGRE_FLESH_EATERS, Quest.State.COMPLETE));
+        // req.add(new QuestRequirement(Quest.PRIEST_IN_PERIL, Quest.State.COMPLETE));
         req.add(new SkillRequirement(Skills.SKILLS.CRAFTING, 42));
         req.add(new SkillRequirement(Skills.SKILLS.FISHING, 50));
         req.add(new SkillRequirement(Skills.SKILLS.FARMING, 40));
@@ -460,17 +564,55 @@ public class RumDeal implements QuestTask {
             cQuesterV2.taskList.remove(this);
             return;
         }
+
         int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId());
         Log.info("[Debug]: Rum deal gameSetting is " + gameSetting);
+        //if (gameSetting == 0)
+        //    buyitems.buyItems();
+        if (!getSlayerGloves()) {
+            Log.info("Failed to get slayer gloves");
+            Waiting.waitNormal(950, 50);
+            return;
+        }
+        if (gameSetting == 11) {
+            Log.info("Getting slugs");
+            getSlugs = new SlugSteps();
+            getSlugs.execute();
+            gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId());
+        }
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
         step.ifPresent(s -> cQuesterV2.status = s.getClass().toGenericString());
-        Waiting.waitNormal(550, 50);
+        step.ifPresent(QuestStep::execute);
+        if (plantedPatch.check()) {
+            cQuesterV2.status = "Waiting 5 min";
+            //Waiting.waitNormal(5000, 500);
+        }
+        //idle while killing npc
+        if (Query.npcs().nameContains("Evil spirit").isAny()) {
+            CombatUtil.waitUntilOutOfCombat("Evil spirit", 45);
+
+            return;
+        }
+        if (Query.npcs().nameContains("Fever spider").isMyPlayerInteractingWith().isAny()) {
+            CombatUtil.waitUntilOutOfCombat("Fever spider", 45);
+            if (Query.groundItems().idEquals(ItemID.FEVER_SPIDER_BODY).findClosest().map(
+                    f -> f.interact("Take")).orElse(false))
+                Waiting.waitUntil(() -> Inventory.contains(ItemID.FEVER_SPIDER_BODY));
+            return;
+        }
+        if (gameSetting == 13 && !Inventory.contains(ItemID.HOLY_WRENCH))
+            Waiting.waitNormal(3000, 50);
+        else
+            Waiting.waitNormal(950, 50);
+        Utils.cutScene();
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
     }
 
     @Override
     public String questName() {
-        return "Rum Deal";
+        return "Rum Deal (" + GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId()) + ")";
     }
 
     @Override

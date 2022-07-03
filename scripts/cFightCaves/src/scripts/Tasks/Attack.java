@@ -114,8 +114,8 @@ public class Attack implements Task {
         LocalTile projectileTile = mageProjectileTile();
         walker.setAcceptAdjacent(true);
         if (projectileTile != null) {
-            Log.info("Projectile tile is not null");
-            Log.info("Projectile tile: " + projectileTile.toString());
+         //   Log.info("Projectile tile is not null");
+           // Log.info("Projectile tile: " + projectileTile.toString());
             if (PathingUtil.localNav(projectileTile)) {
                 Waiting.waitUntil(() -> !shouldMoveToMagers());
             }
@@ -132,9 +132,9 @@ public class Attack implements Task {
         LocalTile projectileTile = rangeProjectileTile();
         walker.setAcceptAdjacent(true);
         if (projectileTile != null) {
-            Log.info("We are attempting to move to rangers");
-            Log.info("Projectile tile is not null");
-            Log.info("Projectile tile: " + projectileTile.toString());
+          //  Log.info("We are attempting to move to rangers");
+         //   Log.info("Projectile tile is not null");
+         //   Log.info("Projectile tile: " + projectileTile.toString());
             if (PathingUtil.localNav(projectileTile)) {
                 Waiting.waitUntil(() -> !shouldMoveToRangers());
             }
@@ -254,7 +254,8 @@ public class Attack implements Task {
 //                Log.info("NPC is Clickable", highestPriority.isClickable());
 //                Log.info("NPC is on screen", highestPriority.isOnScreen());
 //                Log.info("NPC is valid", highestPriority.isValid());
-                if (MyPlayer.isHealthBarVisible() && highestPriority.distance() < General.random(7, 17)) {
+                if (MyPlayer.isHealthBarVisible() && highestPriority.getHealthBarPercent() != 0
+                        && highestPriority.distance() < General.random(7, 17)) {
                     Optional<Npc> target =
                             Query.npcs().nameContains(highestPriority.getName())
                                     .findClosestByPathDistance();
@@ -263,12 +264,15 @@ public class Attack implements Task {
                         Waiting.waitUntil(highestPriority::isHealthBarVisible);
                     }
                 } else if ((character == null || !characterName.equals(name))) {
-                    Optional<Npc> target = Query.npcs().nameContains(highestPriority.getName()).findClosestByPathDistance();
+                    Optional<Npc> target = Query.npcs().nameContains(highestPriority.getName())
+                            .isHealthBarNotEmpty()
+                            .findClosestByPathDistance();
                     if (clickAttack(target))
                         Waiting.waitUntil(highestPriority::isHealthBarVisible);
                 }
             }
-            if (highestPriority.isInteractingWithMe() && highestPriority.isHealthBarVisible()) {
+            if (highestPriority.isInteractingWithMe() && highestPriority.isHealthBarVisible()
+                    && highestPriority.getHealthBarPercent() != 0) {
                 AntiBan.timedActions();
 //                Log.info("We are interacting with the highest priority NPC (" + highestPriority.getName() + ")");
             }

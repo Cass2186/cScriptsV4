@@ -1,12 +1,19 @@
 package scripts;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tribot.api2007.NPCs;
+import org.tribot.api2007.Player;
+import org.tribot.api2007.Projection;
+import org.tribot.api2007.types.RSNPC;
 import org.tribot.script.interfaces.MessageListening07;
+import org.tribot.script.interfaces.Painting;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.input.Mouse;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
 import org.tribot.script.sdk.script.TribotScriptManifest;
+import org.tribot.script.sdk.types.Npc;
 import scripts.Data.Paint;
 import scripts.Data.Rotations;
 import scripts.Data.Vars;
@@ -14,9 +21,13 @@ import scripts.Data.Wave;
 import scripts.ScriptUtils.CassScript;
 import scripts.Tasks.*;
 
+import java.awt.*;
+import java.util.List;
+import java.util.Optional;
+
 
 @TribotScriptManifest(author = "Cass2186", name = "cFightCaves", category = "Testing")
-public class cFightCaves extends CassScript implements TribotScript {
+public class cFightCaves extends CassScript implements TribotScript, Painting {
 
     GenerateMap map = new GenerateMap();
 
@@ -30,7 +41,7 @@ public class cFightCaves extends CassScript implements TribotScript {
         AntiBan.create();
         super.initializeDax();
         Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
-
+        Mouse.setSpeed(175);
         Paint.addMainPaint();
         //Tasks
         TaskSet tasks = new TaskSet(
@@ -64,6 +75,7 @@ public class cFightCaves extends CassScript implements TribotScript {
                 Log.warn("Making map, started in instance");
                 map.execute();
             }
+
             //fast loop
             Waiting.waitNormal(35, 5);
 
@@ -74,7 +86,16 @@ public class cFightCaves extends CassScript implements TribotScript {
             }
         }
     }
-
-
-
+    @Override
+    public void onPaint(Graphics g) {
+        RSNPC[] all = NPCs.getAll();
+        for (RSNPC n : all){
+            if (n.isOnScreen()){;
+                Polygon pp = Projection.getTileBoundsPoly(n, 0);
+                org.tribot.script.sdk.painting.Painting.addPaint(gg->
+                        gg.drawPolygon(pp) );
+                // g.drawString("D: " + n.getPosition().distanceTo(Player.getPosition()),pp.getBounds().x, pp.getBounds().y));
+            }
+        }
+    }
 }
