@@ -30,7 +30,7 @@ public class cFightCaves extends CassScript implements TribotScript {
         AntiBan.create();
         super.initializeDax();
         Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
-
+        Mouse.setSpeed(175);
         Paint.addMainPaint();
         //Tasks
         TaskSet tasks = new TaskSet(

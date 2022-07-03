@@ -88,7 +88,8 @@ public class GenerateMap implements Task {
         }*/
         Vars.get().caveObject = QueryUtils.getObject(Const.CAVE_ENTRANCE_ID);
         if (Vars.get().caveObject.isPresent()) {
-            path = Arrays.asList(fightWalker.findPath(Utils.getRSTileFromLocalTile(getTileInDirection(General.random(0, 50),
+            path = Arrays.asList(fightWalker.findPath(
+                    Utils.getRSTileFromLocalTile(getTileInDirection(General.random(0, 50),
                     General.random(5, 10)))));
             if (WalkerEngine.getInstance().walkPath(path)) {
                 Log.info("Generating Cave Map");
