@@ -114,8 +114,8 @@ public class Attack implements Task {
         LocalTile projectileTile = mageProjectileTile();
         walker.setAcceptAdjacent(true);
         if (projectileTile != null) {
-         //   Log.info("Projectile tile is not null");
-           // Log.info("Projectile tile: " + projectileTile.toString());
+            Log.info("Projectile tile is not null");
+            Log.info("Projectile tile: " + projectileTile.toString());
             if (PathingUtil.localNav(projectileTile)) {
                 Waiting.waitUntil(() -> !shouldMoveToMagers());
             }
@@ -132,9 +132,9 @@ public class Attack implements Task {
         LocalTile projectileTile = rangeProjectileTile();
         walker.setAcceptAdjacent(true);
         if (projectileTile != null) {
-          //  Log.info("We are attempting to move to rangers");
-         //   Log.info("Projectile tile is not null");
-         //   Log.info("Projectile tile: " + projectileTile.toString());
+            Log.info("We are attempting to move to rangers");
+            Log.info("Projectile tile is not null");
+            Log.info("Projectile tile: " + projectileTile.toString());
             if (PathingUtil.localNav(projectileTile)) {
                 Waiting.waitUntil(() -> !shouldMoveToRangers());
             }
@@ -182,7 +182,7 @@ public class Attack implements Task {
                 for (CaveNPCs npc : CaveNPCs.values()) {
                     if (npc.getProjectileAnimation() == projectile.getGraphicId() &&
                             npc.isShouldPrayRange()) {
-                        Log.info("Ranged Projectile Coming from " + npc.getName());
+                       // Log.info("Ranged Projectile Coming from " + npc.getName());
                         return true;
                     }
                 }
@@ -203,7 +203,7 @@ public class Attack implements Task {
             if (projectile.isTargetingMe()) {
                 for (CaveNPCs npc : CaveNPCs.values()) {
                     if (npc.getProjectileAnimation() == projectile.getGraphicId() && npc.isShouldPrayMage()) {
-                        Log.info("Mage Projectile Coming from " + npc.getName());
+                        //Log.info("Mage Projectile Coming from " + npc.getName());
                         return true;
                     }
                 }
@@ -223,7 +223,7 @@ public class Attack implements Task {
             String characterName = null;
             RSCharacter character = me.getInteractingCharacter();
             if (character != null) {
-                Log.info("Character: " + character.getName());
+                //Log.info("Character: " + character.getName());
                 characterName = character.getName();
             }
             if (character == null) {
@@ -254,8 +254,8 @@ public class Attack implements Task {
 //                Log.info("NPC is Clickable", highestPriority.isClickable());
 //                Log.info("NPC is on screen", highestPriority.isOnScreen());
 //                Log.info("NPC is valid", highestPriority.isValid());
-                if (MyPlayer.isHealthBarVisible() && highestPriority.getHealthBarPercent() != 0
-                        && highestPriority.distance() < General.random(7, 17)) {
+                if (MyPlayer.isHealthBarVisible() && highestPriority.getHealthBarPercent() != 0 &&
+                        highestPriority.distance() < General.random(7, 17)) {
                     Optional<Npc> target =
                             Query.npcs().nameContains(highestPriority.getName())
                                     .findClosestByPathDistance();
@@ -271,8 +271,7 @@ public class Attack implements Task {
                         Waiting.waitUntil(highestPriority::isHealthBarVisible);
                 }
             }
-            if (highestPriority.isInteractingWithMe() && highestPriority.isHealthBarVisible()
-                    && highestPriority.getHealthBarPercent() != 0) {
+            if (highestPriority.isInteractingWithMe() && highestPriority.getHealthBarPercent() != 0 &&highestPriority.isHealthBarVisible()) {
                 AntiBan.timedActions();
 //                Log.info("We are interacting with the highest priority NPC (" + highestPriority.getName() + ")");
             }

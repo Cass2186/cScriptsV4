@@ -12,7 +12,7 @@ public class EatTask implements Task {
 
     @Override
     public Priority priority() {
-        return Priority.MEDIUM;
+        return Priority.HIGH;
     }
 
     @Override
