@@ -19,6 +19,7 @@ import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
+import scripts.ItemUtil;
 
 import java.util.List;
 
@@ -36,89 +37,7 @@ public class FishDrop implements Task {
         }
     }
 
-    /**
-     * Returns an array of 28 Items based on the indexes of the given items. Array indexes without a corresponding Item
-     * will have null values.
-     */
-    private static Item[] getAsInventory(List<? extends Item> items) {
-        Item[] out = new Item[28];
-        for (Item item : items) {
-            int i = item.getIndex();
-            if (i >= 0 && i <= 27)
-                out[i] = item;
-        }
-        return out;
-    }
 
-    public static int drop(List<? extends Item> items) {
-        if (items.isEmpty()) {
-            return 0;
-        }
-
-        val antibanProps = AntibanProperties.getPropsForCurrentChar();
-        val dropPattern = antibanProps.determineDropPattern();
-        val isShiftDropEnabled = org.tribot.script.sdk.Options.isShiftClickDropEnabled();
-        val invItems = getAsInventory(items);
-
-        // If we should be shift dropping, let's first hold shift
-        Keyboard.HoldAction.KeyHoldContext holdShiftContext = null;
-        boolean waitedForShiftStart = false;
-        if (isShiftDropEnabled) {
-            holdShiftContext = Keyboard.hold()
-                    .key(Keyboard.HoldAction.Key.SHIFT)
-                    .timeout(2 * 60 * 1000)
-                    .start();
-            Waiting.waitNormal(110, 15);
-        }
-
-        var dropped = 0;
-
-        for (int index : dropPattern.getDropList()) {
-            val itemToDrop = invItems[index];
-
-            if (itemToDrop != null) {
-
-                // If an item is selected, we need to deselect it by opening the chooseoption menu and cancelling it
-                if (GameState.isAnyItemSelected()) {
-                    if (!ChooseOption.isOpen()) {
-                        val openedChooseOption = Retry.retry(General.random(2, 4), () -> {
-                            Mouse.click(3);
-                            Waiting.waitNormal(180, 20);
-                            return ChooseOption.isOpen();
-                        });
-
-                        // If we can't open the chooseoption menu, return early (failure)
-                        if (!openedChooseOption) {
-                            return dropped;
-                        }
-                    }
-
-                    ChooseOption.select("Cancel");
-                    Waiting.waitNormal(290, 35);
-                }
-
-                // If we just started, lets try to hover the item while waiting for the key to be held.
-                // Otherwise if it hasn't started, wait a little longer and hope it starts soon.
-                if (!waitedForShiftStart && holdShiftContext != null && !holdShiftContext.isStarted()) {
-                    itemToDrop.hover();
-                    val finalCtx = holdShiftContext;
-                    Waiting.waitUntil(() -> finalCtx.isStarted() || Game.getUptext().startsWith("Drop"));
-                    waitedForShiftStart = true;
-                }
-
-                if (itemToDrop.click("Drop")) {
-                    dropped += itemToDrop.getStack();
-                    Waiting.waitNormal(15, 5);
-                }
-            }
-        }
-
-        if (holdShiftContext != null) {
-            holdShiftContext.stop();
-        }
-
-        return dropped;
-    }
 
 
 
@@ -148,9 +67,9 @@ public class FishDrop implements Task {
         int sp = Mouse.getSpeed();
         Mouse.setSpeed(300);
        // if (raw.size() > 0)
-            drop(raw);
+            ItemUtil.drop(raw);
        // if (leap.size() > 0)
-           drop(leap);
+        ItemUtil.drop(leap);
 
         Mouse.setSpeed(sp);
     }

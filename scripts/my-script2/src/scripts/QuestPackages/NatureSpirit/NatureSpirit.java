@@ -5,13 +5,15 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Player;
+import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
-import org.tribot.script.sdk.types.InventoryItem;
-import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.types.*;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -71,6 +73,7 @@ public class NatureSpirit implements QuestTask {
     RSTile ORANGE_STONE_TILE = new RSTile(3440, 3335, 0);
     RSTile ROTTEN_LOG_TILE = new RSTile(3435, 3449, 0);
     RSTile ROTTEN_LOG_TILE2 = new RSTile(3426, 3331, 0);
+    WorldTile ROTTEN_LOG_TILE2_WORLD = new WorldTile(3426, 3331, 0);
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
@@ -137,14 +140,9 @@ public class NatureSpirit implements QuestTask {
         cQuesterV2.status = "Going to Start Quest";
         PathingUtil.walkToArea(DREZEL_UNDERGROUND);
         if (NpcChat.talkToNPC("Drezel")) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("Is there anything else interesting to do around here?");
-            NPCInteraction.handleConversation("Well, what is it, I may be able to help?");
-            NPCInteraction.handleConversation("Yes.");
-            NPCInteraction.handleConversation();
-            if (Interfaces.isInterfaceSubstantiated(11, 4)) {
-                Interfaces.get(11, 4).click();
-            }
+            NpcChat.handle(true, "Is there anything else interesting to do around here?",
+                    "Well, what is it, I may be able to help?", "Yes.");
+            NpcChat.handle();
         }
 
     }
@@ -179,14 +177,11 @@ public class NatureSpirit implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             goToGrotto();
             dropRottenFood(); // makes inventory space
-            Utils.clickObj(GROTO_ENTER_ID, "Enter");
-            Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 7000);
-            if (NPCs.find("Filliman Tarlock").length > 0) {
-                NpcChat.talkToNPC("Filliman Tarlock");
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                NPCInteraction.handleConversation("Could I have another bloom scroll please?");
-                NPCInteraction.handleConversation();
+            if (Utils.clickObj(GROTO_ENTER_ID, "Enter"))
+                Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 7000);
+
+            if (NpcChat.talkToNPC("Filliman Tarlock")) {
+                NpcChat.handle(true, "Could I have another bloom scroll please?");
             }
         }
     }
@@ -231,13 +226,11 @@ public class NatureSpirit implements QuestTask {
 
                 if (NPCs.find("Filliman Tarlock").length > 0 && Inventory.find(MIRROR).length > 0) {
                     if (NpcChat.talkToNPC("Filliman Tarlock")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation("What's it like being a ghost?");
-                        NPCInteraction.handleConversation();
+                        NpcChat.handle(true, "What's it like being a ghost?");
+
                     }
                     if (Utils.useItemOnNPC(MIRROR, "Filliman Tarlock")) {
-                        NPCInteraction.waitForConversationWindow();
-                        NPCInteraction.handleConversation();
+                        NpcChat.handle(true);
                         Utils.shortSleep();
                     }
                 }
@@ -247,13 +240,10 @@ public class NatureSpirit implements QuestTask {
 
 
     public void step2b() {
-        Utils.clickObj(GROTO_ENTER_ID, "Enter");
-        Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 7000);
-        if (NPCs.find("Filliman Tarlock").length > 0) {
-            if (NpcChat.talkToNPC("Filliman Tarlock")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-            }
+        if (Utils.clickObj(GROTO_ENTER_ID, "Enter"))
+            Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 7000);
+        if (NpcChat.talkToNPC("Filliman Tarlock")) {
+            NpcChat.handle(true);
         }
         if (Inventory.find("Journal").length < 1) {
             if (Inventory.isFull()) {
@@ -261,8 +251,7 @@ public class NatureSpirit implements QuestTask {
                 Inventory.drop(WASHING_BOWL);
             }
             if (Utils.clickObj("Grotto tree", "Search")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
                 Timer.waitCondition(() -> Inventory.find("Journal").length > 0, 5000, 7000);
                 Utils.shortSleep();
             }
@@ -270,9 +259,7 @@ public class NatureSpirit implements QuestTask {
         if (NPCs.find("Filliman Tarlock").length > 0) {
             if (Inventory.find("Journal").length > 0) {
                 if (Utils.useItemOnNPC("Journal", "Filliman Tarlock")) {
-                    NPCInteraction.waitForConversationWindow();
-                    NPCInteraction.handleConversation("How can I help?");
-                    NPCInteraction.handleConversation();
+                    NpcChat.handle(true, "How can I help?");
                 }
             }
         }
@@ -291,11 +278,9 @@ public class NatureSpirit implements QuestTask {
         if (DREZEL_UNDERGROUND.contains(Player.getPosition())) {
             cQuesterV2.status = "Getting blessed";
             if (NpcChat.talkToNPC("Drezel")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
                 General.sleep(General.random(3000, 5000)); // sleep while he blesses you
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
             }
         }
     }
@@ -351,11 +336,13 @@ public class NatureSpirit implements QuestTask {
             if (Utils.useItemOnObject(MUSHROOM, 3527))
                 Timer.waitCondition(() -> Inventory.find(MUSHROOM).length > 1, 5000, 7000);
 
-            RSObject[] grottoTree = Objects.findNearest(20, GROTO_ENTER_ID);
-
-            if (grottoTree.length > 0) {
-                AccurateMouse.click(grottoTree[0], "Enter");
-                Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 7000);
+            Optional<GameObject> grottoTree = Query.gameObjects()
+                    .nameContains("Grotto")
+                    .actionContains("Enter")
+                    .findClosestByPathDistance();
+            if (grottoTree.map(g -> g.interact("Enter")).orElse(false)) {
+                Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 8000);
+                Utils.idleNormalAction(true);
             }
         }
         if (NPCs.find("Filliman Tarlock").length > 0)
@@ -373,29 +360,28 @@ public class NatureSpirit implements QuestTask {
             }
         }
 
-        RSObject[] grottoTree = Objects.findNearest(20, "Grotto");
-        if (grottoTree.length > 0) {
-            AccurateMouse.click(grottoTree[0], "Enter");
+        Optional<GameObject> grottoTree = Query.gameObjects().nameContains("Grotto")
+                .actionContains("Enter")
+                .findClosestByPathDistance();
+        if (grottoTree.map(g -> g.interact("Enter")).orElse(false)) {
             Timer.waitCondition(() -> NPCs.find("Filliman Tarlock").length > 0, 5000, 8000);
-            General.sleep(General.random(1000, 3500));
+            Utils.idleNormalAction(true);
         }
 
-        Walking.clickTileMS(ORANGE_STONE_TILE, "Walk here");
-        General.sleep(General.random(2600, 4500));
-
-        if (NPCs.find("Filliman Tarlock").length > 0) {
-            if (NpcChat.talkToNPC("Filliman Tarlock")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("I think I've solved the puzzle!");
-
-                General.sleep(General.random(3000, 4500)); //sleep as he casts a spell
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-            }
+        if (Walking.clickTileMS(ORANGE_STONE_TILE, "Walk here")) {
+            Waiting.waitUntil(5000, 600,
+                    () -> Player.getPosition().equals(ORANGE_STONE_TILE));
         }
+
+        if (NpcChat.talkToNPC("Filliman Tarlock")) {
+            NpcChat.handle(true, "I think I've solved the puzzle!");
+
+            General.sleep(3000, 4500); //sleep as he casts a spell
+            NpcChat.handle(true);
+
+            NpcChat.handle(true);
+        }
+
     }
 
     public void enterGrotto() {
@@ -417,10 +403,8 @@ public class NatureSpirit implements QuestTask {
             cQuesterV2.status = "Searching Grotto";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Utils.clickObj(3520, "Search")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
+                NpcChat.handle(true);
             }
         }
     }
@@ -433,10 +417,8 @@ public class NatureSpirit implements QuestTask {
             cQuesterV2.status = "Searching Grotto";
             General.println("[Debug]: " + cQuesterV2.status);
             if (Utils.clickObj(3520, "Search")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation();
+                NpcChat.handle(true);
+                NpcChat.handle(true);
             }
         }
     }
@@ -475,17 +457,12 @@ public class NatureSpirit implements QuestTask {
                     Inventory.drop(APPLE_PIE);
                 }
 
-                RSObject[] fungi = Objects.findNearest(6, MUSHROOM_ON_LOG);
-                if (fungi.length > 0) {
+                Optional<GameObject> fungi = Query.gameObjects()
+                        .idEquals(MUSHROOM_ON_LOG).maxDistance(5)
+                        .findClosestByPathDistance();
+                if (fungi.map(f -> f.interact("Pick")).orElse(false))
+                    Timer.abc2WaitCondition(() -> Inventory.find(MUSHROOM).length > invFungi.length, 5000, 7000);
 
-                    if (!fungi[0].isClickable())
-                        fungi[0].adjustCameraTo();
-
-                    if (AccurateMouse.click(fungi[0], "Pick")) {
-                        Timer.waitCondition(() -> Inventory.find(MUSHROOM).length > invFungi.length, 5000, 7000);
-                        Utils.shortSleep();
-                    }
-                }
                 if (Inventory.find(MUSHROOM).length > 2)
                     break;
 
@@ -522,6 +499,10 @@ public class NatureSpirit implements QuestTask {
 
     public void getFungi() {
         PathingUtil.walkToTile(ROTTEN_LOG_TILE2);
+        if (!ROTTEN_LOG_TILE2_WORLD.equals(MyPlayer.getTile()) &&
+                ROTTEN_LOG_TILE2_WORLD.interact("Walk here")) {
+            PathingUtil.movementIdle();
+        }
         if (ROTTEN_LOG2_AREA.contains(Player.getPosition())) {
             if (Prayer.getPrayerPoints() < 5) {
                 if (Inventory.find(
@@ -542,78 +523,62 @@ public class NatureSpirit implements QuestTask {
                         dropRottenFood();
                     }
                 }
-
                 RSItem[] invFungi = Inventory.find(MUSHROOM);
-                RSObject[] fungi = Objects.findNearest(6, MUSHROOM_ON_LOG);
-
-                if (fungi.length > 0) {
-
-                    if (!fungi[0].isClickable())
-                        fungi[0].adjustCameraTo();
-
-                    if (AccurateMouse.click(fungi[0], "Pick"))
-                        Timer.abc2WaitCondition(() -> Inventory.find(MUSHROOM).length > invFungi.length, 5000, 7000);
-                }
+                Optional<GameObject> fungi = Query.gameObjects()
+                        .idEquals(MUSHROOM_ON_LOG).maxDistance(5)
+                        .findClosestByPathDistance();
+                if (fungi.map(f -> f.interact("Pick")).orElse(false))
+                    Timer.abc2WaitCondition(() -> Inventory.find(MUSHROOM).length > invFungi.length, 5000, 7000);
             }
         }
     }
 
 
     public void fightGhast() {
-        PathingUtil.walkToTile(ROTTEN_LOG_TILE2);
-        PathingUtil.movementIdle();
+        if (PathingUtil.walkToTile(ROTTEN_LOG_TILE2)) {
+            PathingUtil.movementIdle();
+            //click tile if not on it
+            if (!ROTTEN_LOG_TILE2_WORLD.equals(MyPlayer.getTile()) &&
+                    ROTTEN_LOG_TILE2_WORLD.interact("Walk here")) {
+                PathingUtil.movementIdle();
+            }
+        }
         if (Inventory.find(MUSHROOM).length > 2) {
             cQuesterV2.status = "Filling pouch";
-
-            if (Inventory.find(DRUIDIC_POUCH).length > 0) {
-                if (AccurateMouse.click(Inventory.find(DRUIDIC_POUCH)[0], "Fill"))
-                    Timer.waitCondition(() -> NPCs.find("Ghast").length > 0, 25000, 30000);
-
-            } else if (Inventory.find(FILLED_DRUIDIC_POUCH).length > 0)
-
-                if (AccurateMouse.click(Inventory.find(FILLED_DRUIDIC_POUCH)[0], "Fill"))
-                    Timer.waitCondition(() -> NPCs.find("Ghast").length > 0, 25000, 30000); //waits to be attacked
-
+            Optional<InventoryItem> pouch = Query.inventory()
+                    .idEquals(DRUIDIC_POUCH, FILLED_DRUIDIC_POUCH)
+                    .findClosestToMouse();
+            if (pouch.map(f -> f.click("Fill")).orElse(false)) {
+                cQuesterV2.status = "Waiting to be attacked";
+                Timer.waitCondition(() -> Query.npcs()
+                        .nameContains("Ghast")
+                        .isInteractingWithMe()
+                        .isAny(), 25000, 30000); //waits to be attacked
+            }
         } else if (Inventory.find(FILLED_DRUIDIC_POUCH).length < 1) {
             getFungi();
         }
-        while ((Inventory.find(FILLED_DRUIDIC_POUCH).length > 0 || Combat.isUnderAttack())) {
-            General.sleep(100);
+        while (Inventory.find(FILLED_DRUIDIC_POUCH).length > 0 ||
+                MyPlayer.isHealthBarVisible()) {
+            General.sleep(75, 150);
             Optional<Npc> vis = Query.npcs().idEquals(VISIBLE_GHAST)
+                    .isNotBeingInteractedWith()
                     .findBestInteractable();
-            Optional<Npc> inVis = Query.npcs().idEquals(INVISIBLE_GHAST)
+            Optional<Npc> invis = Query.npcs().idEquals(INVISIBLE_GHAST)
                     .findBestInteractable();
             Optional<InventoryItem> filledPouch = Query.inventory()
                     .idEquals(FILLED_DRUIDIC_POUCH)
                     .findClosestToMouse();
-            RSNPC[] visible = NPCs.find(VISIBLE_GHAST);
-            RSNPC[] invisible = NPCs.find(INVISIBLE_GHAST);
-            if (vis.isPresent()) {
-                if (!MyPlayer.isHealthBarVisible() &&
-                        vis.map(n -> n.interact("Attack")).orElse(false)) {
-                    cQuesterV2.status = "Attacking VISIBLE Ghast";
-                    Timer.waitCondition(MyPlayer::isHealthBarVisible, 3500, 5000);
-                }
-            } else if (inVis.isPresent() && filledPouch.isPresent()) {
-                if (GameState.isAnyItemSelected()) {
-                    Utils.unselectItem();
-                }
-                cQuesterV2.status = "Attacking Invisible Ghast";
-                if (filledPouch.map(p -> p.useOn(inVis.get())).orElse(false))
-                    Timer.waitCondition(MyPlayer::isHealthBarVisible, 3500, 5000);
-            }
-            /*if (!Combat.isUnderAttack() && invisible.length > 0) {
-                cQuesterV2.status = "Attacking Ghast";
-                if (AccurateMouse.click(Inventory.find(FILLED_DRUIDIC_POUCH)[0], "Use")) {
-                    if (DynamicClicking.clickRSNPC(invisible[0], "Use Druid pouch ->"))
-                        Timer.waitCondition(() -> Combat.isUnderAttack(), 12000, 15000);
-                }
-            } else if (!Combat.isUnderAttack() && visible.length > 0) {
-                if (CombatUtil.clickTarget(visible[0]))
-                    Timer.waitCondition(() -> Combat.isUnderAttack(), 12000, 15000);
-            }*/
+            if (!MyPlayer.isHealthBarVisible() &&
+                    vis.map(n -> n.interact("Attack")).orElse(false)) {
+                cQuesterV2.status = "Attacking Visible Ghast";
+                Timer.waitCondition(MyPlayer::isHealthBarVisible, 3500, 5000);
 
-            if (Combat.getHPRatio() < General.random(40, 65)) {
+            } else if (filledPouch.map(fp -> invis.map(fp::useOn).orElse(false)).orElse(false)) {
+                cQuesterV2.status = "Attacking Invisible Ghast";
+                Timer.waitCondition(MyPlayer::isHealthBarVisible, 3500, 5000);
+            }
+            if (MyPlayer.getCurrentHealthPercent() < General.random(40, 65)) {
                 cQuesterV2.status = "Eating";
                 General.println("[Debug]: " + cQuesterV2.status);
                 EatUtil.eatFood(true);
@@ -622,6 +587,8 @@ public class NatureSpirit implements QuestTask {
                 General.sleep(700, 3000);
             }
         }
+        //sleeps after breaking loop briefly
+        Utils.idleNormalAction(true);
 
     }
 
@@ -668,18 +635,10 @@ public class NatureSpirit implements QuestTask {
 
     @Override
     public void execute() {
-        if (!checkRequirements())
-            cQuesterV2.taskList.remove(this);
-/*
-        if (!Utils.checkGameSettings(GAME_SETTING)) {
-            safteyTimer.reset();
-            Utils.recordGameSetting(GAME_SETTING);
-        }
-        if (!safteyTimer.isRunning()) {
-            General.println("[Debug]: Script timed out after 8-10min");
+        if (!checkRequirements()) {
             cQuesterV2.taskList.remove(this);
             return;
-        } */
+        }
 
         if (Game.getSetting(307) == 0) {
             buyItems();
@@ -688,59 +647,43 @@ public class NatureSpirit implements QuestTask {
                 Utils.clanWarsReset();
 
             startQuest();
-        }
-        if (Game.getSetting(307) == 5 || Game.getSetting(307) == 10 || Game.getSetting(307) == 15) {
+
+        } else if (Game.getSetting(307) >= 5 && Game.getSetting(307) <= 15) {
             step2();
-        }
-        if (Game.getSetting(307) == 25 || Game.getSetting(307) == 30) {
+        } else if (Game.getSetting(307) == 25 || Game.getSetting(307) == 30) {
             step2b();
-        }
-        if (Game.getSetting(307) == 35) {
+        } else if (Game.getSetting(307) == 35) {
             getBlessedByDrezel();
             Utils.longSleep();
-        }
-        if (Game.getSetting(307) == 40 || Game.getSetting(307) == 45) {
+        } else if (Game.getSetting(307) == 40 || Game.getSetting(307) == 45) {
             getMushroom();
-        }
-        if (Game.getSetting(307) == 50) {
+        } else if (Game.getSetting(307) == 50) {
             step5();
-        }
-        if (Game.getSetting(307) == 55) {
+        } else if (Game.getSetting(307) == 55) {
             step5();
             step6();
             Utils.longSleep();
-        }
-        if (Game.getSetting(307) == 60) {
+        } else if (Game.getSetting(307) == 60) {
             enterGrotto();
-        }
-        if (Game.getSetting(307) == 65) { // for 65 you need to search the Grotto, then  it changes to 70 after he does a spell
+        } else if (Game.getSetting(307) == 65) { // for 65 you need to search the Grotto, then  it changes to 70 after he does a spell
             step8();
-        }
-        if (Game.getSetting(307) == 70) { // this step is getting your sickle blessed
+        } else if (Game.getSetting(307) == 70) { // this step is getting your sickle blessed
             step8();
-        }
-        if (Game.getSetting(307) == 75) {
+        } else if (Game.getSetting(307) == 75) {
             step9();
-        }
-        if (Game.getSetting(307) == 80) {
+        } else if (Game.getSetting(307) == 80) {
             getFungi();
-        }
-        if (Game.getSetting(307) == 85) {
+        } else if (Game.getSetting(307) == 85) {
             getFungi();
-        }
-        if (Game.getSetting(307) == 90) {
+        } else if (Game.getSetting(307) == 90) {
             fightGhast();
-        }
-        if (Game.getSetting(307) == 95) {
+        } else if (Game.getSetting(307) == 95) {
             fightGhast();
-        }
-        if (Game.getSetting(307) == 100) {
+        } else if (Game.getSetting(307) == 100) {
             fightGhast();
-        }
-        if (Game.getSetting(307) == 105) {
+        } else if (Game.getSetting(307) == 105) {
             finishQuest();
-        }
-        if (Game.getSetting(307) == 110) {
+        } else if (Game.getSetting(307) == 110) {
             if (Utils.closeQuestCompletionWindow())
                 NPCInteraction.waitForConversationWindow();
             if (NPCInteraction.isConversationWindowUp()) {
@@ -760,13 +703,14 @@ public class NatureSpirit implements QuestTask {
 
     @Override
     public boolean validate() {
-        return cQuesterV2.taskList.get(0).equals(this);
+        return cQuesterV2.taskList.size() > 0 &&
+                cQuesterV2.taskList.get(0).equals(this);
     }
 
 
     @Override
     public String questName() {
-        return "Nature Spirit";
+        return "Nature Spirit ( " + Game.getSetting(307) + ")";
     }
 
     @Override

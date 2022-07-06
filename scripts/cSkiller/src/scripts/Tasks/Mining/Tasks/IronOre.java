@@ -5,6 +5,7 @@ import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.input.Mouse;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
@@ -103,7 +104,7 @@ public class IronOre implements Task {
             cSkiller.status = "Dropping Rocks";
             List<InventoryItem> ore = Query.inventory().nameContains("ore")
                     .toList();
-            Inventory.drop(ore);
+            ItemUtil.drop(ore);
             Mouse.setSpeed(b);
             Utils.unselectItem();
         }
@@ -118,7 +119,7 @@ public class IronOre implements Task {
                 PathingUtil.movementIdle();
 
             if (ARDOUGNE_MINING_TILE.isVisible() && ARDOUGNE_MINING_TILE.click("Walk here"))
-               Waiting.waitUntil(1500, 200, ()-> ARDOUGNE_MINING_TILE.equals(MyPlayer.getTile()));
+                Waiting.waitUntil(1500, 200, () -> ARDOUGNE_MINING_TILE.equals(MyPlayer.getTile()));
 
 
         } else {
@@ -157,9 +158,11 @@ public class IronOre implements Task {
         }
         if (Inventory.isFull()) {
             int b = Mouse.getSpeed();
-            Mouse.setSpeed(General.random(200, 250));
+            Mouse.setSpeed(TribotRandom.uniform(200, 250));
             cSkiller.status = "Dropping Rocks";
-            Inventory.drop(ItemID.IRON_ORE, UNCUT_EMERALD, ItemID.UNCUT_SAPPHIRE, ItemID.UNCUT_RUBY);
+            List<InventoryItem> ore = Query.inventory().idEquals(ItemID.IRON_ORE, UNCUT_EMERALD, ItemID.UNCUT_SAPPHIRE, ItemID.UNCUT_RUBY)
+                    .toList();
+            ItemUtil.drop(ore);
             Mouse.setSpeed(b);
             Utils.unselectItem();
         }

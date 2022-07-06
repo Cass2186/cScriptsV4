@@ -5,11 +5,16 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api.input.Mouse;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.GameTab;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.DruidicRitual.DruidicRitual;
@@ -315,11 +320,14 @@ public class FairyTalePt1 implements QuestTask {
         }
         if (Inventory.find(DRAYNOR_SKULL).length < 1) {
             cQuesterV2.status = "Getting Draynor skull";
-            PathingUtil.walkToArea(GRAVE_AREA);
-            PathingUtil.walkToTile(new RSTile(3106, 3382, 0));
-            if (Inventory.find(SPADE).length > 0) {
-                if (AccurateMouse.click(Inventory.find(SPADE)[0], "Dig"))
-                    Timer.waitCondition(() -> Inventory.find(DRAYNOR_SKULL).length > 0, 10000, 12000);
+            if (PathingUtil.walkToArea(GRAVE_AREA)) {
+                WorldTile t = new WorldTile(3106, 3382, 0);
+                if (t.distance() < 20 && t.interact("Walk here")) {
+                    PathingUtil.movementIdle();
+                }
+            }
+            if (Utils.clickInventoryItem(ItemID.SPADE, "Dig")) {
+                Timer.waitCondition(() -> Inventory.find(DRAYNOR_SKULL).length > 0, 10000, 12000);
             }
         }
     }
@@ -339,96 +347,33 @@ public class FairyTalePt1 implements QuestTask {
         cQuesterV2.status = "Going to Dark Wizards";
         PathingUtil.walkToArea(MALIGNUS_AREA);
         if (NpcChat.talkToNPC(MALIGNUS)) {
-            NPCInteraction.waitForConversationWindow();
-            NPCInteraction.handleConversation("I need help with fighting a Tanglefoot.");
-            NPCInteraction.handleConversation();
-        }
-    }
-
-
-    private static int[] QUEST_BOX_VISIBLE = {399, 6};
-
-    public static boolean isQuestNameVisible(String questName) {
-        RSInterface questBox = Interfaces.get(QUEST_BOX_VISIBLE[0], QUEST_BOX_VISIBLE[1]);
-        RSInterface questListParent = Interfaces.get(399, 7);
-
-        if (questBox != null && questListParent != null) {
-            RSInterface[] quests = questListParent.getChildren();
-            RSInterface questInter = null;
-            if (quests != null) {
-                for (RSInterface q : quests) {
-                    String name = q.getComponentName();
-
-                    if (name != null) {
-                        String stripped = General.stripFormatting(name);
-
-                        if (stripped.toLowerCase().contains(questName.toLowerCase())) {
-                            return questBox.getAbsoluteBounds().contains(q.getAbsolutePosition());
-                        }
-
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private static int[] SCROLL_BAR_WIDGET = {399, 5, 1};
-
-    private static void moveMouseToQuestBox() {
-        RSInterfaceChild box = Interfaces.get(QUEST_BOX_VISIBLE[0], QUEST_BOX_VISIBLE[1]);
-        if (box != null && !box.getAbsoluteBounds().contains(Mouse.getPos())){
-            Mouse.moveBox(box.getAbsoluteBounds());
+            NpcChat.handle(true, "I need help with fighting a Tanglefoot.");
         }
     }
 
     public static void openQuestGuide() {
-        if (Interfaces.get(119, 180) == null) {
-            General.println("[Debug]: Opening quest guide");
-            GameTab.open(GameTab.TABS.QUESTS);
-        }
-        for (int i = 0; i < 3; i++) {
-            if (GameTab.getOpen() == GameTab.TABS.QUESTS) {
-                int Y = General.random(306, 312); //this is teh range for the scroll bar
+        for (int i = 0; i < 5; i++) {
+            if (GameState.getVarbit(8168) != 1
+                    && org.tribot.script.sdk.GameTab.QUESTS.open()
+                    && Query.widgets().actionContains("Quest List")
+                    .findFirst().map(Widget::click).orElse(false))
+                Waiting.waitUntil(2500, 500, () -> GameState.getVarbit(8168) == 1);
+
+            if (org.tribot.script.sdk.GameTab.QUESTS.open()) {
                 Optional<Widget> fairytale = Query.widgets().inIndexPath(399, 7)
                         .nameContains("Fairytale I").findFirst();
-                if (isQuestNameVisible("Fairytale I") && fairytale.map(f -> f.click()).orElse(false)) {
-                    Log.debug("Clicking fairytale");
-                    Timer.waitCondition(() -> Interfaces.get(119) != null, 5000, 7000);
-                    General.sleep(General.random(500, 2000));
-                    return;
-                }
-                if (Interfaces.get(399, 7) != null
-                        && !Interfaces.get(399, 7).getAbsoluteBounds().contains(Mouse.getPos())) {
-                    moveMouseToQuestBox();
-
-                    while (Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]) != null &&
-                            Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]).getAbsolutePosition().getY() < Y) {
-                        moveMouseToQuestBox();
-
-                        Mouse.scroll(false);
-                        General.sleep(General.random(200, 500));
-                        if (isQuestNameVisible("Fairytale I"))
-                            break;
+                if (fairytale.map(f -> f.scrollTo() &&
+                        f.click()).orElse(false)) {
+                    Log.info("Clicking fairytale quest widget");
+                    if (Waiting.waitUntil(5000, 900, () ->
+                            Widgets.isVisible(119))) {
+                        Utils.idleNormalAction(true);
+                        return;
                     }
-                    while (Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]) != null
-                            && Interfaces.get(SCROLL_BAR_WIDGET[0], SCROLL_BAR_WIDGET[1], SCROLL_BAR_WIDGET[2]).getAbsolutePosition().getY() > Y) {
-                        moveMouseToQuestBox();
-                        Mouse.scroll(true);
-                        General.sleep(General.random(200, 500));
-                        if (isQuestNameVisible("Fairytale I"))
-                            break;
-                    }
+                } else {
+                    Log.warn("Failed to scroll and click, waiting briefly");
+                    Waiting.waitNormal(300, 20);
                 }
-            }
-            General.sleep(300, 550); //need this after scrolling
-            Optional<Widget> fairytale = Query.widgets().inIndexPath(399, 7)
-                    .nameContains("Fairytale I").findFirst();
-            Log.info("[Debug]: Clicking quest");
-            if (isQuestNameVisible("Fairytale I") && fairytale.map(f -> f.click()).orElse(false)) {
-                Timer.waitCondition(() -> Interfaces.get(119) != null, 5000, 7000);
-                General.sleep(General.random(500, 2000));
-                return;
             }
         }
     }
@@ -1154,9 +1099,12 @@ public class FairyTalePt1 implements QuestTask {
             cQuesterV2.status = "Waiting for crops to grow";
             General.println("[Debug]: " + cQuesterV2.status + " (mouse off screen)");
             Mouse.leaveGame(true);
-            Timer.abc2WaitCondition(() -> Utils.getVarBitValue(PART_2_VARBIT) == 10, 120000, 180000);
+            Timer.abc2WaitCondition(() -> Utils.getVarBitValue(PART_2_VARBIT) == 10,
+                    120000, 170000);
             Mouse.pickupMouse();
             Mouse.randomRightClick();
+            if (MyPlayer.getTile().translate(-1, -1).interact("Walk here"))
+                PathingUtil.movementIdle();
         } else if (Utils.getVarBitValue(PART_2_VARBIT) == 10) {
             talkToMartin("I suppose I'd better go and see what the problem is then.");
         } else if (Utils.getVarBitValue(PART_2_VARBIT) == 20) {

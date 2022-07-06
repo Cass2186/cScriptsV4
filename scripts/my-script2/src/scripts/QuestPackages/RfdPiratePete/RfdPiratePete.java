@@ -103,17 +103,17 @@ public class RfdPiratePete implements QuestTask {
     );
 
     VarbitRequirement walkingUnderwater = new VarbitRequirement(1871, 1);
-    RSArea  underwater = new RSArea(new RSTile(2944, 9472, 1), new RSTile(3007, 9534, 1));
+    RSArea underwater = new RSArea(new RSTile(2944, 9472, 1), new RSTile(3007, 9534, 1));
 
     VarbitRequirement canGrindCod = new VarbitRequirement(1877, 1);
 
     Conditions askedCookOptions = new Conditions(
-			new VarbitRequirement(1873, 1),
-			new VarbitRequirement(1876, 1),
-			new VarbitRequirement(1877, 1));
+            new VarbitRequirement(1873, 1),
+            new VarbitRequirement(1876, 1),
+            new VarbitRequirement(1877, 1));
 
     AreaRequirement inUnderWater = new AreaRequirement(underwater);
-    VarbitRequirement  hasEnoughRocks = new VarbitRequirement(1869, 5);
+    VarbitRequirement hasEnoughRocks = new VarbitRequirement(1869, 5);
 
 
     public void checkLevel() {
@@ -174,7 +174,7 @@ public class RfdPiratePete implements QuestTask {
             BankManager.withdraw(1, true, ItemID.ADAMANT_SCIMITAR);
             Utils.equipItem(ItemID.ADAMANT_SCIMITAR);
         }
-       // BankManager.withdraw(1, true, BankManager.STAMINA_POTION[0]);
+        // BankManager.withdraw(1, true, BankManager.STAMINA_POTION[0]);
         BankManager.close(true);
     }
 
@@ -213,8 +213,8 @@ public class RfdPiratePete implements QuestTask {
         if (NpcChat.talkToNPC("Cook")) {
             Log.info("In ChatScreen");
             NpcChat.handle(true, "Protecting the Pirate");
-           // NpcChat.handle(true);
-            ChatScreen.handle(()-> ChatScreen.isSelectOptionOpen(), "Where do I get Ground Cod?");
+            // NpcChat.handle(true);
+            ChatScreen.handle(() -> ChatScreen.isSelectOptionOpen(), "Where do I get Ground Cod?");
             //NPCInteraction.handleConversation("Where do I get Ground Cod?");
             Log.info("Done ChatScreen");
             NPCInteraction.handleConversation("Where do I get Ground Cod?");
@@ -250,9 +250,9 @@ public class RfdPiratePete implements QuestTask {
 
     public void equipSwimGear() {
         if (Utils.equipItem(fishbowlHelmet))
-            Waiting.waitUntil(2500, 750, ()-> Equipment.contains(fishbowlHelmet));
+            Waiting.waitUntil(2500, 750, () -> Equipment.contains(fishbowlHelmet));
         if (Utils.equipItem(divingApparatus))
-            Waiting.waitUntil(2500, 750, ()-> Equipment.contains(divingApparatus));
+            Waiting.waitUntil(2500, 750, () -> Equipment.contains(divingApparatus));
     }
 
     public void goDiving() {
@@ -548,11 +548,15 @@ public class RfdPiratePete implements QuestTask {
         if (Inventory.find(7529).length < 1
                 && Inventory.find(groundCod).length < 1 && Inventory.find(groundKelp).length < 1) {
             if (Utils.useItemOnItem(kelp, pestleAndMotar))
-                General.sleep(General.random(800, 1800));
+                General.sleep(1200, 1800);
             if (Utils.useItemOnItem(ItemID.RAW_COD, pestleAndMotar))
-                General.sleep(General.random(800, 1800));
-            if (Utils.useItemOnItem(knife, bread))
-                General.sleep(General.random(800, 1800));
+                General.sleep(1200, 1800);
+            if (Utils.useItemOnItem(knife, bread) &&
+                    Waiting.waitUntil(3000, 500, MakeScreen::isOpen)) {
+                if (MakeScreen.make(ItemID.BREADCRUMBS)) {
+                    Utils.idleNormalAction(true);
+                }
+            }
             if (Utils.useItemOnItem(crabMeat, pestleAndMotar))
                 General.sleep(General.random(1600, 3800));
 
@@ -598,7 +602,7 @@ public class RfdPiratePete implements QuestTask {
             PathingUtil.walkToArea(cooksKitchenArea);
         }
         if (NpcChat.talkToNPC("Cook")) {
-            NpcChat.handle(true,"Protecting the Pirate" ,
+            NpcChat.handle(true, "Protecting the Pirate",
                     "What do I do with all of it?");
         }
     }

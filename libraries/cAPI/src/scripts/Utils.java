@@ -1409,8 +1409,12 @@ public class Utils {
 
     }
 
-    public static boolean clickInventoryItem(int itemID) {
-        return QueryUtils.getItem(itemID).map(InventoryItem::click).orElse(false);
+    public static boolean clickInventoryItem(int itemId) {
+        return QueryUtils.getItem(itemId).map(InventoryItem::click).orElse(false);
+    }
+
+    public static boolean clickInventoryItem(int itemId, String string) {
+        return QueryUtils.getItem(itemId).map(i-> i.click(string)).orElse(false);
     }
 
 
@@ -1434,7 +1438,8 @@ public class Utils {
 
 
     public static Optional<Npc> getTargetEntity() {
-        Optional<Npc> interactable = Query.npcs().isMyPlayerInteractingWith()
+        Optional<Npc> interactable = Query.npcs()
+                .isMyPlayerInteractingWith()
                 .isInteractingWithMe()
                 .findBestInteractable();
         return interactable.isPresent() ? interactable : Query.npcs()
@@ -2000,4 +2005,15 @@ public class Utils {
         return false;
     }
 
+    public static void animationIdle(){
+        if (Waiting.waitUntil(4000, 500, MyPlayer::isAnimating)){
+            Waiting.waitUntil(6000, 500, ()-> !MyPlayer.isAnimating());
+        }
+    }
+
+    public static void animationIdle(int timeout){
+        if (Waiting.waitUntil(4000, 500, MyPlayer::isAnimating)){
+            Waiting.waitUntil(timeout, 500, ()-> !MyPlayer.isAnimating());
+        }
+    }
 }

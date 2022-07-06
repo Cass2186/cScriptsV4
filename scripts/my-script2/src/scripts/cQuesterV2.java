@@ -761,7 +761,9 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             taskList.add(SkippyAndTheMogres.get());
         }
         else if (arg.toLowerCase().contains("rumdeal")) {
-            General.println("[Args]: Added Rum deal");
+            General.println("[Args]: Added Rum deal, Big chompy and Zogre flesh eaters");
+            taskList.add(BigChompyBirdHunting.get());
+            taskList.add(ZogreFleshEaters.get());
             taskList.add(RumDeal.get());
         }
         else if (arg.toLowerCase().contains("templeoftheeye")) {

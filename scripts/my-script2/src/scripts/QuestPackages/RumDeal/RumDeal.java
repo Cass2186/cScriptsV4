@@ -49,12 +49,11 @@ public class RumDeal implements QuestTask {
             Arrays.asList(
                     new ItemReq(ItemID.RAKE, 1),
                     new ItemReq(ItemID.SEED_DIBBER, 1),
-                    new ItemReq(ItemID.SHARK, 20, 1),
+                    new ItemReq(ItemID.SHARK, 15, 1),
                     new ItemReq(ItemID.BUCKET, 1),
                     new ItemReq(ItemID.FENKENSTRAINS_CASTLE_TELEPORT, 5, 1),
                     new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
                     new ItemReq(ItemID.STAMINA_POTION[0], 3, 0),
-                    new ItemReq(ItemID.RING_OF_DUELING[0], 1, 0),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
     ));
@@ -567,8 +566,10 @@ public class RumDeal implements QuestTask {
 
         int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId());
         Log.info("[Debug]: Rum deal gameSetting is " + gameSetting);
-        //if (gameSetting == 0)
-        //    buyitems.buyItems();
+        if (gameSetting == 0 && !initialItemReqs.check()) {
+            buyitems.buyItems();
+            initialItemReqs.withdrawItems();
+        }
         if (!getSlayerGloves()) {
             Log.info("Failed to get slayer gloves");
             Waiting.waitNormal(950, 50);
