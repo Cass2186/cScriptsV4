@@ -14,10 +14,13 @@ import org.tribot.api2007.Prayer;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.tasks.Amount;
 import org.tribot.script.sdk.tasks.BankTask;
 import org.tribot.script.sdk.tasks.BankTaskError;
 import org.tribot.script.sdk.tasks.EquipmentReq;
+import org.tribot.script.sdk.types.GameObject;
+import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
@@ -78,11 +81,11 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                     new GEItem(ItemID.MIND_RUNE, 10, 50),
                     new GEItem(ItemID.EARTH_RUNE, 10, 50),
                     new GEItem(ItemID.RUNE_AXE, 1, 50),
-                    new GEItem(ItemID.RUNE_PICKAXE,1, 50),
-                    new GEItem(ItemID.MACHETE,1, 500),
-                    new GEItem(ItemID.COSMIC_RUNE,10, 50),
-                    new GEItem(ItemID.SHARK,20, 50),
-                    new GEItem(ItemID.SUPER_COMBAT_POTION4,1, 50),
+                    new GEItem(ItemID.RUNE_PICKAXE, 1, 50),
+                    new GEItem(ItemID.MACHETE, 1, 500),
+                    new GEItem(ItemID.COSMIC_RUNE, 10, 50),
+                    new GEItem(ItemID.SHARK, 20, 50),
+                    new GEItem(ItemID.SUPER_COMBAT_POTION4, 1, 50),
                     new GEItem(ItemID.PRAYER_POTION[0], 6, 50),
                     new GEItem(ItemID.ARDOUGNE_TELEPORT, 20, 50),
                     new GEItem(ItemID.STAMINA_POTION[0], 8, 15),
@@ -547,7 +550,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         ConditionalStep startQuest = new ConditionalStep(talkToGuard);
         startQuest.addStep(inGuild, talkToRadimus);
         startQuest.execute();
-        Waiting.waitUntil(5000, 750, ()-> inGuild.check());
+        Waiting.waitUntil(5000, 750, () -> inGuild.check());
     }
 
 
@@ -788,7 +791,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         if (!inFire.check()) {
             cQuesterV2.status = "Entering fire";
             useBowlOnFireWall.useItemOnObject();
-            return Waiting.waitUntil(3500, 1250, ()-> inFire.check());
+            return Waiting.waitUntil(3500, 1250, () -> inFire.check());
         }
         return inFire.check();
     }
@@ -821,7 +824,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         cQuesterV2.status = "Adding water to seeds";
         useBowlOnSeeds.setHandleChat(true);
         useBowlOnSeeds.execute();
-        if (ChatScreen.isOpen()){
+        if (ChatScreen.isOpen()) {
             ChatScreen.handle();
         }
         if (InterfaceUtil.click(11, 4))
@@ -883,7 +886,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             }
             cQuesterV2.status = "Banking";
             Optional<BankTaskError> execute = tsk.execute();
-            if (execute.isPresent()){
+            if (execute.isPresent()) {
                 Log.warn(execute.toString());
                 ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
                         Arrays.asList(
@@ -893,9 +896,9 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                                 new GEItem(ItemID.ROPE, 2, 500),
                                 new GEItem(ItemID.VIAL_OF_WATER, 1, 500),
                                 new GEItem(ItemID.RUNE_AXE, 1, 50),
-                                new GEItem(ItemID.RUNE_PICKAXE,1, 50),
-                                new GEItem(ItemID.COSMIC_RUNE,10, 50),
-                                new GEItem(ItemID.SHARK,10, 50),
+                                new GEItem(ItemID.RUNE_PICKAXE, 1, 50),
+                                new GEItem(ItemID.COSMIC_RUNE, 10, 50),
+                                new GEItem(ItemID.SHARK, 10, 50),
                                 new GEItem(ItemID.PRAYER_POTION[0], 4, 50),
                                 new GEItem(ItemID.ARDOUGNE_TELEPORT, 20, 50),
                                 new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
@@ -961,7 +964,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             .addInvItem(ItemID.MACHETE, Amount.of(1))
             .addInvItem(ItemID.WATER_RUNE, Amount.of(60))
             .addInvItem(ItemID.LOCKPICK, Amount.of(2))
-           // .addInvItem(ItemID.BRAVERY_POTION, Amount.of(1))
+            // .addInvItem(ItemID.BRAVERY_POTION, Amount.of(1))
             .addInvItem(ItemID.STAMINA_POTION[0], Amount.of(2))
             .addInvItem(ItemID.PRAYER_POTION[0], Amount.of(3))
             .addInvItem(ItemID.ROPE, Amount.of(1))
@@ -1117,24 +1120,48 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
 
 
     public void climbDownWinch() {
-        if (inCaveRoom6.check()) {
-            cQuesterV2.status = "Climbing down Winch";
-            if (rope.check()) {
-                useRopeOnWinch.setUseLocalNav(true);
-                useRopeOnWinch.useItemOnObject();
-                Timer.waitCondition(() -> Objects.findNearest(10, 2935).length == 1, 5000, 7000);
-            }
-            if (Objects.findNearest(10, 2935).length == 1) {
-                drinkBraveryPotion.execute();
-                NPCInteraction.waitForConversationWindow();
-                ChatScreen.handle("Yes, I'll bravely drink the bravery potion.",
-                        "Yes, I'll shimmy down the rope into possible doom.");
+        // if we don't loop it thinks its out of bravery and leaves
+        for (int i =0; i <3; i++) {
+            if (inCaveRoom6.check()) {
+                cQuesterV2.status = "Climbing down Winch";
+                if (rope.check()) {
+                    if (Utils.useItemOnObject(ItemID.ROPE, "Winch")){
+                        Waiting.waitUntil(4500, 500, ()->
+                                Inventory.find(ItemID.ROPE).length ==0);
+                    }
+                   // useRopeOnWinch.setUseLocalNav(true);
+                    //useRopeOnWinch.useItemOnObject();
+                   // Timer.waitCondition(() -> Objects.findNearest(10, 2935).length == 1, 5000, 7000);
+                }
+                if (Objects.findNearest(10, 2935).length == 1) {
+                    drinkBraveryPotion.execute();
+                    NPCInteraction.waitForConversationWindow();
+                    ChatScreen.handle("Yes, I'll bravely drink the bravery potion.",
+                            "Yes, I'll shimmy down the rope into possible doom.");
 
+                    Optional<GameObject> searchable = Query.gameObjects()
+                            .actionContains("Search")
+                            .nameContains("Winch").findClosest();
+                    if (searchable.map(s->s.interact("Search")).orElse(false)){
+                        Waiting.waitUntil(4500, 500, ()-> Query.gameObjects()
+                                .actionContains("Climb-down")
+                                .nameContains("Winch").isAny());
 
-                climbDownWinch.setUseLocalNav(true);
-                climbDownWinch.execute();
-                Timer.waitCondition(() -> !inCaveRoom6.check(), 8000, 9000);
+                    }
+
+                    Optional<GameObject> closest = Query.gameObjects()
+                            .actionContains("Climb-down")
+                            .nameContains("Winch").findClosest();
+                    if (closest.map(c->c.interact("Climb-down")).orElse(false)){
+                        NpcChat.handle(true, "Yes, I'll shimmy down the rope into possible doom.");
+                    }
+                    //climbDownWinch.setUseLocalNav(true);
+                  //  climbDownWinch.execute();
+                    if(Timer.waitCondition(() -> !inCaveRoom6.check(), 8000, 9000))
+                        break;
+                }
             }
+            Waiting.waitNormal(1000,50);
         }
     }
 
@@ -1337,9 +1364,9 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             makeBowl.execute();
 
             if (ChatScreen.isOpen()) {
-               NpcChat.handle("Yes.");
-               Waiting.waitUntil(6500, 705,
-                       ()->      org.tribot.script.sdk.Inventory.contains(ItemID.GOLD_BOWL) );
+                NpcChat.handle("Yes.");
+                Waiting.waitUntil(6500, 705,
+                        () -> org.tribot.script.sdk.Inventory.contains(ItemID.GOLD_BOWL));
             }
         }
         return goldBowl.check();
@@ -1424,7 +1451,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         enterMossyRockToSource.addDialogStep("Yes, I'll crawl through, I'm very athletic.");
         enterBookcaseToSource.addDialogStep("Yes please!");
         enterGate2ToSource.addDialogStep("Yes, I'm very strong, I'll force them open.");
-        searchMarkedWallToSource.addDialogStep("Investigate the outline of the door.", "Yes, I'll go through!");
+        searchMarkedWallToSource.addDialogStep("Yes, I'll read it.", "Investigate the outline of the door.", "Yes, I'll go through!");
 
         //    climbDownWinch.addAlternateObjects(ObjectID.WINCH_2935);
         climbDownWinch.addDialogStep("Yes, I'll shimmy down the rope into possible doom.");
@@ -1487,56 +1514,71 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
         }
         if (SECOND_AREA_BEFORE_FIRST_GATE.contains(Player.getPosition())) {
             cQuesterV2.status = "Passing gate 1";
-            enterGate1.setUseLocalNav(true);
-            enterGate1.setHandleChat(true);
-            enterGate1.execute();
-            NPCInteraction.waitForConversationWindow();
-            if (ChatScreen.isOpen())
-                ChatScreen.handle();
-            General.sleep(1000, 2000);
+            Optional<GameObject> gate = QueryUtils.getObject("Ancient Gate");
+            if (gate.map(g->g.getTile().getY() < MyPlayer.getTile().getY() &&
+                    g.interact("Search")).orElse(false)) {
+                Log.info("Interacted with gate");
+                NpcChat.handle(true);
+                NpcChat.handle(true); //need the second one too
+                General.sleep(2000, 3000);
+            }
         }
         if (SECOND_AREA_BEFORE_SECOND_GATE.contains(Player.getPosition())) {
-            cQuesterV2.status = "Passing rocks";
-            smashRocks.setUseLocalNav(true);
-            smashRocks.execute();
-            Timer.waitCondition(() -> Player.getAnimation() != -1, 1000, 1750);
+            cQuesterV2.status = "Passing rock 1";
+            Optional<GameObject> rock = Query.gameObjects()
+                    .nameContains("Boulder")
+                    .filter(g->g.getTile().getY() < MyPlayer.getTile().getY())
+                    .findClosest();
+            if (rock.map(r->r.interact("Smash-to-bits")).orElse(false)){
+                WorldTile t = MyPlayer.getTile();
+                if (Timer.waitCondition(() -> Player.getAnimation() != -1, 1000, 1750))
+                    Timer.waitCondition(() -> MyPlayer.getTile().getY() <= (t.getY() -2),
+                            4500, 5000);
+            }
+
         }
         if (SECOND_AREA_BEFORE_THIRD_GATE.contains(Player.getPosition())) {
-            cQuesterV2.status = "Passing gate 2";
-            smashRocks2.setUseLocalNav(true);
-            smashRocks2.execute();
-            for (int i = 0; i < 3; i++) {
+            cQuesterV2.status = "Passing rock 2";
+            Optional<GameObject> rock = Query.gameObjects()
+                    .nameContains("Boulder")
+                    .filter(g->g.getTile().getY() < MyPlayer.getTile().getY())
+                    .findClosest();
+            if (rock.map(r->r.interact("Smash-to-bits")).orElse(false)){
+                WorldTile t = MyPlayer.getTile();
                 if (Timer.waitCondition(() -> Player.getAnimation() != -1, 1000, 1750))
-                    Timer.waitCondition(() -> SECOND_AREA_BEFORE_FOURTH_GATE.contains(Player.getPosition()), 2500, 4000);
-                if (SECOND_AREA_BEFORE_FOURTH_GATE.contains(Player.getPosition()))
-                    break;
+                    Timer.waitCondition(() -> MyPlayer.getTile().getY() <= (t.getY() -2),
+                            4500, 5000);
             }
         }
         if (SECOND_AREA_BEFORE_FOURTH_GATE.contains(Player.getPosition())) {
             cQuesterV2.status = "Passing rocks 3";
-            for (int i = 0; i < 3; i++) {
-                General.println("smashing rock");
-                smashRocks3.setUseLocalNav(true);
-                smashRocks3.execute();
+            Optional<GameObject> rock = Query.gameObjects()
+                    .nameContains("Boulder")
+                    .filter(g->g.getTile().getY() < MyPlayer.getTile().getY())
+                    .findClosest();
+            if (rock.map(r->r.interact("Smash-to-bits")).orElse(false)){
                 if (Timer.waitCondition(() -> Player.getAnimation() != -1, 1000, 1750))
-                    Timer.waitCondition(() -> SECOND_AREA_BEFORE_FIFTH_GATE.contains(Player.getPosition()), 2500, 4000);
-                if (SECOND_AREA_BEFORE_FIFTH_GATE.contains(Player.getPosition()))
-                    break;
-            }
+                    Timer.waitCondition(() -> SECOND_AREA_BEFORE_FIFTH_GATE.contains(Player.getPosition()),
+                           3500, 4000);
 
+            }
         }
         if (SECOND_AREA_BEFORE_FIFTH_GATE.contains(Player.getPosition())) {
             cQuesterV2.status = "Passing rocks 3";
-            enterGate2.setUseLocalNav(true);
-            enterGate2.setHandleChat(true);
-            enterGate2.addDialogStep("Yes, I'm very strong, I'll force them open.");
-            enterGate2.execute();
+            Optional<GameObject> gate = QueryUtils.getObject("Ancient Gate");
+            if (gate.map(g->g.getTile().getY() < MyPlayer.getTile().getY() &&
+                    g.interact("Open")).orElse(false)){
+                Log.info("Interacted with gate");
+                NpcChat.handle(true ,"Yes, I'm very strong, I'll force them open.");
+                General.sleep(2000, 3000);
+            }
         } else {//if (THIRD_AREA_PT1.contains(Player.getPosition())){
             if (inCaveRoom4.check()) {
                 cQuesterV2.status = "Searching marked wall";
-                if (JUST_AFTER_GATE_AREA.contains(Player.getPosition()) &&
-                        PathingUtil.localNavigation(new RSTile(2804, 9287, 0))) {
-                    PathingUtil.movementIdle();
+                if (JUST_AFTER_GATE_AREA.contains(Player.getPosition())) {
+                    Log.info("Walking to jagged wall");
+                    if (Walking.blindWalkTo(new RSTile(2803, 9284, 0)))
+                        PathingUtil.movementIdle();
                     General.sleep(4000, 5000);
                 }
                 if (THIRD_AREA_PT1.contains(Player.getPosition())) {
@@ -1546,8 +1588,18 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                 }
                 if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 10)
                     return;
-                searchMarkedWallToSource.setHandleChat(true);
-                searchMarkedWallToSource.execute();
+
+                cQuesterV2.status = "Searching Marked Wall";
+                Optional<GameObject> wall = Query.gameObjects()
+                        .nameContains("Marked wall")
+                        .actionContains("Search")
+                        .findClosest();
+                if (wall.map(r->r.interact("Search")).orElse(false)) {
+                    Log.info("Serached wall");
+                    NpcChat.handle(true, "Yes, I'll read it.");
+                }
+               // searchMarkedWallToSource.setHandleChat(true);
+                //searchMarkedWallToSource.execute();
             }
         }
         Inventory.drop(1480); //rocks
@@ -1562,8 +1614,8 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             General.println("[Debug]: Area contaims player");
         if (area.contains(Player.getPosition()) &&
                 Utils.clickObject(pred, "Climb-over")) {
-            if (Timer.waitCondition(() -> Player.isMoving(), 2000, 3000)) {
-                Timer.waitCondition(() ->ChatScreen.isOpen(), 8000, 10000);
+            if (Timer.waitCondition(MyPlayer::isMoving, 2000, 3000)) {
+                Timer.waitCondition(ChatScreen::isOpen, 9000, 11000);
                 ChatScreen.handle("Yes, I can think of nothing more exciting!",
                         "Yes, I want to climb over the rocks.");
                 Timer.waitCondition(() -> !area.contains(Player.getPosition()), 8000, 10000);
@@ -1804,8 +1856,8 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                     spinBull();
                     talkToGujuoAgain.execute();
                 } else if (new Conditions(inCaves, talkedToUngadulu).check()) {
-                    cQuesterV2.status = "Leaveing cave";
-                    Log.debug("Leaveing cave");
+                    cQuesterV2.status = "Leaving cave";
+                    Log.debug("Leaving cave");
                     leaveCave.execute();
                 } else if (!inCaves.check()) {
                     cQuesterV2.status = "Entering Mossy Rock";
@@ -1824,6 +1876,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
 
             } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 8) {
                 makeGoldBowlStep();
+
                 if (goldBowl.check()) {
                     cQuesterV2.status = "Blessing bowl";
                     if (LegendsUtils.enterForest()) {
@@ -1895,7 +1948,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                     }
                 }
             }
-            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 11) {
+            else   if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 11) {
                 if (goldBowlFull.check() && bindingBook.check()) {
                     if (inCaveRoom5.check() && LegendsUtils.enterForest()) {
                         if (inKharazi.check()) {
@@ -1908,13 +1961,13 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
 
             }
 
-            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 12) {
+          else  if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 12) {
                 // after killing demon in fire circle
                 if (!germinatedSeeds.check() && !yommiSeeds.check())
                     talkToUngaduluAfterFight();
                 addWaterToSeeds();
             }
-            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 13) {
+            else  if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 13) {
                 if (inFire.check() && Utils.clickObject("Fire Wall", "Touch", true)) {
                     Timer.waitCondition(() -> !inFire.check(), 4000, 6000);
                 }
@@ -1922,14 +1975,14 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                 plantSeeds();
             }
 
-            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
+            else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 14) {
                 plantSeeds();
 
                 if (inKharazi.check() && spinBull())
                     talkToGujuoAfterSeeds.execute();
             }
 
-            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 15) {
+            else  if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 15) {
                 if (!WHOLE_CAVE_AREA_2.contains(Player.getPosition())) {
                     bank(bankTaskStep15);
                     getArdrigal();
@@ -1942,7 +1995,7 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
                     climbDownWinch();
                 }
             }
-            if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 16) {
+            else  if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 16) {
                 walkDownPath();
                 killAll();
                 useLumpOnFurnace();
@@ -2065,8 +2118,10 @@ public class LegendsQuest implements QuestTask, InterfaceListener {
             } else if (GameState.getSetting(LegendsUtils.LEGENDS_GAME_SETTING) == 75) {
                 // Done Quest, close window
             }
-            Waiting.waitNormal(200, 20);
+            Waiting.waitNormal(400, 20);
         }
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
     }
 
     @Override

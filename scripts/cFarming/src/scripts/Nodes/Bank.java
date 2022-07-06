@@ -281,6 +281,7 @@ public class Bank implements Task {
     public void execute() {
         Vars.get().status = "Banking";
         if (Vars.get().doingTrees) {
+            Log.info("Tree bank");
             getTreeItems();
         } else if (Vars.get().doingFruitTrees) {
             fruitTreeInvSetup(Vars.get().fruitTreeId);

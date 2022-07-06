@@ -9,19 +9,19 @@ import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSObjectDefinition;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.LocalTile;
 import scripts.NpcChat;
 import scripts.PathingUtil;
 import scripts.Requirements.Requirement;
 import scripts.Timer;
 import scripts.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
-public class UseItemOnObjectStep extends QuestStep{
+public class UseItemOnObjectStep extends QuestStep {
 
     RSTile tile;
     int ItemID;
@@ -59,6 +59,7 @@ public class UseItemOnObjectStep extends QuestStep{
         this.waitCond = Inventory.find(this.ItemID).length == 0;
         this.handleChat = false;
     }
+
     public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, Requirement... requirements) {
         this.ItemID = ItemID;
         this.objectId = objectId;
@@ -72,6 +73,7 @@ public class UseItemOnObjectStep extends QuestStep{
 
         this.requirements.addAll(Arrays.asList(requirements));
     }
+
     public UseItemOnObjectStep(int ItemID, int objectId, RSTile tile, String print) {
         this.ItemID = ItemID;
         this.objectId = objectId;
@@ -150,26 +152,31 @@ public class UseItemOnObjectStep extends QuestStep{
             General.println("[UseItemOnObjectStep]: We failed a requirement to execute this NPCStep");
             return false;
         }
-        if (this.print != null){
-            General.println("[UseItemOnObjStep]: " + this.print);
+        if (this.print != null) {
+            Log.info("[UseItemOnObjStep]: " + this.print);
         }
         if (Player.getPosition().distanceTo(this.tile) > this.tileRadius) {
-            General.println("[Debug]: Moving to object");
-            if (!PathingUtil.localNav(Utils.getLocalTileFromRSTile(this.tile)))
+            Optional<LocalTile> bestInteractable = Query.tiles()
+                    .inArea(Area.fromRadius(Utils.getLocalTileFromRSTile(this.tile), 1))
+                    .filter(t -> t.isWalkable())
+                    .findClosest();
+            Log.info("[UseItemOnObjStep]:  Moving to object");
+            if (!bestInteractable.map(PathingUtil::localNav).orElse(false) &&
+                !PathingUtil.localNavigation(this.tile))
                 PathingUtil.walkToTile(this.tile, this.tileRadius, false);
             else
                 PathingUtil.movementIdle();
         }
         if (this.objectId != -1 && Utils.useItemOnObject(this.ItemID, this.objectId)) {
             if (this.handleChat) {
-                General.println("[Debug]: Waiting for chat to handle");
+                Log.info("[UseItemOnObjStep]:  Waiting for chat to handle");
                 NpcChat.handle(true, "Yes", "Yes.");
             }
             Log.info("[UseItemOnObj]: Waiting for waid cond");
             return Timer.waitCondition(() -> waitCond, 5000, 8000);
         } else if (Utils.useItemOnObject(this.ItemID, this.objectName)) {
             if (this.handleChat) {
-                General.println("[Debug]: Waiting for chat to handle");
+                Log.info("[UseItemOnObjStep]: Waiting for chat to handle");
                 NpcChat.handle(true, "Yes", "Yes.");
             }
             return Timer.waitCondition(() -> waitCond, 5000, 8000);
