@@ -10,7 +10,10 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.GroundItem;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.*;
 import scripts.GEManager.GEItem;
 import scripts.QuestPackages.RestlessGhost.RestlessGhost;
@@ -23,6 +26,7 @@ import scripts.Tasks.Priority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 public class ZogreFleshEaters implements QuestTask {
@@ -343,7 +347,11 @@ public class ZogreFleshEaters implements QuestTask {
     private void searchCoffin() {
         if (Inventory.find(BLACK_PRISM).length < 1) {
             cQuesterV2.status = "Searching Coffin";
-            if (Utils.clickObj("Ogre Coffin", "Search")) {
+            Optional<GameObject> search = Query.gameObjects()
+                    .tileEquals(new WorldTile(2438, 9458, 2))
+                    .actionContains("Search")
+                    .findClosest();
+            if (search.map(s -> s.interact("Search")).orElse(false)) {
                 Timer.waitCondition(() -> Inventory.find(BLACK_PRISM).length > 0 || NPCInteraction.isConversationWindowUp(), 4000, 6000);
                 NPCInteraction.handleConversation();
             }
