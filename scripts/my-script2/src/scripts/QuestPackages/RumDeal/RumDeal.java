@@ -362,20 +362,27 @@ public class RumDeal implements QuestTask {
         useBucketOnWater = new UseItemOnObjectStep(ItemID.BUCKET, ObjectID.STAGNANT_LAKE, new RSTile(2135, 5161, 0), "Go to the north part of the island and get some stagnant water.", bucketHighlight);
         // useBucketOnWater.addSubSteps(goDownForWater, openGate);
 
-        goUpWithWater = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5090, 0), "Take the water back to the hopper on the top floor.", stagnantWater);
+        goUpWithWater = new
+                ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5090, 0),
+                "Take the water back to the hopper on the top floor.",
+                MyPlayer.getTile().getPlane() != 1,
+                stagnantWater);
 
         goUpToDropWater = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2163, 5092, 1),
-                "Climb-up", stagnantWater);
+                "Climb-up", MyPlayer.getTile().getPlane() ==2,
+                stagnantWater);
         goUpToDropWater.addDialogStep("What exactly do you want me to do?");
 
-        dropWater = new ObjectStep(ObjectID.HOPPER_10170, new RSTile(2142, 5102, 2),
-                "Take the water back to the hopper on the top floor.", stagnantWaterHighlight);
-        //dropWater.addSubSteps(goUpWithWater, goUpToDropWater);
+        dropWater = new UseItemOnObjectStep(ItemID.BUCKET_OF_WATER_6712,
+                ObjectID.HOPPER_10170, new RSTile(2142, 5102, 2),
+                !Inventory.contains(ItemID.BUCKET_OF_WATER_6712),
+                stagnantWaterHighlight);
+       // dropWater.addSubSteps(goUpWithWater, goUpToDropWater);
 
         goDownFromTopAfterDropWater = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5092, 2), "Return to Captain Braindeath.");
 
         talkToBraindeathAfterWater = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
-        talkToBraindeathAfterWater.addSubSteps(goDownFromTopAfterDropWater);
+        //talkToBraindeathAfterWater.addSubSteps(goDownFromTopAfterDropWater);
 
         getSlugs = new SlugSteps();
 
@@ -397,12 +404,12 @@ public class RumDeal implements QuestTask {
                 "Go up the ladder.");
 
         talkToBraindeathAfterSpirit = new NPCStep(NpcID.CAPTAIN_BRAINDEATH, new RSTile(2145, 5108, 1), "Talk to Captain Braindeath.");
-        goDownToSpiders = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2139, 5105, 1), "Go into the brewery's basement and kill a fever spider. If you're not wearing slayer gloves they'll afflict you with disease.", slayerGloves);
+        goDownToSpiders = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2139, 5105, 1),
+                "Go into the brewery's basement and kill a fever spider. If you're not wearing slayer gloves they'll afflict you with disease.");
 
-        killSpider = new NPCStep(NpcID.FEVER_SPIDER, new RSTile(2139, 5105, 1), //TODO fix this guess on tile
-                //    "Go into the brewery's basement and kill a fever spider.  slayer gloves they'll afflict you with disease.",
-                slayerGloves.equipped());
-        killSpider.setInteractionString("Attack");
+        killSpider = new NPCStep(NpcID.FEVER_SPIDER, new RSTile(2139, 5105, 1)); //TODO fix this guess on tile
+                //    "Go into the brewery's basement and kill a fever spider.  slayer gloves they'll afflict you with disease.");
+        killSpider.setAsKillNpcStep();
 
         pickUpCarcass = new GroundItemStep(ItemID.FEVER_SPIDER_BODY);
         goUpFromSpidersWithCorpse = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2139, 5105, 0),
@@ -559,13 +566,14 @@ public class RumDeal implements QuestTask {
             Log.warn("Missing a rum deal quest requirement, check the wiki");
             cQuesterV2.taskList.remove(this);
             return;
-        } else if (isComplete()) {
+        }
+        int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId());
+        Log.info("[Debug]: Rum deal gameSetting is " + gameSetting);
+
+        if (isComplete()) {
             cQuesterV2.taskList.remove(this);
             return;
         }
-
-        int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId());
-        Log.info("[Debug]: Rum deal gameSetting is " + gameSetting);
         if (gameSetting == 0 && !initialItemReqs.check()) {
             buyitems.buyItems();
             initialItemReqs.withdrawItems();
@@ -580,7 +588,13 @@ public class RumDeal implements QuestTask {
             getSlugs = new SlugSteps();
             getSlugs.execute();
             gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId());
-        }
+        } else
+            //idle while killing npc
+            if (Query.npcs().nameContains("Evil spirit").isAny()) {
+                CombatUtil.waitUntilOutOfCombat("Evil spirit", 45);
+
+                return;
+            }
         Map<Integer, QuestStep> steps = loadSteps();
         Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
         step.ifPresent(s -> cQuesterV2.status = s.getClass().toGenericString());
@@ -589,12 +603,7 @@ public class RumDeal implements QuestTask {
             cQuesterV2.status = "Waiting 5 min";
             //Waiting.waitNormal(5000, 500);
         }
-        //idle while killing npc
-        if (Query.npcs().nameContains("Evil spirit").isAny()) {
-            CombatUtil.waitUntilOutOfCombat("Evil spirit", 45);
 
-            return;
-        }
         if (Query.npcs().nameContains("Fever spider").isMyPlayerInteractingWith().isAny()) {
             CombatUtil.waitUntilOutOfCombat("Fever spider", 45);
             if (Query.groundItems().idEquals(ItemID.FEVER_SPIDER_BODY).findClosest().map(
@@ -605,7 +614,7 @@ public class RumDeal implements QuestTask {
         if (gameSetting == 13 && !Inventory.contains(ItemID.HOLY_WRENCH))
             Waiting.waitNormal(3000, 50);
         else
-            Waiting.waitNormal(950, 50);
+            Waiting.waitNormal(2000, 50); //dont shorten
         Utils.cutScene();
         if (ChatScreen.isOpen())
             NpcChat.handle();
@@ -628,6 +637,6 @@ public class RumDeal implements QuestTask {
 
     @Override
     public boolean isComplete() {
-        return Quest.RUM_DEAL.getState().equals(Quest.State.COMPLETE);
+        return GameState.getSetting(QuestVarPlayer.QUEST_RUM_DEAL.getId()) == 19;
     }
 }

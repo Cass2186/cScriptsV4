@@ -20,6 +20,7 @@ import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.WorldTile;
+import org.tribot.script.sdk.util.TribotRandom;
 import org.tribot.script.sdk.walking.GlobalWalking;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.EntitySelector.Entities;
@@ -218,6 +219,31 @@ public class ObjectStep extends QuestStep {
             this.alternateIds.add(i);
     }
 
+    private boolean handleSuccessfulClick(String action) {
+        if (!handleChat) {
+            if (NPCInteraction.isConversationWindowUp())
+                NPCInteraction.handleConversation();
+        } else {
+            Log.debug("[ObjectStep]: Handling chat");
+            NPCInteraction.waitForConversationWindow();
+            if (chat != null && NPCInteraction.isConversationWindowUp()) {
+                String[] s = new String[chat.size()];
+                NPCInteraction.handleConversation(chat.toArray(s));
+            } else if (NPCInteraction.isConversationWindowUp()) {
+                NPCInteraction.handleConversation();
+            }
+            //  return; //I Don't think this should be here as it will never exectute the wait condition
+        }
+        if (action.contains("Climb")){
+            Log.info("Waiting for climb");
+            int plane = MyPlayer.getTile().getPlane();
+            return Waiting.waitUntil(TribotRandom.uniform(4500,6000), 400,
+                    ()->MyPlayer.getTile().getPlane() != plane );
+        }
+        // will end after click if no wait condition as it is default true
+        return Timer.waitCondition(() -> this.waitCond, 6000, 9000);
+    }
+
     private boolean handleSuccessfulClick() {
         if (!handleChat) {
             if (NPCInteraction.isConversationWindowUp())
@@ -233,6 +259,7 @@ public class ObjectStep extends QuestStep {
             }
             //  return; //I Don't think this should be here as it will never exectute the wait condition
         }
+
         // will end after click if no wait condition as it is default true
         return Timer.waitCondition(() -> this.waitCond, 6000, 9000);
     }
@@ -262,11 +289,11 @@ public class ObjectStep extends QuestStep {
     @Override
     public void execute() {
         if (requirements.stream().anyMatch(r -> !r.check())) {
-            Log.error("[ObjectStep]: We failed a requirement to execute this NPCStep");
+            Log.error("[ObjectStep]: We failed a requirement to execute this ObjectStep");
             return;
         }
         if (this.substeps.size() > 0) {
-            General.println("[NPCStep]: There are substeps for this NPCStep, executing them");
+            General.println("[NPCStep]: There are substeps for this ObjectStep, executing them");
             for (QuestStep sub : this.substeps) {
                 sub.execute();
             }
@@ -390,7 +417,7 @@ public class ObjectStep extends QuestStep {
                 PathingUtil.movementIdle();
             }
             if (object.map(obj -> obj.interact(this.objectAction)).orElse(false)) {
-                handleSuccessfulClick();
+                handleSuccessfulClick(this.objectAction);
                 return;
             }
         }

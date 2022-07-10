@@ -44,11 +44,24 @@ public class Const {
             return sup.getAsBoolean();
         });
     }
-    public static final int BLOOD_ALTAR_ID = 27978;
 
+    public static final int BLOOD_ALTAR_ID = 27978;
+    public static final WorldTile WILDERNESS_TILE = new WorldTile(3104, 3557, 0);
     public static final int PARENT_INTERFACE_NPC_CONTACT = 75;
     public static final int PARENT_EQUIPMENT_INTERFACE = 387;
 
+    public static final  Area WHOLE_ABYSS= Area.fromRectangle(
+            new WorldTile(3068, 4804, 0), new WorldTile(3010, 4861, 0));
+    public static final  Area INNER_ABYSS = Area.fromPolygon(
+            new WorldTile(3039, 4848, 0),
+            new WorldTile(3027, 4845, 0),
+            new WorldTile(3023, 4836, 0),
+            new WorldTile(3025, 4823, 0),
+            new WorldTile(3035, 4817, 0),
+            new WorldTile(3047, 4817, 0),
+            new WorldTile(3056, 4827, 0),
+            new WorldTile(3052, 4844, 0)
+    );
     public static String imbueOn = "You are charged to combine runes";
     public static String imbueOff = "charge has ended";
     public static RSTile COSMIC_PORTAL_TILE = new RSTile(2122, 4833, 0);
@@ -94,8 +107,8 @@ public class Const {
             new WorldTile(1759, 3862, 0));
 
     public static final Area ARCEUUS_MINE = Area.fromRectangle
-           (new WorldTile(1758, 3861, 0),
-                   new WorldTile(1769, 3844, 0));
+            (new WorldTile(1758, 3861, 0),
+                    new WorldTile(1769, 3844, 0));
 
     public static final RSTile NORTH_ROCK_OBSTACLE_TILE = new RSTile(1761, 3873, 0);
     public static final Area BEFORE_NORTH_OBSTACLE = Area.fromPolygon(
@@ -204,7 +217,7 @@ public class Const {
                     new WorldTile(1764, 3854, 0)
             );
 
-    public static final  Area DARK_ALTAR_AREA =
+    public static final Area DARK_ALTAR_AREA =
             Area.fromPolygon(List.of(
                     new WorldTile(1706, 3887, 0),
                     new WorldTile(1709, 3875, 0),

@@ -48,7 +48,9 @@ public class SlugSteps extends QuestStep {
 
         talkToPete = new NPCStep(NpcID.PIRATE_PETE, new RSTile(3680, 3537, 0), "Talk to Pirate Pete north east of the Ectofuntus.");
         talkToPete.addDialogStep("Okay!");
-        addSluglings = new ObjectStep(ObjectID.PRESSURE_BARREL, new RSTile(2142, 5102, 2),
+        addSluglings =
+                new UseItemOnObjectStep(ItemID.SLUGLINGS,
+                        ObjectID.PRESSURE_BARREL, new RSTile(2142, 5102, 2),
                 "Add the sea creatures to the pressure barrel on the top floor.", sluglings);
 
         goDownFromTop = new ObjectStep(ObjectID.LADDER_10168, new RSTile(2163, 5092, 2), "Go down the ladder and fish for sea creatures.");
@@ -70,14 +72,16 @@ public class SlugSteps extends QuestStep {
 
         goUpFromSluglings = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5088, 0),
                 "Go to the top floor to pull the pressure lever.", sluglings);
-        goUpF1ToPressure = new ObjectStep(ObjectID.WOODEN_STAIR, new RSTile(2150, 5088, 0),
-                "Go to the top floor to pull the pressure lever.");
+        goUpF1ToPressure = new ObjectStep(ObjectID.WOODEN_STAIR,
+                new RSTile(2150, 5088, 0),
+                "Go to the top floor to pull the pressure lever.",
+                MyPlayer.getTile().getPlane() != 0);
         goUpToF2ToPressure = new ObjectStep(ObjectID.LADDER_10167, new RSTile(2163, 5092, 1),
-                "Go to the top floor to pull the pressure lever.");
+                "Go to the top floor to pull the pressure elver.",            MyPlayer.getTile().getPlane() != 1);
 
         pressure = new ObjectStep(10164, new RSTile(2140, 5103, 2),
                 "Pull the pressure lever.");
-        pressure.addSubSteps(goUpToF2ToPressure, goUpF1ToPressure);
+       // pressure.addSubSteps(goUpToF2ToPressure, goUpF1ToPressure);
 
         getSluglings = new ConditionalStep(talkToPete);
         getSluglings.addStep(onIslandF0, fish5Slugs);

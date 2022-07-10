@@ -9,6 +9,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.Data.Vars;
 import scripts.*;
 import scripts.RcApi.RcUtils;
@@ -27,12 +28,20 @@ public class CraftRunes implements Task {
                 nameNotContains("Rune pouch").toList();
     }
 
+    public static List<InventoryItem> getGiantAndMediumPouch() {
+        return Query.inventory().idEquals(ItemID.GIANT_POUCH, ItemID.SMALL_POUCH).toList();
+    }
+
+    public static List<InventoryItem> getLargeAndSmallPouch() {
+        return Query.inventory().idEquals(ItemID.LARGE_POUCH, ItemID.MEDIUM_POUCH).toList();
+    }
+
     public boolean craftRunesAltar() {
         // General.sleep(500);
         Optional<GameObject> altar = Query.gameObjects().nameEquals("Altar").findClosest();
 
-        if (!Inventory.isFull())
-            emptyPouches();
+  //      if (!Inventory.isFull())
+      //      emptyPouches();
 
         if (altar.isPresent()) {
 
@@ -45,36 +54,42 @@ public class CraftRunes implements Task {
 
 
             if (altar.map(a -> a.interact("Craft-rune")).orElse(false)) {
-                Timer.slowWaitCondition(() -> MyPlayer.getAnimation() != -1, 9000, 15000);
-                return Timer.waitCondition(() -> MyPlayer.getAnimation() == -1, 3000, 5000);
+               return Timer.slowWaitCondition(() -> MyPlayer.getAnimation() != -1, 9000, 15000);
+              //  return Timer.waitCondition(() -> MyPlayer.getAnimation() == -1, 3000, 5000);
             }
         }
         return false;
     }
 
     public void craftRunesAltar(RSArea altarTile) {
-        General.sleep(500);
+        General.sleep(300, 500);
         Optional<GameObject> altar = RcUtils.getAltar();
-        if (altar.map(a->a.interact("Craft-rune")).orElse(false)){
+        if (altar.map(a -> a.interact("Craft-rune")).orElse(false)) {
             Timer.abc2WaitCondition(() -> !Inventory.contains(ItemID.PURE_ESSENCE), 9000, 15000);
         }
     }
 
 
     public boolean emptyPouches() {
-        List<InventoryItem> p = getPouches();
-        if (p.size() > 0) {
-            Log.debug("Opening pouches");
-            Keyboard.sendPress((char) KeyEvent.VK_SHIFT, 16);
-            for (InventoryItem item : p) {
-                if (item.click("Empty"))
-                    Waiting.waitNormal(90, 20);
-            }
-            Keyboard.sendRelease((char) KeyEvent.VK_SHIFT, 16);
-            Waiting.waitNormal(300, 75);
-            return true;
+        List<InventoryItem> p = CraftRunes.getGiantAndMediumPouch();
+        Keyboard.sendPress((char) KeyEvent.VK_SHIFT, 16);
+        for (InventoryItem pouch : p) {
+            if (pouch.click("Empty"))
+                Waiting.waitNormal(60, 15);
         }
-        return false;
+        if (Waiting.waitUntil(TribotRandom.uniform(600, 900), 50,
+                () -> Inventory.getAll().size() >=18)) {
+            craftRunesAltar();
+        }
+        p = CraftRunes.getLargeAndSmallPouch();
+        for (InventoryItem pouch : p) {
+            if (pouch.click("Empty"))
+                Waiting.waitNormal(60, 15);
+        }
+        Keyboard.sendRelease((char) KeyEvent.VK_SHIFT, 16);
+        Waiting.waitUniform(600, 1200);
+
+        return true;
     }
 
 
@@ -153,7 +168,8 @@ public class CraftRunes implements Task {
 
     public static boolean atAltar() {
         List<GameObject> altarList = Query.gameObjects().nameContains("Altar")
-                .actionNotContains("Pray").toList();;
+                .actionNotContains("Pray").toList();
+        ;
         return altarList.size() > 0;
     }
 
@@ -182,14 +198,19 @@ public class CraftRunes implements Task {
             return atAltar() && Inventory.contains(ItemID.PURE_ESSENCE)
                     && !Vars.get().collectPouches;
 
+        } else if (Vars.get().abyssCrafting) {
+            return RcUtils.atAltar() &&
+                    Inventory.contains(ItemID.PURE_ESSENCE);
         }
+
         //doing steam NO imbue
         if (!Vars.get().lava && !Vars.get().usingLunarImbue
                 && !Vars.get().abyssCrafting && !Vars.get().zanarisCrafting &&
                 Skill.RUNECRAFT.getActualLevel() >= 19) {
             Log.info("HERE");
-            return RcUtils.getAltar().isPresent() && Inventory.contains(ItemID.PURE_ESSENCE, ItemID.WATER_TALISMAN)
-                    && !Vars.get().collectPouches ;
+            return RcUtils.atAltar() &&
+                    Inventory.contains(ItemID.PURE_ESSENCE, ItemID.WATER_TALISMAN)
+                    && !Vars.get().collectPouches;
         }
         //doing steam WITH Imbue
         if (!Vars.get().lava
@@ -200,7 +221,7 @@ public class CraftRunes implements Task {
         }
 
         // mostly redundant with the previous one
-        return !Bank.isNearby() &&  atAltar() && Inventory.contains(ItemID.PURE_ESSENCE) && !Vars.get().collectPouches;
+        return !Bank.isNearby() && atAltar() && Inventory.contains(ItemID.PURE_ESSENCE) && !Vars.get().collectPouches;
     }
 
     @Override
@@ -210,6 +231,12 @@ public class CraftRunes implements Task {
 
         } else if (Skill.RUNECRAFT.getActualLevel() < 19) {
             craftRunesAltar(FIRE_ALTAR_TILE);
+
+        } else if (Vars.get().abyssCrafting) {
+            craftRunesAltar();
+            emptyPouches();
+            craftRunesAltar();
+            Log.info("Done crafting");
 
         } else if (Vars.get().lava) {
             craftCombinationRune(ItemID.EARTH_RUNE);

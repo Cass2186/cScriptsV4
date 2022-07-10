@@ -349,7 +349,7 @@ public class Utils {
             if (!Inventory.contains(ItemID.RING_OF_DUELING) &&
                     !Equipment.contains(ItemID.RING_OF_DUELING)) {
 
-                General.println("[Debug]: Getting Ring of Dueling");
+                Log.info("[Utils]: Getting Ring of Dueling");
                 BankManager.open(true);
                 BankManager.withdraw(1, true, ItemID.RING_OF_DUELING);
                 BankManager.close(true);
@@ -407,15 +407,15 @@ public class Utils {
             if (Interfaces.get(399, 7, i) != null) {
                 if (Interfaces.get(399, 7, i).getText().contains(questName)) {
                     if (Interfaces.get(399, 7, i).getTextColour() == NOT_STARTED_ID) {
-                        General.println("[Debug]: " + questName + " is not started");
+                        Log.info("[Utils]: " + questName + " is not started");
                         return QUEST_STATUS.NOT_STARTED;
                     }
                     if (Interfaces.get(399, 7, i).getTextColour() == IN_PROGRESS_ID) {
-                        General.println("[Debug]: " + questName + " is in progress");
+                        Log.info("[Utils]: " + questName + " is in progress");
                         return QUEST_STATUS.IN_PROGRESS;
                     }
                     if (Interfaces.get(399, 7, i).getTextColour() == COMPLETED_ID) {
-                        General.println("[Debug]: " + questName + " is complete");
+                        Log.info("[Utils]: " + questName + " is complete");
                         return QUEST_STATUS.COMPLETED;
                     }
                 }
@@ -702,7 +702,7 @@ public class Utils {
             Log.info("[Utils]: Missing item with either id: " + ItemId + " or ID: " + ItemId2);
             return false;
         }
-    Log.info("[Utils]: Using " + getItemName(ItemId) + " on " + getItemName(ItemId2));
+        Log.info("[Utils]: Using " + getItemName(ItemId) + " on " + getItemName(ItemId2));
         return item2.map(i2 -> item1.map(i1 -> i1.useOn(i2)).orElse(false)).orElse(false);
     }
 
@@ -1201,14 +1201,9 @@ public class Utils {
     }
 
     public static boolean drinkPotion(int[] potionList) {
-        for (Integer id : potionList) {
-            Optional<InventoryItem> item = QueryUtils.getItem(id);
-
-            if (item.map(i -> i.click("Drink")).orElse(false))
-                return Utils.waitCondtion(() -> MyPlayer.getAnimation() == 829);
-
-        }
-        return false;
+       return Query.inventory().idEquals(potionList).findClosestToMouse()
+                .map(i -> i.click("Drink")).orElse(false) &&
+                Utils.waitCondtion(() -> MyPlayer.getAnimation() == 829);
     }
 
     public static double getLevelBoost(Skill skill) {
@@ -1414,7 +1409,7 @@ public class Utils {
     }
 
     public static boolean clickInventoryItem(int itemId, String string) {
-        return QueryUtils.getItem(itemId).map(i-> i.click(string)).orElse(false);
+        return QueryUtils.getItem(itemId).map(i -> i.click(string)).orElse(false);
     }
 
 
@@ -2005,15 +2000,15 @@ public class Utils {
         return false;
     }
 
-    public static void animationIdle(){
-        if (Waiting.waitUntil(4000, 500, MyPlayer::isAnimating)){
-            Waiting.waitUntil(6000, 500, ()-> !MyPlayer.isAnimating());
+    public static void rink() {
+        if (Waiting.waitUntil(4000, 500, MyPlayer::isAnimating)) {
+            Waiting.waitUntil(6000, 500, () -> !MyPlayer.isAnimating());
         }
     }
 
-    public static void animationIdle(int timeout){
-        if (Waiting.waitUntil(4000, 500, MyPlayer::isAnimating)){
-            Waiting.waitUntil(timeout, 500, ()-> !MyPlayer.isAnimating());
+    public static void animationIdle(int timeout) {
+        if (Waiting.waitUntil(4000, 500, MyPlayer::isAnimating)) {
+            Waiting.waitUntil(timeout, 500, () -> !MyPlayer.isAnimating());
         }
     }
 }

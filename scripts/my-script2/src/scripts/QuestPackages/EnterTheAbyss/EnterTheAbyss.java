@@ -6,6 +6,7 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Bank;
 import org.tribot.script.sdk.Quest;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -45,6 +46,7 @@ public class EnterTheAbyss implements QuestTask {
                     new GEItem(ItemID.NECKLACE_OF_PASSAGE[0], 1, 100),
                     new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 50),
                     new GEItem(ItemID.STAMINA_POTION[0], 2, 15),
+                    new GEItem(ItemID.SKILLS_NECKLACE4, 1, 15),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
             )
     );
@@ -54,7 +56,8 @@ public class EnterTheAbyss implements QuestTask {
                     new ItemReq(ItemID.LOBSTER, 15, 2),
                     new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, 1, true, true),
                     new ItemReq(ItemID.VARROCK_TELEPORT, 5, 1),
-                    new ItemReq(ItemID.EMPTY_BUCKET, 1, 1),
+                    new ItemReq(ItemID.EMPTY_BUCKET, 1),
+                    new ItemReq(ItemID.SKILLS_NECKLACE4, 1, 0),
                     new ItemReq(ItemID.STAMINA_POTION[0], 1, 0),
                     new ItemReq(ItemID.NECKLACE_OF_PASSAGE[0], 1, 0, true),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
@@ -75,8 +78,10 @@ public class EnterTheAbyss implements QuestTask {
         cQuesterV2.status = "Getting Items";
         General.println("[Debug]: " + cQuesterV2.status);
         BankManager.open(true);
+        BankManager.depositEquipment();
         BankManager.checkEquippedGlory();
         BankManager.depositAll(true);
+        BankManager.withdraw(1, true, ItemID.SKILLS_NECKLACE4);
         BankManager.withdraw(2, true, ItemID.STAMINA_POTION[0]);
         BankManager.withdraw(1, true, ItemID.AMULET_OF_GLORY[2]);
         BankManager.withdraw(1, true, ItemID.NECKLACE_OF_PASSAGE[0]);
@@ -92,8 +97,7 @@ public class EnterTheAbyss implements QuestTask {
             General.println("[Debug]: " + cQuesterV2.status);
             PathingUtil.walkToArea(START_AREA);
             if (NpcChat.talkToNPC("Mage of Zamorak")) {
-                NPCInteraction.waitForConversationWindow();
-                NPCInteraction.handleConversation("Yes.");
+                NpcChat.handle(true, "Alright, I'll go.", "Yes.");
             }
         }
     }
@@ -234,7 +238,7 @@ public class EnterTheAbyss implements QuestTask {
 
     @Override
     public String questName() {
-        return "Enter the Abyss";
+        return "Enter the Abyss (" + Game.getSetting(492) + ")";
     }
 
     @Override

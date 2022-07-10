@@ -83,7 +83,6 @@ public class Vars {
 
     public boolean lava = false;
 
-    public boolean usingPouches = false;
 
     public boolean shouldAfk = false;
 
@@ -95,7 +94,7 @@ public class Vars {
 
     public boolean failedObstacle = false;
 
-    public boolean abyssCrafting = false;
+    public boolean abyssCrafting = Skill.RUNECRAFT.getActualLevel() >=77;
 
     public boolean needToRepairPouches = false;
 

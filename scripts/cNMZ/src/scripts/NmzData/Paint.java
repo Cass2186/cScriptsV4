@@ -107,7 +107,7 @@ public class Paint {
                 .row(template.toBuilder().label("Eat Rockcake at")
                         .value(() -> Vars.get().eatRockCakeAt)
                         .condition(() -> Vars.get().showDetailedPaint &&
-                                Vars.get().usingAbsorptions)
+                                Vars.get().usingLocatorOrb)
                         .build())
                 .row(template.toBuilder().label("Drink Absorption At")
                         .value(() -> Vars.get().drinkAbsorptionAt)

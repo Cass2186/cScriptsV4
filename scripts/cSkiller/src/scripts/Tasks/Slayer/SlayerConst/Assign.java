@@ -433,8 +433,9 @@ public enum Assign {
             .useGearType(GearType.MELEE)),
 
     NECHRYAEL(new Builder()
-            //  .inArea(Areas.) //TODO Add this area
+            .inArea(Areas.NECH_AREA) //TODO Add this area
             .nameContains("Nechryael")
+            .usePrayerType(PrayerType.MELEE)
             .setHopPlayerThreshold(3)
             .useGearType(GearType.MELEE)),
 

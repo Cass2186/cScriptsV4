@@ -38,7 +38,8 @@ public class Move implements Task {
                 .idEquals(patchId)
                 .actionNotContains("Pick")
                 .maxDistance(10)
-                .actionContains(action).isAny();
+                .actionContains(action)
+                .isAny();
     }
 
     private static boolean checkForObj(String name, int patchId, String... actions) {
@@ -66,13 +67,7 @@ public class Move implements Task {
 
     private static boolean shouldMoveFromAllotment(int patchId) {
         return (checkForObj("Inspect", patchId) &&
-                !checkForObj("Inspect", patchId, "Allotment")
-                && !checkForObj("Harvest", patchId));
-    }
-
-    public static boolean shouldMoveFromHerb(int patchId) {
-        return (checkForObj("Inspect", patchId) &&
-                !checkForObj("Inspect", patchId, "Allotment")
+                !checkForObj("Allotment", patchId, "Inspect")
                 && !checkForObj("Harvest", patchId));
     }
 

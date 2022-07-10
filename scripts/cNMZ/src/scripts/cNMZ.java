@@ -71,6 +71,7 @@ public class cNMZ extends CassScript implements TribotScript {
                 new AttackNpc(),
                 new DrinkPotion(),
                 new EnterDream(),
+                new RockCake(),
                 new InventorySetup()
         );
 

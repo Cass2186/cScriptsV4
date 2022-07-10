@@ -32,11 +32,14 @@ public class Paint {
                         })
                         .condition(() -> Vars.get().currentRune.isPresent())
                         .build())
-                .row(template.toBuilder().label("Runecrafting").value(Paint::getXpGainedString).build())
                 .row(template.toBuilder().label("Profit").value(()-> Utils.addCommaToNum(
                         Vars.get().getProfit())+
                         " | " + Utils.addCommaToNum(Vars.get().getProfitHr()) + "/hr").build())
-
+                .row(template.toBuilder().label("Using Abyss")
+                        .value(()->Vars.get().abyssCrafting).build())
+                .row(template.toBuilder().label("Using Imbue")
+                        .value(()->Vars.get().usingLunarImbue).build())
+                .row(template.toBuilder().label("Runecrafting").value(Paint::getXpGainedString).build())
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
 

@@ -1,6 +1,7 @@
 package scripts.Tasks;
 
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
 import scripts.BankManager;
 
 
@@ -39,6 +40,15 @@ public class RepairPouches implements Task {
 
     }
 
+    private boolean useDarkMage() {
+        if (Query.npcs().actionContains("Repairs")
+                .findClosestByPathDistance()
+                .map(npc -> npc.interact("Repairs")).orElse(false)) {
+            return NpcChat.waitForChatScreen();
+        }
+        return false;
+    }
+
 
     @Override
     public String toString() {
@@ -60,7 +70,11 @@ public class RepairPouches implements Task {
     public void execute() {
         if (Vars.get().usingLunarImbue && Magic.getActiveSpellBook() == Magic.SpellBook.LUNAR) {
             repairNpcContact();
+        } else if (Magic.getActiveSpellBook() != Magic.SpellBook.LUNAR && Vars.get().abyssCrafting) {
+            if (GoToRcAltar.enterInnerAbyss())
+                useDarkMage();
         } else if (Magic.getActiveSpellBook() != Magic.SpellBook.LUNAR)
-            Log.error("Cannot repair pouches, due to invalid spell book", new NullPointerException());
+            Log.error("Cannot repair pouches, due to invalid spell book",
+                    new NullPointerException());
     }
 }

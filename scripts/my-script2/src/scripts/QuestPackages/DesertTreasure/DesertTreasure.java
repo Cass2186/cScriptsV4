@@ -59,6 +59,9 @@ public class DesertTreasure implements QuestTask {
     NPCStep killIceTrolls, talkToArchaeologist, talkToBartender, talkToEblis,
             talkToExpert, talkToExpertAgain, talkToArchaeologistAgainAfterTranslation;
 
+    UseItemOnNpcStep useAshesonEblis, usedLogsOnEblis,
+            useBloodRuneOnEblis, useMoltenGlassOnEblis, useSteelBarsOnEblis;
+
     ConditionalStep getSmokeDiamond, getBloodDiamond, getIceDiamond, getShadowDiamond, getDiamonds;
 
     public Map<Integer, QuestStep> loadSteps() {
@@ -180,7 +183,8 @@ public class DesertTreasure implements QuestTask {
         spikedBoots = new ItemRequirement("Spiked boots", ItemID.SPIKED_BOOTS);
         // spikedBoots.setTooltip("Bring Dunstan in Burthorpe climbing boots and an iron bar to make these");
 
-        spikedBootsEquipped = new ItemRequirement(ItemID.SPIKED_BOOTS, 1, true);
+        spikedBootsEquipped = new ItemRequirement(ItemID.SPIKED_BOOTS, 1,
+                true, true);
         //  spikedBootsEquipped.setTooltip("Bring Dunstan in Burthorpe climbing boots and an iron bar to make these");
 
         climbingBoots = new ItemRequirement("Climbing boots", ItemID.CLIMBING_BOOTS);
@@ -361,6 +365,16 @@ public class DesertTreasure implements QuestTask {
         talkToEblis.addDialogStep("Tell me of The four diamonds of Azzanadra");
         talkToEblis.addDialogStep("Yes");
 
+        useAshesonEblis = new UseItemOnNpcStep(ItemID.getNotedId(ItemID.CHARCOAL),
+                NpcID.EBLIS, new RSTile(3184, 2989, 0));
+        usedLogsOnEblis = new UseItemOnNpcStep(ItemID.getNotedId(ItemID.MAGIC_LOGS),
+                NpcID.EBLIS, new RSTile(3184, 2989, 0));
+        useBloodRuneOnEblis = new UseItemOnNpcStep(ItemID.BLOOD_RUNE,
+                NpcID.EBLIS, new RSTile(3184, 2989, 0));
+        useMoltenGlassOnEblis = new UseItemOnNpcStep(ItemID.getNotedId(ItemID.MOLTEN_GLASS),
+                NpcID.EBLIS, new RSTile(3184, 2989, 0));
+        useSteelBarsOnEblis = new UseItemOnNpcStep(ItemID.getNotedId(ItemID.STEEL_BAR),
+                NpcID.EBLIS, new RSTile(3184, 2989, 0));
         bringItemsToEblis = new NPCStep(NpcID.EBLIS, new RSTile(3184, 2989, 0),
                 //"Use the items on Eblis " +
                 //          "in the east of the Bandit Camp. Items can be noted.", ashes, bloodRune, bones,
@@ -653,9 +667,9 @@ public class DesertTreasure implements QuestTask {
         if (wait) {
             for (int i = 0; i < 4; i++) {
                 if (potion.map(p -> p.click("Drink")).orElse(false) &&
-                Waiting.waitUntil(800, 50, () ->
-                        Prayer.getPrayerPoints() > pPoints))
-                return true;
+                        Waiting.waitUntil(800, 50, () ->
+                                Prayer.getPrayerPoints() > pPoints))
+                    return true;
             }
         }
         return potion.map(p -> p.click("Drink")).orElse(false);
@@ -670,14 +684,14 @@ public class DesertTreasure implements QuestTask {
             }
             if (!CombatUtil.isInteractingWith("Damis")) {
                 Optional<Npc> damis = Query.npcs().nameContains("Damis").findClosestByPathDistance();
-                if (damis.map(d-> d.interact("Attack")).orElse(false)){
-                   Waiting.waitUntil(4500, 200, ()-> CombatUtil.isInteractingWith("Damis") ||
-                                   Prayer.getPrayerPoints() < 12);
+                if (damis.map(d -> d.interact("Attack")).orElse(false)) {
+                    Waiting.waitUntil(4500, 200, () -> CombatUtil.isInteractingWith("Damis") ||
+                            Prayer.getPrayerPoints() < 12);
                 }
             } else {
                 //already fighting
-                if(Waiting.waitUntil(10000, 200, ()->
-                        !CombatUtil.isInteractingWith("Damis")|| Prayer.getPrayerPoints() < 12))
+                if (Waiting.waitUntil(10000, 200, () ->
+                        !CombatUtil.isInteractingWith("Damis") || Prayer.getPrayerPoints() < 12))
                     Log.warn("No longer interacting");
             }
         }

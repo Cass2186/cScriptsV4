@@ -121,6 +121,7 @@ import scripts.QuestPackages.WitchsHouse.WitchsHouse;
 import scripts.QuestPackages.WitchsPotion.WitchsPotion;
 import scripts.QuestPackages.XMarksTheSpot.XMarksTheSpot;
 import scripts.QuestPackages.ZogreFleshEaters.ZogreFleshEaters;
+import scripts.QuestPackages.cabinFever.CabinFever;
 import scripts.QuestPackages.kingsRansom.KingsRansom;
 import scripts.QuestPackages.lairoftarnrazorlor.TarnRoute;
 import scripts.QuestPackages.observatoryQuest.ObservatoryQuest;
@@ -601,7 +602,8 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
             General.println("[Args]: Added Restless Ghost");
             taskList.add(RestlessGhost.get());
         } else if (arg.toLowerCase().contains("entertheabyss")) {
-            General.println("[Args]: Added Enter The Abyss");
+            General.println("[Args]: Added Enter The Abyss & Rune Mysteries");
+            taskList.add(RuneMysteries.get());
             taskList.add(EnterTheAbyss.get());
         } else if (arg.toLowerCase().contains("fenkenstrain")) {
             General.println("[Args]: Added Creature of Fenkenstrain");
@@ -769,6 +771,10 @@ public class cQuesterV2 extends Script implements Painting, Starting, Ending, Ar
         else if (arg.toLowerCase().contains("templeoftheeye")) {
             General.println("[Args]: Added Temple of the Eye");
             taskList.add(TempleOfTheEye.get());
+        }
+        else if (arg.toLowerCase().contains("cabinfever")) {
+            General.println("[Args]: Added Cabin Fever");
+            taskList.add(CabinFever.get());
         }
         if (taskList.size() > 0)
             Vars.get().shouldShowGui = false;

@@ -17,6 +17,7 @@ import org.tribot.api2007.types.RSCharacter;
 import org.tribot.api2007.types.RSNPC;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 
 
 /**
@@ -424,7 +425,7 @@ public class AntiBan {
 
     public static boolean checkXp() {
         if (getABCUtil().shouldCheckXP()) {
-            General.println("[ABC2]: Checking XP");
+            Log.info("[ABC2]: Checking XP");
             abc.checkXP();
             return true;
         }
@@ -442,7 +443,7 @@ public class AntiBan {
 
         if (getABCUtil().shouldPickupMouse()) {
 
-            General.println("[ABC2]: Picking up mouse");
+            Log.info("[ABC2]: Picking up mouse");
 
             getABCUtil().pickupMouse();
 
@@ -460,7 +461,7 @@ public class AntiBan {
 
         if (getABCUtil().shouldLeaveGame() && (General.random(0, 100) < lgc)) {
 
-            General.println("[ABC2]: Left game window");
+            Log.info("[ABC2]: Left game window");
 
             getABCUtil().leaveGame();
             General.sleep(General.random(150,500));
@@ -472,7 +473,7 @@ public class AntiBan {
 
     public static boolean examineEntity() {
         if (getABCUtil().shouldExamineEntity()) {
-            General.println("[ABC2]: Examining entity");
+            Log.info("[ABC2]: Examining entity");
 
             getABCUtil().examineEntity();
             return true;
@@ -496,7 +497,7 @@ public class AntiBan {
 
         if (getABCUtil().shouldRightClick()) {
 
-            General.println("[ABC2]: Random right click");
+            Log.info("[ABC2]: Random right click");
 
             getABCUtil().rightClick();
 
@@ -762,7 +763,7 @@ public class AntiBan {
 
         if (should_hover) {
 
-          General.println("[ABC2]: Hovering next target");
+          Log.info("[ABC2]: Hovering next target");
 
             Clicking.hover(targets);
 
@@ -873,7 +874,7 @@ public class AntiBan {
     }
 
     private static void debug(Object message) {
-        General.println("[ABC2]: " + message);
+        Log.info("[ABC2]: " + message);
     }
 }
 

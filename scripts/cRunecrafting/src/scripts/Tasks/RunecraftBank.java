@@ -18,6 +18,7 @@ import org.tribot.script.sdk.types.EquipmentItem;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
 
 import scripts.Data.Const;
@@ -109,7 +110,8 @@ public class RunecraftBank implements Task {
             BankManager.withdraw(1, true, item);
             List<InventoryItem> itm = Query.inventory().idEquals(item).toList();
             if (itm.size() > 0 && itm.get(0).click(cmd))
-                return Timer.waitCondition(() -> Equipment.contains(item), 2500, 3500);
+                return Waiting.waitUntil(TribotRandom.uniform(2500, 3500), 600,
+                        () -> Equipment.contains(item));
         }
         return Equipment.contains(item);
     }
@@ -119,8 +121,10 @@ public class RunecraftBank implements Task {
             BankManager.withdrawArray(item, 1);
             List<InventoryItem> itm = Query.inventory().idEquals(item).toList();
             if (itm.size() > 0 && itm.get(0).click(cmd))
-                return Timer.waitCondition(() -> Equipment.contains(item) ||
-                        Inventory.contains(item), 1500, 3000);
+                return Waiting.waitUntil(TribotRandom.uniform(2500, 3500),
+                        TribotRandom.normal(600,45),
+                        () -> Equipment.contains(item));
+
 
         }
         return Equipment.contains(item);
@@ -150,7 +154,7 @@ public class RunecraftBank implements Task {
 
             closeLootInterface();
             if (rodTele("Castle Wars")) {
-                if(Waiting.waitUntil(5000, 75, () -> Bank.isNearby()
+                if (Waiting.waitUntil(5000, 75, () -> Bank.isNearby()
                        /* Query.gameObjects()
                         .nameContains("Bank chest")
                         .isAny()*/))
@@ -184,14 +188,97 @@ public class RunecraftBank implements Task {
     }
 
     public void fillPouches() {
-        List<InventoryItem> p = CraftRunes.getPouches();
+        List<InventoryItem> p = CraftRunes.getGiantAndMediumPouch();
         for (InventoryItem pouch : p) {
+            if (Inventory.getCount(ItemID.PURE_ESSENCE) < 8) {
+                BankManager.withdraw(0, true, ItemID.PURE_ESSENCE);
+            }
+            if (pouch.click("Fill"))
+                Waiting.waitNormal(60, 15);
+        }
+        Waiting.waitUntil(TribotRandom.uniform(700,1000), 50, ()->
+                Inventory.getAll().size() < 12);
+        p = CraftRunes.getLargeAndSmallPouch();
+        for (InventoryItem pouch : p) {
+            if (Inventory.getCount(ItemID.PURE_ESSENCE) < 10) {
+                BankManager.withdraw(0, true, ItemID.PURE_ESSENCE);
+            }
             if (pouch.click("Fill"))
                 Waiting.waitNormal(60, 15);
         }
         Waiting.waitUniform(600, 1200);
     }
 
+    private boolean getAndDrinkStamina(boolean keepInInventory){
+        if(BankManager.withdrawArray(ItemID.STAMINA_POTION, 1)){
+            if(QueryUtils.getItem("Stamina potion")
+                    .map(p->p.click("Drink")).orElse(false)){
+
+
+            }
+        }
+        return Utils.getVarBitValue(25) != 0; //if true, we have active stam
+    }
+
+
+    public void getAbyssItems(int runeId) {
+        if (!itemInInv(ItemID.PURE_ESSENCE) || !Query.equipment()
+                .nameContains("Amulet of glory(").isAny()) {
+            Log.info("Abyss Bank");
+            List<InventoryItem> p = CraftRunes.getPouches();
+
+            //TODO handle globally
+            if (!tmr.isRunning() && Vars.get().shouldAfk) {
+                Utils.afk(General.random(15000, 60000));
+                tmr.reset();
+            }
+            if (RunescapeBank.EDGEVILLE.getPosition().distanceTo(Player.getPosition()) > 20)
+                if(!PathingUtil.walkToTile(RunescapeBank.EDGEVILLE.getPosition()))
+                    return; //failed for some reason
+            Log.info("passed edge");
+            BankManager.open(true);
+
+            if (p.size() > 0) {
+                BankManager.depositAllExcept(false, runeId, ItemID.BLOOD_ESSENCE_ACTIVE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2],
+                        ItemID.GIANT_POUCH);
+                Timer.waitCondition(() -> Inventory.getAll().size() < 6, 1500, 2000);
+            } else
+                BankManager.depositAllExcept(false, runeId, ItemID.ASTRAL_RUNE);
+
+            rodFailSafe();
+
+            if (getAndEquip(ItemID.AMULET_OF_GLORY, "Wear"))
+                BankManager.depositAllExcept(false, runeId, ItemID.ASTRAL_RUNE,ItemID.BLOOD_ESSENCE_ACTIVE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2], ItemID.GIANT_POUCH);
+
+            if (Vars.get().useStamina && Utils.getVarBitValue(25) == 0 && Game.getRunEnergy() < General.random(65, 80)) {
+                getAndEquip(ItemID.STAMINA_POTION, "Drink");
+                BankManager.depositAllExcept(false, runeId, ItemID.ASTRAL_RUNE,ItemID.BLOOD_ESSENCE_ACTIVE,
+                        ItemID.ALL_POUCHES[0], ItemID.ALL_POUCHES[1], ItemID.ALL_POUCHES[2], ItemID.GIANT_POUCH);
+            }
+
+            if (getPouches())
+                p = CraftRunes.getPouches();
+
+            // get essence
+            BankManager.withdraw(0, true, ItemID.PURE_ESSENCE);
+
+            // fill pouches (if we have any)
+            fillPouches();
+
+            // refill inv with essence if needed
+            if (!Inventory.isFull())
+                BankManager.withdraw(0, true, ItemID.PURE_ESSENCE);
+
+            BankManager.close(true);
+
+            Utils.hoverXp(Skills.SKILLS.RUNECRAFTING, 5);
+            if (!checkItems()) {
+
+            }
+        }
+    }
 
     public void getItemsComboRunes(int talisman, int regularRune) {
         if (!itemInInv(talisman, regularRune, ItemID.PURE_ESSENCE)) {
@@ -394,14 +481,6 @@ public class RunecraftBank implements Task {
 
     @Override
     public boolean validate() {
-
-        boolean invTiara = Query.inventory()
-                .idEquals(ItemID.TIARA)
-                .isAny();
-        boolean invTalisman = Query.inventory()
-                .nameContains("talisman")
-                .isAny();
-
         General.println("Abyss: " + Vars.get().abyssCrafting + " ; Lunars: " +
                 Vars.get().usingLunarImbue + " ; Zanaris: "
                 + Vars.get().zanarisCrafting);
@@ -440,8 +519,12 @@ public class RunecraftBank implements Task {
     @Override
     public void execute() {
         closeLootInterface();
-        //TODO implement combo runes bank (progressive bank doesn't handle pouches)
-        progressiveBank();
+        if (Vars.get().abyssCrafting)
+            getAbyssItems(ItemID.BLOOD_RUNE);
+        else {
+            //TODO implement combo runes bank (progressive bank doesn't handle pouches)
+            progressiveBank();
+        }
     }
 
     @Override

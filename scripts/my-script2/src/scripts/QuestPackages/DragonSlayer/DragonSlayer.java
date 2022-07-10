@@ -10,6 +10,7 @@ import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.cache.BankCache;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
@@ -440,32 +441,42 @@ public class DragonSlayer implements QuestTask {
             if (CHAMPIONS_GUILD_BOTTOM.contains(Player.getPosition())) {
                 NpcChat.talkToNPC("Guildmaster");
                 NPCInteraction.waitForConversationWindow();
-                NpcChat.handle( "About my quest to kill the dragon...");
+                NpcChat.handle("About my quest to kill the dragon...");
                 if (!askedAboutShip.check()) {
                     Log.info("Asking about Ship");
                     NpcChat.handle("Where can I find the right ship?");
-                }  if (!askedAboutLozar.check()) {
+                }
+                if (!askedAboutLozar.check()) {
                     Log.info("Asking about Lozar");
                     NpcChat.handle("Where is Lozar's map piece?");
-                } if (!askedAboutThalzar.check()) {
+                }
+                if (!askedAboutThalzar.check()) {
                     Log.info("Asking about thalzar");
                     NpcChat.handle("Where is Thalzar's map piece?");
                 }
                 NPCInteraction.handleConversation(guildMasterArray);
             }
+
+
         }
     }
 
     public void step3() {
         if (Inventory.find(MAZE_KEY).length < 1 && Inventory.find(MAP_PIECE_1).length < 1) {
             // could add a bank check here for map pieces
+            if (Inventory.getCount(MAP_PIECE_1) < 1 && checkBankCache(MAP_PIECE_1)) {
+                Log.warn("getItems2() executing to get map piece 1");
+                getItems2(false);
+                return;
+            } else {
+                Log.info("Passed map check");
+            }
             cQuesterV2.status = "Going to Champions Guild";
             Log.info(cQuesterV2.status);
             PathingUtil.walkToArea(CHAMPIONS_GUILD_BOTTOM);
             if (CHAMPIONS_GUILD_BOTTOM.contains(Player.getPosition())) {
                 NpcChat.talkToNPC("Guildmaster");
-                NPCInteraction.waitForConversationWindow();
-                NpcChat.handle("About my quest to kill the dragon...");
+                NpcChat.handle(true, "About my quest to kill the dragon...");
                 if (!askedAboutShip.check()) {
                     Log.info("Asking about Ship");
                     NpcChat.handle("Where can I find the right ship?");
@@ -480,6 +491,10 @@ public class DragonSlayer implements QuestTask {
                 }
 
                 NPCInteraction.handleConversation(guildMasterArray);
+                if (Inventory.getCount(MAP_PIECE_1) < 1 && checkBankCache(MAP_PIECE_1)) {
+                    Log.warn("getItems2() executing to get map piece 1");
+                    getItems2(false);
+                }
             }
         }
     }
@@ -785,8 +800,8 @@ public class DragonSlayer implements QuestTask {
     }
 
 
-    public void getItems2() {
-        if (Inventory.find(MAP_PIECE_1).length > 0 && Inventory.find(MAP_PIECE_2).length < 1) {
+    public void getItems2(boolean check) {
+        if (!check || (Inventory.find(MAP_PIECE_1).length > 0 && Inventory.find(MAP_PIECE_2).length < 1)) {
             cQuesterV2.status
                     = "Getting Items for map pieces 2/3";
             Log.info(cQuesterV2.status
@@ -817,7 +832,7 @@ public class DragonSlayer implements QuestTask {
             if (!BankManager.checkInventoryItems(WIZARDS_MIND_BOMB, UNFIRED_BOWL,
                     ItemID.FALADOR_TELEPORT, LOBSTER_POT, SILK, STEEL_NAILS, PLANK)) {
                 buyItems();
-                getItems2();
+                getItems2(true);
             }
             if (!askedOracleAboutMap.check()) {
                 cQuesterV2.status = "Going to Oracle";
@@ -871,10 +886,10 @@ public class DragonSlayer implements QuestTask {
                     }
                 }
             }
-            if (!IN_VAULT.contains(Player.getPosition()) && !Game.isInInstance()){
+            if (!IN_VAULT.contains(Player.getPosition()) && !Game.isInInstance()) {
                 //clicks door to enter
                 Optional<GameObject> door = QueryUtils.getObject(25115);
-                if (door.map(d->d.click()).orElse(false) &&
+                if (door.map(d -> d.click()).orElse(false) &&
                         Timer.abc2WaitCondition(() -> IN_VAULT.contains(Player.getPosition())
                                 || Game.isInInstance(), 12000, 15000)) {
                     Waiting.waitNormal(1500, 150);
@@ -1065,6 +1080,14 @@ public class DragonSlayer implements QuestTask {
         }
     }
 
+    private boolean checkBankCache(int itemId) {
+        if (!BankCache.isInitialized()) {
+            Log.warn("Bank Cache is not intialized, going to bank");
+            BankManager.open(true);
+            BankCache.update();
+        }
+        return BankCache.getStack(itemId) > 0;
+    }
 
     private Timer safteyTimer = new Timer(General.random(480000, 600000)); // 8- 10min
 
@@ -1075,9 +1098,12 @@ public class DragonSlayer implements QuestTask {
         // checkLevel();
 
         General.println("RSVarBit.get(3749).getValue() = " + RSVarBit.get(3749).getValue());
-        General.sleep(100);
-        General.println("[Debug]: Game Setting 176 is " + Game.getSetting(176));
 
+        General.println("[Debug]: Game Setting 176 is " + Game.getSetting(176));
+        Log.info("Asked about Lozar? " + askedAboutLozar.check());
+        Log.info("Asked about Thalzar? " + askedAboutThalzar.check());
+        Log.info("Asked about Melzar? " + askedAboutMelzar.check());
+        Log.info("Asked about Ship? " + askedAboutShip.check());
 
         if (Game.getSetting(176) == 0) {
             General.sleep(100);
@@ -1090,7 +1116,7 @@ public class DragonSlayer implements QuestTask {
             step3();
             talkToGuildMasterAboutPiece();
             navigateMaze();
-            getItems2();
+            getItems2(true);
             talkToGuildMasterAboutPiece();
             step5();
             step6();
@@ -1113,7 +1139,7 @@ public class DragonSlayer implements QuestTask {
             Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
         }
-
+        Waiting.waitNormal(100, 20);
     }
 
 

@@ -50,7 +50,7 @@ public class PathingUtil {
 
     public static DPathNavigator nav = new DPathNavigator();
     private static RSArea stonesArea = new RSArea(
-            new RSTile[] {
+            new RSTile[]{
                     new RSTile(2525, 3592, 0),
                     new RSTile(2517, 3591, 0),
                     new RSTile(2520, 3604, 0),
@@ -162,7 +162,7 @@ public class PathingUtil {
 
         // handle stamina
         if (Utils.getVarBitValue(25) == 0 && MyPlayer.getRunEnergy() <= nextStaminaPotionUse) {
-           // Log.info("[DaxPref]: Should Drink stamina");
+            // Log.info("[DaxPref]: Should Drink stamina");
             Optional<InventoryItem> invStam = Query.inventory().idEquals(ItemID.STAMINA_POTION).findClosestToMouse();
             if (invStam.map(s -> s.click("Drink")).orElse(false)) {
                 nextStaminaPotionUse = General.randomSD(55, 80, 70, 7);
@@ -237,6 +237,30 @@ public class PathingUtil {
         });
     }
 
+    public static boolean walkToTile(WorldTile destination, int radius, boolean abc2sleep) {
+        Log.info("[PathingUtil] Global Walking V2 - Worldtile: " + destination);
+        Area area = Area.fromRadius(destination ,radius);
+        if (area.containsMyPlayer())
+            return true;
+
+        int sleepMin = Game.isRunOn() ? 8000 : 12000;
+        int sleepMax = Game.isRunOn() ? 15000 : 20000;
+        for (int i = 0; i < 3; i++) {
+            if (i > 0 && Game.isInInstance())
+                break;
+            if (!GlobalWalking.walkTo(destination, PathingUtil::getWalkState)) {
+                Log.warn("[PathingUtil]  GlobalWalking failed to generate a path, sleeping ~1-2s");
+                Waiting.waitNormal(1700, 200);
+            } else {
+                Waiting.waitUntil(TribotRandom.uniform(sleepMin,sleepMax), 500,()-> area.containsMyPlayer());
+                if (abc2sleep)
+                    Utils.idleAfkAction();
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean walkToTile(WorldTile destination) {
         Log.info("[PathingUtil] Global Walking V2 - Worldtile: " + destination);
         for (int i = 0; i < 3; i++) {
@@ -302,7 +326,7 @@ public class PathingUtil {
     public static boolean movementIdle() {
         int timeout = Game.isRunOn() ? 10000 : 15000;
         if (Waiting.waitUntil(1750, 75, MyPlayer::isMoving))
-            return Waiting.waitUntil(timeout, Utils.random(700,1200), () -> !MyPlayer.isMoving());
+            return Waiting.waitUntil(timeout, Utils.random(700, 1200), () -> !MyPlayer.isMoving());
         return false;
     }
 
@@ -310,7 +334,7 @@ public class PathingUtil {
         int timeout = Game.isRunOn() ? 10000 : 15000;
 
         if (Waiting.waitUntil(1750, 75, MyPlayer::isMoving))
-            return Waiting.waitUntil(timeout, Utils.random(700,1200), () -> !MyPlayer.isMoving() ||
+            return Waiting.waitUntil(timeout, Utils.random(700, 1200), () -> !MyPlayer.isMoving() ||
                     destination.distanceTo(MyPlayer.getTile()) < 5);
         else return
                 destination.distanceTo(MyPlayer.getTile()) < 5;
@@ -823,77 +847,12 @@ public class PathingUtil {
         checkRun();
         int sleepMin = Game.isRunOn() ? 8000 : 15000;
         int sleepMax = Game.isRunOn() ? 15000 : 20000;
-        RSArea largeArea = makeLargerArea(new RSArea(tile, sizeRadius + 1));
-
-        setDaxPref();
-
-        if (!largeArea.contains(Player.getPosition())) {
-            for (int i = 0; i < attempts; i++) {
-
-                if (DaxWalker.walkTo(tile, DaxWalker.getGlobalWalkingCondition())) {
-                    Timer.waitCondition(() -> largeArea.contains(Player.getPosition()) || !Player.isMoving(), sleepMin, sleepMax);
-
-                    return largeArea.contains(Player.getPosition()) ||
-                            tile.distanceTo(Player.getPosition()) <= sizeRadius + 1;
-
-                } else {
-                    General.println("[Debug]: Failed to generate a path, waiting 2-5s and trying again.");
-                    General.sleep(2500, 3500);
-
-                    // place this here so it tries at least once to generate a path
-                    if (Game.isInInstance()) {
-                        General.println("[PathingUtil]: In Instance, breaking from dax walker loop");
-                        break;
-                    }
-
-                }
-                Waiting.waitUniform(500, 750);
-            }
-
-        } else // already in area
-            return true;
-
-        return false;
+        return walkToTile(Utils.getWorldTileFromRSTile(tile));
     }
 
     public static boolean walkToTile(RSTile tile, int sizeRadius, boolean abc2Sleep) {
         checkRun();
-        int sleepMin = Game.isRunOn() ? 8000 : 15000;
-        int sleepMax = Game.isRunOn() ? 15000 : 20000;
-        RSArea largeArea = makeLargerArea(new RSArea(tile, sizeRadius + 1));
-        long currentTime;
-        setDaxPref();
-
-        if (!largeArea.contains(Player.getPosition())) {
-            for (int i = 0; i < 3; i++) {
-
-                if (DaxWalker.walkTo(tile, DaxWalker.getGlobalWalkingCondition())) {
-                    currentTime = System.currentTimeMillis();
-                    Timer.waitCondition(() -> largeArea.contains(Player.getPosition()) || !Player.isMoving(), sleepMin, sleepMax);
-
-                    if (abc2Sleep)
-                        Utils.abc2ReactionSleep(currentTime);
-
-                    return largeArea.contains(Player.getPosition()) ||
-                            tile.distanceTo(Player.getPosition()) <= sizeRadius + 1;
-
-                } else {
-                    General.println("[Debug]: Failed to generate a path, waiting 2-5s and trying again.");
-                    General.sleep(2500, 3500);
-
-                    // place this here so it tries at least once to generate a path
-                    if (Game.isInInstance()) {
-                        General.println("[PathingUtil]: In Instance, breaking from dax walker loop");
-                        break;
-                    }
-
-                }
-            }
-
-        } else // already in area
-            return true;
-
-        return false;
+        return walkToTile(Utils.getWorldTileFromRSTile(tile));
     }
 
 

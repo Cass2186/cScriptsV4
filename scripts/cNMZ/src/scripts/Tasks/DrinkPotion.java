@@ -147,51 +147,6 @@ public class DrinkPotion implements Task {
                 Vars.get().usingPrayerPots), sleep);
     }
 
-    public void rockCake() {
-        Optional<InventoryItem> rockCake = Query.inventory()
-                .idEquals(Const.ROCK_CAKE)
-                .findClosestToMouse();
-        Optional<InventoryItem> locatorOrb = Query.inventory()
-                .idEquals(ItemID.LOCATOR_ORB)
-                .findClosestToMouse();
-        if ((rockCake.isPresent() || locatorOrb.isPresent()) &&
-                MyPlayer.getCurrentHealth() != 1 //&& Vars.get().overloadTimer.isRunning()
-                && MyPlayer.getCurrentHealth() >= Vars.get().eatRockCakeAt) {
-
-            if (MyPlayer.getMaxHealth() != MyPlayer.getCurrentHealth()) //will skip the first it does absorptions
-                determineSleep();
-
-            drinkOverload();
-            if (MyPlayer.getCurrentHealth() > 1 &&
-                    ((Vars.get().usingOverloadPots && Vars.get().overloadTimer.isRunning()) ||
-                            Vars.get().usingAbsorptions)) {
-
-                for (int i = 0; i < 50; i++) {
-                    Log.info("Eating rock cake");
-                    General.sleep(50, 80);
-
-                    if (!GameState.isInInstance() || MyPlayer.getCurrentHealth() == 1)
-                        break;
-
-                    if (locatorOrb.map(l -> l.click("Feel")).orElse(false)) {
-                        Waiting.waitNormal(325, 60);
-                    } else if (rockCake.map(r -> r.click("Guzzle")).orElse(false)) {
-                        Waiting.waitNormal(325, 60);
-                    }
-                }
-            } else if (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()) {
-                Log.debug("Overload timer isn't running");
-
-            }
-
-            Vars.get().eatRockCakeAt = Vars.get().getEatRockCakeAt();
-            Log.info("Next eating rock cake at: " + Vars.get().eatRockCakeAt);
-        } else if (Vars.get().usingAbsorptions) {
-            Log.warn("Error with rock caking: do we have one? " + rockCake.isPresent());
-            Log.warn("Is HP > eatRockCake at: " + (MyPlayer.getCurrentHealth() >= Vars.get().eatRockCakeAt));
-        }
-    }
-
 
     public void drinkOverload() {
         if (Vars.get().usingOverloadPots) {
@@ -260,7 +215,7 @@ public class DrinkPotion implements Task {
             Vars.get().drinkAbsorptionAt = Utils.random(50, 150);
             Log.info("[Debug]: Next drinking Absorption at " + Vars.get().drinkAbsorptionAt
                     + " up to: " + Vars.get().drinkAbsorptionUpTo);
-            rockCake();
+            RockCake.rockCake();
         }
     }
 
@@ -305,7 +260,7 @@ public class DrinkPotion implements Task {
         if (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning())
             drinkOverload();
 
-        rockCake();
+        RockCake.rockCake();
 
     }
 }

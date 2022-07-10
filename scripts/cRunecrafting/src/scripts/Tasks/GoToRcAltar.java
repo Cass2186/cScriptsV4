@@ -3,6 +3,7 @@ package scripts.Tasks;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
+import org.tribot.script.sdk.util.TribotRandom;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.Data.Const;
 
@@ -99,6 +100,47 @@ public class GoToRcAltar implements Task {
         return false;
     }
 
+    private static boolean enterAbyss() {
+        if (!Const.WHOLE_ABYSS.containsMyPlayer()) {
+            Log.info("Going to abyss");
+            if (PathingUtil.walkToTile(Const.WILDERNESS_TILE) &&
+                    Query.npcs().actionContains("Teleport")
+                            .findClosestByPathDistance()
+                            .map(n -> n.interact("Teleport")).orElse(false)) {
+                return Waiting.waitUntil(TribotRandom.uniform(9000, 11000), 600,
+                        () -> Const.WHOLE_ABYSS.containsMyPlayer());
+            }
+        }
+        Log.info("Already in Abyss");
+        return Const.WHOLE_ABYSS.containsMyPlayer();
+    }
+
+    public static boolean enterInnerAbyss() {
+        if (enterAbyss() && !Const.INNER_ABYSS.containsMyPlayer() &&
+                Query.gameObjects().actionContains("Squeeze-through")
+                        .findClosestByPathDistance()
+                        .map(obj -> obj.interact("Squeeze-through"))
+                        .orElse(false)) {
+            return Waiting.waitUntil(TribotRandom.uniform(9000, 11000), 600,
+                    Const.INNER_ABYSS::containsMyPlayer);
+        }
+        return Const.INNER_ABYSS.containsMyPlayer();
+    }
+
+    private boolean enterAbyssPortal(String portalName) {
+        if (enterInnerAbyss() &&
+                Query.gameObjects().actionContains("Exit-through")
+                        .nameContains(portalName)
+                        .findClosestByPathDistance().map(obj -> obj.interact("Exit-through"))
+                        .orElse(false)) {
+            return Waiting.waitUntil(TribotRandom.uniform(8000, 10000),
+                    TribotRandom.normal(450, 65), () -> RcUtils.atAltar() &&
+                            !Const.WHOLE_ABYSS.containsMyPlayer());
+        }
+        return RcUtils.atAltar() &&
+                !Const.WHOLE_ABYSS.containsMyPlayer();
+    }
+
 
     @Override
     public Priority priority() {
@@ -113,7 +155,7 @@ public class GoToRcAltar implements Task {
         }
         //TODO add support for RC Abyss
         if (Vars.get().abyssCrafting)
-            return false;
+            return Inventory.getAll().size() > 26;
 
         return Inventory.contains(ItemID.PURE_ESSENCE) &&
                 Vars.get().currentRune.map(current ->
@@ -130,11 +172,14 @@ public class GoToRcAltar implements Task {
         } else if (Skill.RUNECRAFT.getActualLevel() < 19) {
             goToFireAltar();
 
-        } else if (!Vars.get().zanarisCrafting) {
-            goToFireAltar();
+        } else if (Vars.get().abyssCrafting) {
+
+                enterAbyssPortal("Blood");
 
         } else if (Vars.get().zanarisCrafting)
             goToCosmicAltar();
+        else
+            goToFireAltar();
     }
 
     @Override

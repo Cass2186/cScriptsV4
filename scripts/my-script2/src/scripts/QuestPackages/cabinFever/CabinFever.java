@@ -1,10 +1,17 @@
 package scripts.QuestPackages.cabinFever;
 
+import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
+import scripts.GEManager.GEItem;
 import scripts.QuestPackages.Contact.Contact;
+import scripts.QuestPackages.RumDeal.SlugSteps;
 import scripts.QuestSteps.*;
 import scripts.Requirements.*;
 import scripts.Requirements.Items.ItemCollections;
@@ -13,10 +20,7 @@ import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CabinFever implements QuestTask {
 
@@ -406,13 +410,16 @@ public class CabinFever implements QuestTask {
     }
 
     public void setupSteps() {
-        talkToBill = new NPCStep("Bill Teach", new RSTile(3678, 3494, 0));
+        talkToBill = new NPCStep("Bill Teach", new RSTile(3670, 3494, 0));
         talkToBill.addDialogStep("Yes.", "Yes, I've always wanted to be a pirate!", "Yes, I am a woman of my word.",
                 "Yes, I am a man of my word.");
-        goOnBillBoat = new ObjectStep(ObjectID.GANGPLANK_11209, new RSTile(3710, 3496, 0), "Talk to Bill Teach on his boat in Port Phasmatys.");
-        talkToBillOnBoat = new NPCStep("Bill Teach", new RSTile(3714, 3496, 1));
+        goOnBillBoat = new ObjectStep(ObjectID.GANGPLANK_11209,
+                new RSTile(3710, 3496, 0),
+                "Cross", MyPlayer.getTile().getPlane() == 1);
+        talkToBillOnBoat = new NPCStep("Bill Teach",
+                new RSTile(3714, 3498, 1));
         talkToBillOnBoat.addDialogStep("Let's go Cap'n!");
-        talkToBillOnBoat.addSubSteps(goOnBillBoat);
+        //talkToBillOnBoat.addSubSteps(goOnBillBoat);
 
         leaveHull = new ObjectStep(ObjectID.SHIPS_LADDER_11308, new RSTile(1815, 4836, 0), "Leave the hull.");
         enterHull = new ObjectStep(ObjectID.SHIPS_LADDER_11309, new RSTile(1815, 4836, 1), "Enter the ship's hull.");
@@ -428,10 +435,11 @@ public class CabinFever implements QuestTask {
         pickUpRope = new GroundItemStep(ItemID.ROPE, new RSTile(1822, 4827, 1), floorRope);
 
         take1Fuse = new ObjectStep(ObjectID.GUN_LOCKER, new RSTile(1816, 4833, 0),
-                "Search", fuse1);
+                "Search");
         take1Fuse.addAlternateObjects(ObjectID.GUN_LOCKER_11249);
         take4Ropes = new ObjectStep(ObjectID.REPAIR_LOCKER, new RSTile(1814, 4832, 0),
-                "Search the repair locker for 4 ropes.", ropes4);
+                "Search");
+
         take4Ropes.addAlternateObjects(ObjectID.REPAIR_LOCKER_11247);
         takeTinderbox = new GroundItemStep(ItemID.TINDERBOX, new RSTile(1814, 4825, 0), floorTinderbox);
 
@@ -470,7 +478,7 @@ public class CabinFever implements QuestTask {
         takePasteHole3 = new ObjectStep(ObjectID.REPAIR_LOCKER, new RSTile(1814, 4832, 0), "Search the repair locker for repair items.", hammer, paste1);
         takePasteHole3.addAlternateObjects(ObjectID.REPAIR_LOCKER_11247);
 
-        // takeHoleItems1.addSubSteps(takeHoleItems2, takeHoleItems3, takePasteHole1, takePasteHole2, takePasteHole3);
+        takeHoleItems1.addSubSteps(takeHoleItems2, takeHoleItems3, takePasteHole1, takePasteHole2, takePasteHole3);
 
         repairHole1 = new ObjectStep(NullObjectID.NULL_11221, new RSTile(1817, 4834, 0), "Repair the holes.", hammer, planks2, tacks10);
         repairHole2 = new ObjectStep(NullObjectID.NULL_11222, new RSTile(1817, 4832, 0), "Repair the holes.", hammer, planks2, tacks10);
@@ -480,7 +488,7 @@ public class CabinFever implements QuestTask {
         pasteHole1 = new ObjectStep(NullObjectID.NULL_11221, new RSTile(1817, 4834, 0), "Waterproof the hole.", paste1);
         pasteHole2 = new ObjectStep(NullObjectID.NULL_11222, new RSTile(1817, 4832, 0), "Waterproof the hole.", paste1);
         pasteHole3 = new ObjectStep(NullObjectID.NULL_11223, new RSTile(1817, 4830, 0), "Waterproof the hole.", paste1);
-        pasteHole1.addSubSteps(pasteHole2, pasteHole3);
+        //  pasteHole1.addSubSteps(pasteHole2, pasteHole3);
 
         goUpAfterRepair = new ObjectStep(ObjectID.SHIPS_LADDER_11308, new RSTile(1815, 4836, 0), "Go up to the deck.");
         talkToBillAfterRepair = new NPCStep(4014, new RSTile(1815, 4834, 1), "Talk to Bill Teach.");
@@ -524,7 +532,7 @@ public class CabinFever implements QuestTask {
         getRamrod.addAlternateObjects(ObjectID.GUN_LOCKER_11249);
         // getRamrod.addSubSteps(goDownForRamrod);
         goUpToCannon = new ObjectStep(ObjectID.SHIPS_LADDER_11308, new RSTile(1815, 4836, 0), "Go up to the deck to fire the cannon.");
-        usePowder = new UseItemOnObjectStep(ItemID.GUNPOWDER,NullObjectID.NULL_11213, new RSTile(1817, 4833, 1), "Use the gunpowder on the cannon.", powderHighlight);
+        usePowder = new UseItemOnObjectStep(ItemID.GUNPOWDER, NullObjectID.NULL_11213, new RSTile(1817, 4833, 1), "Use the gunpowder on the cannon.", powderHighlight);
         useRamrod = new UseItemOnObjectStep(ItemID.RAMROD, NullObjectID.NULL_11213, new RSTile(1817, 4833, 1), "Use the ramrod on the cannon.", ramrodHighlight);
         useCanister = new UseItemOnObjectStep(ItemID.CANISTER_7149, NullObjectID.NULL_11213, new RSTile(1817, 4833, 1), "Use the canister on the cannon.", canisterHighlight);
         useFuse = new UseItemOnObjectStep(ItemID.FUSE,
@@ -558,10 +566,101 @@ public class CabinFever implements QuestTask {
         repeatBallSteps = new DetailedQuestStep("Keep firing cannonballs until Bill tells you to stop. Quest completed!");
     }
 
+    //TODO update these
+    ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
+            Arrays.asList(
+                    new GEItem(ItemID.RAKE, 1, 500),
+                    new GEItem(ItemID.SEED_DIBBER, 1, 500),
+                    new GEItem(ItemID.SHARK, 25, 20),
+                    new GEItem(ItemID.BUCKET, 1, 500),
+                    new GEItem(ItemID.CAMELOT_TELEPORT, 5, 30),
+                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25)
+            )
+    );
+    InventoryRequirement initialItemReqs = new InventoryRequirement(new ArrayList<>(
+            Arrays.asList(
+                    new ItemReq(ItemID.ECTOPHIAL, 1, 0),
+                    new ItemReq(ItemID.SHARK, 6, 0),
+                    new ItemReq(ItemID.COINS_995, 10000, 3500),
+                    new ItemReq(ItemID.GHOSTSPEAK_AMULET, 1, 1, true, true),
+                    new ItemReq(ItemID.CAMELOT_TELEPORT, 3, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
+                    new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true, true)
+            )
+    ));
+
+    private boolean getFuses(int num) {
+        loadRSAreas();
+        if (Inventory.getCount(ItemID.FUSE) < num) {
+            if (boatF0.contains(Player.getPosition())) {
+                if (!Widgets.isVisible(501, 9) &&
+                        Query.gameObjects().nameContains("Gun Locker")
+                                .actionContains("Open")
+                                .findClosest().map(l -> l.interact("Open")).orElse(false)) {
+                    Waiting.waitUntil(4500, 500, () -> Query.gameObjects().idEquals(11247).isAny());
+                }
+                if (Query.gameObjects().nameContains("Gun Locker")
+                        .actionContains("Search")
+                        .findClosest().map(l -> l.interact("Search")).orElse(false)) {
+                    Waiting.waitUntil(4500, 500, () -> Widgets.isVisible(501, 9));
+                }
+                // todo update widgets for this
+                int iters = num - Inventory.getCount(ItemID.FUSE);
+                for (int i = 0; i < iters; i++) {
+                    if (Query.widgets().inIndexPath(501, 9).findFirst().map(Widget::click).orElse(false)) {
+                        Utils.idleNormalAction(true);
+                    }
+                    if (Inventory.getCount(ItemID.FUSE) >= num)
+                        break;
+                }
+            }
+            if (Widgets.isVisible(501, 9) &&
+                    Query.widgets().inIndexPath(501).actionContains("Close").findFirst().map(Widget::click).orElse(false)) {
+                Utils.idleNormalAction(true);
+
+            }
+        }
+        return Inventory.getCount(ItemID.FUSE) >= num;
+    }
+
+    private boolean getRopes(int num) {
+        loadRSAreas();
+        if (Inventory.getCount(ItemID.ROPE) < num) {
+            if (boatF0.contains(Player.getPosition())) {
+                if (!Widgets.isVisible(502, 8) &&
+                        Query.gameObjects().nameContains("Repair Locker")
+                                .actionContains("Open")
+                                .findClosest().map(l -> l.interact("Open")).orElse(false)) {
+                    Waiting.waitUntil(4500, 500, () -> Query.gameObjects().idEquals(11247).isAny());
+                }
+                if (Query.gameObjects().nameContains("Repair Locker")
+                        .actionContains("Search")
+                        .findClosest().map(l -> l.interact("Search")).orElse(false)) {
+                    Waiting.waitUntil(4500, 500, () -> Widgets.isVisible(502, 8));
+                }
+                int iters = num - Inventory.getCount(ItemID.ROPE);
+                for (int i = 0; i < iters; i++) {
+                    if (Query.widgets().inIndexPath(502, 8).findFirst().map(Widget::click).orElse(false)) {
+                        Utils.idleNormalAction(true);
+                    }
+                    if (Inventory.getCount(ItemID.ROPE) >= num)
+                        break;
+                }
+            }
+            if (Widgets.isVisible(502) &&
+                    Query.widgets().inIndexPath(502).actionContains("Close").findFirst().map(Widget::click).orElse(false)) {
+                Utils.idleNormalAction(true);
+            }
+        }
+        return Inventory.getCount(ItemID.ROPE) >= num;
+    }
+
+    BuyItemsStep buyitems = new BuyItemsStep(itemsToBuy);
 
     @Override
     public Priority priority() {
-        return null;
+        return Priority.LOW;
     }
 
     @Override
@@ -571,17 +670,57 @@ public class CabinFever implements QuestTask {
 
     @Override
     public void execute() {
+        if (!checkRequirements()) {
+            Log.warn("Missing a Cabin Fever quest requirement, check the wiki");
+            cQuesterV2.taskList.remove(this);
+            return;
+        } else if (isComplete()) {
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
+
+        int gameSetting = GameState.getSetting(QuestVarPlayer.QUEST_CABIN_FEVER.getId());
+        Log.info("Cabin Fever GameSetting is " + gameSetting);
+        if (gameSetting == 0 && !initialItemReqs.check()) {
+            buyitems.buyItems();
+            initialItemReqs.withdrawItems();
+        }
+        if (gameSetting > 0 && gameSetting <= 20 && !GameState.isInInstance()) {
+            //ConditionalStep setSail = new ConditionalStep(goOnBillBoat);
+            //  setSail.addStep(onBoatAtDock, talkToBillOnBoat);
+            if (MyPlayer.getTile().getPlane() != 1) {
+
+            }
+        } else if (gameSetting == 20 && Inventory.getCount(ItemID.ROPE) < 4) {
+            getRopes(4);
+        }
+
+        Map<Integer, QuestStep> steps = loadSteps();
+        Optional<QuestStep> step = Optional.ofNullable(steps.get(gameSetting));
+        step.ifPresent(s -> cQuesterV2.status = s.getClass().toGenericString());
+        if (gameSetting == 30) {
+            if (onBoatF0.check() && ropes4.check()) {
+                getFuses(1);
+            }
+        }
+        step.ifPresent(QuestStep::execute);
+
+        if (Waiting.waitUntil(TribotRandom.uniform(1250, 1750), 250, Utils::inCutScene))
+            Utils.cutScene();
+
+        if (ChatScreen.isOpen())
+            NpcChat.handle();
 
     }
 
     @Override
     public String questName() {
-        return null;
+        return "Cabin Fever (" + GameState.getSetting(QuestVarPlayer.QUEST_CABIN_FEVER.getId()) + ")";
     }
 
     @Override
     public boolean checkRequirements() {
-        return false;
+        return getGeneralRequirements().stream().allMatch(Requirement::check);
     }
 
     @Override
@@ -604,6 +743,6 @@ public class CabinFever implements QuestTask {
 
     @Override
     public boolean isComplete() {
-        return false;
+        return Quest.CABIN_FEVER.getState().equals(Quest.State.COMPLETE);
     }
 }

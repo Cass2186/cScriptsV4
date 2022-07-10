@@ -1,6 +1,7 @@
 package scripts.QuestPackages.templeOfTheEye;
 
 import com.google.errorprone.annotations.Var;
+import lombok.Getter;
 import org.tribot.api2007.Game;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.types.RSArea;
@@ -8,6 +9,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.*;
+import org.tribot.script.sdk.util.TribotRandom;
 import org.tribot.script.sdk.walking.LocalWalking;
 import scripts.*;
 import scripts.GEManager.GEItem;
@@ -40,12 +42,172 @@ import java.util.*;
         */
 public class TempleOfTheEye implements QuestTask {
 
-
     private static TempleOfTheEye quest;
 
     public static TempleOfTheEye get() {
         return quest == null ? quest = new TempleOfTheEye() : quest;
     }
+
+    //1 = law
+    //2 = earth
+    // 3 = cosmic
+    //4 = fire
+    // 5 = nature
+    //6 = death
+
+    int LAW_ENERGY = 43846;
+    int EARTH_ENERGY = 43842;
+    int COSMIC_ENERGY = 43843;
+    int FIRE_ENERGY = 43847;
+    int NATURE_ENERGY = 43845;
+    int DEATH_ENERGY = 43844;
+
+    BALLS ball1;
+    BALLS ball2;
+    BALLS ball3;
+    BALLS ball4;
+    BALLS ball5;
+    BALLS ball6;
+    int[] allBallIds = {
+            LAW_ENERGY, //law
+            EARTH_ENERGY, //earth
+            COSMIC_ENERGY, //cosmic
+            FIRE_ENERGY, //fire
+            NATURE_ENERGY, //nature
+            DEATH_ENERGY// death
+    };
+
+
+    private enum BALLS {
+
+        LAW_ENERGY(43846),
+        EARTH_ENERGY(43842),
+        COSMIC_ENERGY(43843),
+        FIRE_ENERGY(43847),
+        NATURE_ENERGY(43845),
+        DEATH_ENERGY(43844);
+
+        BALLS(int id) {
+            this.id = id;
+        }
+
+        @Getter
+        private int id;
+
+    }
+
+    ArrayList<BALLS> knownBalls = new ArrayList<>(List.of(
+    ));
+
+    ArrayList<BALLS> possibleBalls = new ArrayList<>(List.of(
+            BALLS.LAW_ENERGY, //law
+            BALLS.EARTH_ENERGY, //earth
+            BALLS.COSMIC_ENERGY, //cosmic
+            BALLS.FIRE_ENERGY, //fire
+            BALLS.NATURE_ENERGY, //nature
+            BALLS.DEATH_ENERGY// death
+    ));
+
+    private void handleBalls() {
+        if (ball1 == null && numberOfWhiteBalls() == 0) {
+            ball1 = getWhiteBallId();
+            Log.info("Got ball 1 ID " + ball1);
+            possibleBalls.remove(ball1);
+            knownBalls.add(ball1);
+        } else if (ball1 != null && numberOfWhiteBalls() == 0) {
+            checkBall(ball1.getId());
+        }
+        if (ball2 == null && numberOfWhiteBalls() == 1) {
+            ball2 = getWhiteBallId();
+            Log.info("Got ball 2 ID " + ball2);
+            possibleBalls.remove(ball2);
+            knownBalls.add(ball2);
+        } else if (ball2 != null && numberOfWhiteBalls() == 1) {
+            checkBall(ball2.getId());
+        }
+        if (ball3 == null && numberOfWhiteBalls() == 2) {
+            ball3 = getWhiteBallId();
+            Log.info("Got ball 3 ID " + ball3);
+            possibleBalls.remove(ball3);
+            knownBalls.add(ball3);
+        } else if (ball3 != null && numberOfWhiteBalls() == 2) {
+            checkBall(ball3.getId());
+        }
+        if (ball4 == null && numberOfWhiteBalls() == 3) {
+            ball4 = getWhiteBallId();
+            Log.info("Got ball 4 ID " + ball4);
+            possibleBalls.remove(ball4);
+            knownBalls.add(ball4);
+        } else if (ball4 != null && numberOfWhiteBalls() == 3) {
+            checkBall(ball4.getId());
+        }
+        if (ball5 == null && numberOfWhiteBalls() == 4) {
+            ball5 = getWhiteBallId();
+            Log.info("Got ball 5 ID " + ball5);
+            possibleBalls.remove(ball5);
+            knownBalls.add(ball5);
+        } else if (ball5 != null && numberOfWhiteBalls() == 4) {
+            checkBall(ball5.getId());
+        }
+        if (ball6 == null && numberOfWhiteBalls() == 5) {
+            ball6 = getWhiteBallId();
+            Log.info("Got ball 6 ID " + ball6);
+            possibleBalls.remove(ball6);
+            knownBalls.add(ball6);
+        } else if (ball6 != null && numberOfWhiteBalls() == 5) {
+            checkBall(ball6.getId());
+        }
+
+
+    }
+
+    // touchRunes = new ObjectStep(43768, "Touch");
+    //returns true if the ball disapears
+    private boolean checkBall(int ballId) {
+        return Query.gameObjects().maxDistance(6)
+                .actionContains("Touch")
+                .idEquals(ballId)
+                .findClosestByPathDistance()
+                .map(b -> b.interact("Touch")).orElse(false) &&
+                Waiting.waitUntil(TribotRandom.uniform(5000, 7000), TribotRandom.uniform(400, 600),
+                        () -> isBallWhite(ballId));
+    }
+
+    //when it turns white, the action  dissapears so we use that to count the available ones
+    private boolean isBallWhite(int id) {
+        return Query.gameObjects().maxDistance(6)
+                .actionNotContains("Touch")
+                .idEquals(id)
+                .isAny();
+    }
+
+    private void clickKnownBalls() {
+        for (BALLS b : knownBalls) {
+            Log.info("Clicking known balls");
+            checkBall(b.getId());
+        }
+
+    }
+
+    private int numberOfWhiteBalls() {
+        return Query.gameObjects().maxDistance(6)
+                .actionNotContains("Touch")
+                .idEquals(allBallIds)
+                .count();
+    }
+
+    private BALLS getWhiteBallId() {
+        for (BALLS b : possibleBalls) {
+            if (checkBall(b.getId())) {
+                Log.info("Ball is white");
+                return b;
+            } else {
+                clickKnownBalls();
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public Priority priority() {
@@ -66,6 +228,9 @@ public class TempleOfTheEye implements QuestTask {
         if (varbit == 0 && !initialItemReqs.check()) {
             buyStep.buyItems();
             initialItemReqs.withdrawItems();
+        } else if (varbit == 35) {
+            handleBalls();
+            return;
         } else if (varbit == 75) {
             Log.info("Handling Apprentices");
             if (felixPuzzleNotSeen.check()) talkToFelix.execute();
@@ -113,12 +278,14 @@ public class TempleOfTheEye implements QuestTask {
         if (ChatScreen.isOpen())
             NpcChat.handle();
 
-        Waiting.waitNormal(300, 500);
+        Waiting.waitNormal(900, 50);
     }
 
     @Override
     public String questName() {
-        return "Temple of the Eye (" + GameState.getVarbit(QuestVarbits.QUEST_TEMPLE_OF_THE_EYE.getId()) + ")";
+        return "Temple of the Eye (vb: " +
+                GameState.getVarbit(QuestVarbits.QUEST_TEMPLE_OF_THE_EYE.getId()) + " || GS: " +
+                GameState.getVarbit(tutorialSetting) + ")";
     }
 
     @Override
@@ -134,7 +301,7 @@ public class TempleOfTheEye implements QuestTask {
 
     @Override
     public boolean isComplete() {
-        return false;
+        return  GameState.getVarbit(QuestVarbits.QUEST_TEMPLE_OF_THE_EYE.getId())  == 130;
     }
 
     //Items Required
@@ -166,31 +333,6 @@ public class TempleOfTheEye implements QuestTask {
                 .findFirst().map(c -> c.click()).orElse(false);
     }
 
-    int orb1 = 0;
-    int orb2 = 0;
-    int orb3 = 0;
-    int orb4 = 0;
-    int orb5 = 0;
-
-    private void solveOrbs() {
-
-    }
-
-    private boolean touchEnergy(String name) {
-        Optional<GameObject> energy = Query.gameObjects().nameContains(name)
-                .findClosestByPathDistance();
-        return energy.map(e -> e.interact("Touch")).orElse(false);
-    }
-
-    private boolean areAllEnergiesPresent() {
-        return Query.gameObjects().nameContains("Earth Energy", "Cosmic Energy",
-                        "Fire Energy", "Nature Energy", "Death Energy", "Law Energy")
-                .toList().size() >= 5;
-    }
-
-    private boolean isEnergyPresent(String name) {
-        return Query.gameObjects().nameContains(name).isAny();
-    }
 
     ArrayList<GEItem> itemsToBuy = new ArrayList<GEItem>(
             Arrays.asList(
@@ -251,7 +393,143 @@ public class TempleOfTheEye implements QuestTask {
     int tutorialSetting = 13759;
 
     private void handleTutorial() {
-        if (GameState.getVarbit(tutorialSetting) == 65) {
+        if (GameState.getVarbit(tutorialSetting) == 15) {
+            if (QueryUtils.getNpc("Apprentice Felix")
+                    .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        } else if (GameState.getVarbit(tutorialSetting) == 20) {
+            cQuesterV2.status = "Taking Cells";
+            if (!Inventory.contains(26883) &&
+                    Query.gameObjects().nameContains("Weak cells")
+                            .actionContains("Take").findClosest()
+                            .map(o -> o.interact("Take")).orElse(false))
+                Waiting.waitUntil(5000, 500, () ->
+                        Inventory.contains(26883));
+            cQuesterV2.status = "Talking to Tamara";
+            if (Inventory.contains(26883) &&
+                    QueryUtils.getNpc("Apprentice Tamara")
+                            .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        } else if (GameState.getVarbit(tutorialSetting) == 25) {
+            cQuesterV2.status = "Placing Cell";
+            if (Query.gameObjects().actionContains("Place-cell").findClosest()
+                    .map(o -> o.interact("Place-cell")).orElse(false))
+                Waiting.waitUntil(5000, 500, () -> GameState.getVarbit(tutorialSetting) == 70);
+
+
+        } else if (GameState.getVarbit(tutorialSetting) == 35) {
+            cQuesterV2.status = "Talking to Tamara";
+            if (Inventory.contains(26883) &&
+                    QueryUtils.getNpc("Apprentice Tamara")
+                            .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        } else if (GameState.getVarbit(tutorialSetting) == 40) {
+            cQuesterV2.status = "Talking to Felix";
+            if (QueryUtils.getNpc("Apprentice Felix")
+                    .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        } else if (GameState.getVarbit(tutorialSetting) == 45) {
+            cQuesterV2.status = "Taking Cells";
+            if (!Inventory.contains(26883) &&
+                    Query.gameObjects().nameContains("Weak cells")
+                            .actionContains("Take").findClosest()
+                            .map(o -> o.interact("Take")).orElse(false))
+                Waiting.waitUntil(5000, 500, () ->
+                        Inventory.contains(26883));
+
+            cQuesterV2.status = "Assembling Cell";
+            if (Inventory.contains(26883) && Query.gameObjects().actionContains("Assemble")
+                    .nameContains("elemental")
+                    .findClosest()
+                    .map(o -> o.interact("Assemble")).orElse(false))
+                Waiting.waitUntil(5000, 500, () ->
+                        !Inventory.contains(26883));
+
+            if (!Inventory.contains(26883) &&
+                    Query.gameObjects().nameContains("Weak cells")
+                            .actionContains("Take").findClosest()
+                            .map(o -> o.interact("Take")).orElse(false))
+                Waiting.waitUntil(5000, 500, () ->
+                        Inventory.contains(26883));
+
+            cQuesterV2.status = "Assembling Cell";
+            if (Inventory.contains(26883) && Query.gameObjects().actionContains("Assemble")
+                    .nameContains("catalytic")
+                    .findClosest()
+                    .map(o -> o.interact("Assemble")).orElse(false))
+                Waiting.waitUntil(5000, 500, () ->
+                        GameState.getVarbit(tutorialSetting) == 50);
+
+        } else if (GameState.getVarbit(tutorialSetting) == 50) {
+            cQuesterV2.status = "Talking to Tamara";
+            if (QueryUtils.getNpc("Apprentice Tamara")
+                    .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        }
+        if (GameState.getVarbit(tutorialSetting) == 55) {
+            if (Inventory.getCount("Guardian fragments") < 5 && Inventory.getCount("Guardian essence") < 5 &&
+                    Query.gameObjects().actionContains("Mine").findClosest()
+                            .map(o -> o.interact("Mine")).orElse(false))
+                Waiting.waitUntil(25000, 500, () -> Inventory.getCount("Guardian fragments") == 5);
+
+            if (Inventory.getCount("Guardian fragments") == 5 && Inventory.getCount("Guardian essence") < 5 &&
+                    Query.gameObjects().actionContains("Work-at").findClosest()
+                            .map(o -> o.interact("Work-at")).orElse(false))
+                Waiting.waitUntil(25000, 500, () -> Inventory.getCount("Guardian essence") == 5);
+
+            if (Inventory.getCount("Guardian essence") == 5 &&
+                    Inventory.getCount("Uncharged cell") == 0 &&
+                    Query.gameObjects().actionContains("Take").nameContains("Uncharged").findClosest()
+                            .map(o -> o.interact("Take")).orElse(false))
+                Waiting.waitUntil(8000, 500, () -> Inventory.getCount("Uncharged cell") == 1);
+
+            cQuesterV2.status = "Talking to Tamara";
+            if (Inventory.getCount("Guardian essence") == 5 &&
+                    Inventory.getCount("Uncharged cell") == 0 &&
+                    QueryUtils.getNpc("Apprentice Tamara")
+                            .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        }
+        if (GameState.getVarbit(tutorialSetting) == 60) {
+            //enter water portal
+            if (Inventory.getCount("Guardian essence") == 5
+                    && !Query.gameObjects().actionContains("Craft-rune").isAny()
+                    && Inventory.getCount("Uncharged cell") == 1
+                    && Query.gameObjects().actionContains("Enter")
+                    .nameContains("Guardian of Mind")
+                    .findClosest()
+                    .map(o -> o.interact("Enter")).orElse(false))
+                Waiting.waitUntil(8000, 500,
+                        () -> Query.gameObjects().actionContains("Craft-rune").isAny());
+
+            //make runes
+            if (Inventory.getCount("Guardian essence") == 5 &&
+                    Inventory.getCount("Uncharged cell") == 1 &&
+                    Query.gameObjects().actionContains("Craft-rune").findClosest()
+                            .map(o -> o.interact("Craft-rune")).orElse(false))
+                Waiting.waitUntil(8000, 500, () -> Inventory.getCount("Catalytic guardian stone") == 5);
+
+            //leave water rune area
+            if (Query.gameObjects().actionContains("Craft-rune").isAny() &&
+                    Inventory.getCount("Catalytic guardian stone") == 5 &&
+                    Query.gameObjects().actionContains("Use")
+                            .nameContains("Portal").findClosest()
+                            .map(o -> o.interact("Use")).orElse(false))
+                Waiting.waitUntil(8000, 500, () -> !Query.gameObjects().actionContains("Craft-rune").isAny());
+
+            cQuesterV2.status = "Talking to Tamara";
+            if (Inventory.getCount("Catalytic guardian stone") == 5  &&
+                    QueryUtils.getNpc("Apprentice Tamara")
+                            .map(f -> f.interact("Talk-to")).orElse(false)) {
+                NpcChat.handle(true);
+            }
+        } else if (GameState.getVarbit(tutorialSetting) == 65) {
             cQuesterV2.status = "Placing Cell";
             if (Query.gameObjects().actionContains("Place-cell").findClosest()
                     .map(o -> o.interact("Place-cell")).orElse(false))
@@ -295,22 +573,25 @@ public class TempleOfTheEye implements QuestTask {
                     .nameContains("Guardian of Water")
                     .findClosest()
                     .map(o -> o.interact("Enter")).orElse(false))
-                Waiting.waitUntil(8000, 500, () -> Inventory.getCount("Uncharged cell") == 1);
+                Waiting.waitUntil(8000, 500, () ->
+                        Query.gameObjects().actionContains("Craft-rune").isAny());
 
             //make runes
             if (Inventory.getCount("Guardian essence") == 5 &&
                     Inventory.getCount("Uncharged cell") == 1 &&
                     Query.gameObjects().actionContains("Craft-rune").findClosest()
                             .map(o -> o.interact("Craft-rune")).orElse(false))
-                Waiting.waitUntil(8000, 500, () -> Inventory.getCount("Portal talisman") == 1);
+                Waiting.waitUntil(8000, 500, () ->
+                        Inventory.getCount("Portal talisman") == 1);
 
             //leave water rune area
             if (Query.gameObjects().actionContains("Craft-rune").isAny() &&
-                    Inventory.getCount("Portal talisman") == 1 &&
+                    Inventory.getCount("Portal talisman (water)") == 1 &&
                     Query.gameObjects().actionContains("Use")
                             .nameContains("Portal").findClosest()
                             .map(o -> o.interact("Use")).orElse(false))
-                Waiting.waitUntil(8000, 500, () -> !Query.gameObjects().actionContains("Craft-rune").isAny());
+                Waiting.waitUntil(8000, 500, () ->
+                        !Query.gameObjects().actionContains("Craft-rune").isAny());
 
             //power up
             cQuesterV2.status = "Powering up";
@@ -381,13 +662,13 @@ public class TempleOfTheEye implements QuestTask {
             if (Inventory.getCount("Medium cell") == 1
                     && Query.gameObjects().actionContains("Craft-rune").isAny()
                     && Query.gameObjects().actionContains("Use").nameContains("Portal").findClosest()
-                            .map(o -> o.interact("Use")).orElse(false))
+                    .map(o -> o.interact("Use")).orElse(false))
                 Waiting.waitUntil(8000, 500, () -> !Query.gameObjects().actionContains("Craft-rune").isAny());
 
             cQuesterV2.status = "Talking to Tamara";
-            if (Inventory.getCount("Medium cell") == 1  &&
+            if (Inventory.getCount("Medium cell") == 1 &&
                     Query.npcs().nameContains("Apprentice Tamara").findClosest()
-                    .map(n -> n.interact("Talk-to")).orElse(false))
+                            .map(n -> n.interact("Talk-to")).orElse(false))
                 Waiting.waitUntil(5000, 500, () -> ChatScreen.isOpen());
             NpcChat.handle();
 

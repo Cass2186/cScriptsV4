@@ -2,6 +2,7 @@ package scripts.Tasks.Slayer.SlayerConst;
 
 import org.tribot.script.sdk.interfaces.Tile;
 import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.World;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.types.Area;
 
@@ -212,6 +213,19 @@ public class Areas {
                     new WorldTile(3437, 9931, 3),
                     new WorldTile(3429, 9931, 3)
             ))
+    );
+    public static Area NECH_AREA = Area.fromPolygon(
+                    new WorldTile(3418, 9949, 3),
+                    new WorldTile(3419, 9957, 3),
+                    new WorldTile(3429, 9957, 3),
+                    new WorldTile(3429, 9963, 3),
+                    new WorldTile(3423, 9963, 3),
+                    new WorldTile(3423, 9968, 3),
+                    new WorldTile(3432, 9968, 3),
+                    new WorldTile(3432, 9974, 3),
+                    new WorldTile(3402, 9977, 3),
+                    new WorldTile(3398, 9968, 3),
+                    new WorldTile(3402, 9949, 3)
     );
     public static Area GREEN_DRAGON_AREA = Area.fromRectangle(new WorldTile(3342, 3663, 0), new WorldTile(3318, 3697, 0));
     public static Area GHOST_AREA = Area.fromRectangle(new WorldTile(2924, 9821, 0), new WorldTile(2895, 9817, 0));

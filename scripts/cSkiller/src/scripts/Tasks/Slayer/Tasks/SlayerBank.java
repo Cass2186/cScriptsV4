@@ -169,7 +169,8 @@ public class SlayerBank implements Task {
         if (teleItem != ItemID.VARROCK_TELEPORT && teleItem != -1)
             myInv.add(new ItemReq(teleItem, 1));
 
-        if (!Equipment.contains(ItemID.SLAYER_HELMET) && !Equipment.contains(ItemID.SLAYER_HELMET_I))
+        if (!Equipment.contains(ItemID.SLAYER_HELMET) &&
+                !Equipment.contains(ItemID.SLAYER_HELMET_I))
             myInv.add(new ItemReq(ItemID.ENCHANTED_GEM, 1));
 
         myInv.add(new ItemReq(ItemID.MONKFISH, 0));
@@ -1257,8 +1258,10 @@ public class SlayerBank implements Task {
                 generalInventorySetup(ItemID.VARROCK_TELEPORT, false, false, -1, false);
 
             } else if (NPC.contains("banshee")) {
-                Log.debug("[Debug]: Setting Banshee Inventory and Earmuffs");
-                bansheeInventory();
+                Log.info("[Debug]: Setting Banshee Inventory and Earmuffs");
+              //  bansheeInventory();
+                generalInventorySetup(ItemID.SALVE_GRAVEYARD_TELEPORT, true,
+                        false, false, ItemID.EARMUFFS, true);
 
             } else if (NPC.contains("basilisk")) {
                 generalInventorySetup(ItemID.CAMELOT_TELEPORT, true, false,
@@ -1451,6 +1454,10 @@ public class SlayerBank implements Task {
                 SlayerVars.get().shouldPrayMagic = true;
             } else if (NPC.contains("bronze dragon"))
                 return;
+            else if (NPC.contains("nechryael")){
+                generalInventorySetup(ItemID.SALVE_GRAVEYARD_TELEPORT, false,
+                        new ItemRequirement(ItemID.PRAYER_POTION_4, 5, 1));
+            }
 
             else {
                 Log.debug("[Debug]: No custom inventory determined");

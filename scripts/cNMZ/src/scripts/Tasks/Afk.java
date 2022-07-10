@@ -44,7 +44,7 @@ public class Afk implements Task {
             return (Vars.get().usingPrayerPots && DrinkPotion.shouldDrinkPrayerPot()) ||
                     (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()) ||
                     (DrinkPotion.shouldDrinkAbsorption() && Vars.get().usingAbsorptions) ||
-                    (Vars.get().usingAbsorptions &&
+                    (
                             Combat.getHP() >= Vars.get().eatRockCakeAt);
 
         }, General.random(300000, 460000)); //5-7.6 min
@@ -76,16 +76,16 @@ public class Afk implements Task {
         Vars.get().currentTime = System.currentTimeMillis();
 
         if (chance < 30) {
-            Log.log("[AFK]: AFK [w/ ABC2 Actions]");
+            Log.info("[AFK]: AFK [w/ ABC2 Actions]");
             waitCond(true, true);
 
         } else {
             AntiBan.timedActions();
-            Log.log("[AFK]: AFKing");
+            Log.info("[AFK]: AFKing");
             waitCond(false, true);
-            Log.log("[Debug]: After Wait condition");
+            Log.info("[Debug]: After Wait condition");
             if (Combat.isUnderAttack() && Combat.getHPRatio() > Vars.get().eatAt) {
-                Log.log("[Debug]: Returning");
+                Log.info("Returning");
                 return; // still in combat so we skip abc2 sleep
             }
         }
