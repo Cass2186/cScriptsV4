@@ -97,7 +97,7 @@ public class GenerateMap implements Task {
                      (path.get(path.size() - 1).distanceTo(Player.getPosition())) < General.random(0, 5));
             }
             if (QueryUtils.getObject(Const.CAVE_ENTRANCE_ID).isPresent() && !MyPlayer.isMoving()) {
-                fightWalker.traverse(General.random(1, 30));
+              //  fightWalker.traverse(General.random(1, 30));
             }
             if (Vars.get().caveObject.isPresent()) {
                 Vars.get().caveObjectTile = Vars.get().caveObject.map(c -> c.getTile().toLocalTile());

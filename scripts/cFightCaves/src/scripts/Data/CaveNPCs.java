@@ -144,14 +144,14 @@ public enum CaveNPCs {
                 if (npc.attackAnimation != 0) {
                     List<Npc> dangerousNPCs = Query.npcs().nameContains(npc.name).toList();
                     if (dangerousNPCs.size() > 0) {
-                        Log.info("Avoidable Animation: " + (dangerousNPCs.get(0).getAnimation() == npc.attackAnimation));
-                        Log.info("NPCs Moving and Distance is < 4: " + (dangerousNPCs.get(0).isMoving() && dangerousNPCs.get(0).distance() < 4));
-                        Log.info("NPCs too close to player: " +
-                                (dangerousNPCs.get(0).distance() < 2));
+                      //  Log.info("[CaveNPCs] Avoidable Animation: " + (dangerousNPCs.get(0).getAnimation() == npc.attackAnimation));
+                      //  Log.info("[CaveNPCs] NPCs Moving and Distance is < 4: " + (dangerousNPCs.get(0).isMoving() && dangerousNPCs.get(0).distance() < 4));
+                        //Log.info("[CaveNPCs] NPCs too close to player: " +
+                        //         (dangerousNPCs.get(0).distance() < 3));
                         General.sleep(60);
                         return (dangerousNPCs.get(0).getAnimation() == npc.attackAnimation
                                 || (dangerousNPCs.get(0).isMoving() && dangerousNPCs.get(0).distance() < 4)
-                                || dangerousNPCs.get(0).distance() < 2);
+                                || dangerousNPCs.get(0).distance() < 3);
                     }
                 }
             }

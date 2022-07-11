@@ -8,6 +8,7 @@ import org.tribot.api2007.Options;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.MyPlayer;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.api2007.util.DPathNavigator;
 import org.tribot.script.sdk.types.LocalTile;
@@ -55,8 +56,10 @@ public class SafeSpotTask implements Task {
         emergencyRunActivation();
         safeSpot.setAcceptAdjacentTiles(true);
         safeSpot.setExcludedTiles(CaveNPCs.getTilesOfDangerousNPC(Wave.getCurrentWave()));
+        if(shouldRotateSpotOnItalyRock())
+            PathingUtil.movementIdle(4500);
 
-        int upperLimit = 0;
+       /* int upperLimit = 0;
         if (getClosestPath().get(0).distance() < minDistance) {
             Log.info("We need the next path");
             Log.info("Min Distance " + minDistance);
@@ -70,7 +73,7 @@ public class SafeSpotTask implements Task {
         }
         upperLimit = General.random(0, getClosestPath().size() - 1);
         if (safeSpot.walkToTile(getClosestPath().get(upperLimit), getWalkState())) {
-            Waiting.waitUntil(1500, 200, ()-> MyPlayer.isMoving());
+            Waiting.waitUntil(1500, 200, () -> MyPlayer.isMoving());
             Optional<Integer> dist = Optional.ofNullable(
                     CaveNPCs.getTileOfDangerousNPC(Wave.getCurrentWave()).distance());
             Log.info("We're moving to the closest path");
@@ -79,7 +82,7 @@ public class SafeSpotTask implements Task {
             Log.info("Distance from NPC " + dist);
             PathingUtil.movementIdle();
             //setComplete();
-        }
+        }*/
     }
 
     private WalkState getWalkState() {
@@ -121,8 +124,21 @@ public class SafeSpotTask implements Task {
 
     }
 
-    private boolean shouldRotateSpotOnItalyRock(){
-
+    private boolean shouldRotateSpotOnItalyRock() {
+        if (CaveNPCs.underAttack(Wave.getCurrentWave()) &&
+                Vars.get().ITALY_ROCK_EAST.isPresent() && Vars.get().ITALY_ROCK_WEST.isPresent()) {
+            Optional<LocalTile> closest = Query.tiles().tileEquals(Vars.get().ITALY_ROCK_EAST.get(),
+                            Vars.get().ITALY_ROCK_WEST.get())
+                    .findClosestByPathDistance();
+            Log.info("Moving to safe tile");
+            return closest.map(c -> Query.tiles()
+                    .tileEquals(Vars.get().ITALY_ROCK_EAST.get(), Vars.get().ITALY_ROCK_WEST.get())
+                    .tileNotEquals(c)
+                    .findClosestByPathDistance()
+                    .map(t -> t.interact("Walk here"))
+                    .orElse(false)).orElse(false);
+        }
+        Log.info("Don't need to rotate spot");
         return false;
     }
 

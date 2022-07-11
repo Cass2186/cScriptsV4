@@ -1,10 +1,12 @@
 package scripts;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tribot.api.Timing;
 import org.tribot.api2007.NPCs;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Projection;
 import org.tribot.api2007.types.RSNPC;
+import org.tribot.script.Script;
 import org.tribot.script.interfaces.MessageListening07;
 import org.tribot.script.interfaces.Painting;
 import org.tribot.script.sdk.*;
@@ -22,24 +24,26 @@ import scripts.ScriptUtils.CassScript;
 import scripts.Tasks.*;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @TribotScriptManifest(author = "Cass2186", name = "cFightCaves", category = "Testing")
-public class cFightCaves extends CassScript implements TribotScript, Painting {
+public class cFightCaves extends CassScript implements TribotScript, Painting{
 
     GenerateMap map = new GenerateMap();
-
     @Override
     public void configure(ScriptConfig config) {
-        TribotScript.super.configure(config);
-    }
+       TribotScript.super.configure(config);
+ }
 
     @Override
     public void execute(String args) {
         AntiBan.create();
-        super.initializeDax();
+      //  super.initializeDax();
         Mouse.setClickMethod(Mouse.ClickMethod.TRIBOT_DYNAMIC);
         Mouse.setSpeed(175);
         Paint.addMainPaint();
@@ -70,7 +74,7 @@ public class cFightCaves extends CassScript implements TribotScript, Painting {
             }
         });
 
-        while (super.isRunning.get()) {
+        while (isRunning.get()) {
             if (GameState.isInInstance() &&  Vars.get().nePath == null){
                 Log.warn("Making map, started in instance");
                 map.execute();
@@ -86,16 +90,12 @@ public class cFightCaves extends CassScript implements TribotScript, Painting {
             }
         }
     }
+
     @Override
     public void onPaint(Graphics g) {
-        RSNPC[] all = NPCs.getAll();
-        for (RSNPC n : all){
-            if (n.isOnScreen()){;
-                Polygon pp = Projection.getTileBoundsPoly(n, 0);
-                org.tribot.script.sdk.painting.Painting.addPaint(gg->
-                        gg.drawPolygon(pp) );
-                // g.drawString("D: " + n.getPosition().distanceTo(Player.getPosition()),pp.getBounds().x, pp.getBounds().y));
-            }
-        }
+        Vars.get().ITALY_ROCK_WEST.ifPresent(tile ->  g.drawPolygon(
+                Projection.getTileBoundsPoly(Utils.getRSTileFromWorldTile(tile.toWorldTile()), 0)));
+        Vars.get().ITALY_ROCK_EAST.ifPresent(tile ->  g.drawPolygon(
+                Projection.getTileBoundsPoly(Utils.getRSTileFromWorldTile(tile.toWorldTile()), 0)));
     }
 }

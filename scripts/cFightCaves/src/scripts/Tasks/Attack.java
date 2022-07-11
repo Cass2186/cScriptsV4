@@ -11,6 +11,7 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.types.Projectile;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
 import scripts.Data.CaveNPCs;
 import scripts.Data.Wave;
@@ -281,15 +282,18 @@ public class Attack implements Task {
     //blow pipesrange is 5 tile
     private boolean clickAttack(Optional<Npc> target) {
         if (Waiting.waitUntil(Utils.random(2250, 4500), 75, () -> target.map(t ->
-                t.isVisible() && t.distance() < 7).orElse(false))) {
+                t.isVisible() && t.distance() < TribotRandom.uniform(7,9)).orElse(false))) {
             return target.map(t -> t.isVisible() && t.click("Attack")).orElse(false);
         }
         if (target.map(t -> t.isVisible() && t.click("Attack")).orElse(false)) {
             return true;
-        } else if (target.map(t ->
-                !t.isVisible() && t.adjustCameraTo()
-                        && t.click("Attack")).orElse(false)) {
-            return true;
+        } else{
+            Log.info("Focusing on target");
+            if (target.map(t ->
+                    //!t.isVisible() && t.adjustCameraTo()&&
+                    t.interact("Attack")).orElse(false)) {
+                return true;
+            }
         }
         return false;
     }

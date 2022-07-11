@@ -15,6 +15,7 @@ import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.Npc;
 import scripts.PaintUtil;
+import scripts.Utils;
 
 import java.awt.*;
 import java.util.List;
@@ -37,10 +38,13 @@ public class Paint {
                 .row(template.toBuilder().label("Should Lure").value(()->CaveNPCs.shouldLure(Wave.getCurrentWave())).build())
                 .row(template.toBuilder().label("Should Prayer Range").value(()-> CaveNPCs.shouldProtectRange(Wave.getCurrentWave())).build())
                 .row(template.toBuilder().label("Highest Priority Mob").value(()->  CaveNPCs.getNPCPriority(Wave.getCurrentWave()).entrySet().stream().findFirst()).build())
+                .row(template.toBuilder().label("ITALY_ROCK_WEST").value(()-> Vars.get().ITALY_ROCK_WEST.isPresent()).build())
+                .row(template.toBuilder().label("ITALY_ROCK_EAST").value(()-> Vars.get().ITALY_ROCK_EAST.isPresent()).build())
+
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
 
-    }
+          }
 
 }
