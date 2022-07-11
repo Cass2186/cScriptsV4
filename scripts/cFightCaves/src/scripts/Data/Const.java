@@ -10,4 +10,9 @@ public class Const {
     public static Area START_AREA = Area.fromRectangle(new WorldTile(2437, 5171, 0), new WorldTile(2440, 5168, 0));
     public static int CAVE_ENTRANCE_ID = 11834;
     public static final int START_RANGED_XP = Skill.RANGED.getXp();
+
+    // NPC animations
+    public static final int TZTOK_JAD_MAGIC_ATTACK = 2656;
+    public static final int TZTOK_JAD_RANGE_ATTACK = 2652;
+
 }
