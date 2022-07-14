@@ -6,8 +6,12 @@ import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
@@ -238,12 +242,22 @@ public class RfdMonkey implements QuestTask {
         }
     }
 
+    private boolean hasGreeGrees() {
+        return Inventory.find(ItemID.ZOMBIE_MONKEY_GREEGREE_4030,
+                ItemID.NINJA_MONKEY_GREEGREE, ItemID.GORILLA_GREEGREE).length >= 3;
+    }
+
+    private boolean hasBonesOrGreeGrees() {
+        return Inventory.find(GORILLA_BONES, ARCHER_BONES, ZOMBIE_MONKEY_BONES).length >= 3
+                || hasGreeGrees();
+    }
+
     public boolean buyTalismans(boolean buy) { // get 3050 coins for this
         RSItem[] tal = Inventory.find(MONKEY_TALISMAN);
         if (KING_AREA.contains(Player.getPosition()))
             return true;
-        if (tal.length < 3 ||
-                (!buy && Inventory.find(GORILLA_BONES, ARCHER_BONES, ZOMBIE_MONKEY_BONES).length < 3)) {
+        if (tal.length < 3 || (!buy)) {
+            //  && Inventory.find(GORILLA_BONES, ARCHER_BONES, ZOMBIE_MONKEY_BONES).length < 3)) {
             RSItem[] invGreeGree = Inventory.find(GREEGREE);
             cQuesterV2.status = "Going to Buy Talismans";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -276,7 +290,8 @@ public class RfdMonkey implements QuestTask {
                     General.sleep(General.random(3500, 5000));
                 }
             }
-            if (!LARGE_SHOP_AREA.contains(Player.getPosition())) {
+            if (!LARGE_SHOP_AREA.contains(Player.getPosition()) &&
+                    ISLAND_AREA.contains(Player.getPosition())) {
                 cQuesterV2.status = "Going to talisman Shop - blind walk";
                 PathingUtil.localNavigation(SMALL_SHOP_AREA.getRandomTile());
                 Walking.blindWalkTo(SMALL_SHOP_AREA.getRandomTile());
@@ -284,7 +299,7 @@ public class RfdMonkey implements QuestTask {
             }
 
             if (!buy)
-                return SMALL_SHOP_AREA.contains(Player.getPosition());
+                return LARGE_SHOP_AREA.contains(Player.getPosition());
 
             cQuesterV2.status = "Buying talismans";
             if (Utils.clickNPC("Tutab", "Trade"))
@@ -319,8 +334,11 @@ public class RfdMonkey implements QuestTask {
 
 
     public void getGorillaBones() {
-        if (!ISLAND_AREA.contains(Player.getPosition()))
+        if (!ISLAND_AREA.contains(Player.getPosition()) &&
+                !org.tribot.script.sdk.Inventory.contains(ItemID.GORILLA_GREEGREE))
             buyTalismans(false);
+        else if (org.tribot.script.sdk.Inventory.contains(ItemID.GORILLA_GREEGREE))
+            return;
 
         if (!BankManager.checkInventoryItems(GORILLA_BONES) && ISLAND_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Getting Gorilla bones";
@@ -339,8 +357,10 @@ public class RfdMonkey implements QuestTask {
 
 
     public void getNinjaBones() {
-        if (BankManager.checkInventoryItems(GORILLA_BONES)) {
-            if (!BankManager.checkInventoryItems(ARCHER_BONES) && ISLAND_AREA.contains(Player.getPosition())) {
+        if (BankManager.checkInventoryItems(GORILLA_BONES) &&
+                org.tribot.script.sdk.Inventory.contains(ItemID.NINJA_MONKEY_GREEGREE)) {
+            if (!BankManager.checkInventoryItems(ARCHER_BONES) &&
+                    ISLAND_AREA.contains(Player.getPosition())) {
                 cQuesterV2.status = "Getting Archer/Ninja bones";
 
                 if (equipGreegree()) {
@@ -443,17 +463,23 @@ public class RfdMonkey implements QuestTask {
 
     public void talkToAwowogei() {
         // go to and talk to him (he's an object)
-        if (ISLAND_AREA.contains(Player.getPosition())) {
+        if (hasGreeGrees() &&
+                ISLAND_AREA.contains(Player.getPosition())) {
             if (!KING_AREA.contains(Player.getPosition())) {
                 cQuesterV2.status = "Going to Awowogei";
                 General.println("[Debug]: " + cQuesterV2.status);
+
+                if (PathingUtil.localNav(new LocalTile(2801, 2756, 0)))
+                    PathingUtil.movementIdle();
+
                 RSItem[] invItem1 = Inventory.find(M_SPEAK_AMULET);
-                if (invItem1.length > 0) {
-                    invItem1[0].click("Wear");
-                }
+                if (invItem1.length > 0 && invItem1[0].click("Wear"))
+                    Utils.idleNormalAction(true);
+
                 if (Utils.clickObj(4771, "Talk-to")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation();
+                    Waiting.waitUntil(7000, 500, () -> KING_AREA.contains(Player.getPosition()));
                 }
             }
             if (KING_AREA.contains(Player.getPosition())) {
@@ -561,7 +587,7 @@ public class RfdMonkey implements QuestTask {
 
         if (invCorpse.length < 3 && banana.length >= 2) {
 
-            if (!SNAKE_PIT_AREA.contains(Player.getPosition())) {
+            if (!SNAKE_PIT_AREA.contains(Player.getPosition()) && !GameState.isInInstance()) {
                 cQuesterV2.status = "Going to Snake pit";
                 PathingUtil.walkToArea(CRASH_ISLAND_HOLE_ENTRANCE, false);
                 if (scim.length > 0)
@@ -571,7 +597,8 @@ public class RfdMonkey implements QuestTask {
                 if (Utils.clickObj("Pit", "Enter")) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation("Yes, I'm as hard as nails.");
-                    Timer.waitCondition(() -> NPCs.find(SNAKE_ID).length > 0, 4000, 5600);
+                    Timer.waitCondition(() -> NPCs.find(SNAKE_ID).length > 0 &&
+                            Game.isInInstance(), 5000, 6600);
                 }
             }
 
@@ -595,7 +622,7 @@ public class RfdMonkey implements QuestTask {
         if (snakes.length > 0 && Inventory.find(SNAKE_CORPSE).length > 2 &&
                 Utils.clickObj("Rope", "Climb")) { //exits
             cQuesterV2.status = "Leaving snake pit";
-            Timer.waitCondition(() -> !SNAKE_PIT_AREA.contains(Player.getPosition()), 4000, 6000);
+            Timer.waitCondition(() -> !GameState.isInInstance(), 5000, 6000);
         }
     }
 
@@ -603,21 +630,26 @@ public class RfdMonkey implements QuestTask {
         RSItem[] invCorpse = Inventory.find(SNAKE_CORPSE);
         RSItem[] sliced = Inventory.find(SLICED_RED_BANANA);
         if (invCorpse.length >= 3 && sliced.length >= 3) {
-            cQuesterV2.status = "Getting Nuts";
-            // need to be a ninja monkey to navigate the agility course
-
-
-            if (Utils.clickObj("Bush", "Pick")) { //picks nut
-
+            for (int i = 0; i < 3; i++) {
+                cQuesterV2.status = "Getting Nuts";
+                // need to be a ninja monkey to navigate the agility course
+                if (Utils.clickObj("Bush", "Pick")) { //picks nut
+                    Waiting.waitUntil(6000, TribotRandom.uniform(400, 800),
+                            () -> Inventory.getCount(TCHIKI_MONKEY_NUTS) >= 1);
+                }
+                if (Utils.useItemOnItem(TCHIKI_MONKEY_NUTS, ItemID.PESTLE_AND_MORTAR)) {
+                    Waiting.waitUntil(6000, TribotRandom.uniform(400, 800),
+                            () -> Inventory.getCount(TCHIKI_NUT_PASTE) >= 1);
+                }
+                if (Utils.useItemOnItem(SNAKE_CORPSE, TCHIKI_NUT_PASTE)) {
+                    int f = i;
+                    Waiting.waitUntil(6000, TribotRandom.uniform(400, 800),
+                            () -> Inventory.getCount(RAW_STUFFED_SNAKE) > f);
+                }
+                // stuff snake and repeat 3x
             }
-            if (Utils.useItemOnItem(TCHIKI_MONKEY_NUTS, ItemID.PESTLE_AND_MORTAR)) {
-
-            }
-            if (Utils.useItemOnItem(SNAKE_CORPSE, TCHIKI_NUT_PASTE)) {
-
-            }
-            // stuff snake and repeat 3x
         }
+
     }
 
 
@@ -684,7 +716,9 @@ public class RfdMonkey implements QuestTask {
     public void getTchikiNuts() {
         cQuesterV2.status = "Going to get nuts";
         // check for inventory staff for fairy rings
-        if (!ISLAND_AREA.contains(Player.getPosition()) && !NUT_AREA.contains(Player.getPosition()))
+        if (!ISLAND_AREA.contains(Player.getPosition()) &&
+                !GameState.isInInstance() &&
+                !NUT_AREA.contains(Player.getPosition()))
             PathingUtil.walkToTile(AGILITY_START, 2, false);
 
         Utils.equipItem(NINJA_GREEGREE, "Hold");
@@ -835,7 +869,7 @@ public class RfdMonkey implements QuestTask {
     @Override
     public void execute() {
 
-        General.println("Varbit 1914 is " + Utils.getVarBitValue(1914));
+        Log.info("Varbit 1914 is " + Utils.getVarBitValue(1914));
 
         if (Utils.getVarBitValue(1914) == 0) {
             buyItems();
@@ -858,8 +892,8 @@ public class RfdMonkey implements QuestTask {
                     BankManager.checkInventoryItems(ZOMBIE_MONKEY_BONES, GORILLA_BONES, ARCHER_BONES))
                 goToZooknook();
 
-
-            talkToAwowogei();
+            if (BankManager.checkInventoryItems(ZOMBIE_GREEGREE, NINJA_GREEGREE, GORILLA_GREEGREE))
+                talkToAwowogei();
 
             // talk to awowgei
         } else if (Utils.getVarBitValue(1914) == 10) {
@@ -944,7 +978,7 @@ public class RfdMonkey implements QuestTask {
 
     @Override
     public String questName() {
-        return "RFD Awowogei";
+        return "RFD Awowogei (" + Utils.getVarBitValue(1914) + ")";
     }
 
     @Override

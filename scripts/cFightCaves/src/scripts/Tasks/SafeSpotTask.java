@@ -12,6 +12,7 @@ import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.api2007.util.DPathNavigator;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.util.TribotRandom;
 import org.tribot.script.sdk.walking.LocalWalking;
 import org.tribot.script.sdk.walking.WalkState;
 import scripts.Data.CaveNPCs;
@@ -44,7 +45,8 @@ public class SafeSpotTask implements Task {
 
     @Override
     public boolean validate() {
-        return (CaveNPCs.underAttack(Wave.getCurrentWave()));
+        return !Query.npcs().nameContains("Jad").isAny() &&
+                (CaveNPCs.underAttack(Wave.getCurrentWave()));
     }
 
     @Override
@@ -57,7 +59,7 @@ public class SafeSpotTask implements Task {
         safeSpot.setAcceptAdjacentTiles(true);
         safeSpot.setExcludedTiles(CaveNPCs.getTilesOfDangerousNPC(Wave.getCurrentWave()));
         if(shouldRotateSpotOnItalyRock())
-            PathingUtil.movementIdle(4500);
+            PathingUtil.movementIdle(TribotRandom.uniform(4500,5500));
 
        /* int upperLimit = 0;
         if (getClosestPath().get(0).distance() < minDistance) {

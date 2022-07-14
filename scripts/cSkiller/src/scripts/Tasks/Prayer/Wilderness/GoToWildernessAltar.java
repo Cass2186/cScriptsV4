@@ -112,7 +112,7 @@ public class GoToWildernessAltar implements Task {
                     }
                     return WalkState.FAILURE;
                 }else {
-                    Log.info("No PKers");
+              //      Log.info("No PKers");
                 }
 
                 return WalkState.CONTINUE;

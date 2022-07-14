@@ -1,5 +1,6 @@
 package scripts.Tasks;
 
+import org.tribot.api.input.Mouse;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.query.Query;
@@ -24,6 +25,8 @@ public class JadTask implements Task {
     @Override
     public void execute() {
         Optional<Npc> jad = Query.npcs().nameContains("Jad").findBestInteractable();
+        Mouse.setSpeed(250);
+        hanldePrayer();
 
     }
 
@@ -37,6 +40,7 @@ public class JadTask implements Task {
                 !Prayer.getActivePrayers().contains(Prayer.PROTECT_FROM_MISSILES)) {
             Log.warn("Need to switch for Ranged Attack");
             Prayer.enableAll(Prayer.PROTECT_FROM_MISSILES);
+        } else{
 
         }
     }

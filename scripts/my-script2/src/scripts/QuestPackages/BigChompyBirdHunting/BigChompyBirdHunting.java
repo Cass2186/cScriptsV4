@@ -35,7 +35,7 @@ public class BigChompyBirdHunting implements QuestTask {
 
     //Objects
     int ACHEY_TREE_ID = 2023;
-    int UNLOCKED_CHEST_ID = 3378;
+    private static  int UNLOCKED_CHEST_ID = 3378;
     //NPC
     int NPC_INFLATED_TOAD = 1474;
 
@@ -49,8 +49,8 @@ public class BigChompyBirdHunting implements QuestTask {
     int wolfBoneArrowTips = 2861;
 
     int acheyArrowShaft = 2864;
-    int bellows = 2871;
-    int[] inflatedBellows = {2872, 2873, 2874};
+    private static int bellows = 2871;
+    private static int[] inflatedBellows = {2872, 2873, 2874};
     int bloatedToad = 2875;
     int orgreBow = 2883;
     int rawChompy = 2876;
@@ -63,15 +63,15 @@ public class BigChompyBirdHunting implements QuestTask {
     boolean addPotato = false;
     boolean addEquaLeaves = false;
 
-    RSArea START_AREA = new RSArea(new RSTile(2631, 2979, 0), 5);
-    RSArea CAVE_ENTRANCE_AREA = new RSArea(new RSTile(2633, 2991, 0), new RSTile(2628, 2996, 0));
-    RSArea INSIDE_CAVE = new RSArea(new RSTile(2632, 9399, 0), new RSTile(2659, 9378, 0));
-    RSArea BUGS_AREA = new RSArea(new RSTile(2636, 9395, 0), new RSTile(2644, 9388, 0));
-    RSArea CAVE_EXIT = new RSArea(new RSTile(2645, 9381, 0), new RSTile(2648, 9378, 0));
-    RSArea TOAD_AREA = new RSArea(new RSTile(2592, 2972, 0), new RSTile(2605, 2961, 0));
+    private static RSArea START_AREA = new RSArea(new RSTile(2631, 2979, 0), 5);
+    private static  RSArea CAVE_ENTRANCE_AREA = new RSArea(new RSTile(2633, 2991, 0), new RSTile(2628, 2996, 0));
+    private static RSArea INSIDE_CAVE = new RSArea(new RSTile(2632, 9399, 0), new RSTile(2659, 9378, 0));
+    private static RSArea BUGS_AREA = new RSArea(new RSTile(2636, 9395, 0), new RSTile(2644, 9388, 0));
+    private static RSArea CAVE_EXIT = new RSArea(new RSTile(2645, 9381, 0), new RSTile(2648, 9378, 0));
+    private static RSArea TOAD_AREA = new RSArea(new RSTile(2592, 2972, 0), new RSTile(2605, 2961, 0));
     //RSArea TOAD_AREA = new RSArea(new RSTile(2592, 2972, 0), new RSTile(2605, 2967, 0));
-    RSArea HUNT_AREA = new RSArea(new RSTile(2634, 2967, 0), new RSTile(2638, 2963, 0));
-    RSArea HIDE_AREA = new RSArea(new RSTile(2630, 2978, 0), new RSTile(2633, 2973, 0));
+    private static RSArea HUNT_AREA = new RSArea(new RSTile(2634, 2967, 0), new RSTile(2638, 2963, 0));
+    private static RSArea HIDE_AREA = new RSArea(new RSTile(2630, 2978, 0), new RSTile(2633, 2973, 0));
 
     public boolean checkLevel() {
         if (Skills.getCurrentLevel(Skills.SKILLS.RANGED) < 30 ||
@@ -232,8 +232,8 @@ public class BigChompyBirdHunting implements QuestTask {
     }
 
 
-    public void goToChest() {
-        if (Inventory.find(ItemID.OGRE_BELLOWS).length == 0) {
+    public static void goToChest() {
+        if (!Query.inventory().nameContains("bellow").isAny()) {
             if (!CAVE_ENTRANCE_AREA.contains(Player.getPosition()) &&
                     !INSIDE_CAVE.contains(Player.getPosition())) {
                 cQuesterV2.status = "Walking to cave entrance";

@@ -236,8 +236,8 @@ public class DrinkPotion implements Task {
                 ((Vars.get().usingPrayerPots && shouldDrinkPrayerPot()) ||
                         (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()) ||
                         (shouldDrinkAbsorption() && Vars.get().usingAbsorptions) ||
-                        (Vars.get().usingAbsorptions &&
-                                MyPlayer.getCurrentHealth() >= Vars.get().eatRockCakeAt));
+                        (Combat.getHP() >= Vars.get().eatRockCakeAt && Query.inventory()
+                                .nameContains("Absorption").isAny()));
     }
 
     @Override

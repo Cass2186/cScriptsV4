@@ -8,8 +8,10 @@ import org.tribot.api2007.Game;
 import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Prayer;
 import org.tribot.api2007.types.RSGroundItem;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.query.Query;
 import scripts.AntiBan;
 import scripts.NmzData.Vars;
 import scripts.Utils;
@@ -44,8 +46,8 @@ public class Afk implements Task {
             return (Vars.get().usingPrayerPots && DrinkPotion.shouldDrinkPrayerPot()) ||
                     (Vars.get().usingOverloadPots && !Vars.get().overloadTimer.isRunning()) ||
                     (DrinkPotion.shouldDrinkAbsorption() && Vars.get().usingAbsorptions) ||
-                    (
-                            Combat.getHP() >= Vars.get().eatRockCakeAt);
+                    (Combat.getHP() >= Vars.get().eatRockCakeAt && Query.inventory()
+                            .nameContains("Absorption").isAny());
 
         }, General.random(300000, 460000)); //5-7.6 min
     }

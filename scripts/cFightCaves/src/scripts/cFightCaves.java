@@ -80,14 +80,14 @@ public class cFightCaves extends CassScript implements TribotScript, Painting{
                 map.execute();
             }
 
-            //fast loop
-            Waiting.waitNormal(35, 5);
+
 
             Task task = tasks.getValidTask();
             if (task != null) {
                 Vars.get().status = task.toString();
                 task.execute();
             }
+            Waiting.waitNormal(25, 5);
         }
     }
 

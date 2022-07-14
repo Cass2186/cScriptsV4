@@ -37,6 +37,7 @@ public class PkObserver {
     public static int combatMax = ourCombatLevel + org.tribot.api2007.Combat.getWildernessLevel();
     public static int pointThreshold = 200;
     public static int points = 0;
+
     public static int nextWorld =
             getNextWorld();
     public static int PARENT = 69;
@@ -59,17 +60,33 @@ public class PkObserver {
                 .findRandom();
         return first.map(World::getWorldNumber).orElse(second.map(World::getWorldNumber).orElse(-1));
     }
-    public static boolean isWorldVisible(int world) {
-        RSInterface worldInter = Interfaces.get(PARENT, 16, world);
-        RSInterface boxInter = Interfaces.get(PARENT, WHOLE_BOX);
-        if (worldInter != null && boxInter != null) {
-            Rectangle boxRectangle = boxInter.getAbsoluteBounds().getBounds();
-            if (boxRectangle.contains(worldInter.getAbsolutePosition())) {
-                return true;
-            }
-        }
-        return false;
+
+    public static int getScore(Player player) {
+        int score = 0;
+        int maxLevel = MyPlayer.getCombatLevel() + Combat.getWildernessLevel();
+        int minLevel = MyPlayer.getCombatLevel() - Combat.getWildernessLevel();
+
+        if (player.getCombatLevel() < minLevel || player.getCombatLevel() > maxLevel)
+            return 0;
+
+        if (player.getSkullIcon().isPresent())
+            return score + 201; //return to hop immediatley
+
+        if (player.getEquipment().stream().anyMatch(
+                eq-> eq.getName().contains("Mystic")))
+            score = score + 50;
+
+        if (player.getEquipment().stream().anyMatch(eq-> eq.getName().contains("xerician")))
+            score = score + 50;
+
+        if (player.getEquippedItem(Equipment.Slot.WEAPON).stream().anyMatch(
+                eq-> eq.getName().contains("staff") || eq.getName().contains("crossbow")))
+            score = score + 75;
+
+
+        return score;
     }
+
 
     public static boolean scrollToWorldNoClick(int world) {
         org.tribot.api2007.WorldHopper.openWorldSelect();
@@ -82,7 +99,7 @@ public class PkObserver {
             Mouse.setSpeed(250);
             //General.println("[AntiPkThread]: Scrolling to world to max visible:  " + nextWorld);
             for (int i = 0; i < 100; i++) {
-                if (box.map(b->!b.getBounds().contains(Mouse.getPos())).orElse(false)){
+                if (box.map(b -> !b.getBounds().contains(Mouse.getPos())).orElse(false)) {
                     Mouse.moveBox(box.get().getBounds());
                     Waiting.waitNormal(20, 5);
                 }
@@ -99,37 +116,6 @@ public class PkObserver {
                     Waiting.waitNormal(30, 10);
                 }*/
             }
-        }
-        return false;
-    }
-
-    public static boolean scrollToWorld(int world) {
-
-        RSInterface worldInter = Interfaces.get(PARENT, 16, world);
-        RSInterface scrollInter = Interfaces.get(PARENT, 18, 1);
-        RSInterface boxInter = Interfaces.get(PARENT, 15);
-        if (worldInter != null && scrollInter != null) {
-
-            General.println("[AntiPkThread]: Hopping due to dangerous player to " + nextWorld);
-            for (int i = 0; i < 100; i++) {
-                if (!boxInter.getAbsoluteBounds().contains(Mouse.getPos())) {
-                    Mouse.moveBox(boxInter.getAbsoluteBounds());
-                    Waiting.waitNormal(100, 20);
-                }
-                if (boxInter.getAbsoluteBounds().contains(worldInter.getAbsolutePosition())) {
-                    if (worldInter.click())
-                        return Timer.waitCondition(() -> org.tribot.api2007.WorldHopper.getWorld() == nextWorld, 10000, 15000);
-                } else if (worldInter.getAbsolutePosition().getY() > scrollInter.getAbsolutePosition().getY()) {
-                    Mouse.scroll(false);
-                    Waiting.waitNormal(30, 10);
-                } else if (worldInter.getAbsolutePosition().getY() < scrollInter.getAbsolutePosition().getY()) {
-                    Mouse.scroll(true);
-                    Waiting.waitNormal(30, 10);
-
-                }
-            }
-            if (worldInter.click())
-                return Timer.waitCondition(() -> org.tribot.api2007.WorldHopper.getWorld() == nextWorld, 10000, 15000);
         }
         return false;
     }

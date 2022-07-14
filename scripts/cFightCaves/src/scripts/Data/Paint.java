@@ -35,16 +35,18 @@ public class Paint {
                                 PaintUtil.getXpHr(Skill.RANGED, Const.START_RANGED_XP, Vars.get().startTime)))
                         .build())
                 .row(template.toBuilder().label("Rotation").value(Rotations::getRotation).build())
-                .row(template.toBuilder().label("Should Lure").value(()->CaveNPCs.shouldLure(Wave.getCurrentWave())).build())
-                .row(template.toBuilder().label("Should Prayer Range").value(()-> CaveNPCs.shouldProtectRange(Wave.getCurrentWave())).build())
-                .row(template.toBuilder().label("Highest Priority Mob").value(()->  CaveNPCs.getNPCPriority(Wave.getCurrentWave()).entrySet().stream().findFirst()).build())
-                .row(template.toBuilder().label("ITALY_ROCK_WEST").value(()-> Vars.get().ITALY_ROCK_WEST.isPresent()).build())
-                .row(template.toBuilder().label("ITALY_ROCK_EAST").value(()-> Vars.get().ITALY_ROCK_EAST.isPresent()).build())
+                .row(template.toBuilder().label("Should Lure").value(() -> CaveNPCs.shouldLure(Wave.getCurrentWave())).build())
+                .row(template.toBuilder().label("Should Prayer Range").value(() -> CaveNPCs.shouldProtectRange(Wave.getCurrentWave())).build())
+                .row(template.toBuilder().label("Highest Priority Mob").value(() -> CaveNPCs.getNPCPriority(Wave.getCurrentWave()).entrySet().stream().findFirst()).build())
+                .row(template.toBuilder().label("ITALY_ROCK_WEST").value(() -> Vars.get().ITALY_ROCK_WEST.isPresent()).build())
+                .row(template.toBuilder().label("ITALY_ROCK_EAST").value(() -> Vars.get().ITALY_ROCK_EAST.isPresent()).build())
 
                 .location(PaintLocation.BOTTOM_LEFT_VIEWPORT)
                 .build();
         org.tribot.script.sdk.painting.Painting.addPaint(p -> paint.render(p));
 
-          }
+        Vars.get().ITALY_ROCK_EAST.ifPresent(tile -> Painting.addPaint(p->
+                p.drawPolygon(tile.toWorldTile().getBounds().get())));
+    }
 
 }

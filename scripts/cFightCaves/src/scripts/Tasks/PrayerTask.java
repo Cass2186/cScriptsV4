@@ -2,6 +2,7 @@ package scripts.Tasks;
 
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Prayer;
+import org.tribot.script.sdk.query.Query;
 import scripts.Data.CaveNPCs;
 import scripts.Data.Wave;
 import scripts.Utils;
@@ -23,13 +24,15 @@ public class PrayerTask implements Task {
 
     @Override
     public boolean validate() {
-        return ((!CaveNPCs.shouldProtectMage(Wave.getCurrentWave())
+        return !Query.npcs().nameContains("Jad").isAny() &&
+                ((!CaveNPCs.shouldProtectMage(Wave.getCurrentWave())
                 && !CaveNPCs.shouldProtectRange(Wave.getCurrentWave())
                 && (Prayer.isAllEnabled(Prayer.PROTECT_FROM_MISSILES)
                 || Prayer.isAllEnabled(Prayer.PROTECT_FROM_MAGIC))
                 || (CaveNPCs.shouldProtectMage(Wave.getCurrentWave())
                 && !Prayer.isAllEnabled(Prayer.PROTECT_FROM_MAGIC))
-                || (CaveNPCs.shouldProtectRange(Wave.getCurrentWave()) && !CaveNPCs.shouldProtectMage(Wave.getCurrentWave())
+                || (CaveNPCs.shouldProtectRange(Wave.getCurrentWave()) &&
+                !CaveNPCs.shouldProtectMage(Wave.getCurrentWave())
                 && !Prayer.isAllEnabled(Prayer.PROTECT_FROM_MISSILES))));
     }
 
@@ -41,6 +44,7 @@ public class PrayerTask implements Task {
             Prayer.disableAll(Prayer.PROTECT_FROM_MISSILES,
                     Prayer.PROTECT_FROM_MAGIC);
         }
+
         if (CaveNPCs.shouldProtectMage(Wave.getCurrentWave())) {
             setPrayer(Prayer.PROTECT_FROM_MAGIC);
         } else if (CaveNPCs.shouldProtectRange(Wave.getCurrentWave()) && !CaveNPCs.shouldProtectMage(Wave.getCurrentWave())) {

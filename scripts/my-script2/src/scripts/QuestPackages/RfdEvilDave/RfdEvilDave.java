@@ -7,11 +7,14 @@ import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.NpcEntity;
@@ -67,10 +70,10 @@ public class RfdEvilDave implements QuestTask {
     int FALADOR_TAB = 8009;
     int LUMBRIDGE_TAB = 8008;
 
-    public static int RED_SPICE_NUMBER ;
-    public static int YELLOW_SPICE_NUMBER ;
-    public static int BROWN_SPICE_NUMBER ;
-    public static int ORANGE_SPICE_NUMBER ;
+    public static int RED_SPICE_NUMBER;
+    public static int YELLOW_SPICE_NUMBER;
+    public static int BROWN_SPICE_NUMBER;
+    public static int ORANGE_SPICE_NUMBER;
 
     boolean RED_CHECK = false;
     boolean YELLOW_CHECK = false;
@@ -81,28 +84,28 @@ public class RfdEvilDave implements QuestTask {
     String spice = "R(" + RED_SPICE_NUMBER + ") || Y(" + YELLOW_SPICE_NUMBER + ") || B(" + BROWN_SPICE_NUMBER +
             ") || O(" + ORANGE_SPICE_NUMBER;
 
-    public void feedCat() {
-        RSNPC npcCat = getFollowerRSNPC();
-        RSItem[] salmon = Inventory.find(SALMON);
-        int lng = salmon.length;
-        if (salmon.length > 0 && npcCat != null) {
-            cQuesterV2.status = "Feeding Cat";
-            General.println("[Debug]: Feeding Cat", Color.red);
-            for (int i = 0; i < 3; i++) {
-                if (Utils.useItemOnNPC(SALMON, npcCat)) {
-                    if (Timer.waitCondition(() -> Inventory.find(SALMON).length < lng, 2500, 3500)) {
-                        feedTimer.reset();
-                        break;
-                    }
-                    General.println("[Debug]: Seemingly failed to feed cat, looping (i = " + i + ")");
-                }
-                General.sleep(300, 900);
-            }
-
-        } else {
+    public boolean feedCat() {
+        Optional<Npc> myKitten = getFollowerRSNPC();
+        int lng = Query.inventory().idEquals(ItemID.SALMON).toList().size();
+        Optional<InventoryItem> salmon = Query.inventory().idEquals(ItemID.SALMON).findClosestToMouse();
+        if (salmon.isEmpty()) {
             pickupCat();
-            General.println("[Debug]: Should be feeding cat, but we are out of food or don't have a pet.");
+            Log.info("Should be feeding cat, but we are out of food or don't have a pet.");
+            return false;
         }
+        cQuesterV2.status = "Feeding Cat";
+        Log.info("Feeding Cat");
+        for (int i = 0; i < 3; i++) {
+            if (salmon.map(s -> myKitten.map(s::useOn).orElse(false)).orElse(false)) {
+                if (Timer.waitCondition(() -> Query.inventory().idEquals(ItemID.SALMON).toList().size() < lng, 3500, 5500)) {
+                    feedTimer.reset();
+                    return true;
+                }
+                Log.info("Seemingly failed to feed cat, looping (i = " + i + ")");
+            }
+            General.sleep(400, 900);
+        }
+        return false;
     }
 
     Timer feedTimer = new Timer(General.random(900000, 1000000));
@@ -115,10 +118,10 @@ public class RfdEvilDave implements QuestTask {
     }
 
     public void interactWithCat() {
-        RSNPC myKitten = getFollowerRSNPC();
-        if (myKitten != null) {
+        Optional<Npc> myKitten = getFollowerRSNPC();
+        if (myKitten.isPresent()) {
             for (int i = 0; i < 2; i++) {
-                if (Utils.clickNPC(myKitten, "Interact", false)) {
+                if (myKitten.map(n -> n.interact("Interact")).orElse(false)) {
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation("Stroke");
                     NPCInteraction.waitForConversationWindow();
@@ -131,7 +134,7 @@ public class RfdEvilDave implements QuestTask {
     public void checkInteraction() {
         if (!interactTimer.isRunning()) {
             cQuesterV2.status = "Interacting with Cat";
-            General.println("[Debug]: Stroking Cat", Color.red);
+            Log.info("Stroking Cat");
             interactWithCat();
         }
     }
@@ -168,7 +171,7 @@ public class RfdEvilDave implements QuestTask {
     private void dropEmptyShakers() {
         emptyShakers = Inventory.find(EMPTY_SHAKER);
         if (emptyShakers.length > 0) {
-            General.println("[Debug]: Dropping empty spice shakers");
+            Log.info("Dropping empty spice shakers");
             Inventory.drop(EMPTY_SHAKER, BOWL);
 
             Waiting.waitUniform(500, 1700);
@@ -180,7 +183,7 @@ public class RfdEvilDave implements QuestTask {
     //**********QUEST*************//
     public void buyItems() {
         cQuesterV2.status = "Buying Items";
-        General.println("[Debug]: " + cQuesterV2.status);
+        Log.info("" + cQuesterV2.status);
       /*  GEManager.getCoins();
         GEManager.openGE();
         GEManager.buyItem(FALADOR_TAB, 30, 5);
@@ -195,7 +198,7 @@ public class RfdEvilDave implements QuestTask {
 
     public void getItems() {
         cQuesterV2.status = "Getting Items";
-        General.println("[Debug]: Getting Items");
+        Log.info("Getting Items");
         BankManager.open(true);
         BankManager.depositAll(true);
         BankManager.withdraw(20, true, STEW);
@@ -213,7 +216,7 @@ public class RfdEvilDave implements QuestTask {
         RSItem[] invKitten = Inventory.find(catIds);
         if (invKitten.length == 1) {
             cQuesterV2.status = "Dropping kitten";
-            General.println("[Debug]: Dropping kitten");
+            Log.info("Dropping kitten");
             if (invKitten[0].click("Drop")) {
                 Timer.waitCondition(() -> Inventory.find(catIds).length == 0, 1500, 2500);
             }
@@ -228,7 +231,7 @@ public class RfdEvilDave implements QuestTask {
         RSItem[] invKitten = Inventory.find(catIds);
         if (invKitten.length == 1) {
             cQuesterV2.status = "Dropping kitten";
-            General.println("[Debug]: Dropping kitten");
+            Log.info("Dropping kitten");
             if (invKitten[0].click("Drop")) {
                 Timer.waitCondition(() -> Inventory.find(catIds).length == 0, 1500, 2500);
             }
@@ -351,20 +354,21 @@ public class RfdEvilDave implements QuestTask {
                 }
             } else {
                 cQuesterV2.status = "Going to basement";
-                General.println("[Debug]: Going to house");
+                Log.info("Going to house");
                 goDownTrapDoor();
                 // need to go back to basement
             }
         }
 
-        RSNPC npcCat = getFollowerRSNPC();
-        if (npcCat != null) {
-            cQuesterV2.status = "Making cat chase mice";
-            if (Utils.clickNPC(npcCat, "Chase", false)) {
-                General.sleep(General.random(5000, 8000));
-                Timer.waitCondition(() -> npcCat.getPosition().distanceTo(Player.getPosition()) < 2, 6000, 8000);
-            }
+        Optional<Npc> npcCat = getFollowerRSNPC();
+
+        cQuesterV2.status = "Making cat chase mice";
+        if (npcCat.map(n -> n.interact("Chase")).orElse(false)) {
+            General.sleep(5000, 8000);
+            Waiting.waitUntil(TribotRandom.uniform(6500, 9000), TribotRandom.uniform(400, 750),
+                    () -> npcCat.get().getTile().distance() < 2);
         }
+
     }
 
     String fail = "The rate manages to get away!";
@@ -373,7 +377,7 @@ public class RfdEvilDave implements QuestTask {
         cQuesterV2.status = "Chasing Rats";
         chaseRats();
      /*   if (checkChat()) {
-            General.println("[Debug]: Cat missed rat");
+            Log.info("Cat missed rat");
             Timer.waitCondition(() -> npcCat[0].getPosition().distanceTo(Player.getPosition()) < 2, 6000); // waits unitl cat has returned to you
           ;
         } else
@@ -381,9 +385,9 @@ public class RfdEvilDave implements QuestTask {
         if (GroundItems.find(SPICE_IDS).length > 0) { // we did not get the fail message, so we look for ground items
             groundSpices = GroundItems.find(SPICE_IDS);
             cQuesterV2.status = "Looting spice";
-            General.println("[Debug]: " + cQuesterV2.status);
+            Log.info("" + cQuesterV2.status);
             if (Utils.clickGroundItem(SPICE_IDS)) {
-                General.println("[Debug]: Successfully looted spice");
+                Log.info("Successfully looted spice");
             }
             if (shouldCombineSpices()) {
                 combineSpices();
@@ -410,14 +414,14 @@ public class RfdEvilDave implements QuestTask {
     public boolean getSpiceNumber(String colour) {
         RSItem[] colourFiltered = Inventory.find(Filters.Items.nameContains(colour));
         if (colourFiltered.length > 1) { // greater than 1 length means we have at least 2
-            General.println("[Debug]: Identified inventory spices based on passed string of color: " + colour);
+            Log.info("Identified inventory spices based on passed string of color: " + colour);
             one = Inventory.find(Filters.Items.nameContains("spice (1)").and(Filters.Items.nameContains(colour)));
             two = Inventory.find(Filters.Items.nameContains("spice (2)").and(Filters.Items.nameContains(colour)));
             three = Inventory.find(Filters.Items.nameContains("spice (3)").and(Filters.Items.nameContains(colour)));
             four = Inventory.find(Filters.Items.nameContains("spice (4)").and(Filters.Items.nameContains(colour)));
 
             int sum = (one.length + two.length + three.length + four.length);
-            General.println("[Debug]: We have " + sum + " doses of the spice: " + colour);
+            Log.info("We have " + sum + " doses of the spice: " + colour);
             return two.length > 1 ||
                     (three.length > 0 && one.length > 0) ||
                     (two.length > 0 && one.length > 0) ||
@@ -445,7 +449,7 @@ public class RfdEvilDave implements QuestTask {
 
     private void combineSpices() {
         cQuesterV2.status = "Combining spices";
-        General.println("[Debug]: " + cQuesterV2.status);
+        Log.info("" + cQuesterV2.status);
         if (two.length > 1 && two[0].click()) {
             General.sleep(100, 200);
             if (two[1].click()) {
@@ -524,8 +528,8 @@ public class RfdEvilDave implements QuestTask {
 
 
     public void pickupCat() {
-        RSNPC npcCat = getFollowerRSNPC();
-        if (npcCat != null && Inventory.find(CAT_NAMES).length < 1) {
+        Optional<Npc> npcCat = getFollowerRSNPC();
+        if (Inventory.find(CAT_NAMES).length < 1) {
             cQuesterV2.status = "Picking up cat";
             if (Inventory.isFull()) {
                 RSItem[] salmon = Inventory.find(SALMON);
@@ -533,34 +537,37 @@ public class RfdEvilDave implements QuestTask {
                     Timer.waitCondition(() -> !Inventory.isFull(), 2500, 3500);
                 }
             }
-            if (DynamicClicking.clickRSNPC(npcCat, "Pick-up"))
+            if (npcCat.map(n -> n.interact("Pick-up")).orElse(false))
                 Timer.waitCondition(() -> Inventory.find(CAT_NAMES).length > 0, 3500, 45000);
         }
     }
 
     int SPICED_STEW_ID = 7479;
 
-    public void useSpiceOnStew(int[] spice) {
-        RSItem[] invSpice = Inventory.find(spice);
-        RSItem[] stew = Inventory.find(STEW);
+    public boolean useSpiceOnStew(int[] spiceId) {
         RSItem[] spicedStew = Inventory.find(SPICED_STEW_ID);
-        if (invSpice.length > 0 && stew.length > 0 && spicedStew.length == 0) {
-            if (AccurateMouse.click(invSpice[0], "Use"))
-                General.sleep(General.random(400, 700));
-            if (stew[0].click("Use"))
-                Timer.waitCondition(() -> Inventory.find(SPICED_STEW_ID).length > 0, 3000);
-            General.sleep(General.random(2000, 3000));
+        Optional<InventoryItem> spice = Query.inventory()
+                .idEquals(spiceId).findClosestToMouse();
+        Optional<InventoryItem> stew = Query.inventory()
+                .idEquals(ItemID.STEW).findClosestToMouse();
+        Log.info("Using spice on stew");
+        if (spicedStew.length == 0 &&
+                stew.map(st -> spice.map(sp -> sp.useOn(st))
+                        .orElse(false)).orElse(false)) {
+           return  Timer.waitCondition(() -> Inventory.find(SPICED_STEW_ID).length > 0, 3000);
+
         }
+        return false;
     }
 
-    public void useSpiceOnSpicedStew(int[] spice) {
-        RSItem[] invSpice = Inventory.find(spice);
-        RSItem[] spicedStew = Inventory.find(7479);
-        if (invSpice.length > 0 && spicedStew.length > 0) {
-            AccurateMouse.click(invSpice[0], "Use");
-            General.sleep(General.random(300, 600));
-            if (spicedStew[0].click("Use"))
-                General.sleep(General.random(2000, 3000));
+    public void useSpiceOnSpicedStew(int[] spiceId) {
+        Optional<InventoryItem> spice = Query.inventory()
+                .idEquals(spiceId).findClosestToMouse();
+        Optional<InventoryItem> stew = Query.inventory()
+                .idEquals(ItemID.SPICY_STEW).findClosestToMouse();
+        if (stew.map(st -> spice.map(sp -> sp.useOn(st))
+                .orElse(false)).orElse(false)) {
+            General.sleep(2000, 3000);
         }
     }
 
@@ -578,7 +585,7 @@ public class RfdEvilDave implements QuestTask {
                     DaxCamera.focus(dave[0]);
 
                 if (Utils.useItemOnNPC(SPICED_STEW_ID, "Evil Dave"))
-                    if (Timer.waitCondition(NPCInteraction::isConversationWindowUp, 7000, 9000))
+                    if (Timer.waitCondition(ChatScreen::isOpen, 7000, 9000))
                         return true;
             }
         }
@@ -604,8 +611,8 @@ public class RfdEvilDave implements QuestTask {
                 Timer.waitCondition(() -> Interfaces.get(231, 4) != null, 3000);
             }
             if (Interfaces.get(231, 4).getText().contains("All the spices are<br>wrong.")) {
-                General.println("[Debug]: " + Interfaces.get(231, 4).getText());
-                General.println("[Debug]: Red spice number was wrong");
+                Log.info("" + Interfaces.get(231, 4).getText());
+                Log.info("Red spice number was wrong");
                 if (Inventory.find(STEW).length > 0) {
                     useSpiceOnStew(RED_SPICES);
                     useSpiceOnSpicedStew(RED_SPICES); // add 2 red spices to stew
@@ -616,17 +623,17 @@ public class RfdEvilDave implements QuestTask {
                     if (Interfaces.get(231, 4) != null) {
                         if (Interfaces.get(231, 4).getText().contains("All the spices are<br>wrong.")) {
                             RED_SPICE_NUMBER = 3;
-                            General.println("[Debug]: Red spice number: " + RED_SPICE_NUMBER);
+                            Log.info("Red spice number: " + RED_SPICE_NUMBER);
                             RED_CHECK = true;
                         } else {
                             RED_SPICE_NUMBER = 2;
-                            General.println("[Debug]: Red spice number: " + RED_SPICE_NUMBER);
+                            Log.info("Red spice number: " + RED_SPICE_NUMBER);
                             RED_CHECK = true;
                         }
                     }
                 } else if (Interfaces.get(231, 4).getText().contains("I think you've got")) {
                     RED_SPICE_NUMBER = 1;
-                    General.println("[Debug]: Red spice number: " + RED_SPICE_NUMBER);
+                    Log.info("Red spice number: " + RED_SPICE_NUMBER);
                     RED_CHECK = true;
                 }
             }
@@ -666,7 +673,7 @@ public class RfdEvilDave implements QuestTask {
     public boolean clickContinueChatMe() {
         Optional<RSInterface> button = getClickToContinueInterfaceMe();
         if (button.isPresent() && button.get().click()) {
-            General.println("[Debug]: clicked optional");
+            Log.info("clicked optional");
             Timer.waitCondition(() -> !getClickToContinueInterfaceMe().isPresent(), 3500, 5000);
         }
 
@@ -681,31 +688,30 @@ public class RfdEvilDave implements QuestTask {
                 }
             }
         }
-        if (Interfaces.get(217, 4) != null) {
-            if (Interfaces.get(217, 4).click())
-                return (Timer.waitCondition(() -> Interfaces.get(231, 5) != null, 5000, 7000));
+        if (ChatScreen.clickContinue())
+            return (Timer.waitCondition(() -> Interfaces.get(231) != null, 5000, 7000));
 
-        }
+
         return false;
     }
 
     public boolean checkSpiceChat(int spiceNum) {
         if (NPCInteraction.isConversationWindowUp()) {
             if (clickContinueChatMe()) {
-                Timer.waitCondition(() -> Interfaces.get(231, 5) != null, 3000);
-                General.println("[Debug]: Clicked continue chat me");
-                RSInterface textInter = Interfaces.get(231, 5);
-                if (textInter != null &&
-                        General.stripFormatting(textInter.getText()).contains("All the spices are wrong.")) {
-                    General.println("[Debug]: " + textInter.getText());
-                    General.println("[Debug]: Spice number was wrong");
+                Timer.waitCondition(() -> Interfaces.get(231) != null, 3000);
+                Log.info("Clicked continue chat me");
+                Optional<String> message = ChatScreen.getMessage();
+                if (message.isPresent() &&
+                        General.stripFormatting(message.get()).contains("All the spices are wrong.")) {
+                    Log.info("" + message.get());
+                    Log.info("Spice number was wrong");
                     return false;
                 }
             }
-            RSInterface textInter = Interfaces.get(231, 5);
-            if (textInter != null &&
-                    textInter.getText().contains("I think you've got")) {
-                General.println("[Debug]: Spice number: " + spiceNum);
+            Optional<String> message = ChatScreen.getMessage();
+            if (message.isPresent() &&
+                    General.stripFormatting(message.get()).contains("I think you've got")) {
+                Log.info("Spice number: " + spiceNum);
                 return true;
             }
         }
@@ -725,23 +731,23 @@ public class RfdEvilDave implements QuestTask {
 
     public int checkSpice(int[] spiceArray, boolean spiceCheck, String spiceColor) {
         if (Inventory.find(STEW).length > 0 && !spiceCheck) {
-            General.println("[Debug]: Using spice on stew x1");
+            Log.info("Using spice on stew x1");
             useSpiceOnStew(spiceArray);
             if (!useStewOnDave())
                 return -1;
 
             if (checkSpiceChat(1)) {
-                General.println("[Debug]: Spice number is 1 for " + spiceColor + " spice", Color.RED);
+                Log.info("Spice number is 1 for " + spiceColor + " spice");
                 return 1;
             } else {
                 useSpiceOnStew(spiceArray);
                 useSpiceOnSpicedStew(spiceArray);
                 if (useStewOnDave()) {
                     if (checkSpiceChat(2)) {
-                        General.println("[Debug]: Spice number is 2", Color.RED);
+                        Log.info("Spice number is 2");
                         return 2;
                     } else {
-                        General.println("[Debug]: Spice number is 3", Color.RED);
+                        Log.info("Spice number is 3");
                         return 3;
                     }
 
@@ -758,7 +764,7 @@ public class RfdEvilDave implements QuestTask {
             int num = checkSpice(YELLOW_SPICES, YELLOW_CHECK, "yellow");
 
             if (num != -1) {
-                General.println("[Debug]: Yellow spice number is " + num);
+                Log.info("Yellow spice number is " + num);
                 YELLOW_SPICE_NUMBER = num;
                 YELLOW_CHECK = true;
             }
@@ -770,7 +776,7 @@ public class RfdEvilDave implements QuestTask {
         int num = checkSpice(BROWN_SPICES, BROWN_CHECK, "brown");
 
         if (num != -1) {
-            General.println("[Debug]: Brown spice number is " + num);
+            Log.info("Brown spice number is " + num);
             BROWN_SPICE_NUMBER = num;
             BROWN_CHECK = true;
         }
@@ -778,31 +784,36 @@ public class RfdEvilDave implements QuestTask {
     }
 
     public void makeFinalStew() {
-        for (int i = 0; i < RED_SPICE_NUMBER; i++) {
-            useSpiceOnStew(RED_SPICES);
-            General.sleep(General.random(500, 1000));
-        }
-        for (int i = 0; i < YELLOW_SPICE_NUMBER; i++) {
-            useSpiceOnSpicedStew(YELLOW_SPICES);
-            General.sleep(General.random(500, 1000));
-        }
-        for (int i = 0; i < ORANGE_SPICE_NUMBER; i++) {
-            useSpiceOnSpicedStew(ORANGE_SPICES);
-            General.sleep(General.random(500, 1000));
-        }
-        for (int i = 0; i < BROWN_SPICE_NUMBER; i++) {
-            useSpiceOnSpicedStew(BROWN_SPICES);
-            General.sleep(General.random(500, 1000));
+        for (int b =0; b< 3; b++) {
+            for (int i = 0; i < getRedNeeded(); i++) {
+                if(!useSpiceOnStew(RED_SPICES)){
+                    useSpiceOnSpicedStew(RED_SPICES);
+                }
+                General.sleep(800, 1200);
+            }
+            for (int i = 0; i < getYellowNeeded(); i++) {
+                useSpiceOnSpicedStew(YELLOW_SPICES);
+                General.sleep(800, 1200);
+            }
+            for (int i = 0; i < getOrangeNeeded(); i++) {
+                useSpiceOnSpicedStew(ORANGE_SPICES);
+                General.sleep(800, 1200);
+            }
+            for (int i = 0; i < getBrownNeeded(); i++) {
+                useSpiceOnSpicedStew(BROWN_SPICES);
+                General.sleep(800, 1200);
+            }
         }
         useStewOnDave();
-        NPCInteraction.waitForConversationWindow();
-        if (Interfaces.get(217, 4) != null) {
-            Interfaces.get(217, 4).click();
-            Timer.waitCondition(() -> Interfaces.get(231, 5) != null, 3000);
+        if (NpcChat.waitForChatScreen() &&
+                ChatScreen.getName().map(n->!n.contains("Evil Dave")).orElse(false) &&
+                //Interfaces.get(231) == null &&
+                ChatScreen.clickContinue()) {
+            Timer.waitCondition(() -> Interfaces.get(231) != null, 3000);
         }
-        RSInterface textInter = Interfaces.get(231, 5);
-        if (textInter != null && textInter.getText().contains("EVIL")) {
+        if (ChatScreen.getMessage().map(m -> m.contains("EVIL")).orElse(false)) {
             HAS_FINAL_STEW = true;
+            Log.warn("Has final stew");
             NPCInteraction.handleConversation();
         }
     }
@@ -820,18 +831,70 @@ public class RfdEvilDave implements QuestTask {
         }
     }
 
-    public RSNPC getFollowerRSNPC() {
-        RSNPC[] kitten = Entities.find(NpcEntity::new)
-                .actionsContains("Chase")
-                .actionsContains("Interact")
-                .sortByDistance()
-                .getResults();
+    public Optional<Npc> getFollowerRSNPC() {
+        return Query.npcs().actionContains("Chase")
+                .actionContains("Interact")
+                .sortedByDistance()
+                .isInteractingWithMe()
+                .findClosest();
 
-        if (kitten != null && kitten.length > 0) {
+       /* if (kitten != null && kitten.length > 0) {
             return kitten[0];
         }
 
-        return null;
+        return null;*/
+    }
+
+    public int getRedNeeded() {
+        int redNeeded = GameState.getVarbit(1883);
+        int redInStew = GameState.getVarbit(Varbits.SPICY_STEW_RED_SPICES.getId());
+        int numRedStillNeeded = redNeeded - redInStew;
+        Log.info("Red Needed: " + numRedStillNeeded);
+        return numRedStillNeeded;
+    }
+
+    public int getYellowNeeded() {
+        int yellowNeeded = GameState.getVarbit(1884);
+        int yellowInStew = GameState.getVarbit(Varbits.SPICY_STEW_YELLOW_SPICES.getId());
+        int numYellowStillNeeded = yellowNeeded - yellowInStew;
+        Log.info("Yellow Needed: " + numYellowStillNeeded);
+        return numYellowStillNeeded;
+    }
+
+    public int getBrownNeeded() {
+        int brownNeeded = GameState.getVarbit(1885);
+        int brownInStew = GameState.getVarbit(Varbits.SPICY_STEW_BROWN_SPICES.getId());
+        int numBrownStillNeeded = brownNeeded - brownInStew;
+        Log.info("Brown Needed: " + numBrownStillNeeded);
+        return numBrownStillNeeded;
+    }
+
+    public int getOrangeNeeded() {
+        int orangeInStew = GameState.getVarbit(Varbits.SPICY_STEW_ORANGE_SPICES.getId());
+        int orangeNeeded = GameState.getVarbit(1886);
+        int numOrangeStillNeeded = orangeNeeded - orangeInStew;
+        Log.info("Orange Needed: " + numOrangeStillNeeded);
+        return numOrangeStillNeeded;
+    }
+
+    private boolean hasEnoughRedSpice() {
+        return Query.inventory().nameContains("Red spice").count() >=
+                getRedNeeded();
+    }
+
+    private boolean hasEnoughYellowSpice() {
+        return Query.inventory().nameContains("Yellow spice").count() >=
+                getYellowNeeded();
+    }
+
+    private boolean hasEnoughBrownSpice() {
+        return Query.inventory().nameContains("Brown spice").count() >=
+                getBrownNeeded();
+    }
+
+    private boolean hasEnoughOrangeSpice() {
+        return Query.inventory().nameContains("Orange spice").count() >=
+                getOrangeNeeded();
     }
 
     private static RfdEvilDave quest;
@@ -869,30 +932,34 @@ public class RfdEvilDave implements QuestTask {
         if (RSVarBit.get(1878).getValue() == 3) {
 
             if (EVIL_DAVES_UNDERGROUND.contains(Player.getPosition())) { // -1,605,928,957
-                getSpices();
-                moveArea();
-                checkFeeding();
-                checkInteraction();
-                dropEmptyShakers();
-                if (checkSpiceNumber(RED_SPICES) && !HAS_FINAL_STEW && !RED_CHECK) {
+                if (hasEnoughRedSpice() && hasEnoughYellowSpice() &&
+                        hasEnoughOrangeSpice() && hasEnoughBrownSpice() &&
+                        !HAS_FINAL_STEW) {
+                    Log.info("Making final stew");
+                    makeFinalStew();
+                    NPCInteraction.handleConversation();
+                    pickupCat();
+                } else {
+                    getSpices();
+                    moveArea();
+                    checkFeeding();
+                    checkInteraction();
+                    dropEmptyShakers();
+                }
+              /* if (checkSpiceNumber(RED_SPICES) && !HAS_FINAL_STEW && !RED_CHECK) {
                     checkRedSpice();
                 }
                 if (checkSpiceNumber(YELLOW_SPICES) && !HAS_FINAL_STEW && !YELLOW_CHECK) {
                     checkYellowSpice();
                 }
                 if (checkSpiceNumber(ORANGE_SPICES) && !HAS_FINAL_STEW && !ORANGE_CHECK) {
-                    General.println("[Debug]: Checking orange spice");
+                    Log.info("Checking orange spice");
                     checkOrangeSpice();
                 }
                 if (checkSpiceNumber(BROWN_SPICES) && !HAS_FINAL_STEW && !BROWN_CHECK) {
                     checkBrownSpice();
-                }
-                if (RED_CHECK && YELLOW_CHECK && ORANGE_CHECK && BROWN_CHECK && !HAS_FINAL_STEW) {
-                    General.println("[Debug]: Making final stew");
-                    makeFinalStew();
-                    NPCInteraction.handleConversation();
-                    pickupCat();
-                }
+                }*/
+
             } else {
                 goDownTrapDoor(); //goes to basement
             }
@@ -907,6 +974,7 @@ public class RfdEvilDave implements QuestTask {
 
         }
     }
+
 
     @Override
     public String toString() {
@@ -928,9 +996,9 @@ public class RfdEvilDave implements QuestTask {
 
     @Override
     public String questName() {
-        String spice = "RFD Evil Dave || R(" + RED_SPICE_NUMBER + ") || Y(" + YELLOW_SPICE_NUMBER + ") || B(" + BROWN_SPICE_NUMBER +
-                ") || O(" + ORANGE_SPICE_NUMBER;
-        return spice;
+        return "RFD Evil Dave: R(" + GameState.getVarbit(1883) + ") || Y(" + GameState.getVarbit(1884) +
+                ") || B(" + GameState.getVarbit(1885)+
+                ") || O(" +GameState.getVarbit(1886) + ")";
     }
 
     @Override

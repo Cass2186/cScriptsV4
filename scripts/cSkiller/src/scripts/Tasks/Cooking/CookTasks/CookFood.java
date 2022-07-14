@@ -60,7 +60,7 @@ public class CookFood implements Task {
 
     public void makeWine() {
         if (Utils.useItemOnItem(ItemID.GRAPES, ItemID.JUG_OF_WATER))
-            Timer.waitCondition(MakeScreen::isOpen, 2500, 4500);
+            Waiting.waitUntil(4000, Utils.random(200, 800), MakeScreen::isOpen);
 
         if (MakeScreen.isOpen() && MakeScreen.makeAll(ItemID.UNFERMENTED_WINE) &&
                 Waiting.waitUntil(40000, Utils.random(400, 800), () ->

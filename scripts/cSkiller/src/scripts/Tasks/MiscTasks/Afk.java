@@ -40,7 +40,7 @@ public class Afk implements Task {
             if (Mouse.isInBounds() && Vars.get().moveMouseOffScreenAfk){
                 Mouse.leaveGame();
             }
-            return Combat.isUnderAttack();
+            return Combat.isUnderAttack() || Combat.isInWilderness();
         });
         Vars.get().afkTimer = new Timer(General.randomSD(Vars.get().afkFrequencyAvg, Vars.get().afkFrequencySD));
     }

@@ -258,26 +258,26 @@ public class ItemReq implements Requirement {
         RSItem[] i = Inventory.find(this.id);
         RSItemDefinition def = RSItemDefinition.get(this.id);
         if (Equipment.isEquipped(this.id)) {
-            Log.log("Has item equipped w/ ID of " + this.id);
+            Log.info("Has item equipped w/ ID of " + this.id);
             return true;
         }
 
         if (this.alternateItemIDs != null){
             if (this.alternateItemIDs.stream().anyMatch(jar -> Inventory.find(jar).length > 0)) {
-                General.println("[ItemReq]: We have an alternate item");
+                Log.info("[ItemReq]: We have an alternate item");
                 return true;
             }
         }
         if (i.length > 0) {
             if (def == null)
-                General.println("[ItemReq]: Definition is null");
+                Log.info("[ItemReq]: Definition is null");
 
             if (def != null && !def.isStackable()) {
-                General.println("[ItemReq]: We have x" + i.length + " of unstackable item " +
+                Log.info("[ItemReq]: We have x" + i.length + " of unstackable item " +
                         this.id + " (min = " + this.minAmount + ")");
                 return i.length >= this.minAmount;
             } else if (def != null && def.isStackable()) {
-                General.println("[ItemReq]: We have x" + i.length + " of stackable item " +
+                Log.info("[ItemReq]: We have x" + i.length + " of stackable item " +
                         this.id + " (min = " + this.minAmount + ")");
                 return i[0].getStack() >= this.minAmount;
             }
@@ -285,7 +285,7 @@ public class ItemReq implements Requirement {
             if (this.alternateItemIDs != null && this.alternateItemIDs.size() > 0) {
                 for (Integer b : alternateItemIDs) {
                     if (i[0].getID() == b) {
-                        General.println("[ItemReq]: Accepted an alternative id of " + b +
+                        Log.info("[ItemReq]: Accepted an alternative id of " + b +
                                 " for ItemID of " + i[0].getID());
                         return true;
                     }
@@ -295,12 +295,13 @@ public class ItemReq implements Requirement {
 
         boolean b = (i.length >= this.minAmount);
         if (def != null)
-            General.println("[ItemReq]: We are missing inv item " + def.getName() + " (min = " + this.minAmount + ") " +
+            Log.info("[ItemReq]: We are missing inv item " + def.getName() + " (min = " + this.minAmount + ") " +
                     b);
         else
-        General.println("[ItemReq]: We are missing inv item " + " (min = " + this.minAmount + ") " +
+        Log.info("[ItemReq]: We are missing inv item " + " (min = " + this.minAmount + ") " +
                 b);
-        // General.println("[ItemReq]: boolean (i.e. do we have item) for this item(#" + this.id + " ): " + b);
+        // Log.info
+        //("[ItemReq]: boolean (i.e. do we have item) for this item(#" + this.id + " ): " + b);
         return b;
     }
 
@@ -331,7 +332,7 @@ public class ItemReq implements Requirement {
             }
         }
         boolean b = charges >= this.amountOfChargesNeeded;
-        Log.log("[ItemReq]: Do we have at least " + this.amountOfChargesNeeded + " charges of item: " +
+        Log.info("[ItemReq]: Do we have at least " + this.amountOfChargesNeeded + " charges of item: " +
                 itemName + ": " + b);
         return b;
     }
@@ -351,7 +352,7 @@ public class ItemReq implements Requirement {
         if (nameSplit.length > 1) {
             String[] chargesUnformatted = nameSplit[1].split("\\)");
             if (chargesUnformatted.length > 0) {
-                Log.log("[ItemReq]: Detected item in inventory with " + chargesUnformatted[0] + " charges");
+                Log.info("[ItemReq]: Detected item in inventory with " + chargesUnformatted[0] + " charges");
                 return Integer.parseInt(chargesUnformatted[0]);
             }
         }
