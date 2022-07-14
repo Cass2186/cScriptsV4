@@ -173,8 +173,8 @@ public class GoToRcAltar implements Task {
             goToFireAltar();
 
         } else if (Vars.get().abyssCrafting) {
-
-                enterAbyssPortal("Blood");
+            enterAbyssPortal("Cosmic");
+              //  enterAbyssPortal("Blood");
 
         } else if (Vars.get().zanarisCrafting)
             goToCosmicAltar();

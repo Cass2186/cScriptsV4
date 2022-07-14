@@ -40,16 +40,16 @@ public class cRunecrafting extends CassScript implements TribotScript {
         if (args.toLowerCase().contains("blood")){
             Log.info("Blood rune crafting");
             Vars.get().bloodRuneCrafting = true;
+        } else if (args.toLowerCase().contains("abyss")) {
+            Log.info("[Args]: Abyss crafting");
+            Vars.get().abyssCrafting = true;
         }
+
         AntiBan.create();
         super.initializeDax();
 
-        /**
-         Paint
-         */
-
         populateInitialMap(Vars.get().skillStartXpMap);
-
+        //  Paint
         Paint.addMainPaint();
 
         Vars.get().startRcLevel = Skill.RUNECRAFT.getCurrentLevel();

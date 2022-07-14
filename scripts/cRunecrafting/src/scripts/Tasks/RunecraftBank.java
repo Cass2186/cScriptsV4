@@ -520,7 +520,7 @@ public class RunecraftBank implements Task {
     public void execute() {
         closeLootInterface();
         if (Vars.get().abyssCrafting)
-            getAbyssItems(ItemID.BLOOD_RUNE);
+            getAbyssItems(ItemID.COSMIC_RUNE);
         else {
             //TODO implement combo runes bank (progressive bank doesn't handle pouches)
             progressiveBank();

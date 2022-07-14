@@ -94,7 +94,7 @@ public class Vars {
 
     public boolean failedObstacle = false;
 
-    public boolean abyssCrafting = Skill.RUNECRAFT.getActualLevel() >=77;
+    public boolean abyssCrafting = Skill.RUNECRAFT.getActualLevel() >=90;
 
     public boolean needToRepairPouches = false;
 
