@@ -5,13 +5,13 @@ import dax.walker.utils.camera.DaxCamera;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
-import org.tribot.api2007.Inventory;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
 import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
-import org.tribot.script.sdk.types.Widget;
+import org.tribot.script.sdk.types.InventoryItem;
 import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
@@ -59,7 +59,6 @@ public class RfdSkratch implements QuestTask {
     int IRON_SPIT = 7225;
     int SKEWERED_CHOMPY = 7230;
     int COOKED_CHOMPY = 2878;
-    int bellows = 2871;
     int[] inflatedBellows = {2872, 2873, 2874};
     int bloatedToad = 2875;
     int ROCKS = 1480;
@@ -67,9 +66,9 @@ public class RfdSkratch implements QuestTask {
     int JUBBLY_ID = 4863;
     int RAW_JUBBLY = 7566;
     int COOKED_JUBBLY = 7568;
-    int HAMMER = 2347;
     int LUMBRIDGE_TAB = 8008;
     int SKRATCH_OBJ_ID = 12343;
+    int JUBBLY_ID_4864 = 4864;
 
     RSArea LUMBRIDGE = new RSArea(new RSTile(3213, 3225, 0), new RSTile(3216, 3219, 0));
     RSArea RANTZ_AREA = new RSArea(new RSTile(2626, 2986, 0), new RSTile(2636, 2975, 0));
@@ -113,12 +112,12 @@ public class RfdSkratch implements QuestTask {
         BankManager.depositAll(true);
         BankManager.withdraw(1, true,
                 ItemID.AMULET_OF_GLORY[0]);
-        BankManager.withdraw(1, true, BankManager.STAMINA_POTION);
+        BankManager.withdraw(2, true, ItemID.STAMINA_POTION4);
         BankManager.withdraw(1, true, IRON_AXE);
         BankManager.withdraw(1, true, IRON_BAR);
         BankManager.withdraw(1, true, LOG);
         BankManager.withdraw(1, true, TINDERBOX);
-        BankManager.withdraw(1, true, 2347);
+        BankManager.withdraw(1, true, ItemID.HAMMER);
         BankManager.withdraw(1, true, IRON_PICKAXE);
         BankManager.withdraw(2, true, LUMBRIDGE_TAB);
         BankManager.withdraw(3, true, BALL_OF_WOOL);
@@ -132,7 +131,7 @@ public class RfdSkratch implements QuestTask {
     }
 
     public void makeSpit() {
-        if (Inventory.find(IRON_SPIT).length == 0) {
+        if (!Inventory.contains(IRON_SPIT)) {
             cQuesterV2.status = "Making iron spit";
             PathingUtil.walkToTile(new RSTile(3188, 3425, 0));
 
@@ -144,7 +143,7 @@ public class RfdSkratch implements QuestTask {
                         .findFirst().map(w -> w.click()).orElse(false)) {
                     //   if (Interfaces.get(312, 32) != null) {
                     //   Interfaces.get(312, 32).click();
-                    Timer.waitCondition(() -> Inventory.find(IRON_SPIT).length > 0, 7000, 12000);
+                    Timer.waitCondition(() -> Inventory.contains(IRON_SPIT), 7000, 12000);
                 }
             }
         }
@@ -219,7 +218,7 @@ public class RfdSkratch implements QuestTask {
     }
 
     public void goToTree() {
-        if (Inventory.find(IRON_SPIT).length < 1 && Inventory.find(SKEWERED_CHOMPY).length < 1) {
+        if (!Inventory.contains(IRON_SPIT, SKEWERED_CHOMPY)) {
             buyItems();
             getItems();
             makeSpit();
@@ -240,13 +239,13 @@ public class RfdSkratch implements QuestTask {
             cQuesterV2.status = "Cooking chompy";
             Log.info(cQuesterV2.status);
             if (Utils.useItemOnItem(RAW_CHOMPY, IRON_SPIT))
-                Timer.waitCondition(() -> Inventory.find(SKEWERED_CHOMPY).length > 0, 5000, 8000);
+                Timer.waitCondition(() -> Inventory.contains(SKEWERED_CHOMPY), 5000, 8000);
 
             if (Utils.useItemOnObject(SKEWERED_CHOMPY, "Fire")) {
                 Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(270, 14), 6000, 9000);
                 if (Interfaces.isInterfaceSubstantiated(270, 14))
                     if (Interfaces.get(270, 14).click())
-                        Timer.waitCondition(() -> Inventory.find(COOKED_CHOMPY).length > 0, 8000, 12000);
+                        Timer.waitCondition(() -> Inventory.contains(COOKED_CHOMPY), 8000, 12000);
                 Utils.modSleep();
                 Utils.cutScene();
             }
@@ -275,7 +274,7 @@ public class RfdSkratch implements QuestTask {
 
 
     public void inflateToads() {
-        if (Inventory.find(COOKED_JUBBLY).length > 0)
+        if (Inventory.contains(COOKED_JUBBLY))
             return;
 
         if (!Query.inventory().nameContains("bellow").isAny()) {
@@ -284,19 +283,19 @@ public class RfdSkratch implements QuestTask {
             return;
         }
 
-        if (!TOAD_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length < 3) {
+        if (!TOAD_AREA.contains(Player.getPosition()) && Inventory.getCount(bloatedToad) < 3) {
             cQuesterV2.status = "Going to Toads";
             Log.info(cQuesterV2.status);
             PathingUtil.walkToArea(TOAD_AREA);
         }
-        if (TOAD_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length < 3) {
-            if (Inventory.find(inflatedBellows).length < 1) {
+        if (TOAD_AREA.contains(Player.getPosition()) && Inventory.getCount(bloatedToad) < 3) {
+            if (Inventory.getCount(inflatedBellows) < 1) {
                 cQuesterV2.status = "Inflating Bellow";
                 Log.info(cQuesterV2.status);
                 if (Utils.clickObj("Swamp bubbles", "Suck"))
-                    Timer.waitCondition(() -> Inventory.find(inflatedBellows).length > 0, 8000, 12000);
+                    Timer.waitCondition(() -> Inventory.getCount(inflatedBellows) > 0, 8000, 12000);
             }
-            while (Inventory.find(inflatedBellows).length > 0 && Inventory.find(bloatedToad).length < 3) {
+            while (Inventory.getCount(inflatedBellows) > 0 && Inventory.getCount(bloatedToad) < 3) {
                 General.sleep(100);
                 cQuesterV2.status = "Catching Toads (x3)";
                 Log.info(cQuesterV2.status);
@@ -306,13 +305,13 @@ public class RfdSkratch implements QuestTask {
                     if (!toad[0].isClickable())
                         toad[0].adjustCameraTo();
 
-                    RSItem[] invToad = Inventory.find(bloatedToad);
+                    List<InventoryItem> invToad = Query.inventory().idEquals(bloatedToad).toList();
 
                     if (AccurateMouse.click(toad[0], "Inflate"))
-                        Timer.waitCondition(() -> Inventory.find(bloatedToad).length > invToad.length, 8900, 12000);
+                        Timer.waitCondition(() -> Inventory.getCount(bloatedToad) > invToad.size(), 8900, 12000);
 
                 }
-                if (Inventory.find(bloatedToad).length > 2)
+                if (Inventory.getCount(bloatedToad) > 2)
                     break;
 
             }
@@ -322,14 +321,14 @@ public class RfdSkratch implements QuestTask {
     RSTile SWAMP_BUBBLE_TILE = new RSTile(2595, 2967, 0);
 
     public void makeBaloon() {
-
         RSNPC[] jubbly = NPCs.find(JUBBLY_ID);
-        if (jubbly.length < 1 && Inventory.find(BALOON_TOAD).length == 0 &&
-                Inventory.find(COOKED_JUBBLY).length == 0) {
+        if (jubbly.length < 1 && Inventory.getCount(BALOON_TOAD) == 0 &&
+                Inventory.getCount(ItemID.RAW_JUBBLY) == 0 &&
+                Inventory.getCount(COOKED_JUBBLY) == 0) {
             PathingUtil.walkToArea(TOAD_AREA);
 
-            if (TOAD_AREA.contains(Player.getPosition()) && Inventory.find(BELLOW).length > 0) {
-                if (Inventory.find(inflatedBellows).length < 1) {
+            if (TOAD_AREA.contains(Player.getPosition()) && Inventory.getCount(BELLOW) > 0) {
+                if (Inventory.getCount(inflatedBellows) == 0) {
                     cQuesterV2.status = "Inflating Bellow";
                     PathingUtil.walkToTile(SWAMP_BUBBLE_TILE);
                     Log.info(cQuesterV2.status);
@@ -340,22 +339,18 @@ public class RfdSkratch implements QuestTask {
                             .findBestInteractable();
 
                     if (Utils.clickObj(bubbles, "Suck"))
-                        Timer.waitCondition(() -> Inventory.find(inflatedBellows).length > 0, 8000, 12000);
+                        Timer.waitCondition(() -> Inventory.getCount(inflatedBellows) > 0, 8000, 12000);
                 }
             }
 
-            if (Inventory.find(inflatedBellows).length > 0 && Inventory.find(bloatedToad).length > 0) {
+            if (Inventory.getCount(inflatedBellows) > 0 && Inventory.getCount(bloatedToad) > 0) {
                 cQuesterV2.status = "Making baloon";
                 Log.info(cQuesterV2.status);
-
-                if (Inventory.find(inflatedBellows).length > 0 && Inventory.find(bloatedToad).length > 0) {
-                    AccurateMouse.click(Inventory.find(inflatedBellows)[0], "Use");
-                    General.sleep(General.random(100, 300));
-                    RSItem[] invToad = Inventory.find(bloatedToad);
-
-                    if (AccurateMouse.click(Inventory.find(bloatedToad)[0], "Use"))
-                        Timer.waitCondition(() -> Inventory.find(bloatedToad).length < invToad.length, 8900, 12000);
-
+                Optional<InventoryItem> bellows = QueryUtils.getItem(inflatedBellows);
+                Optional<InventoryItem> inflatedToad = QueryUtils.getItem(bloatedToad);
+                if (bellows.map(b -> inflatedToad.map(b::useOn).orElse(false)).orElse(false)) {
+                    Timer.waitCondition(8500, 500,
+                            () -> Inventory.getCount(BALOON_TOAD) > 0);
                 }
             }
         }
@@ -363,37 +358,36 @@ public class RfdSkratch implements QuestTask {
 
     public void mineRocks() {
         RSNPC[] jubbly = NPCs.find(JUBBLY_ID);
-        if (jubbly.length < 1 && Inventory.find(BALOON_TOAD).length == 0 &&
-                Inventory.find(COOKED_JUBBLY).length == 0) {
+        if (jubbly.length < 1 && Inventory.getCount(BALOON_TOAD) == 0 &&
+                Inventory.getCount(ItemID.RAW_JUBBLY) == 0 &&
+                Inventory.getCount(COOKED_JUBBLY) == 0) {
             cQuesterV2.status = "Going to mine";
             Log.info(cQuesterV2.status);
-            if (!MINING_AREA.contains(Player.getPosition()) && Inventory.find(bloatedToad).length > 1
-                    && Inventory.find(ROCKS).length < 1)
+            if (!MINING_AREA.contains(Player.getPosition()) && Inventory.getCount(bloatedToad) > 1
+                    && Inventory.getCount(ROCKS) < 1)
                 PathingUtil.walkToArea(MINING_AREA);
 
-            RSObject[] rocks = Objects.findNearest(20, 12564);
-            if (Inventory.find(ROCKS).length < 3 && rocks.length > 0) {
-
-
-                for (int i = 0; i < 3; i++) {
-
-                    if (AccurateMouse.click(Objects.findNearest(20, 12564)[0], "Mine")) {
-                        RSItem[] invRocks = Inventory.find(ROCKS);
-                        Timer.abc2WaitCondition(() -> Inventory.find(ROCKS).length > invRocks.length, 10000, 15000);
+            if (Inventory.getCount(ROCKS) < 3) {
+                for (int i = 0; i < 5; i++) {
+                    List<InventoryItem> invRocks = Query.inventory().idEquals(ROCKS).toList();
+                    if (Utils.clickObj(12564, "Mine")) {
+                        Timer.abc2WaitCondition(() -> Inventory.getCount(ROCKS) > invRocks.size(), 10000, 15000);
                     }
+                    if (Inventory.getCount(ROCKS) >= 3)
+                        break;
                 }
             }
         }
     }
 
-    int JUBBLY_ID_4864 = 4864;
+
 
     public void baitBird() {
         Utils.equipItem(OGRE_BOW);
         Utils.equipItem(OGRE_ARROW);
-        if (Inventory.find(BALOON_TOAD).length > 0 &&
-                Inventory.find(RAW_JUBBLY).length == 0 &&
-                Inventory.find(COOKED_JUBBLY).length == 0) {
+        if (Inventory.getCount(BALOON_TOAD) > 0 &&
+                Inventory.getCount(ItemID.RAW_JUBBLY) == 0 &&
+                Inventory.getCount(COOKED_JUBBLY) == 0) {
 
             PathingUtil.walkToArea(RANTZ_AREA);
 
@@ -403,13 +397,12 @@ public class RfdSkratch implements QuestTask {
                 Utils.blindWalkToTile(new RSTile(2633, 2970, 0));
                 PathingUtil.movementIdle();
 
-                RSItem[] baloon = Inventory.find(BALOON_TOAD);
-                if (baloon.length > 0) {
-                    if (AccurateMouse.click(baloon[0], "Drop")) {
-                        cQuesterV2.status = "Waiting for Jubbly...";
-                        Log.info(cQuesterV2.status);
-                        Timer.waitCondition(() -> NPCs.find(JUBBLY_ID).length > 0, 65000, 85000);
-                    }
+                Optional<InventoryItem> baloon = Query.inventory().idEquals(BALOON_TOAD).findClosestToMouse();
+                if (baloon.map(b -> b.click("Drop")).orElse(false)) {
+                    cQuesterV2.status = "Waiting for Jubbly...";
+                    Log.info(cQuesterV2.status);
+                    Timer.waitCondition(() -> NPCs.find(JUBBLY_ID).length > 0, 65000, 85000);
+
                 }
             }
 
@@ -441,9 +434,9 @@ public class RfdSkratch implements QuestTask {
                     DaxCamera.focus(rawJubbly[0]);
 
                 if (AccurateMouse.click(rawJubbly[0], "Take"))
-                    Timer.waitCondition(() -> Inventory.find(RAW_JUBBLY).length > 0, 6000, 9000);
+                    Timer.waitCondition(() -> Inventory.getCount(RAW_JUBBLY) > 0, 6000, 9000);
             }
-        } else {
+        } else if (Inventory.getCount(ItemID.RAW_JUBBLY) == 0) {
             inflateToads();
             mineRocks();
             makeBaloon();
@@ -452,8 +445,8 @@ public class RfdSkratch implements QuestTask {
     }
 
     public void cookJubbly() {
-        if (Inventory.find(RAW_JUBBLY).length > 0 &&
-                Inventory.find(COOKED_JUBBLY).length == 0) {
+        if (Inventory.getCount(RAW_JUBBLY) > 0 &&
+                Inventory.getCount(COOKED_JUBBLY) == 0) {
             cQuesterV2.status = "Cooking Jubbly";
             if (PathingUtil.walkToTile(new RSTile(2631, 2989, 0)))
                 Timer.waitCondition(() -> Objects.find(30, 6895).length > 0, 8000, 12000);
@@ -462,7 +455,7 @@ public class RfdSkratch implements QuestTask {
                 Timer.waitCondition(() -> Objects.find(30, 6895)[0]
                         .getPosition().distanceTo(Player.getPosition()) < 2, 12000);
                 if (Utils.useItemOnObject(RAW_JUBBLY, 6895))
-                    Timer.waitCondition(() -> Inventory.find(COOKED_JUBBLY).length > 0, 20000);
+                    Timer.waitCondition(() -> Inventory.getCount(COOKED_JUBBLY) > 0, 20000);
             }
         }
     }
@@ -496,7 +489,9 @@ public class RfdSkratch implements QuestTask {
     }
 
     private void releaseAllFrogs() {
-
+        if (Query.inventory().actionContains("Release-all")
+                .findClosestToMouse().map(f -> f.click("Release-all")).orElse(false))
+            Utils.idleNormalAction(true);
     }
 
     @Override
@@ -511,6 +506,10 @@ public class RfdSkratch implements QuestTask {
 
     @Override
     public void execute() {
+        if (!checkRequirements()){
+            cQuesterV2.taskList.remove(this);
+            return;
+        }
         if (GameState.getVarbit(1904) == 0) {
             buyItems();
             getItems();
@@ -523,8 +522,11 @@ public class RfdSkratch implements QuestTask {
             goToLog();
         } else if (GameState.getVarbit(1904) == 30) {
             goToLog();
-        } else if (RSVarBit.get(6719).getValue() == 30) { // alternatively 1904 is 40 during cutscene
-            General.sleep(General.random(8000, 12000)); // cut scene
+        } else if (RSVarBit.get(6719).getValue() == 30 ||
+                GameState.getVarbit(1904) == 40) {
+            cQuesterV2.status = "Waiting for cut scene";
+            Waiting.waitUntil(20000, 1500,
+                    () -> GameState.getVarbit(1904) == 50); // cut scene
         } else if (GameState.getVarbit(1904) == 50) {
             cutLog();
         } else if (GameState.getVarbit(1904) == 60) {
@@ -534,15 +536,17 @@ public class RfdSkratch implements QuestTask {
         } else if (GameState.getVarbit(1904) == 80) {
             goToTree();
         } else if (GameState.getVarbit(1904) == 90) {
-            General.sleep(General.random(12000, 22000));
+            cQuesterV2.status = "Waiting for cut scene";
+            Waiting.waitUntil(20000, 1500,
+                    () -> GameState.getVarbit(1904) == 100); // cut scene
         } else if (GameState.getVarbit(1904) == 100) {
             goWithKids();
         } else if (GameState.getVarbit(1904) == 110) {
             mineRocks();
             inflateToads();
             makeBaloon();
-        } else if (GameState.getVarbit(1904) == 120 ||
-                GameState.getVarbit(1904) == 130 || GameState.getVarbit(1904) == 140) {
+        } else if (GameState.getVarbit(1904) >= 120 &&
+                GameState.getVarbit(1904) <= 140) {
             makeBaloon();
             baitBird();
         } else if (GameState.getVarbit(1904) == 150) {
@@ -555,18 +559,16 @@ public class RfdSkratch implements QuestTask {
 
         if (GameState.getVarbit(1904) == 170) {
             Utils.closeQuestCompletionWindow();
-            Utils.continuingChat();
+            NpcChat.handle();
             cQuesterV2.taskList.remove(this);
-            if(Query.inventory().actionContains("Release-all")
-                    .findClosestToMouse().map(f->f.click("Release-all")).orElse(false))
-                Utils.idleNormalAction(true);
+            releaseAllFrogs();
         }
 
     }
 
     @Override
     public String questName() {
-        return "RFD Skratch";
+        return "RFD Skratch (" + GameState.getVarbit(1904) + ")";
     }
 
     @Override

@@ -432,14 +432,7 @@ public class ShilloVillage implements QuestTask {
 
     public void buryCorpse() {
         if (!Inventory.contains(BONE_SHARD, BONE_KEY)) {
-            InventoryRequirement invReq = new InventoryRequirement(new ArrayList<>(
-                    Arrays.asList(
-                            new ItemReq(ZADIMUS_CORPSE, 1)
-                    ))
-            );
-
-
-            if (invReq.check()) {
+            if (Inventory.contains(ZADIMUS_CORPSE)) {
                 cQuesterV2.status = "Burying corpse";
                 PathingUtil.walkToTile(STATUE_TILE, 1, true);
                 PathingUtil.movementIdle();

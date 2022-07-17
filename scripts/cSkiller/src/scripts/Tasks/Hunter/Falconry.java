@@ -65,6 +65,8 @@ public class Falconry implements Task {
                 Utils.idlePredictableAction();
             }
            // RSNPC[] kibbet = NPCs.findNearest(5531);
+            org.tribot.script.sdk.input.Mouse.setClickMethod(
+                    org.tribot.script.sdk.input.Mouse.ClickMethod.ACCURATE_MOUSE);
             Optional<Npc> kibbet = Query.npcs().idEquals(5531).findBestInteractable();
             if (Equipment.isEquipped(GLOVE_WITH_FALCON) &&
                     kibbet.map(k->k.interact("Catch")).orElse(false)){
@@ -95,7 +97,7 @@ public class Falconry implements Task {
                 Vars.get().currentTask.equals(SkillTasks.HUNTER)) {
             if (Skills.getCurrentLevel(Skills.SKILLS.HUNTER) < 43) {
                 return false;
-            } else return Skill.HUNTER.getActualLevel() < 47;
+            } else return Skill.HUNTER.getActualLevel() < 60; //todo switch to 47
         }
         return false;
     }

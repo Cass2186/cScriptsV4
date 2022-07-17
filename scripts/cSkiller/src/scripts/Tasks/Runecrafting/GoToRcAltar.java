@@ -9,6 +9,7 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Log;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -40,7 +41,7 @@ public class GoToRcAltar implements Task {
         RSObject[] obj = Objects.findNearest(10,
                 Filters.Objects.nameContains("Bank chest"));
 
-        if (obj.length > 0 && rodTele("Duel Arena")) {
+        if (obj.length > 0 && rodTele("PVP Arena")) {
             Timer.waitCondition(() -> Objects.findNearest(10,
                     Filters.Objects.nameContains("Bank chest")).length == 0, 3000, 5000);
         }
@@ -55,7 +56,7 @@ public class GoToRcAltar implements Task {
             if (RcVars.get().usingLunarImbue)
                 GameTab.open(GameTab.TABS.MAGIC);
 
-            General.println("[Debug] Entering Ruins");
+            Log.info("Entering Ruins");
             if (Utils.clickObj("Mysterious ruins", "Enter")) {
                 Timer.waitCondition(() -> Objects.findNearest(30, "Altar").length > 0, 7000, 12000);
                 General.sleep(500);

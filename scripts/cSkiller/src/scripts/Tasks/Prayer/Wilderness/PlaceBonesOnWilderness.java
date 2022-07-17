@@ -35,8 +35,7 @@ public class PlaceBonesOnWilderness implements Task {
         if (MyPlayer.getAnimation() == -1 && item.isPresent() && altar.isPresent()) {
             Log.info("Placing bones");
 
-            if (altar.map(a -> item.map(i -> i.useOn(a))
-                    .orElse(false)).orElse(false) &&
+            if (item.map(i -> altar.map(i::useOn).orElse(false)).orElse(false) &&
                     Waiting.waitUntil(5000, 50, () -> PkObserver.shouldHop() ||
                             MyPlayer.getAnimation() != -1)) {
                 Log.info("Idling");

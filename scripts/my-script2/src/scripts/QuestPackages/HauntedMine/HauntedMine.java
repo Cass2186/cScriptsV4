@@ -13,6 +13,7 @@ import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.Inventory;
 import org.tribot.script.sdk.Prayer;
 import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Npc;
 import org.tribot.script.sdk.types.WorldTile;
@@ -221,10 +222,10 @@ public class HauntedMine implements QuestTask {
     public void enterMine() {
         if (Utils.getVarBitValue(5983) == 1 && hasKeyOrOpenedValve.check()) {
             if (inStartArea.check()) {
-                Log.debug("[Debug]: Walking to mine entrance");
+                Log.info("Walking to mine entrance");
                 WalkerEngine.getInstance().walkPath(Arrays.asList(HauntedMineConst.pathToMineEntranceFromStart));
             }
-            Log.debug("[Debug]: Entering mine");
+            Log.info("Entering mine");
             enterMine.execute();
         }
     }
@@ -330,6 +331,7 @@ public class HauntedMine implements QuestTask {
 
     ObjectStep goDownToCollectFungus = new ObjectStep(4967, new RSTile(2710, 4539, 0),
             "Climb-down", Player.getAnimation() != -1 && Player.getAnimation() == -1);
+
     ObjectStep collectFungus = new ObjectStep(ObjectID.MINE_CART_4974, new RSTile(2775, 4537, 0),
             "Search", NPCInteraction.isConversationWindowUp());
 
@@ -362,7 +364,8 @@ public class HauntedMine implements QuestTask {
 
     // goUpFromFungusRoom.addSubSteps(goUpFromLevel3South, goUpFromLevel2South, leaveLevel1South);
 
-    ObjectStep enterMineNorth = new ObjectStep(ObjectID.CART_TUNNEL_4914, new RSTile(3429, 3233, 0),
+    ObjectStep enterMineNorth = new ObjectStep(ObjectID.CART_TUNNEL_4914,
+            new RSTile(3429, 3233, 0),
             "Crawl-down", Player.getAnimation() != -1 && Player.getAnimation() == -1);
 
     ObjectStep goDownLevel1North = new ObjectStep(4965, new RSTile(3412, 9633, 0),
@@ -519,15 +522,15 @@ public class HauntedMine implements QuestTask {
                 Log.info("Handling minecart reverse, i = " + i);
                 if (mineCartTriggerReverseArea.contains(mineCart[0].getPosition())
                         && mineCartLevel3SouthHideTileReverse.equals(Player.getPosition())) {
-                    Log.debug("[Debug]: Cart is in trigger area");
+                    Log.info("Cart is in trigger area");
                     // goDownToFungusRoom.execute();
                     Timer.slowWaitCondition(() -> Player.getAnimation() != -1, 4500, 5500);
                 } else if (mineCartLevel3SouthHideTile.equals(Player.getPosition())) {
-                    Log.debug("[Debug]: Waiting on cart to move to trigger area");
+                    Log.info("Waiting on cart to move to trigger area");
                     Timer.waitCondition(() -> mineCartTriggerReverseArea.contains(mineCart[0].getPosition()), 25000, 35000);
                 } else if (!afterMineCartReverse.contains(Player.getPosition()) &&
                         mineCartTriggerReverseArea.contains(mineCart[0])) {
-                    Log.debug("[Debug]: Moving to south hide tile");
+                    Log.info("Moving to south hide tile");
                     if (PathingUtil.localNav(Utils.getWorldTileFromRSTile(mineCartLevel3SouthHideTileReverse))) {
                         Timer.waitCondition(() -> mineCartLevel3SouthHideTile.isClickable(), 3500, 5000);
                         if (mineCartLevel3SouthHideTileReverse.isClickable() &&
@@ -536,16 +539,16 @@ public class HauntedMine implements QuestTask {
                     }
                     // in the safe tile
                     if (mineCartLevel3SouthHideTileReverse.equals(Player.getPosition())) {
-                        Log.debug("[Debug]: We are on south hide tile");
+                        Log.info("We are on south hide tile");
                         //wait until the mine cart is NOT in the trigger area, (i.e it's north of us)
                         if (Timer.waitCondition(() -> !mineCartTriggerReverseArea.contains(mineCart[0]),
                                 25000, 35000)) {
-                            Log.debug("[Debug]: Moving to final destination area");
+                            Log.info("Moving to final destination area");
                             PathingUtil.localNavigation(afterMineCartReverse);
                         }
                     }
                 } else {
-                    Log.debug("[Debug]: Waiting on cart to move to trigger area");
+                    Log.info("Waiting on cart to move to trigger area");
                     Timer.waitCondition(() -> mineCartTriggerReverseArea.contains(mineCart[0]), 25000, 35000);
                 }
             }
@@ -607,6 +610,8 @@ public class HauntedMine implements QuestTask {
             }
     );
     AreaRequirement inOutsideDaythRoom = new AreaRequirement(outsideDaythRoom);
+    Area mineAreaOne =  Area.fromRectangle(new WorldTile(3402, 9661, 0),
+            new WorldTile(3437, 9617, 0));
 
     public void navigateMine() {
         if (inCrystalRoom.check()) {
@@ -617,113 +622,120 @@ public class HauntedMine implements QuestTask {
         } else if (inDarkCrystalRoom.check()) {
             leaveDarkCrystalRoom.execute();
         } else if (inDarkDaythRoom.check()) {
-            Log.debug("[Debug]: In dark datyh room");
+            Log.info("In dark datyh room");
             leaveDarkDaythRoom.execute();
         } else if (new Conditions(glowingFungus, inDaythRoom).check()) {
-            Log.debug("[Debug]: Kill boss");
+            Log.info("Kill boss");
             bossFight();
             Waiting.waitNormal(5000, 200);
         } else if (new Conditions(glowingFungus, inOutsideDaythRoom).check()) {
             cQuesterV2.status = "Enter Boss Room";
-            Log.debug("[Debug]: Enter Boss Room Manualy");
+            Log.info("Enter Boss Room Manualy");
             Waiting.waitNormal(5000, 200);
         } else if (new Conditions(glowingFungus, inFloodedRoom).check() && !crystalMineKey.check()) {
-            Log.debug("[Debug]: goDownToDayth");
+            Log.info("goDownToDayth");
             goDownToDayth.execute();
         } else if (new Conditions(inCrystalEntrance).check()) {
-            Log.debug("[Debug]: leaveCrystalRoom");
+            Log.info("leaveCrystalRoom");
             leaveCrystalRoom.execute();
         } else if (new Conditions(glowingFungus, inLiftRoom, valveOpen, chisel).check()) {
-            Log.debug("[Debug]: goDownLift");
+            Log.info("goDownLift");
             goDownLift.execute();
         } else if (new Conditions(glowingFungus, inLiftRoom, valveOpened, chisel).check()) {
             Log.debug("[Debug]:openValve.execute();");
             openValve.execute();
         } else if (new Conditions(glowingFungus, inLiftRoom, zealotsKey, chisel).check()) {
-            Log.debug("[Debug]: useKeyOnValve");
+            Log.info("useKeyOnValve");
             useKeyOnValve.execute();
         } else if (new Conditions(glowingFungus, inLiftRoom, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: pickUpChisel");
+            Log.info("pickUpChisel");
             pickUpChisel.execute();
         } else if (new Conditions(glowingFungus, inCollectRoom, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: goUpFromCollectRoom");
+            Log.info("goUpFromCollectRoom");
             goUpFromCollectRoom.execute();
         } else if (new Conditions(glowingFungus, inLevel3North, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: goDownFromLevel3NorthEast");
+            Log.info("goDownFromLevel3NorthEast");
             //TODO add click on the tile to avoid the cart
             goDownFrom3NE().execute();
         } else if (new Conditions(glowingFungus, inLevel2North, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: goDownLevel2North");
+            Log.info("goDownLevel2North");
             goDownLevel2North.execute();
         } else if (new Conditions(glowingFungus, inLevel1North, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: goDownLevel1North");
+            Log.info("goDownLevel1North");
             goDownLevel1North.execute();
         } else if (new Conditions(fungusOnOtherSide, inCollectRoom, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Collecting fungus");
+            Log.info("Collecting fungus");
             if (Inventory.isFull())
                 EatUtil.eatFood();
             collectFungus.execute();
             NpcChat.handle("Take it.");
         } else if (new Conditions(fungusOnOtherSide, inLevel3North, hasKeyOrOpenedValve).check()) {
             Log.debug("[Debug]:Going down to Collect fungus");
+            goDownToCollectFungus.setUseLocalNav(true);
             goDownToCollectFungus.execute();
         } else if (new Conditions(fungusOnOtherSide, inLiftRoom, hasKeyOrOpenedValve).check()) {
             goUpFromLiftRoom.execute();
         } else if (new Conditions(fungusOnOtherSide, inLevel2North, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Going down level 2 north");
+            Log.info("Going down level 2 north");
             goDownLevel2North.execute();
         } else if (new Conditions(fungusOnOtherSide, inLevel1North, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Going down level 1 north");
+            Log.info("Going down level 1 north");
             goDownLevel1North.execute();
         } else if (new Conditions(fungusOnOtherSide, inLevel1South, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Going up level 1 south");
+            Log.info("Going up level 1 south");
             leaveLevel1South.execute();
         } else if (new Conditions(fungusOnOtherSide, inLevel2South, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Going up level 2 south");
+            Log.info("Going up level 2 south");
             goUpFromLevel2South.execute();
         } else if (new Conditions(fungusOnOtherSide, inLevel3South, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Going up level 3 south");
+            Log.info("Going up level 3 south");
             solveMineCartReverse();
             //goUpFromLevel3South.execute();
         } else if (new Conditions(fungusOnOtherSide, inCartRoom, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Going up from fungus room");
+            Log.info("Going up from fungus room");
             goUpFromFungusRoom.execute();
-        } else if (new Conditions(fungusOnOtherSide, hasKeyOrOpenedValve).check()) {
-            Log.debug("[Debug]: Enter mine north");
+        } else if (new Conditions(fungusOnOtherSide, hasKeyOrOpenedValve).check() &&
+                !mineAreaOne.containsMyPlayer()) {
+            Log.info("Enter mine north");
             enterMineNorth.execute();
         } else if (new Conditions(fungusInCart, inCartRoom).check()) {
-            Log.debug("[Debug]: Solve mine carts");
+            Log.info("Solve mine carts");
             if (leverAWrong.check()) pullLeverA.execute();
             else if (leverBWrong.check()) pullLeverB.execute();
             else if (leverCWrong.check()) pullLeverC.execute();
             else if (leverDWrong.check()) pullLeverD.execute();
             else if (leverEWrong.check()) pullLeverE.execute();
             else if (leverFWrong.check()) {
-                if (pullLeverF.getTile().distanceTo(Player.getPosition()) > 4)
+                if (pullLeverF.getTile().distanceTo(Player.getPosition()) > 4) {
                     Walking.walkPath(pathToLaterLevers);
+                    Log.info("Walking to Lever G");
+                }
                 pullLeverF.execute();
+
             } else if (leverGWrong.check()) {
-                if (pullLeverG.getTile().distanceTo(Player.getPosition()) > 4)
+                if (pullLeverG.getTile().distanceTo(Player.getPosition()) > 4) {
+                    Log.info("Walking to Lever G");
                     Walking.walkPath(pathToLaterLevers);
+                }
                 pullLeverG.execute();
             } else if (leverHWrong.check()) pullLeverH.execute();
             else handleStartPanel();
 
         } else if (new Conditions(glowingFungus, inCartRoom).check()) {
-            Log.debug("[Debug]: Put fungus in cart");
+            Log.info("Put fungus in cart");
             putFungusInCart.execute();
         } else if (inLevel1South.check()) {
-            Log.debug("[Debug]: In level 1 south");
+            Log.info("In level 1 south");
             goDownFromLevel1South.execute();
         } else if (inLevel2South.check()) {
-            Log.debug("[Debug]: In level 2 south");
+            Log.info("In level 2 south");
             goDownFromLevel2South.execute();
 
         } else if (inLevel3South.check()) {
-            Log.debug("[Debug]: In level 3 south");
+            Log.info("In level 3 south");
             handleLevel3SouthMineCart();
         } else if (inCartRoom.check()) {
-            Log.debug("[Debug]: In cart room");
+            Log.info("In cart room");
             pickFungus.execute();
         } else {
             Log.debug("Enter mine");
@@ -855,7 +867,7 @@ public class HauntedMine implements QuestTask {
 
         if (askedAboutKey.check() && !zealotsKey.check() &&
                 Game.getSetting(QuestVarPlayer.QUEST_HAUNTED_MINE.getId()) == 1) {
-            Log.debug("[Debug]: Getting key");
+            Log.info("Getting key");
             pickpocketZealot.execute();
         }
 

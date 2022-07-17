@@ -7,6 +7,7 @@ import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
+import org.tribot.script.sdk.util.TribotRandom;
 
 import java.util.function.BooleanSupplier;
 
@@ -131,6 +132,11 @@ public class Timer {
             Waiting.waitNormal(300, 60);
             return (condition.getAsBoolean());
         });
+    }
+
+    public static boolean waitCondition(int min, int step, BooleanSupplier condition) {
+        return Waiting.waitUntil(TribotRandom.normal(min, (min / TribotRandom.uniform(8,10))),
+                TribotRandom.normal(step, step/TribotRandom.uniform(8,10)), condition::getAsBoolean);
     }
 
 

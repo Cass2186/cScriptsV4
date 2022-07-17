@@ -98,6 +98,16 @@ public final class ItemID {
     public static final int[] SUPER_STRENGTH_POTION = {2440, 157, 159, 161};
     public static final int[] SUPER_ATTACK_POTION = {2436, 145, 147, 149};
     public static final int[] SUPER_DEFENCE_POTION = {2442, 163, 165, 167};
+
+    public static final int GUARDIAN_FRAGMENTS = 26878;
+    public static final int GUARDIAN_ESSENCE = 26879;
+    public static final int UNCHARGED_CELL = 26882;
+    public static final int WEAK_CELL = 26883;
+    public static final int MEDIUM_CELL = 26883;
+    public static final int STRONG_CELL = 26885;
+    public static final int CATALYTIC_GUARDIAN_STONE = 26880;
+    public static final int ELEMENTAL_GUARDIAN_STONE = 26881;
+
     public static final int DWARF_REMAINS = 0;
     public static final int TOOLKIT = 1;
     public static final int CANNONBALL = 2;

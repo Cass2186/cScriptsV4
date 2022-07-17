@@ -86,7 +86,11 @@ public class Vars {
 
     public boolean shouldAfk = false;
 
+
     public boolean usingLunarImbue = false;
+
+
+    public boolean playingGuardians = false;
 
     public boolean isImbueActive = false;
 

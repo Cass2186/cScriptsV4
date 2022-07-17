@@ -43,7 +43,7 @@ public enum SpellInfo {
 
     HIGH_ALCHEMY("High Level Alchemy", SPELL_TYPE.ALCH, 65, List.of(ItemID.NATURE_RUNE,
             Utils.getNotedItemID(Vars.get().alchItem.getId())),
-            ItemID.STAFF_OF_FIRE, 55, 75),
+            ItemID.STAFF_OF_FIRE, 55, 82),
 
 
     TELE_ALCH("High Level Alchemy", SPELL_TYPE.TELE_ALCH, 110,

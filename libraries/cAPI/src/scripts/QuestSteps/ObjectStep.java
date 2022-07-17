@@ -331,7 +331,7 @@ public class ObjectStep extends QuestStep {
                 } else if (PathingUtil.localNavigation(this.tile)) {
                     Log.info("[ObjectStep]: Navigating to object area - local DPathNav");
                     humanWalkIdle(this.tile);
-                } else if (PathingUtil.walkToTile(this.tile)) {
+                } else if (!useLocalNav && PathingUtil.walkToTile(this.tile)) {
                     humanWalkIdle(this.tile);
                 }
             }
@@ -456,6 +456,45 @@ public class ObjectStep extends QuestStep {
                 }
             }
         }
+    }
+
+    private boolean handleWalking(){
+        RSArea objArea = new RSArea(this.tile, this.tileRadius);
+        if (!objArea.contains(Player.getPosition())) {
+
+            Log.debug("[ObjectStep]: Navigating to object area: ID " + this.objectId);
+            LocalTile tile =
+                    new LocalTile(this.tile.getX(), this.tile.getY(), this.tile.getPlane());
+            Waiting.waitUntil(TribotRandom.uniform(500,700), 25, tile::isRendered);
+
+            Optional<LocalTile> bestInteractable = Query.tiles()
+                    .inArea(Area.fromRadius(tile, 1))
+                    .filter(t -> t.isWalkable())
+                    .findClosest();
+            Optional<LocalTile> walkable =
+                    bestInteractable.map(b -> PathingUtil.getWalkableTile(b))
+                            .orElse(Optional.empty());
+            Log.warn("Is bestInteractable.Present(): " + bestInteractable.isPresent());
+            Log.warn("Is walkable.Present(): " + walkable.isPresent());
+            if (bestInteractable.map(PathingUtil::localNav).orElse(false)) {
+                Log.info("[ObjectStep]: Navigating to object area - LocalWalking to bestInteractable");
+                humanWalkIdle(tile.toWorldTile());
+            } else if (walkable.map(PathingUtil::localNav).orElse(false)) {
+                Log.info("[ObjectStep]: Navigating to object area - local SDK (walkable)");
+                humanWalkIdle(walkable.get().toWorldTile());
+            }
+            if (bestInteractable.map(t -> PathingUtil.localNavigation(
+                    Utils.getRSTileFromLocalTile(t))).orElse(false)) {
+                Log.info("[ObjectStep]: Navigating to object area - DPath to walkable tile");
+                humanWalkIdle(tile.toWorldTile());
+            } else if (PathingUtil.localNavigation(this.tile)) {
+                Log.info("[ObjectStep]: Navigating to object area - local DPathNav");
+                humanWalkIdle(this.tile);
+            } else if (!useLocalNav && PathingUtil.walkToTile(this.tile)) {
+                humanWalkIdle(this.tile);
+            }
+        }
+        return false;
     }
 
 

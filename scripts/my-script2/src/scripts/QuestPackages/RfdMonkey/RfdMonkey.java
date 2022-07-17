@@ -4,13 +4,17 @@ import dax.walker.utils.AccurateMouse;
 import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
+import org.tribot.api2007.Combat;
+import org.tribot.api2007.Equipment;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Prayer;
 import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.*;
-import org.tribot.script.sdk.GameState;
-import org.tribot.script.sdk.Log;
-import org.tribot.script.sdk.Quest;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.types.WorldTile;
 import org.tribot.script.sdk.util.TribotRandom;
 import scripts.*;
 import scripts.EntitySelector.Entities;
@@ -165,7 +169,7 @@ public class RfdMonkey implements QuestTask {
             Arrays.asList(
                     new GEItem(ItemID.ROPE, 1, 300),
                     new GEItem(ItemID.APE_ATOLL_TELEPORT, 6, 50),
-                    new GEItem(ItemID.PRAYER_POTION_4, 4, 20),
+                    new GEItem(ItemID.PRAYER_POTION_4, 2, 20),
                     new GEItem(ItemID.ANTIDOTE_PLUS_PLUS[0], 3, 30),
                     new GEItem(ItemID.KNIFE, 1, 300),
                     new GEItem(ItemID.LUMBRIDGE_TELEPORT, 5, 50),
@@ -173,7 +177,7 @@ public class RfdMonkey implements QuestTask {
                     new GEItem(BANANA, 1, 500),
                     new GEItem(MONKEY_NUTS, 1, 500),
                     new GEItem(ItemID.SUPER_COMBAT_POTION[0], 2, 15),
-                    new GEItem(ItemID.STAMINA_POTION[0], 3, 15),
+                    new GEItem(ItemID.STAMINA_POTION[0], 4, 15),
                     new GEItem(ItemID.VARROCK_TELEPORT, 5, 40),
                     new GEItem(ItemID.RING_OF_WEALTH[0], 1, 25),
                     new GEItem(ItemID.DRAGON_SCIMITAR, 1, 25)
@@ -195,7 +199,7 @@ public class RfdMonkey implements QuestTask {
                     new ItemReq(APE_ATOL_TAB, 5, 1),
                     new ItemReq(ItemID.PESTLE_AND_MORTAR, 1, 1),
                     new ItemReq(M_SPEAK_AMULET, 1, 1, true, true),
-                    new ItemReq(ItemID.STAMINA_POTION[0], 2, 1),
+                    new ItemReq(ItemID.STAMINA_POTION[0], 3, 1),
                     new ItemReq(ItemID.KNIFE, 1, 1),
                     new ItemReq(ItemID.LUMBRIDGE_TELEPORT, 5, 2),
                     new ItemReq(ItemID.SHARK, 6, 1),
@@ -205,7 +209,7 @@ public class RfdMonkey implements QuestTask {
                     new ItemReq(DRAMEN_STAFF, 1, 1, true),
                     new ItemReq(ItemID.SUPER_COMBAT_POTION[0], 1, 0),
 
-                    new ItemReq(ItemID.PRAYER_POTION[0], 4, 1),
+                    new ItemReq(ItemID.PRAYER_POTION[0], 3, 1),
                     new ItemReq(ItemID.ANTIDOTE_PLUS_PLUS[0], 1, 0, true),
                     new ItemReq(ItemID.RING_OF_WEALTH[0], 1, 0, true)
             )
@@ -546,6 +550,7 @@ public class RfdMonkey implements QuestTask {
                 cQuesterV2.status = "Going to red bananas (Pathed)";
                 General.println("[Debug]: " + cQuesterV2.status);
                 Walking.walkPath(PATH_TO_RED_TREE_FROM_THREE_MONKEYS);
+                PathingUtil.localNav(new LocalTile(2696, 2784, 0));
                 PathingUtil.movementIdle();
             }
             cQuesterV2.status = "Getting Red Bananas";
@@ -760,6 +765,90 @@ public class RfdMonkey implements QuestTask {
         }
     }
 
+
+    int STEPPING_STONE = 15412;
+    int TROPICAL_TREE = 15414;
+    int MONKEYBARS = 15417;
+    int SKULL_SLOPE = 15483;
+    Area START_AGILITY_AREA = Area.fromPolygon(
+            new WorldTile(2755, 2742, 0),
+            new WorldTile(2755, 2739, 0),
+            new WorldTile(2757, 2740, 0),
+            new WorldTile(2758, 2745, 0),
+            new WorldTile(2761, 2748, 0),
+            new WorldTile(2762, 2748, 0),
+            new WorldTile(2762, 2754, 0),
+            new WorldTile(2756, 2756, 0)
+    );
+    Area AGILITY_ISLAND = Area.fromPolygon(
+            new WorldTile(2753, 2739, 0),
+            new WorldTile(2754, 2740, 0),
+            new WorldTile(2754, 2742, 0),
+            new WorldTile(2753, 2743, 0),
+            new WorldTile(2751, 2743, 0),
+            new WorldTile(2750, 2740, 0)
+    );
+    Area AGILITY_PLATFORM = Area.fromRectangle(new WorldTile(2754, 2741, 2), new WorldTile(2751, 2742, 2));
+
+    Area AFTER_SKULL_SLOPE_AREA = Area.fromPolygon(
+            new WorldTile(2745, 2741, 0), new WorldTile(2743, 2742, 0),
+            new WorldTile(2741, 2744, 0), new WorldTile(2737, 2744, 0),
+            new WorldTile(2734, 2746, 0), new WorldTile(2730, 2744, 0),
+            new WorldTile(2742, 2730, 0), new WorldTile(2752, 2728, 0),
+            new WorldTile(2754, 2733, 0), new WorldTile(2753, 2737, 0)
+    );
+
+    private void handleAgilityCourse() {
+        if (!org.tribot.script.sdk.Equipment.contains(NINJA_GREEGREE)){
+            Utils.equipItem(NINJA_GREEGREE);
+            return;
+        }
+        if (START_AGILITY_AREA.containsMyPlayer() &&
+                QueryUtils.getObject(STEPPING_STONE)
+                        .map(o -> o.interact("Jump-to")).orElse(false)) {
+            Timer.waitCondition(8000, 500, () ->
+                    AGILITY_ISLAND.containsMyPlayer() &&
+                            MyPlayer.getAnimation() == -1);
+        }
+        if (AGILITY_ISLAND.containsMyPlayer() &&
+                QueryUtils.getObject(TROPICAL_TREE)
+                        .map(o -> o.interact("Climb")).orElse(false)) {
+            Timer.waitCondition(11000, 500,
+                    () -> MyPlayer.getTile().getPlane() == 2 &&
+                            MyPlayer.getAnimation() == -1);
+        }
+        if (AGILITY_PLATFORM.containsMyPlayer() &&
+                QueryUtils.getObject(MONKEYBARS)
+                        .map(o -> o.interact("Swing Across")).orElse(false)) {
+            Timer.waitCondition(11000, 500,
+                    () -> MyPlayer.getTile().getPlane() == 0 &&
+                            MyPlayer.getAnimation() == -1);
+        }
+        if (MyPlayer.getTile().equals(new WorldTile(2747, 2741, 2)) &&
+                QueryUtils.getObject(SKULL_SLOPE)
+                        .map(o -> o.interact("Climb-up")).orElse(false)) {
+            Timer.waitCondition(11000, 500,
+                    () -> AFTER_SKULL_SLOPE_AREA.containsMyPlayer()
+                            && MyPlayer.getAnimation() == -1);
+        }
+        if (AREA_BEFORE_ROPE_SWING.contains(Player.getPosition())) {
+            if (PathingUtil.localNavigation(TILE_BEFORE_ROPE_AGIL_COURSE))
+                PathingUtil.movementIdle();
+
+            if (Utils.clickObj("Rope", "Swing"))
+                Timer.waitCondition(8500, 500,
+                        () -> AREA_AFTER_ROPE_SWING.contains(Player.getPosition()));
+
+        }
+        if (AREA_AFTER_ROPE_SWING.contains(Player.getPosition())) {
+            if (Utils.clickObj("Hole", "Enter")) {
+                Timer.waitCondition(8500, 500,
+                        () -> NUT_AREA.contains(Player.getPosition()));
+            }
+        }
+    }
+
+
     RSArea AFTER_CLIMBING_DOWN_TREE_AREA = new RSArea(
             new RSTile[]{
                     new RSTile(2764, 2747, 0),
@@ -782,7 +871,7 @@ public class RfdMonkey implements QuestTask {
     };
     RSArea AREA_UNDER_TRAP_DOOR = new RSArea(new RSTile(2814, 9187, 0), new RSTile(2796, 9213, 0));
 
-    public void leaveNutArea() {
+    private void leaveNutArea() {
         // check we have 3 nuts
         if (NUT_AREA.contains(Player.getPosition())) {
             cQuesterV2.status = "Leaving nut area";
@@ -801,7 +890,17 @@ public class RfdMonkey implements QuestTask {
             Walking.walkPath(PATH_TO_TRAP_DOOR);
             PathingUtil.movementIdle();
         }
-
+        if (Query.gameObjects().actionNotContains("Open")
+                .nameContains("Trap").findClosestByPathDistance()
+                .map(o -> o.interact("Open")).orElse(false)) {
+            Waiting.waitNormal(4000, 250);
+        }
+        if (Query.gameObjects().actionNotContains("Climb-down")
+                .nameContains("Trap").findClosestByPathDistance()
+                .map(o -> o.interact("Climb-down")).orElse(false)) {
+            Timer.waitCondition(() -> AREA_UNDER_TRAP_DOOR.contains(Player.getPosition()),
+                    5000, 8000);
+        }
         if (AREA_UNDER_TRAP_DOOR.contains(Player.getPosition()) &&
                 Utils.clickObj("Exit", "Enter")) {
             PathingUtil.movementIdle();
@@ -962,7 +1061,7 @@ public class RfdMonkey implements QuestTask {
             }
         }
 
-
+        Waiting.waitNormal(300, 15);
     }
 
     @Override

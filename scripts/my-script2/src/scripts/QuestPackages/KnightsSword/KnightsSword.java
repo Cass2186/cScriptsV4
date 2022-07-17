@@ -112,7 +112,7 @@ public class KnightsSword implements QuestTask {
         }
     }
 
-    public void step2() {
+    public void goToReldo() {
         cQuesterV2.status = "Going to Reldo";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(RELDO_AREA);
@@ -123,7 +123,7 @@ public class KnightsSword implements QuestTask {
         }
     }
 
-    public void step3() {
+    public void goToThurgo() {
         cQuesterV2.status = "Going to Thurgo";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(HUT_AREA);
@@ -135,7 +135,7 @@ public class KnightsSword implements QuestTask {
         }
     }
 
-    public void step4() {
+    public void talkToThurgo() {
         cQuesterV2.status = "Going to Thurgo";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(HUT_AREA);
@@ -146,7 +146,7 @@ public class KnightsSword implements QuestTask {
         }
     }
 
-    public void step5() {
+    public void goToSquire() {
         cQuesterV2.status = "Going to Squire";
         General.println("[Debug]: " + cQuesterV2.status);
         PathingUtil.walkToArea(START_AREA);
@@ -157,7 +157,7 @@ public class KnightsSword implements QuestTask {
         }
     }
 
-    public void step6() {
+    public void getPortrait() {
         if (Inventory.find(PORTRAIT).length < 1) {
             cQuesterV2.status = "Going to Sir Vyin's Room";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -239,7 +239,7 @@ public class KnightsSword implements QuestTask {
     }
 
 
-    public void step8() {
+    public void getSword() {
         if (Inventory.find(BLURITE_ORE).length > 0) {
             Prayer.disable(Prayer.PRAYERS.PROTECT_FROM_MELEE);
             cQuesterV2.status = "Going to get blurite sword";
@@ -270,7 +270,7 @@ public class KnightsSword implements QuestTask {
     }
 
 
-    public void step9() {
+    public void finishQuest() {
         if (Inventory.find(BLURITE_SWORD).length > 0) {
             cQuesterV2.status = "Finishing quest";
             General.println("[Debug]: " + cQuesterV2.status);
@@ -284,36 +284,36 @@ public class KnightsSword implements QuestTask {
     }
 
 
-    int GAME_SETTING = 122;
+    int GAME_SETTING = QuestVarPlayer.QUEST_THE_KNIGHTS_SWORD.getId();
 
     @Override
     public void execute() {
-        if (Game.getSetting(GAME_SETTING) == 0) {
+        if (Game.getSetting(QuestVarPlayer.QUEST_THE_KNIGHTS_SWORD.getId()) == 0) {
             buyItems();
             getItems();
             startQuest();
 
         } else if (Game.getSetting(GAME_SETTING) == 1) {
-            step2();
+            goToReldo();
 
         } else if (Game.getSetting(GAME_SETTING) == 2) {
-            step3();
+            goToThurgo();
 
         } else if (Game.getSetting(GAME_SETTING) == 3) {
-            step4();
+            talkToThurgo();
 
         } else if (Game.getSetting(GAME_SETTING) == 4) {
-            step5();
+            goToSquire();
 
         } else if (Game.getSetting(GAME_SETTING) == 5) {
-            step6();
+            getPortrait();
             givingThrugoPictureStep6b();
             ;
 
         } else if (Game.getSetting(GAME_SETTING) == 6) {
             gettingOreStep7();
-            step8();
-            step9();
+            getSword();
+            finishQuest();
 
         } else if (Game.getSetting(GAME_SETTING) >= 7) {
             Utils.closeQuestCompletionWindow();

@@ -15,6 +15,7 @@ import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.LocalTile;
 import org.tribot.script.sdk.types.Npc;
+import org.tribot.script.sdk.util.TribotRandom;
 
 import java.util.*;
 
@@ -115,7 +116,14 @@ public class NpcChat extends NPCChat {
 
     public static boolean waitForChatScreen() {
         int timeout = Game.isRunOn() ? 8000 : 13000;
-        return Waiting.waitUntil(timeout, Utils.random(75, 300), () -> ChatScreen.isOpen());
+        return Waiting.waitUntil(TribotRandom.normal(timeout, timeout/10),
+                Utils.random(50, 200), () -> ChatScreen.isOpen());
+    }
+
+    public static boolean waitForChatScreen(int step) {
+        int timeout = Game.isRunOn() ? 8000 : 13000;
+        return Waiting.waitUntil(TribotRandom.normal(timeout, timeout/10),
+                step, () -> ChatScreen.isOpen());
     }
 
     /**
