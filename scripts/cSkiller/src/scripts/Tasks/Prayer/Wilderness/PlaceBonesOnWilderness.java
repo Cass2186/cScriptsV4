@@ -9,6 +9,7 @@ import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -36,14 +37,16 @@ public class PlaceBonesOnWilderness implements Task {
             Log.info("Placing bones");
 
             if (item.map(i -> altar.map(i::useOn).orElse(false)).orElse(false) &&
-                    Waiting.waitUntil(5000, 50, () -> PkObserver.shouldHop() ||
-                            MyPlayer.getAnimation() != -1)) {
+                    Waiting.waitUntil(5000,
+                            TribotRandom.uniform(40,80),
+                            () -> PkObserver.shouldHop() || MyPlayer.getAnimation() != -1)) {
                 Log.info("Idling");
             }
         }
-        if (Waiting.waitUntil(75000, 50, () -> {
+        if (Waiting.waitUntil(75000, TribotRandom.uniform(30,60), () -> {
                     if (MyPlayer.getAnimation() == -1 &&
-                            !Waiting.waitUntil(1400, 15,
+                            !Waiting.waitUntil(1600,
+                                    TribotRandom.uniform(10,45),
                                     () -> PkObserver.shouldHop() ||
                                             MyPlayer.getAnimation() != -1)) {
                         return true;

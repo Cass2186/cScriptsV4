@@ -88,7 +88,7 @@ public class RfdLumbridgeGuide implements QuestTask {
     String answer7 = " Catherby";
 
     String question8 = "if i'm going to need glass";
-    String answer8 = "Sand, bucket, soda ash, glassblowing pipe";
+    String answer8 = "Sand, bucket, soda ash, glass blowing pipe";
 
     String question9 = "i'm in a bar west of pollnivneach";
     String answer9 = "Bandit Camp";
@@ -114,9 +114,9 @@ public class RfdLumbridgeGuide implements QuestTask {
             answer10, answer11, answer12, answer13, answer14, answer15, answer16
     };
 
-    NPCStep answerQuestions = new NPCStep("Traiborn", new RSTile(3112, 3162, 1));
-    NPCStep  answerRuneQuestion = new NPCStep( "Traiborn", new RSTile(3112, 3162, 1));
-    NPCStep answerWeaponQuestion = new NPCStep("Traiborn", new RSTile(3112, 3162, 1));
+    NPCStep answerQuestions = new NPCStep("Wizard Traiborn", new RSTile(3112, 3162, 1));
+    NPCStep  answerRuneQuestion = new NPCStep( "Wizard Traiborn", new RSTile(3112, 3162, 1));
+    NPCStep answerWeaponQuestion = new NPCStep("Wizard Traiborn", new RSTile(3112, 3162, 1));
 
 
     public void addDialog() {
@@ -253,7 +253,7 @@ public class RfdLumbridgeGuide implements QuestTask {
     public void step2() {
         cQuesterV2.status = "Going to Traiborn";
         PathingUtil.walkToArea(WIZARDS_TOWER_AREA);
-        if (NpcChat.talkToNPC("Traiborn")) {
+        if (NpcChat.talkToNPC("Wizard Traiborn")) {
             NPCInteraction.waitForConversationWindow();
             NPCInteraction.handleConversation("Ask about helping the Lumbridge Guide.");
             NPCInteraction.handleConversation();
@@ -268,7 +268,7 @@ public class RfdLumbridgeGuide implements QuestTask {
 
 
         cQuesterV2.status = "Starting Quiz";
-        if (!NPCInteraction.isConversationWindowUp() && NpcChat.talkToNPC("Traiborn")) {
+        if (!NPCInteraction.isConversationWindowUp() && NpcChat.talkToNPC("Wizard Traiborn")) {
             NPCInteraction.waitForConversationWindow();
         }
         for (int i = 0; i < 30; i++) {
@@ -301,7 +301,7 @@ public class RfdLumbridgeGuide implements QuestTask {
     public void milkQuiz() {
         cQuesterV2.status = "Milk Quiz";
         PathingUtil.walkToArea(WIZARDS_TOWER_AREA);
-        if (!NPCInteraction.isConversationWindowUp() && NpcChat.talkToNPC("Traiborn")) {
+        if (!NPCInteraction.isConversationWindowUp() && NpcChat.talkToNPC("Wizard Traiborn")) {
             NPCInteraction.waitForConversationWindow();
         }
         if (NPCInteraction.isConversationWindowUp()) {
@@ -319,14 +319,16 @@ public class RfdLumbridgeGuide implements QuestTask {
             Timer.waitCondition(() -> Interfaces.get(231, 4) != null, 5000);
             if (Interfaces.isInterfaceSubstantiated(231, 3)) {
                 General.println("Selecting 231, 4");
-                if (Interfaces.get(231, 4).click())
+                if (ChatScreen.clickContinue())
                     Timer.waitCondition(() -> Interfaces.get(229, 2) != null, 5000);
             }
 
             Timer.waitCondition(() -> Interfaces.get(229, 2) != null, 5000);
             if (Interfaces.get(229, 2) != null) {
                 General.println("Selecting 229, 2");
-                Interfaces.get(229, 2).click();
+               //Interfaces.get(229, 2).click();
+                ChatScreen.clickContinue();
+                Waiting.waitNormal(2000,200);
             }
 
             answerQuestion();
@@ -339,9 +341,10 @@ public class RfdLumbridgeGuide implements QuestTask {
 
     public void answerQuestion() {
         General.println("[Debug]: Answering question");
-        Timer.waitCondition(() -> Interfaces.isInterfaceSubstantiated(231, 5), 5000);
+        Timer.waitCondition(() -> ChatScreen.getOptions().size() > 0, 5000);
         RSInterface questionInterface = Interfaces.get(231, 4);
-        NPCInteraction.handleConversation(ANSWER_ARRAY);
+        NpcChat.handle(true, ANSWER_ARRAY);
+        //NPCInteraction.handleConversation(ANSWER_ARRAY);
        /* if (questionInterface != null) {
             Optional<String> question = ChatScreen.getMessage();
             if (question.isEmpty()) return;
@@ -416,7 +419,7 @@ public class RfdLumbridgeGuide implements QuestTask {
 
         if (!NPCInteraction.isConversationWindowUp() &&
                 !Interfaces.isInterfaceSubstantiated(264, 24) &&
-                NpcChat.talkToNPC("Traiborn")) {
+                NpcChat.talkToNPC("Wizard Traiborn")) {
             NPCInteraction.waitForConversationWindow();
         }
         if (NPCInteraction.isConversationWindowUp()) {
