@@ -1236,6 +1236,6 @@ public class FairyTalePt1 implements QuestTask {
 
     @Override
     public boolean isComplete() {
-        return Quest.FAIRYTALE_I_GROWING_PAINS.getState().equals(Quest.State.COMPLETE);
+        return Quest.FAIRYTALE_I__GROWING_PAINS.getState().equals(Quest.State.COMPLETE);
     }
 }

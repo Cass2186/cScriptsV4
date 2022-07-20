@@ -10,6 +10,7 @@ import org.tribot.script.sdk.Skill;
 import org.tribot.script.sdk.types.Area;
 import org.tribot.script.sdk.types.GameObject;
 import org.tribot.script.sdk.types.LocalTile;
+import org.tribot.script.sdk.util.TribotRandom;
 import scripts.Timer;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class Vars {
         return Skill.RANGED.getXp() - Const.START_RANGED_XP;
     }
 
+    public int drinkPrayerAt =  TribotRandom.normal(4,35, 14, 6);
 
     //AREAS
     public Area endPhase = null;

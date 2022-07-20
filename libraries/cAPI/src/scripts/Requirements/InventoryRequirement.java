@@ -73,14 +73,24 @@ public class InventoryRequirement implements Requirement {
                 item.minAmount = 1; //this prevents it from skipping items with a min of 0 if the bank is open
                 if (!item.hasItem()) {
                     missing.add(item);
-                    Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
-                            item.getId(), missing.size()));
+                    Optional<ItemDefinition> def = ItemDefinition.get(item.getId());
+                    def.ifPresent(d ->
+                            Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                                    d.getName(), missing.size())));
+                    if (def.isEmpty())
+                        Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                                item.getId(), missing.size()));
                 }
                 item.minAmount = 0;
             } else if (!item.hasItem()) {
                 missing.add(item);
-                Log.info("[InventoryRequirement] Missing item: " + item.getId() + " ||  missing.size(): " + missing.size());
-            }
+                Optional<ItemDefinition> def = ItemDefinition.get(item.getId());
+                def.ifPresent(d ->
+                        Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                                d.getName(), missing.size())));
+                if (def.isEmpty())
+                    Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                            item.getId(), missing.size()));  }
         }
         return missing;
     }
@@ -93,13 +103,23 @@ public class InventoryRequirement implements Requirement {
                 item.minAmount = 1; //this prevents it from skipping items with a min of 0 if the bank is open
                 if (!item.hasItem()) {
                     missing.add(item);
-                    Log.info("[InventoryReq] Missing item: " + item.getId() + " || missing.size(): " + missing.size());
-                }
+                    Optional<ItemDefinition> def = ItemDefinition.get(item.getId());
+                    def.ifPresent(d ->
+                            Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                                    d.getName(), missing.size())));
+                    if (def.isEmpty())
+                        Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                                item.getId(), missing.size()));   }
                 item.minAmount = 0;
             } else if (!item.hasItem()) {
                 missing.add(item);
-                Log.info("[InventoryReq] Missing item: " + item.getId() + " ||  missing.size(): " + missing.size());
-            }
+                Optional<ItemDefinition> def = ItemDefinition.get(item.getId());
+                def.ifPresent(d ->
+                        Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                                d.getName(), missing.size())));
+                if (def.isEmpty())
+                    Log.info(String.format("[InventoryReq] Missing item: %s || size of list: %s",
+                            item.getId(), missing.size())); }
         }
         return missing;
     }
@@ -156,7 +176,7 @@ public class InventoryRequirement implements Requirement {
             Log.info("[InventoryReq]: Missing size is " + missing.size());
             BankManager.open(true);
             BankManager.depositAll(true);
-            if (this.depositEquipment){
+            if (this.depositEquipment) {
                 BankManager.depositEquipment();
             }
             missing = getMissingBankItemsList(); // adds everything that might have been in the inv to begin with
@@ -280,9 +300,9 @@ public class InventoryRequirement implements Requirement {
             if (!item.hasItem()) {
                 Optional<ItemDefinition> def = Query.itemDefinitions().idEquals(item.getId()).findFirst();
 
-               if (def.isEmpty())
-                   Log.info("Def is empty");
-                   String s = String.format("[ItemRequirement]: Missing an ItemReq: %s ",
+                if (def.isEmpty())
+                    Log.info("Def is empty");
+                String s = String.format("[ItemRequirement]: Missing an ItemReq: %s ",
                         item.getId());
                 s = def.map(b -> String.format("[ItemRequirement]: Missing an ItemReq: %s ",
                         b.getName())).orElse(s);

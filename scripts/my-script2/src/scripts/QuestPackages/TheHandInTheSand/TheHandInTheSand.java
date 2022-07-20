@@ -305,6 +305,7 @@ public class TheHandInTheSand implements QuestTask {
     public void execute() {
         int varbit = Utils.getVarBitValue(QuestVarbits.QUEST_THE_HAND_IN_THE_SAND.getId());
         if (isComplete() || Quest.THE_HAND_IN_THE_SAND.getStep() == 160) {
+            Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
             return;
         }

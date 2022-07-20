@@ -433,6 +433,11 @@ public class cSkiller extends Script implements Starting, Ending, Painting,
                     General.println("[Args]: Training Slayer");
                     Vars.get().shouldShowGUI = false;
                 }
+                if (arg.toLowerCase().contains("motherload")) {
+                    General.println("[Args]: Training Mother Load Mine");
+                    Vars.get().useMLM = true;
+                    //Vars.get().shouldShowGUI = false;
+                }
                 if (arg.toLowerCase().contains("prayer")) {
                     General.println("[Args]: Training prayer first");
                     currentSkill = Vars.get().currentTask.getSkill();

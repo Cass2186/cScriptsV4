@@ -8,6 +8,7 @@ import org.tribot.script.sdk.painting.template.basic.BasicPaintTemplate;
 import org.tribot.script.sdk.painting.template.basic.PaintLocation;
 import org.tribot.script.sdk.painting.template.basic.PaintRows;
 import org.tribot.script.sdk.painting.template.basic.PaintTextRow;
+import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.script.ScriptConfig;
 import org.tribot.script.sdk.script.TribotScript;
 import scripts.Data.Const;
@@ -44,7 +45,6 @@ public class cRunecrafting extends CassScript implements TribotScript {
             Log.info("[Args]: Abyss crafting");
             Vars.get().abyssCrafting = true;
         }
-
         AntiBan.create();
         super.initializeDax();
 

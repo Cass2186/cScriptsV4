@@ -9,7 +9,10 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.InventoryItem;
+import org.tribot.script.sdk.util.TribotRandom;
+import scripts.Data.Vars;
 import scripts.NpcChat;
+import scripts.Timer;
 import scripts.Utils;
 
 import java.io.IOException;
@@ -100,14 +103,14 @@ public class DrinkPotion implements Task {
         boostedCombatStats = (Skills.getCurrentLevel(Skills.SKILLS.ATTACK) + Skills.getCurrentLevel(Skills.SKILLS.DEFENCE) + Skills.getCurrentLevel(Skills.SKILLS.STRENGTH) + Skills.getCurrentLevel(Skills.SKILLS.MAGIC) + Skills.getCurrentLevel(Skills.SKILLS.RANGED));
         actualCombatStats = (Skills.getActualLevel(Skills.SKILLS.ATTACK) + Skills.getActualLevel(Skills.SKILLS.DEFENCE) + Skills.getActualLevel(Skills.SKILLS.STRENGTH) + Skills.getActualLevel(Skills.SKILLS.MAGIC) + Skills.getActualLevel(Skills.SKILLS.RANGED));
         return (boostedCombatStats - actualCombatStats < General.random(5, 10)) ||
-               MyPlayer.getCurrentHealthPercent() < 0.5;
+                MyPlayer.getCurrentHealthPercent() < 0.5;
     }
 
     boolean needsPrayerPotion(String name) {
         if (!hasPotion(name)) {
             return false;
         }
-        return Prayer.getPrayerPoints() <= General.random(5, 10);
+        return Prayer.getPrayerPoints() <= Vars.get().drinkPrayerAt;
     }
 
     Optional<InventoryItem> getPotion(String name) {
@@ -125,7 +128,8 @@ public class DrinkPotion implements Task {
 
     @Override
     public boolean validate() {
-        return isPendingCompletion();
+        return isPendingCompletion()
+                && !JadTask.needToChangePrayer();
     }
 
     @Override
@@ -140,32 +144,25 @@ public class DrinkPotion implements Task {
             NpcChat.handle();
         }
         if (drinkPrayerPotion(prayer)) {
-            if (Waiting.waitUntil(300, 5, () -> !needsPrayerPotion(prayer))) {
+            Vars.get().drinkPrayerAt = TribotRandom.normal(4, 35, 14, 6);
+            Log.info("Next Drinking prayer at " + Vars.get().drinkPrayerAt);
+            if (Timer.waitCondition(400, 10, () -> !needsPrayerPotion(prayer))) {
                 Utils.idlePredictableAction();
-                return;
             }
-        }
+        } else if (drinkRestorePotion() &&
+                Timer.waitCondition(400, 10, () -> !shouldDrinkPotion(restore))) {
+            Log.info("Drank Super Restore Potion");
+            Utils.idlePredictableAction();
+        } else if (!shouldDrinkPotion(restore) && drinkBoostPotion(ranged) &&
+                Timer.waitCondition(400, 10, () -> !needsBoostPotion(boost))) {
+            Log.info("Drank Bastion Potion");
+            Utils.idlePredictableAction();
 
-        if (drinkRestorePotion()) {
-            if (Waiting.waitUntil(300, 5, () -> !shouldDrinkPotion(restore))) {
+        } else if (!shouldDrinkPotion(restore) && !needsBoostPotion(boost)) {
+            Log.info("Drinking Ranged Potion");
+            if (drinkRangePotion() && Timer.waitCondition(400, 10,
+                    () -> !needsRangePotion())) {
                 Utils.idlePredictableAction();
-                return;
-            }
-        }
-
-        if (!shouldDrinkPotion(restore) && drinkBoostPotion(ranged)) {
-            Log.info("drinking bastion");
-            if (Waiting.waitUntil(300, 5, () -> !needsBoostPotion(boost))) {
-                Utils.idlePredictableAction();
-                return;
-            }
-        }
-
-        if(!shouldDrinkPotion(restore) && !needsBoostPotion(boost)){
-            if (drinkRangePotion()) {
-                if (Waiting.waitUntil(300, 5, () -> !needsRangePotion())) {
-                    Utils.idlePredictableAction();
-                }
             }
         }
     }

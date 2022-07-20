@@ -1,9 +1,12 @@
 package scripts;
 
+import org.tribot.script.sdk.*;
+import org.tribot.script.sdk.types.WorldTile;
+import scripts.QuestSteps.QuestStep;
+import scripts.Requirements.ItemReq;
+
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -17,4 +20,9 @@ public class QuestUtil {
     {
         return Collectors.toCollection(ArrayList::new);
     }
+
+    public static void handleQuest(Map<Integer, QuestStep> stepMap){
+
+    }
+
 }

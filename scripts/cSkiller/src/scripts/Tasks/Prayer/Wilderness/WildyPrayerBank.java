@@ -2,10 +2,7 @@ package scripts.Tasks.Prayer.Wilderness;
 
 import obf.M;
 import org.tribot.api2007.Combat;
-import org.tribot.script.sdk.Equipment;
-import org.tribot.script.sdk.Inventory;
-import org.tribot.script.sdk.MyPlayer;
-import org.tribot.script.sdk.Waiting;
+import org.tribot.script.sdk.*;
 import org.tribot.script.sdk.query.Query;
 import org.tribot.script.sdk.types.EquipmentItem;
 import org.tribot.script.sdk.types.GameObject;
@@ -68,7 +65,7 @@ public class WildyPrayerBank implements Task {
                 }
             }
             BankManager.withdraw(0, true, ItemID.DRAGON_BONES);
-            if (!Inventory.contains(ItemID.DRAGON_BONES)) {
+            if (!Inventory.contains(ItemID.DRAGON_BONES) && (Bank.isOpen() || Bank.isNearby())) {
                 throw new NullPointerException();
             }
         }

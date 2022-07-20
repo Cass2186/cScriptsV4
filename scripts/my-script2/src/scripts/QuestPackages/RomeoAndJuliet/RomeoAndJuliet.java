@@ -234,6 +234,6 @@ public class RomeoAndJuliet implements QuestTask {
 
     @Override
     public boolean isComplete() {
-        return Quest.ROMEO_JULIET.getState().equals(Quest.State.COMPLETE);
+        return Quest.ROMEO__JULIET.getState().equals(Quest.State.COMPLETE);
     }
 }

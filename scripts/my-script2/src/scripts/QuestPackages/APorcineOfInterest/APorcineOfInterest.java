@@ -4,6 +4,7 @@ import dax.walker_engine.interaction_handling.NPCInteraction;
 import org.tribot.api.General;
 import org.tribot.api2007.*;
 import org.tribot.api2007.types.*;
+import org.tribot.script.sdk.GameState;
 import org.tribot.script.sdk.Log;
 import org.tribot.script.sdk.Quest;
 import org.tribot.script.sdk.Waiting;
@@ -32,7 +33,7 @@ public class APorcineOfInterest implements QuestTask {
             Arrays.asList(
                     new GEItem(ItemID.ADAMANT_SCIMITAR, 1, 100),
                     new GEItem(ItemID.IRON_PLATEBODY, 1, 200),
-                    new GEItem(ItemID.AMULET_OF_GLORY[2], 1, 20),
+                    new GEItem(ItemID.AMULET_OF_GLORY[2], 2, 20),
                     new GEItem(ItemID.STAMINA_POTION[0], 2, 20),
                     new GEItem(ItemID.IRON_PLATELEGS, 1, 200),
                     new GEItem(ItemID.IRON_FULL_HELM, 1, 200),
@@ -50,6 +51,7 @@ public class APorcineOfInterest implements QuestTask {
                     new ItemReq(ItemID.ADAMANT_SCIMITAR, 1, true, true),
                     new ItemReq(ItemID.IRON_PLATEBODY, 1, true, true),
                     new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0, true, true),
+                    new ItemReq(ItemID.AMULET_OF_GLORY[2], 1, 0),
                     new ItemReq(ItemID.STAMINA_POTION[0], 2, 0),
                     new ItemReq(ItemID.IRON_PLATELEGS, 1, true, true),
                     new ItemReq(ItemID.IRON_FULL_HELM, 1, true, true),
@@ -96,11 +98,11 @@ public class APorcineOfInterest implements QuestTask {
         RSObject[] skel = Objects.findNearest(40, 40350);
         RSObject[] blockage = Objects.findNearest(40, "Blockage");
         if (skel.length > 0) {
-            Log.log("[Debug]: Detected skeleton");
+            Log.info("Detected skeleton");
             if (PathingUtil.localNavigation(skel[0].getPosition()))
                 PathingUtil.movementIdle();
             else if (blockage.length > 0 && Utils.clickObject(blockage[0], "Climb-over")) {
-                Log.log("[Debug]: Navigating blockage");
+                Log.info("Navigating blockage");
                 PathingUtil.movementIdle();
             }
         }
@@ -142,10 +144,20 @@ public class APorcineOfInterest implements QuestTask {
     public void useRopeOnHoleStep() {
         cQuesterV2.status = "Using rope on hole";
         useRopeOnHole.useItemOnObject();
-        NPCInteraction.waitForConversationWindow();
-        NPCInteraction.handleConversation("I think that'll be all for now.");
+        NpcChat.handle(true, "I think that'll be all for now.");
     }
 
+
+    private boolean cutOffFoot() {
+        cQuesterV2.status = "Getting foot";
+        if (!hoof.check() &&
+                QueryUtils.getObject("Dead sourhog")
+                        .map(s -> s.interact("Cut-foot")).orElse(false)) {
+            return Waiting.waitUntil(7500, 500, () ->
+                    Inventory.getCount(ItemID.SOURHOG_FOOT) > 0);
+        }
+        return hoof.check();
+    }
 
     @Override
     public String toString() {
@@ -159,7 +171,7 @@ public class APorcineOfInterest implements QuestTask {
 
     @Override
     public boolean validate() {
-    return cQuesterV2.taskList.get(0).equals(this);
+        return cQuesterV2.taskList.get(0).equals(this);
     }
 
     @Override
@@ -202,7 +214,7 @@ public class APorcineOfInterest implements QuestTask {
                 }
                 RSObject[] blockage = Objects.findNearest(40, "Blockage");
                 if (blockage.length > 0 && Utils.clickObject(blockage[0], "Climb-over")) {
-                    Log.log("[Debug]: Navigating blockage");
+                    Log.info("Navigating blockage");
                     NPCInteraction.waitForConversationWindow();
                     NPCInteraction.handleConversation("Yes");
                     if (Timer.waitCondition(() -> Player.getAnimation() != -1, 4500, 5000))
@@ -210,7 +222,7 @@ public class APorcineOfInterest implements QuestTask {
                 }
             }
             cQuesterV2.status = "Killing Sourhog";
-            Log.log("[Debug]: " + cQuesterV2.status);
+            Log.info("" + cQuesterV2.status);
             NPCStep killSourhog = new NPCStep(10436, Player.getPosition(), reinforcedGoggles);
 
 
@@ -233,41 +245,49 @@ public class APorcineOfInterest implements QuestTask {
             killSourhog.execute();
             Timer.waitCondition(() -> Combat.isUnderAttack(), 3500, 4000);
             if (!hoof.check())
-                cutOffFoot.execute();
+                cutOffFoot();
         } else if (Utils.getVarBitValue(setting) == 30 && !hoof.check()) {
-            if (!Game.isInInstance()) {
+            if (!GameState.isInInstance()) {
                 cQuesterV2.status = "Entering hole again";
                 enterHoleAgain.execute();
-                RSObject[] blockage = Objects.findNearest(40, "Blockage");
-                if (blockage.length > 0 && Utils.clickObject(blockage[0], "Climb-over")) {
-                    Log.log("[Debug]: Navigating blockage");
-                    if (Timer.waitCondition(() -> Player.getAnimation() != -1, 4500, 5000))
-                        Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 4500, 5000);
-                }
             }
+            RSObject[] blockage = Objects.findNearest(40, "Blockage");
+            if (blockage.length > 0 && Utils.clickObject(blockage[0], "Climb-over")) {
+                Log.info("Navigating blockage");
+                if (Timer.waitCondition(() -> Player.getAnimation() != -1, 4500, 5000))
+                    Timer.slowWaitCondition(() -> Player.getAnimation() == -1, 4500, 5000);
+            }
+
             cQuesterV2.status = "Cutting off Foot";
-            cutOffFoot.execute();
+            cutOffFoot();
         } else if (Game.getSetting(setting) >= 30 && Game.getSetting(setting) < 99 || hoof.check()) {
             cQuesterV2.status = "Returning to Sarah";
             returnToSarah.execute();
         } else if (Utils.getVarBitValue(setting) == 35) {
             cQuesterV2.status = "Returning to Spira";
             returnToSpria.execute();
-        }else if (Utils.getVarBitValue(setting) == 100) {
+        } else if (
+
+                isComplete()) {
+            Utils.closeQuestCompletionWindow();
             cQuesterV2.taskList.remove(this);
         }
-
+        Utils.cutScene();
+        NpcChat.handle();
+        Waiting.waitNormal(200, 20);
     }
 
     @Override
     public String questName() {
-        return "A Porcine of Interest";
+        return "A Porcine of Interest (" +
+                Quest.A_PORCINE_OF_INTEREST.getStep() + ")";
     }
 
     @Override
     public boolean checkRequirements() {
         return Skills.getActualLevel(Skills.SKILLS.ATTACK) >= 30;
     }
+
     @Override
     public List<Requirement> getGeneralRequirements() {
         return null;
@@ -277,6 +297,7 @@ public class APorcineOfInterest implements QuestTask {
     public List<ItemRequirement> getBuyList() {
         return null;
     }
+
     @Override
     public boolean isComplete() {
         return Quest.A_PORCINE_OF_INTEREST.getState().equals(Quest.State.COMPLETE);

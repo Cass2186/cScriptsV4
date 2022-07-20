@@ -104,7 +104,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
 
     @FXML
     @DoNotRename
-    private CheckBox useMlmBox1, useFruitStallButton, pointBoosingBox, getBarbarianRodCheckBox,
+    private CheckBox useMlmBox1, useMlmBox, useFruitStallButton, pointBoosingBox, getBarbarianRodCheckBox,
             moveMouseOffScreenWhileAfkBox, useBlastFurnaceBox, preferJewleryOverTeleportsCheckBox,
             growKittenDuringFishingBox, growKittenDuringAgilityBox, enableSummerPieBoostingBox,
             enableAlchingAgilityBox, enableWildernessCourseBox, enableSpamClickingAgilityBox;
@@ -497,7 +497,7 @@ public class SkillerGUIController extends SkillerAbstractGUIController {
         SlayerVars.get().pointBoosting = pointBoosingBox.isSelected();
         updateSlayerPotion();
         SlayerVars.get().abc2Chance = (int) slayerAbc2ChanceSlider.getValue() + 1; // adding 1 in case it's set to 0
-
+        Vars.get().useMLM = useMlmBox.isSelected();
 
         ScriptSettings settingsHandler = ScriptSettings.getDefault();
         //update slayer vars object in vars

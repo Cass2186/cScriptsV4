@@ -52,7 +52,7 @@ public class AttackNpc implements Task {
     }
 
     private static boolean checkAggro() {
-        return Waiting.waitUntil(Utils.random(25,450), 5, () ->
+        return Waiting.waitUntil(Utils.random(25, 450), 5, () ->
                 Query.npcs().isMyPlayerInteractingWith().isAny());
     }
 
@@ -79,11 +79,11 @@ public class AttackNpc implements Task {
         if (monsterStrings == null)
             return Optional.empty();
 
+        var target = Query.npcs().isMyPlayerInteractingWith()
+                .findClosestByPathDistance();
+        //Optional<Character> target = MyPlayer.get().flatMap(player -> player.getInteractingCharacter());
 
-        Optional<Character> target = MyPlayer.get().
-                flatMap(player -> player.getInteractingCharacter());
-
-        if (target.isEmpty()) {
+        if (!target.isEmpty()) {
             // Log.info("Interacting Target is empty, finding a new one");
             int i = 0;
             List<Npc> potentialTargets = Query.npcs()
@@ -94,6 +94,7 @@ public class AttackNpc implements Task {
                     .isReachable()
                     .sortedByInteractionCost()
                     .toList();
+
 
             for (Npc targ : potentialTargets) {
                 i++;
@@ -109,23 +110,20 @@ public class AttackNpc implements Task {
                     return Optional.of(targ);
                 }
             }
-        } else
-
+        } else if (target.map(t -> t.getHealthBarPercent() == 0).orElse(false)) {
             // NPC we're interacting with is dead, look for next one
-            if (target.get().getHealthBarPercent() == 0) {
-                List<Npc> potentialTargets = Query.npcs()
-                        .nameContains(monsterStrings)
-                        .isNotBeingInteractedWith()
-                        .isHealthBarNotVisible()
-                        .isReachable()
-                        .sortedByDistance()
-                        // .inArea(SlayerVars.get().fightArea)
-                        .toList();
-                if (potentialTargets.size() > 0)
-                    return Optional.ofNullable(potentialTargets.get(0));
+            List<Npc> potentialTargets = Query.npcs()
+                    .nameContains(monsterStrings)
+                    .isNotBeingInteractedWith()
+                    .isHealthBarNotVisible()
+                    .isReachable()
+                    .sortedByDistance()
+                    // .inArea(SlayerVars.get().fightArea)
+                    .toList();
+            if (potentialTargets.size() > 0)
+                return Optional.ofNullable(potentialTargets.get(0));
 
-            } else
-                return Optional.of((Npc) target.get());
+        } else return target;
 
         return Optional.empty();
     }
@@ -263,9 +261,9 @@ public class AttackNpc implements Task {
             }
             return
                     !Query.npcs().isMyPlayerInteractingWith().isAny() ||
-                    npcOptional.map(npc -> npc.getHealthBarPercent() == 0).orElse(false) ||
-                    !EatUtil.hasFood() ||
-                    (Prayer.getActivePrayers().size() > 0 && Prayer.getPrayerPoints() < 6);
+                            npcOptional.map(npc -> npc.getHealthBarPercent() == 0).orElse(false) ||
+                            !EatUtil.hasFood() ||
+                            (Prayer.getActivePrayers().size() > 0 && Prayer.getPrayerPoints() < 6);
         });
     }
 
@@ -293,7 +291,7 @@ public class AttackNpc implements Task {
 
             } else {
                 SlayerVars.get().status = "Sleeping...";
-                Waiting.waitNormal(100,10); //adds ~100ms to the base sleep, which is fast
+                Waiting.waitNormal(100, 10); //adds ~100ms to the base sleep, which is fast
                 Utils.idleNormalAction(true);
                 SlayerVars.get().abc2Chance = General.random(0, 100);
             }

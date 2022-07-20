@@ -54,7 +54,8 @@ public class cFightCaves extends CassScript implements TribotScript, Painting{
                 new EatTask(),
                 new PrayerTask(),
                 new DrinkPotion(),
-                new SafeSpotTask()
+                new SafeSpotTask(),
+                new JadTask()
         );
         MessageListening.addServerMessageListener(m -> {
             if (m.contains("defeated!")) {

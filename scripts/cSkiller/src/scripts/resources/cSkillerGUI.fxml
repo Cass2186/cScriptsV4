@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="568.0" prefWidth="787.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
+<VBox prefHeight="568.0" prefWidth="787.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scripts.SkillerGUIController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -352,6 +352,12 @@
                                                 </Label>
                                                 <CheckBox fx:id="growKittenDuringAgilityBox" disable="true" layoutX="23.0" layoutY="145.0" mnemonicParsing="false" text="Grow Kitten During Agility" />
                                                 <CheckBox fx:id="enableSpamClickingAgilityBox" layoutX="23.0" layoutY="178.0" mnemonicParsing="false" text="Enable Mutli-Clicking (beta)" />
+                                                <CheckBox fx:id="useMlmBox" layoutX="401.0" layoutY="132.0" mnemonicParsing="false" text="Use Motherload Mine" />
+                                                <Label layoutX="401.0" layoutY="101.0" text="Mining Preferences" underline="true">
+                                                   <font>
+                                                      <Font name="System Bold" size="15.0" />
+                                                   </font>
+                                                </Label>
                                              </children>
                                           </AnchorPane>
                                        </content>
