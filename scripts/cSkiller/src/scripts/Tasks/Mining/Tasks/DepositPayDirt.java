@@ -9,6 +9,8 @@ import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.types.Area;
+import org.tribot.script.sdk.types.WorldTile;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.Data.SkillTasks;
@@ -56,11 +58,11 @@ public class DepositPayDirt implements Task {
     public void repairStruts() {
         List<RSObject> struts = getBrokenStruts();
         if (area.contains(Player.getPosition()) && struts.size() == 2) {
-            Log.log("[Debug]: Fixing struts");
+            Log.info("Fixing struts");
             if (getHammer()) {
                 for (RSObject obj : struts) {
                     if (!obj.isClickable() && PathingUtil.localNavigation(obj.getPosition())) {
-                        Log.log("[Debug]: Navigating to struts");
+                        Log.info("Navigating to struts");
                         Timer.waitCondition(() -> obj.isClickable(), 5000, 7000);
                     }
                     if (Utils.clickObject(obj, "Hammer")) {
@@ -80,6 +82,12 @@ public class DepositPayDirt implements Task {
                     new RSTile(3748, 5676, 0)
             }
     );
+    Area sdkArea = Area.fromPolygon(
+            new WorldTile(3748, 5674, 0),
+            new WorldTile(3746, 5674, 0),
+            new WorldTile(3746, 5676, 0),
+            new WorldTile(3748, 5676, 0)
+    );
 
     public void depositOre() {
         if (!MLMUtils.WHOLE_MLM_AREA.contains(Player.getPosition()))
@@ -87,15 +95,19 @@ public class DepositPayDirt implements Task {
 
         if (!MLMUtils.MLM_DEPOSIT_BOX_TILE.isClickable() &&
                 PathingUtil.localNavigation(area.getRandomTile())) {
-            General.println("[Debug]: Deposting ore - Moving");
-            Timer.waitCondition(() -> MLMUtils.MLM_DEPOSIT_BOX_TILE.isClickable(), 6000, 9000);
-        } else if (PathingUtil.walkToArea(area, false)) {
-            General.println("[Debug]: Deposting ore - Moving (DAX)");
-            Timer.waitCondition(() -> MLMUtils.MLM_DEPOSIT_BOX_TILE.isClickable(), 6000, 9000);
-            if (Utils.clickObject("Hopper", "Deposit", true)) {
+            Log.info("Deposting ore - Moving");
+            Timer.waitCondition(15000, 700,
+                    () -> MLMUtils.MLM_DEPOSIT_BOX_TILE.isClickable());
+        } else if (PathingUtil.walkToTile(sdkArea.getCenter())) {
+            Log.info("Deposting ore - Moving (DAX)");
+            Timer.waitCondition(15000, 700,
+                    () -> MLMUtils.MLM_DEPOSIT_BOX_TILE.isClickable());
+            if (QueryUtils.getObject("Hopper").map(
+                    h -> h.interact("Deposit")).orElse(false)) {
+                //   if (Utils.clickObject("Hopper", "Deposit", true)) {
                 Vars.get().oreDeposits++;
                 int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.getId());
-                General.println("[Debug]: Depositing ore (A)");
+                Log.info("Depositing ore (A)");
                 Timer.waitCondition(() -> !Inventory.isFull(), 6000, 9000);
                 if (ore >= 56) {
                     Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) != ore,
@@ -105,10 +117,12 @@ public class DepositPayDirt implements Task {
             }
         }
         if (MLMUtils.MLM_DEPOSIT_BOX_TILE.distanceTo(Player.getPosition()) < 5) {
-            if (Utils.clickObject("Hopper", "Deposit", true)) {
+            if (QueryUtils.getObject("Hopper").map(
+                    h -> h.interact("Deposit")).orElse(false)) {
+                //if (Utils.clickObject("Hopper", "Deposit", true)) {
                 Vars.get().oreDeposits++;
                 int ore = Utils.getVarBitValue(Varbits.SACK_NUMBER.getId());
-                General.println("[Debug]: Depositing ore (B)");
+                Log.info("Depositing ore (B)");
                 if (Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) >= 55) {
                     PathingUtil.localNavigation(SACK_TILE);
                     Timer.waitCondition(() -> Utils.getVarBitValue(Varbits.SACK_NUMBER.getId()) > ore, 6000, 9000);

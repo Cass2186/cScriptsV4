@@ -9,6 +9,7 @@ import org.tribot.script.sdk.util.TribotRandom;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
+import scripts.API.Teleportable;
 import scripts.Data.SkillTasks;
 import scripts.Data.Vars;
 
@@ -17,17 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class IronOre implements Task {
+public class IronOre implements Task, Teleportable {
 
 
     WorldTile ARDOUGNE_MINING_TILE = new WorldTile(2692, 3329, 0);
-    int UNCUT_EMERALD = 1621;
 
     List<Integer> DEPLETED_ORE_IDS = new ArrayList<>(Arrays.asList(11391, 11390));
     List<Integer> IRON_ROCK_IDS = new ArrayList<>(Arrays.asList(11365, 11364));
     int[] IRON_ROCK_ARRAY = {11365, 11364};
-    // int[] IRON_ROCK_ARRAY = {11365, 11364};
     int[] DEPLETED_ORE_ARRAY = {11391, 11390};
+
+
     WorldTile[] ARDOUGNE_IRON_ROCK_TILES = {
             new WorldTile(2691, 3329, 0),
             new WorldTile(2692, 3328, 0),
@@ -160,7 +161,8 @@ public class IronOre implements Task {
             int b = Mouse.getSpeed();
             Mouse.setSpeed(TribotRandom.uniform(200, 250));
             cSkiller.status = "Dropping Rocks";
-            List<InventoryItem> ore = Query.inventory().idEquals(ItemID.IRON_ORE, UNCUT_EMERALD, ItemID.UNCUT_SAPPHIRE, ItemID.UNCUT_RUBY)
+            List<InventoryItem> ore = Query.inventory().idEquals(ItemID.IRON_ORE,
+                            ItemID.UNCUT_EMERALD, ItemID.UNCUT_SAPPHIRE, ItemID.UNCUT_RUBY)
                     .toList();
             ItemUtil.drop(ore);
             Mouse.setSpeed(b);
@@ -186,7 +188,7 @@ public class IronOre implements Task {
     public void execute() {
         if (Skill.MINING.getActualLevel() >= 15)
             mineOre();
-        else {
+        else { // LvL <15
             genericMineRock(new WorldTile(3223, 3147, 0)); //lumbridge
         }
     }
@@ -199,5 +201,10 @@ public class IronOre implements Task {
     @Override
     public String taskName() {
         return "Mining";
+    }
+
+    @Override
+    public int[] getTeleItem() {
+        return ItemID.SKILLS_NECKLACE;
     }
 }

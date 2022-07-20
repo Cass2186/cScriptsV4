@@ -24,11 +24,11 @@ public class MineOreMLM implements Task {
     public static void goToMLM() {
 
         if (!MLMUtils.WHOLE_MLM_AREA.contains(Player.getPosition())) {
-            General.println("[Debug]: Going to MLM");
+            Log.info("Going to MLM");
             PathingUtil.walkToArea(MLMUtils.NORTH_MINING_AREA, false);
         }
         if (!MLMUtils.NORTH_MINING_AREA.contains(Player.getPosition())) {
-            General.println("[Debug]: Going to North area");
+            Log.info("Going to North area");
             PathingUtil.walkToTile(new RSTile(3735, 5689, 0), 2, false);
         }
     }
@@ -38,7 +38,7 @@ public class MineOreMLM implements Task {
         if (obj != null) {
             RSObjectDefinition def = obj.getDefinition();
             if (def != null && def.getName().equals("Depleted vein")) {
-                General.println("[Debug]: Identified vein is depleted");
+                Log.info("Identified vein is depleted");
                 return true;
             }
         }
@@ -57,24 +57,24 @@ public class MineOreMLM implements Task {
             vein = Entities.find(ObjectEntity::new)
                     .tileEquals(myTile.translate(0, 1))
                     .getFirstResult();
-            // General.println("[Debug]: Facing north. Is Vein null: " + (vein == null));
+            // Log.info("Facing north. Is Vein null: " + (vein == null));
             return checkDepletion(vein);
 
         } else if (facing == PlayerOrientation.SOUTH) {
             vein = Entities.find(ObjectEntity::new)
                     .tileEquals(myTile.translate(0, 1))
                     .getFirstResult();
-            //   General.println("[Debug]: Facing south. Is Vein null: " + (vein == null));
+            //   Log.info("Facing south. Is Vein null: " + (vein == null));
             return checkDepletion(vein);
 
         } else if (facing == PlayerOrientation.EAST) {
             vein = Entities.find(ObjectEntity::new)
                     .tileEquals(myTile.translate(1, 0))
                     .getFirstResult();
-            //  General.println("[Debug]: Facing East. Is Vein null: " + (vein == null));
+            //  Log.info("Facing East. Is Vein null: " + (vein == null));
             return checkDepletion(vein);
         }
-        //   General.println("[Debug]: Failed to identify vein based on direction");
+        //   Log.info("Failed to identify vein based on direction");
 
         getOreVein("Depleted vein");
         getOreVein("Ore vein");
@@ -88,26 +88,26 @@ public class MineOreMLM implements Task {
                 tileEquals(myTile.translate(0, 1)).and(
                 Filters.Objects.nameContains(veinName)));
         if (ore.length > 0) {
-            //  General.println("[Debug]: Vein is north of us");
+            //  Log.info("Vein is north of us");
             return ore[0];
         }
         ore = Objects.findNearest(2, Filters.Objects.
                 tileEquals(myTile.translate(0, -1)).and(Filters.Objects.nameContains(veinName)));
 
         if (ore.length > 0) {
-            // General.println("[Debug]: Vein is south of us");
+            // Log.info("Vein is south of us");
             return ore[0];
         }
         ore = Objects.findNearest(2, Filters.Objects.
                 tileEquals(myTile.translate(-1, 0)).and(Filters.Objects.nameContains(veinName)));
         if (ore.length > 0) {
-            // General.println("[Debug]: Vein is west of us");
+            // Log.info("Vein is west of us");
             return ore[0];
         }
         ore = Objects.findNearest(2, Filters.Objects.
                 tileEquals(myTile.translate(1, 0)).and(Filters.Objects.nameContains(veinName)));
         if (ore.length > 0) {
-            //  General.println("[Debug]: Vein is east of us");
+            //  Log.info("Vein is east of us");
             return ore[0];
         }
         //    General.println("[Debug] no veins anywhere");
@@ -142,15 +142,15 @@ public class MineOreMLM implements Task {
 
         if (Player.getAnimation() != -1) {
             AntiBan.timedActions();
-          //  General.println("[Debug]: mineRock() returning true");
+          //  Log.info("mineRock() returning true");
             return true;
         }
 
         if (vein != null) {
-            General.println("[Debug]: Vein identified at " + vein.getPosition().toString());
+            Log.info("Vein identified at " + vein.getPosition().toString());
 
             if (!MLMUtils.isReachable(vein.getPosition())) {
-                General.println("[Debug]: Navigating to vein");
+                Log.info("Navigating to vein");
                 if(PathingUtil.walkToTile(vein.getPosition(), 1, false))
               //  MLMUtils.localNavigation(vein.getPosition());
                 Timer.waitCondition(() -> vein.getPosition().distanceTo(Player.getPosition()) <
@@ -159,7 +159,7 @@ public class MineOreMLM implements Task {
             }
             if (Utils.clickObject(vein, "Mine", true)) {
                 Vars.get().currentTime = System.currentTimeMillis();
-                General.println("[Debug]: Vein is reachable, clicking");
+                Log.info("Vein is reachable, clicking");
                 return Timer.waitCondition(() -> Player.getAnimation() != -1, 4500, 6000);
             }
 
@@ -169,7 +169,7 @@ public class MineOreMLM implements Task {
 
     public void hopWorlds(){
         if (shouldHop()){
-            Log.log("[Debug]: Hopping worlds");
+            Log.info("Hopping worlds");
             Utils.hopWorlds();
         }
     }
@@ -201,7 +201,7 @@ public class MineOreMLM implements Task {
         } else {
             message = "Sleeping...";
             int sleep = General.randomSD(1250, 450);
-            General.println("[Debug]: Sleeping for " + sleep + " ms");
+            Log.info("Sleeping for " + sleep + " ms");
             General.sleep(sleep);
             Vars.get().abc2Chance = General.random(0, 100);
         }
