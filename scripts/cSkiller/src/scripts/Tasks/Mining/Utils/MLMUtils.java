@@ -13,6 +13,7 @@ import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSObjectDefinition;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.api2007.util.DPathNavigator;
+import org.tribot.script.sdk.Log;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ObjectEntity;
 import scripts.PathingUtil;
@@ -119,7 +120,7 @@ public class MLMUtils {
     );
     public static PlayerOrientation getDirection() {
         PlayerOrientation i = PlayerOrientation.getOrientation();
-    //    General.println("[Debug]: We are facing: " + i.toString());
+    //    Log.info("[Debug]: We are facing: " + i.toString());
         return i;
     }
 
@@ -133,8 +134,8 @@ public class MLMUtils {
         // dont use dax's class
         boolean b = PathFinding.canReach(tile, true);
         boolean c = PathFinding.canReach(tile, false);
-        General.println("[Debug]: isReachable (obj): " + b);
-        General.println("[Debug]: isReachable (notObj): " + c);
+       // Log.info("[Debug]: isReachable (obj): " + b);
+        //Log.info("[Debug]: isReachable (notObj): " + c);
         return b ;
     }
 
@@ -147,10 +148,10 @@ public class MLMUtils {
         dpath.setAcceptAdjacent(true);
         RSTile[] path = dpath.findPath(destination);
         if (path.length == 0) {
-            General.println("[PathingUtil]: DPathNavigator failed to generate a path");
+            Log.info("[PathingUtil]: DPathNavigator failed to generate a path");
             return false;
         } else {
-            General.println("[PathingUtil]: DPathNavigator generated a path, feeding to dax");
+            Log.info("[PathingUtil]: DPathNavigator generated a path, feeding to dax");
             WalkerEngine.getInstance().walkPath(Arrays.asList(path));
             return true;
             //movementIdle();

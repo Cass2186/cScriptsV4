@@ -193,16 +193,17 @@ public class MineOreMLM implements Task {
     String message = "";
 
     private void sleep() {
-        if (Vars.get().abc2Chance < 30) {
+        if (Vars.get().abc2Chance < 35) {
             message = "ABC2 Sleeping...";
             Utils.abc2ReactionSleep(Vars.get().currentTime);
             Vars.get().abc2Chance = General.random(0, 100);
 
         } else {
             message = "Sleeping...";
-            int sleep = General.randomSD(1250, 450);
+            Utils.idleNormalAction(true);
+           /* int sleep = General.randomSD(1250, 450);
             Log.info("Sleeping for " + sleep + " ms");
-            General.sleep(sleep);
+            General.sleep(sleep);*/
             Vars.get().abc2Chance = General.random(0, 100);
         }
 

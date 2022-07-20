@@ -8,6 +8,11 @@ import org.tribot.api2007.ext.Filters;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.Bank;
+import org.tribot.script.sdk.Log;
+import org.tribot.script.sdk.Prayer;
+import org.tribot.script.sdk.query.Query;
+import org.tribot.script.sdk.types.GameObject;
 import scripts.API.Priority;
 import scripts.API.Task;
 import scripts.*;
@@ -16,6 +21,8 @@ import scripts.Data.Vars;
 import scripts.EntitySelector.Entities;
 import scripts.EntitySelector.finders.prefabs.ItemEntity;
 import scripts.Tasks.Mining.Utils.MLMUtils;
+
+import java.util.Optional;
 
 public class CollectOre implements Task {
 
@@ -37,8 +44,15 @@ public class CollectOre implements Task {
         RSItem[] ore = Entities.find(ItemEntity::new)
                 .nameContains("ore")
                 .getResults();
+        Optional<GameObject> chest = Query.gameObjects().nameContains("chest")
+                .findClosestByPathDistance();
         if (ore.length > 0) {
-            BankManager.open(true);
+            if (!Bank.isOpen()){
+                if(chest.map(c->c.interact("Use")).orElse(false)){
+                    Log.info("Interacted with bank chest");
+                    Timer.waitCondition(9000, 600, Bank::isOpen);
+                } else BankManager.open(true);
+            }
             BankManager.depositAll(true);
             BankManager.close(true);
         }
