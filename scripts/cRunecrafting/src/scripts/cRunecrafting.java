@@ -18,6 +18,7 @@ import scripts.Data.Vars;
 import scripts.ScriptUtils.CassScript;
 import scripts.ScriptUtils.ScriptTimer;
 import scripts.Tasks.*;
+import scripts.Tasks.AbyssTasks.GetPouches;
 import scripts.Tasks.BloodCrafting.ChipEssence;
 import scripts.Tasks.BloodCrafting.GetDenceEssence;
 import scripts.Tasks.BloodCrafting.GoToBloodAltar;
@@ -45,6 +46,10 @@ public class cRunecrafting extends CassScript implements TribotScript {
             Log.info("[Args]: Abyss crafting");
             Vars.get().abyssCrafting = true;
         }
+        else if (args.toLowerCase().contains("pouch")) {
+            Log.info("[Args]: Pouches ");
+            Vars.get().collectPouches = true;
+        }
         AntiBan.create();
         super.initializeDax();
 
@@ -62,7 +67,8 @@ public class cRunecrafting extends CassScript implements TribotScript {
                 new CraftRunes(),
                 new GoToRcAltar(),
                 new RunecraftBank(),
-                new RepairPouches()
+                new RepairPouches(),
+                new GetPouches()
         );
 
         if (Vars.get().bloodRuneCrafting){
@@ -83,7 +89,7 @@ public class cRunecrafting extends CassScript implements TribotScript {
         while (isRunning.get()) {
             Waiting.waitUniform(40, 70);
             //reset safety timer if we've gained xp since last itteration
-            if (Skill.RUNECRAFT.getXp() > Vars.get().lastIterRcXp) {
+            if (Skill.RUNECRAFT.getXp() > Vars.get().lastIterRcXp || Vars.get().collectPouches) {
                 Vars.get().safetyTimer.reset();
                 Vars.get().lastIterRcXp = Skill.RUNECRAFT.getXp();
             }

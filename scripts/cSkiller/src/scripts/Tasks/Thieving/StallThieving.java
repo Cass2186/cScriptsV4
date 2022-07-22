@@ -76,7 +76,7 @@ public class StallThieving implements Task {
             } else {
                 return Utils.clickObject(obj[0], "Steal-from", false); //moves far more
             }
-        } else {
+        } else if (ThievingConst.FRUIT_STALL_TILE.distanceTo(Player.getPosition()) > 5) {
             message = "Going to Fruit stall";
             PathingUtil.walkToTile(ThievingConst.FRUIT_STALL_TILE, 4, false);
         }

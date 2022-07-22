@@ -488,6 +488,8 @@ public class RunecraftBank implements Task {
         //       return invTiara || talisman.length == 0;
 
         //   } else
+        if (Vars.get().collectPouches)
+            return false;
         if (getLevel() < 14) {
             return !Inventory.contains(ItemID.PURE_ESSENCE) ||
                     !Equipment.contains(ItemID.EARTH_TIARA);

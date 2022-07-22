@@ -121,7 +121,7 @@ public class cFarming extends Script implements Painting, Starting, Arguments, E
         for (String arg : input.split(";")) {
             try {
                 String tasks = arg.split(";")[0].toLowerCase();
-                if (tasks.contains("tree")) {
+                if (tasks.contains("tree") || tasks.contains("trees")) {
                     General.println("[Arguments]: Doing Trees", Color.RED);
                     Vars.get().doingTrees = true;
                     Plant.determineTreeId();
