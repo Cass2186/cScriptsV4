@@ -7,6 +7,8 @@ import org.tribot.api2007.GameTab;
 import org.tribot.api2007.Interfaces;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.types.RSInterface;
+import org.tribot.script.sdk.GameState;
+import org.tribot.script.sdk.Options;
 import org.tribot.script.sdk.Waiting;
 import org.tribot.script.sdk.Widgets;
 import org.tribot.script.sdk.query.Query;
@@ -16,33 +18,37 @@ import scripts.Data.Const;
 import scripts.Tasks.Priority;
 import scripts.Tasks.Task;
 
+import java.util.Optional;
+
 public class BankTask implements Task {
 
     private void openBank() {
-        PathingUtil.walkToTile(Const.BANK_TILE, 2, false);
+        PathingUtil.walkToTile(Const.BANK_TILE);
         if (BankManager.open(true)) {
-            Waiting.waitNormal(500, 175);
+            Utils.idleNormalAction(true);
         }
     }
 
     private void openPollBooth() {
         BankManager.close(true);
 
-        if (Utils.clickObject("Poll booth", "Use", false) &&
-                NPCInteraction.waitForConversationWindow()) {
-            NPCInteraction.handleConversation();
-            Timer.waitCondition(() -> Interfaces.get(310, 2, 11) != null, 2500, 4000);
+        if (Utils.clickObject("Poll booth", "Use", false)) {
+            NpcChat.handle(true);
+            Timer.waitCondition(4000, 400,
+                    () -> Widgets.isVisible(310));
         }
     }
 
     private void closePollInterface() {
-        RSInterface closeButton = Interfaces.findWhereAction("Close", 310);
-        if (closeButton != null && closeButton.click()) {
-            Timer.waitCondition(() -> Interfaces.get(310) == null, 2500, 4000);
+        Optional<Widget> closeButton = Query.widgets().inIndexPath(310)
+                .actionContains("Close").findFirst();
+
+        if (closeButton.map(Widget::click).orElse(false)) {
+            Timer.waitCondition(3500, 400,
+                    () -> !Widgets.isVisible(310));
         } else {
             Query.widgets().actionContains("Close").findFirst().map(Widget::click);
         }
-        //if (Interfaces.get(310, 2, 11) != null) {
 
     }
 
@@ -50,19 +56,17 @@ public class BankTask implements Task {
     private void goToAccountGuide() {
         closePollInterface();
         Widgets.closeAll();
-        PathingUtil.localNavigation(Const.ACCOUNT_INFO_TILE);
+        PathingUtil.localNav(Const.ACCOUNT_INFO_TILE);
     }
 
     private void talkToAccountGuide() {
         closePollInterface();
-        if (NpcChat.talkToNPC(3310) &&
-                NPCInteraction.waitForConversationWindow()) { // don't check this, it stops it from working
-            NPCInteraction.handleConversation();
-        }
+        if (NpcChat.talkToNPC(Const.ACCOUNT_GUIDE_ID))
+            NpcChat.handle(true);
     }
 
     private void openTab() {
-        int SKILLS_INTERFACE = General.isClientResizable() ? 164 : 548;
+        int SKILLS_INTERFACE = Options.isResizableModeEnabled() ? 164 : 548;
         RSInterface skills = Interfaces.findWhereAction("Account Management", SKILLS_INTERFACE);
         if (skills != null && skills.click()) {
             Timer.slowWaitCondition(() -> GameTab.getOpen() ==

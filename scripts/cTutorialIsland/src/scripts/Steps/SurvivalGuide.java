@@ -26,7 +26,7 @@ public class SurvivalGuide implements Task {
     int LOGS = 2511;
 
     public void openInventoryTab() {
-        final int INVENTORY_INTERFACE = General.isClientResizable() ? 164 : 548;
+        final int INVENTORY_INTERFACE = Options.isResizableModeEnabled() ? 164 : 548;
         RSInterface inv = Interfaces.findWhereAction("Inventory", INVENTORY_INTERFACE);
         if (inv != null && inv.click()) {
             Timer.slowWaitCondition(() -> GameTab.getOpen() ==
@@ -42,7 +42,7 @@ public class SurvivalGuide implements Task {
     }
 
     public void openSkillsTab() {
-        int SKILLS_INTERFACE = General.isClientResizable() ? 164 : 548;
+        int SKILLS_INTERFACE = Options.isResizableModeEnabled() ? 164 : 548;
         RSInterface skills = Interfaces.findWhereAction("Skills", SKILLS_INTERFACE);
         if (skills != null && skills.click()) {
             Timer.slowWaitCondition(() -> GameTab.getOpen() ==

@@ -333,7 +333,8 @@ public class CombatUtil {
     public static boolean waitUntilOutOfCombat(String name, int eatAt) {
         int eatAtHP = eatAt + General.random(1, 10);//true if praying
 
-        Timing.waitCondition(() -> {
+        Timer.waitCondition(30000, 250,
+                () -> {
             General.sleep(General.random(100, 500));
 
             AntiBan.timedActions();
@@ -355,8 +356,9 @@ public class CombatUtil {
                 return !Combat.isUnderAttack() || !EatUtil.hasFood()
                         || (isPraying() && Prayer.getPrayerPoints() < 5);
 
-            return !Query.npcs().isMyPlayerInteractingWith().isAny() || !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
-        }, General.random(20000, 40000));
+            return !Query.npcs().isMyPlayerInteractingWith().isAny() ||
+                    !EatUtil.hasFood() || Prayer.getPrayerPoints() < 5;
+        });
 
         AntiBan.resetShouldOpenMenu();
 

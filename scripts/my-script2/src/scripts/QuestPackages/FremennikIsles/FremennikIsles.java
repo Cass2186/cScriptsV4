@@ -147,10 +147,12 @@ public class FremennikIsles implements QuestTask {
             // fix middle bridges
             cQuesterV2.status = "Fixing Middle Bridges";
             PathingUtil.localNav(LEFT_MIDDLE_BRIDGE_TILE);
-            Optional<GameObject> repair = Query.gameObjects().actionContains("Repair").findClosest();
+            Optional<GameObject> repair = Query.gameObjects()
+                    .actionContains("Repair").findClosest();
             if (repair.map(r -> r.interact("Repair")).orElse(false)) {
-                Waiting.waitUntil(15000, 1200, ()-> END_NEITIZNOT_AREA.contains(Player.getPosition()));
+                Waiting.waitUntil(18000, 1200, ()-> END_NEITIZNOT_AREA.contains(Player.getPosition()));
             }
+
         }
 
 

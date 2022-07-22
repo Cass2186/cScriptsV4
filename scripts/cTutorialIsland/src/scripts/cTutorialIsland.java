@@ -47,9 +47,7 @@ public class cTutorialIsland extends CassScript implements TribotScript {
 
     @Override
     public void execute(String args) {
-
         handleArgs(args);
-
         super.initializeDax();
 
         AntiBan.create();

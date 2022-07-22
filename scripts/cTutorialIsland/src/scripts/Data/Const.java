@@ -2,6 +2,7 @@ package scripts.Data;
 
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSTile;
+import org.tribot.script.sdk.types.WorldTile;
 
 public class Const {
 
@@ -11,10 +12,11 @@ public class Const {
     };
 
     public static int GAME_SETTING = 281;
+    public static int ACCOUNT_GUIDE_ID = 3310;
     public static int FIRE_ID = 26185;
     public static RSArea SURVIVAL_AREA = new RSArea(new RSTile(3100, 3098, 0), new RSTile(3105, 3094, 0));
-    public static RSTile BANK_TILE = new RSTile(3122, 3122, 0);
-    public static RSTile ACCOUNT_INFO_TILE = new RSTile(3126, 3124, 0);
+    public static WorldTile BANK_TILE = new WorldTile(3122, 3122, 0);
+    public static WorldTile ACCOUNT_INFO_TILE = new WorldTile(3126, 3124, 0);
 
     public static int TINDERBOX = 590;
     public static int MIND_RUNE = 558;

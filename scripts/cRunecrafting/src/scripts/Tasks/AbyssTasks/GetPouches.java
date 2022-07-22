@@ -42,7 +42,7 @@ public class GetPouches implements Task {
         //GoToAbyss.teleportMage();
         killLeeches();
         lootPouches();
-        General.sleep(100);
+        General.sleep(30,60);
         //  Main.timeoutTimer.reset();
     }
 
@@ -78,9 +78,10 @@ public class GetPouches implements Task {
             Timer.waitCondition(5000, 500, () -> bestInteractable.map(b -> b.isHealthBarVisible()).orElse(false));
         }
 
-        if (Timer.waitCondition(9000, 25, () -> Query.npcs().isMyPlayerInteractingWith().findFirst().map(b ->
+        if (Timer.waitCondition(9000, 25, () ->
+                Query.npcs().nameContains("Leech").isMyPlayerInteractingWith()
+                        .findFirst().map(b ->
                 b.getHealthBarPercent() == 0).orElse(false))) {
-            General.println("[Debug]: Sleeping");
             Utils.idleNormalAction(true);
         }
       /*  if (!targs[0].isClickable() && !targs[0].isInteractingWithMe())
