@@ -2041,11 +2041,11 @@ public class MonkeyMadnessI implements QuestTask {
         }
         if (Game.getSetting(365) == 8) {
             finishQuest();
-            NPCInteraction.handleConversation();
+            NpcChat.handle();
         }
         if (Game.getSetting(365) == 9) {
             Utils.closeQuestCompletionWindow();
-            Utils.continuingChat();
+            NpcChat.handle();
             getXPReward(attackAndDef);
 
         }

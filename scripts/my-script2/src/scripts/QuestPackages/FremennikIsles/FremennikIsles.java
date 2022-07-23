@@ -20,6 +20,7 @@ import scripts.Requirements.Util.ConditionalStep;
 import scripts.Requirements.Util.Conditions;
 import scripts.Requirements.Util.LogicType;
 import scripts.Tasks.Priority;
+import scripts.Timer;
 
 import java.security.Key;
 import java.util.*;
@@ -134,28 +135,46 @@ public class FremennikIsles implements QuestTask {
     ));
 
     WorldTile LEFT_MIDDLE_BRIDGE_TILE = new WorldTile(2314, 3838, 0);
+    WorldTile RIGHT_MIDDLE_BRIDGE_TILE = new WorldTile(2355, 3838, 0);
 
     private void repairBridges() {
+        VarbitRequirement repairedBridge1 = new VarbitRequirement(3313, 1);
+        VarbitRequirement repairedBridge2 = new VarbitRequirement(3314, 1);
         if (!END_NEITIZNOT_AREA.contains(Player.getPosition()) &&
                 !MIDDLE_NEITIZNOT_AREA.contains(Player.getPosition())) {
             // go to middle area
             cQuesterV2.status = "going to middle area with Bridges";
             Optional<GameObject> bridge = Query.gameObjects().actionContains("Walk-across").findClosest();
+            if (bridge.map(b -> b.interact("Walk-across")).orElse(false)) {
+                Timer.waitCondition(12000, 500,
+                        () -> MIDDLE_NEITIZNOT_AREA.contains(Player.getPosition()));
+            }
         }
         if (!END_NEITIZNOT_AREA.contains(Player.getPosition()) &&
                 MIDDLE_NEITIZNOT_AREA.contains(Player.getPosition())) {
             // fix middle bridges
-            cQuesterV2.status = "Fixing Middle Bridges";
-            PathingUtil.localNav(LEFT_MIDDLE_BRIDGE_TILE);
-            Optional<GameObject> repair = Query.gameObjects()
-                    .actionContains("Repair").findClosest();
-            if (repair.map(r -> r.interact("Repair")).orElse(false)) {
-                Waiting.waitUntil(18000, 1200, ()-> END_NEITIZNOT_AREA.contains(Player.getPosition()));
+            if (!repairedBridge1.check()) {
+                cQuesterV2.status = "Fixing Middle Bridge (1)";
+                if (PathingUtil.localNav(LEFT_MIDDLE_BRIDGE_TILE))
+                    PathingUtil.movementIdle();
+                Optional<GameObject> repair = Query.gameObjects()
+                        .actionContains("Repair").findClosest();
+                if (repair.map(r -> r.interact("Repair")).orElse(false))
+                    Waiting.waitUntil(18000, 1200, () -> END_NEITIZNOT_AREA.contains(Player.getPosition()));
             }
+            if (!repairedBridge2.check()) {
+                cQuesterV2.status = "Fixing Middle Bridge (2)";
+                if (PathingUtil.localNav(RIGHT_MIDDLE_BRIDGE_TILE))
+                    PathingUtil.movementIdle();
+                Optional<GameObject> repair = Query.gameObjects()
+                        .actionContains("Repair").findClosest();
+                if (repair.map(r -> r.interact("Repair")).orElse(false)) {
+                    Waiting.waitUntil(18000, 1200, () -> END_NEITIZNOT_AREA.contains(Player.getPosition()));
+                }
+            }
+        } else if (END_NEITIZNOT_AREA.contains(Player.getPosition())) {
 
         }
-
-
     }
 
 
@@ -514,9 +533,11 @@ public class FremennikIsles implements QuestTask {
         talkToMawnisWithLogs.addSubSteps(talkToMawnisAfterItems);
 
         repairBridge1 = new ObjectStep(ObjectID.ROPE_BRIDGE_21310, new RSTile(2314, 3840, 0), "Right-click " +
-                "Repair", MyPlayer.getTile().getY() > 3847, splitLogs8, rope8, knife);
+                "Repair",
+                MyPlayer.getTile().getY() > 3847, splitLogs8, rope8, knife);
         repairBridge1Second = new ObjectStep(ObjectID.ROPE_BRIDGE_21310, new RSTile(2314, 3840, 0),
-                "Repair", MyPlayer.getTile().getY() > 3847, splitLogs4, rope4, knife);
+                "Repair",
+                MyPlayer.getTile().getY() > 3847, splitLogs4, rope4, knife);
         repairBridge2 = new ObjectStep(ObjectID.ROPE_BRIDGE_21312, new RSTile(2355, 3840, 0),
                 "Repair", splitLogs4, rope4, knife);
         repairBridge1.addSubSteps(repairBridge1Second, repairBridge2);
@@ -616,40 +637,40 @@ public class FremennikIsles implements QuestTask {
         enterKingRoom = new ObjectStep(ObjectID.ROPE_BRIDGE_21316, new RSTile(2385, 10263, 1), "Cross the rope bridge. Be prepared to fight the Ice Troll King. Use the Protect from Magic prayer for the fight.");
         killKing = new NPCStep(NpcID.ICE_TROLL_KING, new RSTile(2386, 10249, 1), "Kill the king. Use the Protect from Magic prayer for the fight.");
         decapitateKing = new ObjectStep(ObjectID.ICE_TROLL_KING, "Decapitate"
-                );
+        );
         finishQuest = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0),
                 head);
         finishQuestGivenHead = new NPCStep(NpcID.MAWNIS_BUROWGAR, new RSTile(2335, 3800, 0), "Talk to Mawnis to complete the quest.");
         finishQuest.addSubSteps(finishQuestGivenHead);
     }
 
-    private void bossFight(){
+    private void bossFight() {
         Inventory.contains(ItemID.DECAPITATED_HEAD_10842);
 
         Optional<Npc> king = Query.npcs().nameContains("Ice Troll King").findClosest();
-        if (king.isEmpty()){
+        if (king.isEmpty()) {
             Optional<GameObject> closest = Query.gameObjects().actionContains("Walk-across").findClosest();
-            if (closest.map(c->c.interact("Walk-across")).orElse(false)){
+            if (closest.map(c -> c.interact("Walk-across")).orElse(false)) {
                 Waiting.waitUntil(7500, 500,
-                        ()->  Query.npcs().nameContains("Ice Troll King").isAny());
+                        () -> Query.npcs().nameContains("Ice Troll King").isAny());
             }
-        } else{
-            if (Prayer.getPrayerPoints() < TribotRandom.uniform(7,12)){
+        } else {
+            if (Prayer.getPrayerPoints() < TribotRandom.uniform(7, 12)) {
                 Utils.drinkPotion(ItemID.PRAYER_POTION);
             }
             Prayer.enableAll(Prayer.PROTECT_FROM_MAGIC);
-            if (king.map(k-> !k.isHealthBarVisible() && k.interact("Attack")).orElse(false)){
+            if (king.map(k -> !k.isHealthBarVisible() && k.interact("Attack")).orElse(false)) {
                 Waiting.waitUntil(3500, 500,
-                        ()-> king.map(k-> !k.isHealthBarVisible()).orElse(false));
+                        () -> king.map(k -> !k.isHealthBarVisible()).orElse(false));
             }
-            if (MyPlayer.getCurrentHealthPercent() < TribotRandom.uniform(40,60)){
+            if (MyPlayer.getCurrentHealthPercent() < TribotRandom.uniform(40, 60)) {
                 EatUtil.eatFood(true);
             }
 
             if (king.map(k -> k.getHealthBarPercent() == 0).orElse(false)) {
                 //wait tyo decapitate
                 Waiting.waitUntil(8000, 750,
-                        ()-> Query.gameObjects().actionContains("Decapitate").isAny());
+                        () -> Query.gameObjects().actionContains("Decapitate").isAny());
             }
             Waiting.waitNormal(250, 40);
         }
@@ -744,8 +765,7 @@ public class FremennikIsles implements QuestTask {
         if (new Conditions(inJatizso, collectedValigga, collectedKeepa, collectedSkuli,
                 collectedHring).check()) {
             talkToGjukiAfterCollection1.execute();
-        }
-        else if (new Conditions(inJatizso, collectedValigga, collectedKeepa, collectedSkuli).check()) {
+        } else if (new Conditions(inJatizso, collectedValigga, collectedKeepa, collectedSkuli).check()) {
             handleTaxStep(collectFromHring, "8000");
         } else if (new Conditions(inJatizso, collectedValigga, collectedKeepa).check()) {
             handleTaxStep(collectFromSkuli, "6000");
@@ -759,7 +779,6 @@ public class FremennikIsles implements QuestTask {
     }
 
 
-
     public void handleTaxStep(NPCStep step, String taxAmount) {
         Log.info("Doing tax step for " + taxAmount);
         step.execute();
@@ -767,8 +786,8 @@ public class FremennikIsles implements QuestTask {
                 EnterInputScreen.enter(taxAmount)) {
             Waiting.waitUntil(4500, 500, () -> ChatScreen.isOpen());
         }
-        NpcChat.handle(true,"But, rules are rules. Pay up!");
-        NpcChat.handle(true,"But rules are rules. Pay up!");
+        NpcChat.handle(true, "But, rules are rules. Pay up!");
+        NpcChat.handle(true, "But rules are rules. Pay up!");
     }
 
     private boolean unequipJester() {
@@ -789,7 +808,7 @@ public class FremennikIsles implements QuestTask {
     @Override
     public List<Requirement> getGeneralRequirements() {
         ArrayList<Requirement> req = new ArrayList<>();
-       // req.add(new QuestRequirement(Quest.THE_FREMENNIK_TRIALS, Quest.State.COMPLETE));
+        // req.add(new QuestRequirement(Quest.THE_FREMENNIK_TRIALS, Quest.State.COMPLETE));
         req.add(new SkillRequirement(Skills.SKILLS.AGILITY, 40));
         req.add(new SkillRequirement(Skills.SKILLS.CONSTRUCTION, 20));
         req.add(new SkillRequirement(Skills.SKILLS.PRAYER, 43)); //my req
@@ -839,6 +858,8 @@ public class FremennikIsles implements QuestTask {
             return;
         } else if (Utils.getVarBitValue(varbit) == 90) {
             unequipJester();
+        } else if (Utils.getVarBitValue(varbit) == 140) {
+            repairBridges();
         } else if (Utils.getVarBitValue(varbit) == 230) {
             equipJester();
         } else if (Utils.getVarBitValue(varbit) == 235 && GameState.isInInstance()) {
