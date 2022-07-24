@@ -45,7 +45,7 @@ public class NpcThieving implements Task {
         if (invCoinPouch.length > 0 && invCoinPouch[0].getStack() >= numToOpenAt) {
             General.println("[Thieving]: Need to open coin pouches");
             if (invCoinPouch[0].click("Open"))
-                General.sleep(General.randomSD(200, 600, 400, 75));
+                Utils.idleNormalAction(true);
         }
     }
 
@@ -65,7 +65,7 @@ public class NpcThieving implements Task {
             BankManager.close(true);
             if (Inventory.find(Filters.Items.actionsContains("Eat")).length == 0) {
                 General.println("[Thieving]: Ending due to no food");
-              //  Main.TRAIN_THIEVING = false;
+              throw new NullPointerException();
             }
         }
     }
@@ -84,7 +84,7 @@ public class NpcThieving implements Task {
             checkHealthAndEat();
             openCoinPouches(General.random(12, 20)); //lower threshold
             Timer.abc2WaitCondition(() -> Player.getAnimation() == -1, 6000, 9000);
-            General.sleep(General.random(0, 500));
+            Utils.idlePredictableAction();
             return;
         }
 
@@ -101,7 +101,7 @@ public class NpcThieving implements Task {
             if (DynamicClicking.clickRSNPC(target[0], "Pickpocket")) {
                 Timer.waitCondition(() -> Player.getAnimation() == 397 ||
                         Player.getAnimation() == 881 || Player.getAnimation() == 424, 3000, 4500);
-
+                Utils.idlePredictableAction();
             }
         }
         if (!afkTimer.isRunning()) {
