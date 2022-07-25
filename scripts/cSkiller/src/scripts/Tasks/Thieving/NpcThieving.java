@@ -88,7 +88,7 @@ public class NpcThieving implements Task {
             return;
         }
 
-        int cameraChance = General.random(0, 100);
+        int cameraChance = General.random(0, 120);
 
         if (target.length > 0) {
            // Utils.closeAllWindows(); // in case bank is open

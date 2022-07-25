@@ -100,7 +100,7 @@ public class Exchange {
                         .type(GrandExchangeOffer.Type.BUY)
                         .itemId(item.getItemID())
                         .price(price)
-                        .searchText(getItemName(item))
+                        .searchText(getItemName(item).toLowerCase())
                         .quantity(item.getItemQuantity()).build();
             }
         }
@@ -108,7 +108,7 @@ public class Exchange {
                 .type(GrandExchangeOffer.Type.BUY)
                 .itemId(item.getItemID())
                 .priceAdjustment(Utils.roundToNearest(item.getPercentIncrease(), 5) / 5)
-                .searchText(getItemName(item))
+                .searchText(getItemName(item).toLowerCase())
                 .quantity(item.getItemQuantity()).build();
     }
 

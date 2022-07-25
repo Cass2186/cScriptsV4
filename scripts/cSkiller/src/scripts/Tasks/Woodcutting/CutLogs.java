@@ -24,7 +24,7 @@ import java.util.Optional;
 public class CutLogs implements Task {
 
 
-    public void chopTree(Area area, String treeName) {
+    private void chopTree(Area area, String treeName) {
         Utils.unselectItem();
 
         PathingUtil.walkToArea(area, false);

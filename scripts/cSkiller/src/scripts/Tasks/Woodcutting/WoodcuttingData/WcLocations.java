@@ -15,8 +15,8 @@ public enum WcLocations {
 
     VARROCK_WEST_TREES(WoodCuttingConst.VARROCK_WESK_REGULAR,"Tree", 1, 15),
     VARROCK_WEST_OAKS(WoodCuttingConst.VARROCK_WEST_OAKS, "Oak", 15, 31),
-    PORT_SARIM_WILLOWS(WoodCuttingConst.PORT_SARIM_WILLOWS, "Willow", 31, 55),
-    DRAYNOR_WILLOWS(WoodCuttingConst.DRAYNOR_WILLOW_AREA, "Willow", 31, 55),
+    PORT_SARIM_WILLOWS(WoodCuttingConst.PORT_SARIM_WILLOWS, "Willow", 31, 41),
+    DRAYNOR_WILLOWS(WoodCuttingConst.DRAYNOR_WILLOW_AREA, "Willow", 41, 55),
     SEERS_WILLOWS(WoodCuttingConst.SEERS_MAPLES_AREA, "Willow", 31, 55),
     CASTLE_WARS_TEAKS(WoodCuttingConst.TEAK_AREA, "Teak", 55, 61),
    SEERS_MAPLES(WoodCuttingConst.SEERS_MAPLES_AREA, "Maple",  61, 61),
